@@ -1,0 +1,83 @@
+﻿@model IEnumerable<SchoolManagementSystem.Models.ClassFeeList>
+
+@{
+    ViewData["Title"] = "Fee List";
+    GlobalUI.PageTitle = "Class Fee Lists";
+    int sl = 0;
+}
+
+<div class="shadow-lg p-2">
+    <div class="">
+        <table class="table" id="myTable">
+            <thead class="bg-info text-light">
+                <tr>
+                    <th>
+                        #
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.StudentFeeHead.Name)
+                    </th>
+
+                    <th>
+                        Academic Class
+                    </th>
+                    @*<th>
+                        Academic Session
+                    </th>*@
+                    <th>
+                        @Html.DisplayNameFor(model => model.Amount)
+                    </th>
+                    <th class="no-sort">
+                        <a class="p-2 btn-sm btn-warning btn-round" asp-action="Create"><i class="fa fa-plus"></i> Add</a>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @(++sl).
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.StudentFeeHead.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AcademicClass.Name)
+                        </td>
+                        @*<td>
+                            @Html.DisplayFor(modelItem => item.AcademicSession.Name)
+                        </td>*@
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Amount)
+                        </td>
+                        <td>
+                            <partial name="_Edit_Details_Delete" model="@item.Id" />
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+
+</div>
+@section Scripts{
+    <script src="~/js/DataTable/dataTable.js"></script>
+    @if (TempData["create"] != null)
+    {
+        <script src="~/js/AlertifyNotify/successNotify.js"></script>
+    }
+
+    @if (TempData["edit"] != null)
+    {
+
+        <script src="~/js/AlertifyNotify/warningNotify.js"></script>
+    }
+
+    @if (TempData["delete"] != null)
+    {
+
+        <script src="~/js/AlertifyNotify/errorNotify.js"></script>
+    }
+}

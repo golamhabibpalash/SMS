@@ -1,0 +1,7 @@
+﻿@model int
+<div class="btn-group btn-group-sm" role="group">
+    <a class="btn btn-sm btn-warning rounded" asp-action="Edit" asp-route-id="@Model" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-edit"></i> </a>
+    <a class="btn btn-success btn-sm rounded" asp-action="Details" asp-route-id="@Model" data-toggle="tooltip" data-placement="top" title="Details"><i class="fa fa-info"></i> </a>
+    <a class="btn btn-sm rounded btn-danger" asp-action="Delete" asp-route-id="@Model" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fa fa-trash"></i> </a>
+</div>
+

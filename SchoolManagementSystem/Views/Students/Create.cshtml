@@ -1,0 +1,270 @@
+﻿@model SchoolManagementSystem.Models.Student
+
+@{
+    ViewData["Title"] = "Add New Student";
+    GlobalUI.PageTitle = ViewBag.Title;
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="Create" asp-controller="Students" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="row">
+                <div class="col-md-10 offset-2">
+                    <h6 class="alert alert-heading alert-info">Academic Information</h6>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label asp-for="AcademicSessionId" class="control-label col-form-label text-right col-md-2"></label>
+                <div class="col-md-4">
+                    <select asp-for="AcademicSessionId" class="form-control input-sm" asp-items="ViewBag.AcademicSessionId">
+                        <option disabled selected>Select Academic Session</option>
+                    </select>
+                </div>
+                <label asp-for="AcademicClassId" class="col-form-label text-right col-md-2"></label>
+                <div class="col-md-4">
+                    <select asp-for="AcademicClassId" class="form-control input-sm">
+                        <option disabled selected>Select Session first</option>
+                    </select>
+                    <span asp-validation-for="AcademicClassId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label asp-for="AcademicSectionId" class="control-label col-form-label text-right col-md-2"></label>
+                <div class="col-md-4">
+                    <select asp-for="AcademicSectionId" class="form-control input-sm" >
+                        <option disabled selected>Select Class</option>
+                    </select>
+                    <span asp-validation-for="AcademicSectionId" class="text-danger"></span>
+                </div>
+
+                <label asp-for="ClassRoll" class="control-label col-form-label text-right col-md-2"></label>
+                <div class="col-md-4">
+                    <input asp-for="ClassRoll" class="form-control input-sm" />
+                    <span asp-validation-for="ClassRoll" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-10 offset-2">
+                    <h6 class="alert alert-heading alert-info">Personal Information</h6>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label asp-for="Name" class="col-form-label text-right col-md-2"></label>
+                <div class="col-md-4">
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <label asp-for="FatherName" class="control-label col-form-label text-right col-md-2"></label>
+                <div class="col-md-4">
+                    <input asp-for="FatherName" class="form-control" />
+                    <span asp-validation-for="FatherName" class="text-danger"></span>
+                </div>
+
+            </div>
+            <div class="form-group row">
+                <label asp-for="GuardianPhone" class="control-label col-form-label text-right col-md-2"></label>
+                <div class="col-md-4">
+                    <input asp-for="GuardianPhone" class="form-control" />
+                    <span asp-validation-for="GuardianPhone" class="text-danger"></span>
+                </div>
+
+                <label asp-for="MotherName" class="control-label col-form-label text-right col-md-2"></label>
+                <div class="col-md-4">
+                    <input asp-for="MotherName" class="form-control" />
+                    <span asp-validation-for="MotherName" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label asp-for="AdmissionDate" class="control-label col-form-label text-right col-md-2"></label>
+                <div class="col-md-4">
+                    <input asp-for="AdmissionDate" class="form-control" />
+                    <span asp-validation-for="AdmissionDate" class="text-danger"></span>
+                </div>
+
+                <label asp-for="Email" class="control-label col-form-label text-right col-md-2"></label>
+                <div class="col-md-4">
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label asp-for="PhoneNo" class="control-label col-form-label text-right col-md-2"></label>
+                <div class="col-md-4">
+                    <input asp-for="PhoneNo" class="form-control" />
+                    <span asp-validation-for="PhoneNo" class="text-danger"></span>
+                </div>
+
+
+                <label asp-for="Photo" class="control-label col-form-label text-right col-md-2"></label>
+                <div class="col-md-4">
+                    <div class="col-md-6">
+                        <input type="file" name="sPhoto" class="form-control-plaintext" id="imgInp" />
+                    </div>
+                    <div class="col-md-6" id="photoDiv" style="display:none">
+                        <img  id="sPhotoId" style="width:100px; border:1px solid black" />
+                    </div>
+
+                    <span asp-validation-for="Photo" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label asp-for="DOB" class="control-label col-form-label text-right col-md-2"></label>
+                <div class="col-md-4">
+                    <input asp-for="DOB" class="form-control" />
+                    <span asp-validation-for="DOB" class="text-danger"></span>
+                </div>
+
+                <label asp-for="ReligionId" class="control-label col-form-label text-right col-md-2"></label>
+                <div class="col-md-4">
+                    <select asp-for="ReligionId" class="form-control" asp-items="ViewBag.ReligionId">
+                        <option selected disabled>Select Religion</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label asp-for="GenderId" class="control-label col-form-label text-right col-md-2"></label>
+                <div class="col-md-4">
+                    <select asp-for="GenderId" class="form-control" asp-items="ViewBag.GenderId">
+                        <option selected disabled>Select Gender</option>
+                    </select>
+                </div>
+
+                <label asp-for="BloodGroupId" class="control-label col-form-label text-right col-md-2"></label>
+                <div class="col-md-4">
+                    <select asp-for="BloodGroupId" class="form-control" asp-items="ViewBag.BloodGroupId">
+                        <option selected disabled>Select Blood Group</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label asp-for="NationalityId" class="control-label col-form-label text-right col-md-2"></label>
+                <div class="col-md-4">
+                    <select asp-for="NationalityId" class="form-control" asp-items="ViewBag.NationalityId">
+                        <option selected disabled>Select Nationality</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-10 offset-2">
+                    <h6 class="alert alert-heading alert-info">Present Address Information</h6>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label asp-for="PresentAddressArea" class="control-label col-form-label text-right col-md-2"></label>
+                <div class="col-md-4">
+                    <input asp-for="PresentAddressArea" class="form-control" />
+                    <span asp-validation-for="PresentAddressArea" class="text-danger"></span>
+                </div>
+
+                <label asp-for="PresentAddressPO" class="control-label col-form-label text-right col-md-2"></label>
+                <div class="col-md-4">
+                    <input asp-for="PresentAddressPO" class="form-control" />
+                    <span asp-validation-for="PresentAddressPO" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+
+                <label asp-for="PresentDivisiontId" class="control-label col-form-label text-right col-md-2"></label>
+                <div class="col-md-4">
+                    <select asp-for="PresentDivisiontId" class="form-control select2" asp-items="@ViewBag.DivisionList" style="width:100%;">
+                        <option disabled selected>Select Division Name</option>
+                    </select>
+                    <span asp-validation-for="PresentDivisiontId" class="text-danger"></span>
+                </div>
+
+                <label asp-for="PresentDistrictId" class="control-label col-form-label text-right col-md-2"></label>
+                <div class="col-md-4">
+                    <select asp-for="PresentDistrictId" class="form-control select2" style="width:100%;">
+                        <option disabled selected>Select Division First</option>
+                    </select>
+                    <span asp-validation-for="PresentDistrictId" class="text-danger"></span>
+                </div>
+
+            </div>
+            <div class="form-group row">
+
+                <label asp-for="PresentUpazilaId" class="control-label col-form-label text-right col-md-2"></label>
+                <div class="col-md-4">
+                    <select asp-for="PresentUpazilaId" class="form-control select2" style="width:100%;">
+                        <option disabled selected>Select District First</option>
+                    </select>
+                    <span asp-validation-for="PresentUpazilaId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-10 offset-2">
+                    <h6 class="alert alert-heading alert-info">Permanent Address Information <span>(<input type="checkbox" id="sameAddress" /> <label for="sameAddress">Same as Present Address</label> )</span></h6>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label asp-for="PermanentAddressArea" class="control-label col-form-label text-right col-md-2"></label>
+                <div class="col-md-4">
+                    <input asp-for="PermanentAddressArea" class="form-control" />
+                    <span asp-validation-for="PermanentAddressArea" class="text-danger"></span>
+                </div>
+
+                <label asp-for="PermanentAddressPO" class="control-label col-form-label text-right col-md-2"></label>
+                <div class="col-md-4">
+                    <input asp-for="PermanentAddressPO" class="form-control" />
+                    <span asp-validation-for="PermanentAddressPO" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label asp-for="PermanentDivisiontId" class="control-label col-form-label text-right col-md-2"></label>
+                <div class="col-md-4">
+                    <select asp-for="PermanentDivisiontId" class="form-control select2" asp-items="@ViewBag.DivisionList" style="width:100%;">
+                        <option disabled selected>Select Division Name</option>
+                    </select>
+                    <span asp-validation-for="PermanentDivisiontId" class="text-danger"></span>
+                </div>
+
+                <label asp-for="PermanentDistrictId" class="control-label col-form-label text-right col-md-2"></label>
+                <div class="col-md-4">
+                    <select asp-for="PermanentDistrictId" class="form-control select2" style="width:100%;">
+                        <option disabled selected>Select Division First</option>
+                    </select>
+                    <span asp-validation-for="PermanentDistrictId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label asp-for="PermanentUpazilaId" class="control-label col-form-label text-right col-md-2"></label>
+                <div class="col-md-4">
+                    <select asp-for="PermanentUpazilaId" class="form-control select2" style="width:100%;">
+                        <option disabled selected>Select District First</option>
+                    </select>
+                    <span asp-validation-for="PermanentUpazilaId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label asp-for="PreviousSchool" class="control-label col-form-label text-right col-md-2"></label>
+                <div class="col-md-10">
+                    <input asp-for="PreviousSchool" class="form-control" />
+                    <span asp-validation-for="PreviousSchool" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group form-check row">
+                <label class="form-check-label control-label col-form-label col-md-4 offset-2">
+                    <input class="form-check-input" asp-for="Status" /> @Html.DisplayNameFor(model => model.Status)
+                </label>
+            </div>
+            <div class="form-group text-right">
+                <input type="submit" value="Create" class="btn btn-primary" />
+                <a class="btn btn-success" asp-action="Index" title="Go To List" data-toggle="tooltip" data-placement="top"><i class="fa fa-list"></i></a>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+
+    <script src="~/js/Student/Create.js"></script>
+}

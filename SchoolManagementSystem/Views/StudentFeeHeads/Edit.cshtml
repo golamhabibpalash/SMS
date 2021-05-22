@@ -1,0 +1,56 @@
+﻿@model SchoolManagementSystem.Models.StudentFeeHead
+
+@{
+    ViewData["Title"] = "Edit Fee Head";
+    GlobalUI.PageTitle = "Student Fee Head Edit";
+}
+
+
+<div class="row">
+    <div class="col-md-10 offset-1 shadow-lg p-2">
+        <form asp-action="Edit" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group row">
+                <label asp-for="Name" class="control-label col-md-2 col-form-label text-right">
+                    Fee Head Name
+                </label>
+                <div class="col-md-10">
+                    <input asp-for="Name" class="form-control" placeholder="Ex: Monthly Fee" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label offset-2">
+                    <input class="form-check-input" asp-for="Repeatedly" />
+                    @Html.DisplayNameFor(model => model.Repeatedly)
+                </label>
+            </div>
+            <div class="form-group row">
+                <div class="offset-2 col-md-10 text-center">
+                    <partial name="_Update_Back" model="@Model.Id" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="row mt-3">
+    @if (ViewBag.msg != null)
+    {
+        <div class="col-md-10 offset-1 text-center">
+            <h6 id="msg" class="text-danger">@ViewBag.msg</h6>
+        </div>
+    }
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @if (TempData["editFail"] != null)
+    {
+        <script src="~/js/AlertifyNotify/warningUpdateFailNotify.js"></script>
+    }
+    <script src="~/js/Accessories/FadeOut.js"></script>
+
+}

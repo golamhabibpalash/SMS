@@ -1,0 +1,32 @@
+﻿@model SchoolManagementSystem.ViewModels.StudentyPaymentVM
+
+@{
+    ViewData["Title"] = "Index";
+    GlobalUI.PageTitle = "Student Payment";
+    int sl = 0;
+}
+<div class="row pt-3 pb-2 bg-orange">
+    <div class="col-md-12 text-center">
+        <form asp-action="Payment" asp-controller="StudentPayments" class="">
+            <div class="form-group row">
+                <label class="col-md-2 offset-2 col-form-label text-right">
+                    <span class="h5">Student Roll</span>
+                </label>
+                <div class="col-md-4">
+                    @if (ViewBag.roll != null)
+                    {
+                        <input id="rollInput" class="form-control" name="stRoll" value="@ViewBag.roll" />
+                    }
+                    else
+                    {
+                        <input id="rollInput" placeholder="Input Student Roll Number" class="form-control" name="stRoll" />
+                    }
+
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-info rounded" id="submitButton">Search</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,65 @@
+﻿@model SchoolManagementSystem.Models.ClassFeeList
+
+@{
+    ViewData["Title"] = "Edit Fee List";
+    GlobalUI.PageTitle = "Class Fee List Edit";
+}
+
+<div class="row">
+    <div class="col-md-10 offset-1 shadow-lg p-2">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group row">
+                <label asp-for="StudentFeeHeadId" class="col-md-2 text-right col-form-label control-label"></label>
+                <div class="col-md-10">
+
+                    <select asp-for="StudentFeeHeadId" class="form-control" asp-items="ViewBag.StudentFeeHeadId">
+                        <option disabled selected>Select Fee Head</option>
+                    </select>
+                    <span asp-validation-for="StudentFeeHeadId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                @*<label asp-for="AcademicSessionId" class="col-md-2 text-right col-form-label control-label"></label>
+                <div class="col-md-4">
+                    <select asp-for="AcademicSessionId" class="form-control" asp-items="ViewBag.AcademicSessionId">
+                        <option disabled selected>Select Session</option>
+                    </select>
+                    <span asp-validation-for="AcademicSessionId"></span>
+                </div>*@
+                <label asp-for="AcademicClassId" class="col-md-2 text-right col-form-label control-label"></label>
+                <div class="col-md-4">
+                    <select asp-for="AcademicClassId" class="form-control">
+                        <option disabled selected>Select Session First</option>
+                    </select>
+                    <span asp-validation-for="AcademicClassId"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label asp-for="Amount" class="col-md-2 text-right col-form-label control-label"></label>
+                <div class="col-md-4">
+                    <input asp-for="Amount" class="form-control" placeholder="Ex: Monthly Fee" />
+                    <span asp-validation-for="Amount" class="text-danger"></span>
+                </div>
+
+
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @if (TempData["editFail"] != null)
+    {
+        <script src="~/js/AlertifyNotify/warningUpdateFailNotify.js"></script>
+    }
+}

@@ -1,0 +1,22 @@
+﻿<h3> Role Management</h3><hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" method="post" class="form-inline">
+            <label> Role Name</label>
+            <input type="text" name="rName" class="form-control" value="" />
+            <button type="submit">Create Role</button>
+        </form>
+        @if (ViewBag.msg != null)
+        {
+            <h4 id="msg">@ViewBag.msg</h4>
+        }
+    </div>
+</div>
+
+@section Scripts{ 
+<script>
+    $(document).ready(function () {
+        $("#msg").fadeOut(6000);
+    });
+</script>
+}

@@ -1,0 +1,61 @@
+﻿@model SchoolManagementSystem.Models.ClassFeeList
+
+@{
+    ViewData["Title"] = "Add Fee List";
+    GlobalUI.PageTitle = "Add new Fee List of Class";
+}
+
+<div class="row">
+    <div class="col-md-10 offset-1 shadow-lg p-2">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group row">
+                <label asp-for="StudentFeeHeadId" class="col-md-2 text-right col-form-label control-label"></label>
+                <div class="col-md-10">
+                    <select asp-for="StudentFeeHeadId" class="form-control" asp-items="ViewBag.StudentFeeHeadId">
+                        <option disabled selected>Select Fee Head</option>
+                    </select>
+
+                    <span asp-validation-for="StudentFeeHeadId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label asp-for="AcademicClassId" class="col-md-2 text-right col-form-label control-label"></label>
+                <div class="col-md-4">
+                    <select asp-for="AcademicClassId" class="form-control">
+                        <option disabled selected>Select Session First</option>
+                    </select>
+                    <span asp-validation-for="AcademicClassId"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label asp-for="Amount" class="col-md-2 text-right col-form-label control-label"></label>
+                <div class="col-md-4">
+                    <input asp-for="Amount" class="form-control" placeholder="Ex: 500" />
+                    <span asp-validation-for="Amount" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group text-center">
+                <partial name="_Create_Back" />
+            </div>
+        </form>
+    </div>
+</div>
+<div class="row" id="warningMsg">
+    @if (ViewBag.msg != null)
+    {
+        <div class="col-md-12 text-center">
+            <h5 class="alert alert-warning">@ViewBag.msg</h5>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/StudentFeeLists/Create.js"></script>
+    @if (TempData["crateFail"] != null)
+    {
+        <script src="~/js/AlertifyNotify/warningCreateNotify.js"></script>
+    }
+}

@@ -24,5 +24,6 @@ namespace SchoolManagementSystem.Models
 
         [Display(Name = "Edited At")]
         public DateTime EditedAt { get; set; }
+        public List<Designation> Designations { get; set; }
     }
 }

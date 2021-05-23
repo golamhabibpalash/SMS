@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,10 +16,12 @@ namespace SchoolManagementSystem.Controllers
     public class EmployeesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _host;
 
-        public EmployeesController(ApplicationDbContext context)
+        public EmployeesController(ApplicationDbContext context, IWebHostEnvironment host)
         {
             _context = context;
+            _host = host;
         }
 
         // GET: Employees
@@ -70,7 +75,7 @@ namespace SchoolManagementSystem.Controllers
         // GET: Employees/Create
         public IActionResult Create()
         {
-            ViewData["DesignationId"] = new SelectList(_context.Designation, "Id", "Name");
+            ViewData["DesignationId"] = new SelectList(_context.Designation, "Id", "DesignationName");
             ViewData["EmpTypeId"] = new SelectList(_context.EmpType, "Id", "Name");
             ViewData["GenderId"] = new SelectList(_context.Gender, "Id", "Name");
             ViewData["NationalityId"] = new SelectList(_context.Nationality, "Id", "Name");
@@ -89,16 +94,33 @@ namespace SchoolManagementSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,EmployeeName,DOB,Image,GenderId,ReligionId,NationalityId,NIDNo,NIDCard,Phone,Email,Nominee,NomineePhone,EmpTypeId,DesignationId,JoiningDate,PresentAddress,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddress,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,CreatedBy,CreatedAt,EditedBy,EditedAt,Status")] Employee employee)
+        public async Task<IActionResult> Create([Bind("Id,EmployeeName,DOB,Image,GenderId,ReligionId,NationalityId,NIDNo,NIDCard,Phone,Email,Nominee,NomineePhone,EmpTypeId,DesignationId,JoiningDate,PresentAddress,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddress,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,CreatedBy,CreatedAt,EditedBy,EditedAt,Status")] Employee employee, IFormFile empImage, IFormFile nidCard)
         {
+            if (empImage != null)
+            {
+                string root = _host.WebRootPath;
+                string folder = "~/Images/Employee";
+                string fileExtension = Path.GetExtension(empImage.FileName);
+                string fileName = "e_" + DateTime.Today.ToString("yyyy") + "_" + employee.NIDNo;
+                string pathCombine = Path.Combine(root, folder, fileName);
+
+            }
+
+            if (nidCard != null)
+            {
+
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(employee);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            
 
-            ViewData["DesignationId"] = new SelectList(_context.Designation, "Id", "Name");
+
+            ViewData["DesignationId"] = new SelectList(_context.Designation, "Id", "DesignationName",employee.DesignationId);
             ViewData["EmpTypeId"] = new SelectList(_context.EmpType, "Id", "Name");
             ViewData["GenderId"] = new SelectList(_context.Gender, "Id", "Name");
             ViewData["NationalityId"] = new SelectList(_context.Nationality, "Id", "Name");
@@ -171,7 +193,7 @@ namespace SchoolManagementSystem.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DesignationId"] = new SelectList(_context.Designation, "Id", "Id", employee.DesignationId);
+            ViewData["DesignationId"] = new SelectList(_context.Designation, "Id", "DesignationName", employee.DesignationId);
             ViewData["EmpTypeId"] = new SelectList(_context.EmpType, "Id", "Name", employee.EmpTypeId);
             ViewData["GenderId"] = new SelectList(_context.Gender, "Id", "Id", employee.GenderId);
             ViewData["NationalityId"] = new SelectList(_context.Nationality, "Id", "Id", employee.NationalityId);

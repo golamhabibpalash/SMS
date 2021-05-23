@@ -24,9 +24,7 @@ namespace SchoolManagementSystem.Controllers
         public async Task<IActionResult> Index()
         {
             var AcademicClassList = _context.AcademicClass
-                .Include(a => a.AcademicSession)
-                .OrderBy(c => c.AcademicSession.Name)
-                .ThenBy(c => c.ClassSerial);
+                .OrderBy(c => c.ClassSerial);
 
             return View(await AcademicClassList.ToListAsync());
         }
@@ -40,7 +38,6 @@ namespace SchoolManagementSystem.Controllers
             }
 
             var academicClass = await _context.AcademicClass
-                .Include(a => a.AcademicSession)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (academicClass == null)
             {
@@ -69,7 +66,7 @@ namespace SchoolManagementSystem.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var classExist = _context.AcademicClass.FirstOrDefault(c => c.Name.Trim() == academicClass.Name.Trim() && c.AcademicSessionId == academicClass.AcademicSessionId);
+                    var classExist = _context.AcademicClass.FirstOrDefault(c => c.Name.Trim() == academicClass.Name.Trim());
                     if (classExist != null)
                     {
                         msg = academicClass.Name + " name is already exist.";
@@ -91,7 +88,7 @@ namespace SchoolManagementSystem.Controllers
                 msg = "Please insert a class name.";
             }
             ViewBag.msg = msg;
-            ViewData["AcademicSessionId"] = new SelectList(_context.AcademicSession, "Id", "Name", academicClass.AcademicSessionId);
+            ViewData["AcademicSessionId"] = new SelectList(_context.AcademicSession, "Id", "Name");
             return View(academicClass);
         }
 
@@ -108,7 +105,7 @@ namespace SchoolManagementSystem.Controllers
             {
                 return NotFound();
             }
-            ViewData["AcademicSessionId"] = new SelectList(_context.AcademicSession, "Id", "Name", academicClass.AcademicSessionId);
+            ViewData["AcademicSessionId"] = new SelectList(_context.AcademicSession, "Id", "Name");
             return View(academicClass);
         }
 
@@ -124,7 +121,7 @@ namespace SchoolManagementSystem.Controllers
             {
                 return NotFound();
             }
-            var existAcademicClass = _context.AcademicClass.Where(ac => ac.Name == academicClass.Name.Trim() && ac.AcademicSessionId == academicClass.AcademicSessionId && ac.Id != id).FirstOrDefault();
+            var existAcademicClass = _context.AcademicClass.Where(ac => ac.Name == academicClass.Name.Trim() && ac.Id != id).FirstOrDefault();
             if (existAcademicClass==null)
             {
                 if (ModelState.IsValid)
@@ -158,7 +155,7 @@ namespace SchoolManagementSystem.Controllers
             }
 
             ViewBag.msg = msg;
-            ViewData["AcademicSessionId"] = new SelectList(_context.AcademicSession, "Id", "Name", academicClass.AcademicSessionId);
+            ViewData["AcademicSessionId"] = new SelectList(_context.AcademicSession, "Id", "Name");
             return View(academicClass);
         }
 
@@ -171,7 +168,6 @@ namespace SchoolManagementSystem.Controllers
             }
 
             var academicClass = await _context.AcademicClass
-                .Include(a => a.AcademicSession)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (academicClass == null)
             {

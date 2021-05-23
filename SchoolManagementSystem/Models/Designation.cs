@@ -13,6 +13,9 @@ namespace SchoolManagementSystem.Models
         [Display(Name = "Designation")]
         public string DesignationName { get; set; }
 
+        [Display(Name ="Designation Type")]
+        public int DesignationTypeId { get; set; }
+
         [Display(Name = "Created By")]
         public string CreatedBy { get; set; }
 
@@ -24,5 +27,7 @@ namespace SchoolManagementSystem.Models
 
         [Display(Name = "Edited At")]
         public DateTime EditedAt { get; set; }
+
+        public DesignationType DesignationType { get; set; }
     }
 }

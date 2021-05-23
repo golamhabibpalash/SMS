@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -56,11 +57,25 @@ namespace SchoolManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,DesignationTypeName,CreatedBy,CreatedAt,EditedBy,EditedAt")] DesignationType designationType)
         {
-            if (ModelState.IsValid)
+            string msg = "";
+            var isExist =await _context.DesignationType
+                .FirstOrDefaultAsync(s => s.DesignationTypeName.Trim()==designationType.DesignationTypeName.Trim());
+            if (isExist!=null)
             {
-                _context.Add(designationType);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                msg =designationType.DesignationTypeName+ " is already exist";
+                ViewBag.msg = msg;
+            }
+            else
+            {
+                if (ModelState.IsValid)
+                {
+                    designationType.CreatedAt = DateTime.Now;
+                    designationType.CreatedBy = HttpContext.Session.GetString("User");
+
+                    _context.Add(designationType);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
             }
             return View(designationType);
         }
@@ -92,26 +107,39 @@ namespace SchoolManagementSystem.Controllers
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
+            string msg = "";
+            var isExist = await _context.DesignationType
+                .FirstOrDefaultAsync(s => s.DesignationTypeName.Trim() == designationType.DesignationTypeName.Trim() && designationType.Id != s.Id);
+            if (isExist != null)
             {
-                try
+                msg = designationType.DesignationTypeName + " is already exist";
+                ViewBag.msg = msg;
+            }
+            else
+            {
+                if (ModelState.IsValid)
                 {
-                    _context.Update(designationType);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!DesignationTypeExists(designationType.Id))
+                    try
                     {
-                        return NotFound();
+                        designationType.EditedAt = DateTime.Now;
+                        designationType.EditedBy = HttpContext.Session.GetString("User");
+
+                        _context.Update(designationType);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!DesignationTypeExists(designationType.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
             }
             return View(designationType);
         }

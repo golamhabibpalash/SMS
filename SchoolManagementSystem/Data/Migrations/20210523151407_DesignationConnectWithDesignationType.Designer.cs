@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchoolManagementSystem.Data;
 
 namespace SchoolManagementSystem.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210523151407_DesignationConnectWithDesignationType")]
+    partial class DesignationConnectWithDesignationType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -226,6 +228,9 @@ namespace SchoolManagementSystem.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("AcademicSessionId")
+                        .HasColumnType("int");
+
                     b.Property<int>("ClassSerial")
                         .HasColumnType("int");
 
@@ -252,6 +257,8 @@ namespace SchoolManagementSystem.Data.Migrations
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AcademicSessionId");
 
                     b.ToTable("AcademicClass");
                 });
@@ -1252,6 +1259,17 @@ namespace SchoolManagementSystem.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("SchoolManagementSystem.Models.AcademicClass", b =>
+                {
+                    b.HasOne("SchoolManagementSystem.Models.AcademicSession", "AcademicSession")
+                        .WithMany("AcademicClasses")
+                        .HasForeignKey("AcademicSessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AcademicSession");
+                });
+
             modelBuilder.Entity("SchoolManagementSystem.Models.AcademicSection", b =>
                 {
                     b.HasOne("SchoolManagementSystem.Models.AcademicClass", "AcademicClass")
@@ -1578,6 +1596,8 @@ namespace SchoolManagementSystem.Data.Migrations
 
             modelBuilder.Entity("SchoolManagementSystem.Models.AcademicSession", b =>
                 {
+                    b.Navigation("AcademicClasses");
+
                     b.Navigation("StudentFeeLists");
                 });
 

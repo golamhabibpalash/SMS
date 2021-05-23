@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +23,7 @@ namespace SchoolManagementSystem.Controllers
         // GET: Designations
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Designation.ToListAsync());
+            return View(await _context.Designation.Include(s => s.DesignationType).ToListAsync());
         }
 
         // GET: Designations/Details/5
@@ -46,6 +47,7 @@ namespace SchoolManagementSystem.Controllers
         // GET: Designations/Create
         public IActionResult Create()
         {
+            ViewData["DesignationTypeList"] = new SelectList(_context.DesignationType, "Id", "DesignationTypeName");
             return View();
         }
 
@@ -54,14 +56,28 @@ namespace SchoolManagementSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,DesignationName,CreatedBy,CreatedAt,EditedBy,EditedAt")] Designation designation)
+        public async Task<IActionResult> Create([Bind("Id,DesignationName,DesignationTypeId,CreatedBy,CreatedAt,EditedBy,EditedAt")] Designation designation)
         {
-            if (ModelState.IsValid)
+            string msg = "";
+            var isExist = await _context.Designation.FirstOrDefaultAsync(d => d.DesignationName.Trim() == designation.DesignationName.Trim());
+            if (isExist!=null)
             {
-                _context.Add(designation);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                msg = designation.DesignationName + " is already exist.";
+                ViewBag.msg = msg;
             }
+            else
+            {
+                if (ModelState.IsValid)
+                {
+                    designation.CreatedAt = DateTime.Now;
+                    designation.CreatedBy = HttpContext.Session.GetString("User");
+
+                    _context.Add(designation);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            ViewData["DesignationTypeList"] = new SelectList(_context.DesignationType, "Id", "DesignationTypeName", designation.DesignationTypeId);
             return View(designation);
         }
 
@@ -78,6 +94,8 @@ namespace SchoolManagementSystem.Controllers
             {
                 return NotFound();
             }
+
+            ViewData["DesignationTypeList"] = new SelectList(_context.DesignationType, "Id", "DesignationTypeName");
             return View(designation);
         }
 
@@ -86,33 +104,50 @@ namespace SchoolManagementSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,DesignationName,CreatedBy,CreatedAt,EditedBy,EditedAt")] Designation designation)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,DesignationName,DesignationTypeId,CreatedBy,CreatedAt,EditedBy,EditedAt")] Designation designation)
         {
             if (id != designation.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            string msg = "";
+            var isExist = await _context.Designation.FirstOrDefaultAsync(d => d.DesignationName.Trim() == designation.DesignationName.Trim() && d.Id != designation.Id);
+            if (isExist != null)
             {
-                try
-                {
-                    _context.Update(designation);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!DesignationExists(designation.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                msg = designation.DesignationName + " is already exist.";
+                ViewBag.msg = msg;
             }
+            else
+            {
+                if (ModelState.IsValid)
+                {
+                    try
+                    {
+
+                        designation.EditedAt = DateTime.Now;
+                        designation.EditedBy = HttpContext.Session.GetString("User");
+
+                        _context.Update(designation);
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!DesignationExists(designation.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                    return RedirectToAction(nameof(Index));
+                }
+
+            }
+
+            ViewData["DesignationTypeList"] = new SelectList(_context.DesignationType, "Id", "DesignationTypeName", designation.DesignationTypeId);
             return View(designation);
         }
 

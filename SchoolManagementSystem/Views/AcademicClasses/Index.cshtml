@@ -18,9 +18,6 @@
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                Academic Session
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Description)
             </th>
             <th>
@@ -40,9 +37,6 @@
                 <td>@(++i).</td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.AcademicSession.Name)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Description)

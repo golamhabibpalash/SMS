@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -56,11 +57,24 @@ namespace SchoolManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,CreatedBy,CreatedAt,EditedBy,EditedAt")] EmpType empType)
         {
-            if (ModelState.IsValid)
+            string msg = "";
+            var typeExist =await _context.EmpType.FirstOrDefaultAsync(e => e.Name.Trim() == empType.Name.Trim());
+            if (typeExist!=null)
             {
-                _context.Add(empType);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                msg = empType.Name + " is already exist.";
+                ViewBag.msg = msg;
+            }
+            else
+            {
+                if (ModelState.IsValid)
+                {
+                    empType.CreatedAt = DateTime.Now;
+                    empType.CreatedBy = HttpContext.Session.GetString("User");
+
+                    _context.Add(empType);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
             }
             return View(empType);
         }
@@ -92,11 +106,20 @@ namespace SchoolManagementSystem.Controllers
             {
                 return NotFound();
             }
-
+            string msg = "";
+            var typeExist = await _context.EmpType.FirstOrDefaultAsync(e => e.Name.Trim() == empType.Name.Trim() && e.Id!=id);
+            if (typeExist != null)
+            {
+                msg = empType.Name + " is already exist.";
+                ViewBag.msg = msg;
+            }
             if (ModelState.IsValid)
             {
                 try
                 {
+
+                    empType.EditedAt = DateTime.Now;
+                    empType.EditedBy = HttpContext.Session.GetString("User");
                     _context.Update(empType);
                     await _context.SaveChangesAsync();
                 }

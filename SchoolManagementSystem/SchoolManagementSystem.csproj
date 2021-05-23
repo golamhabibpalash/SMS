@@ -29,6 +29,7 @@
     <Folder Include="Interface\Manager\" />
     <Folder Include="Interface\Repository\" />
     <Folder Include="Manager\" />
+    <Folder Include="wwwroot\Images\Employee\" />
     <Folder Include="wwwroot\Images\Student\" />
   </ItemGroup>
 

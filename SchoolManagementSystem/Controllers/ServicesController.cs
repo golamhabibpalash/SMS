@@ -22,7 +22,6 @@ namespace SchoolManagementSystem.Controllers
         public async Task<JsonResult> GetClassListBySessionId(int id)
         {
             var classList = await _context.AcademicClass
-                .Where(s => s.AcademicSessionId==id)
                 .OrderBy(s => s.ClassSerial)
                 .ToListAsync();
             return Json(classList);

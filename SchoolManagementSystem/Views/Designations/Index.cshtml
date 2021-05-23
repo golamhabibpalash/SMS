@@ -1,57 +1,39 @@
 ﻿@model IEnumerable<SchoolManagementSystem.Models.Designation>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Designations";
+    GlobalUI.PageTitle = ViewBag.Title;
+    int sl = 0;
 }
 
-<h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
+            <th>#</th>
             <th>
                 @Html.DisplayNameFor(model => model.DesignationName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CreatedBy)
+                @Html.DisplayNameFor(model => model.DesignationTypeId)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CreatedAt)
+                <a class="btn-sm rounded-pill btn-info p-2" asp-action="Create"><i class="fa fa-plus"></i> Add New</a>
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EditedBy)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EditedAt)
-            </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            <td>@(++sl).</td>
             <td>
                 @Html.DisplayFor(modelItem => item.DesignationName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CreatedBy)
+                @Html.DisplayFor(modelItem => item.DesignationType.DesignationTypeName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EditedBy)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EditedAt)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <partial name="_Edit_Details_Delete" model="@item.Id" />
             </td>
         </tr>
 }

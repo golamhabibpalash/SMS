@@ -23,8 +23,7 @@ namespace SchoolManagementSystem.Repository
         public List<AcademicClass> GetAll()
         {
             var result = _context.AcademicClass
-                .OrderBy(c => c.AcademicSessionId)
-                .ThenBy(c => c.ClassSerial)
+                .OrderBy(c => c.ClassSerial)
                 .ToList();
 
             return result;
@@ -37,7 +36,6 @@ namespace SchoolManagementSystem.Repository
         public async Task<List<AcademicClass>> GetAllBySessionIdAsync(int id)
         {
             var result = await _context.AcademicClass
-                .Where(a => a.AcademicSessionId == id)
                 .OrderBy(a => a.ClassSerial)
                 .ToListAsync();
 

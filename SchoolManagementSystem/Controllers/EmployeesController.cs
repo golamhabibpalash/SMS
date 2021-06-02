@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DatabaseContext;
 using Models;
+using Repositories;
 
 namespace SchoolManagementSystem.Controllers
 {
@@ -17,11 +18,13 @@ namespace SchoolManagementSystem.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _host;
+        private readonly EmployeeRepository _empRepository;
 
-        public EmployeesController(ApplicationDbContext context, IWebHostEnvironment host)
+        public EmployeesController(ApplicationDbContext context, IWebHostEnvironment host, EmployeeRepository employeeRepository)
         {
             _context = context;
             _host = host;
+            _empRepository = employeeRepository;
         }
 
         // GET: Employees
@@ -89,9 +92,6 @@ namespace SchoolManagementSystem.Controllers
             return View();
         }
 
-        // POST: Employees/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,EmployeeName,DOB,Image,GenderId,ReligionId,NationalityId,NIDNo,NIDCard,Phone,Email,Nominee,NomineePhone,EmpTypeId,DesignationId,JoiningDate,PresentAddress,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddress,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,CreatedBy,CreatedAt,EditedBy,EditedAt,Status")] Employee employee, IFormFile empImage, IFormFile nidCard)
@@ -168,8 +168,10 @@ namespace SchoolManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,EmployeeName,DOB,Image,GenderId,ReligionId,NationalityId,NIDNo,NIDCard,Phone,Email,Nominee,NomineePhone,EmpTypeId,DesignationId,JoiningDate,PresentAddress,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddress,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,CreatedBy,CreatedAt,EditedBy,EditedAt,Status")] Employee employee)
         {
+            string msg = "";
             if (id != employee.Id)
             {
+
                 return NotFound();
             }
 
@@ -177,8 +179,14 @@ namespace SchoolManagementSystem.Controllers
             {
                 try
                 {
-                    _context.Update(employee);
-                    await _context.SaveChangesAsync();
+                    employee.EditedAt = DateTime.Now;
+                    employee.EditedBy = HttpContext.Session.GetString("UserId");
+                    bool isSaved =await _empRepository.Update(employee);
+                    if (isSaved)
+                    {
+                       msg = "Employee info edited";
+                        ViewBag.msg = msg;
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -192,6 +200,10 @@ namespace SchoolManagementSystem.Controllers
                     }
                 }
                 return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                msg = "Something wrong";
             }
             ViewData["DesignationId"] = new SelectList(_context.Designation, "Id", "DesignationName", employee.DesignationId);
             ViewData["EmpTypeId"] = new SelectList(_context.EmpType, "Id", "Name", employee.EmpTypeId);

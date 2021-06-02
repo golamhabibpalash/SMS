@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SchoolManagementSystem.Data;
-using SchoolManagementSystem.Models;
+using DatabaseContext;
+using Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

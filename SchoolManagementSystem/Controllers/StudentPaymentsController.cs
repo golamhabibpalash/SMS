@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using SchoolManagementSystem.Data;
-using SchoolManagementSystem.Models;
+using DatabaseContext;
+using Models;
 using SchoolManagementSystem.ViewModels;
 
 namespace SchoolManagementSystem.Controllers
@@ -24,16 +24,23 @@ namespace SchoolManagementSystem.Controllers
         // GET: StudentPayments
         [HttpGet]
         public IActionResult Index()
-        {   
+        {
+            var msg = "";
+            if (TempData["msg"]!=null)
+            {
+                msg = TempData["msg"].ToString();
+            }
+            ViewBag.msg = msg;
             return View();
         }        
         
         public async Task<IActionResult> Payment(int? stRoll)
         {
-            if (stRoll < 0 || stRoll == 0)
+            if (stRoll < 0 || stRoll == 0 || stRoll ==null)
             {
-                return NotFound();
+                return RedirectToAction("Index");
             }
+
             List<StudentPayment> studentPayments = new ();
             StudentyPaymentVM spvm = new ();
 
@@ -42,25 +49,34 @@ namespace SchoolManagementSystem.Controllers
                 .Include(s => s.AcademicSession)
                 .Include(s => s.AcademicSection)
                 .FirstOrDefaultAsync(s => s.ClassRoll == stRoll);
-            StudentPayment sp = new ();
-            sp.Student = student;
-            spvm.StudentPayment = sp;
-            studentPayments = await _context.StudentPayment.Where(s => s.StudentId == student.Id).ToListAsync();
-            spvm.StudentPayments = studentPayments;
-
-            List<ClassFeeList> feeList = new();
-            var fList = from cfl in _context.ClassFeeList.Include(c => c.StudentFeeHead)
-                        from s in _context.Student.Where(s => s.ClassRoll == stRoll)
-                        from ac in _context.AcademicClass
-                        where cfl.AcademicClassId == ac.Id && s.AcademicClassId == ac.Id
-                        select cfl;
-            foreach (var item in fList)
+            if (student!=null)
             {
-                feeList.Add(item);
+                StudentPayment sp = new();
+                sp.Student = student;
+                spvm.StudentPayment = sp;
+                studentPayments = await _context.StudentPayment.Where(s => s.StudentId == student.Id).ToListAsync();
+                spvm.StudentPayments = studentPayments;
+
+                List<ClassFeeList> feeList = new();
+                var fList = from cfl in _context.ClassFeeList.Include(c => c.StudentFeeHead)
+                            from s in _context.Student.Where(s => s.ClassRoll == stRoll)
+                            from ac in _context.AcademicClass
+                            where cfl.AcademicClassId == ac.Id && s.AcademicClassId == ac.Id
+                            select cfl;
+                foreach (var item in fList)
+                {
+                    feeList.Add(item);
+                }
+                spvm.ClassFeeLists = feeList;
+                ViewBag.roll = stRoll;
+                return View(spvm);
             }
-            spvm.ClassFeeLists = feeList;
-            ViewBag.roll = stRoll;
-            return View(spvm);
+            else
+            {
+                TempData["msg"] = "Student Not Found";
+                return RedirectToAction("Index");
+            }
+            
         }
 
         // GET: StudentPayments/Details/5

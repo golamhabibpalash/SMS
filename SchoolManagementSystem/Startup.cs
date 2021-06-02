@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SchoolManagementSystem.Data;
+using DatabaseContext;
 using SchoolManagementSystem.Repository;
 using System;
 using System.Collections.Generic;

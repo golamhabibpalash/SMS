@@ -1,7 +1,7 @@
 ﻿@model SchoolManagementSystem.ViewModels.StudentyPaymentVM
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Student Payment";
     GlobalUI.PageTitle = "Student Payment";
     int sl = 0;
 }
@@ -30,3 +30,25 @@
         </form>
     </div>
 </div>
+
+@if (ViewBag.msg != null)
+{
+    <div class="row mt-3" id="msgId">
+        <div class="col-md-12 text-center">
+
+            <h6 class="alert alert-warning">@ViewBag.msg</h6>
+            
+        </div>
+    </div>
+
+}
+
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+        <script>
+            $(document).ready(function () {
+                $('#msgId').fadeOut(6000);
+            });
+        </script>
+    }

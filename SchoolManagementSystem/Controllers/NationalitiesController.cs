@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using SchoolManagementSystem.Data;
-using SchoolManagementSystem.Models;
+using DatabaseContext;
+using Models;
 
 namespace SchoolManagementSystem.Controllers
 {

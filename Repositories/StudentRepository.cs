@@ -1,20 +1,16 @@
 ﻿using DatabaseContext;
-using Microsoft.EntityFrameworkCore;
 using Models;
 using Repositories.Base;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repositories
 {
-
-    public class EmployeeRepository : Repository<Employee>
+    public class StudentRepository : Repository<Student>
     {
-
         private readonly ApplicationDbContext _context;
-
-
-        public EmployeeRepository(ApplicationDbContext context):base(context)
+        public StudentRepository(ApplicationDbContext context):base(context)
         {
             _context = context;
         }

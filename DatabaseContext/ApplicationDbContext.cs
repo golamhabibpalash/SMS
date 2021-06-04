@@ -5,6 +5,7 @@ namespace DatabaseContext
 {
     public class ApplicationDbContext : IdentityDbContext
     {
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -34,5 +35,6 @@ namespace DatabaseContext
         public DbSet<Models.Designation> Designation { get; set; }
         public DbSet<Models.EmpType> EmpType { get; set; }
         public DbSet<Models.Employee> Employee { get; set; }
+        
     }
 }

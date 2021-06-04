@@ -18,32 +18,19 @@ namespace SchoolManagementSystem.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _host;
-        private readonly EmployeeRepository _empRepository;
 
-        public EmployeesController(ApplicationDbContext context, IWebHostEnvironment host, EmployeeRepository employeeRepository)
+        public EmployeesController(ApplicationDbContext context, IWebHostEnvironment host) 
         {
             _context = context;
             _host = host;
-            _empRepository = employeeRepository;
         }
+
 
         // GET: Employees
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Employee
-                .Include(e => e.Designation)
-                .Include(e => e.EmpType)
-                .Include(e => e.Gender)
-                .Include(e => e.Nationality)
-                .Include(e => e.PermanentDistrict)
-                .Include(e => e.PermanentDivision)
-                .Include(e => e.PermanentUpazila)
-                .Include(e => e.PresentDistrict)
-                .Include(e => e.PresentDivision)
-                .Include(e => e.PresentUpazila)
-                .Include(e => e.Religion);
-
-            return View(await applicationDbContext.ToListAsync());
+            var allEmp = await _context.Employee.ToListAsync();
+            return View(allEmp);
         }
 
         // GET: Employees/Details/5
@@ -181,12 +168,14 @@ namespace SchoolManagementSystem.Controllers
                 {
                     employee.EditedAt = DateTime.Now;
                     employee.EditedBy = HttpContext.Session.GetString("UserId");
-                    bool isSaved =await _empRepository.Update(employee);
-                    if (isSaved)
-                    {
-                       msg = "Employee info edited";
-                        ViewBag.msg = msg;
-                    }
+                    _context.Update(employee);
+                    await _context.SaveChangesAsync();
+                    //bool isSaved =await _empRepository.Update(employee);
+                    //if (isSaved)
+                    //{
+                    //   msg = "Employee info edited";
+                    //    ViewBag.msg = msg;
+                    //}
                 }
                 catch (DbUpdateConcurrencyException)
                 {

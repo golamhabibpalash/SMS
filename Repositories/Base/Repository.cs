@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Repositories.Base
 {
-    public class Repository<T> where T:class
+    public abstract class Repository<T> where T:class
     {
         private readonly ApplicationDbContext _context;
         public Repository(ApplicationDbContext context)

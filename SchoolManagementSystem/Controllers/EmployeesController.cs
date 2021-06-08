@@ -11,25 +11,29 @@ using Microsoft.EntityFrameworkCore;
 using DatabaseContext;
 using Models;
 using Repositories;
+using Infrastructures;
 
 namespace SchoolManagementSystem.Controllers
 {
     public class EmployeesController : Controller
     {
-        private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _host;
+        private readonly IEmployee _employeeRepository;
+        private readonly ApplicationDbContext _context;
 
-        public EmployeesController(ApplicationDbContext context, IWebHostEnvironment host) 
+
+        public EmployeesController(IWebHostEnvironment host, IEmployee employeeRepository, ApplicationDbContext context) 
         {
-            _context = context;
             _host = host;
+            _employeeRepository = employeeRepository;
+            _context = context;
         }
 
-
+        
         // GET: Employees
         public async Task<IActionResult> Index()
         {
-            var allEmp = await _context.Employee.ToListAsync();
+            var allEmp = await _employeeRepository.GetAllAsync();
             return View(allEmp);
         }
 
@@ -40,20 +44,23 @@ namespace SchoolManagementSystem.Controllers
             {
                 return NotFound();
             }
+            int myid = Convert.ToInt32(id);
+            //var employee = await _context.Employee
+            //    .Include(e => e.Designation)
+            //    .Include(e => e.EmpType)
+            //    .Include(e => e.Gender)
+            //    .Include(e => e.Nationality)
+            //    .Include(e => e.PermanentDistrict)
+            //    .Include(e => e.PermanentDivision)
+            //    .Include(e => e.PermanentUpazila)
+            //    .Include(e => e.PresentDistrict)
+            //    .Include(e => e.PresentDivision)
+            //    .Include(e => e.PresentUpazila)
+            //    .Include(e => e.Religion)
+            //    .FirstOrDefaultAsync(m => m.Id == id);
+ 
+            Employee employee = await _employeeRepository.GetByIdAsync(myid);
 
-            var employee = await _context.Employee
-                .Include(e => e.Designation)
-                .Include(e => e.EmpType)
-                .Include(e => e.Gender)
-                .Include(e => e.Nationality)
-                .Include(e => e.PermanentDistrict)
-                .Include(e => e.PermanentDivision)
-                .Include(e => e.PermanentUpazila)
-                .Include(e => e.PresentDistrict)
-                .Include(e => e.PresentDivision)
-                .Include(e => e.PresentUpazila)
-                .Include(e => e.Religion)
-                .FirstOrDefaultAsync(m => m.Id == id);
             if (employee == null)
             {
                 return NotFound();
@@ -100,9 +107,11 @@ namespace SchoolManagementSystem.Controllers
 
             if (ModelState.IsValid)
             {
-                _context.Add(employee);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                bool isSaved =await _employeeRepository.AddAsync(employee);
+                if (isSaved)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
             }
             
 
@@ -168,14 +177,14 @@ namespace SchoolManagementSystem.Controllers
                 {
                     employee.EditedAt = DateTime.Now;
                     employee.EditedBy = HttpContext.Session.GetString("UserId");
-                    _context.Update(employee);
-                    await _context.SaveChangesAsync();
+                    bool isUpdated =await _employeeRepository.UpdateAsync(employee);
+
                     //bool isSaved =await _empRepository.Update(employee);
-                    //if (isSaved)
-                    //{
-                    //   msg = "Employee info edited";
-                    //    ViewBag.msg = msg;
-                    //}
+                    if (isUpdated)
+                    {
+                        msg = "Employee info edited";
+                        ViewBag.msg = msg;
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -215,20 +224,8 @@ namespace SchoolManagementSystem.Controllers
             {
                 return NotFound();
             }
-
-            var employee = await _context.Employee
-                .Include(e => e.Designation)
-                .Include(e => e.EmpType)
-                .Include(e => e.Gender)
-                .Include(e => e.Nationality)
-                .Include(e => e.PermanentDistrict)
-                .Include(e => e.PermanentDivision)
-                .Include(e => e.PermanentUpazila)
-                .Include(e => e.PresentDistrict)
-                .Include(e => e.PresentDivision)
-                .Include(e => e.PresentUpazila)
-                .Include(e => e.Religion)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            int myId = Convert.ToInt32(id);
+            var employee = await _employeeRepository.GetByIdAsync(myId);
             if (employee == null)
             {
                 return NotFound();
@@ -242,15 +239,21 @@ namespace SchoolManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var employee = await _context.Employee.FindAsync(id);
-            _context.Employee.Remove(employee);
-            await _context.SaveChangesAsync();
+            await _employeeRepository.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
         private bool EmployeeExists(int id)
         {
-            return _context.Employee.Any(e => e.Id == id);
+            var employee= _employeeRepository.GetByIdAsync(id);
+            if (employee!=null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

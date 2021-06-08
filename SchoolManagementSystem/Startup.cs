@@ -13,6 +13,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Infrastructures;
+using Repositories;
+using Models;
 
 namespace SchoolManagementSystem
 {
@@ -31,9 +34,9 @@ namespace SchoolManagementSystem
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddScoped<StudentRepository>();
-            services.AddScoped<AcademicClassRepository>();
             services.AddDatabaseDeveloperPageExceptionFilter();
+
+            services.AddScoped<IEmployee, EmployeeRepository>();
 
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<IdentityRole>()

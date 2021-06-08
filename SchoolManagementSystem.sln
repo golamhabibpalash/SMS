@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DatabaseContext", "Database
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repositories", "Repositories\Repositories.csproj", "{6B958658-2D28-42CD-9701-20E00202C1E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BLL", "BLL\BLL.csproj", "{369A13F5-179F-4C8E-9F2E-44EA717B21EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BLL", "BLL\BLL.csproj", "{369A13F5-179F-4C8E-9F2E-44EA717B21EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructures", "Infrastructures\Infrastructures.csproj", "{C45BB6B3-DEE8-44EA-8D5C-09A827E5A281}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{369A13F5-179F-4C8E-9F2E-44EA717B21EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{369A13F5-179F-4C8E-9F2E-44EA717B21EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{369A13F5-179F-4C8E-9F2E-44EA717B21EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C45BB6B3-DEE8-44EA-8D5C-09A827E5A281}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C45BB6B3-DEE8-44EA-8D5C-09A827E5A281}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C45BB6B3-DEE8-44EA-8D5C-09A827E5A281}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C45BB6B3-DEE8-44EA-8D5C-09A827E5A281}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

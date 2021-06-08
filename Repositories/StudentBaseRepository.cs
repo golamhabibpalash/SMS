@@ -1,6 +1,6 @@
 ﻿namespace Repositories
 {
-    public class StudentRepositoryBase
+    public class StudentBaseRepository
     {
     }
 }

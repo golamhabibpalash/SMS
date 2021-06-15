@@ -13,7 +13,7 @@ using SMS.DB;
 using SMS.Entities;
 using SMS.App.ViewModels;
 using Repositories;
-using SMS.DAL;
+using SMS.DAL.Repositories;
 
 namespace SchoolManagementSystem.Controllers
 {
@@ -259,9 +259,9 @@ namespace SchoolManagementSystem.Controllers
             return _context.Student.Any((System.Linq.Expressions.Expression<Func<Student, bool>>)(e => e.Id == id));
         }
 
-        public async Task<JsonResult> GetClassList(int id)
+        public async Task<JsonResult> GetClassList()
         {
-            var classList =await _academicClassRepository.GetAllBySessionIdAsync(id);
+            var classList =await _academicClassRepository.GetAllAsync();
             return Json(classList);
         }
         public async Task<JsonResult> GetSectionList(int id)

@@ -8,25 +8,27 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SMS.Entities;
+using SMS.BLL.Contracts;
 
 namespace SMS.App.Controllers
 {
     public class AcademicClassesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IAcademicClassManager _academicClassManager;
 
-        public AcademicClassesController(ApplicationDbContext context)
+        public AcademicClassesController(ApplicationDbContext context, IAcademicClassManager academicClassManager)
         {
             _context = context;
+            _academicClassManager = academicClassManager;
         }
 
         // GET: AcademicClasses
         public async Task<IActionResult> Index()
         {
-            var AcademicClassList = _context.AcademicClass
-                .OrderBy(c => c.ClassSerial);
+            var AcademicClassList =await _academicClassManager.GetAllAsync();
 
-            return View(await AcademicClassList.ToListAsync());
+            return View(AcademicClassList);
         }
 
         // GET: AcademicClasses/Details/5
@@ -37,8 +39,7 @@ namespace SMS.App.Controllers
                 return NotFound();
             }
 
-            var academicClass = await _context.AcademicClass
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var academicClass = await _academicClassManager.GetByIdAsync(Convert.ToInt32(id));
             if (academicClass == null)
             {
                 return NotFound();

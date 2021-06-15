@@ -17,6 +17,7 @@ using Repositories;
 using SMS.DAL.Contracts;
 using SMS.BLL.Contracts;
 using SMS.BLL.Managers;
+using SMS.DAL.Repositories;
 
 namespace SchoolManagementSystem
 {
@@ -38,8 +39,7 @@ namespace SchoolManagementSystem
 
             //services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
-            services.AddScoped<IEmployeeManager, EmployeeManager>();
+            
 
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<IdentityRole>()
@@ -55,6 +55,12 @@ namespace SchoolManagementSystem
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
+
+            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<IEmployeeManager, EmployeeManager>();
+
+            services.AddScoped<IAcademicClassRepository, AcademicClassRepository>();
+            services.AddScoped<IAcademicClassManager, AcademicClassManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

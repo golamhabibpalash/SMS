@@ -17,18 +17,5 @@ namespace SMS.Entities
         public string Logo { get; set; }
         public string Address { get; set; }
         public string BranchName { get; set; }
-
-        [Display(Name = "Created By")]
-        public string CreatedBy { get; set; }
-
-        [Display(Name = "Created At")]
-        public DateTime CreatedAt { get; set; }
-
-        [Display(Name = "Edited By")]
-        public string EditedBy { get; set; }
-
-        [Display(Name = "Edited At")]
-        public DateTime EditedAt { get; set; }
-
     }
 }

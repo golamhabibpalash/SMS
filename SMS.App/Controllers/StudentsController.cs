@@ -14,6 +14,7 @@ using SMS.Entities;
 using SMS.App.ViewModels;
 using Repositories;
 using SMS.DAL.Repositories;
+using SMS.BLL.Contracts;
 
 namespace SchoolManagementSystem.Controllers
 {
@@ -21,21 +22,22 @@ namespace SchoolManagementSystem.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _host;
-        private readonly StudentRepository _studentRepository;
-        private readonly AcademicClassRepository _academicClassRepository;
+        private readonly IStudentManager _studentManager;
+        private readonly IAcademicClassManager _academicClassManager;
 
-        public StudentsController(StudentRepository stRepository, ApplicationDbContext context, AcademicClassRepository academicClassRepository, IWebHostEnvironment host)
+        public StudentsController(IStudentManager studentManager, ApplicationDbContext context, IAcademicClassManager academicClassManager, IWebHostEnvironment host)
         {
-            _studentRepository = stRepository;
-            _academicClassRepository = academicClassRepository;
+            
+            _academicClassManager = academicClassManager;
             _context = context;
             _host = host;
+            _studentManager = studentManager;
         }
 
         // GET: Students
         public async Task<IActionResult> Index()
         {
-            var student = await _studentRepository.GetAllAsync();
+            var student = await _studentManager.GetAllAsync();
             return View(student);
         }
 
@@ -48,7 +50,7 @@ namespace SchoolManagementSystem.Controllers
             }
 
             int myId = Convert.ToInt32(id);
-            var student =await _studentRepository.GetByIdAsync(myId);
+            var student =await _studentManager.GetByIdAsync(myId);
             if (student == null)
             {
                 return NotFound();
@@ -102,7 +104,7 @@ namespace SchoolManagementSystem.Controllers
                 }
                 student.CreatedBy = HttpContext.Session.GetString("UserId");
                 student.CreatedAt = DateTime.Now;
-                bool saveStudent = await _studentRepository.AddAsync(student);
+                bool saveStudent = await _studentManager.AddAsync(student);
                 if (saveStudent==true)
                 {
                     TempData["create"] = "Created Successfully";
@@ -131,7 +133,7 @@ namespace SchoolManagementSystem.Controllers
                 return NotFound();
             }
             int myId = (int)(id);
-            var student = await _studentRepository.GetByIdAsync(myId);
+            var student = await _studentManager.GetByIdAsync(myId);
             if (student == null)
             {
                 return NotFound();
@@ -183,7 +185,7 @@ namespace SchoolManagementSystem.Controllers
                     student.EditedBy = HttpContext.Session.GetString("UserId");
                     student.EditedAt = DateTime.Now;
 
-                    isUpdated = await _studentRepository.UpdateAsync(student);
+                    isUpdated = await _studentManager.UpdateAsync(student);
 
                 }
                 catch (DbUpdateConcurrencyException)
@@ -225,7 +227,7 @@ namespace SchoolManagementSystem.Controllers
                 return NotFound();
             }
             int myId = (int)(id);
-            var student = await _studentRepository.GetByIdAsync(myId);
+            var student = await _studentManager.GetByIdAsync(myId);
 
             if (student == null)
             {
@@ -240,8 +242,8 @@ namespace SchoolManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var student = await _studentRepository.GetByIdAsync(id);
-            bool isSaved = await _studentRepository.RemoveAsync(student);
+            var student = await _studentManager.GetByIdAsync(id);
+            bool isSaved = await _studentManager.RemoveAsync(student);
             if (isSaved==true)
             {
                 TempData["delete"] = "Deleted Successfully.";
@@ -261,7 +263,7 @@ namespace SchoolManagementSystem.Controllers
 
         public async Task<JsonResult> GetClassList()
         {
-            var classList =await _academicClassRepository.GetAllAsync();
+            var classList =await _academicClassManager.GetAllAsync();
             return Json(classList);
         }
         public async Task<JsonResult> GetSectionList(int id)

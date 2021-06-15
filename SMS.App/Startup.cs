@@ -1,23 +1,18 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SMS.DB;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using SMS.Entities;
 using Repositories;
 using SMS.DAL.Contracts;
 using SMS.BLL.Contracts;
 using SMS.BLL.Managers;
 using SMS.DAL.Repositories;
+using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation;
 
 namespace SchoolManagementSystem
 {
@@ -45,7 +40,9 @@ namespace SchoolManagementSystem
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews().AddRazorRuntimeCompilation();
+            services.AddRazorPages();
+
 
             services.AddSession(options =>
             {
@@ -61,6 +58,12 @@ namespace SchoolManagementSystem
 
             services.AddScoped<IAcademicClassRepository, AcademicClassRepository>();
             services.AddScoped<IAcademicClassManager, AcademicClassManager>();
+
+            services.AddScoped<IAcademicSessionRepository, AcademicSessionRepository>();
+            services.AddScoped<IAcademicSessionManager, AcademicSessionManager>();
+
+            services.AddScoped<IStudentRepository, StudentRepository>();
+            services.AddScoped<IStudentManager, StudentManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

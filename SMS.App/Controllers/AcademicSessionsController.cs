@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SMS.BLL.Contracts;
 using SMS.DB;
 using SMS.Entities;
 
@@ -16,10 +17,12 @@ namespace SchoolManagementSystem.Controllers
     public class AcademicSessionsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IAcademicSessionManager _sessionManager;
 
-        public AcademicSessionsController(ApplicationDbContext context)
+        public AcademicSessionsController(ApplicationDbContext context, IAcademicSessionManager sessionManager)
         {
             _context = context;
+            _sessionManager = sessionManager;
         }
 
         // GET: AcademicSessions

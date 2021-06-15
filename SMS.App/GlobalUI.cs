@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace SchoolManagementSystem
 {
-    public class GlobalUI
+    public static class GlobalUI
     {
-        public int Id { get; set; }
         public static string PageTitle { get; set; }
         public static string InstituteName { get; set; }
         public static string SiteTitle { get; set; }

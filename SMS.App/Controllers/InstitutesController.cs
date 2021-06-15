@@ -1,156 +1,95 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using SMS.BLL.Contracts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using SMS.DB;
-using SMS.Entities;
 
-namespace SchoolManagementSystem.Controllers
+namespace SMS.App.Controllers
 {
-    [Authorize]
     public class InstitutesController : Controller
     {
-        
-        private readonly ApplicationDbContext _context;
+        private readonly IInstituteManager _instituteManager;
 
-        public InstitutesController(ApplicationDbContext context)
+        public InstitutesController(IInstituteManager instituteManager)
         {
-            _context = context;
+            _instituteManager = instituteManager;
+        }
+        // GET: InstitutesController
+        public ActionResult Index()
+        {
+            return View();
+            
         }
 
-        // GET: Institutes
-        public async Task<IActionResult> Index()
-        {
-            return View(await _context.Institute.ToListAsync());
-        }
-
-        // GET: Institutes/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var institute = await _context.Institute
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (institute == null)
-            {
-                return NotFound();
-            }
-
-            return View(institute);
-        }
-
-        // GET: Institutes/Create
-        public IActionResult Create()
+        // GET: InstitutesController/Details/5
+        public ActionResult Details(int id)
         {
             return View();
         }
 
-        // POST: Institutes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // GET: InstitutesController/Create
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+        // POST: InstitutesController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,ISO,EIIN,Slogan,Banner,Logo,Address,BranchName,CreatedBy,CreatedAt,EditedBy,EditedAt")] Institute institute)
+        public ActionResult Create(IFormCollection collection)
         {
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(institute);
-                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(institute);
+            catch
+            {
+                return View();
+            }
         }
 
-        // GET: Institutes/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        // GET: InstitutesController/Edit/5
+        public ActionResult Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var institute = await _context.Institute.FindAsync(id);
-            if (institute == null)
-            {
-                return NotFound();
-            }
-            return View(institute);
+            return View();
         }
 
-        // POST: Institutes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: InstitutesController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ISO,EIIN,Slogan,Banner,Logo,Address,BranchName,CreatedBy,CreatedAt,EditedBy,EditedAt")] Institute institute)
+        public ActionResult Edit(int id, IFormCollection collection)
         {
-            if (id != institute.Id)
+            try
             {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(institute);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!InstituteExists(institute.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
                 return RedirectToAction(nameof(Index));
             }
-            return View(institute);
+            catch
+            {
+                return View();
+            }
         }
 
-        // GET: Institutes/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // GET: InstitutesController/Delete/5
+        public ActionResult Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var institute = await _context.Institute
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (institute == null)
-            {
-                return NotFound();
-            }
-
-            return View(institute);
+            return View();
         }
 
-        // POST: Institutes/Delete/5
-        [HttpPost, ActionName("Delete")]
+        // POST: InstitutesController/Delete/5
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public ActionResult Delete(int id, IFormCollection collection)
         {
-            var institute = await _context.Institute.FindAsync(id);
-            _context.Institute.Remove(institute);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool InstituteExists(int id)
-        {
-            return _context.Institute.Any(e => e.Id == id);
+            try
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
         }
     }
 }

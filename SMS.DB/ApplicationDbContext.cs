@@ -22,6 +22,7 @@ namespace SMS.DB
         public DbSet<Nationality> Nationality { get; set; }
         public DbSet<Religion> Religion { get; set; }
         public DbSet<Upazila> Upazila { get; set; }
+
         public DbSet<Institute> Institute { get; set; }
         public DbSet<AcademicClass> AcademicClass { get; set; }
         public DbSet<AcademicSection> AcademicSection { get; set; }

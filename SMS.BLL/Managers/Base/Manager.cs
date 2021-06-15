@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BLL.Managers.Base
 {
-    public abstract class Manager<T>:IManager<T> where T:class
+    public abstract class Manager<T> : IManager<T> where T : class
     {
         private readonly IRepository<T> _repository;
         public Manager(IRepository<T> repository)
@@ -43,5 +43,5 @@ namespace BLL.Managers.Base
         {
             return await _repository.IsExistByIdAsync(id);
         }
-
+    }
 }

@@ -32,11 +32,11 @@ namespace SMS.BLL.Managers
             var isExist = await GetByName(entity.Name);
             if (isExist)
             {
-                return await base.AddAsync(entity);
+                return false;
             }
             else
             {
-                return false;
+                return await base.AddAsync(entity);
             }
         }
         public override async Task<bool> UpdateAsync(AcademicClass entity)

@@ -8,7 +8,7 @@ namespace SMS.BLL.Contracts.Base
 {
     public interface IManager<T> where T:class
     {
-        Task<T> GetByIdAsync(int id);
+        public Task<T> GetByIdAsync(int id);
 
         Task<IReadOnlyCollection<T>> GetAllAsync();
 
@@ -17,5 +17,7 @@ namespace SMS.BLL.Contracts.Base
         Task<bool> UpdateAsync(T entity);
 
         Task<bool> RemoveAsync(T entity);
+
+        Task<bool> IsExistByIdAsync(int id);
     }
 }

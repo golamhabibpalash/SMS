@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SMS.DAL.Repositories.Base;
 
-namespace Repositories
+namespace SMS.DAL.Repositories
 {
     public class AcademicSessionRepository:Repository<AcademicSession>
     {

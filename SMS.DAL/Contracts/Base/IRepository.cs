@@ -17,5 +17,7 @@ namespace SMS.DAL.Contracts.Base
         Task<bool> UpdateAsync(T entity);
 
         Task<bool> RemoveAsync(T entity);
+
+        Task<bool> IsExistByIdAsync(int id);
     }
 }

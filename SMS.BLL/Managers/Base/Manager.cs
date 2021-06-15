@@ -14,29 +14,34 @@ namespace BLL.Managers.Base
             _repository = repository;
         }
 
-        public async Task<bool> AddAsync(T entity)
+        public virtual async Task<bool> AddAsync(T entity)
         {
             return await _repository.AddAsync(entity);
         }
 
-        public async Task<IReadOnlyCollection<T>> GetAllAsync()
+        public virtual async Task<IReadOnlyCollection<T>> GetAllAsync()
         {
             return await _repository.GetAllAsync();
         }
 
-        public async Task<T> GetByIdAsync(int id)
+        public virtual async Task<T> GetByIdAsync(int id)
         {
             return await _repository.GetByIdAsync(id);
         }
 
-        public async Task<bool> RemoveAsync(T entity)
+        public virtual async Task<bool> RemoveAsync(T entity)
         {
             return await _repository.RemoveAsync(entity);
         }
 
-        public async Task<bool> UpdateAsync(T entity)
+        public virtual async Task<bool> UpdateAsync(T entity)
         {
             return await _repository.UpdateAsync(entity);
         }
-    }
+
+        public virtual async Task<bool> IsExistByIdAsync(int id)
+        {
+            return await _repository.IsExistByIdAsync(id);
+        }
+
 }

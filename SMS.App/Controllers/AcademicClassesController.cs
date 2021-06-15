@@ -14,13 +14,13 @@ namespace SMS.App.Controllers
 {
     public class AcademicClassesController : Controller
     {
-        private readonly ApplicationDbContext _context;
         private readonly IAcademicClassManager _academicClassManager;
+        private readonly IAcademicSessionManager _academicSessionManager;
 
-        public AcademicClassesController(ApplicationDbContext context, IAcademicClassManager academicClassManager)
+        public AcademicClassesController(IAcademicClassManager academicClassManager, IAcademicSessionManager academicSessionManager)
         {
-            _context = context;
             _academicClassManager = academicClassManager;
+            _academicSessionManager = academicSessionManager;
         }
 
         // GET: AcademicClasses
@@ -49,9 +49,10 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicClasses/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["AcademicSessionId"] = new SelectList(_context.AcademicSession, "Id", "Name");
+            var allSession = await _academicSessionManager.GetAllAsync();
+            ViewData["AcademicSessionId"] = new SelectList(allSession, "Id", "Name");
             return View();
         }
 
@@ -67,20 +68,18 @@ namespace SMS.App.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var classExist = _context.AcademicClass.FirstOrDefault(c => c.Name.Trim() == academicClass.Name.Trim());
-                    if (classExist != null)
+                    academicClass.CreatedBy = HttpContext.Session.GetString("UserId");
+                    academicClass.CreatedAt = DateTime.Today;
+
+                    var isSaved = await _academicClassManager.AddAsync(academicClass);
+                    if (isSaved)
                     {
-                        msg = academicClass.Name + " name is already exist.";
+                        TempData["create"] = "Created Successfully";
+                        return RedirectToAction(nameof(Index));
                     }
                     else
                     {
-                        academicClass.CreatedBy = HttpContext.Session.GetString("UserId");
-                        academicClass.CreatedAt = DateTime.Today;
-
-                        _context.Add(academicClass);
-                        await _context.SaveChangesAsync();
-                        TempData["create"] = "Created Successfully";
-                        return RedirectToAction(nameof(Index));
+                        msg = "Save Fail! "+academicClass.Name+" is already exist!";
                     }
                 }
             }
@@ -89,7 +88,7 @@ namespace SMS.App.Controllers
                 msg = "Please insert a class name.";
             }
             ViewBag.msg = msg;
-            ViewData["AcademicSessionId"] = new SelectList(_context.AcademicSession, "Id", "Name");
+            ViewData["AcademicSessionId"] = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name");
             return View(academicClass);
         }
 
@@ -101,12 +100,12 @@ namespace SMS.App.Controllers
                 return NotFound();
             }
 
-            var academicClass = await _context.AcademicClass.FindAsync(id);
+            var academicClass = await _academicClassManager.GetByIdAsync(Convert.ToInt32(id));
             if (academicClass == null)
             {
                 return NotFound();
             }
-            ViewData["AcademicSessionId"] = new SelectList(_context.AcademicSession, "Id", "Name");
+            ViewData["AcademicSessionId"] = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name");
             return View(academicClass);
         }
 
@@ -122,41 +121,32 @@ namespace SMS.App.Controllers
             {
                 return NotFound();
             }
-            var existAcademicClass = _context.AcademicClass.Where(ac => ac.Name == academicClass.Name.Trim() && ac.Id != id).FirstOrDefault();
-            if (existAcademicClass==null)
-            {
-                if (ModelState.IsValid)
-                {
-                    try
-                    {
-                        academicClass.EditedBy = HttpContext.Session.GetString("UserId");
-                        academicClass.EditedAt = DateTime.Now;
 
-                        _context.Update(academicClass);
-                        await _context.SaveChangesAsync();
-                    }
-                    catch (DbUpdateConcurrencyException)
-                    {
-                        if (!AcademicClassExists(academicClass.Id))
-                        {
-                            return NotFound();
-                        }
-                        else
-                        {
-                            throw;
-                        }
-                    }
-                    TempData["edit"] = "Updated Successfully";
-                    return RedirectToAction(nameof(Index));
-                }
-            }
-            else
+            if (ModelState.IsValid)
             {
-                msg = "This class name is already exist in this session";
+                try
+                {
+                    academicClass.EditedBy = HttpContext.Session.GetString("UserId");
+                    academicClass.EditedAt = DateTime.Now;
+                    await _academicClassManager.UpdateAsync(academicClass);
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if ( !AcademicClassExists(academicClass.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                TempData["edit"] = "Updated Successfully";
+                return RedirectToAction(nameof(Index));
             }
 
             ViewBag.msg = msg;
-            ViewData["AcademicSessionId"] = new SelectList(_context.AcademicSession, "Id", "Name");
+            ViewData["AcademicSessionId"] = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name");
             return View(academicClass);
         }
 
@@ -167,9 +157,8 @@ namespace SMS.App.Controllers
             {
                 return NotFound();
             }
+            var academicClass = await _academicClassManager.GetByIdAsync(Convert.ToInt32(id));
 
-            var academicClass = await _context.AcademicClass
-                .FirstOrDefaultAsync(m => m.Id == id);
             if (academicClass == null)
             {
                 return NotFound();
@@ -183,16 +172,23 @@ namespace SMS.App.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var academicClass = await _context.AcademicClass.FindAsync(id);
-            _context.AcademicClass.Remove(academicClass);
-            await _context.SaveChangesAsync();
+            var academicClass = await _academicClassManager.GetByIdAsync(id);
+            await _academicClassManager.RemoveAsync(academicClass);
             TempData["delete"] = "Deleted Successfully.";
             return RedirectToAction(nameof(Index));
         }
 
         private bool AcademicClassExists(int id)
         {
-            return _context.AcademicClass.Any(e => e.Id == id);
+            var aClass = _academicClassManager.GetByIdAsync(id);
+            if (aClass!=null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

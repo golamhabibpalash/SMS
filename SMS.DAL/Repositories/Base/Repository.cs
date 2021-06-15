@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using SMS.DAL.Contracts.Base;
+using System;
 
 namespace SMS.DAL.Repositories.Base
 {
@@ -44,6 +45,19 @@ namespace SMS.DAL.Repositories.Base
         {
             Table.Remove(entity);
             return await _context.SaveChangesAsync() > 0;
+        }
+
+        public virtual async Task<bool> IsExistByIdAsync(int id)
+        {
+            var result = await Table.FindAsync(id);
+            if (result!=null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

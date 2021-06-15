@@ -1,0 +1,44 @@
+﻿@model IEnumerable<SMS.Entities.Division>
+
+@{
+    ViewData["Title"] = "Division";
+    GlobalUI.PageTitle = "Division List";
+    int sl = 0;
+}
+
+<div class="p-1">
+    <table class="table" id="myTable">
+        <thead>
+            <tr>
+                <th width="20">#</th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th class="text-center">
+                    @Html.DisplayNameFor(model => model.Status)
+                </th>
+                <th><a class="btn btn-info" asp-action="Create"><i class="fa fa-plus"></i> Add New</a></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@(++sl).</td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td class="text-center">
+                        @Html.DisplayFor(modelItem => item.Status)
+                    </td>
+                    <td>
+                        <partial name="_Edit_Details_Delete" model="@item.Id" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@section Scripts{ 
+    <script src="~/js/DataTable/dataTable.js"></script>
+}

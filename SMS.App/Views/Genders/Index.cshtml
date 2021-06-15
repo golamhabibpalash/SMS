@@ -1,0 +1,41 @@
+﻿@model IEnumerable<SMS.Entities.Gender>
+
+@{
+    ViewData["Title"] = "Gender";
+    GlobalUI.PageTitle = ViewBag.Gender;
+    int sl = 0;
+}
+
+
+<table class="table">
+    <thead class="table-info">
+        <tr>
+            <th>#</th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th>
+                <a class="btn-sm p-2 rounded-pill btn-success" asp-action="Create"><i class="fa fa-plus"></i> Add New</a>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>@(++sl).</td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                <partial name="_Edit_Details_Delete" model="@item.Id" />
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

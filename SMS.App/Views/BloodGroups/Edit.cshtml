@@ -1,0 +1,41 @@
+﻿@model SMS.Entities.BloodGroup
+
+@{
+    ViewData["Title"] = "Edit Blood group";
+    GlobalUI.PageTitle = "Blood Group Edit";
+}
+
+<div class="row">
+    <div class="col-md-10 offset-1">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group row">
+                <label asp-for="Name" class="control-label col-form-label text-right col-md-2"></label>
+                <div class="col-md-10">
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                    @if (ViewBag.msg != null)
+                    {
+                        <span class="alert alert-danger" id="msgId">@ViewBag.msg</span>
+                    }
+                </div>
+            </div>
+            <div class="form-group form-check row">
+                <label class="form-check-label offset-2">
+                    <input class="form-check-input" asp-for="Status" /> @Html.DisplayNameFor(model => model.Status)
+                </label>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-12 text-center">
+                    <partial name="_Update_Back" model="@Model.Id"/>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

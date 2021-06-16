@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SMS.BLL.Contracts;
 using SMS.DB;
 using SMS.Entities;
 
@@ -12,18 +13,20 @@ namespace SchoolManagementSystem.Controllers
 {
     public class AcademicSectionsController : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        public AcademicSectionsController(ApplicationDbContext context)
+        //private readonly ApplicationDbContext _context;
+        private readonly IAcademicSectionManager _academicSectionManager;
+        private readonly IAcademicClassManager _academicClassManager;
+        public AcademicSectionsController(ApplicationDbContext context, IAcademicSectionManager academicSectionManager, IAcademicClassManager academicClassManager)
         {
-            _context = context;
+            _academicSectionManager = academicSectionManager;
+            _academicClassManager = academicClassManager;
         }
 
         // GET: AcademicSections
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.AcademicSection.Include(a => a.AcademicClass);
-            return View(await applicationDbContext.ToListAsync());
+            var aSectiion = await _academicSectionManager.GetAllAsync();
+            return View(aSectiion);
         }
 
         // GET: AcademicSections/Details/5
@@ -33,10 +36,8 @@ namespace SchoolManagementSystem.Controllers
             {
                 return NotFound();
             }
-
-            var academicSection = await _context.AcademicSection
-                .Include(a => a.AcademicClass)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            int myId = Convert.ToInt32(id);
+            var academicSection = await _academicSectionManager.GetByIdAsync(myId);
             if (academicSection == null)
             {
                 return NotFound();
@@ -46,9 +47,9 @@ namespace SchoolManagementSystem.Controllers
         }
 
         // GET: AcademicSections/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["AcademicClassId"] = new SelectList(_context.AcademicClass, "Id", "Name");
+            ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name");
             return View();
         }
 
@@ -61,11 +62,10 @@ namespace SchoolManagementSystem.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(academicSection);
-                await _context.SaveChangesAsync();
+                await _academicSectionManager.AddAsync(academicSection);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AcademicClassId"] = new SelectList(_context.AcademicClass, "Id", "Name", academicSection.AcademicClassId);
+            ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", academicSection.AcademicClassId);
             return View(academicSection);
         }
 
@@ -76,19 +76,14 @@ namespace SchoolManagementSystem.Controllers
             {
                 return NotFound();
             }
-
-            var academicSection = await _context.AcademicSection.FindAsync(id);
-            if (academicSection == null)
-            {
-                return NotFound();
-            }
-            ViewData["AcademicClassId"] = new SelectList(_context.AcademicClass, "Id", "Name", academicSection.AcademicClassId);
+            int myId = Convert.ToInt32(id);
+            var academicSection = await _academicSectionManager.GetByIdAsync(myId);
+            
+            ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", academicSection.AcademicClassId);
             return View(academicSection);
         }
 
         // POST: AcademicSections/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Status,AcademicClassId,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSection academicSection)
@@ -102,8 +97,7 @@ namespace SchoolManagementSystem.Controllers
             {
                 try
                 {
-                    _context.Update(academicSection);
-                    await _context.SaveChangesAsync();
+                    await _academicSectionManager.UpdateAsync(academicSection);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -118,7 +112,7 @@ namespace SchoolManagementSystem.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AcademicClassId"] = new SelectList(_context.AcademicClass, "Id", "Name", academicSection.AcademicClassId);
+            ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", academicSection.AcademicClassId);
             return View(academicSection);
         }
 
@@ -129,15 +123,12 @@ namespace SchoolManagementSystem.Controllers
             {
                 return NotFound();
             }
-
-            var academicSection = await _context.AcademicSection
-                .Include(a => a.AcademicClass)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            int myId = Convert.ToInt32(id);
+            var academicSection = await _academicSectionManager.GetByIdAsync(myId);
             if (academicSection == null)
             {
                 return NotFound();
             }
-
             return View(academicSection);
         }
 
@@ -146,15 +137,23 @@ namespace SchoolManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var academicSection = await _context.AcademicSection.FindAsync(id);
-            _context.AcademicSection.Remove(academicSection);
-            await _context.SaveChangesAsync();
+            var academicSection = await _academicSectionManager.GetByIdAsync(id);
+            await _academicSectionManager.RemoveAsync(academicSection);
             return RedirectToAction(nameof(Index));
         }
 
         private bool AcademicSectionExists(int id)
         {
-            return _context.AcademicSection.Any(e => e.Id == id);
+            var isExist = _academicSectionManager.GetByIdAsync(id);
+            if (isExist !=null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
         }
     }
 }

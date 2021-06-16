@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SMS.BLL.Contracts;
+using SMS.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,10 +39,12 @@ namespace SMS.App.Controllers
         // POST: InstitutesController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create(Institute institute)
         {
             try
             {
+                
+                await _instituteManager.AddAsync(institute);
                 return RedirectToAction(nameof(Index));
             }
             catch

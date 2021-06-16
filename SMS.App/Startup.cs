@@ -64,6 +64,12 @@ namespace SchoolManagementSystem
 
             services.AddScoped<IStudentRepository, StudentRepository>();
             services.AddScoped<IStudentManager, StudentManager>();
+
+            services.AddScoped<IInstituteRepository, InstituteRepository>();
+            services.AddScoped<IInstituteManager, InstituteManager>();
+
+            services.AddScoped<IAcademicSectionRepositoy, AcademicSectionRepository>();
+            services.AddScoped<IAcademicSectionManager, AcademicSectionManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

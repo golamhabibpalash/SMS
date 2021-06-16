@@ -1,17 +1,21 @@
 ﻿@model SMS.Entities.Institute
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Institute Information";
+    GlobalUI.PageTitle = ViewBag.Title;
 }
 
-<h1>Index</h1>
 
 <div>
-    <h4>Institute</h4>
-    <hr />
-    <dl class="row">
-        <dd>Inst</dd>
-    </dl>
+    <form asp-action="Create" method="post">
+        <div class="form-group row">
+            <label class="col-form-label col-md-2">Institute Name</label>
+            <div class="col-md-10">
+                <input type="text" class="form-control" name="intituteName" value="" />
+            </div>
+        </div>
+        <input type="submit" value="Save" />
+    </form>
 </div>
 <div>
     <a asp-action="Index">Back to List</a>

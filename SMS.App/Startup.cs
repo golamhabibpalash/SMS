@@ -79,6 +79,9 @@ namespace SchoolManagementSystem
             
             services.AddScoped<IAcademicSubjectRepository, AcademicSubjectRepository>();
             services.AddScoped<IAcademicSubjectManager, AcademicSubjectManager>();
+            
+            services.AddScoped<IAcademicSubjectTypeRepository, AcademicSubjectTypeRepository>();
+            services.AddScoped<IAcademicSubjectTypeManager, AcademicSubjectTypeManager>();
 
         }
 

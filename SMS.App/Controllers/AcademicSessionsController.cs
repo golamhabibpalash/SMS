@@ -16,19 +16,19 @@ namespace SchoolManagementSystem.Controllers
     
     public class AcademicSessionsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        //private readonly ApplicationDbContext _context;
         private readonly IAcademicSessionManager _sessionManager;
 
-        public AcademicSessionsController(ApplicationDbContext context, IAcademicSessionManager sessionManager)
+        public AcademicSessionsController(IAcademicSessionManager sessionManager)
         {
-            _context = context;
             _sessionManager = sessionManager;
         }
 
         // GET: AcademicSessions
         public async Task<IActionResult> Index()
         {
-            var aSession = await _context.AcademicSession.OrderBy(a => a.Name.Trim().Substring(0,4)).ToListAsync();
+            //var aSession = await _context.AcademicSession.OrderBy(a => a.Name.Trim().Substring(0,4)).ToListAsync();
+            var aSession = await _sessionManager.GetAllAsync();
             return View(aSession);
         }
 
@@ -39,9 +39,11 @@ namespace SchoolManagementSystem.Controllers
             {
                 return NotFound();
             }
+            int myId = Convert.ToInt32(id);
 
-            var academicSession = await _context.AcademicSession
-                .FirstOrDefaultAsync(m => m.Id == id);
+            //var academicSession = await _context.AcademicSession
+            //    .FirstOrDefaultAsync(m => m.Id == id);
+            var academicSession = await _sessionManager.GetByIdAsync(myId);
             if (academicSession == null)
             {
                 return NotFound();
@@ -56,9 +58,7 @@ namespace SchoolManagementSystem.Controllers
             return View();
         }
 
-        // POST: AcademicSessions/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSession academicSession)
@@ -68,22 +68,22 @@ namespace SchoolManagementSystem.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var existingSession = _context.AcademicSession.Where(s => s.Name.Trim() == academicSession.Name.Trim()).FirstOrDefault();
+                    //var existingSession = _context.AcademicSession.Where(s => s.Name.Trim() == academicSession.Name.Trim()).FirstOrDefault();
 
-                    if (existingSession != null)
-                    {
-                        msg = "This name is already exists.";
-                    }
-                    else
-                    {
+                    //if (existingSession != null)
+                    //{
+                    //    msg = "This name is already exists.";
+                    //}
+                    //else
+                    //{
                         academicSession.CreatedAt = DateTime.Now;
                         academicSession.CreatedBy = HttpContext.Session.GetString("UserId");
 
-                        _context.Add(academicSession);
-                        await _context.SaveChangesAsync();
+                        //_context.Add(academicSession);
+                    await _sessionManager.AddAsync(academicSession);
                         TempData["create"] = "Created Successfully";
                         return RedirectToAction(nameof(Index));
-                    }
+                    //}
 
                 }
             }
@@ -103,7 +103,8 @@ namespace SchoolManagementSystem.Controllers
                 return NotFound();
             }
 
-            var academicSession = await _context.AcademicSession.FindAsync(id);
+            //var academicSession = await _context.AcademicSession.FindAsync(id);
+            var academicSession = await _sessionManager.GetByIdAsync((int)id);
             if (academicSession == null)
             {
                 return NotFound();
@@ -111,9 +112,7 @@ namespace SchoolManagementSystem.Controllers
             return View(academicSession);
         }
 
-        // POST: AcademicSessions/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSession academicSession)
@@ -123,13 +122,8 @@ namespace SchoolManagementSystem.Controllers
             {
                 return NotFound();
             }
-            var existStudent = _context.AcademicSession.FirstOrDefault(a => a.Name.Trim() == academicSession.Name.Trim() && a.Id != id);
-            if (existStudent!=null)
-            {
-                msg = "This name is already exist!";
-            }
-            else
-            {
+            //var existStudent = _context.AcademicSession.FirstOrDefault(a => a.Name.Trim() == academicSession.Name.Trim() && a.Id != id);
+
                 if (ModelState.IsValid)
                     {
                         try
@@ -137,8 +131,10 @@ namespace SchoolManagementSystem.Controllers
                             academicSession.EditedBy = HttpContext.Session.GetString("UserId");
                             academicSession.EditedAt = DateTime.Now;
 
-                            _context.Update(academicSession);
-                            await _context.SaveChangesAsync();
+                            //_context.Update(academicSession);
+
+                        await _sessionManager.UpdateAsync(academicSession);
+                            
                         }
                         catch (DbUpdateConcurrencyException)
                         {
@@ -155,7 +151,7 @@ namespace SchoolManagementSystem.Controllers
                     TempData["edit"] = "Updated Successfully";
                     return RedirectToAction(nameof(Index));
                     }
-            }
+
             ViewBag.msg = msg;
             return View(academicSession);
         }
@@ -168,8 +164,9 @@ namespace SchoolManagementSystem.Controllers
                 return NotFound();
             }
 
-            var academicSession = await _context.AcademicSession
-                .FirstOrDefaultAsync(m => m.Id == id);
+            //var academicSession = await _context.AcademicSession
+            //    .FirstOrDefaultAsync(m => m.Id == id);
+            var academicSession = await _sessionManager.GetByIdAsync((int)id);
             if (academicSession == null)
             {
                 return NotFound();
@@ -183,16 +180,25 @@ namespace SchoolManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var academicSession = await _context.AcademicSession.FindAsync(id);
-            _context.AcademicSession.Remove(academicSession);
-            await _context.SaveChangesAsync();
+            //var academicSession = await _context.AcademicSession.FindAsync(id);
+            //_context.AcademicSession.Remove(academicSession);
+            var academicSession = await _sessionManager.GetByIdAsync(id);
+            await _sessionManager.RemoveAsync(academicSession);
             TempData["delete"] = "Deleted Successfully.";
             return RedirectToAction(nameof(Index));
         }
 
         private bool AcademicSessionExists(int id)
         {
-            return _context.AcademicSession.Any(e => e.Id == id);
+            var isExist =  _sessionManager.GetByIdAsync(id);
+            if (isExist!=null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
     }
 }

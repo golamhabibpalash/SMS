@@ -40,7 +40,11 @@ namespace SchoolManagementSystem
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddControllersWithViews().AddRazorRuntimeCompilation();
+
+            services.AddAutoMapper(typeof(Startup)); 
+            services.AddControllersWithViews()
+                .AddRazorRuntimeCompilation();
+
             services.AddRazorPages();
 
 
@@ -52,6 +56,8 @@ namespace SchoolManagementSystem
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
+
+
 
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<IEmployeeManager, EmployeeManager>();
@@ -70,6 +76,10 @@ namespace SchoolManagementSystem
 
             services.AddScoped<IAcademicSectionRepositoy, AcademicSectionRepository>();
             services.AddScoped<IAcademicSectionManager, AcademicSectionManager>();
+            
+            services.AddScoped<IAcademicSubjectRepository, AcademicSubjectRepository>();
+            services.AddScoped<IAcademicSubjectManager, AcademicSubjectManager>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

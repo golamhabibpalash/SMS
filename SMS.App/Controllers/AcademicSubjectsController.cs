@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SMS.BLL.Contracts;
 using SMS.DB;
 using SMS.Entities;
 
@@ -13,10 +14,12 @@ namespace SchoolManagementSystem.Controllers
     public class AcademicSubjectsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IAcademicSubjectManager _academicSubjectManager;
 
-        public AcademicSubjectsController(ApplicationDbContext context)
+        public AcademicSubjectsController(ApplicationDbContext context, IAcademicSubjectManager academicSubjectManger)
         {
             _context = context;
+            _academicSubjectManager = academicSubjectManger;
         }
 
         // GET: AcademicSubjects

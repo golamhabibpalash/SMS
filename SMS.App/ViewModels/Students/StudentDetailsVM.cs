@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SMS.App.ViewModels
+namespace SMS.App.ViewModels.Students
 {
     public class StudentDetailsVM
     {

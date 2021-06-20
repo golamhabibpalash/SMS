@@ -18,13 +18,11 @@ namespace SchoolManagementSystem.Controllers
     public class EmployeesController : Controller
     {
         private readonly IWebHostEnvironment _host;
-        private readonly ApplicationDbContext _context;
         private readonly IEmployeeManager _employeeManager;
 
-        public EmployeesController(IWebHostEnvironment host,  ApplicationDbContext context, IEmployeeManager employeeManager) 
+        public EmployeesController(IWebHostEnvironment host,  IEmployeeManager employeeManager) 
         {
             _host = host;
-            _context = context;
             _employeeManager = employeeManager;
         }
 
@@ -44,20 +42,6 @@ namespace SchoolManagementSystem.Controllers
                 return NotFound();
             }
             int myid = Convert.ToInt32(id);
-            //var employee = await _context.Employee
-            //    .Include(e => e.Designation)
-            //    .Include(e => e.EmpType)
-            //    .Include(e => e.Gender)
-            //    .Include(e => e.Nationality)
-            //    .Include(e => e.PermanentDistrict)
-            //    .Include(e => e.PermanentDivision)
-            //    .Include(e => e.PermanentUpazila)
-            //    .Include(e => e.PresentDistrict)
-            //    .Include(e => e.PresentDivision)
-            //    .Include(e => e.PresentUpazila)
-            //    .Include(e => e.Religion)
-            //    .FirstOrDefaultAsync(m => m.Id == id);
-
             Employee employee = await _employeeManager.GetByIdAsync(myid);
 
             if (employee == null)
@@ -71,17 +55,17 @@ namespace SchoolManagementSystem.Controllers
         // GET: Employees/Create
         public IActionResult Create()
         {
-            ViewData["DesignationId"] = new SelectList(_context.Designation, "Id", "DesignationName");
-            ViewData["EmpTypeId"] = new SelectList(_context.EmpType, "Id", "Name");
-            ViewData["GenderId"] = new SelectList(_context.Gender, "Id", "Name");
-            ViewData["NationalityId"] = new SelectList(_context.Nationality, "Id", "Name");
-            ViewData["PermanentDistrictId"] = new SelectList(_context.District, "Id", "Name");
-            ViewData["PermanentDivisionId"] = new SelectList(_context.Division, "Id", "Name");
-            ViewData["PermanentUpazilaId"] = new SelectList(_context.Upazila, "Id", "Name");
-            ViewData["PresentDistrictId"] = new SelectList(_context.District, "Id", "Name");
-            ViewData["PresentDivisionId"] = new SelectList(_context.Division, "Id", "Name");
-            ViewData["PresentUpazilaId"] = new SelectList(_context.Upazila, "Id", "Name");
-            ViewData["ReligionId"] = new SelectList(_context.Religion, "Id", "Name");
+            //ViewData["DesignationId"] = new SelectList(_context.Designation, "Id", "DesignationName");
+            //ViewData["EmpTypeId"] = new SelectList(_context.EmpType, "Id", "Name");
+            //ViewData["GenderId"] = new SelectList(_context.Gender, "Id", "Name");
+            //ViewData["NationalityId"] = new SelectList(_context.Nationality, "Id", "Name");
+            //ViewData["PermanentDistrictId"] = new SelectList(_context.District, "Id", "Name");
+            //ViewData["PermanentDivisionId"] = new SelectList(_context.Division, "Id", "Name");
+            //ViewData["PermanentUpazilaId"] = new SelectList(_context.Upazila, "Id", "Name");
+            //ViewData["PresentDistrictId"] = new SelectList(_context.District, "Id", "Name");
+            //ViewData["PresentDivisionId"] = new SelectList(_context.Division, "Id", "Name");
+            //ViewData["PresentUpazilaId"] = new SelectList(_context.Upazila, "Id", "Name");
+            //ViewData["ReligionId"] = new SelectList(_context.Religion, "Id", "Name");
             return View();
         }
 
@@ -115,17 +99,17 @@ namespace SchoolManagementSystem.Controllers
             
 
 
-            ViewData["DesignationId"] = new SelectList(_context.Designation, "Id", "DesignationName",employee.DesignationId);
-            ViewData["EmpTypeId"] = new SelectList(_context.EmpType, "Id", "Name");
-            ViewData["GenderId"] = new SelectList(_context.Gender, "Id", "Name");
-            ViewData["NationalityId"] = new SelectList(_context.Nationality, "Id", "Name");
-            ViewData["PermanentDistrictId"] = new SelectList(_context.District, "Id", "Name");
-            ViewData["PermanentDivisionId"] = new SelectList(_context.Division, "Id", "Name");
-            ViewData["PermanentUpazilaId"] = new SelectList(_context.Upazila, "Id", "Name");
-            ViewData["PresentDistrictId"] = new SelectList(_context.District, "Id", "Name");
-            ViewData["PresentDivisionId"] = new SelectList(_context.Division, "Id", "Name");
-            ViewData["PresentUpazilaId"] = new SelectList(_context.Upazila, "Id", "Name");
-            ViewData["ReligionId"] = new SelectList(_context.Religion, "Id", "Name");
+            //ViewData["DesignationId"] = new SelectList(_context.Designation, "Id", "DesignationName",employee.DesignationId);
+            //ViewData["EmpTypeId"] = new SelectList(_context.EmpType, "Id", "Name");
+            //ViewData["GenderId"] = new SelectList(_context.Gender, "Id", "Name");
+            //ViewData["NationalityId"] = new SelectList(_context.Nationality, "Id", "Name");
+            //ViewData["PermanentDistrictId"] = new SelectList(_context.District, "Id", "Name");
+            //ViewData["PermanentDivisionId"] = new SelectList(_context.Division, "Id", "Name");
+            //ViewData["PermanentUpazilaId"] = new SelectList(_context.Upazila, "Id", "Name");
+            //ViewData["PresentDistrictId"] = new SelectList(_context.District, "Id", "Name");
+            //ViewData["PresentDivisionId"] = new SelectList(_context.Division, "Id", "Name");
+            //ViewData["PresentUpazilaId"] = new SelectList(_context.Upazila, "Id", "Name");
+            //ViewData["ReligionId"] = new SelectList(_context.Religion, "Id", "Name");
             return View(employee);
         }
 
@@ -137,22 +121,22 @@ namespace SchoolManagementSystem.Controllers
                 return NotFound();
             }
 
-            var employee = await _context.Employee.FindAsync(id);
+            var employee = await _employeeManager.GetByIdAsync((int)id);
             if (employee == null)
             {
                 return NotFound();
             }
-            ViewData["DesignationId"] = new SelectList(_context.Designation, "Id", "Id", employee.DesignationId);
-            ViewData["EmpTypeId"] = new SelectList(_context.EmpType, "Id", "Name", employee.EmpTypeId);
-            ViewData["GenderId"] = new SelectList(_context.Gender, "Id", "Id", employee.GenderId);
-            ViewData["NationalityId"] = new SelectList(_context.Nationality, "Id", "Id", employee.NationalityId);
-            ViewData["PermanentDistrictId"] = new SelectList(_context.District, "Id", "Id", employee.PermanentDistrictId);
-            ViewData["PermanentDivisionId"] = new SelectList(_context.Division, "Id", "Id", employee.PermanentDivisionId);
-            ViewData["PermanentUpazilaId"] = new SelectList(_context.Upazila, "Id", "Id", employee.PermanentUpazilaId);
-            ViewData["PresentDistrictId"] = new SelectList(_context.District, "Id", "Id", employee.PresentDistrictId);
-            ViewData["PresentDivisionId"] = new SelectList(_context.Division, "Id", "Id", employee.PresentDivisionId);
-            ViewData["PresentUpazilaId"] = new SelectList(_context.Upazila, "Id", "Id", employee.PresentUpazilaId);
-            ViewData["ReligionId"] = new SelectList(_context.Religion, "Id", "Id", employee.ReligionId);
+            //ViewData["DesignationId"] = new SelectList(_context.Designation, "Id", "Id", employee.DesignationId);
+            //ViewData["EmpTypeId"] = new SelectList(_context.EmpType, "Id", "Name", employee.EmpTypeId);
+            //ViewData["GenderId"] = new SelectList(_context.Gender, "Id", "Id", employee.GenderId);
+            //ViewData["NationalityId"] = new SelectList(_context.Nationality, "Id", "Id", employee.NationalityId);
+            //ViewData["PermanentDistrictId"] = new SelectList(_context.District, "Id", "Id", employee.PermanentDistrictId);
+            //ViewData["PermanentDivisionId"] = new SelectList(_context.Division, "Id", "Id", employee.PermanentDivisionId);
+            //ViewData["PermanentUpazilaId"] = new SelectList(_context.Upazila, "Id", "Id", employee.PermanentUpazilaId);
+            //ViewData["PresentDistrictId"] = new SelectList(_context.District, "Id", "Id", employee.PresentDistrictId);
+            //ViewData["PresentDivisionId"] = new SelectList(_context.Division, "Id", "Id", employee.PresentDivisionId);
+            //ViewData["PresentUpazilaId"] = new SelectList(_context.Upazila, "Id", "Id", employee.PresentUpazilaId);
+            //ViewData["ReligionId"] = new SelectList(_context.Religion, "Id", "Id", employee.ReligionId);
             return View(employee);
         }
 
@@ -202,17 +186,17 @@ namespace SchoolManagementSystem.Controllers
             {
                 msg = "Something wrong";
             }
-            ViewData["DesignationId"] = new SelectList(_context.Designation, "Id", "DesignationName", employee.DesignationId);
-            ViewData["EmpTypeId"] = new SelectList(_context.EmpType, "Id", "Name", employee.EmpTypeId);
-            ViewData["GenderId"] = new SelectList(_context.Gender, "Id", "Id", employee.GenderId);
-            ViewData["NationalityId"] = new SelectList(_context.Nationality, "Id", "Id", employee.NationalityId);
-            ViewData["PermanentDistrictId"] = new SelectList(_context.District, "Id", "Id", employee.PermanentDistrictId);
-            ViewData["PermanentDivisionId"] = new SelectList(_context.Division, "Id", "Id", employee.PermanentDivisionId);
-            ViewData["PermanentUpazilaId"] = new SelectList(_context.Upazila, "Id", "Id", employee.PermanentUpazilaId);
-            ViewData["PresentDistrictId"] = new SelectList(_context.District, "Id", "Id", employee.PresentDistrictId);
-            ViewData["PresentDivisionId"] = new SelectList(_context.Division, "Id", "Id", employee.PresentDivisionId);
-            ViewData["PresentUpazilaId"] = new SelectList(_context.Upazila, "Id", "Id", employee.PresentUpazilaId);
-            ViewData["ReligionId"] = new SelectList(_context.Religion, "Id", "Id", employee.ReligionId);
+            //ViewData["DesignationId"] = new SelectList(_context.Designation, "Id", "DesignationName", employee.DesignationId);
+            //ViewData["EmpTypeId"] = new SelectList(_context.EmpType, "Id", "Name", employee.EmpTypeId);
+            //ViewData["GenderId"] = new SelectList(_context.Gender, "Id", "Id", employee.GenderId);
+            //ViewData["NationalityId"] = new SelectList(_context.Nationality, "Id", "Id", employee.NationalityId);
+            //ViewData["PermanentDistrictId"] = new SelectList(_context.District, "Id", "Id", employee.PermanentDistrictId);
+            //ViewData["PermanentDivisionId"] = new SelectList(_context.Division, "Id", "Id", employee.PermanentDivisionId);
+            //ViewData["PermanentUpazilaId"] = new SelectList(_context.Upazila, "Id", "Id", employee.PermanentUpazilaId);
+            //ViewData["PresentDistrictId"] = new SelectList(_context.District, "Id", "Id", employee.PresentDistrictId);
+            //ViewData["PresentDivisionId"] = new SelectList(_context.Division, "Id", "Id", employee.PresentDivisionId);
+            //ViewData["PresentUpazilaId"] = new SelectList(_context.Upazila, "Id", "Id", employee.PresentUpazilaId);
+            //ViewData["ReligionId"] = new SelectList(_context.Religion, "Id", "Id", employee.ReligionId);
             return View(employee);
         }
 

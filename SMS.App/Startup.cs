@@ -40,13 +40,11 @@ namespace SchoolManagementSystem
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-
             services.AddAutoMapper(typeof(Startup)); 
             services.AddControllersWithViews()
                 .AddRazorRuntimeCompilation();
 
             services.AddRazorPages();
-
 
             services.AddSession(options =>
             {
@@ -56,8 +54,6 @@ namespace SchoolManagementSystem
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
-
-
 
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<IEmployeeManager, EmployeeManager>();
@@ -82,7 +78,30 @@ namespace SchoolManagementSystem
             
             services.AddScoped<IAcademicSubjectTypeRepository, AcademicSubjectTypeRepository>();
             services.AddScoped<IAcademicSubjectTypeManager, AcademicSubjectTypeManager>();
-
+            
+            services.AddScoped<IDesignationRepository, DesignationRepository>();
+            services.AddScoped<IDesignationManager, DesignationManager>();
+            
+            services.AddScoped<IDesignationTypeRepository, DesignationTypeRepository>();
+            services.AddScoped<IDesignationTypeManager, DesignationTypeManager>();
+            
+            services.AddScoped<IEmpTypeRepository, EmpTypeRepository>();
+            services.AddScoped<IEmpTypeManager, EmpTypeManager>();
+            
+            services.AddScoped<IGenderRepository, GenderRepository>();
+            services.AddScoped<IGenderManager, GenderManager>();
+            
+            services.AddScoped<INationalityRepository, NationalityRepository>();
+            services.AddScoped<INationalityManager, NationalityManager>();
+            
+            services.AddScoped<IStudentPaymentRepository, StudentPaymentRepository>();
+            services.AddScoped<IStudentPaymentManager, StudentPaymentManager>();
+            
+            services.AddScoped<IStudentPaymentDetailsRepository, StudentPaymentDetailsRepository>();
+            services.AddScoped<IStudentPaymentDetailsManager, StudentPaymentDetailsManager>();
+            
+            services.AddScoped<IStudentFeeHeadRepository, StudentFeeHeadRepository>();
+            services.AddScoped<IStudentFeeHeadManager, StudentFeeHeadManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

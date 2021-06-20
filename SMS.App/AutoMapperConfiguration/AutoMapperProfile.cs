@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using SMS.App.ViewModels.Employees;
 using SMS.App.ViewModels.Students;
 using SMS.Entities;
 using System;
@@ -14,6 +15,9 @@ namespace SMS.App.AutoMapperConfiguration
         {
             CreateMap<StudentCreateVM, Student>();
             CreateMap<Student, StudentCreateVM>();
+
+            CreateMap<EmployeeCreateVM, Employee>();
+            CreateMap<Employee, EmployeeCreateVM>();
         }
     }
 }

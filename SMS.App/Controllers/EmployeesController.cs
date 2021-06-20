@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SMS.App.ViewModels.Employees;
 using SMS.BLL.Contracts;
 using SMS.DB;
 using SMS.Entities;
@@ -19,11 +21,13 @@ namespace SchoolManagementSystem.Controllers
     {
         private readonly IWebHostEnvironment _host;
         private readonly IEmployeeManager _employeeManager;
+        private readonly IMapper _mapper;
 
-        public EmployeesController(IWebHostEnvironment host,  IEmployeeManager employeeManager) 
+        public EmployeesController(IWebHostEnvironment host,  IEmployeeManager employeeManager, IMapper mapper) 
         {
             _host = host;
             _employeeManager = employeeManager;
+            _mapper = mapper;
         }
 
         
@@ -71,14 +75,14 @@ namespace SchoolManagementSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,EmployeeName,DOB,Image,GenderId,ReligionId,NationalityId,NIDNo,NIDCard,Phone,Email,Nominee,NomineePhone,EmpTypeId,DesignationId,JoiningDate,PresentAddress,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddress,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,CreatedBy,CreatedAt,EditedBy,EditedAt,Status")] Employee employee, IFormFile empImage, IFormFile nidCard)
+        public async Task<IActionResult> Create([Bind("Id,EmployeeName,DOB,Image,GenderId,ReligionId,NationalityId,NIDNo,NIDCard,Phone,Email,Nominee,NomineePhone,EmpTypeId,DesignationId,JoiningDate,PresentAddress,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddress,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,CreatedBy,CreatedAt,EditedBy,EditedAt,Status")] EmployeeCreateVM employeeVM, IFormFile empImage, IFormFile nidCard)
         {
             if (empImage != null)
             {
                 string root = _host.WebRootPath;
                 string folder = "~/Images/Employee";
                 string fileExtension = Path.GetExtension(empImage.FileName);
-                string fileName = "e_" + DateTime.Today.ToString("yyyy") + "_" + employee.NIDNo;
+                string fileName = "e_" + DateTime.Today.ToString("yyyy") + "_" + employeeVM.NIDNo;
                 string pathCombine = Path.Combine(root, folder, fileName);
 
             }
@@ -88,8 +92,12 @@ namespace SchoolManagementSystem.Controllers
 
             }
 
+            var employee = _mapper.Map<Employee>(employeeVM);
+
             if (ModelState.IsValid)
             {
+                
+
                 bool isSaved =await _employeeManager.AddAsync(employee);
                 if (isSaved)
                 {

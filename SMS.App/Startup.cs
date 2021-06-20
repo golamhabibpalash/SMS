@@ -40,7 +40,8 @@ namespace SchoolManagementSystem
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddAutoMapper(typeof(Startup)); 
+            services.AddAutoMapper(typeof(Startup));
+
             services.AddControllersWithViews()
                 .AddRazorRuntimeCompilation();
 

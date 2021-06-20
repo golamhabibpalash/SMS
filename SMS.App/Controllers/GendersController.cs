@@ -7,25 +7,25 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SMS.BLL.Contracts;
 using SMS.DB;
 using SMS.Entities;
 
 namespace SchoolManagementSystem.Controllers
 {
-    [Authorize]
     public class GendersController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IGenderManager _genderManager;
 
-        public GendersController(ApplicationDbContext context)
+        public GendersController(IGenderManager genderManager)
         {
-            _context = context;
+            _genderManager = genderManager;
         }
 
         // GET: Genders
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Gender.ToListAsync());
+            return View(await _genderManager.GetAllAsync());
         }
 
         // GET: Genders/Details/5
@@ -36,8 +36,7 @@ namespace SchoolManagementSystem.Controllers
                 return NotFound();
             }
 
-            var gender = await _context.Gender
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var gender = await _genderManager.GetByIdAsync((int)id);
             if (gender == null)
             {
                 return NotFound();
@@ -52,31 +51,19 @@ namespace SchoolManagementSystem.Controllers
             return View();
         }
 
-        // POST: Genders/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] Gender gender)
         {
             string msg = "";
-            var existGender = await _context.Gender.FirstOrDefaultAsync(g => g.Name.Trim() == gender.Name.Trim());
-            if (existGender!=null)
-            {
-                msg = gender.Name + " is already exist!";
-                ViewBag.msg = msg;
-            }
-            else
-            {
-                if (ModelState.IsValid)
-                {
-                    gender.CreatedAt = DateTime.Now;
-                    gender.CreatedBy = HttpContext.Session.GetString("User");
 
-                    _context.Add(gender);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
-                }
+            if (ModelState.IsValid)
+            {
+                gender.CreatedAt = DateTime.Now;
+                gender.CreatedBy = HttpContext.Session.GetString("User");
+
+                await _genderManager.AddAsync(gender);
+                return RedirectToAction(nameof(Index));
             }
             
             return View(gender);
@@ -90,7 +77,7 @@ namespace SchoolManagementSystem.Controllers
                 return NotFound();
             }
 
-            var gender = await _context.Gender.FindAsync(id);
+            var gender = await _genderManager.GetByIdAsync((int)id);
             if (gender == null)
             {
                 return NotFound();
@@ -114,8 +101,7 @@ namespace SchoolManagementSystem.Controllers
             {
                 try
                 {
-                    _context.Update(gender);
-                    await _context.SaveChangesAsync();
+                    await _genderManager.UpdateAsync(gender);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -141,8 +127,7 @@ namespace SchoolManagementSystem.Controllers
                 return NotFound();
             }
 
-            var gender = await _context.Gender
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var gender = await _genderManager.GetByIdAsync((int)id);
             if (gender == null)
             {
                 return NotFound();
@@ -156,15 +141,22 @@ namespace SchoolManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var gender = await _context.Gender.FindAsync(id);
-            _context.Gender.Remove(gender);
-            await _context.SaveChangesAsync();
+            var gender = await _genderManager.GetByIdAsync(id);
+            await _genderManager.RemoveAsync(gender);
             return RedirectToAction(nameof(Index));
         }
 
         private bool GenderExists(int id)
         {
-            return _context.Gender.Any(e => e.Id == id);
+            var gender = _genderManager.GetByIdAsync(id);
+            if (gender!=null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

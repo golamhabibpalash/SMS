@@ -1,4 +1,5 @@
-﻿using SMS.Entities;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using SMS.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -98,28 +99,13 @@ namespace SMS.App.ViewModels.Employees
         [Display(Name = "Active/Inactive")]
         public bool Status { get; set; }
 
-        [ForeignKey("PresentDivisiontId")]
-        public Division PresentDivision { get; set; }
 
-        [ForeignKey("PresentDistrictId")]
-        public District PresentDistrict { get; set; }
 
-        [ForeignKey("PresentUpazilaId")]
-        public Upazila PresentUpazila { get; set; }
+        public List<SelectListItem> GenderList { get; set; }
+        public List<SelectListItem> ReligionList { get; set; }
+        public List<SelectListItem> NationalityList { get; set; }
+        public List<SelectListItem> EmpTypeList { get; set; }
+        public List<SelectListItem> DesignationList { get; set; }
 
-        [ForeignKey("PermanentDivisiontId")]
-        public Division PermanentDivision { get; set; }
-
-        [ForeignKey("PermanentDistrictId")]
-        public District PermanentDistrict { get; set; }
-
-        [ForeignKey("PermanentUpazilaId")]
-        public Upazila PermanentUpazila { get; set; }
-
-        public Gender Gender { get; set; }
-        public Religion Religion { get; set; }
-        public Nationality Nationality { get; set; }
-        public EmpType EmpType { get; set; }
-        public Designation Designation { get; set; }
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SMS.BLL.Contracts;
 using SMS.DB;
 using SMS.Entities;
 
@@ -13,17 +14,17 @@ namespace SchoolManagementSystem.Controllers
 {
     public class EmpTypesController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IEmpTypeManager _empTypeManager;
 
-        public EmpTypesController(ApplicationDbContext context)
+        public EmpTypesController(IEmpTypeManager empTypeManager)
         {
-            _context = context;
+            _empTypeManager = empTypeManager;
         }
 
         // GET: EmpTypes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.EmpType.ToListAsync());
+            return View(await _empTypeManager.GetAllAsync());
         }
 
         // GET: EmpTypes/Details/5
@@ -34,8 +35,7 @@ namespace SchoolManagementSystem.Controllers
                 return NotFound();
             }
 
-            var empType = await _context.EmpType
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var empType = await _empTypeManager.GetByIdAsync((int)id);
             if (empType == null)
             {
                 return NotFound();
@@ -50,31 +50,19 @@ namespace SchoolManagementSystem.Controllers
             return View();
         }
 
-        // POST: EmpTypes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,CreatedBy,CreatedAt,EditedBy,EditedAt")] EmpType empType)
         {
-            string msg = "";
-            var typeExist =await _context.EmpType.FirstOrDefaultAsync(e => e.Name.Trim() == empType.Name.Trim());
-            if (typeExist!=null)
+            
+            if (ModelState.IsValid)
             {
-                msg = empType.Name + " is already exist.";
-                ViewBag.msg = msg;
-            }
-            else
-            {
-                if (ModelState.IsValid)
-                {
-                    empType.CreatedAt = DateTime.Now;
-                    empType.CreatedBy = HttpContext.Session.GetString("User");
+                empType.CreatedAt = DateTime.Now;
+                empType.CreatedBy = HttpContext.Session.GetString("User");
 
-                    _context.Add(empType);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
-                }
+                await _empTypeManager.AddAsync(empType);
+                return RedirectToAction(nameof(Index));
             }
             return View(empType);
         }
@@ -87,7 +75,7 @@ namespace SchoolManagementSystem.Controllers
                 return NotFound();
             }
 
-            var empType = await _context.EmpType.FindAsync(id);
+            var empType = await _empTypeManager.GetByIdAsync((int) id);
             if (empType == null)
             {
                 return NotFound();
@@ -95,9 +83,6 @@ namespace SchoolManagementSystem.Controllers
             return View(empType);
         }
 
-        // POST: EmpTypes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,CreatedBy,CreatedAt,EditedBy,EditedAt")] EmpType empType)
@@ -106,13 +91,7 @@ namespace SchoolManagementSystem.Controllers
             {
                 return NotFound();
             }
-            string msg = "";
-            var typeExist = await _context.EmpType.FirstOrDefaultAsync(e => e.Name.Trim() == empType.Name.Trim() && e.Id!=id);
-            if (typeExist != null)
-            {
-                msg = empType.Name + " is already exist.";
-                ViewBag.msg = msg;
-            }
+            
             if (ModelState.IsValid)
             {
                 try
@@ -120,8 +99,7 @@ namespace SchoolManagementSystem.Controllers
 
                     empType.EditedAt = DateTime.Now;
                     empType.EditedBy = HttpContext.Session.GetString("User");
-                    _context.Update(empType);
-                    await _context.SaveChangesAsync();
+                    await _empTypeManager.UpdateAsync(empType);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -147,8 +125,7 @@ namespace SchoolManagementSystem.Controllers
                 return NotFound();
             }
 
-            var empType = await _context.EmpType
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var empType = await _empTypeManager.GetByIdAsync((int)id);
             if (empType == null)
             {
                 return NotFound();
@@ -162,15 +139,23 @@ namespace SchoolManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var empType = await _context.EmpType.FindAsync(id);
-            _context.EmpType.Remove(empType);
-            await _context.SaveChangesAsync();
+            var empType = await _empTypeManager.GetByIdAsync((int)id);
+
+            await _empTypeManager.RemoveAsync(empType);
             return RedirectToAction(nameof(Index));
         }
 
         private bool EmpTypeExists(int id)
         {
-            return _context.EmpType.Any(e => e.Id == id);
+            var empType = _empTypeManager.GetByIdAsync((int)id);
+            if (empType != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

@@ -7,25 +7,25 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SMS.BLL.Contracts;
 using SMS.DB;
 using SMS.Entities;
 
 namespace SchoolManagementSystem.Controllers
 {
-    [Authorize]
     public class NationalitiesController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly INationalityManager _nationalityManager;
 
-        public NationalitiesController(ApplicationDbContext context)
+        public NationalitiesController(INationalityManager nationalityManager)
         {
-            _context = context;
+           _nationalityManager = nationalityManager;
         }
 
         // GET: Nationalities
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Nationality.ToListAsync());
+            return View(await _nationalityManager.GetAllAsync());
         }
 
         // GET: Nationalities/Details/5
@@ -36,8 +36,7 @@ namespace SchoolManagementSystem.Controllers
                 return NotFound();
             }
 
-            var nationality = await _context.Nationality
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var nationality = await _nationalityManager.GetByIdAsync((int)id);
             if (nationality == null)
             {
                 return NotFound();
@@ -52,32 +51,22 @@ namespace SchoolManagementSystem.Controllers
             return View();
         }
 
-        // POST: Nationalities/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] Nationality nationality)
         {
-            string msg = "";
-            var nationalityExist = await _context.Nationality.FirstOrDefaultAsync(n => n.Name.Trim() == nationality.Name.Trim());
-            if (nationalityExist!=null)
-            {
-                msg = nationality.Name + " is already exist.";
-                ViewBag.msg = msg;
-            }
-            else
-            {
+            
                 if (ModelState.IsValid)
                 {
                     nationality.CreatedAt = DateTime.Now;
                     nationality.CreatedBy = HttpContext.Session.GetString("User");
 
-                    _context.Add(nationality);
-                    await _context.SaveChangesAsync();
+
+                    await _nationalityManager.AddAsync(nationality);
                     return RedirectToAction(nameof(Index));
                 }
-            }
             
             return View(nationality);
         }
@@ -90,7 +79,7 @@ namespace SchoolManagementSystem.Controllers
                 return NotFound();
             }
 
-            var nationality = await _context.Nationality.FindAsync(id);
+            var nationality = await _nationalityManager.GetByIdAsync((int)id);
             if (nationality == null)
             {
                 return NotFound();
@@ -98,9 +87,6 @@ namespace SchoolManagementSystem.Controllers
             return View(nationality);
         }
 
-        // POST: Nationalities/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] Nationality nationality)
@@ -118,8 +104,8 @@ namespace SchoolManagementSystem.Controllers
                     nationality.EditedAt = DateTime.Now;
                     nationality.EditedBy = HttpContext.Session.GetString("User");
 
-                    _context.Update(nationality);
-                    await _context.SaveChangesAsync();
+                    
+                    await _nationalityManager.UpdateAsync(nationality);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -145,8 +131,7 @@ namespace SchoolManagementSystem.Controllers
                 return NotFound();
             }
 
-            var nationality = await _context.Nationality
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var nationality = await _nationalityManager.GetByIdAsync((int)id);
             if (nationality == null)
             {
                 return NotFound();
@@ -160,15 +145,23 @@ namespace SchoolManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var nationality = await _context.Nationality.FindAsync(id);
-            _context.Nationality.Remove(nationality);
-            await _context.SaveChangesAsync();
+            var nationality = await _nationalityManager.GetByIdAsync((int)id);
+
+            await _nationalityManager.RemoveAsync(nationality);
             return RedirectToAction(nameof(Index));
         }
 
         private bool NationalityExists(int id)
         {
-            return _context.Nationality.Any(e => e.Id == id);
+            var nationality =  _nationalityManager.GetByIdAsync((int)id);
+            if (nationality!=null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

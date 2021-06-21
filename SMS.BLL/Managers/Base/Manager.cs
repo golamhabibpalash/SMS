@@ -8,7 +8,7 @@ namespace BLL.Managers.Base
 {
     public abstract class Manager<T> : IManager<T> where T : class
     {
-        private readonly IRepository<T> _repository;
+        protected readonly IRepository<T> _repository;
         public Manager(IRepository<T> repository)
         {
             _repository = repository;

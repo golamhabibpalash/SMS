@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace SMS.DAL.Repositories
 {
-    public class DesignationTypeRepository: Repository<DesignationType>, IDesignationTypeRepository
+    public class ReligionRepository : Repository<Religion>, IReligionRepository
     {
-        public DesignationTypeRepository(ApplicationDbContext db) : base(db)
+        public ReligionRepository(ApplicationDbContext db) : base(db)
         {
-        }
 
+        }
     }
 }

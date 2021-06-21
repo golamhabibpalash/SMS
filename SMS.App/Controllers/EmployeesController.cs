@@ -22,12 +22,22 @@ namespace SchoolManagementSystem.Controllers
         private readonly IWebHostEnvironment _host;
         private readonly IEmployeeManager _employeeManager;
         private readonly IMapper _mapper;
+        private readonly IGenderManager _genderManager;
+        private readonly IReligionManager _religionManager;
+        private readonly INationalityManager _nationalityManager;
+        private readonly IEmpTypeManager _empTypeManager;
+        private readonly IDesignationManager _designationManager;
 
-        public EmployeesController(IWebHostEnvironment host,  IEmployeeManager employeeManager, IMapper mapper) 
+        public EmployeesController(IWebHostEnvironment host,  IEmployeeManager employeeManager, IGenderManager genderManager, IReligionManager religionManager, IMapper mapper, INationalityManager nationalityManager, IEmpTypeManager empTypeManager, IDesignationManager designationManager) 
         {
             _host = host;
             _employeeManager = employeeManager;
+            _genderManager = genderManager;
             _mapper = mapper;
+            _religionManager = religionManager;
+            _nationalityManager = nationalityManager;
+            _empTypeManager = empTypeManager;
+            _designationManager = designationManager;
         }
 
         
@@ -57,20 +67,23 @@ namespace SchoolManagementSystem.Controllers
         }
 
         // GET: Employees/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            //ViewData["DesignationId"] = new SelectList(_context.Designation, "Id", "DesignationName");
-            //ViewData["EmpTypeId"] = new SelectList(_context.EmpType, "Id", "Name");
-            //ViewData["GenderId"] = new SelectList(_context.Gender, "Id", "Name");
-            //ViewData["NationalityId"] = new SelectList(_context.Nationality, "Id", "Name");
+            EmployeeCreateVM employee = new EmployeeCreateVM();
+            employee.GenderList = new SelectList(await _genderManager.GetAllAsync(), "Id", "Name").ToList();
+            employee.ReligionList = new SelectList(await _religionManager.GetAllAsync(), "Id", "Name").ToList();
+            employee.NationalityList = new SelectList(await _nationalityManager.GetAllAsync(), "Id", "Name").ToList();
+            employee.EmpTypeList = new SelectList(await _empTypeManager.GetAllAsync(), "Id", "Name").ToList();
+            employee.DesignationList = new SelectList(await _designationManager.GetAllAsync(), "Id", "DesignationName").ToList();
+
             //ViewData["PermanentDistrictId"] = new SelectList(_context.District, "Id", "Name");
             //ViewData["PermanentDivisionId"] = new SelectList(_context.Division, "Id", "Name");
             //ViewData["PermanentUpazilaId"] = new SelectList(_context.Upazila, "Id", "Name");
             //ViewData["PresentDistrictId"] = new SelectList(_context.District, "Id", "Name");
             //ViewData["PresentDivisionId"] = new SelectList(_context.Division, "Id", "Name");
             //ViewData["PresentUpazilaId"] = new SelectList(_context.Upazila, "Id", "Name");
-            //ViewData["ReligionId"] = new SelectList(_context.Religion, "Id", "Name");
-            return View();
+
+            return View(employee);
         }
 
         [HttpPost]

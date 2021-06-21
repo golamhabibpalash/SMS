@@ -1,4 +1,5 @@
-﻿using SMS.DAL.Contracts;
+﻿using Microsoft.EntityFrameworkCore;
+using SMS.DAL.Contracts;
 using SMS.DAL.Repositories.Base;
 using SMS.DB;
 using SMS.Entities;
@@ -15,6 +16,11 @@ namespace SMS.DAL.Repositories
         public DesignationRepository(ApplicationDbContext db): base(db)
         {
 
+        }
+        public override async Task<IReadOnlyCollection<Designation>> GetAllAsync()
+        {
+            return await _context.Designation.Include(d => d.DesignationType).ToListAsync();
+            
         }
     }
 }

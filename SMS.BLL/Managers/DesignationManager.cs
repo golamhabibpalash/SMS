@@ -16,5 +16,9 @@ namespace SMS.BLL.Managers
         {
 
         }
+        public override Task<IReadOnlyCollection<Designation>> GetAllAsync()
+        {
+            return _repository.GetAllAsync();
+        }
     }
 }

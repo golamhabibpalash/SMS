@@ -6,22 +6,23 @@ using SMS.Entities;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using SMS.BLL.Contracts;
 
 namespace SchoolManagementSystem.Controllers
 {
     public class DesignationTypesController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IDesignationTypeManager _designationTypeManager;
 
-        public DesignationTypesController(ApplicationDbContext context)
+        public DesignationTypesController(IDesignationTypeManager designationTypeManager)
         {
-            _context = context;
+            _designationTypeManager = designationTypeManager;
         }
 
         // GET: DesignationTypes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.DesignationType.ToListAsync());
+            return View(await _designationTypeManager.GetAllAsync());
         }
 
         // GET: DesignationTypes/Details/5
@@ -32,8 +33,7 @@ namespace SchoolManagementSystem.Controllers
                 return NotFound();
             }
 
-            var designationType = await _context.DesignationType
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var designationType = await _designationTypeManager.GetByIdAsync((int)id);
             if (designationType == null)
             {
                 return NotFound();
@@ -48,32 +48,18 @@ namespace SchoolManagementSystem.Controllers
             return View();
         }
 
-        // POST: DesignationTypes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,DesignationTypeName,CreatedBy,CreatedAt,EditedBy,EditedAt")] DesignationType designationType)
         {
-            string msg = "";
-            var isExist =await _context.DesignationType
-                .FirstOrDefaultAsync(s => s.DesignationTypeName.Trim()==designationType.DesignationTypeName.Trim());
-            if (isExist!=null)
-            {
-                msg =designationType.DesignationTypeName+ " is already exist";
-                ViewBag.msg = msg;
-            }
-            else
-            {
-                if (ModelState.IsValid)
-                {
-                    designationType.CreatedAt = DateTime.Now;
-                    designationType.CreatedBy = HttpContext.Session.GetString("User");
 
-                    _context.Add(designationType);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
-                }
+            if (ModelState.IsValid)
+            {
+                designationType.CreatedAt = DateTime.Now;
+                designationType.CreatedBy = HttpContext.Session.GetString("User");
+
+                await _designationTypeManager.AddAsync(designationType);
+                return RedirectToAction(nameof(Index));
             }
             return View(designationType);
         }
@@ -86,7 +72,7 @@ namespace SchoolManagementSystem.Controllers
                 return NotFound();
             }
 
-            var designationType = await _context.DesignationType.FindAsync(id);
+            var designationType = await _designationTypeManager.GetByIdAsync((int)id);
             if (designationType == null)
             {
                 return NotFound();
@@ -94,9 +80,6 @@ namespace SchoolManagementSystem.Controllers
             return View(designationType);
         }
 
-        // POST: DesignationTypes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,DesignationTypeName,CreatedBy,CreatedAt,EditedBy,EditedAt")] DesignationType designationType)
@@ -105,39 +88,28 @@ namespace SchoolManagementSystem.Controllers
             {
                 return NotFound();
             }
-            string msg = "";
-            var isExist = await _context.DesignationType
-                .FirstOrDefaultAsync(s => s.DesignationTypeName.Trim() == designationType.DesignationTypeName.Trim() && designationType.Id != s.Id);
-            if (isExist != null)
+            
+            if (ModelState.IsValid)
             {
-                msg = designationType.DesignationTypeName + " is already exist";
-                ViewBag.msg = msg;
-            }
-            else
-            {
-                if (ModelState.IsValid)
+                try
                 {
-                    try
-                    {
-                        designationType.EditedAt = DateTime.Now;
-                        designationType.EditedBy = HttpContext.Session.GetString("User");
+                    designationType.EditedAt = DateTime.Now;
+                    designationType.EditedBy = HttpContext.Session.GetString("User");
 
-                        _context.Update(designationType);
-                        await _context.SaveChangesAsync();
-                    }
-                    catch (DbUpdateConcurrencyException)
-                    {
-                        if (!DesignationTypeExists(designationType.Id))
-                        {
-                            return NotFound();
-                        }
-                        else
-                        {
-                            throw;
-                        }
-                    }
-                    return RedirectToAction(nameof(Index));
+                    await _designationTypeManager.UpdateAsync(designationType);
                 }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!DesignationTypeExists(designationType.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
             }
             return View(designationType);
         }
@@ -150,8 +122,7 @@ namespace SchoolManagementSystem.Controllers
                 return NotFound();
             }
 
-            var designationType = await _context.DesignationType
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var designationType = await _designationTypeManager.GetByIdAsync((int)id);
             if (designationType == null)
             {
                 return NotFound();
@@ -165,15 +136,23 @@ namespace SchoolManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var designationType = await _context.DesignationType.FindAsync(id);
-            _context.DesignationType.Remove(designationType);
-            await _context.SaveChangesAsync();
+            var designationType = await _designationTypeManager.GetByIdAsync(id);
+            await _designationTypeManager.RemoveAsync(designationType);
             return RedirectToAction(nameof(Index));
         }
 
         private bool DesignationTypeExists(int id)
         {
-            return _context.DesignationType.Any(e => e.Id == id);
+            var designationType = _designationTypeManager.GetByIdAsync(id);
+
+            if (designationType !=null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

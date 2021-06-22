@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SMS.BLL.Contracts;
 using SMS.DB;
 using SMS.Entities;
 
@@ -13,19 +14,20 @@ namespace SMS.App.Controllers
 {
     public class DistrictsController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        private readonly I
+        private readonly IDistrictManager _districtManager;
+        private readonly IDivisionManager _divisionManager;
 
-        public DistrictsController(ApplicationDbContext context)
+        public DistrictsController(IDistrictManager districtManager, IDivisionManager divisionManager)
         {
-            _context = context;
+            _districtManager = districtManager;
+            _divisionManager = divisionManager;
         }
 
         // GET: Districts
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.District.Include(d => d.Division);
-            return View(await applicationDbContext.ToListAsync());
+            var districts =await _districtManager.GetAllAsync() ;
+            return View(districts);
         }
 
         // GET: Districts/Details/5
@@ -36,9 +38,7 @@ namespace SMS.App.Controllers
                 return NotFound();
             }
 
-            var district = await _context.District
-                .Include(d => d.Division)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var district = await _districtManager.GetByIdAsync((int)id);
             if (district == null)
             {
                 return NotFound();
@@ -48,9 +48,9 @@ namespace SMS.App.Controllers
         }
 
         // GET: Districts/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["DivisionId"] = new SelectList(_context.Set<Division>(), "Id", "Id");
+            ViewData["DivisionId"] = new SelectList(await _divisionManager.GetAllAsync(), "Id", "Id");
             return View();
         }
 
@@ -63,11 +63,10 @@ namespace SMS.App.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(district);
-                await _context.SaveChangesAsync();
+                await _districtManager.AddAsync(district);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DivisionId"] = new SelectList(_context.Set<Division>(), "Id", "Id", district.DivisionId);
+            ViewData["DivisionId"] = new SelectList(await _divisionManager.GetAllAsync(), "Id", "Id", district.DivisionId);
             return View(district);
         }
 
@@ -79,12 +78,12 @@ namespace SMS.App.Controllers
                 return NotFound();
             }
 
-            var district = await _context.District.FindAsync(id);
+            var district = await _districtManager.GetByIdAsync((int)id);
             if (district == null)
             {
                 return NotFound();
             }
-            ViewData["DivisionId"] = new SelectList(_context.Set<Division>(), "Id", "Id", district.DivisionId);
+            ViewData["DivisionId"] = new SelectList(await _divisionManager.GetAllAsync(), "Id", "Id", district.DivisionId);
             return View(district);
         }
 
@@ -104,8 +103,7 @@ namespace SMS.App.Controllers
             {
                 try
                 {
-                    _context.Update(district);
-                    await _context.SaveChangesAsync();
+                    await _districtManager.UpdateAsync(district);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -120,7 +118,7 @@ namespace SMS.App.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DivisionId"] = new SelectList(_context.Set<Division>(), "Id", "Id", district.DivisionId);
+            ViewData["DivisionId"] = new SelectList(await _divisionManager.GetAllAsync(), "Id", "Id", district.DivisionId);
             return View(district);
         }
 
@@ -132,9 +130,7 @@ namespace SMS.App.Controllers
                 return NotFound();
             }
 
-            var district = await _context.District
-                .Include(d => d.Division)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var district = await _districtManager.GetByIdAsync((int)id);
             if (district == null)
             {
                 return NotFound();
@@ -148,15 +144,23 @@ namespace SMS.App.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var district = await _context.District.FindAsync(id);
-            _context.District.Remove(district);
-            await _context.SaveChangesAsync();
+            var district = await _districtManager.GetByIdAsync((int)id);
+
+            await _districtManager.RemoveAsync(district);
             return RedirectToAction(nameof(Index));
         }
 
         private bool DistrictExists(int id)
         {
-            return _context.District.Any(e => e.Id == id);
+            var district = _districtManager.GetByIdAsync(id);
+            if (district != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

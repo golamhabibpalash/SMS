@@ -6,25 +6,26 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SMS.BLL.Contracts;
 using SMS.DB;
 using SMS.Entities;
 
 namespace SchoolManagementSystem.Controllers
 {
-    [Authorize]
+    
     public class DivisionsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IDivisionManager _divisionManager;
 
-        public DivisionsController(ApplicationDbContext context)
+        public DivisionsController(IDivisionManager divisionManager)
         {
-            _context = context;
+            _divisionManager = divisionManager;
         }
 
         // GET: Divisions
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Division.ToListAsync());
+            return View(await _divisionManager.GetAllAsync());
         }
 
         // GET: Divisions/Details/5
@@ -35,8 +36,7 @@ namespace SchoolManagementSystem.Controllers
                 return NotFound();
             }
 
-            var division = await _context.Division
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var division = await _divisionManager.GetByIdAsync((int)id);
             if (division == null)
             {
                 return NotFound();
@@ -51,17 +51,14 @@ namespace SchoolManagementSystem.Controllers
             return View();
         }
 
-        // POST: Divisions/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] Division division)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(division);
-                await _context.SaveChangesAsync();
+                await _divisionManager.AddAsync(division);
                 return RedirectToAction(nameof(Index));
             }
             return View(division);
@@ -75,7 +72,7 @@ namespace SchoolManagementSystem.Controllers
                 return NotFound();
             }
 
-            var division = await _context.Division.FindAsync(id);
+            var division = await _divisionManager.GetByIdAsync((int)id);
             if (division == null)
             {
                 return NotFound();
@@ -99,8 +96,8 @@ namespace SchoolManagementSystem.Controllers
             {
                 try
                 {
-                    _context.Update(division);
-                    await _context.SaveChangesAsync();
+
+                    await _divisionManager.UpdateAsync(division);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -126,8 +123,7 @@ namespace SchoolManagementSystem.Controllers
                 return NotFound();
             }
 
-            var division = await _context.Division
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var division = await _divisionManager.GetByIdAsync((int)id);
             if (division == null)
             {
                 return NotFound();
@@ -141,15 +137,23 @@ namespace SchoolManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var division = await _context.Division.FindAsync(id);
-            _context.Division.Remove(division);
-            await _context.SaveChangesAsync();
+            var division = await _divisionManager.GetByIdAsync(id);
+
+            await _divisionManager.RemoveAsync(division);
             return RedirectToAction(nameof(Index));
         }
 
         private bool DivisionExists(int id)
         {
-            return _context.Division.Any(e => e.Id == id);
+            var division = _divisionManager.GetByIdAsync(id);
+            if (division!=null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

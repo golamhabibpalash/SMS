@@ -106,6 +106,7 @@ namespace SMS.App.ViewModels.Employees
         public List<SelectListItem> NationalityList { get; set; }
         public List<SelectListItem> EmpTypeList { get; set; }
         public List<SelectListItem> DesignationList { get; set; }
+        public List<SelectListItem> DivisionList { get; set; }
 
     }
 }

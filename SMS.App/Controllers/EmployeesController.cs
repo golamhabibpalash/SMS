@@ -27,8 +27,9 @@ namespace SchoolManagementSystem.Controllers
         private readonly INationalityManager _nationalityManager;
         private readonly IEmpTypeManager _empTypeManager;
         private readonly IDesignationManager _designationManager;
+        private readonly IDivisionManager _divisionManager;
 
-        public EmployeesController(IWebHostEnvironment host,  IEmployeeManager employeeManager, IGenderManager genderManager, IReligionManager religionManager, IMapper mapper, INationalityManager nationalityManager, IEmpTypeManager empTypeManager, IDesignationManager designationManager) 
+        public EmployeesController(IWebHostEnvironment host,  IEmployeeManager employeeManager, IGenderManager genderManager, IReligionManager religionManager, IMapper mapper, INationalityManager nationalityManager, IEmpTypeManager empTypeManager, IDesignationManager designationManager, IDivisionManager divisionManager) 
         {
             _host = host;
             _employeeManager = employeeManager;
@@ -38,6 +39,7 @@ namespace SchoolManagementSystem.Controllers
             _nationalityManager = nationalityManager;
             _empTypeManager = empTypeManager;
             _designationManager = designationManager;
+            _divisionManager = divisionManager;
         }
 
         
@@ -75,6 +77,7 @@ namespace SchoolManagementSystem.Controllers
             employee.NationalityList = new SelectList(await _nationalityManager.GetAllAsync(), "Id", "Name").ToList();
             employee.EmpTypeList = new SelectList(await _empTypeManager.GetAllAsync(), "Id", "Name").ToList();
             employee.DesignationList = new SelectList(await _designationManager.GetAllAsync(), "Id", "DesignationName").ToList();
+            employee.DivisionList = new SelectList(await _divisionManager.GetAllAsync(), "Id", "Name").ToList();
 
             //ViewData["PermanentDistrictId"] = new SelectList(_context.District, "Id", "Name");
             //ViewData["PermanentDivisionId"] = new SelectList(_context.Division, "Id", "Name");

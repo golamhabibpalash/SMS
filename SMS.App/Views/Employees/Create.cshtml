@@ -131,7 +131,7 @@
                 <div class="offset-2 col-md-10">
                     <div class="row">
                         <div class="col-md-4">
-                            <select asp-for="PresentDivisionId" class="form-control form-control-sm" asp-items="ViewBag.PresentDivisionId">
+                            <select asp-for="PresentDivisionId" class="form-control form-control-sm" asp-items="Model.DivisionList">
                                 <option selected disabled>Select Division</option>
                             </select>
                         </div>
@@ -151,7 +151,7 @@
             <div class="form-group row">
                 <label asp-for="PermanentAddress" class="control-label col-form-label col-md-2 text-right"></label>
                 <div class="col-md-10">
-                    <input asp-for="PermanentAddress" class="form-control form-control-sm rounded" />
+                    <input asp-for="PermanentAddress" class="form-control form-control-sm rounded" placeholder="Vill / Area / Road" />
                     <span asp-validation-for="PermanentAddress" class="text-danger"></span>
                 </div>
             </div>
@@ -159,7 +159,7 @@
                 <div class="col-md-10 offset-2">
                     <div class="row">
                         <div class="col-md-4">
-                            <select asp-for="PermanentDivisionId" class="form-control form-control-sm rounded" asp-items="ViewBag.PermanentDivisionId">
+                            <select asp-for="PermanentDivisionId" class="form-control form-control-sm rounded" asp-items="Model.DivisionList">
                                 <option selected disabled>Select Division</option>
                             </select>
                         </div>

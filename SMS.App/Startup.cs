@@ -106,6 +106,9 @@ namespace SchoolManagementSystem
             
             services.AddScoped<IReligionRepository, ReligionRepository>();
             services.AddScoped<IReligionManager, ReligionManager>();
+            
+            services.AddScoped<IDivisionRepository, DivisionRepository>();
+            services.AddScoped<IDivisionManager, DivisionManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

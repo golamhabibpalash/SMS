@@ -24,5 +24,7 @@ namespace SMS.Entities
 
         [Display(Name = "Edited At")]
         public DateTime EditedAt { get; set; }
+
+        public ICollection<Designation> Designations { get; set; }
     }
 }

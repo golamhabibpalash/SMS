@@ -204,6 +204,30 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 <script>
     $(document).ready(function () {
+        //Code for Designation name Load
+        $('#EmpTypeId').change(function () {
+            let id = $('#EmpTypeId option: selected').val();
+            $.ajax({
+                url: "/api/designations/GetByEmpType"+id,
+                dataType: 'JSON',
+                type: 'POST',
+                cache: false,
+                success: function (data) {
+                    $(divName).empty();
+                    var op = '<option disabled selected>Select Designation</option>';
+                    $(divName).append(op);
+                    $.each(data, function (i, obj) {
+                        var ob = '<option value="' + obj.id + '">' + obj.name + '</option>';
+                        $(divName).append(ob);
+                    });
+                },
+                error: function (err) {
+
+                }
+            });
+
+
+        });
         //Code for PresentDistrict Load
         $('#PresentDivisionId').change(function () {
             let divId = $('#PresentDivisionId option:selected').val();

@@ -16,6 +16,9 @@ namespace SMS.Entities
         [Display(Name ="Designation Type")]
         public int DesignationTypeId { get; set; }
 
+        [Display(Name ="Designation Type")]
+        public int? EmpTypeId { get; set; }
+
         [Display(Name = "Created By")]
         public string CreatedBy { get; set; }
 
@@ -29,5 +32,6 @@ namespace SMS.Entities
         public DateTime EditedAt { get; set; }
 
         public DesignationType DesignationType { get; set; }
+        public EmpType EmpType { get; set; }
     }
 }

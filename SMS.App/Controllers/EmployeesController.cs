@@ -30,7 +30,7 @@ namespace SMS.App.Controllers
         private readonly IDivisionManager _divisionManager;
         private readonly IBloodGroupManager _bloodGroupManager;
 
-        public EmployeesController(IWebHostEnvironment host,  IEmployeeManager employeeManager, IGenderManager genderManager, IReligionManager religionManager, IMapper mapper, INationalityManager nationalityManager, IEmpTypeManager empTypeManager, IDesignationManager designationManager, IDivisionManager divisionManager) 
+        public EmployeesController(IWebHostEnvironment host,  IEmployeeManager employeeManager, IGenderManager genderManager, IReligionManager religionManager, IMapper mapper, INationalityManager nationalityManager, IEmpTypeManager empTypeManager, IDesignationManager designationManager, IDivisionManager divisionManager, IBloodGroupManager bloodGroupManager) 
         {
             _host = host;
             _employeeManager = employeeManager;
@@ -41,6 +41,7 @@ namespace SMS.App.Controllers
             _empTypeManager = empTypeManager;
             _designationManager = designationManager;
             _divisionManager = divisionManager;
+            _bloodGroupManager = bloodGroupManager;
         }
 
         
@@ -79,6 +80,7 @@ namespace SMS.App.Controllers
             employee.EmpTypeList = new SelectList(await _empTypeManager.GetAllAsync(), "Id", "Name").ToList();
             employee.DesignationList = new SelectList(await _designationManager.GetAllAsync(), "Id", "DesignationName").ToList();
             employee.DivisionList = new SelectList(await _divisionManager.GetAllAsync(), "Id", "Name").ToList();
+            employee.BloodGroupList = new SelectList(await _bloodGroupManager.GetAllAsync(), "Id", "Name").ToList();
 
             //ViewData["PermanentDistrictId"] = new SelectList(_context.District, "Id", "Name");
             //ViewData["PermanentDivisionId"] = new SelectList(_context.Division, "Id", "Name");
@@ -92,7 +94,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,EmployeeName,DOB,Image,GenderId,ReligionId,NationalityId,NIDNo,NIDCard,Phone,Email,Nominee,NomineePhone,EmpTypeId,DesignationId,JoiningDate,PresentAddress,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddress,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,CreatedBy,CreatedAt,EditedBy,EditedAt,Status")] EmployeeCreateVM employeeVM, IFormFile empImage, IFormFile nidCard)
+        public async Task<IActionResult> Create([Bind("Id,EmployeeName,DOB,Image,GenderId,ReligionId,NationalityId,NIDNo,NIDCard,Phone,Email,Nominee,NomineePhone,EmpTypeId,DesignationId,JoiningDate,PresentAddress,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddress,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,CreatedBy,CreatedAt,EditedBy,EditedAt,Status,BloodGroupId")] EmployeeCreateVM employeeVM, IFormFile empImage, IFormFile nidCard)
         {
             string empPhoto = "";
             string nidPhoto = "";
@@ -187,7 +189,7 @@ namespace SMS.App.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,EmployeeName,DOB,Image,GenderId,ReligionId,NationalityId,NIDNo,NIDCard,Phone,Email,Nominee,NomineePhone,EmpTypeId,DesignationId,JoiningDate,PresentAddress,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddress,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,CreatedBy,CreatedAt,EditedBy,EditedAt,Status")] Employee employee)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,EmployeeName,DOB,Image,GenderId,ReligionId,NationalityId,NIDNo,NIDCard,Phone,Email,Nominee,NomineePhone,EmpTypeId,DesignationId,JoiningDate,PresentAddress,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddress,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,CreatedBy,CreatedAt,EditedBy,EditedAt,Status,BloodGroupId")] Employee employee)
         {
             string msg = "";
             if (id != employee.Id)

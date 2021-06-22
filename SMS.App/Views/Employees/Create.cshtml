@@ -113,10 +113,12 @@
             </div>
 
             <div class="form-group row">
-                <label asp-for="blood" class="control-label col-form-label col-md-2 text-right"></label>
+                <label asp-for="BloodGroupId" class="control-label col-form-label col-md-2 text-right"></label>
                 <div class="col-md-4">
-                    <input asp-for="JoiningDate" class="form-control form-control-sm rounded" />
-                    <span asp-validation-for="JoiningDate" class="text-danger"></span>
+                    <select asp-for="BloodGroupId" class="form-control form-control-sm rounded" asp-items="Model.BloodGroupList">
+                        <option selected disabled>Select Blood Group</option>
+                    </select>
+                    <span asp-validation-for="BloodGroupId" class="text-danger"></span>
                 </div>
 
                 <label asp-for="JoiningDate" class="control-label col-form-label col-md-2 text-right"></label>

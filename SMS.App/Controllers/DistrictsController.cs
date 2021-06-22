@@ -162,5 +162,11 @@ namespace SMS.App.Controllers
                 return false;
             }
         }
+
+        [Route("api/Districts/byDivision")]
+        public async Task<IReadOnlyCollection<District>> GetDistrictByDivisionId(int divId)
+        {
+            return await _districtManager.GetAllByDivId(divId);
+        }
     }
 }

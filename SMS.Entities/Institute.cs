@@ -7,10 +7,9 @@ using System.Threading.Tasks;
 
 namespace SMS.Entities
 {
-    [Keyless]
     public class Institute
     {
-        //public int Id { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public string ISO { get; set; }
         public string EIIN { get; set; }

@@ -22,7 +22,6 @@
                     <input type="file" name="empImage" class="rounded" />
                     <span asp-validation-for="Image" class="text-danger"></span>
                 </div>
-                <div class="col-md-4"></div>
             </div>
             <div class="form-group row">
                 <label asp-for="DOB" class="col-form-label col-md-2 text-right"></label>
@@ -58,7 +57,7 @@
             <div class="form-group row">
                 <label asp-for="NIDNo" class="control-label col-form-label col-md-2 text-right"></label>
                 <div class="col-md-4">
-                    <input asp-for="NIDNo" class="form-control form-control-sm rounded" />
+                    <input asp-for="NIDNo" class="form-control form-control-sm rounded" placeholder="Ex:123456789"/>
                     <span asp-validation-for="NIDNo" class="text-danger"></span>
                 </div>
 
@@ -73,13 +72,13 @@
             <div class="form-group row">
                 <label asp-for="Phone" class="control-label col-form-label col-md-2 text-right"></label>
                 <div class="col-md-4">
-                    <input asp-for="Phone" class="form-control form-control-sm rounded" />
+                    <input asp-for="Phone" class="form-control form-control-sm rounded" placeholder="Ex: 01725252525"/>
                     <span asp-validation-for="Phone" class="text-danger"></span>
                 </div>
 
                 <label asp-for="Email" class="control-label col-form-label col-md-2 text-right"></label>
                 <div class="col-md-4">
-                    <input asp-for="Email" class="form-control form-control-sm rounded" />
+                    <input asp-for="Email" class="form-control form-control-sm rounded" placeholder="Enter a valid email" />
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
             </div>
@@ -93,7 +92,7 @@
 
                 <label asp-for="NomineePhone" class="control-label col-form-label col-md-2 text-right"></label>
                 <div class="col-md-4">
-                    <input asp-for="NomineePhone" class="form-control form-control-sm rounded" />
+                    <input asp-for="NomineePhone" class="form-control form-control-sm rounded" placeholder="Ex: 01700000000" />
                     <span asp-validation-for="NomineePhone" class="text-danger"></span>
                 </div>
             </div>
@@ -131,7 +130,7 @@
                 <div class="offset-2 col-md-10">
                     <div class="row">
                         <div class="col-md-4">
-                            <select asp-for="PresentDivisionId" class="form-control form-control-sm" asp-items="Model.DivisionList">
+                            <select asp-for="PresentDivisionId" class="form-control form-control-sm rounded" asp-items="Model.DivisionList">
                                 <option selected disabled>Select Division</option>
                             </select>
                         </div>
@@ -179,7 +178,7 @@
 
             <div class="form-group form-check row">
                 <label class="form-check-label offset-2 col-form-label">
-                    <input class="form-check-input" asp-for="Status" /> @Html.DisplayNameFor(model => model.Status)
+                    <input class="" asp-for="Status" /> @Html.DisplayNameFor(model => model.Status)
                 </label>
             </div>
             <div class="form-group row">
@@ -194,4 +193,102 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script>
+    $(document).ready(function () {
+        //Code for PresentDistrict Load
+        $('#PresentDivisionId').change(function () {
+            let divId = $('#PresentDivisionId option:selected').val();
+
+            $.ajax({
+                url: "/api/districts/bydivision?divId=" + divId,
+                dataType: 'JSON',
+                type: 'POST',
+                cache: false,
+                success: function (data) {
+                    $('#PresentDistrictId').empty();
+                    var op = '<option disabled selected>Select district Name</option>';
+                    $('#PresentDistrictId').append(op);
+                    $.each(data, function (i, obj) {
+                        var ob = '<option value="' + obj.id + '">' + obj.name + '</option>';
+                        $('#PresentDistrictId').append(ob);
+                    });
+                },
+                error: function (err) {
+
+                }
+            });
+        });
+
+        //Code for PresentUpazila Load
+        $('#PresentDistrictId').change(function () {
+            let disId = $('#PresentDistrictId option:selected').val();
+            $.ajax({
+                url: "/api/upazilas/byDistrict?id=" + disId,
+                dataType: 'JSON',
+                type: 'POST',
+                cache: false,
+                success: function (data) {
+                    $('#PresentUpazilaId').empty();
+                    var option = '<option disabled selected>Select Upazila Name</option>';
+                    $('#PresentUpazilaId').append(option);
+                    $.each(data, function (i, obj) {
+                        var ob = '<option value="' + obj.id + '">' + obj.name + '</option>';
+                        $('#PresentUpazilaId').append(ob);
+                    });
+                },
+                error: function (err) {
+
+                }
+            });
+        });
+
+        //Code for PermanentDistrict Load
+        $('#PermanentDivisionId').change(function () {
+            let divId = $('#PermanentDivisionId option:selected').val();
+
+            $.ajax({
+                url: "/api/districts/bydivision?divId=" + divId,
+                dataType: 'JSON',
+                type: 'POST',
+                cache: false,
+                success: function (data) {
+                    $('#PermanentDistrictId').empty();
+                    var option = '<option disabled selected>Select district Name</option>';
+                    $('#PermanentDistrictId').append(option);
+                    $.each(data, function (i, obj) {
+                        var ob = '<option value="' + obj.id + '">' + obj.name + '</option>';
+                        $('#PermanentDistrictId').append(ob);
+                    });
+                },
+                error: function (err) {
+
+                }
+            });
+        });
+
+        //Code for PresentUpazila Load
+        $('#PermanentDistrictId').change(function () {
+            let disId = $('#PermanentDistrictId option:selected').val();
+
+            $.ajax({
+                url: "/api/upazilas/byDistrict?id=" + disId,
+                dataType: 'JSON',
+                type: 'POST',
+                cache: false,
+                success: function (data) {
+                    $('#PermanentUpazilaId').empty();
+                    var option = '<option disabled selected>Select Upazila Name</option>';
+                    $('#PermanentUpazilaId').append(option);
+                    $.each(data, function (i, obj) {
+                        var ob = '<option value="' + obj.id + '">' + obj.name + '</option>';
+                        $('#PermanentUpazilaId').append(ob);
+                    });
+                },
+                error: function (err) {
+
+                }
+            });
+        });
+    });
+</script>
 }

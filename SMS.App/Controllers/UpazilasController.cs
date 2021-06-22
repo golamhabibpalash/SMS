@@ -5,23 +5,27 @@ using Microsoft.EntityFrameworkCore;
 using SMS.Entities;
 using System.Linq;
 using System.Threading.Tasks;
+using SMS.BLL.Contracts;
+using System.Collections.Generic;
 
 namespace SMS.App.Controllers
 {
     public class UpazilasController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IUpazilaManager _upazilaManager;
+        private readonly IDistrictManager _districtManager;
 
-        public UpazilasController(ApplicationDbContext context)
+        public UpazilasController(IUpazilaManager upazilaManager, IDistrictManager districtManager)
         {
-            _context = context;
+            _upazilaManager = upazilaManager;
+            _districtManager = districtManager;
         }
 
         // GET: Upazilas
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Upazila.Include(u => u.District);
-            return View(await applicationDbContext.ToListAsync());
+
+            return View(await _upazilaManager.GetAllAsync());
         }
 
         // GET: Upazilas/Details/5
@@ -32,9 +36,7 @@ namespace SMS.App.Controllers
                 return NotFound();
             }
 
-            var Upazila = await _context.Upazila
-                .Include(u => u.District)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var Upazila = await _upazilaManager.GetByIdAsync((int)id);
             if (Upazila == null)
             {
                 return NotFound();
@@ -44,9 +46,9 @@ namespace SMS.App.Controllers
         }
 
         // GET: Upazilas/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["DistrictId"] = new SelectList(_context.District, "Id", "Id");
+            ViewData["DistrictId"] = new SelectList(await _districtManager.GetAllAsync(), "Id", "Name");
             return View();
         }
 
@@ -59,11 +61,10 @@ namespace SMS.App.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(Upazila);
-                await _context.SaveChangesAsync();
+                await _upazilaManager.AddAsync(Upazila);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DistrictId"] = new SelectList(_context.District, "Id", "Id", Upazila.DistrictId);
+            ViewData["DistrictId"] = new SelectList(await _districtManager.GetAllAsync(), "Id", "Name", Upazila.DistrictId);
             return View(Upazila);
         }
 
@@ -75,12 +76,12 @@ namespace SMS.App.Controllers
                 return NotFound();
             }
 
-            var Upazila = await _context.Upazila.FindAsync(id);
+            var Upazila = await _upazilaManager.GetByIdAsync((int)id);
             if (Upazila == null)
             {
                 return NotFound();
             }
-            ViewData["DistrictId"] = new SelectList(_context.District, "Id", "Id", Upazila.DistrictId);
+            ViewData["DistrictId"] = new SelectList(await _districtManager.GetAllAsync(), "Id", "Name", Upazila.DistrictId);
             return View(Upazila);
         }
 
@@ -100,8 +101,7 @@ namespace SMS.App.Controllers
             {
                 try
                 {
-                    _context.Update(Upazila);
-                    await _context.SaveChangesAsync();
+                    await _upazilaManager.UpdateAsync(Upazila);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -116,7 +116,7 @@ namespace SMS.App.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DistrictId"] = new SelectList(_context.District, "Id", "Id", Upazila.DistrictId);
+            ViewData["DistrictId"] = new SelectList(await _districtManager.GetAllAsync(), "Id", "Name", Upazila.DistrictId);
             return View(Upazila);
         }
 
@@ -128,9 +128,7 @@ namespace SMS.App.Controllers
                 return NotFound();
             }
 
-            var Upazila = await _context.Upazila
-                .Include(u => u.District)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var Upazila = await _upazilaManager.GetByIdAsync((int)id);
             if (Upazila == null)
             {
                 return NotFound();
@@ -144,15 +142,29 @@ namespace SMS.App.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var Upazila = await _context.Upazila.FindAsync(id);
-            _context.Upazila.Remove(Upazila);
-            await _context.SaveChangesAsync();
+            var Upazila = await _upazilaManager.GetByIdAsync(id);
+
+            await _upazilaManager.RemoveAsync(Upazila);
             return RedirectToAction(nameof(Index));
         }
 
         private bool UpazilaExists(int id)
         {
-            return _context.Upazila.Any(e => e.Id == id);
+            var Upazila = _upazilaManager.GetByIdAsync((int)id);
+            if (Upazila != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        [Route("api/upazilas/byDistrict")]
+        public async Task<IReadOnlyCollection<Upazila>> GetByDistrictId(int id)
+        {
+            return await _upazilaManager.GetByDistrictId(id);
         }
     }
 }

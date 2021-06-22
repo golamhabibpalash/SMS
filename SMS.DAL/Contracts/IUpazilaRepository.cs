@@ -10,5 +10,6 @@ namespace SMS.DAL.Contracts
 {
     public interface IUpazilaRepository : IRepository<Upazila>
     {
+        Task<IReadOnlyCollection<Upazila>> GetByDistrictId(int id);
     }
 }

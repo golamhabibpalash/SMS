@@ -1,4 +1,5 @@
-﻿using SMS.DAL.Contracts;
+﻿using Microsoft.EntityFrameworkCore;
+using SMS.DAL.Contracts;
 using SMS.DAL.Repositories.Base;
 using SMS.DB;
 using SMS.Entities;
@@ -15,6 +16,11 @@ namespace SMS.DAL.Repositories
         public UpazilaRepository(ApplicationDbContext db) : base(db)
         {
 
+        }
+
+        public async Task<IReadOnlyCollection<Upazila>> GetByDistrictId(int id)
+        {
+            return await _context.Upazila.Where(u => u.DistrictId == id).ToListAsync();
         }
     }
 }

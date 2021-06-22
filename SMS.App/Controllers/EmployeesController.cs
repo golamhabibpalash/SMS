@@ -93,27 +93,44 @@ namespace SMS.App.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,EmployeeName,DOB,Image,GenderId,ReligionId,NationalityId,NIDNo,NIDCard,Phone,Email,Nominee,NomineePhone,EmpTypeId,DesignationId,JoiningDate,PresentAddress,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddress,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,CreatedBy,CreatedAt,EditedBy,EditedAt,Status")] EmployeeCreateVM employeeVM, IFormFile empImage, IFormFile nidCard)
         {
+            string empPhoto = "";
+            string nidPhoto = "";
+
             if (empImage != null)
             {
                 string root = _host.WebRootPath;
-                string folder = "~/Images/Employee";
+                string folder = "Images/Employee/photo";
                 string fileExtension = Path.GetExtension(empImage.FileName);
-                string fileName = "e_" + DateTime.Today.ToString("yyyy") + "_" + employeeVM.NIDNo;
-                string pathCombine = Path.Combine(root, folder, fileName);
-
+                empPhoto = "e_" + DateTime.Today.ToString("yyyy") + "_" + employeeVM.NIDNo+fileExtension;
+                string pathCombine = Path.Combine(root, folder, empPhoto);
+                using (var stream = new FileStream(pathCombine, FileMode.Create))
+                {
+                    await empImage.CopyToAsync(stream);
+                }
             }
 
             if (nidCard != null)
             {
+                string root = _host.WebRootPath;
+                string folder = "Images/Employee/NID";
 
+                string fileExtension = Path.GetExtension(nidCard.FileName);
+                nidPhoto = "e_" + employeeVM.NIDNo + fileExtension;
+                string pathCombine = Path.Combine(root, folder, nidPhoto);
+                using (var stream = new FileStream(pathCombine, FileMode.Create))
+                {
+                    await nidCard.CopyToAsync(stream);
+                }
             }
 
             var employee = _mapper.Map<Employee>(employeeVM);
 
             if (ModelState.IsValid)
             {
-                
-
+                employee.CreatedBy = HttpContext.Session.GetString("User");
+                employee.CreatedAt = DateTime.Now;
+                employee.Image = empPhoto;
+                employee.NIDCard = nidPhoto;
                 bool isSaved =await _employeeManager.AddAsync(employee);
                 if (isSaved)
                 {

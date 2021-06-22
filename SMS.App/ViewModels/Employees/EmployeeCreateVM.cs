@@ -90,10 +90,10 @@ namespace SMS.App.ViewModels.Employees
         [Display(Name = "Created At")]
         public DateTime CreatedAt { get; set; }
 
-        [Display(Name = "Edited By")]
+        [Display(Name = "Updated By")]
         public string EditedBy { get; set; }
 
-        [Display(Name = "Edited At")]
+        [Display(Name = "Updated At")]
         public DateTime EditedAt { get; set; }
 
         [Display(Name = "Active/Inactive")]

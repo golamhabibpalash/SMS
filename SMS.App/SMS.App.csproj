@@ -29,8 +29,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\Images\Employee\" />
+    <Folder Include="wwwroot\Images\Employee\photo\" />
+    <Folder Include="wwwroot\Images\Employee\NID\" />
     <Folder Include="wwwroot\Images\Student\" />
+    <Folder Include="wwwroot\js\Upazila\" />
   </ItemGroup>
 
   <ItemGroup>

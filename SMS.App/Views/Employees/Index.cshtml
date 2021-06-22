@@ -39,7 +39,7 @@
         <tr>
             <td>@(++sl).</td>
             <td>
-                @Html.DisplayFor(modelItem => item.Image)
+                <img src="~/Images/Employee/photo/@item.Image" alt="Alternate Text"  style="width:80px;"/>
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.EmployeeName)

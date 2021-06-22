@@ -1,4 +1,5 @@
-﻿using SMS.DAL.Contracts;
+﻿using Microsoft.EntityFrameworkCore;
+using SMS.DAL.Contracts;
 using SMS.DAL.Repositories.Base;
 using SMS.DB;
 using SMS.Entities;
@@ -15,6 +16,11 @@ namespace SMS.DAL.Repositories
         public DistrictRepository(ApplicationDbContext db) : base(db)
         {
 
+        }
+
+        public async Task<IReadOnlyCollection<District>> GetAllByDivId(int divId)
+        {
+            return await _context.District.Where(c => c.DivisionId == divId).ToListAsync();
         }
     }
 }

@@ -10,5 +10,6 @@ namespace SMS.BLL.Contracts
 {
     public interface IDistrictManager : IManager<District>
     {
+        Task<IReadOnlyCollection<District>> GetAllByDivId(int id);
     }
 }

@@ -10,5 +10,6 @@ namespace SMS.BLL.Contracts
 {
     public interface IUpazilaManager : IManager<Upazila>
     {
+        Task<IReadOnlyCollection<Upazila>> GetByDistrictId(int id);
     }
 }

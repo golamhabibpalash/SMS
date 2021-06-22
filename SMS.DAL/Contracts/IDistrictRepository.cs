@@ -10,5 +10,6 @@ namespace SMS.DAL.Contracts
 {
     public interface IDistrictRepository : IRepository<District>
     {
+        Task<IReadOnlyCollection<District>> GetAllByDivId(int id);
     }
 }

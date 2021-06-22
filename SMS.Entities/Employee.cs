@@ -67,7 +67,7 @@ namespace SMS.Entities
         public int PresentDistrictId { get; set; }
 
         [Display(Name = "Division")]
-        public int PresentDivisionId { get; set; }
+        public int? PresentDivisionId { get; set; }
 
         [Display(Name = "Permanent Address")]
         public string PermanentAddress { get; set; }
@@ -98,7 +98,7 @@ namespace SMS.Entities
         [Display(Name ="Active/Inactive")]
         public bool Status { get; set; }
 
-        [ForeignKey("PresentDivisiontId")]
+        [ForeignKey("PresentDivisionId")]
         public Division PresentDivision { get; set; }
 
         [ForeignKey("PresentDistrictId")]
@@ -107,7 +107,7 @@ namespace SMS.Entities
         [ForeignKey("PresentUpazilaId")]
         public Upazila PresentUpazila { get; set; }
 
-        [ForeignKey("PermanentDivisiontId")]
+        [ForeignKey("PermanentDivisionId")]
         public Division PermanentDivision { get; set; }
 
         [ForeignKey("PermanentDistrictId")]

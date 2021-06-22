@@ -12,9 +12,15 @@ namespace SMS.BLL.Managers
 {
     public class UpazilaManager : Manager<Upazila>, IUpazilaManager
     {
+        private readonly IUpazilaRepository _upazilaRepository;
         public UpazilaManager(IUpazilaRepository upazilaRepository) : base(upazilaRepository)
         {
+            _upazilaRepository = upazilaRepository;
+        }
 
+        public async Task<IReadOnlyCollection<Upazila>> GetByDistrictId(int id)
+        {
+            return await _upazilaRepository.GetByDistrictId(id);
         }
     }
 }

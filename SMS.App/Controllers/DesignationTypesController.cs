@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SMS.BLL.Contracts;
 
-namespace SchoolManagementSystem.Controllers
+namespace SMS.App.Controllers
 {
     public class DesignationTypesController : Controller
     {

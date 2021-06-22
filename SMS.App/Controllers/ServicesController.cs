@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SchoolManagementSystem.Controllers
+namespace SMS.App.Controllers
 {
     public class ServicesController : Controller
     {

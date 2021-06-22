@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SMS.Entities;
 
-namespace SchoolManagementSystem.Controllers
+namespace SMS.App.Controllers
 {
     public class RolesController : Controller
     {

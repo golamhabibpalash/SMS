@@ -10,7 +10,7 @@ using SMS.DB;
 using SMS.Entities;
 using SMS.App.ViewModels;
 
-namespace SchoolManagementSystem.Controllers
+namespace SMS.App.Controllers
 {
     public class StudentPaymentsController : Controller
     {

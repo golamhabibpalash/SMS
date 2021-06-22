@@ -109,6 +109,12 @@ namespace SchoolManagementSystem
             
             services.AddScoped<IDivisionRepository, DivisionRepository>();
             services.AddScoped<IDivisionManager, DivisionManager>();
+            
+            services.AddScoped<IDistrictRepository, DistrictRepository>();
+            services.AddScoped<IDistrictManager, DistrictManager>();
+            
+            services.AddScoped<IUpazilaRepository, UpazilaRepository>();
+            services.AddScoped<IUpazilaManager, UpazilaManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

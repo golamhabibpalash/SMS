@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using SMS.Entities;
 using System.Diagnostics;
 
-namespace SchoolManagementSystem.Controllers
+namespace SMS.App.Controllers
 {
     public class HomeController : Controller
     {

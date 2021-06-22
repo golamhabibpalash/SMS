@@ -11,7 +11,7 @@ using SMS.BLL.Contracts;
 using SMS.DB;
 using SMS.Entities;
 
-namespace SchoolManagementSystem.Controllers
+namespace SMS.App.Controllers
 {
     
     public class AcademicSessionsController : Controller

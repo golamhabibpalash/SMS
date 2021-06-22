@@ -9,12 +9,12 @@ using Microsoft.EntityFrameworkCore;
 using SMS.DB;
 using SMS.Entities;
 
-namespace SchoolManagementSystem.Controllers
+namespace SMS.App.Controllers
 {
-    [Authorize]
     public class DistrictsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly I
 
         public DistrictsController(ApplicationDbContext context)
         {

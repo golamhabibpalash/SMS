@@ -147,6 +147,15 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="offset-md-2">
+                    ( 
+                    <label class="d-inline-block" for="sameAsPresentAddress">
+                        <input class="align-middle" type="checkbox" id="sameAsPresentAddress" /> 
+                        <span class="align-middle">Same as present address</span>
+                    </label> )
+                </div>
+            </div>
             <div class="form-group row">
                 <label asp-for="PermanentAddress" class="control-label col-form-label col-md-2 text-right"></label>
                 <div class="col-md-10">
@@ -198,97 +207,116 @@
         //Code for PresentDistrict Load
         $('#PresentDivisionId').change(function () {
             let divId = $('#PresentDivisionId option:selected').val();
-
-            $.ajax({
-                url: "/api/districts/bydivision?divId=" + divId,
-                dataType: 'JSON',
-                type: 'POST',
-                cache: false,
-                success: function (data) {
-                    $('#PresentDistrictId').empty();
-                    var op = '<option disabled selected>Select district Name</option>';
-                    $('#PresentDistrictId').append(op);
-                    $.each(data, function (i, obj) {
-                        var ob = '<option value="' + obj.id + '">' + obj.name + '</option>';
-                        $('#PresentDistrictId').append(ob);
-                    });
-                },
-                error: function (err) {
-
-                }
-            });
+            let disName = '#PresentDistrictId';
+            GetDistrictByDivisionId(divId, disName);
         });
 
         //Code for PresentUpazila Load
         $('#PresentDistrictId').change(function () {
             let disId = $('#PresentDistrictId option:selected').val();
-            $.ajax({
-                url: "/api/upazilas/byDistrict?id=" + disId,
-                dataType: 'JSON',
-                type: 'POST',
-                cache: false,
-                success: function (data) {
-                    $('#PresentUpazilaId').empty();
-                    var option = '<option disabled selected>Select Upazila Name</option>';
-                    $('#PresentUpazilaId').append(option);
-                    $.each(data, function (i, obj) {
-                        var ob = '<option value="' + obj.id + '">' + obj.name + '</option>';
-                        $('#PresentUpazilaId').append(ob);
-                    });
-                },
-                error: function (err) {
-
-                }
-            });
+            let upName = '#PresentUpazilaId';
+            GetUpazilaByDistrictId(disId, upName);
         });
 
         //Code for PermanentDistrict Load
         $('#PermanentDivisionId').change(function () {
             let divId = $('#PermanentDivisionId option:selected').val();
-
-            $.ajax({
-                url: "/api/districts/bydivision?divId=" + divId,
-                dataType: 'JSON',
-                type: 'POST',
-                cache: false,
-                success: function (data) {
-                    $('#PermanentDistrictId').empty();
-                    var option = '<option disabled selected>Select district Name</option>';
-                    $('#PermanentDistrictId').append(option);
-                    $.each(data, function (i, obj) {
-                        var ob = '<option value="' + obj.id + '">' + obj.name + '</option>';
-                        $('#PermanentDistrictId').append(ob);
-                    });
-                },
-                error: function (err) {
-
-                }
-            });
+            let disName = '#PermanentDistrictId';
+            GetDistrictByDivisionId(divId, disName);
         });
 
         //Code for PresentUpazila Load
         $('#PermanentDistrictId').change(function () {
             let disId = $('#PermanentDistrictId option:selected').val();
+            let upName = '#PermanentUpazilaId';
+            GetUpazilaByDistrictId(disId,upName);
+        });
 
-            $.ajax({
-                url: "/api/upazilas/byDistrict?id=" + disId,
-                dataType: 'JSON',
-                type: 'POST',
-                cache: false,
-                success: function (data) {
-                    $('#PermanentUpazilaId').empty();
-                    var option = '<option disabled selected>Select Upazila Name</option>';
-                    $('#PermanentUpazilaId').append(option);
-                    $.each(data, function (i, obj) {
-                        var ob = '<option value="' + obj.id + '">' + obj.name + '</option>';
-                        $('#PermanentUpazilaId').append(ob);
-                    });
-                },
-                error: function (err) {
+        //Code for Same as Present Address
+        $('#sameAsPresentAddress').change(function () {
+            if ($(this).prop("checked") == true) {
+                let presentAddress = $('#PresentAddress').val();
+                $('#PermanentAddress').val(presentAddress);
 
-                }
-            });
+                var dv = "<option value=" + $("#PresentDivisionId").val() + ">" + $("#PresentDivisionId option:selected").text() + "</option>";
+                $("#PermanentDivisionId").html(dv);
+
+                var ds = "<option value=" + $("#PresentDistrictId").val() + ">" + $("#PresentDistrictId option:selected").text() + "</option>";
+                $("#PermanentDistrictId").html(ds);
+
+                var up = "<option value=" + $("#PresentUpazilaId").val() + ">" + $("#PresentUpazilaId option:selected").text() + "</option>";
+                $("#PermanentUpazilaId").html(up);
+            }
+            else if ($(this).prop("checked") == false) {
+                $('#PermanentAddress').val("");
+
+                let divName = '#PermanentDivisionId';
+                GetDivisionList(divName)
+                $('#PermanentDistrictId').html('<option disabled selected>Select District Name</option>');
+                $('#PermanentUpazilaId').html('<option disabled selected>Select Upazila Name</option>');
+            }
         });
     });
+
+    function GetDivisionList(divName) {
+        $.ajax({
+            url: "/api/divisions/allDivisions",
+            dataType: 'JSON',
+            type: 'POST',
+            cache: false,
+            success: function (data) {
+                $(divName).empty();
+                var op = '<option disabled selected>Select division Name</option>';
+                $(divName).append(op);
+                $.each(data, function (i, obj) {
+                    var ob = '<option value="' + obj.id + '">' + obj.name + '</option>';
+                    $(divName).append(ob);
+                });
+            },
+            error: function (err) {
+
+            }
+        });
+    }
+    function GetDistrictByDivisionId(divId,disName) {
+        $.ajax({
+            url: "/api/districts/bydivision?divId=" + divId,
+            dataType: 'JSON',
+            type: 'POST',
+            cache: false,
+            success: function (data) {
+                $(disName).empty();
+                var op = '<option disabled selected>Select district Name</option>';
+                $(disName).append(op);
+                $.each(data, function (i, obj) {
+                    var ob = '<option value="' + obj.id + '">' + obj.name + '</option>';
+                    $(disName).append(ob);
+                });
+            },
+            error: function (err) {
+
+            }
+        });
+    }
+    function GetUpazilaByDistrictId(disId, upName) {
+        $.ajax({
+            url: "/api/upazilas/byDistrict?id=" + disId,
+            dataType: 'JSON',
+            type: 'POST',
+            cache: false,
+            success: function (data) {
+                $(upName).empty();
+                var option = '<option disabled selected>Select Upazila Name</option>';
+                $(upName).append(option);
+                $.each(data, function (i, obj) {
+                    var ob = '<option value="' + obj.id + '">' + obj.name + '</option>';
+                    $(upName).append(ob);
+                });
+            },
+            error: function (err) {
+
+            }
+        });
+    }
 </script>
 }

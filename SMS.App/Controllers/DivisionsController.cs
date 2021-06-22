@@ -155,5 +155,11 @@ namespace SMS.App.Controllers
                 return false;
             }
         }
+
+        [Route("/api/divisions/allDivisions")]
+        public async Task<IReadOnlyCollection<Division>> allDivisions()
+        {
+            return await _divisionManager.GetAllAsync();
+        }
     }
 }

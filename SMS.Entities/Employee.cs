@@ -18,6 +18,8 @@ namespace SMS.Entities
         [Required, Display(Name ="Date of Birth")]
         public DateTime DOB { get; set; }
 
+        public int BloodGroupId { get; set; }
+
         public string Image { get; set; }
 
         [Display(Name ="Gender")]
@@ -121,5 +123,6 @@ namespace SMS.Entities
         public Nationality Nationality { get; set; }
         public EmpType EmpType { get; set; }
         public Designation Designation { get; set; }
+        public BloodGroup BloodGroup { get; set; }
     }
 }

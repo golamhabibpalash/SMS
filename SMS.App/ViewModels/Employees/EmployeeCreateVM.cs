@@ -99,6 +99,9 @@ namespace SMS.App.ViewModels.Employees
         [Display(Name = "Active/Inactive")]
         public bool Status { get; set; }
 
+        [Display(Name = "Blood Group")]
+        public int BloodGroupId { get; set; }
+
 
 
         public List<SelectListItem> GenderList { get; set; }
@@ -107,6 +110,7 @@ namespace SMS.App.ViewModels.Employees
         public List<SelectListItem> EmpTypeList { get; set; }
         public List<SelectListItem> DesignationList { get; set; }
         public List<SelectListItem> DivisionList { get; set; }
+        public List<SelectListItem> BloodGroupList { get; set; }
 
     }
 }

@@ -12,13 +12,19 @@ namespace SMS.BLL.Managers
 {
     public class DesignationManager : Manager<Designation>, IDesignationManager
     {
+        IDesignationRepository _designationRepository;
         public DesignationManager(IDesignationRepository designationRepository): base(designationRepository)
         {
-
+            _designationRepository = designationRepository;
         }
         public override Task<IReadOnlyCollection<Designation>> GetAllAsync()
         {
             return _repository.GetAllAsync();
+        }
+
+        public async Task<IReadOnlyCollection<Designation>> GetByEmpType(int id)
+        {
+            return await _designationRepository.GetByEmpType(id);
         }
     }
 }

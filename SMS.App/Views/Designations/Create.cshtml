@@ -12,17 +12,26 @@
             <div class="form-group row">
                 <label asp-for="DesignationName" class="control-label col-form-label col-md-2 text-right"></label>
                 <div class="col-md-10">
-                    <input asp-for="DesignationName" class="form-control" />
+                    <input asp-for="DesignationName" class="form-control rounded" />
                     <span asp-validation-for="DesignationName" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
                 <label asp-for="DesignationTypeId" class="control-label col-form-label col-md-2 text-right"></label>
                 <div class="col-md-10">
-                    <select asp-for="DesignationTypeId" asp-items="@ViewBag.DesignationTypeList" class="form-control">
-                        <option selected disabled>Select Type</option>
+                    <select asp-for="DesignationTypeId" asp-items="@ViewBag.DesignationTypeList" class="form-control rounded">
+                        <option selected disabled>Select Designation Category</option>
                     </select>
                     <span asp-validation-for="DesignationTypeId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label asp-for="EmpTypeId" class="control-label col-form-label col-md-2 text-right"></label>
+                <div class="col-md-10">
+                    <select asp-for="EmpTypeId" asp-items="@ViewBag.EmpTypeList" class="form-control rounded">
+                        <option selected disabled>Select Employee Type</option>
+                    </select>
+                    <span asp-validation-for="EmpTypeId" class="text-danger"></span>
                 </div>
             </div>
 

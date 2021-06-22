@@ -16,11 +16,13 @@ namespace SMS.App.Controllers
     {
         private readonly IDesignationManager _designatinManager;
         private readonly IDesignationTypeManager _designationTypeManager;
+        private readonly IEmpTypeManager _empTypeManager;
 
-        public DesignationsController(IDesignationManager designatinManager, IDesignationTypeManager designationTypeManager)
+        public DesignationsController(IDesignationManager designatinManager, IDesignationTypeManager designationTypeManager, IEmpTypeManager empTypeManager)
         {
             _designatinManager = designatinManager;
             _designationTypeManager = designationTypeManager;
+            _empTypeManager = empTypeManager;
         }
 
         // GET: Designations
@@ -50,13 +52,14 @@ namespace SMS.App.Controllers
         public async Task<IActionResult> Create()
         {
             ViewData["DesignationTypeList"] = new SelectList(await _designationTypeManager.GetAllAsync(), "Id", "DesignationTypeName");
+            ViewData["EmpTypeList"] = new SelectList(await _empTypeManager.GetAllAsync(), "Id", "Name");
             return View();
         }
 
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,DesignationName,DesignationTypeId,CreatedBy,CreatedAt,EditedBy,EditedAt")] Designation designation)
+        public async Task<IActionResult> Create([Bind("Id,DesignationName,DesignationTypeId,EmpTypeId,CreatedBy,CreatedAt,EditedBy,EditedAt")] Designation designation)
         {
             
             if (ModelState.IsValid)
@@ -69,6 +72,7 @@ namespace SMS.App.Controllers
             }
             
             ViewData["DesignationTypeList"] = new SelectList(await _designationTypeManager.GetAllAsync(), "Id", "DesignationTypeName", designation.DesignationTypeId);
+            ViewData["EmpTypeList"] = new SelectList(await _empTypeManager.GetAllAsync(), "Id", "Name",designation.EmpTypeId);
             return View(designation);
         }
 
@@ -86,7 +90,8 @@ namespace SMS.App.Controllers
                 return NotFound();
             }
 
-            ViewData["DesignationTypeList"] = new SelectList(await _designationTypeManager.GetAllAsync(), "Id", "DesignationTypeName");
+            ViewData["DesignationTypeList"] = new SelectList(await _designationTypeManager.GetAllAsync(), "Id", "DesignationTypeName",designation.DesignationTypeId);
+            ViewData["EmpTypeList"] = new SelectList(await _empTypeManager.GetAllAsync(), "Id", "Name", designation.EmpTypeId);
             return View(designation);
         }
 
@@ -95,7 +100,7 @@ namespace SMS.App.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,DesignationName,DesignationTypeId,CreatedBy,CreatedAt,EditedBy,EditedAt")] Designation designation)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,DesignationName,DesignationTypeId,EmpTypeId,CreatedBy,CreatedAt,EditedBy,EditedAt")] Designation designation)
         {
             if (id != designation.Id)
             {
@@ -128,6 +133,7 @@ namespace SMS.App.Controllers
             }
 
             ViewData["DesignationTypeList"] = new SelectList(await _designationTypeManager.GetAllAsync(), "Id", "DesignationTypeName", designation.DesignationTypeId);
+            ViewData["EmpTypeList"] = new SelectList(await _empTypeManager.GetAllAsync(), "Id", "Name", designation.EmpTypeId);
             return View(designation);
         }
 
@@ -170,6 +176,12 @@ namespace SMS.App.Controllers
             {
                 return false;
             }
+        }
+
+        [Route("/api/designations/GetByEmpType")]
+        public async Task<IReadOnlyCollection<Designation>> GetByEmpType(int id)
+        {
+            return await _designatinManager.GetByEmpType(id);
         }
     }
 }

@@ -28,6 +28,7 @@ namespace SMS.App.Controllers
         private readonly IEmpTypeManager _empTypeManager;
         private readonly IDesignationManager _designationManager;
         private readonly IDivisionManager _divisionManager;
+        private readonly IBloodGroupManager _bloodGroupManager;
 
         public EmployeesController(IWebHostEnvironment host,  IEmployeeManager employeeManager, IGenderManager genderManager, IReligionManager religionManager, IMapper mapper, INationalityManager nationalityManager, IEmpTypeManager empTypeManager, IDesignationManager designationManager, IDivisionManager divisionManager) 
         {

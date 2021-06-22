@@ -13,10 +13,10 @@ namespace SMS.Entities
         [Display(Name = "Designation")]
         public string DesignationName { get; set; }
 
-        [Display(Name ="Designation Type")]
+        [Display(Name ="Designation Category")]
         public int DesignationTypeId { get; set; }
 
-        [Display(Name ="Designation Type")]
+        [Display(Name ="Employee Type")]
         public int? EmpTypeId { get; set; }
 
         [Display(Name = "Created By")]

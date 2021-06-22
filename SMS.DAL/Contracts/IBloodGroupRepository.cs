@@ -8,8 +8,7 @@ using System.Threading.Tasks;
 
 namespace SMS.DAL.Contracts
 {
-    public interface IDesignationRepository : IRepository<Designation>
+    public interface IBloodGroupRepository : IRepository<BloodGroup>
     {
-        Task<IReadOnlyCollection<Designation>> GetByEmpType(int id);
     }
 }

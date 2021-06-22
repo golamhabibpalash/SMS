@@ -19,8 +19,16 @@ namespace SMS.DAL.Repositories
         }
         public override async Task<IReadOnlyCollection<Designation>> GetAllAsync()
         {
-            return await _context.Designation.Include(d => d.DesignationType).ToListAsync();
+            return await _context.Designation
+                .Include(d => d.DesignationType)
+                .Include(d => d.EmpType)
+                .ToListAsync();
             
+        }
+
+        public async Task<IReadOnlyCollection<Designation>> GetByEmpType(int id)
+        {
+            return await _context.Designation.Where(d => d.EmpTypeId == id).ToListAsync();
         }
     }
 }

@@ -8,8 +8,7 @@ using System.Threading.Tasks;
 
 namespace SMS.BLL.Contracts
 {
-    public interface IDesignationManager : IManager<Designation>
+    public interface IBloodGroupManager : IManager<BloodGroup>
     {
-        Task<IReadOnlyCollection<Designation>> GetByEmpType(int id);
     }
 }

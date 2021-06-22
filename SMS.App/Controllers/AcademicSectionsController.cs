@@ -13,10 +13,9 @@ namespace SMS.App.Controllers
 {
     public class AcademicSectionsController : Controller
     {
-        //private readonly ApplicationDbContext _context;
         private readonly IAcademicSectionManager _academicSectionManager;
         private readonly IAcademicClassManager _academicClassManager;
-        public AcademicSectionsController(ApplicationDbContext context, IAcademicSectionManager academicSectionManager, IAcademicClassManager academicClassManager)
+        public AcademicSectionsController(IAcademicSectionManager academicSectionManager, IAcademicClassManager academicClassManager)
         {
             _academicSectionManager = academicSectionManager;
             _academicClassManager = academicClassManager;

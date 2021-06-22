@@ -16,7 +16,6 @@ namespace SMS.App.Controllers
     
     public class AcademicSessionsController : Controller
     {
-        //private readonly ApplicationDbContext _context;
         private readonly IAcademicSessionManager _sessionManager;
 
         public AcademicSessionsController(IAcademicSessionManager sessionManager)

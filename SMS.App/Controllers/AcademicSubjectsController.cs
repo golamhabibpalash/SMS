@@ -13,20 +13,20 @@ namespace SMS.App.Controllers
 {
     public class AcademicSubjectsController : Controller
     {
-        private readonly ApplicationDbContext _context;
         private readonly IAcademicSubjectManager _academicSubjectManager;
+        private readonly IAcademicSubjectTypeManager _academicSubjectTypeManager;
 
-        public AcademicSubjectsController(ApplicationDbContext context, IAcademicSubjectManager academicSubjectManger)
+        public AcademicSubjectsController(IAcademicSubjectManager academicSubjectManger, IAcademicSubjectTypeManager academicSubjectTypeManager)
         {
-            _context = context;
             _academicSubjectManager = academicSubjectManger;
+            _academicSubjectTypeManager = academicSubjectTypeManager;
         }
 
         // GET: AcademicSubjects
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.AcademicSubject.Include(a => a.AcademicSubjectType);
-            return View(await applicationDbContext.ToListAsync());
+            var academicSubject =await _academicSubjectManager.GetAllAsync();
+            return View(academicSubject);
         }
 
         // GET: AcademicSubjects/Details/5
@@ -37,9 +37,7 @@ namespace SMS.App.Controllers
                 return NotFound();
             }
 
-            var academicSubject = await _context.AcademicSubject
-                .Include(a => a.AcademicSubjectType)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var academicSubject = await _academicSubjectManager.GetByIdAsync((int)id);
             if (academicSubject == null)
             {
                 return NotFound();
@@ -49,9 +47,9 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicSubjects/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["AcademicSubjectTypeId"] = new SelectList(_context.Set<AcademicSubjectType>(), "Id", "Id");
+            ViewData["AcademicSubjectTypeId"] = new SelectList(await _academicSubjectTypeManager.GetAllAsync(), "Id", "SubjectTypeId");
             return View();
         }
 
@@ -64,11 +62,11 @@ namespace SMS.App.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(academicSubject);
-                await _context.SaveChangesAsync();
+                await _academicSubjectManager.AddAsync(academicSubject);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AcademicSubjectTypeId"] = new SelectList(_context.Set<AcademicSubjectType>(), "Id", "Id", academicSubject.AcademicSubjectTypeId);
+
+            ViewData["AcademicSubjectTypeId"] = new SelectList(await _academicSubjectTypeManager.GetAllAsync(), "Id", "SubjectTypeId", academicSubject.AcademicSubjectTypeId);
             return View(academicSubject);
         }
 
@@ -80,12 +78,12 @@ namespace SMS.App.Controllers
                 return NotFound();
             }
 
-            var academicSubject = await _context.AcademicSubject.FindAsync(id);
+            var academicSubject = await _academicSubjectManager.GetByIdAsync((int)id);
             if (academicSubject == null)
             {
                 return NotFound();
             }
-            ViewData["AcademicSubjectTypeId"] = new SelectList(_context.Set<AcademicSubjectType>(), "Id", "Id", academicSubject.AcademicSubjectTypeId);
+            ViewData["AcademicSubjectTypeId"] = new SelectList(await _academicSubjectTypeManager.GetAllAsync(), "Id", "SubjectTypeId", academicSubject.AcademicSubjectTypeId);
             return View(academicSubject);
         }
 
@@ -105,8 +103,7 @@ namespace SMS.App.Controllers
             {
                 try
                 {
-                    _context.Update(academicSubject);
-                    await _context.SaveChangesAsync();
+                    await _academicSubjectManager.UpdateAsync(academicSubject);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -121,7 +118,7 @@ namespace SMS.App.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AcademicSubjectTypeId"] = new SelectList(_context.Set<AcademicSubjectType>(), "Id", "Id", academicSubject.AcademicSubjectTypeId);
+            ViewData["AcademicSubjectTypeId"] = new SelectList(await _academicSubjectTypeManager.GetAllAsync(), "Id", "SubjectTypeId", academicSubject.AcademicSubjectTypeId);
             return View(academicSubject);
         }
 
@@ -133,9 +130,7 @@ namespace SMS.App.Controllers
                 return NotFound();
             }
 
-            var academicSubject = await _context.AcademicSubject
-                .Include(a => a.AcademicSubjectType)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var academicSubject = await _academicSubjectManager.GetByIdAsync((int)id);
             if (academicSubject == null)
             {
                 return NotFound();
@@ -149,15 +144,23 @@ namespace SMS.App.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var academicSubject = await _context.AcademicSubject.FindAsync(id);
-            _context.AcademicSubject.Remove(academicSubject);
-            await _context.SaveChangesAsync();
+            var academicSubject =await _academicSubjectManager.GetByIdAsync(id);
+            
+            await _academicSubjectManager.RemoveAsync(academicSubject);
             return RedirectToAction(nameof(Index));
         }
 
         private bool AcademicSubjectExists(int id)
         {
-            return _context.AcademicSubject.Any(e => e.Id == id);
+            var academicSubject = _academicSubjectManager.GetByIdAsync(id);
+            if (academicSubject != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

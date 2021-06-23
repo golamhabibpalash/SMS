@@ -18,6 +18,10 @@ namespace SMS.App.AutoMapperConfiguration
 
             CreateMap<EmployeeCreateVM, Employee>();
             CreateMap<Employee, EmployeeCreateVM>();
+
+            CreateMap<EmployeeEditVM, Employee>();
+            CreateMap<Employee, EmployeeEditVM>();
+
         }
     }
 }

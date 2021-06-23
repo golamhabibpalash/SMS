@@ -29,8 +29,10 @@ namespace SMS.App.Controllers
         private readonly IDesignationManager _designationManager;
         private readonly IDivisionManager _divisionManager;
         private readonly IBloodGroupManager _bloodGroupManager;
+        private readonly IUpazilaManager _upazilaManager;
+        private readonly IDistrictManager _districtManager;
 
-        public EmployeesController(IWebHostEnvironment host,  IEmployeeManager employeeManager, IGenderManager genderManager, IReligionManager religionManager, IMapper mapper, INationalityManager nationalityManager, IEmpTypeManager empTypeManager, IDesignationManager designationManager, IDivisionManager divisionManager, IBloodGroupManager bloodGroupManager) 
+        public EmployeesController(IWebHostEnvironment host,  IEmployeeManager employeeManager, IGenderManager genderManager, IReligionManager religionManager, IMapper mapper, INationalityManager nationalityManager, IEmpTypeManager empTypeManager, IDesignationManager designationManager, IDivisionManager divisionManager, IDistrictManager districtManager, IUpazilaManager upazilaManager, IBloodGroupManager bloodGroupManager) 
         {
             _host = host;
             _employeeManager = employeeManager;
@@ -42,6 +44,9 @@ namespace SMS.App.Controllers
             _designationManager = designationManager;
             _divisionManager = divisionManager;
             _bloodGroupManager = bloodGroupManager;
+            _districtManager = districtManager;
+            _upazilaManager = upazilaManager;
+
         }
 
         
@@ -85,7 +90,7 @@ namespace SMS.App.Controllers
         // GET: Employees/Create
         public async Task<IActionResult> Create()
         {
-            EmployeeCreateVM employee = new EmployeeCreateVM();
+            EmployeeCreateVM employee = new ();
             employee.GenderList = new SelectList(await _genderManager.GetAllAsync(), "Id", "Name").ToList();
             employee.ReligionList = new SelectList(await _religionManager.GetAllAsync(), "Id", "Name").ToList();
             employee.NationalityList = new SelectList(await _nationalityManager.GetAllAsync(), "Id", "Name").ToList();
@@ -93,13 +98,6 @@ namespace SMS.App.Controllers
             employee.DesignationList = new SelectList(await _designationManager.GetAllAsync(), "Id", "DesignationName").ToList();
             employee.DivisionList = new SelectList(await _divisionManager.GetAllAsync(), "Id", "Name").ToList();
             employee.BloodGroupList = new SelectList(await _bloodGroupManager.GetAllAsync(), "Id", "Name").ToList();
-
-            //ViewData["PermanentDistrictId"] = new SelectList(_context.District, "Id", "Name");
-            //ViewData["PermanentDivisionId"] = new SelectList(_context.Division, "Id", "Name");
-            //ViewData["PermanentUpazilaId"] = new SelectList(_context.Upazila, "Id", "Name");
-            //ViewData["PresentDistrictId"] = new SelectList(_context.District, "Id", "Name");
-            //ViewData["PresentDivisionId"] = new SelectList(_context.Division, "Id", "Name");
-            //ViewData["PresentUpazilaId"] = new SelectList(_context.Upazila, "Id", "Name");
 
             return View(employee);
         }
@@ -118,10 +116,8 @@ namespace SMS.App.Controllers
                 string fileExtension = Path.GetExtension(empImage.FileName);
                 empPhoto = "e_" + DateTime.Today.ToString("yyyy") + "_" + employeeVM.NIDNo+fileExtension;
                 string pathCombine = Path.Combine(root, folder, empPhoto);
-                using (var stream = new FileStream(pathCombine, FileMode.Create))
-                {
-                    await empImage.CopyToAsync(stream);
-                }
+                using var stream = new FileStream(pathCombine, FileMode.Create);
+                await empImage.CopyToAsync(stream);
             }
 
             if (nidCard != null)
@@ -132,10 +128,8 @@ namespace SMS.App.Controllers
                 string fileExtension = Path.GetExtension(nidCard.FileName);
                 nidPhoto = "e_" + employeeVM.NIDNo + fileExtension;
                 string pathCombine = Path.Combine(root, folder, nidPhoto);
-                using (var stream = new FileStream(pathCombine, FileMode.Create))
-                {
-                    await nidCard.CopyToAsync(stream);
-                }
+                using var stream = new FileStream(pathCombine, FileMode.Create);
+                await nidCard.CopyToAsync(stream);
             }
 
             var employee = _mapper.Map<Employee>(employeeVM);
@@ -153,21 +147,17 @@ namespace SMS.App.Controllers
                     return RedirectToAction(nameof(Index));
                 }
             }
-            
+            var employee1 = _mapper.Map<EmployeeCreateVM>(employee);
 
+            employee1.GenderList = new SelectList(await _genderManager.GetAllAsync(), "Id", "Name", employee.GenderId).ToList();
+            employee1.ReligionList = new SelectList(await _religionManager.GetAllAsync(), "Id", "Name", employee.ReligionId).ToList();
+            employee1.NationalityList = new SelectList(await _nationalityManager.GetAllAsync(), "Id", "Name", employee.NationalityId).ToList();
+            employee1.EmpTypeList = new SelectList(await _empTypeManager.GetAllAsync(), "Id", "Name", employee.EmpTypeId).ToList();
+            employee1.DesignationList = new SelectList(await _designationManager.GetAllAsync(), "Id", "DesignationName",employee.DesignationId).ToList();
+            employee1.DivisionList = new SelectList(await _divisionManager.GetAllAsync(), "Id", "Name").ToList();
+            employee1.BloodGroupList = new SelectList(await _bloodGroupManager.GetAllAsync(), "Id", "Name",employee.BloodGroupId).ToList();
 
-            //ViewData["DesignationId"] = new SelectList(_context.Designation, "Id", "DesignationName",employee.DesignationId);
-            //ViewData["EmpTypeId"] = new SelectList(_context.EmpType, "Id", "Name");
-            //ViewData["GenderId"] = new SelectList(_context.Gender, "Id", "Name");
-            //ViewData["NationalityId"] = new SelectList(_context.Nationality, "Id", "Name");
-            //ViewData["PermanentDistrictId"] = new SelectList(_context.District, "Id", "Name");
-            //ViewData["PermanentDivisionId"] = new SelectList(_context.Division, "Id", "Name");
-            //ViewData["PermanentUpazilaId"] = new SelectList(_context.Upazila, "Id", "Name");
-            //ViewData["PresentDistrictId"] = new SelectList(_context.District, "Id", "Name");
-            //ViewData["PresentDivisionId"] = new SelectList(_context.Division, "Id", "Name");
-            //ViewData["PresentUpazilaId"] = new SelectList(_context.Upazila, "Id", "Name");
-            //ViewData["ReligionId"] = new SelectList(_context.Religion, "Id", "Name");
-            return View(employee);
+            return View(employee1);
         }
 
         // GET: Employees/Edit/5
@@ -179,22 +169,31 @@ namespace SMS.App.Controllers
             }
 
             var employee = await _employeeManager.GetByIdAsync((int)id);
-            if (employee == null)
+
+
+            var employee1 = _mapper.Map<EmployeeEditVM>(employee);
+            employee1.GenderList = new SelectList(await _genderManager.GetAllAsync(), "Id", "Name", employee.GenderId).ToList();
+            employee1.ReligionList = new SelectList(await _religionManager.GetAllAsync(), "Id", "Name", employee.ReligionId).ToList();
+            employee1.NationalityList = new SelectList(await _nationalityManager.GetAllAsync(), "Id", "Name", employee.NationalityId).ToList();
+            employee1.EmpTypeList = new SelectList(await _empTypeManager.GetAllAsync(), "Id", "Name", employee.EmpTypeId).ToList();
+            employee1.DesignationList = new SelectList(await _designationManager.GetAllAsync(), "Id", "DesignationName", employee.DesignationId).ToList();
+            employee1.DivisionList = new SelectList(await _divisionManager.GetAllAsync(), "Id", "Name").ToList();
+            employee1.BloodGroupList = new SelectList(await _bloodGroupManager.GetAllAsync(), "Id", "Name", employee.BloodGroupId).ToList();
+
+            ViewData["PermanentDistrictId"] = new SelectList(await _districtManager.GetAllAsync(), "Id", "Name", employee.PermanentDistrictId);
+            ViewData["PermanentUpazilaId"] = new SelectList(await _upazilaManager.GetAllAsync(), "Id", "Name", employee.PermanentUpazilaId);
+            ViewData["PresentDistrictId"] = new SelectList(await _districtManager.GetAllAsync(), "Id", "Name", employee.PresentDistrictId);
+            ViewData["PresentUpazilaId"] = new SelectList(await _upazilaManager.GetAllAsync(), "Id", "Name", employee.PresentUpazilaId);
+
+
+            if (employee1 == null)
             {
                 return NotFound();
             }
-            //ViewData["DesignationId"] = new SelectList(_context.Designation, "Id", "Id", employee.DesignationId);
-            //ViewData["EmpTypeId"] = new SelectList(_context.EmpType, "Id", "Name", employee.EmpTypeId);
-            //ViewData["GenderId"] = new SelectList(_context.Gender, "Id", "Id", employee.GenderId);
-            //ViewData["NationalityId"] = new SelectList(_context.Nationality, "Id", "Id", employee.NationalityId);
-            //ViewData["PermanentDistrictId"] = new SelectList(_context.District, "Id", "Id", employee.PermanentDistrictId);
-            //ViewData["PermanentDivisionId"] = new SelectList(_context.Division, "Id", "Id", employee.PermanentDivisionId);
-            //ViewData["PermanentUpazilaId"] = new SelectList(_context.Upazila, "Id", "Id", employee.PermanentUpazilaId);
-            //ViewData["PresentDistrictId"] = new SelectList(_context.District, "Id", "Id", employee.PresentDistrictId);
-            //ViewData["PresentDivisionId"] = new SelectList(_context.Division, "Id", "Id", employee.PresentDivisionId);
-            //ViewData["PresentUpazilaId"] = new SelectList(_context.Upazila, "Id", "Id", employee.PresentUpazilaId);
-            //ViewData["ReligionId"] = new SelectList(_context.Religion, "Id", "Id", employee.ReligionId);
-            return View(employee);
+            TempData["Image"] = employee.Image;
+            TempData["NIDCard"] = employee.NIDCard;
+
+            return View(employee1);
         }
 
         // POST: Employees/Edit/5
@@ -202,28 +201,66 @@ namespace SMS.App.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,EmployeeName,DOB,Image,GenderId,ReligionId,NationalityId,NIDNo,NIDCard,Phone,Email,Nominee,NomineePhone,EmpTypeId,DesignationId,JoiningDate,PresentAddress,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddress,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,CreatedBy,CreatedAt,EditedBy,EditedAt,Status,BloodGroupId")] Employee employee)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,EmployeeName,DOB,Image,GenderId,ReligionId,NationalityId,NIDNo,NIDCard,Phone,Email,Nominee,NomineePhone,EmpTypeId,DesignationId,JoiningDate,PresentAddress,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddress,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,CreatedBy,CreatedAt,EditedBy,EditedAt,Status,BloodGroupId")] EmployeeEditVM employeeVM, IFormFile Image, IFormFile NIDCard)
         {
+            string empPhoto = "";
+            string nidPhoto = "";
             string msg = "";
-            if (id != employee.Id)
+            if (id != employeeVM.Id)
             {
-
                 return NotFound();
             }
+            //var existEmployee = await _employeeManager.GetByIdAsync(employeeVM.Id);
+            if (Image != null)
+            {
+                string root = _host.WebRootPath;
+                string folder = "Images/Employee/photo";
+                string fileExtension = Path.GetExtension(Image.FileName);
+                empPhoto = "e_" + DateTime.Today.ToString("yyyy") + "_" + employeeVM.NIDNo + fileExtension;
+                string pathCombine = Path.Combine(root, folder, empPhoto);
+                using (var stream = new FileStream(pathCombine, FileMode.Create))
+                {
+                    await Image.CopyToAsync(stream);
+                }
+                employeeVM.Image = empPhoto;
+            }
+            else
+            {
+                employeeVM.Image = TempData["Image"].ToString();
+            }
 
+            if (NIDCard != null)
+            {
+                string root = _host.WebRootPath;
+                string folder = "Images/Employee/NID";
+
+                string fileExtension = Path.GetExtension(NIDCard.FileName);
+                nidPhoto = "e_" + employeeVM.NIDNo + fileExtension;
+                string pathCombine = Path.Combine(root, folder, nidPhoto);
+                using (var stream = new FileStream(pathCombine, FileMode.Create))
+                {
+                    await NIDCard.CopyToAsync(stream);
+                }
+                employeeVM.NIDCard = nidPhoto;
+            }
+            else
+            {
+                employeeVM.NIDCard = TempData["NIDCard"].ToString();
+            }
+
+
+            var employee = _mapper.Map<Employee>(employeeVM);
             if (ModelState.IsValid)
             {
                 try
                 {
                     employee.EditedAt = DateTime.Now;
                     employee.EditedBy = HttpContext.Session.GetString("UserId");
-                    bool isUpdated =await _employeeManager.UpdateAsync(employee);
 
-                    //bool isSaved =await _empRepository.Update(employee);
+                    bool isUpdated =await _employeeManager.UpdateAsync(employee);
                     if (isUpdated)
                     {
-                        msg = "Employee info edited";
-                        ViewBag.msg = msg;
+                        TempData["edited"]="Update Successfully";
                     }
                 }
                 catch (DbUpdateConcurrencyException)
@@ -243,18 +280,21 @@ namespace SMS.App.Controllers
             {
                 msg = "Something wrong";
             }
-            //ViewData["DesignationId"] = new SelectList(_context.Designation, "Id", "DesignationName", employee.DesignationId);
-            //ViewData["EmpTypeId"] = new SelectList(_context.EmpType, "Id", "Name", employee.EmpTypeId);
-            //ViewData["GenderId"] = new SelectList(_context.Gender, "Id", "Id", employee.GenderId);
-            //ViewData["NationalityId"] = new SelectList(_context.Nationality, "Id", "Id", employee.NationalityId);
-            //ViewData["PermanentDistrictId"] = new SelectList(_context.District, "Id", "Id", employee.PermanentDistrictId);
-            //ViewData["PermanentDivisionId"] = new SelectList(_context.Division, "Id", "Id", employee.PermanentDivisionId);
-            //ViewData["PermanentUpazilaId"] = new SelectList(_context.Upazila, "Id", "Id", employee.PermanentUpazilaId);
-            //ViewData["PresentDistrictId"] = new SelectList(_context.District, "Id", "Id", employee.PresentDistrictId);
-            //ViewData["PresentDivisionId"] = new SelectList(_context.Division, "Id", "Id", employee.PresentDivisionId);
-            //ViewData["PresentUpazilaId"] = new SelectList(_context.Upazila, "Id", "Id", employee.PresentUpazilaId);
-            //ViewData["ReligionId"] = new SelectList(_context.Religion, "Id", "Id", employee.ReligionId);
-            return View(employee);
+            var employee1 = _mapper.Map<EmployeeEditVM>(employee);
+            employee1.GenderList = new SelectList(await _genderManager.GetAllAsync(), "Id", "Name", employee.GenderId).ToList();
+            employee1.ReligionList = new SelectList(await _religionManager.GetAllAsync(), "Id", "Name", employee.ReligionId).ToList();
+            employee1.NationalityList = new SelectList(await _nationalityManager.GetAllAsync(), "Id", "Name", employee.NationalityId).ToList();
+            employee1.EmpTypeList = new SelectList(await _empTypeManager.GetAllAsync(), "Id", "Name", employee.EmpTypeId).ToList();
+            employee1.DesignationList = new SelectList(await _designationManager.GetAllAsync(), "Id", "DesignationName", employee.DesignationId).ToList();
+            employee1.DivisionList = new SelectList(await _divisionManager.GetAllAsync(), "Id", "Name").ToList();
+            employee1.BloodGroupList = new SelectList(await _bloodGroupManager.GetAllAsync(), "Id", "Name", employee.BloodGroupId).ToList();
+
+            ViewData["PermanentDistrictId"] = new SelectList(await _districtManager.GetAllAsync(), "Id", "Name", employee.PermanentDistrictId);
+            ViewData["PermanentUpazilaId"] = new SelectList(await _upazilaManager.GetAllAsync(), "Id", "Name", employee.PermanentUpazilaId);
+            ViewData["PresentDistrictId"] = new SelectList(await _districtManager.GetAllAsync(), "Id", "Name", employee.PresentDistrictId);
+            ViewData["PresentUpazilaId"] = new SelectList(await _upazilaManager.GetAllAsync(), "Id", "Name", employee.PresentUpazilaId);
+
+            return View(employee1);
         }
 
         // GET: Employees/Delete/5

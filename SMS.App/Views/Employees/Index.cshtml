@@ -69,26 +69,24 @@
 @section Scripts{ 
     @*<script src="~/js/AlertifyNotify/successNotify.js"></script>*@
 <script>
-    $(function () {
-        let saved = '@TempData["saved"]';
-        let deleted = '@TempData["deleted"]';
-        if (saved != "") {
-            alertify.success("Saved Successfully");
-        }
-        if (deleted != "") {
-            alertify.error("Deleted Successfully");
-        }
-    });
+
     $(document).ready(function () {
 
-        //if (saved.length != 0) {
-        //    alertify.success("Saved Successfully");
-        //    alert(saved);
-        //}
-        //if (deleted.length != 0) {
-        //    alertify.error("Deleted Successfully");
-        //    alert(deleted)
-        //}
+        $(function () {
+            let saved = '@TempData["saved"]';
+            let deleted = '@TempData["deleted"]';
+            let edited = '@TempData["edited"]';
+
+            if (saved != "") {
+                alertify.success("Saved Successfully");
+            }
+            if (deleted != "") {
+                alertify.error("Deleted Successfully");
+            }
+            if (edited != "") {
+                alertify.message('Updated Successfully');
+            }
+        });
     });
 </script>
 }

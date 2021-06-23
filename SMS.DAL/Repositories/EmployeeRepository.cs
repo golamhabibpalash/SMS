@@ -20,6 +20,12 @@ namespace Repositories
             this.db = db;
         }
 
-        
+        public override async Task<IReadOnlyCollection<Employee>> GetAllAsync()
+        {
+            return await _context.Employee
+                .Include(e => e.Designation)
+                .ToListAsync();
+        }
+
     }
 }

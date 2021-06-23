@@ -10,15 +10,18 @@
 <table class="table">
     <thead class="bg-Teal">
         <tr>
-            <th>#</th>
-            <th>
+            <th style="width:20px;">#</th>
+
+            <th class="text-center" style="width:60px;">
                 @Html.DisplayNameFor(model => model.Image)
             </th>
+
             <th>
                 @Html.DisplayNameFor(model => model.EmployeeName)
             </th>
+
             <th>
-                @Html.DisplayNameFor(model => model.Designation)
+                @Html.DisplayNameFor(model => model.Designation.DesignationName)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Phone)
@@ -39,7 +42,7 @@
         <tr>
             <td>@(++sl).</td>
             <td>
-                <img src="~/Images/Employee/photo/@item.Image" alt="Alternate Text"  style="width:80px;"/>
+                <img src="~/Images/Employee/photo/@item.Image" alt="Alternate Text" style="width:60px;" />
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.EmployeeName)
@@ -63,3 +66,29 @@
 }
     </tbody>
 </table>
+@section Scripts{ 
+    @*<script src="~/js/AlertifyNotify/successNotify.js"></script>*@
+<script>
+    $(function () {
+        let saved = '@TempData["saved"]';
+        let deleted = '@TempData["deleted"]';
+        if (saved != "") {
+            alertify.success("Saved Successfully");
+        }
+        if (deleted != "") {
+            alertify.error("Deleted Successfully");
+        }
+    });
+    $(document).ready(function () {
+
+        //if (saved.length != 0) {
+        //    alertify.success("Saved Successfully");
+        //    alert(saved);
+        //}
+        //if (deleted.length != 0) {
+        //    alertify.error("Deleted Successfully");
+        //    alert(deleted)
+        //}
+    });
+</script>
+}

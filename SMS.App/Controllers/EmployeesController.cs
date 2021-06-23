@@ -48,6 +48,18 @@ namespace SMS.App.Controllers
         // GET: Employees
         public async Task<IActionResult> Index()
         {
+            //string msg = "";
+            //if (TempData["saved"]!=null)
+            //{
+            //    msg = TempData["saved"].ToString();
+                
+            //}
+            //ViewBag.saved = msg;
+            //if (TempData["deleted"] != null)
+            //{
+            //    msg = TempData["deleted"].ToString();
+            //}
+            //ViewBag.deleted = msg;
             var empList = await _employeeManager.GetAllAsync();
             return View(empList);
         }
@@ -137,6 +149,7 @@ namespace SMS.App.Controllers
                 bool isSaved =await _employeeManager.AddAsync(employee);
                 if (isSaved)
                 {
+                    TempData["saved"] = "Saved Successful";
                     return RedirectToAction(nameof(Index));
                 }
             }
@@ -267,7 +280,11 @@ namespace SMS.App.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var emp = await _employeeManager.GetByIdAsync(id);
-            await _employeeManager.RemoveAsync(emp);
+            bool isDeleted = await _employeeManager.RemoveAsync(emp);
+            if (isDeleted)
+            {
+                TempData["deleted"] = "Deleted successfully";
+            }
             return RedirectToAction(nameof(Index));
         }
 

@@ -78,13 +78,14 @@ namespace SMS.App.Controllers
             }
             int myid = Convert.ToInt32(id);
             Employee employee = await _employeeManager.GetByIdAsync(myid);
+            var employeeDetailsVM = _mapper.Map<EmployeeDetailsVM>(employee);
 
-            if (employee == null)
+            if (employeeDetailsVM == null)
             {
                 return NotFound();
             }
 
-            return View(employee);
+            return View(employeeDetailsVM);
         }
 
         // GET: Employees/Create

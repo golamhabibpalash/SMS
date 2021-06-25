@@ -1,8 +1,6 @@
 ﻿$('#AcademicSessionId').change(function () {
-    let id = $('#AcademicSessionId option:selected').val();
-
     $.ajax({
-        url: "/Services/GetClassListBySessionId/" + id,
+        url: "/api/academicClass/getAll",
         dataType: "JSON",
         type: "POST",
         cache: false,
@@ -53,102 +51,33 @@ $('#AcademicClassId').change(function () {
     });
 });
 
-$('#PresentDivisiontId').change(function () {
-    let id = $('#PresentDivisiontId option:selected').val();
 
-    $.ajax({
-        url: "/Students/GetDistrictList/" + id,
-        dataType: "JSON",
-        type: "POST",
-        cache: false,
-        success: function (data) {
-            $('#PresentDistrictId').empty();
-            var o = '<option disabled selected>Select District Name</option>';
-            $('#PresentDistrictId').append(o);
-            $.each(data, function (i, obj) {
-                console.log(obj.name);
-                var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
-                $('#PresentDistrictId').append(op);
-            });
-        },
-        error: function (err) {
-            console.log(err);
-        }
-    });
+//Code for PresentDistrict Load
+$('#PresentDivisionId').change(function () {
+    let divId = $('#PresentDivisionId option:selected').val();
+    let disName = '#PresentDistrictId';
+    GetDistrictByDivisionId(divId, disName);
 });
 
+//Code for PresentUpazila Load
 $('#PresentDistrictId').change(function () {
-    let id = $('#PresentDistrictId option:selected').val();
-
-    $.ajax({
-        url: "/Students/GetUpazilaList/" + id,
-        dataType: "JSON",
-        type: "POST",
-        cache: false,
-        success: function (data) {
-            $('#PresentUpazilaId').empty();
-            var o = '<option disabled selected>Select Upazila Name</option>';
-            $('#PresentUpazilaId').append(o);
-            $.each(data, function (i, obj) {
-                console.log(obj.name);
-                var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
-                $('#PresentUpazilaId').append(op);
-            });
-        },
-        error: function (err) {
-            console.log(err);
-        }
-    });
+    let disId = $('#PresentDistrictId option:selected').val();
+    let upName = '#PresentUpazilaId';
+    GetUpazilaByDistrictId(disId, upName);
 });
 
-
-$('#PermanentDivisiontId').change(function () {
-    
-    let id = $('#PermanentDivisiontId option:selected').val();
-
-    $.ajax({
-        url: "/Students/GetDistrictList/" + id,
-        dataType: "JSON",
-        type: "POST",
-        cache: false,
-        success: function (data) {
-            $('#PermanentDistrictId').empty();
-            var o = '<option disabled selected>Select District Name</option>';
-            $('#PermanentDistrictId').append(o);
-            $.each(data, function (i, obj) {
-                console.log(obj.name);
-                var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
-                $('#PermanentDistrictId').append(op);
-            });
-        },
-        error: function (err) {
-            console.log(err);
-        }
-    });
+//Code for PermanentDistrict Load
+$('#PermanentDivisionId').change(function () {
+    let divId = $('#PermanentDivisionId option:selected').val();
+    let disName = '#PermanentDistrictId';
+    GetDistrictByDivisionId(divId, disName);
 });
 
+//Code for PresentUpazila Load
 $('#PermanentDistrictId').change(function () {
-    let id = $('#PermanentDistrictId option:selected').val();
-
-    $.ajax({
-        url: "/Students/GetUpazilaList/" + id,
-        dataType: "JSON",
-        type: "POST",
-        cache: false,
-        success: function (data) {
-            $('#PermanentUpazilaId').empty();
-            var o = '<option disabled selected>Select Upazila Name</option>';
-            $('#PermanentUpazilaId').append(o);
-            $.each(data, function (i, obj) {
-                console.log(obj.name);
-                var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
-                $('#PermanentUpazilaId').append(op);
-            });
-        },
-        error: function (err) {
-            console.log(err);
-        }
-    });
+    let disId = $('#PermanentDistrictId option:selected').val();
+    let upName = '#PermanentUpazilaId';
+    GetUpazilaByDistrictId(disId, upName);
 });
 
 //Image load to view
@@ -209,3 +138,64 @@ $('#sameAddress').change(function () {
         emptyAddress();
     }
 });
+
+function GetDivisionList(divName) {
+    $.ajax({
+        url: "/api/divisions/allDivisions",
+        dataType: 'JSON',
+        type: 'POST',
+        cache: false,
+        success: function (data) {
+            $(divName).empty();
+            var op = '<option disabled selected>Select division Name</option>';
+            $(divName).append(op);
+            $.each(data, function (i, obj) {
+                var ob = '<option value="' + obj.id + '">' + obj.name + '</option>';
+                $(divName).append(ob);
+            });
+        },
+        error: function (err) {
+
+        }
+    });
+}
+function GetDistrictByDivisionId(divId, disName) {
+    $.ajax({
+        url: "/api/districts/bydivision?divId=" + divId,
+        dataType: 'JSON',
+        type: 'POST',
+        cache: false,
+        success: function (data) {
+            $(disName).empty();
+            var op = '<option disabled selected>Select district Name</option>';
+            $(disName).append(op);
+            $.each(data, function (i, obj) {
+                var ob = '<option value="' + obj.id + '">' + obj.name + '</option>';
+                $(disName).append(ob);
+            });
+        },
+        error: function (err) {
+
+        }
+    });
+}
+function GetUpazilaByDistrictId(disId, upName) {
+    $.ajax({
+        url: "/api/upazilas/byDistrict?id=" + disId,
+        dataType: 'JSON',
+        type: 'POST',
+        cache: false,
+        success: function (data) {
+            $(upName).empty();
+            var option = '<option disabled selected>Select Upazila Name</option>';
+            $(upName).append(option);
+            $.each(data, function (i, obj) {
+                var ob = '<option value="' + obj.id + '">' + obj.name + '</option>';
+                $(upName).append(ob);
+            });
+        },
+        error: function (err) {
+
+        }
+    });
+}

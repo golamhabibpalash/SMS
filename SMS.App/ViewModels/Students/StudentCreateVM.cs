@@ -45,7 +45,7 @@ namespace SMS.App.ViewModels.Students
         [Range(01300000000, 01999999999)]
         public long GuardianPhone { get; set; }
 
-        [Display(Name = "Image")]
+        [Display(Name = "Student Image")]
         public string Photo { get; set; }
 
         [MinimumAge(10)]
@@ -78,7 +78,7 @@ namespace SMS.App.ViewModels.Students
         public int PresentDistrictId { get; set; }
 
         [Display(Name = "Division")]
-        public int PresentDivisiontId { get; set; }
+        public int PresentDivisionId { get; set; }
 
         [Display(Name = "Vill/Area")]
         public string PermanentAddressArea { get; set; }
@@ -93,7 +93,7 @@ namespace SMS.App.ViewModels.Students
         public int PermanentDistrictId { get; set; }
 
         [Display(Name = "Division")]
-        public int PermanentDivisiontId { get; set; }
+        public int PermanentDivisionId { get; set; }
 
         [Display(Name = "Academic Session")]
         public int AcademicSessionId { get; set; }

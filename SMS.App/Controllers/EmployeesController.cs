@@ -204,9 +204,9 @@ namespace SMS.App.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,EmployeeName,DOB,Image,GenderId,ReligionId,NationalityId,NIDNo,NIDCard,Phone,Email,Nominee,NomineePhone,EmpTypeId,DesignationId,JoiningDate,PresentAddress,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddress,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,CreatedBy,CreatedAt,EditedBy,EditedAt,Status,BloodGroupId")] EmployeeEditVM employeeVM, IFormFile Image, IFormFile NIDCard)
         {
+            string msg = "";
             string empPhoto = "";
             string nidPhoto = "";
-            string msg = "";
             if (id != employeeVM.Id)
             {
                 return NotFound();
@@ -281,6 +281,7 @@ namespace SMS.App.Controllers
             {
                 msg = "Something wrong";
             }
+            ViewBag.msg = msg;
             var employee1 = _mapper.Map<EmployeeEditVM>(employee);
             employee1.GenderList = new SelectList(await _genderManager.GetAllAsync(), "Id", "Name", employee.GenderId).ToList();
             employee1.ReligionList = new SelectList(await _religionManager.GetAllAsync(), "Id", "Name", employee.ReligionId).ToList();

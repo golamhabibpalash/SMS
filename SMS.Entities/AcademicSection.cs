@@ -12,11 +12,11 @@ namespace SMS.Entities
         public string Name { get; set; }
         public bool Status { get; set; }
 
-        [Display(Name = "Class")]
+        [Required, Display(Name = "Class")]
         public int AcademicClassId { get; set; }
         public AcademicClass AcademicClass { get; set; }
 
-        [Display(Name = "Academic Session")]
+        [Required, Display(Name = "Academic Session")]
         public int AcademicSessionId { get; set; }
         public AcademicSession AcademicSession { get; set; }
 

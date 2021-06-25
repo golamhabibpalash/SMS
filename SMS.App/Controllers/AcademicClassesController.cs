@@ -190,5 +190,11 @@ namespace SMS.App.Controllers
                 return false;
             }
         }
+
+        [Route("/api/academicClass/getAll")]
+        public async Task<IReadOnlyCollection<AcademicClass>> GetAll()
+        {
+            return await _academicClassManager.GetAllAsync();
+        }
     }
 }

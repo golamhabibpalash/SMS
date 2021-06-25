@@ -18,6 +18,7 @@ namespace SMS.DAL.Repositories
             _db = db;
         }
 
+
         public async Task<AcademicClass> GetByNameAsync(string entityName)
         {
             var aClass =await _db.AcademicClass.Where(ac => ac.Name.Trim() == entityName.Trim()).FirstOrDefaultAsync();

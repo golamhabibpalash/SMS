@@ -55,8 +55,6 @@ namespace SMS.App.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] Gender gender)
         {
-            string msg = "";
-
             if (ModelState.IsValid)
             {
                 gender.CreatedAt = DateTime.Now;

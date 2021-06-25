@@ -15,10 +15,14 @@ namespace SMS.App.Controllers
     {
         private readonly IAcademicSectionManager _academicSectionManager;
         private readonly IAcademicClassManager _academicClassManager;
-        public AcademicSectionsController(IAcademicSectionManager academicSectionManager, IAcademicClassManager academicClassManager)
+
+        private readonly IAcademicSessionManager _academicSessionManager;
+
+        public AcademicSectionsController(IAcademicSectionManager academicSectionManager, IAcademicClassManager academicClassManager, IAcademicSessionManager academicSessionManager)
         {
             _academicSectionManager = academicSectionManager;
             _academicClassManager = academicClassManager;
+            _academicSessionManager = academicSessionManager;
         }
 
         // GET: AcademicSections
@@ -49,6 +53,7 @@ namespace SMS.App.Controllers
         public async Task<IActionResult> Create()
         {
             ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name");
+            ViewData["AcademicSessionId"] = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name");
             return View();
         }
 
@@ -57,7 +62,7 @@ namespace SMS.App.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Status,AcademicClassId,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSection academicSection)
+        public async Task<IActionResult> Create([Bind("Id,Name,Status,AcademicClassId,AcademicSessionId,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSection academicSection)
         {
             if (ModelState.IsValid)
             {
@@ -65,6 +70,7 @@ namespace SMS.App.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", academicSection.AcademicClassId);
+            ViewData["AcademicSessionId"] = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name", academicSection.AcademicSessionId);
             return View(academicSection);
         }
 
@@ -79,13 +85,14 @@ namespace SMS.App.Controllers
             var academicSection = await _academicSectionManager.GetByIdAsync(myId);
             
             ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", academicSection.AcademicClassId);
+            ViewData["AcademicSessionId"] = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name", academicSection.AcademicSessionId);
             return View(academicSection);
         }
 
         // POST: AcademicSections/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Status,AcademicClassId,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSection academicSection)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Status,AcademicClassId,AcademicSessionId,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSection academicSection)
         {
             if (id != academicSection.Id)
             {
@@ -112,6 +119,7 @@ namespace SMS.App.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", academicSection.AcademicClassId);
+            ViewData["AcademicSessionId"] = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name", academicSection.AcademicSessionId);
             return View(academicSection);
         }
 

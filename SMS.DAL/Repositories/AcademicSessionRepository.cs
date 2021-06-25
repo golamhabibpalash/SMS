@@ -12,10 +12,8 @@ namespace SMS.DAL.Repositories
 {
     public class AcademicSessionRepository:Repository<AcademicSession>, IAcademicSessionRepository
     {
-        private readonly ApplicationDbContext _context;
         public AcademicSessionRepository(ApplicationDbContext context) : base(context)
         {
-            _context = context;
         }
     }
 }

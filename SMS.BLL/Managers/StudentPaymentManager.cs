@@ -21,7 +21,7 @@ namespace SMS.BLL.Managers
 
         public async Task<IReadOnlyCollection<StudentPayment>> GetAllByStudentIdAsync(int id)
         {
-            return await _studentPaymentRepository.GetByStudentIdAsync(id);
+            return await _studentPaymentRepository.GetAllByStudentIdAsync(id);
         }
     }
 }

@@ -21,7 +21,10 @@ namespace SMS.DAL.Repositories
         }
         public override async Task<IReadOnlyCollection<AcademicSection>> GetAllAsync()
         {
-            return await _context.AcademicSection.Include(m => m.AcademicClass).ToListAsync();
+            return await _context.AcademicSection
+                .Include(m => m.AcademicClass)
+                .Include(m => m.AcademicSession)
+                .ToListAsync();
         }
 
         public async Task<IReadOnlyCollection<AcademicSection>> GetAllByClassWithSessionId(int classId, int sessionId)

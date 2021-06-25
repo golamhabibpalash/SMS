@@ -18,9 +18,10 @@ namespace SMS.App.Controllers
             _instituteManager = instituteManager;
         }
         // GET: InstitutesController
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            return View();
+
+            return View(await _instituteManager.GetAllAsync());
             
         }
 

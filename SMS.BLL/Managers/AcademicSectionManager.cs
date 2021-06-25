@@ -12,9 +12,15 @@ namespace SMS.BLL.Managers
 {
     public class AcademicSectionManager : Manager<AcademicSection>, IAcademicSectionManager
     {
+        private readonly IAcademicSectionRepositoy _academicSectinRepository;
         public AcademicSectionManager(IAcademicSectionRepositoy academicSectionRepository):base(academicSectionRepository)
         {
+            _academicSectinRepository = academicSectionRepository;
+        }
 
+        public async Task<IReadOnlyCollection<AcademicSection>> GetAllByClassWithSessionId(int classId, int sessionId)
+        {
+            return await _academicSectinRepository.GetAllByClassWithSessionId(classId, sessionId);
         }
     }
 }

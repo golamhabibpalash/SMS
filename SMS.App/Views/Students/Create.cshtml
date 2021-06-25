@@ -18,7 +18,7 @@
             <div class="form-group row">
                 <label asp-for="AcademicSessionId" class="control-label col-form-label text-right col-md-2"></label>
                 <div class="col-md-4">
-                    <select asp-for="AcademicSessionId" class="form-control input-sm" asp-items="ViewBag.AcademicSessionId">
+                    <select asp-for="AcademicSessionId" class="form-control input-sm" asp-items="Model.AcademicSessionList">
                         <option disabled selected>Select Academic Session</option>
                     </select>
                 </div>

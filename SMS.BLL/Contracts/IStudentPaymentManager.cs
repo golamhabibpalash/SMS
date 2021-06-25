@@ -10,5 +10,6 @@ namespace SMS.BLL.Contracts
 {
     public interface IStudentPaymentManager : IManager<StudentPayment>
     {
+        Task<IReadOnlyCollection<StudentPayment>> GetAllByStudentIdAsync(int id);
     }
 }

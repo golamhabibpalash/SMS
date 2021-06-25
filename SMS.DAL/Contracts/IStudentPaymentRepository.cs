@@ -10,5 +10,6 @@ namespace SMS.DAL.Contracts
 {
     public interface IStudentPaymentRepository : IRepository<StudentPayment>
     {
+        Task<IReadOnlyCollection<StudentPayment>> GetAllByStudentIdAsync(int id);
     }
 }

@@ -23,5 +23,12 @@ namespace SMS.DAL.Repositories
         {
             return await _context.AcademicSection.Include(m => m.AcademicClass).ToListAsync();
         }
+
+        public async Task<IReadOnlyCollection<AcademicSection>> GetAllByClassWithSessionId(int classId, int sessionId)
+        {
+            return await _context.AcademicSection
+                .Where(s => s.AcademicClassId == classId && s.AcademicSessionId == sessionId)
+                .ToListAsync();
+        }
     }
 }

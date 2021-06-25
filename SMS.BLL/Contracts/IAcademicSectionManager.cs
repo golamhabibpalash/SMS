@@ -10,5 +10,6 @@ namespace SMS.BLL.Contracts
 {
     public interface IAcademicSectionManager:IManager<AcademicSection>
     {
+        Task<IReadOnlyCollection<AcademicSection>> GetAllByClassWithSessionId(int classId, int sessionId);
     }
 }

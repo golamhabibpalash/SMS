@@ -154,5 +154,11 @@ namespace SMS.App.Controllers
             }
 
         }
+
+        [Route("api/academicsections/getbyclasswithsessionId")]
+        public async Task<IReadOnlyCollection<AcademicSection>> GetAllByClassWithSessionId(int classId, int sessionId)
+        {
+            return await _academicSectionManager.GetAllByClassWithSessionId(classId, sessionId);
+        }
     }
 }

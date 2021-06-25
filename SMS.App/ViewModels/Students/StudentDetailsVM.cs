@@ -9,6 +9,6 @@ namespace SMS.App.ViewModels.Students
     public class StudentDetailsVM
     {
         public Student Student { get; set; }
-        public List<StudentPayment> StudentPayments { get; set; }
+        public IReadOnlyCollection<StudentPayment> StudentPayments { get; set; }
     }
 }

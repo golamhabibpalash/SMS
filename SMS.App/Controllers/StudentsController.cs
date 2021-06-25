@@ -21,20 +21,38 @@ namespace SchoolManagementSystem.Controllers
 {
     public class StudentsController : Controller
     {
-        private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _host;
         private readonly IStudentManager _studentManager;
         private readonly IAcademicClassManager _academicClassManager;
         private readonly IMapper _mapper;
+        private readonly IAcademicSessionManager _academicSessionManager;
+        private readonly IStudentPaymentManager _studentPaymentManager;
+        private readonly IDivisionManager _divisionManager;
+        private readonly IDistrictManager _districtManager;
+        private readonly IUpazilaManager _upazilaManager;
+        private readonly IAcademicSectionManager _academicSectionManager;
+        private readonly IBloodGroupManager _bloodGroupManager;
+        private readonly INationalityManager _nationalityManager;
+        private readonly IGenderManager _genderManager;
+        private readonly IReligionManager _religionManager;
 
-        public StudentsController(IStudentManager studentManager, ApplicationDbContext context, IAcademicClassManager academicClassManager, IWebHostEnvironment host, IMapper mapper)
+
+        public StudentsController(IStudentManager studentManager, IAcademicClassManager academicClassManager, IWebHostEnvironment host, IMapper mapper, IAcademicSessionManager academicSessionManager, IStudentPaymentManager studentPaymentManager, IDistrictManager districtManager, IUpazilaManager upazilaManager, IAcademicSectionManager academicSectionManager, IBloodGroupManager bloodGroupManager, IDivisionManager divisionManager, INationalityManager nationalityManager, IGenderManager genderManager, IReligionManager religionManager)
         {
-            
             _academicClassManager = academicClassManager;
-            _context = context;
             _host = host;
             _studentManager = studentManager;
+            _academicSessionManager = academicSessionManager;
             _mapper = mapper;
+            _studentPaymentManager = studentPaymentManager;
+            _districtManager = districtManager;
+            _upazilaManager = upazilaManager;
+            _academicSectionManager = academicSectionManager;
+            _bloodGroupManager = bloodGroupManager;
+            _divisionManager = divisionManager;
+            _nationalityManager = nationalityManager;
+            _genderManager = genderManager;
+            _religionManager = religionManager;
         }
 
         // GET: Students
@@ -53,37 +71,35 @@ namespace SchoolManagementSystem.Controllers
                 return NotFound();
             }
 
-            int myId = Convert.ToInt32(id);
-            var student =await _studentManager.GetByIdAsync(myId);
+            var student =await _studentManager.GetByIdAsync((int)id);
             if (student == null)
             {
                 return NotFound();
             }
-            var stuPayments = await _context.StudentPayment
-                .Include(sp => sp.StudentPaymentDetails)
-                .ThenInclude(sp => sp.StudentFeeHead)
-                .Where(sp => sp.StudentId == id).ToListAsync();
+            var stuPayments = await _studentPaymentManager.GetAllByStudentIdAsync((int)id);
+
             StudentDetailsVM sd = new();
             sd.StudentPayments = stuPayments;
             sd.Student = student;
-            ViewBag.districts = _context.District.ToList();
-            ViewBag.Upazila = _context.Upazila.ToList();
+            ViewBag.districts = await _districtManager.GetAllAsync();
+            ViewBag.Upazila = await _upazilaManager.GetAllAsync();
 
             return View(sd);
         }
 
         // GET: Students/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["AcademicClassId"] = new SelectList(_context.AcademicClass, "Id", "Name");
-            ViewData["AcademicSessionId"] = new SelectList(_context.AcademicSession, "Id", "Name");
-            ViewData["AcademicSectionId"] = new SelectList(_context.Set<AcademicSection>(), "Id", "Name");
-            ViewData["BloodGroupId"] = new SelectList(_context.Set<BloodGroup>(), "Id", "Name");
-            ViewData["GenderId"] = new SelectList(_context.Set<Gender>(), "Id", "Name");
-            ViewData["NationalityId"] = new SelectList(_context.Set<Nationality>(), "Id", "Name");
-            ViewData["ReligionId"] = new SelectList(_context.Set<Religion>(), "Id", "Name");
-            ViewData["DivisionList"] = new SelectList(_context.Set<Division>().OrderBy(d => d.Name), "Id", "Name");
-            return View();
+            StudentCreateVM student = new();
+            student.AcademicSessionList = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name").ToList();
+            student.AcademicClassList = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name").ToList();
+            student.BloodGroupList = new SelectList(await _bloodGroupManager.GetAllAsync(), "Id", "Name").ToList();
+            student.GenderList = new SelectList(await _genderManager.GetAllAsync(), "Id", "Name").ToList();
+            student.NationalityList = new SelectList(await _nationalityManager.GetAllAsync(), "Id", "Name").ToList();
+            student.ReligionList = new SelectList(await _religionManager.GetAllAsync(), "Id", "Name").ToList();
+            student.DivisionList = new SelectList(await _divisionManager.GetAllAsync(), "Id", "Name").ToList();
+
+            return View(student);
         }
 
         [HttpPost]
@@ -97,7 +113,8 @@ namespace SchoolManagementSystem.Controllers
                     string fileExt = Path.GetExtension(sPhoto.FileName);
                     string root = _host.WebRootPath;
                     string folder = "Images/Student/";
-                    string year = _context.AcademicSession.FirstOrDefault(s => s.Id == newStudent.AcademicSessionId).Name.Substring(0,4);
+                    string sessionYear =(await _academicSessionManager.GetByIdAsync(newStudent.AcademicSessionId)).ToString();
+                    string year =sessionYear.Substring(0,4);
                     string fileName = "S_" + year + "_" + newStudent.ClassRoll + fileExt;
                     string pathCombine = Path.Combine(root, folder, fileName);
                     using (var stream = new FileStream(pathCombine, FileMode.Create))
@@ -119,16 +136,18 @@ namespace SchoolManagementSystem.Controllers
                 }
             }
 
-            ViewData["AcademicSessionId"] = new SelectList(_context.Set<AcademicSession>(), "Id", "Name", newStudent.AcademicSessionId);
-            ViewData["classList"] = new SelectList(_context.Set<AcademicClass>(), "Id", "Name", newStudent.AcademicClassId);
-            ViewData["sectionList"] = new SelectList(_context.Set<AcademicSection>(), "Id", "Name", newStudent.AcademicSectionId);
-            ViewData["BloodGroupId"] = new SelectList(_context.Set<BloodGroup>(), "Id", "Name", newStudent.BloodGroupId);
-            ViewData["GenderId"] = new SelectList(_context.Set<Gender>(), "Id", "Name", newStudent.GenderId);
-            ViewData["NationalityId"] = new SelectList(_context.Set<Nationality>(), "Id", "Name", newStudent.NationalityId);
-            ViewData["ReligionId"] = new SelectList(_context.Set<Religion>(), "Id", "Name", newStudent.ReligionId);
-            ViewData["DivisionList"] = new SelectList(_context.Set<Division>().OrderBy(d => d.Name), "Id", "Name");
-            ViewData["DistrictList"] = new SelectList(_context.Set<District>().OrderBy(d => d.Name), "Id", "Name");
-            ViewData["UpList"] = new SelectList(_context.Set<Upazila>().OrderBy(d => d.Name), "Id", "Name");
+            
+
+            newStudent.AcademicSessionList = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name",newStudent.AcademicSessionId).ToList();
+            newStudent.AcademicClassList = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name",newStudent.AcademicClassId).ToList();
+            newStudent.BloodGroupList = new SelectList(await _bloodGroupManager.GetAllAsync(), "Id", "Name", newStudent.BloodGroupId).ToList();
+            newStudent.GenderList = new SelectList(await _genderManager.GetAllAsync(), "Id", "Name",newStudent.GenderId).ToList();
+            newStudent.NationalityList = new SelectList(await _nationalityManager.GetAllAsync(), "Id", "Name",newStudent.NationalityId).ToList();
+            newStudent.ReligionList = new SelectList(await _religionManager.GetAllAsync(), "Id", "Name",newStudent.ReligionId).ToList();
+            newStudent.DivisionList = new SelectList(await _divisionManager.GetAllAsync(), "Id", "Name").ToList();
+
+
+
             return View(newStudent);
         }
 
@@ -145,17 +164,17 @@ namespace SchoolManagementSystem.Controllers
             {
                 return NotFound();
             }
-            ViewData["AcademicSessionId"] = new SelectList(_context.Set<AcademicSession>(), "Id", "Name", student.AcademicSessionId);
-            ViewData["classList"] = new SelectList(_context.Set<AcademicClass>(), "Id", "Name", student.AcademicClassId);
-            ViewData["sectionList"] = new SelectList(_context.Set<AcademicSection>(), "Id", "Name", student.AcademicSectionId);
-            ViewData["BloodGroupId"] = new SelectList(_context.Set<BloodGroup>(), "Id", "Name", student.BloodGroupId);
-            ViewData["GenderId"] = new SelectList(_context.Set<Gender>(), "Id", "Name", student.GenderId);
-            ViewData["NationalityId"] = new SelectList(_context.Set<Nationality>(), "Id", "Name", student.NationalityId);
-            ViewData["ReligionId"] = new SelectList(_context.Set<Religion>(), "Id", "Name", student.ReligionId);
-            ViewData["DivisionList"] = new SelectList(_context.Set<Division>().OrderBy(d => d.Name), "Id", "Name");
-            ViewData["DistrictList"] = new SelectList(_context.Set<District>().OrderBy(d => d.Name), "Id", "Name");
-            ViewData["UpList"] = new SelectList(_context.Set<Upazila>().OrderBy(d => d.Name), "Id", "Name");
-            return View(student);
+            var newStudent = _mapper.Map<StudentCreateVM>(student);
+            newStudent.AcademicSessionList = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name", newStudent.AcademicSessionId).ToList();
+            newStudent.AcademicClassList = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", newStudent.AcademicClassId).ToList();
+            newStudent.BloodGroupList = new SelectList(await _bloodGroupManager.GetAllAsync(), "Id", "Name", newStudent.BloodGroupId).ToList();
+            newStudent.GenderList = new SelectList(await _genderManager.GetAllAsync(), "Id", "Name", newStudent.GenderId).ToList();
+            newStudent.NationalityList = new SelectList(await _nationalityManager.GetAllAsync(), "Id", "Name", newStudent.NationalityId).ToList();
+            newStudent.ReligionList = new SelectList(await _religionManager.GetAllAsync(), "Id", "Name", newStudent.ReligionId).ToList();
+            newStudent.DivisionList = new SelectList(await _divisionManager.GetAllAsync(), "Id", "Name").ToList();
+
+            
+            return View(newStudent);
         }
 
         
@@ -178,7 +197,8 @@ namespace SchoolManagementSystem.Controllers
                         string fileExt = Path.GetExtension(sPhoto.FileName);
                         string root = _host.WebRootPath;
                         string folder = "Images/Student/";
-                        string year = _context.AcademicSession.FirstOrDefault(s => s.Id == student.AcademicSessionId).Name.Substring(0, 4);
+                        string sessionYear = (await _academicSessionManager.GetByIdAsync(student.AcademicSessionId)).ToString();
+                        string year = sessionYear.Substring(0, 4);
                         string fileName = "S_" + year + "_" + student.ClassRoll + fileExt;
                         string pathCombine = Path.Combine(root, folder, fileName);
                         using (var stream = new FileStream(pathCombine, FileMode.Create))
@@ -213,17 +233,16 @@ namespace SchoolManagementSystem.Controllers
                 }
             }
 
-            ViewData["AcademicSessionId"] = new SelectList(_context.Set<AcademicSession>(), "Id", "Name", student.AcademicSessionId);
-            ViewData["classList"] = new SelectList(_context.Set<AcademicClass>(), "Id", "Name", student.AcademicClassId);
-            ViewData["sectionList"] = new SelectList(_context.Set<AcademicSection>(), "Id", "Name", student.AcademicSectionId);
-            ViewData["BloodGroupId"] = new SelectList(_context.Set<BloodGroup>(), "Id", "Name", student.BloodGroupId);
-            ViewData["GenderId"] = new SelectList(_context.Set<Gender>(), "Id", "Name", student.GenderId);
-            ViewData["NationalityId"] = new SelectList(_context.Set<Nationality>(), "Id", "Name", student.NationalityId);
-            ViewData["ReligionId"] = new SelectList(_context.Set<Religion>(), "Id", "Name", student.ReligionId);
-            ViewData["DivisionList"] = new SelectList(_context.Set<Division>().OrderBy(d => d.Name), "Id", "Name");
-            ViewData["DistrictList"] = new SelectList(_context.Set<District>().OrderBy(d => d.Name), "Id", "Name");
-            ViewData["UpList"] = new SelectList(_context.Set<Upazila>().OrderBy(d => d.Name), "Id", "Name");
-            return View(student);
+            var newStudent = _mapper.Map<StudentCreateVM>(student);
+            newStudent.AcademicSessionList = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name", newStudent.AcademicSessionId).ToList();
+            newStudent.AcademicClassList = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", newStudent.AcademicClassId).ToList();
+            newStudent.BloodGroupList = new SelectList(await _bloodGroupManager.GetAllAsync(), "Id", "Name", newStudent.BloodGroupId).ToList();
+            newStudent.GenderList = new SelectList(await _genderManager.GetAllAsync(), "Id", "Name", newStudent.GenderId).ToList();
+            newStudent.NationalityList = new SelectList(await _nationalityManager.GetAllAsync(), "Id", "Name", newStudent.NationalityId).ToList();
+            newStudent.ReligionList = new SelectList(await _religionManager.GetAllAsync(), "Id", "Name", newStudent.ReligionId).ToList();
+            newStudent.DivisionList = new SelectList(await _divisionManager.GetAllAsync(), "Id", "Name").ToList();
+
+            return View(newStudent);
         }
 
         [Authorize(Roles = "Admin")]
@@ -265,38 +284,46 @@ namespace SchoolManagementSystem.Controllers
 
         private bool StudentExists(int id)
         {
-            return _context.Student.Any((System.Linq.Expressions.Expression<Func<Student, bool>>)(e => e.Id == id));
+            var student = _studentManager.GetByIdAsync(id);
+            if (student!=null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
-        public async Task<JsonResult> GetClassList()
-        {
-            var classList =await _academicClassManager.GetAllAsync();
-            return Json(classList);
-        }
-        public async Task<JsonResult> GetSectionList(int id)
-        {
-            var sectionList =await _context.AcademicSection
-                .Where(s => s.AcademicClassId == id)
-                .OrderBy(s => s.Name)
-                .ToListAsync();
-            return Json(sectionList);
-        }
-        public async Task<JsonResult> GetDistrictList(int id)
-        {
-            var districtList =await _context.District.
-                Where(s => s.DivisionId == id)
-                .OrderBy(d => d.Name)
-                .ToListAsync();
-            return Json(districtList);
-        }
-        public async Task<JsonResult> GetUpazilaList(int id)
-        {
-            var upazilaList =await _context.Upazila
-                .Where(s => s.DistrictId == id)
-                .OrderBy(s => s.Name)
-                .ToListAsync();
+        //public async Task<JsonResult> GetClassList()
+        //{
+        //    var classList =await _academicClassManager.GetAllAsync();
+        //    return Json(classList);
+        //}
+        //public async Task<JsonResult> GetSectionList(int id)
+        //{
+        //    var sectionList =await _context.AcademicSection
+        //        .Where(s => s.AcademicClassId == id)
+        //        .OrderBy(s => s.Name)
+        //        .ToListAsync();
+        //    return Json(sectionList);
+        //}
+        //public async Task<JsonResult> GetDistrictList(int id)
+        //{
+        //    var districtList =await _context.District.
+        //        Where(s => s.DivisionId == id)
+        //        .OrderBy(d => d.Name)
+        //        .ToListAsync();
+        //    return Json(districtList);
+        //}
+        //public async Task<JsonResult> GetUpazilaList(int id)
+        //{
+        //    var upazilaList =await _context.Upazila
+        //        .Where(s => s.DistrictId == id)
+        //        .OrderBy(s => s.Name)
+        //        .ToListAsync();
 
-            return Json(upazilaList);
-        }
+        //    return Json(upazilaList);
+        //}
     }
 }

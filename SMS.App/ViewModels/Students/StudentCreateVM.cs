@@ -1,4 +1,5 @@
-﻿using SMS.Entities;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using SMS.Entities;
 using SMS.Entities.AdditionalModels;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,6 @@ namespace SMS.App.ViewModels.Students
 {
     public class StudentCreateVM
     {
-        public int Id { get; set; }
 
         [Display(Name = "Student Name"), StringLength(30), Required]
         public string Name { get; set; }
@@ -118,31 +118,12 @@ namespace SMS.App.ViewModels.Students
         [Display(Name = "Edited at")]
         public DateTime EditedAt { get; set; }
 
-        [ForeignKey("PresentDivisiontId")]
-        public Division PresentDivision { get; set; }
-
-        [ForeignKey("PresentDistrictId")]
-        public District PresentDistrict { get; set; }
-
-        [ForeignKey("PresentUpazilaId")]
-        public Upazila PresentUpazila { get; set; }
-
-        [ForeignKey("PermanentDivisiontId")]
-        public Division PermanentDivision { get; set; }
-
-        [ForeignKey("PermanentDistrictId")]
-        public District PermanentDistrict { get; set; }
-
-        [ForeignKey("PermanentUpazilaId")]
-        public Upazila PermanentUpazila { get; set; }
-
-        public ICollection<AcademicClass> AcademicClasses { get; set; }
-        public ICollection<AcademicSession> AcademicSessions { get; set; }
-        public ICollection<AcademicSection> AcademicSections { get; set; }
-        public ICollection<BloodGroup> BloodGroups { get; set; }
-        public ICollection<Gender> Genders { get; set; }
-        public ICollection<Nationality> Nationalities { get; set; }
-        public ICollection<Religion> Religions { get; set; }
-        public ICollection<Division> Divisions { get; set; }
+        public List<SelectListItem> AcademicSessionList { get; set; }
+        public List<SelectListItem> AcademicClassList { get; set; }
+        public List<SelectListItem> BloodGroupList { get; set; }
+        public List<SelectListItem> GenderList { get; set; }
+        public List<SelectListItem> NationalityList { get; set; }
+        public List<SelectListItem> ReligionList { get; set; }
+        public List<SelectListItem> DivisionList { get; set; }
     }
 }

@@ -18,9 +18,29 @@ namespace SMS.BLL.Managers
             _academicSectinRepository = academicSectionRepository;
         }
 
+        public async override Task<bool> AddAsync(AcademicSection entity)
+        {
+            var exist = await _academicSectinRepository.IsExistByNameWithClassNSessionAsync(entity);
+            if (exist == true)
+            {
+                return false;
+            }
+            return await base.AddAsync(entity);
+        }
+
         public async Task<IReadOnlyCollection<AcademicSection>> GetAllByClassWithSessionId(int classId, int sessionId)
         {
             return await _academicSectinRepository.GetAllByClassWithSessionId(classId, sessionId);
+        }
+
+        public async override Task<bool> UpdateAsync(AcademicSection entity)
+        {
+            var exitSection = await _academicSectinRepository.IsExistByNameWithClassNSessionAsync(entity);
+            if (exitSection == true)
+            {
+                return false;
+            }
+            return await base.UpdateAsync(entity);
         }
     }
 }

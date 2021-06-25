@@ -26,12 +26,36 @@ namespace SMS.DAL.Repositories
                 .Include(m => m.AcademicSession)
                 .ToListAsync();
         }
+        public async override Task<AcademicSection> GetByIdAsync(int id)
+        {
+            return await _context.AcademicSection
+                .Include(a => a.AcademicClass)
+                .Include(a => a.AcademicSession)
+                .Where(a => a.Id == id)
+                .FirstOrDefaultAsync();
+        }
 
         public async Task<IReadOnlyCollection<AcademicSection>> GetAllByClassWithSessionId(int classId, int sessionId)
         {
             return await _context.AcademicSection
                 .Where(s => s.AcademicClassId == classId && s.AcademicSessionId == sessionId)
                 .ToListAsync();
+        }
+
+        public async Task<AcademicSection> GetByNameAsync(string name)
+        {
+            return await _context.AcademicSection.Where(a => a.Name.Trim() == name.Trim()).FirstOrDefaultAsync();
+        }
+
+        public async Task<bool> IsExistByNameWithClassNSessionAsync(AcademicSection academicSection)
+        {
+            var existAcademicSection = await _context.AcademicSection.Where(s => s.AcademicClassId == academicSection.AcademicClassId && s.AcademicSessionId == academicSection.AcademicSessionId && s.Name.Trim() == academicSection.Name.Trim()).FirstOrDefaultAsync();
+
+            if (existAcademicSection != null)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -57,18 +58,26 @@ namespace SMS.App.Controllers
             return View();
         }
 
-        // POST: AcademicSections/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Status,AcademicClassId,AcademicSessionId,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSection academicSection)
+        public async Task<IActionResult> Create([Bind("Id,Name,Status,AcademicClassId,AcademicSessionId")] AcademicSection academicSection)
         {
+            var academicClass =await _academicClassManager.GetByIdAsync(academicSection.AcademicClassId);
             if (ModelState.IsValid)
             {
-                await _academicSectionManager.AddAsync(academicSection);
-                return RedirectToAction(nameof(Index));
+                academicSection.CreatedBy = HttpContext.Session.GetString("User");
+                academicSection.CreatedAt = DateTime.Now;
+                bool save = await _academicSectionManager.AddAsync(academicSection);
+                if (save == true)
+                {
+                    TempData["saved"] = "New Section Added Successfully";
+                    return RedirectToAction(nameof(Index));
+                }
+                TempData["failed"] = academicSection.Name + " is already exist for "+ academicClass.Name;
             }
+
+
             ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", academicSection.AcademicClassId);
             ViewData["AcademicSessionId"] = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name", academicSection.AcademicSessionId);
             return View(academicSection);
@@ -81,8 +90,7 @@ namespace SMS.App.Controllers
             {
                 return NotFound();
             }
-            int myId = Convert.ToInt32(id);
-            var academicSection = await _academicSectionManager.GetByIdAsync(myId);
+            var academicSection = await _academicSectionManager.GetByIdAsync((int)id);
             
             ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", academicSection.AcademicClassId);
             ViewData["AcademicSessionId"] = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name", academicSection.AcademicSessionId);
@@ -103,7 +111,15 @@ namespace SMS.App.Controllers
             {
                 try
                 {
-                    await _academicSectionManager.UpdateAsync(academicSection);
+                    academicSection.EditedBy = HttpContext.Session.GetString("User");
+                    academicSection.EditedAt = DateTime.Now;
+
+                    bool updated = await _academicSectionManager.UpdateAsync(academicSection);
+                    if (updated==true)
+                    {
+                        TempData["update"] = "Academic Section Updated Successfully";
+                        return RedirectToAction(nameof(Index));
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -116,10 +132,14 @@ namespace SMS.App.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                TempData["failed"] = academicSection.Name+ " is already exist";
             }
             ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", academicSection.AcademicClassId);
             ViewData["AcademicSessionId"] = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name", academicSection.AcademicSessionId);
+            var aClass = await _academicClassManager.GetByIdAsync(academicSection.AcademicClassId);
+            var aSession = await _academicSessionManager.GetByIdAsync(academicSection.AcademicSessionId);
+            academicSection.AcademicClass = aClass;
+            academicSection.AcademicSession = aSession;
             return View(academicSection);
         }
 
@@ -145,7 +165,11 @@ namespace SMS.App.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var academicSection = await _academicSectionManager.GetByIdAsync(id);
-            await _academicSectionManager.RemoveAsync(academicSection);
+            bool isDeleted =await _academicSectionManager.RemoveAsync(academicSection);
+            if (isDeleted == true)
+            {
+                TempData["deleted"] = "Deleted Successfullly";
+            }
             return RedirectToAction(nameof(Index));
         }
 

@@ -50,4 +50,27 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+            $(document).ready(function () {
+
+                $(function () {
+                    let saved = '@TempData["saved"]';
+                    let deleted = '@TempData["deleted"]';
+                    let edited = '@TempData["edited"]';
+                    let failed = '@TempData["failed"]'
+                    if (saved != "") {
+                        alertify.success("Saved Successfully");
+                    }
+                    if (deleted != "") {
+                        alertify.error("Deleted Successfully");
+                    }
+                    if (edited != "") {
+                        alertify.message('Updated Successfully');
+                    }
+                    if (failed != "") {
+                        alertify.error(failed);
+                    }
+                });
+            });
+    </script>
 }

@@ -22,9 +22,10 @@
 
 $('#AcademicClassId').change(function () {
     let id = $('#AcademicClassId option:selected').val();
+    let sessionId = $('#AcademicSessionId option:selected').val();
 
     $.ajax({
-        url: "/Students/GetSectionList/" + id,
+        url: "/api/academicsections/getbyclasswithsessionId?classId=" + id + "&sessionId=" + sessionId,
         dataType: "JSON",
         type: "POST",
         cache: false,
@@ -102,7 +103,7 @@ function loadAddress() {
     var preAddressArea = $('#PresentAddressArea').val();
     var preAddressPO = $('#PresentAddressPO').val();
 
-    var preDivVal = $('#PresentDivisiontId').val();
+    var preDivVal = $('#PresentDivisionId').val();
 
     var preDisText = $('#PresentDistrictId option:selected').text();
     var preDisVal = $('#PresentDistrictId').val();

@@ -32,7 +32,6 @@ namespace SMS.DB
         public DbSet<Religion> Religion { get; set; }
         public DbSet<Student> Student { get; set; }
         public DbSet<StudentFeeHead> StudentFeeHead { get; set; }
-        //public DbSet<StudentHub> StudentHubs { get; set; }
         public DbSet<StudentPayment> StudentPayment { get; set; }
         public DbSet<StudentPaymentDetails> StudentPaymentDetails { get; set; }
         public DbSet<Upazila> Upazila { get; set; }

@@ -12,8 +12,16 @@
     string phonePrefix = "+880";
 
 }
+@section Styles{ 
+<style>
+    .table th, .table td {
+        padding: 0.25rem;
+    }
+</style>
 
-<div class="row">
+}
+
+<div class="row p-2">
     <div class="col-md-3 bg-info mh-100">
         <div class="row pt-2">
             <div class="col-md-12 text-center">
@@ -23,28 +31,28 @@
         <div class="row text-light">
             <div class="col-md-12">
                 <dl class="row p-2">
-                    <dt class="col-sm-4 text-right">
+                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
                         Name
                     </dt>
-                    <dd class="col-sm-8">
+                    <dd class="col-sm-8 col-8">
                         @Html.DisplayFor(model => model.Student.Name)
                     </dd>
-                    <dt class="col-sm-4 text-right">
+                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
                         Session
                     </dt>
-                    <dd class="col-sm-8">
+                    <dd class="col-sm-8 col-8">
                         @Html.DisplayFor(model => model.Student.AcademicSession.Name)
                     </dd>
-                    <dt class="col-sm-4 text-right">
+                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
                         Class
                     </dt>
-                    <dd class="col-sm-8">
+                    <dd class="col-sm-8 col-8">
                         @Html.DisplayFor(model => model.Student.AcademicClass.Name)
                     </dd>
-                    <dt class="col-sm-4 text-right">
+                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
                         Section
                     </dt>
-                    <dd class="col-sm-8">
+                    <dd class="col-sm-8 col-8">
                         @if (Model.Student.AcademicSectionId != null)
                         {
                             @Html.DisplayFor(model => model.Student.AcademicSection.Name)
@@ -54,10 +62,10 @@
                         <span>No Section</span>
                         }
                     </dd>
-                    <dt class="col-sm-4 text-right">
+                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
                         Roll
                     </dt>
-                    <dd class="col-sm-8">
+                    <dd class="col-sm-8 col-8">
                         @Html.DisplayFor(model => model.Student.ClassRoll)
                     </dd>
                 </dl>
@@ -88,7 +96,7 @@
             <div class="card-body">
                 <div class="tab-content">
                     <div id="personal" class="tab-pane active text-left" role="tabpanel">
-                        <table class="table border-0 table-borderless" style="line-height:30%;">
+                        <table class="table border-0 table-borderless table-responsive" style="height:100%;">
                             <thead>
                             </thead>
                             <tbody>
@@ -168,12 +176,13 @@
                                 <tr>
                                     <td>Present Address</td>
                                     <td>:</td>
-                                    <td>Vill/Area - @Model.Student.PresentAddressArea, Post Office - @Model.Student.PresentAddressPO, Polic Station - @Model.Student.PresentUpazila.Name, @Model.Student.PresentDistrict.Name, @Model.Student.PresentDivision.Name</td>
+                                    <td>Vill/Area - @Model.Student.PresentAddressArea, Post Office - @Model.Student.PresentAddressPO, Polic Station - @Model.Student.PresentUpazila.Name, @Model.Student.PresentDistrict.Name</td>
                                 </tr>
                                 <tr>
                                     <td>Permanent Address</td>
                                     <td>:</td>
-                                    <td>Vill/Area - @Model.Student.PermanentAddressArea, Post Office - @Model.Student.PermanentAddressPO, Polic Station - @Model.Student.PermanentUpazila.Name, @Model.Student.PresentDistrict.Name, @Model.Student.PresentDivision.Name</td>
+                                    <td>Vill/Area - @Model.Student.PermanentAddressArea, Post Office - @Model.Student.PermanentAddressPO, Polic Station - @Model.Student.PermanentUpazila.Name, @Model.Student.PermanentDistrict.Name</td>
+                                    @*<td>Vill/Area - @Model.Student.PermanentAddressArea, Post Office - @Model.Student.PermanentAddressPO, Polic Station - @Model.Student.PermanentUpazila.Name, @Model.Student.PresentDistrict.Name, @Model.Student.PresentDivision.Name</td>*@
                                 </tr>
                             </tbody>
                             <tfoot></tfoot>

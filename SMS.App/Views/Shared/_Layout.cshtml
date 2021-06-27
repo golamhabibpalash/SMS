@@ -39,16 +39,17 @@
 </head>
 
 <body class="nav-md">
-@*<body class="nav-sm">*@
+    @await RenderSectionAsync("Styles", required: false)
+    @*<body class="nav-sm">*@
     <div class="container body">
         <div class="main_container">
             <div class="col-md-3 left_col menu_fixed">
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="border: 0;">
-                        
-                            <a asp-action="Index" asp-controller="Home" class="site_title"><i class="fa fa-paw"></i> <span>Institute Name</span></a>
-                        
-                      
+
+                        <a asp-action="Index" asp-controller="Home" class="site_title"><i class="fa fa-paw"></i> <span>Institute Name</span></a>
+
+
                     </div>
 
                     <div class="clearfix"></div>
@@ -139,7 +140,7 @@
                             </ul>
                         </div>
                         <div class="menu_section">
-                            
+
                         </div>
 
                     </div>
@@ -218,36 +219,36 @@
     <!-- Custom Theme Scripts -->
     <script src="~/js/custom.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
-<script>
-    function menuToggle() {
-        if ($('body').hasClass('nav-md')) {
-            $("#sidebar-menu").find('li.active ul').hide();
-            $("#sidebar-menu").find('li.active').addClass('active-sm').removeClass('active');
-        } else {
-            $("#sidebar-menu").find('li.active-sm ul').show();
-            $("#sidebar-menu").find('li.active-sm').addClass('active').removeClass('active-sm');
+    <script>
+        function menuToggle() {
+            if ($('body').hasClass('nav-md')) {
+                $("#sidebar-menu").find('li.active ul').hide();
+                $("#sidebar-menu").find('li.active').addClass('active-sm').removeClass('active');
+            } else {
+                $("#sidebar-menu").find('li.active-sm ul').show();
+                $("#sidebar-menu").find('li.active-sm').addClass('active').removeClass('active-sm');
+            }
+            $('body').toggleClass('nav-md nav-sm');
+            setHeight();
         }
-        $('body').toggleClass('nav-md nav-sm');
-        setHeight();
-    }
 
-    function setHeight() {
-        $('.right_col').css('min-height', $(window).height());
-        var bodyHeight = $('body').outerHeight();
-        var footerHeight = $('body').hasClass('footer_fixed') ? -10 : $('footer').height();
-        var leftColHeight = $('.left_col').eq(1).height() + $('.sidebar-footer').height();
-        var contentHeight = bodyHeight < leftColHeight ? leftColHeight : bodyHeight;
-        contentHeight -= $('.nav_menu').height() + footerHeight;
-        $('.right_col').css('min-height', contentHeight);
-    }
+        function setHeight() {
+            $('.right_col').css('min-height', $(window).height());
+            var bodyHeight = $('body').outerHeight();
+            var footerHeight = $('body').hasClass('footer_fixed') ? -10 : $('footer').height();
+            var leftColHeight = $('.left_col').eq(1).height() + $('.sidebar-footer').height();
+            var contentHeight = bodyHeight < leftColHeight ? leftColHeight : bodyHeight;
+            contentHeight -= $('.nav_menu').height() + footerHeight;
+            $('.right_col').css('min-height', contentHeight);
+        }
 
 
 
 
-    $(document).ready(function () {
-        menuToggle();
-        //$('#menu_toggle').click();
-    });
-</script>
+        $(document).ready(function () {
+            menuToggle();
+            //$('#menu_toggle').click();
+        });
+    </script>
 </body>
 </html>

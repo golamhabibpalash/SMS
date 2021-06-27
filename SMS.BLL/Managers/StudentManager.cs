@@ -15,7 +15,8 @@ namespace SMS.BLL.Managers
     {
         public StudentManager(IStudentRepository studentRepository):base(studentRepository)
         {
-
+           
         }
+
     }
 }

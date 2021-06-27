@@ -47,13 +47,13 @@
                             <img src="~/Images/Student/@item.Photo" alt="Photo Not showing" style="width:50px;" />
                         </a>
                     </td>
-                    
+
                     <td>
                         <a asp-action="Details" asp-route-id="@item.Id" asp-controller="Students">
                             @Html.DisplayFor(modelItem => item.Name)
                         </a>
                     </td>
-                   
+
                     <td>
                         @Html.DisplayFor(modelItem => item.AcademicClass.Name)
                     </td>
@@ -76,25 +76,31 @@
 </div>
 
 @section Scripts{
+    <script>
+        $(document).ready(function () {
 
+        $(function () {
+            let saved = '@TempData["saved"]';
+            let deleted = '@TempData["deleted"]';
+            let edited = '@TempData["edited"]';
+            let failed = '@TempData["failed"]'
+            if (saved != "") {
+                alertify.success("Saved Successfully");
+                }
+            if (deleted != "") {
+                alertify.error("Deleted Successfully");
+                }
+            if (edited != "") {
+                alertify.message('Updated Successfully');
+                }
+            if (failed != "") {
+                alertify.error(failed);
+                }
+            });
+        });
 
+    </script>
 
-    @if (TempData["create"] != null)
-    {
-        <script src="~/js/AlertifyNotify/successNotify.js"></script>
-    }
-
-    @if (TempData["edit"] != null)
-    {
-
-        <script src="~/js/AlertifyNotify/warningNotify.js"></script>
-    }
-
-    @if (TempData["delete"] != null)
-    {
-
-        <script src="~/js/AlertifyNotify/errorNotify.js"></script>
-    }
     <script src="~/js/DataTable/dataTable.js"></script>
 
 

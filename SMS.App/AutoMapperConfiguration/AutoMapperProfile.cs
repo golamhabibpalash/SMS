@@ -16,6 +16,12 @@ namespace SMS.App.AutoMapperConfiguration
             CreateMap<StudentCreateVM, Student>();
             CreateMap<Student, StudentCreateVM>();
 
+            CreateMap<StudentEditVM, Student>();
+            CreateMap<Student, StudentEditVM>();
+
+            CreateMap<StudentListVM, Student>();
+            CreateMap<Student, StudentListVM>();
+
             CreateMap<EmployeeCreateVM, Employee>();
             CreateMap<Employee, EmployeeCreateVM>();
 

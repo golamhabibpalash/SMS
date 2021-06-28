@@ -2,53 +2,53 @@
 
 @{
     ViewData["Title"] = "Details";
+    GlobalUI.PageTitle = "Details Academic Subject Type ( "+Model.SubjectTypeName + ")";
 }
 
-<h1>Details</h1>
-
 <div>
-    <h4>AcademicSubjectType</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SubjectTypeId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SubjectTypeId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedBy)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedBy)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedAt)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EditedBy)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EditedBy)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EditedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EditedAt)
-        </dd>
+        <div class="offset-md-2">
+
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.SubjectTypeName)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.SubjectTypeName)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Status)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Status)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.CreatedBy)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.CreatedBy) .
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.CreatedAt)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.CreatedAt)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.EditedBy)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.EditedBy) .
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.EditedAt)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.EditedAt)
+            </dd>
+        </div>
+        <div class="col-md-10 offset-md-1 text-md-center">
+            <partial name="_Edit_Back" model="@Model.Id" />
+        </div>
     </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
 </div>

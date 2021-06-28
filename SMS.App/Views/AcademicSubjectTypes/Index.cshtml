@@ -1,63 +1,41 @@
 ﻿@model IEnumerable<SMS.Entities.AcademicSubjectType>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Academic Subject Type";
+    GlobalUI.PageTitle = ViewBag.Title;
+    int sl = 0;
 }
 
-<h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
+            <th>#</th>
             <th>
-                @Html.DisplayNameFor(model => model.SubjectTypeId)
+                @Html.DisplayNameFor(model => model.SubjectTypeName)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Status)
             </th>
+
             <th>
-                @Html.DisplayNameFor(model => model.CreatedBy)
+                <partial name="_Create" />
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EditedBy)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EditedAt)
-            </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            <td>@(++sl).</td>
             <td>
-                @Html.DisplayFor(modelItem => item.SubjectTypeId)
+                @Html.DisplayFor(modelItem => item.SubjectTypeName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
+
             <td>
-                @Html.DisplayFor(modelItem => item.CreatedBy)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EditedBy)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EditedAt)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <partial name="_Edit_Details_Delete" model="@item.Id" />
             </td>
         </tr>
 }

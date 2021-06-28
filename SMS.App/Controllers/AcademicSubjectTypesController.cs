@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SMS.BLL.Contracts;
 using SMS.DB;
 using SMS.Entities;
 
@@ -12,17 +14,18 @@ namespace SMS.App.Controllers
 {
     public class AcademicSubjectTypesController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IAcademicSubjectTypeManager _academicSubjectTypeManager;
 
-        public AcademicSubjectTypesController(ApplicationDbContext context)
+        public AcademicSubjectTypesController(IAcademicSubjectTypeManager academicSubjectTypeManager)
         {
-            _context = context;
+            _academicSubjectTypeManager = academicSubjectTypeManager;
         }
 
         // GET: AcademicSubjectTypes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.AcademicSubjectType.ToListAsync());
+            
+            return View(await _academicSubjectTypeManager.GetAllAsync());
         }
 
         // GET: AcademicSubjectTypes/Details/5
@@ -33,8 +36,7 @@ namespace SMS.App.Controllers
                 return NotFound();
             }
 
-            var academicSubjectType = await _context.AcademicSubjectType
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var academicSubjectType = await _academicSubjectTypeManager.GetByIdAsync((int)id);
             if (academicSubjectType == null)
             {
                 return NotFound();
@@ -49,17 +51,17 @@ namespace SMS.App.Controllers
             return View();
         }
 
-        // POST: AcademicSubjectTypes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,SubjectTypeId,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSubjectType academicSubjectType)
+        public async Task<IActionResult> Create([Bind("Id,SubjectTypeName,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSubjectType academicSubjectType)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(academicSubjectType);
-                await _context.SaveChangesAsync();
+                academicSubjectType.CreatedAt = DateTime.Now;
+                academicSubjectType.CreatedBy = HttpContext.Session.GetString("User");
+
+                await _academicSubjectTypeManager.AddAsync(academicSubjectType);
                 return RedirectToAction(nameof(Index));
             }
             return View(academicSubjectType);
@@ -72,8 +74,9 @@ namespace SMS.App.Controllers
             {
                 return NotFound();
             }
+            
 
-            var academicSubjectType = await _context.AcademicSubjectType.FindAsync(id);
+            var academicSubjectType = await _academicSubjectTypeManager.GetByIdAsync((int)id);
             if (academicSubjectType == null)
             {
                 return NotFound();
@@ -86,7 +89,7 @@ namespace SMS.App.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,SubjectTypeId,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSubjectType academicSubjectType)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,SubjectTypeName,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSubjectType academicSubjectType)
         {
             if (id != academicSubjectType.Id)
             {
@@ -97,8 +100,10 @@ namespace SMS.App.Controllers
             {
                 try
                 {
-                    _context.Update(academicSubjectType);
-                    await _context.SaveChangesAsync();
+                    academicSubjectType.EditedAt = DateTime.Now;
+                    academicSubjectType.EditedBy = HttpContext.Session.GetString("User");
+
+                    await _academicSubjectTypeManager.UpdateAsync(academicSubjectType);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -124,8 +129,7 @@ namespace SMS.App.Controllers
                 return NotFound();
             }
 
-            var academicSubjectType = await _context.AcademicSubjectType
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var academicSubjectType = await _academicSubjectTypeManager.GetByIdAsync((int)id);
             if (academicSubjectType == null)
             {
                 return NotFound();
@@ -139,15 +143,23 @@ namespace SMS.App.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var academicSubjectType = await _context.AcademicSubjectType.FindAsync(id);
-            _context.AcademicSubjectType.Remove(academicSubjectType);
-            await _context.SaveChangesAsync();
+            var academicSubjectType = await _academicSubjectTypeManager.GetByIdAsync(id);
+            
+            await _academicSubjectTypeManager.RemoveAsync(academicSubjectType);
             return RedirectToAction(nameof(Index));
         }
 
         private bool AcademicSubjectTypeExists(int id)
         {
-            return _context.AcademicSubjectType.Any(e => e.Id == id);
+            var result = _academicSubjectTypeManager.GetByIdAsync(id);
+            if (result != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

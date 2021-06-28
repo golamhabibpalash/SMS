@@ -9,7 +9,9 @@ namespace SMS.Entities
     public class AcademicSubjectType
     {
         public int Id { get; set; }
-        public string SubjectTypeId { get; set; }
+
+        [Display(Name ="Subject Type")]
+        public string SubjectTypeName { get; set; }
         public bool Status { get; set; }
 
         [Display(Name = "Created By")]

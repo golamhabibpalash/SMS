@@ -2,13 +2,11 @@
 
 @{
     ViewData["Title"] = "Details";
+    GlobalUI.PageTitle = "Academic Subject (" + Model.SubjectName + ") Details";
 }
 
-<h1>Details</h1>
 
 <div>
-    <h4>AcademicSubject</h4>
-    <hr />
     <dl class="row">
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.SubjectName)
@@ -23,10 +21,10 @@
             @Html.DisplayFor(model => model.TotalMarks)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsOptional)
+            @Html.DisplayNameFor(model => model.SubjectFor)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsOptional)
+            @Html.DisplayFor(model => model.SubjectFor)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Status)
@@ -67,6 +65,5 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <partial name="_Edit_Back" model="@Model.Id" />
 </div>

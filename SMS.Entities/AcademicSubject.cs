@@ -16,11 +16,13 @@ namespace SMS.Entities
         [Display(Name = "Subject Type")]
         public int AcademicSubjectTypeId { get; set; }
 
+        [Display(Name ="Subject For")]
+        public char SubjectFor { get; set; }
+
+        [Display(Name = "Total Marks")]
         public double TotalMarks { get; set; }
 
-        public bool IsOptional { get; set; }
-
-        [Display(Name = "Active/Inactive")]
+        [Display(Name = "Is Active")]
         public bool Status { get; set; }
 
         [Display(Name = "Created By")]

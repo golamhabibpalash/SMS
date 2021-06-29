@@ -1,82 +1,72 @@
 ﻿@model IEnumerable<SMS.Entities.AcademicSubject>
 
 @{
-    ViewData["Title"] = "Academic Subjec";
+    ViewData["Title"] = "Academic Subjects";
     GlobalUI.PageTitle = ViewBag.Title;
+    int sl = 0;
 }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+
+<table class="table" id="myTable">
     <thead>
         <tr>
+            <th>#</th>
             <th>
                 @Html.DisplayNameFor(model => model.SubjectName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AcademicSubjectTypeId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SubjectFor)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.TotalMarks)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.IsOptional)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Status)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CreatedBy)
+                <partial name="_Create" />
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EditedBy)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EditedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AcademicSubjectType)
-            </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
             <td>
+                @(++sl)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.SubjectName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AcademicSubjectType.SubjectTypeName)
+            </td>
+            <td>
+                @if (item.SubjectFor == 'S' || item.SubjectFor == 's')
+                {
+                    <span>School</span>
+                }
+                else
+                {
+                    <span>College</span>
+                }
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.TotalMarks)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.IsOptional)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CreatedBy)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EditedBy)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EditedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AcademicSubjectType.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <partial name="_Edit_Details_Delete" model="@item.Id" />
             </td>
         </tr>
 }
     </tbody>
 </table>
+
+@section Scripts{ 
+        <script src="~/js/DataTable/dataTable.js"></script>
+}

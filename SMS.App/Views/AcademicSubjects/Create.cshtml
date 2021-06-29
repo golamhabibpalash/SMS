@@ -1,71 +1,60 @@
 ﻿@model SMS.Entities.AcademicSubject
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Subject";
+    GlobalUI.PageTitle = ViewBag.Title;
 }
-
-<h1>Create</h1>
-
-<h4>AcademicSubject</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6 offset-md-3">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="SubjectName" class="control-label"></label>
-                <input asp-for="SubjectName" class="form-control" />
-                <span asp-validation-for="SubjectName" class="text-danger"></span>
+            <div class="form-group row">
+                <label asp-for="SubjectName" class="control-label col-form-label col-md-2 text-md-right "></label>
+                <div class="col-md-10">
+                    <input asp-for="SubjectName" class="form-control rounded" />
+                    <span asp-validation-for="SubjectName" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="AcademicSubjectTypeId" class="control-label"></label>
-                <select asp-for="AcademicSubjectTypeId" class ="form-control" asp-items="ViewBag.AcademicSubjectTypeId"></select>
+            <div class="form-group row">
+                <label asp-for="AcademicSubjectTypeId" class="control-label col-form-label col-md-2 text-md-right  "></label>
+                <div class="col-md-10">
+                    <select asp-for="AcademicSubjectTypeId" class="form-control rounded" asp-items="ViewBag.AcademicSubjectTypeId">
+                        <option selected disabled>Select Subject Type</option>
+                    </select>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="TotalMarks" class="control-label"></label>
-                <input asp-for="TotalMarks" class="form-control" />
-                <span asp-validation-for="TotalMarks" class="text-danger"></span>
+            <div class="form-group row">
+                <label asp-for="SubjectFor" class="control-label  col-form-label col-md-2 text-md-right"></label>
+                <div class="col-md-10">
+                    <input asp-for="SubjectFor" class="form-control rounded" placeholder="please Input C for College & S for School" />
+                    <span asp-validation-for="SubjectFor" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsOptional" /> @Html.DisplayNameFor(model => model.IsOptional)
-                </label>
+            <div class="form-group row">
+                <label asp-for="TotalMarks" class="control-label col-form-label col-md-2 text-md-right"></label>
+                <div class="col-md-10">
+                    <input asp-for="TotalMarks" class="form-control" />
+                    <span asp-validation-for="TotalMarks" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Status" /> @Html.DisplayNameFor(model => model.Status)
-                </label>
+            <div class="form-group row">
+                <div class="offset-md-2 col-md-10">
+                    <label class="">
+                        <input class="" asp-for="Status" /> @Html.DisplayNameFor(model => model.Status)
+                    </label>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="CreatedBy" class="control-label"></label>
-                <input asp-for="CreatedBy" class="form-control" />
-                <span asp-validation-for="CreatedBy" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatedAt" class="control-label"></label>
-                <input asp-for="CreatedAt" class="form-control" />
-                <span asp-validation-for="CreatedAt" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EditedBy" class="control-label"></label>
-                <input asp-for="EditedBy" class="form-control" />
-                <span asp-validation-for="EditedBy" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EditedAt" class="control-label"></label>
-                <input asp-for="EditedAt" class="form-control" />
-                <span asp-validation-for="EditedAt" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+            <div class="form-group row">
+                <div class="offset-md-2 col-md-10">
+                    <partial name="_Create_Back" />
+
+                </div>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

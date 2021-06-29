@@ -49,7 +49,7 @@ namespace SMS.App.Controllers
         // GET: AcademicSubjects/Create
         public async Task<IActionResult> Create()
         {
-            ViewData["AcademicSubjectTypeId"] = new SelectList(await _academicSubjectTypeManager.GetAllAsync(), "Id", "SubjectTypeId");
+            ViewData["AcademicSubjectTypeId"] = new SelectList(await _academicSubjectTypeManager.GetAllAsync(), "Id", "SubjectTypeName");
             return View();
         }
 
@@ -58,7 +58,7 @@ namespace SMS.App.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,SubjectName,AcademicSubjectTypeId,TotalMarks,IsOptional,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSubject academicSubject)
+        public async Task<IActionResult> Create([Bind("Id,SubjectName,AcademicSubjectTypeId,SubjectFor,TotalMarks,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSubject academicSubject)
         {
             if (ModelState.IsValid)
             {
@@ -66,7 +66,7 @@ namespace SMS.App.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["AcademicSubjectTypeId"] = new SelectList(await _academicSubjectTypeManager.GetAllAsync(), "Id", "SubjectTypeId", academicSubject.AcademicSubjectTypeId);
+            ViewData["AcademicSubjectTypeId"] = new SelectList(await _academicSubjectTypeManager.GetAllAsync(), "Id", "SubjectTypeName", academicSubject.AcademicSubjectTypeId);
             return View(academicSubject);
         }
 
@@ -83,7 +83,7 @@ namespace SMS.App.Controllers
             {
                 return NotFound();
             }
-            ViewData["AcademicSubjectTypeId"] = new SelectList(await _academicSubjectTypeManager.GetAllAsync(), "Id", "SubjectTypeId", academicSubject.AcademicSubjectTypeId);
+            ViewData["AcademicSubjectTypeId"] = new SelectList(await _academicSubjectTypeManager.GetAllAsync(), "Id", "SubjectTypeName", academicSubject.AcademicSubjectTypeId);
             return View(academicSubject);
         }
 
@@ -92,7 +92,7 @@ namespace SMS.App.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,SubjectName,AcademicSubjectTypeId,TotalMarks,IsOptional,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSubject academicSubject)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,SubjectName,AcademicSubjectTypeId,SubjectFor,TotalMarks,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSubject academicSubject)
         {
             if (id != academicSubject.Id)
             {

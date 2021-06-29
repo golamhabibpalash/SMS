@@ -1,4 +1,5 @@
-﻿using SMS.DAL.Contracts;
+﻿using Microsoft.EntityFrameworkCore;
+using SMS.DAL.Contracts;
 using SMS.DAL.Contracts.Base;
 using SMS.DAL.Repositories.Base;
 using SMS.DB;
@@ -16,6 +17,10 @@ namespace SMS.DAL.Repositories
         public AcademicSubjectRepository(ApplicationDbContext db):base(db)
         {
 
+        }
+        public override async Task<IReadOnlyCollection<AcademicSubject>> GetAllAsync()
+        {
+            return await _context.AcademicSubject.Include(s => s.AcademicSubjectType).ToListAsync();
         }
     }
 }

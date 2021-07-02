@@ -16,6 +16,9 @@ namespace SMS.Entities
         [Display(Name = "Subject Type")]
         public int AcademicSubjectTypeId { get; set; }
 
+        [Display(Name ="Subject Code")]
+        public int? SubjectCode { get; set; }
+
         [Display(Name ="Subject For")]
         public char SubjectFor { get; set; }
 

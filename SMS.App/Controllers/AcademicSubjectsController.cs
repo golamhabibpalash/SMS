@@ -58,12 +58,20 @@ namespace SMS.App.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,SubjectName,AcademicSubjectTypeId,SubjectFor,TotalMarks,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSubject academicSubject)
+        public async Task<IActionResult> Create([Bind("Id,SubjectName,AcademicSubjectTypeId,SubjectCode,SubjectFor,TotalMarks,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSubject academicSubject)
         {
             if (ModelState.IsValid)
             {
-                await _academicSubjectManager.AddAsync(academicSubject);
-                return RedirectToAction(nameof(Index));
+                var isSaved = await _academicSubjectManager.AddAsync(academicSubject);
+                if (isSaved)
+                {
+                    TempData["created"] = "Created Successfully";
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    TempData["error"] = "Already Exist";
+                }
             }
 
             ViewData["AcademicSubjectTypeId"] = new SelectList(await _academicSubjectTypeManager.GetAllAsync(), "Id", "SubjectTypeName", academicSubject.AcademicSubjectTypeId);
@@ -92,7 +100,7 @@ namespace SMS.App.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,SubjectName,AcademicSubjectTypeId,SubjectFor,TotalMarks,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSubject academicSubject)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,SubjectName,AcademicSubjectTypeId,SubjectCode,SubjectFor,TotalMarks,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSubject academicSubject)
         {
             if (id != academicSubject.Id)
             {
@@ -103,6 +111,7 @@ namespace SMS.App.Controllers
             {
                 try
                 {
+                    TempData["updated"] = "Updated Successfully";
                     await _academicSubjectManager.UpdateAsync(academicSubject);
                 }
                 catch (DbUpdateConcurrencyException)
@@ -147,6 +156,7 @@ namespace SMS.App.Controllers
             var academicSubject =await _academicSubjectManager.GetByIdAsync(id);
             
             await _academicSubjectManager.RemoveAsync(academicSubject);
+            TempData["deleted"]= "Deleted Successfully";
             return RedirectToAction(nameof(Index));
         }
 

@@ -12,7 +12,7 @@
             <div class="form-group row">
                 <label asp-for="Name" class="col-form-label col-md-2 text-md-right text-sm-left"></label>
                 <div class="col-md-10">
-                    <input asp-for="Name" class="form-control rounded" placeholder="Ex: Section A"/>
+                    <input asp-for="Name" class="form-control rounded" placeholder="Ex: Section A" />
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
             </div>
@@ -49,28 +49,6 @@
 
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <script>
-            $(document).ready(function () {
-
-                $(function () {
-                    let saved = '@TempData["saved"]';
-                    let deleted = '@TempData["deleted"]';
-                    let edited = '@TempData["edited"]';
-                    let failed = '@TempData["failed"]'
-                    if (saved != "") {
-                        alertify.success("Saved Successfully");
-                    }
-                    if (deleted != "") {
-                        alertify.error("Deleted Successfully");
-                    }
-                    if (edited != "") {
-                        alertify.message('Updated Successfully');
-                    }
-                    if (failed != "") {
-                        alertify.error(failed);
-                    }
-                });
-            });
-    </script>
-}
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+        <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
+    }

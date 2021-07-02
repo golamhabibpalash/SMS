@@ -43,5 +43,10 @@ namespace BLL.Managers.Base
         {
             return await _repository.IsExistByIdAsync(id);
         }
+
+        public virtual async Task<bool> IsExistAsync(T entity)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

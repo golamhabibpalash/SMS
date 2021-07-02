@@ -20,7 +20,31 @@ namespace SMS.DAL.Repositories
         }
         public override async Task<IReadOnlyCollection<AcademicSubject>> GetAllAsync()
         {
-            return await _context.AcademicSubject.Include(s => s.AcademicSubjectType).ToListAsync();
+            return await _context.AcademicSubject
+                .Include(s => s.AcademicSubjectType)
+                .OrderBy(s => s.SubjectCode)
+                .ToListAsync();
+        }
+        public override async Task<bool> AddAsync(AcademicSubject entity)
+        {
+            await _context.AddAsync(entity);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public override async Task<bool> IsExistAsync(AcademicSubject entity)
+        {
+            var existSubject = await _context.AcademicSubject
+                .Where(s => (s.SubjectName.Trim() == entity.SubjectName.Trim() || s.SubjectCode == entity.SubjectCode) && s.SubjectFor.ToString().Trim() == entity.SubjectFor.ToString().Trim())
+                .FirstOrDefaultAsync();
+
+            if (existSubject != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

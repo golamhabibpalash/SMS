@@ -10,5 +10,6 @@ namespace SMS.BLL.Contracts
 {
     public interface IAcademicSubjectManager :IManager<AcademicSubject>
     {
+        
     }
 }

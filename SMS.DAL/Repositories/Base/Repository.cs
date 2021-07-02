@@ -59,5 +59,11 @@ namespace SMS.DAL.Repositories.Base
                 return false;
             }
         }
+
+        public virtual async Task<bool> IsExistAsync(T entity)
+        {
+            await Table.FindAsync(entity);
+            return true;
+        }
     }
 }

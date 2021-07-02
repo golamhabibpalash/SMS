@@ -19,5 +19,7 @@ namespace SMS.BLL.Contracts.Base
         Task<bool> RemoveAsync(T entity);
 
         Task<bool> IsExistByIdAsync(int id);
+
+        Task<bool> IsExistAsync(T entity);
     }
 }

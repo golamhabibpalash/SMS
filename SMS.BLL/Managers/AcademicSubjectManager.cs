@@ -16,5 +16,17 @@ namespace SMS.BLL.Managers
         {
 
         }
+        public override async Task<bool> AddAsync(AcademicSubject entity)
+        {
+            bool isExist = await _repository.IsExistAsync(entity);
+            if (isExist)
+            {
+                return false;
+            }
+            else
+            {
+              return await _repository.AddAsync(entity);
+            }
+        }
     }
 }

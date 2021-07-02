@@ -15,6 +15,9 @@
                 @Html.DisplayNameFor(model => model.SubjectName)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.SubjectCode)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.AcademicSubjectTypeId)
             </th>
             <th>
@@ -32,41 +35,53 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @(++sl)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SubjectName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AcademicSubjectType.SubjectTypeName)
-            </td>
-            <td>
-                @if (item.SubjectFor == 'S' || item.SubjectFor == 's')
-                {
-                    <span>School</span>
-                }
-                else
-                {
-                    <span>College</span>
-                }
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TotalMarks)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                <partial name="_Edit_Details_Delete" model="@item.Id" />
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @(++sl)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SubjectName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SubjectCode)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AcademicSubjectType.SubjectTypeName)
+                </td>
+                <td>
+                    @if (item.SubjectFor == 'S' || item.SubjectFor == 's')
+                    {
+                        <span>School</span>
+                    }
+                    else
+                    {
+                        <span>College</span>
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalMarks)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                <td>
+                    <partial name="_Edit_Details_Delete" model="@item.Id" />
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 
-@section Scripts{ 
-        <script src="~/js/DataTable/dataTable.js"></script>
+@section Scripts{
+    <script src="~/js/DataTable/dataTable.js"></script>
+
+    <script>
+    let deleted = '@TempData["deleted"]';
+    let created = '@TempData["created"]';
+    let updated = '@TempData["updated"]';
+    let failed = '@TempData["error"]';
+    </script>
+    <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
 }

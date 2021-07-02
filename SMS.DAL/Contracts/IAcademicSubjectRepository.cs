@@ -11,6 +11,5 @@ namespace SMS.DAL.Contracts
 {
     public interface IAcademicSubjectRepository:IRepository<AcademicSubject>
     {
-        
     }
 }

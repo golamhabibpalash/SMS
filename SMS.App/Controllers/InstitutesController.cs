@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SMS.BLL.Contracts;
 using SMS.Entities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,16 +14,18 @@ namespace SMS.App.Controllers
     public class InstitutesController : Controller
     {
         private readonly IInstituteManager _instituteManager;
+        private readonly IWebHostEnvironment _host;
 
-        public InstitutesController(IInstituteManager instituteManager)
+        public InstitutesController(IInstituteManager instituteManager, IWebHostEnvironment host)
         {
             _instituteManager = instituteManager;
+            _host = host;
         }
         // GET: InstitutesController
         public async Task<ActionResult> Index()
         {
-
-            return View(await _instituteManager.GetAllAsync());
+            await _instituteManager.GetAllAsync();
+            return RedirectToAction("Edit", new { id = 1 });
             
         }
 
@@ -55,24 +59,63 @@ namespace SMS.App.Controllers
         }
 
         // GET: InstitutesController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
-            return View();
+            var institute = await _instituteManager.GetByIdAsync(id);
+            return View(institute);
         }
 
         // POST: InstitutesController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(int id,Institute existingInstitute, IFormFile logo, IFormFile banner)
         {
-            try
+            string InstituteLogo = "";
+            string InstituteBanner = "";
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    if (logo != null)
+                    {
+                        string fileExt = Path.GetExtension(logo.FileName);
+                        string root = _host.WebRootPath;
+                        string folder = "Images/Institute/";
+                        string fileName = "NLA_Logo"+fileExt;
+                        string pathCombine = Path.Combine(root, folder, fileName);
+                        using (var stream = new FileStream(pathCombine, FileMode.Create))
+                        {
+                            await logo.CopyToAsync(stream);
+                        }
+                        existingInstitute.Logo = InstituteLogo;
+                    }
+
+                    if (banner != null)
+                    {
+                        string fileExt = Path.GetExtension(banner.FileName);
+                        string root = _host.WebRootPath;
+                        string folder = "Images/Institute/";
+                        string fileName = "NLA_Banner" + fileExt;
+                        string pathCombine = Path.Combine(root, folder, fileName);
+                        using (var stream = new FileStream(pathCombine, FileMode.Create))
+                        {
+                            await banner.CopyToAsync(stream);
+                        }
+                        existingInstitute.Banner = InstituteBanner;
+                    }
+
+                    await _instituteManager.UpdateAsync(existingInstitute);
+
+                    return View();
+
+                }
+                catch
+                {
+                    return View();
+                }
             }
-            catch
-            {
-                return View();
-            }
+            var institute = await _instituteManager.GetByIdAsync(id);
+            return View(institute);
         }
 
         // GET: InstitutesController/Delete/5

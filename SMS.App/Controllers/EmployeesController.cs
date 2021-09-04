@@ -53,18 +53,7 @@ namespace SMS.App.Controllers
         // GET: Employees
         public async Task<IActionResult> Index()
         {
-            //string msg = "";
-            //if (TempData["saved"]!=null)
-            //{
-            //    msg = TempData["saved"].ToString();
-                
-            //}
-            //ViewBag.saved = msg;
-            //if (TempData["deleted"] != null)
-            //{
-            //    msg = TempData["deleted"].ToString();
-            //}
-            //ViewBag.deleted = msg;
+            
             var empList = await _employeeManager.GetAllAsync();
             return View(empList);
         }

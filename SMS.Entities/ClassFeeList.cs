@@ -16,6 +16,10 @@ namespace SMS.Entities
         [Display (Name ="Class Name"), Required]
         public int AcademicClassId { get; set; }
 
+        [Display(Name = "Academic Session"), Required]
+        public int AcademicSessionId { get; set; }
+        public AcademicSession AcademicSession { get; set; }
+
         public StudentFeeHead StudentFeeHead { get; set; }
         public AcademicClass AcademicClass { get; set; }
     }

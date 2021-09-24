@@ -20,18 +20,21 @@
                     <span asp-validation-for="StudentFeeHeadId" class="text-danger"></span>
                 </div>
             </div>
+
             <div class="form-group row">
-                @*<label asp-for="AcademicSessionId" class="col-md-2 text-right col-form-label control-label"></label>
-                <div class="col-md-4">
+                <label asp-for="AcademicSessionId" class="col-md-2 text-md-right col-form-label control-label"></label>
+                <div class="col-md-8">
                     <select asp-for="AcademicSessionId" class="form-control" asp-items="ViewBag.AcademicSessionId">
-                        <option disabled selected>Select Session</option>
+                        <option disabled selected value="0">Select Session</option>
                     </select>
                     <span asp-validation-for="AcademicSessionId"></span>
-                </div>*@
-                <label asp-for="AcademicClassId" class="col-md-2 text-right col-form-label control-label"></label>
-                <div class="col-md-4">
-                    <select asp-for="AcademicClassId" class="form-control">
-                        <option disabled selected>Select Session First</option>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label asp-for="AcademicClassId" class="col-md-2 text-md-right col-form-label control-label"></label>
+                <div class="col-md-6">
+                    <select asp-for="AcademicClassId" class="form-control" asp-items="ViewBag.AcademicClassId">
+                        
                     </select>
                     <span asp-validation-for="AcademicClassId"></span>
                 </div>
@@ -46,14 +49,17 @@
 
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <div class="offset-md-2">
+                    <input type="submit" value="Update" class="btn btn-primary" />
+                    <a class="btn btn-info" asp-action="Index">Back to List</a>
+                </div>
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+
 </div>
 
 @section Scripts {
@@ -62,4 +68,23 @@
     {
         <script src="~/js/AlertifyNotify/warningUpdateFailNotify.js"></script>
     }
+    <script>
+        $(document).ready(function () {
+            $('#AcademicSessionId').change(function () {
+                let val = $('#AcademicSessionId option:selected').val();
+                if (val > 0) {
+                    $('#AcademicClassId').prop('disabled', false);
+                    $('#AcademicClassId').find('[value="0"]').remove();
+                    let op = '<option selected disabled value="0">Select Class</option>';
+                    $('#AcademicClassId').append(op);
+                }
+                else {
+                    $('#AcademicClassId').prop('disabled', true);
+                    $('#AcademicClassId').find('[value="0"]').remove();
+                    let op = '<option selected disabled value="0">Select Session First</option>';
+                    $('#AcademicClassId').append(op);
+                }
+            });
+        });
+    </script>
 }

@@ -103,6 +103,7 @@ namespace SMS.App.Controllers
             }
 
 
+            ViewData["AcademicSessionId"] = new SelectList(_context.AcademicSession, "Id", "Name", classFeeList.AcademicSessionId);
             ViewData["StudentFeeHeadId"] = new SelectList(_context.StudentFeeHead, "Id", "Name",classFeeList.StudentFeeHeadId);
             ViewData["AcademicClassId"] = new SelectList(_context.AcademicClass, "Id", "Name", classFeeList.AcademicClassId);
 
@@ -122,6 +123,8 @@ namespace SMS.App.Controllers
             {
                 return NotFound();
             }
+
+            ViewData["AcademicSessionId"] = new SelectList(_context.AcademicSession, "Id", "Name", classFeeList.AcademicSessionId);
             ViewData["StudentFeeHeadId"] = new SelectList(_context.StudentFeeHead, "Id", "Name", classFeeList.StudentFeeHeadId);
             ViewData["AcademicClassId"] = new SelectList(_context.AcademicClass, "Id", "Name", classFeeList.AcademicClassId);
             return View(classFeeList);
@@ -173,6 +176,7 @@ namespace SMS.App.Controllers
             }
 
 
+            ViewData["AcademicSessionId"] = new SelectList(_context.AcademicSession, "Id", "Name", classFeeList.AcademicSessionId);
             ViewData["StudentFeeHeadId"] = new SelectList(_context.StudentFeeHead, "Id", "Name",classFeeList.StudentFeeHeadId);
             ViewData["AcademicClassId"] = new SelectList(_context.AcademicClass, "Id", "Name", classFeeList.AcademicClassId);
             return View(classFeeList);

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using SMS.DB;
 using SMS.Entities;
 
@@ -15,10 +16,12 @@ namespace SMS.App.Controllers
     public class BloodGroupsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<BloodGroupsController> logger;
 
-        public BloodGroupsController(ApplicationDbContext context)
+        public BloodGroupsController(ApplicationDbContext context, ILogger<BloodGroupsController> _logger)
         {
             _context = context;
+            logger = _logger;
         }
 
         // GET: BloodGroups

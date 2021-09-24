@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using SMS.BLL.Contracts;
 using SMS.DB;
 using SMS.Entities;
@@ -15,11 +16,13 @@ namespace SMS.App.Controllers
     {
         private readonly IAcademicSubjectManager _academicSubjectManager;
         private readonly IAcademicSubjectTypeManager _academicSubjectTypeManager;
+        private readonly ILogger<AcademicSubjectsController> logger;
 
-        public AcademicSubjectsController(IAcademicSubjectManager academicSubjectManger, IAcademicSubjectTypeManager academicSubjectTypeManager)
+        public AcademicSubjectsController(IAcademicSubjectManager academicSubjectManger, IAcademicSubjectTypeManager academicSubjectTypeManager, ILogger<AcademicSubjectsController> _Logger)
         {
             _academicSubjectManager = academicSubjectManger;
             _academicSubjectTypeManager = academicSubjectTypeManager;
+            logger = _Logger;
         }
 
         // GET: AcademicSubjects

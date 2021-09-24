@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using SMS.BLL.Contracts;
 using SMS.DB;
 using SMS.Entities;
@@ -16,14 +17,16 @@ namespace SMS.App.Controllers
     {
         private readonly IAcademicSectionManager _academicSectionManager;
         private readonly IAcademicClassManager _academicClassManager;
+        private readonly ILogger<AcademicSectionsController> _Logger;
 
         private readonly IAcademicSessionManager _academicSessionManager;
 
-        public AcademicSectionsController(IAcademicSectionManager academicSectionManager, IAcademicClassManager academicClassManager, IAcademicSessionManager academicSessionManager)
+        public AcademicSectionsController(IAcademicSectionManager academicSectionManager, IAcademicClassManager academicClassManager, IAcademicSessionManager academicSessionManager, ILogger<AcademicSectionsController> Logger)
         {
             _academicSectionManager = academicSectionManager;
             _academicClassManager = academicClassManager;
             _academicSessionManager = academicSessionManager;
+            _Logger = Logger;
         }
 
         // GET: AcademicSections

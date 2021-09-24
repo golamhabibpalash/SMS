@@ -118,6 +118,9 @@ namespace SchoolManagementSystem
             
             services.AddScoped<IBloodGroupRepository, BloodGroupRepository>();
             services.AddScoped<IBloodGroupManager, BloodGroupManager>();
+            
+            services.AddScoped<IClassFeeListRepository, ClassFeeListRepository>();
+            services.AddScoped<IClassFeeListManager, ClassFeeListManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

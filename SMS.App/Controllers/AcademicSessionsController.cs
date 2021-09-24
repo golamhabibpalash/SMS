@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using SMS.BLL.Contracts;
 using SMS.DB;
 using SMS.Entities;
@@ -17,10 +18,12 @@ namespace SMS.App.Controllers
     public class AcademicSessionsController : Controller
     {
         private readonly IAcademicSessionManager _sessionManager;
+        private readonly ILogger<AcademicSessionsController> logger;
 
-        public AcademicSessionsController(IAcademicSessionManager sessionManager)
+        public AcademicSessionsController(IAcademicSessionManager sessionManager, ILogger<AcademicSessionsController> _Logger)
         {
             _sessionManager = sessionManager;
+            logger = _Logger;
         }
 
         // GET: AcademicSessions

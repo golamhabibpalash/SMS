@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SMS.Entities;
 using SMS.BLL.Contracts;
+using Microsoft.Extensions.Logging;
 
 namespace SMS.App.Controllers
 {
@@ -16,11 +17,13 @@ namespace SMS.App.Controllers
     {
         private readonly IAcademicClassManager _academicClassManager;
         private readonly IAcademicSessionManager _academicSessionManager;
+        private readonly ILogger<AcademicClassesController> _Logger;
 
-        public AcademicClassesController(IAcademicClassManager academicClassManager, IAcademicSessionManager academicSessionManager)
+        public AcademicClassesController(IAcademicClassManager academicClassManager, IAcademicSessionManager academicSessionManager, ILogger<AcademicClassesController> Logger)
         {
             _academicClassManager = academicClassManager;
             _academicSessionManager = academicSessionManager;
+            _Logger = Logger;
         }
 
         // GET: AcademicClasses

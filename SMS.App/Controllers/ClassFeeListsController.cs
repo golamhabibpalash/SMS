@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SMS.BLL.Contracts;
 using SMS.DB;
 using SMS.Entities;
 
@@ -14,6 +15,7 @@ namespace SMS.App.Controllers
     public class ClassFeeListsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IClassFeeListManager classFeeListManager;
 
         public ClassFeeListsController(ApplicationDbContext context)
         {

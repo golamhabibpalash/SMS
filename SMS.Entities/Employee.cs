@@ -7,10 +7,8 @@ using System.Threading.Tasks;
 
 namespace SMS.Entities
 {
-    public class Employee
+    public class Employee : CommonProps
     {
-        public int Id { get; set; }
-
         [Display(Name = "Employee Name"),Required,StringLength(40)]
         public string EmployeeName { get; set; }
 
@@ -84,18 +82,6 @@ namespace SMS.Entities
         public int PermanentDivisionId { get; set; }
 
         public ICollection<AttachDoc> Documents { get; set; }
-
-        [Display(Name = "Created By")]
-        public string CreatedBy { get; set; }
-
-        [Display(Name = "Created At")]
-        public DateTime CreatedAt { get; set; }
-
-        [Display(Name = "Edited By")]
-        public string EditedBy { get; set; }
-
-        [Display(Name = "Edited At")]
-        public DateTime EditedAt { get; set; }
 
         [Display(Name ="Active/Inactive")]
         public bool Status { get; set; }

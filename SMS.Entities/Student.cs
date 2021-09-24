@@ -9,77 +9,92 @@ using System.Threading.Tasks;
 
 namespace SMS.Entities
 {
-    public class Student
+    public class Student : CommonProps
     {
-        public int Id { get; set; }
-
+        [Display(Name ="Student Name")]
         public string Name { get; set; }
 
+        [Display(Name = "College Roll")]
         public int ClassRoll { get; set; }
 
+        [Display(Name = "Academic Class")]
         public int AcademicClassId { get; set; }
 
+        [Display(Name = "Section")]
         public int? AcademicSectionId { get; set; }
 
+        [Display(Name = "Father's Name")]
         public string FatherName { get; set; }
 
+        [Display(Name = "Mother's Name")]
         public string MotherName { get; set; }
 
+        [Display(Name = "Admission Date")]
         public DateTime AdmissionDate { get; set; }
 
         public string Email { get; set; }
 
+        [Display(Name = "Phone No")]
         public long PhoneNo { get; set; }
 
+        [Display(Name = "Guardian Phone")]
         public long GuardianPhone { get; set; }
 
         public string Photo { get; set; }
 
         public DateTime DOB { get; set; }
 
+        [Display(Name = "Religion")]
         public int ReligionId { get; set; }
 
+        [Display(Name = "Gender")]
         public int GenderId { get; set; }
 
+        [Display(Name = "Blood Group")]
         public int BloodGroupId { get; set; }
 
+        [Display(Name = "Nationality")]
         public int NationalityId { get; set; }
 
+        [Display(Name = "Vill/Area")]
         public string PresentAddressArea { get; set; }
 
+        [Display(Name = "Post Office")]
         public string PresentAddressPO { get; set; }
 
+        [Display(Name = "Upazila")]
         public int PresentUpazilaId { get; set; }
 
+        [Display(Name = "District")]
         public int PresentDistrictId { get; set; }
 
+        [Display(Name = "Division")]
         public int PresentDivisiontId { get; set; }
 
+        [Display(Name = "Vill/Area")]
         public string PermanentAddressArea { get; set; }
 
+        [Display(Name = "Post Office")]
         public string PermanentAddressPO { get; set; }
 
+        [Display(Name = "Upazila")]
         public int PermanentUpazilaId { get; set; }
 
+        [Display(Name = "District")]
         public int PermanentDistrictId { get; set; }
 
+        [Display(Name = "Division")]
         public int PermanentDivisiontId { get; set; }
 
+        [Display(Name = "Session")]
         public int AcademicSessionId { get; set; }
 
+        [Display(Name = "Previous School")]
         public string PreviousSchool { get; set; }
 
         public ICollection<AttachDoc> Documents { get; set; }
 
         public bool Status { get; set; }
-
-        public string CreatedBy { get; set; }
-
-        public DateTime CreatedAt { get; set; }
-
-        public string EditedBy { get; set; }
-
-        public DateTime EditedAt { get; set; }
 
         public Division PresentDivision { get; set; }
 

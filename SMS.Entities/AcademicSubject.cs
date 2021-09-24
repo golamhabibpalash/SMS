@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace SMS.Entities
 {
-    public class AcademicSubject
+    public class AcademicSubject : CommonProps
     {
-        public int Id { get; set; }
-        
         [Display(Name = "Subject Name")]
         public string SubjectName { get; set; }
 
@@ -27,18 +25,6 @@ namespace SMS.Entities
 
         [Display(Name = "Is Active")]
         public bool Status { get; set; }
-
-        [Display(Name = "Created By")]
-        public string CreatedBy { get; set; }
-
-        [Display(Name = "Created At")]
-        public DateTime CreatedAt { get; set; }
-
-        [Display(Name = "Edited By")]
-        public string EditedBy { get; set; }
-
-        [Display(Name = "Edited at")]
-        public DateTime EditedAt { get; set; }
 
         public AcademicSubjectType AcademicSubjectType { get; set; }
     }

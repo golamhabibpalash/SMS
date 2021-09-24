@@ -14,12 +14,17 @@ namespace SMS.App.Controllers
 {
     public class ClassFeeListsController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        private readonly IClassFeeListManager classFeeListManager;
+        private readonly IClassFeeListManager _classFeeListManager;
+        private readonly IStudentFeeHeadManager _studentFeeHeadManager;
+        private readonly IAcademicClassManager _academicClassManager;
+        private readonly IAcademicSessionManager academicSessionManager;
 
-        public ClassFeeListsController(ApplicationDbContext context)
+        public ClassFeeListsController(IClassFeeListManager classFeeListManager, IStudentFeeHeadManager studentFeeHeadManager, IAcademicClassManager academicClassManager, IAcademicSessionManager academicSessionManager)
         {
-            _context = context;
+            _classFeeListManager = classFeeListManager;
+            _studentFeeHeadManager = studentFeeHeadManager;
+            _academicClassManager = academicClassManager;
+            this.academicSessionManager = academicSessionManager;
         }
 
         // GET: StudentFeeLists
@@ -30,12 +35,7 @@ namespace SMS.App.Controllers
             {
                 msg = TempData["success"].ToString();
             }
-            var result =await _context.ClassFeeList
-                .Include(s => s.StudentFeeHead)
-                .Include(s => s.AcademicClass)
-                .OrderBy(s => s.AcademicClass.ClassSerial)
-                .ThenBy(s => s.StudentFeeHead.Name)
-                .ToListAsync();
+            var result = await _classFeeListManager.GetAllAsync();
             ViewBag.msg = msg;
             return View(result);
         }
@@ -48,9 +48,7 @@ namespace SMS.App.Controllers
                 return NotFound();
             }
 
-            var studentFeeList = await _context.ClassFeeList
-                .Include(s => s.AcademicClass)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var studentFeeList = await _classFeeListManager.GetByIdAsync((int)id);
             if (studentFeeList == null)
             {
                 return NotFound();
@@ -60,12 +58,12 @@ namespace SMS.App.Controllers
         }
 
         // GET: StudentFeeLists/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             
-            ViewData["StudentFeeHeadId"] = new SelectList(_context.StudentFeeHead, "Id", "Name");
-            ViewData["AcademicClassId"] = new SelectList(_context.AcademicClass, "Id", "Name");
-            ViewData["AcademicSessionId"] = new SelectList(_context.AcademicSession, "Id", "Name");
+            ViewData["StudentFeeHeadId"] = new SelectList(await _studentFeeHeadManager.GetAllAsync(), "Id", "Name");
+            ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync() , "Id", "Name");
+            ViewData["AcademicSessionId"] = new SelectList(await academicSessionManager.GetAllAsync(), "Id", "Name");
             return View();
         }
 
@@ -78,9 +76,8 @@ namespace SMS.App.Controllers
         {
             string msg = "";
 
-            var feeListExist =await _context.ClassFeeList
-                .FirstOrDefaultAsync(s =>   s.AcademicClassId == classFeeList.AcademicClassId &&
-                                            s.StudentFeeHeadId==classFeeList.StudentFeeHeadId);
+
+            var feeListExist = await _classFeeListManager.GetByClassIdAndFeeHeadIdAsync(classFeeList.AcademicClassId, classFeeList.StudentFeeHeadId);
 
             if (feeListExist!=null)
             {
@@ -94,10 +91,12 @@ namespace SMS.App.Controllers
                 {
                     classFeeList.CreatedAt = DateTime.Now;
                     classFeeList.CreatedBy = HttpContext.Session.GetString("UserId");
-
-                    msg = "Saved Successfully.";
-                    _context.Add(classFeeList);
-                    await _context.SaveChangesAsync();
+                    
+                    bool isSaved = await _classFeeListManager.AddAsync(classFeeList);
+                    if (isSaved)
+                    {
+                        msg = "Saved Successfully.";
+                    }
                     ViewBag.msg = msg;
                     TempData["create"] = msg;
                     return RedirectToAction(nameof(Index));
@@ -105,9 +104,9 @@ namespace SMS.App.Controllers
             }
 
 
-            ViewData["AcademicSessionId"] = new SelectList(_context.AcademicSession, "Id", "Name", classFeeList.AcademicSessionId);
-            ViewData["StudentFeeHeadId"] = new SelectList(_context.StudentFeeHead, "Id", "Name",classFeeList.StudentFeeHeadId);
-            ViewData["AcademicClassId"] = new SelectList(_context.AcademicClass, "Id", "Name", classFeeList.AcademicClassId);
+            ViewData["AcademicSessionId"] = new SelectList(await academicSessionManager.GetAllAsync(), "Id", "Name", classFeeList.AcademicSessionId);
+            ViewData["StudentFeeHeadId"] = new SelectList(await _studentFeeHeadManager.GetAllAsync(), "Id", "Name",classFeeList.StudentFeeHeadId);
+            ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", classFeeList.AcademicClassId);
 
             return View(classFeeList);
         }
@@ -120,15 +119,15 @@ namespace SMS.App.Controllers
                 return NotFound();
             }
 
-            var classFeeList = await _context.ClassFeeList.FindAsync(id);
+            var classFeeList = await _classFeeListManager.GetByIdAsync((int)id);
             if (classFeeList == null)
             {
                 return NotFound();
             }
 
-            ViewData["AcademicSessionId"] = new SelectList(_context.AcademicSession, "Id", "Name", classFeeList.AcademicSessionId);
-            ViewData["StudentFeeHeadId"] = new SelectList(_context.StudentFeeHead, "Id", "Name", classFeeList.StudentFeeHeadId);
-            ViewData["AcademicClassId"] = new SelectList(_context.AcademicClass, "Id", "Name", classFeeList.AcademicClassId);
+            ViewData["AcademicSessionId"] = new SelectList(await academicSessionManager.GetAllAsync(), "Id", "Name", classFeeList.AcademicSessionId);
+            ViewData["StudentFeeHeadId"] = new SelectList(await _studentFeeHeadManager.GetAllAsync(), "Id", "Name", classFeeList.StudentFeeHeadId);
+            ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", classFeeList.AcademicClassId);
             return View(classFeeList);
         }
 
@@ -143,8 +142,9 @@ namespace SMS.App.Controllers
             {
                 return NotFound();
             }
-            var feeListExist = await _context.ClassFeeList
-                .FirstOrDefaultAsync(s => s.AcademicClassId == classFeeList.AcademicClassId && s.Id !=id);
+            var feeList = await _classFeeListManager.GetAllAsync();
+            var feeListExist =feeList.Where(s => s.AcademicClassId == classFeeList.AcademicClassId && s.Id !=id).FirstOrDefault();
+
             if (feeListExist!=null)
             {
                 TempData["editFail"] = "Failed";
@@ -158,8 +158,12 @@ namespace SMS.App.Controllers
                         classFeeList.EditedAt = DateTime.Now;
                         classFeeList.EditedBy = HttpContext.Session.GetString("UserId");
 
-                        _context.Update(classFeeList);
-                        await _context.SaveChangesAsync();
+                        bool isUpdated = await _classFeeListManager.UpdateAsync(classFeeList);
+                        if (isUpdated)
+                        {
+                            TempData["edit"] = "Updated Successfully";
+                            return RedirectToAction(nameof(Index));
+                        }
                     }
                     catch (DbUpdateConcurrencyException)
                     {
@@ -172,15 +176,15 @@ namespace SMS.App.Controllers
                             throw;
                         }
                     }
-                    TempData["edit"] = "Updated Successfully";
-                    return RedirectToAction(nameof(Index));
+                    TempData["fail"] = "Fail to Update";
+                    return View();
                 }
             }
 
 
-            ViewData["AcademicSessionId"] = new SelectList(_context.AcademicSession, "Id", "Name", classFeeList.AcademicSessionId);
-            ViewData["StudentFeeHeadId"] = new SelectList(_context.StudentFeeHead, "Id", "Name",classFeeList.StudentFeeHeadId);
-            ViewData["AcademicClassId"] = new SelectList(_context.AcademicClass, "Id", "Name", classFeeList.AcademicClassId);
+            ViewData["AcademicSessionId"] = new SelectList(await academicSessionManager.GetAllAsync(), "Id", "Name", classFeeList.AcademicSessionId);
+            ViewData["StudentFeeHeadId"] = new SelectList(await _studentFeeHeadManager.GetAllAsync(), "Id", "Name", classFeeList.StudentFeeHeadId);
+            ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", classFeeList.AcademicClassId);
             return View(classFeeList);
         }
 
@@ -192,10 +196,7 @@ namespace SMS.App.Controllers
                 return NotFound();
             }
 
-            var studentFeeList = await _context.ClassFeeList
-                .Include(s => s.AcademicClass)
-                .Include(s => s.StudentFeeHead)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var studentFeeList = await _classFeeListManager.GetByIdAsync((int)id);
             if (studentFeeList == null)
             {
                 return NotFound();
@@ -209,16 +210,26 @@ namespace SMS.App.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var studentFeeList = await _context.ClassFeeList.FindAsync(id);
-            _context.ClassFeeList.Remove(studentFeeList);
-            await _context.SaveChangesAsync();
-            TempData["delete"] = "Successfully Deleted";
-            return RedirectToAction(nameof(Index));
+            var classFeeList = await _classFeeListManager.GetByIdAsync(id);
+            bool isDeleted = await _classFeeListManager.RemoveAsync(classFeeList);
+            
+            if (isDeleted)
+            {
+                TempData["delete"] = "Successfully Deleted";
+                return RedirectToAction(nameof(Index));
+            }
+            return View();
+            
         }
 
         private bool StudentFeeListExists(int id)
         {
-            return _context.ClassFeeList.Any(e => e.Id == id);
+            var classFeeList =  _classFeeListManager.GetByIdAsync(id);
+            if (classFeeList!=null)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

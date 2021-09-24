@@ -10,5 +10,6 @@ namespace SMS.DAL.Contracts
 {
     public interface IClassFeeListRepository : IRepository<ClassFeeList>
     {
+        Task<ClassFeeList> GetByClassIdAndFeeHeadIdAsync(int classId, int feeHeadId);
     }
 }

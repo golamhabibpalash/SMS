@@ -17,5 +17,10 @@ namespace SMS.BLL.Managers
         {
 
         }
+
+        public async Task<ClassFeeList> GetByClassIdAndFeeHeadIdAsync(int classId, int feeHeadId)
+        {
+            return await classFeeListRepository.GetByClassIdAndFeeHeadIdAsync(classId, feeHeadId);
+        }
     }
 }

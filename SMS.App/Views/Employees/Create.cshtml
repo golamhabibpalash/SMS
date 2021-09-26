@@ -3,6 +3,13 @@
 @{
     ViewData["Title"] = "Create Employee";
     GlobalUI.PageTitle = "Add New Employee";
+    string minDate = "";
+    string maxDate = "";
+    string minDateYear = (DateTime.Today.Year - 60).ToString();
+    string maxDateYear = (DateTime.Today.Year - 20).ToString();
+    minDate = minDateYear + "-01-01";
+    maxDate = maxDateYear + "-12-30";
+
 }
 
 <div class="row">
@@ -73,13 +80,13 @@
             <div class="form-group row">
                 <label asp-for="DOB" class="col-form-label col-md-2 text-right"></label>
                 <div class="col-md-4">
-                    <input asp-for="DOB" class="form-control form-control-sm rounded" />
+                    <input asp-for="DOB" class="form-control form-control-sm rounded" min="@minDate" max="@maxDate" value="@DateTime.Today.ToString("yyyy-MM-dd")" />
                     <span asp-validation-for="DOB" class="text-danger"></span>
                 </div>
 
                 <label asp-for="JoiningDate" class="control-label col-form-label col-md-2 text-right"></label>
                 <div class="col-md-4">
-                    <input asp-for="JoiningDate" class="form-control form-control-sm rounded" />
+                    <input asp-for="JoiningDate" class="form-control form-control-sm rounded" value="@DateTime.Today.ToString("yyyy-MM-dd")" max="@DateTime.Today.ToString("yyyy-MM-dd")" min="1971-01-01"/>
                     <span asp-validation-for="JoiningDate" class="text-danger"></span>
                 </div>
             </div>

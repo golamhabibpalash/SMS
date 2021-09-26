@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SMS.App.AutoMapperConfiguration
+namespace SMS.App.Utilities.AutoMapperConfiguration
 {
     public class AutoMapperProfile:Profile
     {
@@ -30,7 +30,6 @@ namespace SMS.App.AutoMapperConfiguration
 
             CreateMap<EmployeeDetailsVM, Employee>();
             CreateMap<Employee, EmployeeDetailsVM>();
-
         }
     }
 }

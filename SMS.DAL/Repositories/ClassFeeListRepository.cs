@@ -17,7 +17,16 @@ namespace SMS.DAL.Repositories
         {
             
         }
-
+        public override async Task<IReadOnlyCollection<ClassFeeList>> GetAllAsync()
+        {
+            var feeLists = await _context
+                .ClassFeeList
+                .Include(cf => cf.AcademicClass)
+                .Include(cf => cf.AcademicSession)
+                .Include(cf => cf.StudentFeeHead)
+                .ToListAsync();
+            return feeLists;
+        }
 
         public async Task<ClassFeeList> GetByClassIdAndFeeHeadIdAsync(int classId, int feeHeadId)
         {

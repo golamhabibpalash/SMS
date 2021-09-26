@@ -12,15 +12,16 @@ namespace SMS.BLL.Managers
 {
     public class ClassFeeListManager : Manager<ClassFeeList>, IClassFeeListManager
     {
-        private readonly IClassFeeListRepository classFeeListRepository;
+        private readonly IClassFeeListRepository _classFeeListRepository;
         public ClassFeeListManager(IClassFeeListRepository classFeeListRepository) :base(classFeeListRepository)
         {
-
+            _classFeeListRepository = classFeeListRepository;
         }
 
         public async Task<ClassFeeList> GetByClassIdAndFeeHeadIdAsync(int classId, int feeHeadId)
         {
-            return await classFeeListRepository.GetByClassIdAndFeeHeadIdAsync(classId, feeHeadId);
+            var result = await _classFeeListRepository.GetByClassIdAndFeeHeadIdAsync(classId, feeHeadId);
+            return result;
         }
     }
 }

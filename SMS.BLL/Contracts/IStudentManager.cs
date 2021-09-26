@@ -10,5 +10,6 @@ namespace SMS.BLL.Contracts
 {
     public interface IStudentManager : IManager<Student>
     {
+        Task<Student> GetStudentByClassRollAsync(int classRoll);
     }
 }

@@ -197,9 +197,9 @@
                                 <td>@(++sl)</td>
                                 <td>@item.ReceiptNo</td>
                                 <td>@item.PaidDate.ToString("dd MMM yyyy")</td>
-                                <td></td>
+                                <td>@item.StudentPaymentDetails.Select(s => s.StudentFeeHead.Name)</td>
                                 <td>@item.TotalPayment</td>
-                                <td></td>
+                                <td>@item.Remarks</td>
                                 <td>
                                     <button data-paidDate="@item.PaidDate.ToString()" data-receipt="@item.ReceiptNo" type="button" class="btn btn-light btn-outline-info btn-sm" data-toggle="modal" data-target="#exampleModalCenter" id="modalViewId">
                                         View

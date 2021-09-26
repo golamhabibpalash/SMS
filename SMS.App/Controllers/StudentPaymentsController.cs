@@ -9,16 +9,19 @@ using Microsoft.EntityFrameworkCore;
 using SMS.DB;
 using SMS.Entities;
 using SMS.App.ViewModels;
+using SMS.BLL.Contracts;
 
 namespace SMS.App.Controllers
 {
     public class StudentPaymentsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IStudentPaymentManager studentPaymentManager;
+        private readonly IStudentManager studentManager;
 
-        public StudentPaymentsController(ApplicationDbContext context)
+        public StudentPaymentsController(IStudentPaymentManager studentPaymentManager, IStudentManager studentManager)
         {
-            _context = context;
+            this.studentPaymentManager = studentPaymentManager;
+            this.studentManager = studentManager;
         }
 
         // GET: StudentPayments
@@ -44,11 +47,7 @@ namespace SMS.App.Controllers
             List<StudentPayment> studentPayments = new ();
             StudentyPaymentVM spvm = new ();
 
-            var student =await _context.Student
-                .Include(s => s.AcademicClass)
-                .Include(s => s.AcademicSession)
-                .Include(s => s.AcademicSection)
-                .FirstOrDefaultAsync(s => s.ClassRoll == stRoll);
+            var student = await studentManager.GetStudentByClassRollAsync((int)stRoll);
             if (student!=null)
             {
                 StudentPayment sp = new();

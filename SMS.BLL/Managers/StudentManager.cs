@@ -13,10 +13,16 @@ namespace SMS.BLL.Managers
 {
     public class StudentManager :Manager<Student>, IStudentManager
     {
+        private readonly IStudentRepository studentRepository;
+
         public StudentManager(IStudentRepository studentRepository):base(studentRepository)
         {
-           
+            this.studentRepository = studentRepository;
         }
 
+        public async Task<Student> GetStudentByClassRollAsync(int classRoll)
+        {
+            return await studentRepository.GetStudentByClassRollAsync(classRoll);
+        }
     }
 }

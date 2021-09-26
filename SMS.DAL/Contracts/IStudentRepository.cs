@@ -10,5 +10,6 @@ namespace SMS.DAL.Contracts
 {
     public interface IStudentRepository : IRepository<Student>
     {
+        Task<Student> GetStudentByClassRollAsync(int classRoll);
     }
 }

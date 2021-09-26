@@ -8,6 +8,7 @@ namespace SMS.BLL.Contracts.Base
 {
     public interface IManager<T> where T:class
     {
+        T GetById(int id);
         public Task<T> GetByIdAsync(int id);
 
         Task<IReadOnlyCollection<T>> GetAllAsync();

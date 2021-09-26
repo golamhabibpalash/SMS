@@ -17,11 +17,15 @@ namespace SMS.App.Controllers
     {
         private readonly IStudentPaymentManager studentPaymentManager;
         private readonly IStudentManager studentManager;
+        private readonly IClassFeeListManager classFeeListManager;
+        private readonly IAcademicClassManager academicClassManager;
 
-        public StudentPaymentsController(IStudentPaymentManager studentPaymentManager, IStudentManager studentManager)
+        public StudentPaymentsController(IStudentPaymentManager studentPaymentManager, IStudentManager studentManager, IClassFeeListManager classFeeListManager, IAcademicClassManager academicClassManager)
         {
             this.studentPaymentManager = studentPaymentManager;
             this.studentManager = studentManager;
+            this.classFeeListManager = classFeeListManager;
+            this.academicClassManager = academicClassManager;
         }
 
         // GET: StudentPayments
@@ -53,14 +57,15 @@ namespace SMS.App.Controllers
                 StudentPayment sp = new();
                 sp.Student = student;
                 spvm.StudentPayment = sp;
-                studentPayments = await _context.StudentPayment.Where(s => s.StudentId == student.Id).ToListAsync();
+                studentPayments = (List<StudentPayment>)await studentPaymentManager.GetAllByStudentIdAsync(student.Id);
                 spvm.StudentPayments = studentPayments;
 
                 List<ClassFeeList> feeList = new();
-                var fList = from cfl in _context.ClassFeeList.Include(c => c.StudentFeeHead)
-                            from s in _context.Student.Where(s => s.ClassRoll == stRoll)
-                            from ac in _context.AcademicClass
-                            where cfl.AcademicClassId == ac.Id && s.AcademicClassId == ac.Id
+                var classfeelist = await classFeeListManager.GetAllAsync();
+                var academicClasses = await academicClassManager.GetAllAsync();
+                var fList = from cfl in classfeelist
+                            from ac in academicClasses
+                            where cfl.AcademicClassId == ac.Id && student.AcademicClassId == ac.Id
                             select cfl;
                 foreach (var item in fList)
                 {
@@ -86,9 +91,8 @@ namespace SMS.App.Controllers
                 return NotFound();
             }
 
-            var studentPayment = await _context.StudentPayment
-                .Include(s => s.Student)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var studentPayment = await studentPaymentManager.GetByIdAsync((int)id);
+
             if (studentPayment == null)
             {
                 return NotFound();
@@ -98,9 +102,9 @@ namespace SMS.App.Controllers
         }
 
         // GET: StudentPayments/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["StudentId"] = new SelectList(_context.Student, "Id", "Name");
+            ViewData["StudentId"] = new SelectList(await studentManager.GetAllAsync(), "Id", "Name");
             return View();
         }
 
@@ -114,7 +118,7 @@ namespace SMS.App.Controllers
             Student student = new();
             if (studentyPaymentVM != null)
             {
-                student = _context.Student.FirstOrDefault(s => s.Id == studentyPaymentVM.StudentPayment.StudentId);
+                student =await studentManager.GetByIdAsync(studentyPaymentVM.StudentPayment.StudentId);
                 
             }
             if (ModelState.IsValid)
@@ -130,14 +134,16 @@ namespace SMS.App.Controllers
                     sPayment.StudentPaymentDetails = studentyPaymentVM.StudentPayment.StudentPaymentDetails;
                 }
 
-
-                _context.StudentPayment.Add(sPayment);
-                await _context.SaveChangesAsync();
-                TempData["Saved"] = "Successfully Saved";
-                return RedirectToAction("Payment", "StudentPayments", new { stRoll = student.ClassRoll });
+                bool isSaved = await studentPaymentManager.AddAsync(sPayment);
+                if (isSaved)
+                {
+                    TempData["Saved"] = "Successfully Saved";
+                    return RedirectToAction("Payment", "StudentPayments", new { stRoll = student.ClassRoll });
+                }
+                
             }
 
-            ViewData["StudentId"] = new SelectList(_context.Student, "Id", "Name", studentyPaymentVM.StudentPayment.StudentId);
+            ViewData["StudentId"] = new SelectList(await studentManager.GetAllAsync(), "Id", "Name", studentyPaymentVM.StudentPayment.StudentId);
             return RedirectToAction(nameof(Index));
         }
 
@@ -149,18 +155,16 @@ namespace SMS.App.Controllers
                 return NotFound();
             }
 
-            var studentPayment = await _context.StudentPayment.FindAsync(id);
+            var studentPayment = await studentPaymentManager.GetByIdAsync((int)id);
             if (studentPayment == null)
             {
                 return NotFound();
             }
-            ViewData["StudentId"] = new SelectList(_context.Student, "Id", "Name", studentPayment.StudentId);
+            ViewData["StudentId"] = new SelectList(await studentManager.GetAllAsync(), "Id", "Name", studentPayment.StudentId);
             return View(studentPayment);
         }
 
         // POST: StudentPayments/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,StudentId,TotalPayment,CreatedBy,CreatedAt,EditedBy,EditedAt")] StudentPayment studentPayment)
@@ -174,8 +178,7 @@ namespace SMS.App.Controllers
             {
                 try
                 {
-                    _context.Update(studentPayment);
-                    await _context.SaveChangesAsync();
+                    await studentPaymentManager.UpdateAsync(studentPayment);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -190,7 +193,7 @@ namespace SMS.App.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["StudentId"] = new SelectList(_context.Student, "Id", "Name", studentPayment.StudentId);
+            ViewData["StudentId"] = new SelectList(await studentManager.GetAllAsync(), "Id", "Name", studentPayment.StudentId);
             return View(studentPayment);
         }
 
@@ -202,9 +205,7 @@ namespace SMS.App.Controllers
                 return NotFound();
             }
 
-            var studentPayment = await _context.StudentPayment
-                .Include(s => s.Student)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var studentPayment = await studentPaymentManager.GetByIdAsync((int)id);
             if (studentPayment == null)
             {
                 return NotFound();
@@ -218,19 +219,24 @@ namespace SMS.App.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var studentPayment = await _context.StudentPayment.FindAsync(id);
-            _context.StudentPayment.Remove(studentPayment);
-            await _context.SaveChangesAsync();
+            var studentPayment = await studentPaymentManager.GetByIdAsync((int)id);
+            await studentPaymentManager.RemoveAsync(studentPayment);
             return RedirectToAction(nameof(Index));
         }
 
         private bool StudentPaymentExists(int id)
         {
-            return _context.StudentPayment.Any(e => e.Id == id);
+            var r = studentPaymentManager.GetById(id);
+            if (r!=null)
+            {
+                return true;
+            }
+            return false;
+
         }
-        public double GetTotalPayment(int stuRoll)
+        public async Task<double> GetTotalPayment(int stuRoll)
         {
-            Student student = _context.Student.Include(s => s.AcademicSession).FirstOrDefault(s => s.ClassRoll == stuRoll);
+            Student student = await studentManager.GetStudentByClassRollAsync(stuRoll);
             var session = student.AcademicSession.Name.Trim().Split('-', 4);
             int sessionYear = Convert.ToInt32(session);
 
@@ -238,9 +244,9 @@ namespace SMS.App.Controllers
             DateTime finalDate = new DateTime(sessionYear, 12, 31);
             return 0.0;
         }
-        public double GetCurrentDue(int stuRoll)
+        public async Task<double> GetCurrentDue(int stuRoll)
         {
-            Student student = _context.Student.Include(s => s.AcademicSession).FirstOrDefault(s => s.ClassRoll == stuRoll);
+            Student student = await studentManager.GetStudentByClassRollAsync(stuRoll);
 
             var session = student.AcademicSession.Name.Trim().Split('-', 4);
             int sessionYear = Convert.ToInt32(session);

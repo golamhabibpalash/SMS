@@ -17,7 +17,15 @@ namespace SMS.DAL.Repositories
         {
 
         }
-
+        public override async Task<IReadOnlyCollection<StudentPayment>> GetAllAsync()
+        {
+            var payments = await _context
+                .StudentPayment
+                .Include(sp => sp.Student)
+                .Include(sp => sp.StudentPaymentDetails)
+                .ToListAsync();
+            return payments;
+        }
         public async Task<IReadOnlyCollection<StudentPayment>> GetAllByStudentIdAsync(int id)
         {
             return await _context.StudentPayment

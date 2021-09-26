@@ -46,7 +46,12 @@ namespace BLL.Managers.Base
 
         public virtual async Task<bool> IsExistAsync(T entity)
         {
-            throw new System.NotImplementedException();
+            return await _repository.IsExistAsync(entity);
+        }
+
+        public T GetById(int id)
+        {
+            return _repository.GetById(id);
         }
     }
 }

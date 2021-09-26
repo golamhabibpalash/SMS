@@ -65,5 +65,10 @@ namespace SMS.DAL.Repositories.Base
             await Table.FindAsync(entity);
             return true;
         }
+
+        public T GetById(int id)
+        {
+            return Table.Find(id);
+        }
     }
 }

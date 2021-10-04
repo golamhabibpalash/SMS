@@ -28,6 +28,12 @@ namespace SMS.DAL.Repositories
             return feeLists;
         }
 
+        public async Task<List<ClassFeeList>> GetAllByClassIdAsync(int classId)
+        {
+            var result = await _context.ClassFeeList.Where(c => c.AcademicClassId == classId).ToListAsync();
+            return result;
+        }
+
         public async Task<ClassFeeList> GetByClassIdAndFeeHeadIdAsync(int classId, int feeHeadId)
         {
             var feeListExist = await _context.ClassFeeList

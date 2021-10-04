@@ -16,6 +16,7 @@ using Repositories;
 using SMS.DAL.Repositories;
 using SMS.BLL.Contracts;
 using AutoMapper;
+using NodaTime;
 
 namespace SchoolManagementSystem.Controllers
 {
@@ -35,9 +36,10 @@ namespace SchoolManagementSystem.Controllers
         private readonly INationalityManager _nationalityManager;
         private readonly IGenderManager _genderManager;
         private readonly IReligionManager _religionManager;
+        private readonly IStudentFeeHeadManager _studentFeeHeadManager;
+        private readonly IClassFeeListManager _classFeeListManager;
 
-
-        public StudentsController(IStudentManager studentManager, IAcademicClassManager academicClassManager, IWebHostEnvironment host, IMapper mapper, IAcademicSessionManager academicSessionManager, IStudentPaymentManager studentPaymentManager, IDistrictManager districtManager, IUpazilaManager upazilaManager, IAcademicSectionManager academicSectionManager, IBloodGroupManager bloodGroupManager, IDivisionManager divisionManager, INationalityManager nationalityManager, IGenderManager genderManager, IReligionManager religionManager)
+        public StudentsController(IStudentManager studentManager, IAcademicClassManager academicClassManager, IWebHostEnvironment host, IMapper mapper, IAcademicSessionManager academicSessionManager, IStudentPaymentManager studentPaymentManager, IDistrictManager districtManager, IUpazilaManager upazilaManager, IAcademicSectionManager academicSectionManager, IBloodGroupManager bloodGroupManager, IDivisionManager divisionManager, INationalityManager nationalityManager, IGenderManager genderManager, IReligionManager religionManager, IStudentFeeHeadManager studentFeeHeadManager, IClassFeeListManager classFeeListManager)
         {
             _academicClassManager = academicClassManager;
             _host = host;
@@ -53,6 +55,8 @@ namespace SchoolManagementSystem.Controllers
             _nationalityManager = nationalityManager;
             _genderManager = genderManager;
             _religionManager = religionManager;
+            _studentFeeHeadManager = studentFeeHeadManager;
+            _classFeeListManager = classFeeListManager;
         }
 
         // GET: Students
@@ -300,35 +304,18 @@ namespace SchoolManagementSystem.Controllers
             }
         }
 
-        //public async Task<JsonResult> GetClassList()
-        //{
-        //    var classList =await _academicClassManager.GetAllAsync();
-        //    return Json(classList);
-        //}
-        //public async Task<JsonResult> GetSectionList(int id)
-        //{
-        //    var sectionList =await _context.AcademicSection
-        //        .Where(s => s.AcademicClassId == id)
-        //        .OrderBy(s => s.Name)
-        //        .ToListAsync();
-        //    return Json(sectionList);
-        //}
-        //public async Task<JsonResult> GetDistrictList(int id)
-        //{
-        //    var districtList =await _context.District.
-        //        Where(s => s.DivisionId == id)
-        //        .OrderBy(d => d.Name)
-        //        .ToListAsync();
-        //    return Json(districtList);
-        //}
-        //public async Task<JsonResult> GetUpazilaList(int id)
-        //{
-        //    var upazilaList =await _context.Upazila
-        //        .Where(s => s.DistrictId == id)
-        //        .OrderBy(s => s.Name)
-        //        .ToListAsync();
+        public async Task<double> DueAmount(int id)
+        {
+            Student student = await _studentManager.GetByIdAsync(id);
 
-        //    return Json(upazilaList);
-        //}
+            LocalDate start = new LocalDate(student.AdmissionDate.Year, student.AdmissionDate.Month, student.AdmissionDate.Day);
+            LocalDate end = new LocalDate(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            Period period = Period.Between(start, end);
+            double months = period.Months;
+
+            var allFee = await _classFeeListManager.GetAllByClassIdAsync(student.AcademicClassId);
+
+            return months;
+        }
     }
 }

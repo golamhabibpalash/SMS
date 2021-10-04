@@ -11,5 +11,6 @@ namespace SMS.BLL.Contracts
     public interface IClassFeeListManager : IManager<ClassFeeList>
     {
         Task<ClassFeeList> GetByClassIdAndFeeHeadIdAsync(int classId, int feeHeadId);
+        Task<List<ClassFeeList>> GetAllByClassIdAsync(int classId);
     }
 }

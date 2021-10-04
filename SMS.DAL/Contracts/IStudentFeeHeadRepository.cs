@@ -10,5 +10,6 @@ namespace SMS.DAL.Contracts
 {
     public interface IStudentFeeHeadRepository : IRepository<StudentFeeHead>
     {
+        
     }
 }

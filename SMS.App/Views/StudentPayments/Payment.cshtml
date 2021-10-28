@@ -193,22 +193,19 @@
                     <tbody>
                         @foreach (var item in Model.StudentPayments)
                         {
-                            foreach (var pay in item.StudentPaymentDetails)
-                            {
-                                <tr>
-                                    <td>@(++sl)</td>
-                                    <td>@pay.StudentPayment.ReceiptNo</td>
-                                    <td>@pay.StudentPayment.PaidDate.ToString("dd MMM yyyy")</td>
-                                    <td>@pay.StudentFeeHead.Name</td>
-                                    <td>@pay.StudentPayment.TotalPayment</td>
-                                    <td>@pay.StudentPayment.Remarks</td>
-                                    <td>
-                                        <button data-paidDate="@pay.StudentPayment.PaidDate.ToString()" data-receipt="@pay.StudentPayment.ReceiptNo" type="button" class="btn btn-light btn-outline-info btn-sm" data-toggle="modal" data-target="#exampleModalCenter" id="modalViewId">
-                                            View
-                                        </button>
-                                    </td>
-                                </tr>
-                            }
+                            <tr>
+                                <td>@(++sl)</td>
+                                <td>@item.ReceiptNo</td>
+                                <td>@item.PaidDate.ToString("dd MMM yyyy")</td>
+                                <td>@item.StudentPaymentDetails.Select(s => s.StudentFeeHead.Name)</td>
+                                <td>@item.TotalPayment</td>
+                                <td>@item.Remarks</td>
+                                <td>
+                                    <button data-paidDate="@item.PaidDate.ToString()" data-receipt="@item.ReceiptNo" type="button" class="btn btn-light btn-outline-info btn-sm" data-toggle="modal" data-target="#exampleModalCenter" id="modalViewId">
+                                        View
+                                    </button>
+                                </td>
+                            </tr>
                         }
                     </tbody>
                     <tfoot></tfoot>

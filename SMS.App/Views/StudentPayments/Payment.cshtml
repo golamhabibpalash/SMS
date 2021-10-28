@@ -95,7 +95,7 @@
                 <div class="form-group row">
                     <label class="col-md-2 offset-2 col-form-label text-right">Date </label>
                     <div class="col-md-3">
-                        <input asp-for="StudentPayment.PaidDate" class="form-control form-control-sm" value="@DateTime.Today" />
+                        <input asp-for="StudentPayment.PaidDate" class="form-control form-control-sm" value="@DateTime.Today.ToString("yyyy-MM-dd")" />
                     </div>
                     <span asp-validation-for="StudentPayment.PaidDate" class="text-danger col-form-label"></span>
                 </div>
@@ -193,19 +193,22 @@
                     <tbody>
                         @foreach (var item in Model.StudentPayments)
                         {
-                            <tr>
-                                <td>@(++sl)</td>
-                                <td>@item.ReceiptNo</td>
-                                <td>@item.PaidDate.ToString("dd MMM yyyy")</td>
-                                <td>@item.StudentPaymentDetails.Select(s => s.StudentFeeHead.Name)</td>
-                                <td>@item.TotalPayment</td>
-                                <td>@item.Remarks</td>
-                                <td>
-                                    <button data-paidDate="@item.PaidDate.ToString()" data-receipt="@item.ReceiptNo" type="button" class="btn btn-light btn-outline-info btn-sm" data-toggle="modal" data-target="#exampleModalCenter" id="modalViewId">
-                                        View
-                                    </button>
-                                </td>
-                            </tr>
+                            foreach (var pay in item.StudentPaymentDetails)
+                            {
+                                <tr>
+                                    <td>@(++sl)</td>
+                                    <td>@pay.StudentPayment.ReceiptNo</td>
+                                    <td>@pay.StudentPayment.PaidDate.ToString("dd MMM yyyy")</td>
+                                    <td>@pay.StudentFeeHead.Name</td>
+                                    <td>@pay.StudentPayment.TotalPayment</td>
+                                    <td>@pay.StudentPayment.Remarks</td>
+                                    <td>
+                                        <button data-paidDate="@pay.StudentPayment.PaidDate.ToString()" data-receipt="@pay.StudentPayment.ReceiptNo" type="button" class="btn btn-light btn-outline-info btn-sm" data-toggle="modal" data-target="#exampleModalCenter" id="modalViewId">
+                                            View
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
                         }
                     </tbody>
                     <tfoot></tfoot>
@@ -386,13 +389,28 @@
 
 @section Scripts{
     <script src="~/js/StudentPayments/Payment.js"></script>
-    <script src="~/js/AlertifyNotify/errorNotify.js"></script>
+    
     @if (TempData["Saved"] != null)
     {
         <script src="~/js/AlertifyNotify/successNotify.js"></script>
     }
-
-    <script src="~/js/AlertifyNotify/warningCreateNotify.js"></script>
-    <script src="~/js/AlertifyNotify/warningNotify.js"></script>
-    <script src="~/js/AlertifyNotify/warningUpdateFailNotify.js"></script>
+    @if (TempData["error"] != null)
+    {
+        <script src="~/js/AlertifyNotify/errorNotify.js"></script>
+    }
+    @if (TempData["createWarning"]!=null)
+    {
+        <script src="~/js/AlertifyNotify/warningCreateNotify.js"></script>
+    }
+    @if (TempData["Warning"]!=null)
+    {
+        <script src="~/js/AlertifyNotify/warningNotify.js"></script>
+    }
+    @if (TempData["updateFail"]!=null)
+    {
+<script src="~/js/AlertifyNotify/warningUpdateFailNotify.js"></script>
+    }
+    
+    
+    
 }

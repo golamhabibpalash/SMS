@@ -30,7 +30,7 @@ namespace SMS.DAL.Repositories
 
         public async Task<List<ClassFeeList>> GetAllByClassIdAsync(int classId)
         {
-            var result = await _context.ClassFeeList.Where(c => c.AcademicClassId == classId).ToListAsync();
+            var result = await _context.ClassFeeList.Include(c => c.StudentFeeHead).Where(c => c.AcademicClassId == classId).ToListAsync();
             return result;
         }
 

@@ -19,13 +19,15 @@ namespace SMS.App.Controllers
         private readonly IStudentManager _studentManager;
         private readonly IClassFeeListManager _classFeeListManager;
         private readonly IAcademicClassManager _academicClassManager;
+        private readonly IStudentFeeHeadManager _studentFeeHeadManager;
 
-        public StudentPaymentsController(IStudentPaymentManager studentPaymentManager, IStudentManager studentManager, IClassFeeListManager classFeeListManager, IAcademicClassManager academicClassManager)
+        public StudentPaymentsController(IStudentPaymentManager studentPaymentManager, IStudentManager studentManager, IClassFeeListManager classFeeListManager, IAcademicClassManager academicClassManager, IStudentFeeHeadManager studentFeeHeadManager)
         {
             _studentPaymentManager = studentPaymentManager;
             _studentManager = studentManager;
             _classFeeListManager = classFeeListManager;
             _academicClassManager = academicClassManager;
+            _studentFeeHeadManager = studentFeeHeadManager;
         }
 
         // GET: StudentPayments
@@ -61,11 +63,8 @@ namespace SMS.App.Controllers
                 spvm.StudentPayments = studentPayments;                
                 List<ClassFeeList> feeList = new();
                 var classfeelist = await _classFeeListManager.GetAllByClassIdAsync(student.AcademicClassId);
-                //var academicClasses = await _academicClassManager.GetAllAsync();
-                //var fList = from cfl in classfeelist
-                //            from ac in academicClasses
-                //            where cfl.AcademicClassId == ac.Id && student.AcademicClassId == ac.Id
-                //            select cfl;
+
+                ViewBag.FeeList = new SelectList(await _studentFeeHeadManager.GetAllAsync(), "Id", "Name");
                 foreach (var item in classfeelist)
                 {
                     feeList.Add(item);

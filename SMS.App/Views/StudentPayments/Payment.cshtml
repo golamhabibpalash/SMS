@@ -178,37 +178,40 @@
         <div class="col-md-12 bg-secondary mh-100">
             @if (Model.StudentPayments != null && Model.StudentPayments.Count > 0)
             {
-                <table class="table table-striped table-sm text-light">
-                    <thead class="bg-info">
+            <table class="table table-striped table-sm text-light">
+                <thead class="bg-info">
+                    <tr>
+                        <td>#</td>
+                        <td>Receipt No</td>
+                        <td>Paid Date</td>
+                        <td>Payment Type</td>
+                        <td>Paid Amount</td>
+                        <td>Remark</td>
+                        <td>Action</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.StudentPayments)
+                    {
                         <tr>
-                            <td>#</td>
-                            <td>Receipt No</td>
-                            <td>Paid Date</td>
-                            <td>Payment Type</td>
-                            <td>Paid Amount</td>
-                            <td>Remark</td>
-                            <td>Action</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.StudentPayments)
-                        {
-                            <tr>
+                            @foreach (var payDetail in item.StudentPaymentDetails)
+                            {
                                 <td>@(++sl)</td>
-                                <td>@item.ReceiptNo</td>
-                                <td>@item.PaidDate.ToString("dd MMM yyyy")</td>
-                                <td>@item.StudentPaymentDetails.Select(s => s.StudentFeeHead.Name)</td>
-                                <td>@item.TotalPayment</td>
-                                <td>@item.Remarks</td>
+                                <td>@payDetail.StudentPayment.ReceiptNo</td>
+                                <td>@payDetail.StudentPayment.PaidDate.ToString("dd MMM yyyy")</td>
+                                <td>@payDetail.StudentFeeHead.Name</td>
+                                <td>@payDetail.StudentPayment.TotalPayment</td>
+                                <td>@payDetail.StudentPayment.Remarks</td>
                                 <td>
                                     <button data-paidDate="@item.PaidDate.ToString()" data-receipt="@item.ReceiptNo" type="button" class="btn btn-light btn-outline-info btn-sm" data-toggle="modal" data-target="#exampleModalCenter" id="modalViewId">
                                         View
                                     </button>
                                 </td>
-                            </tr>
-                        }
-                    </tbody>
-                    <tfoot></tfoot>
+                            }
+                        </tr>
+                    }
+                </tbody>
+                <tfoot></tfoot>
                 </table>
             }
             else

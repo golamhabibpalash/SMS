@@ -1,4 +1,5 @@
-﻿using SMS.DAL.Contracts;
+﻿using Microsoft.EntityFrameworkCore;
+using SMS.DAL.Contracts;
 using SMS.DAL.Repositories.Base;
 using SMS.DB;
 using SMS.Entities;
@@ -15,6 +16,11 @@ namespace SMS.DAL.Repositories
         public StudentFeeHeadRepository(ApplicationDbContext db): base(db)
         {
 
+        }
+        public async Task<StudentFeeHead> GetByNameAsync(string name)
+        {
+            var feeHead = await _context.StudentFeeHead.FirstOrDefaultAsync(s => s.Name.ToLower().Trim() == name.ToLower().Trim());
+            return feeHead;
         }
 
     }

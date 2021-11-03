@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SMS.BLL.Contracts;
 using SMS.DB;
 using SMS.Entities;
 
@@ -13,17 +14,17 @@ namespace SMS.App.Controllers
 {
     public class StudentFeeHeadsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IStudentFeeHeadManager _studentFeeHeadManager;
 
-        public StudentFeeHeadsController(ApplicationDbContext context)
+        public StudentFeeHeadsController(IStudentFeeHeadManager studentFeeHeadManager)
         {
-            _context = context;
+            _studentFeeHeadManager = studentFeeHeadManager;
         }
 
         // GET: StudentFeeHeads
         public async Task<IActionResult> Index()
         {
-            return View(await _context.StudentFeeHead.ToListAsync());
+            return View(await _studentFeeHeadManager.GetAllAsync());
         }
 
         // GET: StudentFeeHeads/Details/5
@@ -34,8 +35,7 @@ namespace SMS.App.Controllers
                 return NotFound();
             }
 
-            var studentFeeHead = await _context.StudentFeeHead
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var studentFeeHead = await _studentFeeHeadManager.GetByIdAsync((int)id);
             if (studentFeeHead == null)
             {
                 return NotFound();
@@ -50,15 +50,12 @@ namespace SMS.App.Controllers
             return View();
         }
 
-        // POST: StudentFeeHeads/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Repeatedly,CreatedBy,CreatedAt,EditedBy,EditedAt")] StudentFeeHead studentFeeHead)
         {
             string msg = "";
-            var sfhExist = _context.StudentFeeHead.FirstOrDefault(s => s.Name.Trim() == studentFeeHead.Name.Trim());
+            var sfhExist = await _studentFeeHeadManager.GetByNameAsync(studentFeeHead.Name);
             if (sfhExist!=null)
             {
                 msg = studentFeeHead.Name+" Fee Head is already exist.";
@@ -72,9 +69,7 @@ namespace SMS.App.Controllers
                     studentFeeHead.CreatedBy = HttpContext.Session.GetString("User");
                     studentFeeHead.CreatedAt = DateTime.Now;
 
-                
-                    _context.Add(studentFeeHead);
-                    await _context.SaveChangesAsync();
+                    await _studentFeeHeadManager.AddAsync(studentFeeHead);
 
                     TempData["Create"] = "Successfully Created";
                     return RedirectToAction(nameof(Index));
@@ -92,7 +87,7 @@ namespace SMS.App.Controllers
                 return NotFound();
             }
 
-            var studentFeeHead = await _context.StudentFeeHead.FindAsync(id);
+            var studentFeeHead = await _studentFeeHeadManager.GetByIdAsync((int)id);
             if (studentFeeHead == null)
             {
                 return NotFound();
@@ -100,9 +95,6 @@ namespace SMS.App.Controllers
             return View(studentFeeHead);
         }
 
-        // POST: StudentFeeHeads/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Repeatedly,CreatedBy,CreatedAt,EditedBy,EditedAt")] StudentFeeHead studentFeeHead)
@@ -112,7 +104,7 @@ namespace SMS.App.Controllers
             {
                 return NotFound();
             }
-            var sfhExist = _context.StudentFeeHead.FirstOrDefault(s => s.Name.Trim() == studentFeeHead.Name.Trim() && s.Id != studentFeeHead.Id);
+            var sfhExist =await _studentFeeHeadManager.GetByIdAsync(id);
 
             if (sfhExist!=null)
             {
@@ -129,13 +121,14 @@ namespace SMS.App.Controllers
                         studentFeeHead.EditedAt = DateTime.Now;
                         studentFeeHead.EditedBy = HttpContext.Session.GetString("User");
 
-                        _context.Update(studentFeeHead);
-                        await _context.SaveChangesAsync();
+
+                        await _studentFeeHeadManager.UpdateAsync(studentFeeHead);
                         TempData["edit"] = "Edited Successfully.";
                     }
                     catch (DbUpdateConcurrencyException)
                     {
-                        if (!StudentFeeHeadExists(studentFeeHead.Id))
+                        var StudentFeeHeadExists = await _studentFeeHeadManager.GetByIdAsync(id);
+                        if (StudentFeeHeadExists==null)
                         {
                             return NotFound();
                         }
@@ -158,8 +151,7 @@ namespace SMS.App.Controllers
                 return NotFound();
             }
 
-            var studentFeeHead = await _context.StudentFeeHead
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var studentFeeHead = await _studentFeeHeadManager.GetByIdAsync((int)id);
             if (studentFeeHead == null)
             {
                 return NotFound();
@@ -173,15 +165,10 @@ namespace SMS.App.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var studentFeeHead = await _context.StudentFeeHead.FindAsync(id);
-            _context.StudentFeeHead.Remove(studentFeeHead);
-            await _context.SaveChangesAsync();
+            var studentFeeHead = await _studentFeeHeadManager.GetByIdAsync(id);
+            await _studentFeeHeadManager.RemoveAsync(studentFeeHead);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool StudentFeeHeadExists(int id)
-        {
-            return _context.StudentFeeHead.Any(e => e.Id == id);
-        }
     }
 }

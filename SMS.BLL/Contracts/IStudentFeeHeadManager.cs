@@ -10,6 +10,6 @@ namespace SMS.BLL.Contracts
 {
     public interface IStudentFeeHeadManager : IManager<StudentFeeHead>
     {
-        
+        Task<StudentFeeHead> GetByNameAsync(string name);
     }
 }

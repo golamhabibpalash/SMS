@@ -101,12 +101,12 @@
                     <div class="form-group row">
                         <label class="col-md-4 col-form-label text-right">Payment For </label>
                         <div class="col-md-6">
-                            <select class="form-control" asp-items="@ViewBag.FeeList">
+                            <select id="feeSelectId" class="form-control" asp-items="@ViewBag.FeeList">
                                 <option selected disabled>Select Payment</option>
                             </select>
                         </div>
                         <div class="col-md-2">
-                            <input type="text" id="FeeValue" class="form-control" />
+                            <input type="text" id="FeeAmountId" class="form-control" />
                         </div>
                         <span asp-validation-for="StudentPayment.PaidDate" class="text-danger col-form-label"></span>
                     </div>
@@ -130,17 +130,32 @@
                     </div>
 
                 </div>
-                <div class="col-md-3 bg-light d-flex align-items-center text-dark">
+                <div class="col-md-3 bg-light d-flex align-items-center text-dark mb-3 mb-2">
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
-                            <span class="input-group-text col-form-label" id="inputGroup-sizing-default">Total</span>
+                            <span class="input-group-text " id="inputGroup-sizing-default">Total</span>
                         </div>
-                        <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
-                    </div>
-                    <div>
-                        <button>+Add</button>
+                        <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"><br /><button>+Add</button>
                     </div>
                 </div>
+            </div>
+            <div class="">
+                <table class="table table-hover table-bordered">
+                    <thead>
+                        <tr>
+                            <td>#</td>
+                            <td>Receipt No</td>
+                            <td>Date</td>
+                            <td>Paid For</td>
+                            <td>Amount</td>
+                            <td>Remark</td>
+                            <td>Action</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
             </div>
 
         </div>

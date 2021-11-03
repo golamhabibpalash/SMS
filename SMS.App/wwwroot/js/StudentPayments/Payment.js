@@ -1,4 +1,25 @@
-﻿//Code for waiverFor div show and hide
+﻿/////////////////////// 2nd time(Current) created code
+//Payment for select list option chooose
+$('#feeSelectId').change(function () {
+    let feeVal = $('#feeSelectId option:selected').val();
+
+    $.ajax({
+        url: '/StudentFeeHeads/GetAllByValue',
+        data: { val: feeVal },
+        cache: false,
+        type: 'POST',
+        dataType: 'json',
+        success: function (data) {
+
+        },
+        error: function (err) {
+            console.log(err);
+        }
+        
+    });
+});
+/////////////////////// 1st time(Previous) created code
+//Code for waiverFor div show and hide
 $('#waiverCheckId').click(function () {
     let isChecked = $('#waiverCheckId').is(':checked');
     if (isChecked == true) {

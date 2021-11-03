@@ -10,6 +10,6 @@ namespace SMS.DAL.Contracts
 {
     public interface IStudentFeeHeadRepository : IRepository<StudentFeeHead>
     {
-        
+        Task<StudentFeeHead> GetByNameAsync(string name);
     }
 }

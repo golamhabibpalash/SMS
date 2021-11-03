@@ -12,9 +12,16 @@ namespace SMS.BLL.Managers
 {
     public class StudentFeeHeadManager : Manager<StudentFeeHead>, IStudentFeeHeadManager
     {
+        private readonly IStudentFeeHeadRepository _studentFeeHeadRepository;
+
         public StudentFeeHeadManager(IStudentFeeHeadRepository studentFeeHeadRepository):base(studentFeeHeadRepository)
         {
+            _studentFeeHeadRepository = studentFeeHeadRepository;
+        }
 
+        public async Task<StudentFeeHead> GetByNameAsync(string name)
+        {
+            return await _studentFeeHeadRepository.GetByNameAsync(name);
         }
     }
 }

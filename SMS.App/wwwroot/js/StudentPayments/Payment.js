@@ -1,11 +1,11 @@
 ﻿/////////////////////// 2nd time(Current) created code
 //Payment for select list option chooose
 $('#feeSelectId').change(function () {
-    let feeVal = $('#feeSelectId option:selected').val();
+    let id = $('#feeSelectId option:selected').val();
 
     $.ajax({
-        url: '/StudentFeeHeads/GetAllByValue',
-        data: { val: feeVal },
+        url: '/StudentFeeHeads/GetById',
+        data: { id: id },
         cache: false,
         type: 'POST',
         dataType: 'json',

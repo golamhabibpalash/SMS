@@ -169,6 +169,10 @@ namespace SMS.App.Controllers
             await _studentFeeHeadManager.RemoveAsync(studentFeeHead);
             return RedirectToAction(nameof(Index));
         }
-
+        public async Task<JsonResult> GetById(int id)
+        {
+            var feeHead = await _studentFeeHeadManager.GetByIdAsync(id);
+            return Json(feeHead);
+        }
     }
 }

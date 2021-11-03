@@ -100,14 +100,33 @@
                     </div>
                     <div class="form-group row">
                         <label class="col-md-4 col-form-label text-right">Payment For </label>
-                        <div class="col-md-6">
+                        <div class="col-md-5">
                             <select id="feeSelectId" class="form-control" asp-items="@ViewBag.FeeList">
                                 <option selected disabled>Select Payment</option>
                             </select>
                         </div>
-                        <div class="col-md-2">
-                            <input type="text" id="FeeAmountId" class="form-control" />
+                        <div class="col-md-3">
+                            <div class="input-group mb-0">
+                                <div class="">
+                                    <button class="btn btn-light form-control-sm mr-0" id="minusButton">-</button>
+                                </div>
+                                <div class="custom-file">
+                                    @*<input type="file" class="custom-file-input" id="inputGroupFile03">*@
+                                    <input readonly type="text" id="FeeAmountId" class="form-control" />
+
+                                </div>
+                                <div class="">
+                                    <button class="btn btn-light form-control-sm" id="plusButton">+</button>
+                                </div>
+                            </div>
+                            @*<label>
+                                <button class="btn btn-primary form-control">-</button>
+                                <input readonly type="text" id="FeeAmountId" class="form-control" />
+                                <button class="btn btn-success form-control">+</button>
+                            </label>*@
+                            <input type="hidden" id="academicClassId" value="@Model.StudentPayment.Student.AcademicClassId" />
                         </div>
+                        
                         <span asp-validation-for="StudentPayment.PaidDate" class="text-danger col-form-label"></span>
                     </div>
                     <div class="form-group row">

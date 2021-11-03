@@ -2,21 +2,47 @@
 //Payment for select list option chooose
 $('#feeSelectId').change(function () {
     let id = $('#feeSelectId option:selected').val();
-
+    let classId = $('#academicClassId').val();
     $.ajax({
         url: '/StudentFeeHeads/GetById',
-        data: { id: id },
+        data: { id: id, classId: classId },
         cache: false,
         type: 'POST',
         dataType: 'json',
         success: function (data) {
-
+            $('#FeeAmountId').val(data.amount);
         },
         error: function (err) {
             console.log(err);
         }
         
     });
+});
+//Minus Button Click
+$('#minusButton').click(function () {
+    alert("Minus Button Clicked");
+});
+//Plus Button Click
+$('#plusButton').click(function () {
+    let id = $('#feeSelectId option:selected').val();
+    let classId = $('#academicClassId').val();
+    var existAmount = $('#FeeAmountId').val();
+    $.ajax({
+        url: '/StudentFeeHeads/GetById',
+        data: { id: id, classId: classId },
+        cache: false,
+        type: 'POST',
+        dataType: 'json',
+        success: function (data) {
+            existAmount = existAmount + data.amount;
+        },
+        error: function (err) {
+            console.log(err);
+        }
+
+    });
+
+    $('#FeeAmountId').val(existAmount);
 });
 /////////////////////// 1st time(Previous) created code
 //Code for waiverFor div show and hide

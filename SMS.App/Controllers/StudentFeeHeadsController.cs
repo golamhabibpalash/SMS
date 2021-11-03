@@ -15,10 +15,12 @@ namespace SMS.App.Controllers
     public class StudentFeeHeadsController : Controller
     {
         private readonly IStudentFeeHeadManager _studentFeeHeadManager;
+        private readonly IClassFeeListManager _classFeeListManager;
 
-        public StudentFeeHeadsController(IStudentFeeHeadManager studentFeeHeadManager)
+        public StudentFeeHeadsController(IStudentFeeHeadManager studentFeeHeadManager, IClassFeeListManager classFeeListManager)
         {
             _studentFeeHeadManager = studentFeeHeadManager;
+            _classFeeListManager = classFeeListManager;
         }
 
         // GET: StudentFeeHeads
@@ -169,10 +171,11 @@ namespace SMS.App.Controllers
             await _studentFeeHeadManager.RemoveAsync(studentFeeHead);
             return RedirectToAction(nameof(Index));
         }
-        public async Task<JsonResult> GetById(int id)
+        public async Task<JsonResult> GetById(int id, int classId)
         {
             var feeHead = await _studentFeeHeadManager.GetByIdAsync(id);
-            return Json(feeHead);
+            var classFeeList = await _classFeeListManager.GetByClassIdAndFeeHeadIdAsync(classId, id);
+            return Json(classFeeList);
         }
     }
 }

@@ -10,7 +10,5 @@ namespace SMS.Entities
     {
         public string Name { get; set; }
         public bool Repeatedly { get; set; }
-
-
     }
 }

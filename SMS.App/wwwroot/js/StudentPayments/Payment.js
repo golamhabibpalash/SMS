@@ -20,11 +20,7 @@ $('#feeSelectId').change(function () {
 });
 //Minus Button Click
 $('#minusButton').click(function () {
-    alert("Minus Button Clicked");
-});
-//Plus Button Click
-$('#plusButton').click(function () {
-    let id = $('#feeSelectId option:selected').val();
+    let id = $('#feeSelectId').val();
     let classId = $('#academicClassId').val();
     var existAmount = $('#FeeAmountId').val();
     $.ajax({
@@ -34,7 +30,29 @@ $('#plusButton').click(function () {
         type: 'POST',
         dataType: 'json',
         success: function (data) {
-            existAmount = existAmount + data.amount;
+            existAmount = parseInt(existAmount) - parseInt(data.amount);
+            $('#FeeAmountId').val(existAmount);
+        },
+        error: function (err) {
+            console.log(err);
+        }
+
+    });
+});
+//Plus Button Click
+$('#plusButton').click(function () {
+    let id = $('#feeSelectId').val();
+    let classId = $('#academicClassId').val();
+    var existAmount = $('#FeeAmountId').val();
+    $.ajax({
+        url: '/StudentFeeHeads/GetById',
+        data: { id: id, classId: classId },
+        cache: false,
+        type: 'POST',
+        dataType: 'json',
+        success: function (data) {
+            existAmount = parseInt(existAmount) + parseInt(data.amount);
+            $('#FeeAmountId').val(existAmount);            
         },
         error: function (err) {
             console.log(err);
@@ -42,7 +60,7 @@ $('#plusButton').click(function () {
 
     });
 
-    $('#FeeAmountId').val(existAmount);
+    
 });
 /////////////////////// 1st time(Previous) created code
 //Code for waiverFor div show and hide

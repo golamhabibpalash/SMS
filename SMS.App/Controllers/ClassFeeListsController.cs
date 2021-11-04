@@ -143,7 +143,7 @@ namespace SMS.App.Controllers
                 return NotFound();
             }
             var feeList = await _classFeeListManager.GetAllAsync();
-            var feeListExist =feeList.Where(s => s.AcademicClassId == classFeeList.AcademicClassId && s.Id !=id).FirstOrDefault();
+            var feeListExist =feeList.Where(s => s.AcademicClassId == classFeeList.AcademicClassId && s.Id !=id && s.AcademicSessionId==classFeeList.AcademicSessionId && s.StudentFeeHeadId==classFeeList.StudentFeeHeadId).FirstOrDefault();
 
             if (feeListExist!=null)
             {

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SchoolManagementSystem;
 using SMS.BLL.Contracts;
 using SMS.Entities;
 using System;
@@ -138,5 +139,19 @@ namespace SMS.App.Controllers
                 return View();
             }
         }
+
+        [HttpGet]
+        public ActionResult Setting()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Setting(string name)
+        {
+            GlobalUI.InstituteName = name;
+            return View();
+        }
+
     }
 }

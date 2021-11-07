@@ -1,4 +1,5 @@
-﻿@{
+﻿@model SMS.App.ViewModels.Students.StudentDashboardVM
+@{
     ViewData["Title"] = "Home Page";
     GlobalUI.PageTitle = "";
 }
@@ -12,4 +13,76 @@
     {
         <h1 class="display-4">Welcome to School Management System</h1>
     }
+</div>
+<div class="row">
+    <div class="col-md-3" ">
+        <div class="card text-white bg-primary mb-3 text-center" style="min-height:200px;">
+            <div class="card-header">Total Student</div>
+            <div class="card-body">
+                <h2>Total <span class="h1 text-warning">@ViewBag.totalStudent</span> Students</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info mb-3 text-center"  style="min-height:200px;">
+            <div class="card-header ">Total Teacher</div>
+            <div class="card-body">
+                <h2>Total <span class="h1 text-warning">@ViewBag.totalTeacher</span> Teachers</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success mb-3"  style="min-height:200px;">
+            <div class="card-header text-center">Total Student</div>
+            <div class="card-body">
+                <h5 class="card-title">Primary card title</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning mb-3"  style="min-height:200px;">
+            <div class="card-header text-center">Total Student</div>
+            <div class="card-body">
+                <h5 class="card-title">Primary card title</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-dark mb-3"  style="min-height:200px;">
+            <div class="card-header text-center">Total Student</div>
+            <div class="card-body">
+                <h5 class="card-title">Primary card title</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-danger mb-3"  style="min-height:200px;">
+            <div class="card-header text-center">Total Student</div>
+            <div class="card-body">
+                <h5 class="card-title">Primary card title</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-secondary mb-3"  style="min-height:200px;">
+            <div class="card-header text-center">Total Student</div>
+            <div class="card-body">
+                <h5 class="card-title">Primary card title</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-Coffee mb-3"  style="min-height:200px;">
+            <div class="card-header text-center">Total Student</div>
+            <div class="card-body">
+                <h5 class="card-title">Primary card title</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            </div>
+        </div>
+    </div>
 </div>

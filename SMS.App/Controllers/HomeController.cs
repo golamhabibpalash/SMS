@@ -1,22 +1,35 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SMS.App.ViewModels.Students;
+using SMS.BLL.Contracts;
 using SMS.Entities;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IStudentManager _studentManager;
+        private readonly ITeacherManager _teacherManager;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IStudentManager studentManager, ITeacherManager teacherManager)
         {
             _logger = logger;
+            _studentManager = studentManager;
+            _teacherManager = teacherManager;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            StudentDashboardVM stDashboardVM = new StudentDashboardVM();
+            IReadOnlyCollection<Student> students = await _studentManager.GetAllAsync();
+            ViewBag.totalStudent = students.Count;
+            stDashboardVM.Students = (ICollection<Student>)students;
+
+            return View(stDashboardVM);
         }
 
         public IActionResult Privacy()

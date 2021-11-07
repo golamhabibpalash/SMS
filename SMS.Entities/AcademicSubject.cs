@@ -18,7 +18,7 @@ namespace SMS.Entities
         public int? SubjectCode { get; set; }
 
         [Display(Name ="Subject For")]
-        public char SubjectFor { get; set; }
+        public char SubjectFor { get; set; } //High School, College, Primary School
 
         [Display(Name = "Total Marks")]
         public double TotalMarks { get; set; }

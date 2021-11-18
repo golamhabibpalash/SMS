@@ -13,13 +13,11 @@ namespace SMS.App.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IStudentManager _studentManager;
-        private readonly ITeacherManager _teacherManager;
 
-        public HomeController(ILogger<HomeController> logger, IStudentManager studentManager, ITeacherManager teacherManager)
+        public HomeController(ILogger<HomeController> logger, IStudentManager studentManager)
         {
             _logger = logger;
             _studentManager = studentManager;
-            _teacherManager = teacherManager;
         }
 
         public async Task<IActionResult> Index()

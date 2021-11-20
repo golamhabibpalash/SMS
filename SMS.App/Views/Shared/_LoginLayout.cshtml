@@ -1,0 +1,29 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <title>@ViewBag.Title</title>
+    @await RenderSectionAsync("Styles", required: false);
+</head>
+<body class="bg-info">
+    <div class="container-fluid">
+        <div class="container">
+            @RenderBody()
+        </div>
+    </div>
+
+
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    @await RenderSectionAsync("Scripts", required: false);
+</body>
+</html>

@@ -2,24 +2,52 @@
 
 @{
     ViewBag.Title = "User Login";
+    Layout = "~/Views/Shared/_LoginLayout.cshtml";
 }
 
-<div class="card">
-    <form asp-action="Login" asp-controller="Accounts" method="post">
-        <div class="form-group">
-            <label asp-for="Email"></label>
-            <input asp-for="Email" class="form-control" aria-describedby="emailHelp" placeholder="Enter email">
-            <span asp-validation-for="Email" class="text-danger"></span>
+<div class="row d-flex justify-content-center">
+    <div class="col-md-6">
+        <div class="card p-3">
+            <form asp-action="Login" asp-controller="Accounts" method="post">
+                <div class="form-group row">
+                    <label asp-for="Email" class="col-form-label text-md-right col-md-3"></label>
+                    <div class="col-md-9">
+                        <input asp-for="Email" class="form-control" aria-describedby="emailHelp" placeholder="Enter email">
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label asp-for="Password" class="col-form-label text-md-right col-md-3"></label>
+                    <div class="col-md-9">
+                        <input asp-for="Password" class="form-control" placeholder="Password">
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    
+                    <div class="offset-md-3">
+                        <input asp-for="RememberMe" class="">
+                    </div><label asp-for="RememberMe" class="form-check-label col-md-3 text-md-right"></label>
+                </div>
+                <div class="form-group row text-md-center">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                        
+                    </div>
+                </div>
+                <div class="form-group ">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <span class="text-danger"><a asp-action="resetPassword" asp-controller="Accounts">Forgot password?</a></span>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            <span class="text-right"><a asp-action="register" asp-controller="Accounts">Register</a> for a new user</span>
+
+                        </div>
+
+                    </div>
+                </div>
+            </form>
         </div>
-        <div class="form-group">
-            <label asp-for="Password" ></label>
-            <input asp-for="Password" class="form-control" placeholder="Password">
-            <span asp-validation-for="Password" class="text-danger"></span>
-        </div>
-        <div class="form-check">
-            <input asp-for="RememberMe" class="form-check-input" >
-            <label asp-for="RememberMe" class="form-check-label"></label>
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
+    </div>
 </div>

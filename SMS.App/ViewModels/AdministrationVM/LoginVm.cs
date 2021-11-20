@@ -13,5 +13,8 @@ namespace SMS.App.ViewModels.AdministrationVM
 
         [DataType(DataType.Password), Required]
         public string Password { get; set; }
+
+        [Display(Name ="Remember me")]
+        public bool RememberMe { get; set; }
     }
 }

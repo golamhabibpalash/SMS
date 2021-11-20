@@ -45,6 +45,7 @@ namespace SMS.App.Controllers
             return View();
         }
         
+        [HttpGet]
         public IActionResult Login()
         {
             return View();
@@ -53,7 +54,16 @@ namespace SMS.App.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginVm model)
         {
-            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (ModelState.IsValid)
+            {
+                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("index", "home");
+                }
+                ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
+                
+            }
             return View();
         }
 

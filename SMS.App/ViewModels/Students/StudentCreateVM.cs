@@ -77,7 +77,7 @@ namespace SMS.App.ViewModels.Students
         [Display(Name = "Present District")]
         public int PresentDistrictId { get; set; }
 
-        [Display(Name = "Division")]
+        [Display(Name = "Present Division")]
         public int PresentDivisionId { get; set; }
 
         [Display(Name = "Vill/Area")]
@@ -89,10 +89,10 @@ namespace SMS.App.ViewModels.Students
         [Display(Name = "Upazila/Police Station")]
         public int PermanentUpazilaId { get; set; }
 
-        [Display(Name = "District")]
+        [Display(Name = "Permanent District")]
         public int PermanentDistrictId { get; set; }
 
-        [Display(Name = "Division")]
+        [Display(Name = "Permanent Division")]
         public int PermanentDivisionId { get; set; }
 
         [Display(Name = "Academic Session")]

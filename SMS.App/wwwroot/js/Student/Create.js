@@ -34,7 +34,9 @@ $('#AcademicClassId').change(function () {
 
             if (data != null || data != '') {
                 var o = '<option disabled selected>Select Section Name</option>';
+                var o2 = '<option value="">No Section</option>';
                 $('#AcademicSectionId').append(o);
+                $('#AcademicSectionId').append(o2);
                 $.each(data, function (i, obj) {
                     console.log(obj.name);
                     var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
@@ -104,6 +106,8 @@ function loadAddress() {
     var preAddressPO = $('#PresentAddressPO').val();
 
     var preDivVal = $('#PresentDivisionId').val();
+    var preDivText = $('#PresentDivisionId option:selected').text();
+    var preDiv = '<option value="' + preDivVal + '">' + preDivText + '</option>';
 
     var preDisText = $('#PresentDistrictId option:selected').text();
     var preDisVal = $('#PresentDistrictId').val();
@@ -116,8 +120,7 @@ function loadAddress() {
     $('#PermanentAddressArea').val(preAddressArea);
     $('#PermanentAddressPO').val(preAddressPO);
 
-    $('#PermanentDivisiontId').val(preDivVal);
-
+    $('#PermanentDivisionId').html(preDiv);
     $('#PermanentDistrictId').html(preDis);
     $('#PermanentUpazilaId').html(preUp);
 
@@ -125,7 +128,7 @@ function loadAddress() {
 function emptyAddress() {
     $('#PermanentAddressArea').val("");
     $('#PermanentAddressPO').val("");
-    $('#PermanentDivisiontId').change();
+    $('#PermanentDivisionId').change();
     $('#PermanentDistrictId').empty();
     $('#PermanentAddressPSId').html('<option disabled selected>Select District First</option>');
 }

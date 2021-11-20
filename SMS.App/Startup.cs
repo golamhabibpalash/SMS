@@ -35,7 +35,6 @@ namespace SchoolManagementSystem
             //services.AddDatabaseDeveloperPageExceptionFilter();
 
             
-
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();

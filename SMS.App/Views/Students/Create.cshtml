@@ -35,6 +35,7 @@
                 <div class="col-md-4">
                     <select asp-for="AcademicSectionId" class="form-control input-sm" >
                         <option disabled selected>Select Class First</option>
+                        <option value="">No Section</option>
                     </select>
                     <span asp-validation-for="AcademicSectionId" class="text-danger"></span>
                 </div>
@@ -169,7 +170,7 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label for="PresentDivisiontId" class="control-label col-form-label text-right col-md-2"></label>
+                <label asp-for="PresentDivisionId" class="control-label col-form-label text-right col-md-2"></label>
                 <div class="col-md-4">
                     <select asp-for="PresentDivisionId" class="form-control" asp-items="Model.DivisionList" style="width:100%;">
                         <option disabled selected>Select Division Name</option>
@@ -177,7 +178,7 @@
                     <span asp-validation-for="PresentDivisionId" class="text-danger"></span>
                 </div>
 
-                <label for="PresentDistrictId" class="control-label col-form-label text-right col-md-2"></label>
+                <label asp-for="PresentDistrictId" class="control-label col-form-label text-right col-md-2"></label>
                 <div class="col-md-4">
                     <select asp-for="PresentDistrictId" class="form-control select2" style="width:100%;">
                         <option disabled selected>Select Division First</option>

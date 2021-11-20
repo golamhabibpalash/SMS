@@ -25,10 +25,13 @@
             </div>
             <div class="form-group row">
                 <label asp-for="AcademicSubjectTypeId" class="control-label col-form-label col-md-2 text-md-right  "></label>
-                <div class="col-md-10">
+                <div class="col-md-10 input-group">
                     <select asp-for="AcademicSubjectTypeId" class="form-control rounded" asp-items="ViewBag.AcademicSubjectTypeId">
                         <option selected disabled>Select Subject Type</option>
                     </select>
+                    <div>
+                        <a class="btn btn-sm btn-outline-info" asp-action="Create" asp-controller="AcademicSubjectTypes"><i class="fa fa-plus"></i> Add</a>
+                    </div>
                     <span asp-validation-for="AcademicSubjectTypeId" class="text-danger"></span>
                 </div>
             </div>

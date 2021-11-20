@@ -13,6 +13,8 @@ using SMS.BLL.Contracts;
 using SMS.BLL.Managers;
 using SMS.DAL.Repositories;
 using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 
 namespace SchoolManagementSystem
 {
@@ -33,8 +35,17 @@ namespace SchoolManagementSystem
                     Configuration.GetConnectionString("DefaultConnection")));
 
             //services.AddDatabaseDeveloperPageExceptionFilter();
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.AccessDeniedPath = new PathString("/Accounts/AccessDenied");
+                options.Cookie.Name = "Cookie";
+                options.Cookie.HttpOnly = true;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(720);
+                options.LoginPath = new PathString("/Accounts/Login");
+                options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+                options.SlidingExpiration = true;
+            });
 
-            
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -151,7 +162,7 @@ namespace SchoolManagementSystem
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Accounts}/{action=Login}/{id?}");
                 endpoints.MapRazorPages();
             });
 

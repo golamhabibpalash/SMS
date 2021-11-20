@@ -20,6 +20,7 @@ using NodaTime;
 
 namespace SchoolManagementSystem.Controllers
 {
+    [Authorize]
     public class StudentsController : Controller
     {
         private readonly IWebHostEnvironment _host;

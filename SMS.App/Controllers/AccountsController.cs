@@ -44,5 +44,24 @@ namespace SMS.App.Controllers
             }
             return View();
         }
+        
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginVm model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> LogOut()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Login","Accounts");
+        }
     }
 }

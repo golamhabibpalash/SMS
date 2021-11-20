@@ -1,6 +1,11 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Identity;
+
+@inject SignInManager<IdentityUser> _signInManager;
+
+@{
     string instituteName = GlobalUI.InstituteName != null ? GlobalUI.InstituteName : "Institute Name";
 }
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -157,9 +162,23 @@
                         <a data-toggle="tooltip" data-placement="top" title="Lock">
                             <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
                         </a>
-                        <a data-toggle="tooltip" data-placement="top" title="Logout" href="login.html">
-                            <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
-                        </a>
+                        @if (_signInManager.IsSignedIn(User))
+                        {
+                            <form asp-action="Logout" asp-controller="accounts" method="post">
+                                <button data-toggle="tooltip" data-placement="top" title="Logout" type="submit">
+                                    <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+                                </button>
+                            </form>
+                           
+                        }
+                        else
+                        {
+                            
+                            <a data-toggle="tooltip" data-placement="top" title="Login" asp-action="login" asp-controller="Accounts">
+                                <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>
+                            </a>
+                        }
+                        
                     </div>
                     <!-- /menu footer buttons -->
                 </div>

@@ -6,9 +6,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using SMS.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SMS.App.Controllers
 {
+    [Authorize]
     public class RolesController : Controller
     {
         private readonly ApplicationDbContext _contex;

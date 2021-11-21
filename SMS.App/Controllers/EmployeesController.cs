@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,7 @@ using SMS.Entities;
 
 namespace SMS.App.Controllers
 {
+    [Authorize]
     public class EmployeesController : Controller
     {
         private readonly IWebHostEnvironment _host;

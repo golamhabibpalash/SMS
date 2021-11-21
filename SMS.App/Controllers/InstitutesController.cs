@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SchoolManagementSystem;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
 {
+    [Authorize]
     public class InstitutesController : Controller
     {
         private readonly IInstituteManager _instituteManager;

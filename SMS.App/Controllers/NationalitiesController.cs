@@ -13,6 +13,7 @@ using SMS.Entities;
 
 namespace SMS.App.Controllers
 {
+    [Authorize]
     public class NationalitiesController : Controller
     {
         private readonly INationalityManager _nationalityManager;

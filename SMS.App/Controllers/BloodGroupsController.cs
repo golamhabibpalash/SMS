@@ -13,6 +13,7 @@ using SMS.Entities;
 
 namespace SMS.App.Controllers
 {
+    [Authorize]
     public class BloodGroupsController : Controller
     {
         private readonly ApplicationDbContext _context;

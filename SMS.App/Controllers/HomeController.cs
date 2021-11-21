@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SMS.App.ViewModels.Students;
 using SMS.BLL.Contracts;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

@@ -7,9 +7,11 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using SMS.BLL.Contracts;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SMS.App.Controllers
 {
+    [Authorize]
     public class DesignationTypesController : Controller
     {
         private readonly IDesignationTypeManager _designationTypeManager;

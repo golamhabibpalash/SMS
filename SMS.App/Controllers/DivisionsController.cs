@@ -12,7 +12,8 @@ using SMS.Entities;
 
 namespace SMS.App.Controllers
 {
-    
+
+    [Authorize]
     public class DivisionsController : Controller
     {
         private readonly IDivisionManager _divisionManager;

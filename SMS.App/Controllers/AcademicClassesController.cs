@@ -10,9 +10,11 @@ using Microsoft.EntityFrameworkCore;
 using SMS.Entities;
 using SMS.BLL.Contracts;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SMS.App.Controllers
 {
+    [Authorize]
     public class AcademicClassesController : Controller
     {
         private readonly IAcademicClassManager _academicClassManager;

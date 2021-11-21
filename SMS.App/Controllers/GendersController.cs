@@ -13,6 +13,7 @@ using SMS.Entities;
 
 namespace SMS.App.Controllers
 {
+    [Authorize]
     public class GendersController : Controller
     {
         private readonly IGenderManager _genderManager;

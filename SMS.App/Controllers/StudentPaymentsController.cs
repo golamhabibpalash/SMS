@@ -10,9 +10,11 @@ using SMS.DB;
 using SMS.Entities;
 using SMS.App.ViewModels;
 using SMS.BLL.Contracts;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SMS.App.Controllers
 {
+    [Authorize]
     public class StudentPaymentsController : Controller
     {
         private readonly IStudentPaymentManager _studentPaymentManager;

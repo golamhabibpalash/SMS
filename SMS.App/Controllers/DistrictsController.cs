@@ -12,6 +12,7 @@ using SMS.Entities;
 
 namespace SMS.App.Controllers
 {
+    [Authorize]
     public class DistrictsController : Controller
     {
         private readonly IDistrictManager _districtManager;

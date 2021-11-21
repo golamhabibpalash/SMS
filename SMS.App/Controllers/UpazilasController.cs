@@ -7,9 +7,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using SMS.BLL.Contracts;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SMS.App.Controllers
 {
+    [Authorize]
     public class UpazilasController : Controller
     {
         private readonly IUpazilaManager _upazilaManager;

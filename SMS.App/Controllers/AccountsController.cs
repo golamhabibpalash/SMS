@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SMS.App.ViewModels.AdministrationVM;
 using System;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
 {
+    [Authorize]
     public class AccountsController : Controller
     {
         private readonly UserManager<IdentityUser> _userManager;
@@ -18,13 +20,13 @@ namespace SMS.App.Controllers
             _userManager = userManager;
         }
 
-        [HttpGet]
+        [HttpGet, AllowAnonymous]
         public IActionResult Register()
         {
             return View();
         }
 
-        [HttpPost]
+        [HttpPost, AllowAnonymous]
         public async Task<IActionResult> Register(RegisterVM model)
         {
             if (ModelState.IsValid)
@@ -45,13 +47,13 @@ namespace SMS.App.Controllers
             return View();
         }
         
-        [HttpGet]
+        [HttpGet, AllowAnonymous]
         public IActionResult Login()
         {
             return View();
         }
 
-        [HttpPost]
+        [HttpPost, AllowAnonymous]
         public async Task<IActionResult> Login(LoginVm model)
         {
             if (ModelState.IsValid)

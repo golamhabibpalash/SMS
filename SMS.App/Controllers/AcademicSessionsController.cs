@@ -14,7 +14,8 @@ using SMS.Entities;
 
 namespace SMS.App.Controllers
 {
-    
+
+    [Authorize]
     public class AcademicSessionsController : Controller
     {
         private readonly IAcademicSessionManager _sessionManager;

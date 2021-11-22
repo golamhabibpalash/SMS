@@ -2,6 +2,22 @@
 @{
     ViewData["Title"] = "Home Page";
     GlobalUI.PageTitle = "";
+
+    int totalStudent = 0;
+    int totalTeacher = 0;
+    int totalEmployee = 0;
+    if (ViewBag.totalStudent!=null)
+    {
+        totalStudent = ViewBag.totalStudent;
+    }
+    if (ViewBag.totalTeacher!=null)
+    {
+        totalTeacher = ViewBag.totalTeacher;
+    }
+    if (ViewBag.totalEmployee!=null)
+    {
+        totalEmployee = ViewBag.totalEmployee;
+    }
 }
 
 <div class="text-center">
@@ -19,24 +35,25 @@
         <div class="card text-white bg-primary mb-3 text-center" style="min-height:200px;">
             <div class="card-header">Total Student</div>
             <div class="card-body">
-                <h2>Total <span class="h1 text-warning">@ViewBag.totalStudent</span> Students</h2>
+                <h2>Total <span class="h1 text-warning">@totalStudent</span> Students</h2>
             </div>
         </div>
     </div>
+
     <div class="col-md-3">
         <div class="card text-white bg-info mb-3 text-center"  style="min-height:200px;">
             <div class="card-header ">Total Teacher</div>
             <div class="card-body">
-                <h2>Total <span class="h1 text-warning">@ViewBag.totalTeacher</span> Teachers</h2>
+                <h2>Total <span class="h1 text-warning">@totalTeacher</span> Teachers</h2>
             </div>
         </div>
     </div>
+
     <div class="col-md-3">
-        <div class="card text-white bg-success mb-3"  style="min-height:200px;">
-            <div class="card-header text-center">Total Student</div>
+        <div class="card text-white bg-success mb-3 text-center"  style="min-height:200px;">
+            <div class="card-header text-center">Total Employee</div>
             <div class="card-body">
-                <h5 class="card-title">Primary card title</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                <h2>Total <span class="h1 text-warning">@totalEmployee</span> Employee</h2>
             </div>
         </div>
     </div>

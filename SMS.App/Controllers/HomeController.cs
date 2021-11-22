@@ -6,6 +6,7 @@ using SMS.BLL.Contracts;
 using SMS.Entities;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
@@ -15,19 +16,26 @@ namespace SMS.App.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IStudentManager _studentManager;
+        private readonly IEmployeeManager _employeeManager;
 
-        public HomeController(ILogger<HomeController> logger, IStudentManager studentManager)
+        public HomeController(ILogger<HomeController> logger, IStudentManager studentManager, IEmployeeManager employeeManager)
         {
             _logger = logger;
             _studentManager = studentManager;
+            _employeeManager = employeeManager;
         }
 
         public async Task<IActionResult> Index()
         {
             StudentDashboardVM stDashboardVM = new StudentDashboardVM();
             IReadOnlyCollection<Student> students = await _studentManager.GetAllAsync();
-            ViewBag.totalStudent = students.Count;
             stDashboardVM.Students = (ICollection<Student>)students;
+            ViewBag.totalStudent = students.Count;
+
+            IReadOnlyCollection<Employee> employee = await _employeeManager.GetAllAsync();
+            ViewBag.totalEmployee = employee.Count();
+            ViewBag.totalTeacher = employee.Where(g => g.DesignationId==1).Count();
+
 
             return View(stDashboardVM);
         }

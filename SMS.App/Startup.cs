@@ -136,6 +136,9 @@ namespace SchoolManagementSystem
             services.AddScoped<IClassFeeListRepository, ClassFeeListRepository>();
             services.AddScoped<IClassFeeListManager, ClassFeeListManager>();
             
+            services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
+            services.AddScoped<IApplicationUserManager, ApplicationUserManager>();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -3,6 +3,18 @@
 @{
     ViewBag.Title = "User Login";
     Layout = "~/Views/Shared/_LoginLayout.cshtml";
+    string placeholderText = "";
+    if (ViewBag.userType != null)
+    {
+        if (ViewBag.userType == 's')
+        {
+            placeholderText = "Input your roll here";
+        }
+        else if (ViewBag.userType == 'e')
+        {
+            placeholderText = "Input your email here";
+        }
+    }
 }
 
 <div class="row d-flex justify-content-center align-middle m-5">
@@ -12,11 +24,12 @@
                 <h4>Login</h4>
             </div>
             <form asp-action="Login" asp-controller="Accounts" method="post" class="p-3">
+                <input type="hidden" asp-for="UserType"  value="@ViewBag.userType" />
                 <div class="form-group row">
-                    <label asp-for="Email" class="col-form-label text-md-right col-md-3"></label>
+                    <label asp-for="AppUser" class="col-form-label text-md-right col-md-3"></label>
                     <div class="col-md-9">
-                        <input asp-for="Email" class="form-control" aria-describedby="emailHelp" placeholder="Enter email">
-                        <span asp-validation-for="Email" class="text-danger"></span>
+                        <input asp-for="AppUser" class="form-control" aria-describedby="emailHelp" placeholder="@placeholderText">
+                        <span asp-validation-for="AppUser" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="form-group row">

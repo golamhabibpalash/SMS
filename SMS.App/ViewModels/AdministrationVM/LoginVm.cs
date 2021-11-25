@@ -8,13 +8,16 @@ namespace SMS.App.ViewModels.AdministrationVM
 {
     public class LoginVm
     {
-        [EmailAddress, Required]
-        public string Email { get; set; }
+        [Required]
+        [Display(Name ="User")]
+        public string AppUser { get; set; }
 
         [DataType(DataType.Password), Required]
         public string Password { get; set; }
 
         [Display(Name ="Remember me")]
         public bool RememberMe { get; set; }
+
+        public char UserType { get; set; }
     }
 }

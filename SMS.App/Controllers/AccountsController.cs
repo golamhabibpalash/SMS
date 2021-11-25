@@ -75,19 +75,28 @@ namespace SMS.App.Controllers
         }
         
         [HttpGet, AllowAnonymous]
-        public IActionResult Login()
+        public IActionResult Login(char userType)
         {
+            ViewBag.userType = userType;
             return View();
         }
 
         [HttpPost, AllowAnonymous]
         public async Task<IActionResult> Login(LoginVm model)
         {
+            ViewBag.userType = model.UserType;
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+                var result = await _signInManager.PasswordSignInAsync(model.AppUser, model.Password, model.RememberMe, false);
                 if (result.Succeeded)
                 {
+                    if (model.UserType=='s')
+                    {
+                        
+                        var appUser = a
+                        var student = await _studentManager.GetByIdAsync(appUser.re)
+                        return RedirectToAction("details", "students");
+                    }
                     return RedirectToAction("index", "home");
                 }
                 ModelState.AddModelError(string.Empty, "Invalid Login Attempt");

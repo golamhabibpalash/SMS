@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using SMS.App.ViewModels.AdministrationVM;
+using SMS.BLL.Contracts;
+using SMS.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,15 +17,37 @@ namespace SMS.App.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
-        public AccountsController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        private readonly IStudentManager _studentManager;
+        private readonly IEmployeeManager _employeeManager;
+        public AccountsController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IStudentManager studentManager, IEmployeeManager employeeManager)
         {
             _signInManager = signInManager;
             _userManager = userManager;
+            _studentManager = studentManager;
+            _employeeManager = employeeManager;
         }
 
         [HttpGet, AllowAnonymous]
-        public IActionResult Register()
+        public async Task<IActionResult> Register(char userType)
         {
+            if (userType=='e')
+            {
+                var employees = await _employeeManager.GetAllAsync();
+                ViewBag.userList = new SelectList(employees, "Id", "EmployeeName");
+                ViewBag.userType = userType;
+                ViewBag.user = "Employee";
+            }
+            else if(userType == 's')
+            {
+                var students = await _studentManager.GetAllAsync();
+                ViewBag.userList = new SelectList(students, "Id", "Name");
+                ViewBag.userType = userType;
+                ViewBag.user = "Student";
+            }
+            else
+            {
+                
+            }
             return View();
         }
 
@@ -31,11 +56,13 @@ namespace SMS.App.Controllers
         {
             if (ModelState.IsValid)
             {
-                IdentityUser user = new IdentityUser
+                ApplicationUser user = new ApplicationUser
                 {
                     UserName = model.Email,
                     Email = model.Email,
-                    PhoneNumber = model.Phone
+                    PhoneNumber = model.Phone,
+                    ReferenceId = model.ReferenceId,
+                    UserType = model.UserType
                 };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
@@ -74,6 +101,24 @@ namespace SMS.App.Controllers
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Login","Accounts");
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<JsonResult> GetUserById(int id, string type)
+        {
+            
+            if (type=="e")
+            {
+                Employee employee = await _employeeManager.GetByIdAsync(id);
+                return Json(new { email = employee.Email, phone = employee.Phone });
+            }
+            else if (type =="s")
+            {
+                Student student = await _studentManager.GetByIdAsync(id);
+                return Json(new {email = student.Email, phone=student.PhoneNo});
+            }
+            return Json("");
         }
     }
 }

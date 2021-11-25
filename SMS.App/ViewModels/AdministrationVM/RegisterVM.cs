@@ -8,6 +8,10 @@ namespace SMS.App.ViewModels.AdministrationVM
 {
     public class RegisterVM
     {
+        [Required, Display(Name ="Select User")]
+        public int ReferenceId { get; set; }
+
+        public char UserType { get; set; }
         [EmailAddress]
         [Required]
         public string Email { get; set; }

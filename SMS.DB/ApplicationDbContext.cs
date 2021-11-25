@@ -16,6 +16,7 @@ namespace SMS.DB
         public DbSet<AcademicSession> AcademicSession { get; set; }
         public DbSet<AcademicSubject> AcademicSubject { get; set; }
         public DbSet<AcademicSubjectType> AcademicSubjectType { get; set; }
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<AttachDoc> AttachDocs { get; set; }
         public DbSet<Attendance> Attendances { get; set; }
         public DbSet<BloodGroup> BloodGroup { get; set; }

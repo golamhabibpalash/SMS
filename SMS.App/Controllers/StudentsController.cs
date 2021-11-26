@@ -69,6 +69,7 @@ namespace SchoolManagementSystem.Controllers
         }
 
         // GET: Students/Details/5
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -290,6 +291,12 @@ namespace SchoolManagementSystem.Controllers
                 return RedirectToAction("Delete", new { id });
             }
             
+        }
+
+        public async Task<IActionResult> Profile(int id)
+        {
+            var student = await _studentManager.GetByIdAsync(id);
+            return View(student);
         }
 
         private bool StudentExists(int id)

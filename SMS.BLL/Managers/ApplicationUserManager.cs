@@ -1,4 +1,6 @@
-﻿using SMS.BLL.Contracts;
+﻿using BLL.Managers.Base;
+using Microsoft.AspNetCore.Identity;
+using SMS.BLL.Contracts;
 using SMS.DAL.Repositories;
 using SMS.Entities;
 using System;
@@ -12,25 +14,14 @@ namespace SMS.BLL.Managers
     public class ApplicationUserManager : IApplicationUserManager
     {
         private readonly ApplicationUserRepository _applicationUserRepository;
+        //public ApplicationUserManager(ApplicationUser appUser) :base(appUser)
+        //{
+            
+        //}
 
-        public ApplicationUserManager(ApplicationUserRepository applicationUserRepository)
+        public async Task<ApplicationUser> GetAppUserByUserIdAsync(string id)
         {
-            _applicationUserRepository = applicationUserRepository;
-        }
-
-        public async Task<List<ApplicationUser>> GetAllAsync()
-        {
-            return await _applicationUserRepository.GetAllAsync();
-        }
-
-        public async Task<ApplicationUser> GetByIdAsync(string id)
-        {
-            return await _applicationUserRepository.GetByIdAsync(id);
-        }
-
-        public async Task<ApplicationUser> GetByReferenceIdAsync(int id)
-        {
-            return await _applicationUserRepository.GetByReferenceIdAsync(id);
+            return await _applicationUserRepository.GetAppUserByUserIdAsync(id);
         }
     }
 }

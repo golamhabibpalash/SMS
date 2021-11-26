@@ -1,4 +1,6 @@
-﻿using SMS.Entities;
+﻿using Microsoft.AspNetCore.Identity;
+using SMS.DAL.Contracts.Base;
+using SMS.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,11 +9,8 @@ using System.Threading.Tasks;
 
 namespace SMS.DAL.Contracts
 {
-    public interface IApplicationUserRepository
+    public interface IApplicationUserRepository 
     {
-        Task<ApplicationUser> GetByIdAsync(string id);
-        Task<ApplicationUser> GetByReferenceIdAsync(int id);
-        Task<List<ApplicationUser>> GetAllAsync();
-
+        Task<ApplicationUser> GetAppUserByUserIdAsync(string id);
     }
 }

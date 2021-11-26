@@ -1,14 +1,9 @@
 ﻿@using Microsoft.AspNetCore.Identity;
 
 @inject SignInManager<IdentityUser> _signInManager;
-@inject UserManager<IdentityUser> _userManager;
 
 @{
     string instituteName = GlobalUI.InstituteName != null ? GlobalUI.InstituteName : "Institute Name";
-}
-
-@{
-    var userName = _userManager.GetUserName(User);
 }
 
 <!DOCTYPE html>
@@ -57,7 +52,7 @@
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="border: 0;">
 
-                        <a asp-action="Index" asp-controller="Home" class="site_title"><i class="fa fa-paw"></i> <span>Institute Name</span></a>
+                        <a asp-action="Profile" asp-controller="Students" asp-route-id="1" class="site_title"><i class="fa fa-paw"></i> <span>Noble Residential School</span></a>
 
 
                     </div>
@@ -68,86 +63,28 @@
                         <div class="menu_section">
                             <ul class="nav side-menu">
                                 <li>
-                                    <a asp-controller="Home" asp-action="Index"><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>
+                                    <a asp-controller="Home" asp-action="Index"><i class="fa fa-home"></i> Profile <span class="fa fa-chevron-down"></span></a>
                                 </li>
                                 <li>
                                     <a><i class="fa fa-users"></i> Students <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li>
-                                            <a asp-action="Index" asp-controller="Students">All Students</a>
+                                            <a asp-action="Index" asp-controller="Students">Change Password</a>
                                         </li>
                                         <li>
-                                            <a asp-action="Index" asp-controller="StudentPayments">Student Payment</a>
+                                            <a asp-action="Index" asp-controller="StudentPayments">Make Payment</a>
                                         </li>
                                     </ul>
                                 </li>
                                 <li>
-                                    <a><i class="fa fa-user"></i> Employee <span class="fa fa-chevron-down"></span></a>
+                                    <a><i class="fa fa-user"></i> Academic <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li>
-                                            <a asp-action="Index" asp-controller="Employees"><span class="glyphicon glyphicon-asterisk"></span> All Employee</a>
+                                            <a asp-action="Index" asp-controller="Employees"><span class="glyphicon glyphicon-asterisk"></span> Result</a>
                                         </li>
                                     </ul>
                                 </li>
-                                <li>
-                                    <a><i class="fa fa-table"></i> Setup Modules <span class="fa fa-chevron-down"></span></a>
-                                    <ul class="nav child_menu">
-                                        <li>
-                                            <a asp-action="Index" asp-controller="AcademicSessions">Academic Session</a>
-                                        </li>
-                                        <li>
-                                            <a asp-action="Index" asp-controller="AcademicClasses">Academic Class</a>
-                                        </li>
-                                        <li>
-                                            <a asp-action="Index" asp-controller="AcademicSections">Academic Section</a>
-                                        </li>
-                                        <li>
-                                            <a asp-action="Index" asp-controller="ClassFeeLists">Class Fee</a>
-                                        </li>
-                                        <li>
-                                            <a asp-action="Index" asp-controller="StudentFeeHeads">Fee Head</a>
-                                        </li>
-                                        <li>
-                                            <a asp-action="Index" asp-controller="Genders">Gender</a>
-                                        </li>
-                                        <li>
-                                            <a asp-action="Index" asp-controller="Nationalities">Nationality</a>
-                                        </li>
-                                        <li>
-                                            <a asp-action="Index" asp-controller="BloodGroups">Blood Group</a>
-                                        </li>
-                                        <li>
-                                            <a asp-action="Index" asp-controller="Religions">Religion</a>
-                                        </li>
-                                        <li>
-                                            <a asp-action="Index" asp-controller="EmpTypes">Employee Type</a>
-                                        </li>
-                                        <li>
-                                            <a asp-action="Index" asp-controller="Designations">Designation</a>
-                                        </li>
-                                        <li>
-                                            <a asp-action="Index" asp-controller="DesignationTypes">Designation Type</a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <a><i class="fa fa-bar-chart-o"></i> Subjects Setting<span class="fa fa-chevron-down"></span></a>
-                                    <ul class="nav child_menu">
-                                        <li>
-                                            <a asp-action="Index" asp-controller="AcademicSubjects">Academic Subject</a>
-                                        </li>
-                                        <li>
-                                            <a asp-action="Index" asp-controller="AcademicSubjectTypes">Academic Subject Type</a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li>
-
-                                    <a><i class="fa fa-cog"></i> Settings <span class="fa fa-chrome"></span></a>
-                                    <ul class="nav child_menu">
-                                        <li><a asp-action="Index" asp-controller="Institutes">Institute</a></li>
-                                    </ul>
-                                </li>
+                                
                             </ul>
                         </div>
                         <div class="menu_section">
@@ -194,11 +131,6 @@
                 <div class="nav_menu">
                     <div class="nav toggle">
                         <a style="padding:5px;" id="menu_toggle"><i class="fa fa-bars"></i></a>
-                        @if (_signInManager.IsSignedIn(User))
-                        {
-
-                            <span>@userName</span>
-                        }
                     </div>
                     <nav class="nav navbar-nav">
                         <ul style="list-style:none;" class="navbar">

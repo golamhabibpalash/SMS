@@ -1,4 +1,5 @@
-﻿using SMS.Entities;
+﻿using SMS.BLL.Contracts.Base;
+using SMS.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,10 +8,8 @@ using System.Threading.Tasks;
 
 namespace SMS.BLL.Contracts
 {
-    public interface IApplicationUserManager
+    public interface IApplicationUserManager 
     {
-        Task<ApplicationUser> GetByIdAsync(string id);
-        Task<ApplicationUser> GetByReferenceIdAsync(int id);
-        Task<List<ApplicationUser>> GetAllAsync();
+        Task<ApplicationUser> GetAppUserByUserIdAsync(string id);
     }
 }

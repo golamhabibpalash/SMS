@@ -1,5 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SMS.DAL.Contracts;
+using SMS.DAL.Repositories.Base;
 using SMS.DB;
 using SMS.Entities;
 using System;
@@ -10,30 +13,15 @@ using System.Threading.Tasks;
 
 namespace SMS.DAL.Repositories
 {
-    public class ApplicationUserRepository : IApplicationUserRepository
+    public class ApplicationUserRepository : IdentityDbContext<ApplicationUser>, IApplicationUserRepository
     {
+
         private readonly ApplicationDbContext _context;
 
-        public ApplicationUserRepository(ApplicationDbContext context)
+        public async Task<ApplicationUser> GetAppUserByUserIdAsync(string id)
         {
-            _context = context;
-        }
-        public async Task<List<ApplicationUser>> GetAllAsync()
-        {
-            var appUsers = await _context.ApplicationUsers.ToListAsync();
-            return appUsers;
-        }
-
-        public async Task<ApplicationUser> GetByIdAsync(string id)
-        {
-            var appUser = await _context.ApplicationUsers.FirstOrDefaultAsync(a => a.Id == id);
-            return appUser;
-        }
-
-        public async Task<ApplicationUser> GetByReferenceIdAsync(int id)
-        {
-            var appUser = await _context.ApplicationUsers.FirstOrDefaultAsync(a => a.ReferenceId == id);
-            return appUser;
+            var user = await _context.ApplicationUsers.FirstOrDefaultAsync(u => u.Id == id);
+            return user;
         }
     }
 }

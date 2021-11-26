@@ -8,7 +8,7 @@ namespace SMS.App.Controllers
 {
     public class AdministraionsController : Controller
     {
-        public async Task<IActionResult> AdminRegistration()
+        public IActionResult AdminRegistration()
         {
             return View();
         }

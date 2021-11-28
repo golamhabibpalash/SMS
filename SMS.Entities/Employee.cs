@@ -110,5 +110,7 @@ namespace SMS.Entities
         public EmpType EmpType { get; set; }
         public Designation Designation { get; set; }
         public BloodGroup BloodGroup { get; set; }
+
+        public List<Attendance> Attendances { get; set; }
     }
 }

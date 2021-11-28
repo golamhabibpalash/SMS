@@ -116,5 +116,7 @@ namespace SMS.Entities
         public Gender Gender { get; set; }
         public Religion Religion { get; set; }
 
+        public List<Attendance> Attendances { get; set; }
+
     }
 }

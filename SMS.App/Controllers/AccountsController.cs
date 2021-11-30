@@ -84,10 +84,36 @@ namespace SMS.App.Controllers
             return View();
         }
         
+
+
         [HttpGet, AllowAnonymous]
-        public IActionResult Login(char userType)
+        public IActionResult UserLogin()
         {
-            ViewBag.userType = userType;
+            return View();
+        }
+
+        [HttpPost, AllowAnonymous]
+        public async Task<IActionResult> UserLogin(string userId)
+        {
+            ViewBag.userId = userId;
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName.Trim().ToLower() == userId.Trim().ToLower());
+            if (user != null)
+            {
+                if (user.EmailConfirmed == false)
+                {
+                    ViewBag.msg = "Your verification is incomplete yet!";
+                }
+            }
+            else
+            {
+                ViewBag.msg = "You are not registered yet!";
+            }
+            return View();
+        }
+
+        [HttpGet, AllowAnonymous]
+        public IActionResult Login()
+        {
             return View();
         }
 

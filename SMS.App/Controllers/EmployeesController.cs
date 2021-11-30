@@ -7,6 +7,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -33,8 +34,9 @@ namespace SMS.App.Controllers
         private readonly IBloodGroupManager _bloodGroupManager;
         private readonly IUpazilaManager _upazilaManager;
         private readonly IDistrictManager _districtManager;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public EmployeesController(IWebHostEnvironment host,  IEmployeeManager employeeManager, IGenderManager genderManager, IReligionManager religionManager, IMapper mapper, INationalityManager nationalityManager, IEmpTypeManager empTypeManager, IDesignationManager designationManager, IDivisionManager divisionManager, IDistrictManager districtManager, IUpazilaManager upazilaManager, IBloodGroupManager bloodGroupManager) 
+        public EmployeesController(IWebHostEnvironment host,  IEmployeeManager employeeManager, IGenderManager genderManager, IReligionManager religionManager, IMapper mapper, INationalityManager nationalityManager, IEmpTypeManager empTypeManager, IDesignationManager designationManager, IDivisionManager divisionManager, IDistrictManager districtManager, IUpazilaManager upazilaManager, IBloodGroupManager bloodGroupManager, UserManager<IdentityUser> userManager) 
         {
             _host = host;
             _employeeManager = employeeManager;
@@ -48,6 +50,7 @@ namespace SMS.App.Controllers
             _bloodGroupManager = bloodGroupManager;
             _districtManager = districtManager;
             _upazilaManager = upazilaManager;
+            _userManager = userManager;
 
         }
 
@@ -98,36 +101,78 @@ namespace SMS.App.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,EmployeeName,DOB,Image,GenderId,ReligionId,NationalityId,NIDNo,NIDCard,Phone,Email,Nominee,NomineePhone,EmpTypeId,DesignationId,JoiningDate,PresentAddress,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddress,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,CreatedBy,CreatedAt,EditedBy,EditedAt,Status,BloodGroupId")] EmployeeCreateVM employeeVM, IFormFile empImage, IFormFile nidCard)
         {
+            var employee1 = employeeVM;
+
+            employee1.GenderList = new SelectList(await _genderManager.GetAllAsync(), "Id", "Name", employee1.GenderId).ToList();
+            employee1.ReligionList = new SelectList(await _religionManager.GetAllAsync(), "Id", "Name", employee1.ReligionId).ToList();
+            employee1.NationalityList = new SelectList(await _nationalityManager.GetAllAsync(), "Id", "Name", employee1.NationalityId).ToList();
+            employee1.EmpTypeList = new SelectList(await _empTypeManager.GetAllAsync(), "Id", "Name", employee1.EmpTypeId).ToList();
+            employee1.DesignationList = new SelectList(await _designationManager.GetAllAsync(), "Id", "DesignationName", employee1.DesignationId).ToList();
+            employee1.DivisionList = new SelectList(await _divisionManager.GetAllAsync(), "Id", "Name", employee1.DivisionList).ToList();
+            employee1.BloodGroupList = new SelectList(await _bloodGroupManager.GetAllAsync(), "Id", "Name", employee1.BloodGroupId).ToList();
+
+
             string empPhoto = "";
             string nidPhoto = "";
+            bool isPhoneNoExist = false;
+            bool isEmailExist = false;
+            bool isNIDExist = false;
+            var employees = await _employeeManager.GetAllAsync();
 
-            if (empImage != null)
+            var phoneDuplicate = employees.FirstOrDefault(e => e.Phone.ToString() == employeeVM.Phone.ToString());
+            isPhoneNoExist = phoneDuplicate != null ? true : false;
+
+            var emailDuplicate = employees.FirstOrDefault(e => e.Email == employeeVM.Email);
+            isEmailExist = emailDuplicate != null ? true : false;
+
+            var NIDDuplicate = employees.FirstOrDefault(e => e.NIDNo == employeeVM.NIDNo);
+            isNIDExist = NIDDuplicate != null ? true : false;
+            if (isPhoneNoExist == true || isEmailExist == true || isNIDExist == true)
             {
-                string root = _host.WebRootPath;
-                string folder = "Images/Employee/photo";
-                string fileExtension = Path.GetExtension(empImage.FileName);
-                empPhoto = "e_" + DateTime.Today.ToString("yyyy") + "_" + employeeVM.NIDNo+fileExtension;
-                string pathCombine = Path.Combine(root, folder, empPhoto);
-                using var stream = new FileStream(pathCombine, FileMode.Create);
-                await empImage.CopyToAsync(stream);
+                if (isPhoneNoExist == true)
+                {
+                    ViewBag.msg = "Provided phone number is already exist";
+                }
+                if (isEmailExist == true)
+                {
+                    ViewBag.msg = "Provided email is already exist";
+                }
+                if (isNIDExist == true)
+                {
+                    ViewBag.msg = "Provided NID is already exist";
+                }
+                return View(employee1);
             }
-
-            if (nidCard != null)
-            {
-                string root = _host.WebRootPath;
-                string folder = "Images/Employee/NID";
-
-                string fileExtension = Path.GetExtension(nidCard.FileName);
-                nidPhoto = "e_" + employeeVM.NIDNo + fileExtension;
-                string pathCombine = Path.Combine(root, folder, nidPhoto);
-                using var stream = new FileStream(pathCombine, FileMode.Create);
-                await nidCard.CopyToAsync(stream);
-            }
+            
 
             var employee = _mapper.Map<Employee>(employeeVM);
 
             if (ModelState.IsValid)
             {
+
+                if (empImage != null)
+                {
+                    string root = _host.WebRootPath;
+                    string folder = "Images/Employee/photo";
+                    string fileExtension = Path.GetExtension(empImage.FileName);
+                    empPhoto = "e_" + DateTime.Today.ToString("yyyy") + "_" + employeeVM.NIDNo + fileExtension;
+                    string pathCombine = Path.Combine(root, folder, empPhoto);
+                    using var stream = new FileStream(pathCombine, FileMode.Create);
+                    await empImage.CopyToAsync(stream);
+                }
+
+                if (nidCard != null)
+                {
+                    string root = _host.WebRootPath;
+                    string folder = "Images/Employee/NID";
+
+                    string fileExtension = Path.GetExtension(nidCard.FileName);
+                    nidPhoto = "e_" + employeeVM.NIDNo + fileExtension;
+                    string pathCombine = Path.Combine(root, folder, nidPhoto);
+                    using var stream = new FileStream(pathCombine, FileMode.Create);
+                    await nidCard.CopyToAsync(stream);
+                }
+
                 employee.CreatedBy = HttpContext.Session.GetString("User");
                 employee.CreatedAt = DateTime.Now;
                 employee.Image = empPhoto;
@@ -136,19 +181,27 @@ namespace SMS.App.Controllers
                 if (isSaved)
                 {
                     TempData["saved"] = "Saved Successful";
+                    var user = await _userManager.FindByEmailAsync(employee.Email);
+                    if (user==null)
+                    {
+                        ApplicationUser identityUser = new ApplicationUser() { 
+                            UserName = employee.Email,
+                            NormalizedUserName= employee.EmployeeName,
+                            Email = employee.Email,
+                            NormalizedEmail = employee.Email,
+                            ReferenceId = employee.Id,
+                            UserType = 'e'
+                        };
+                        var result = await _userManager.CreateAsync(identityUser, employee.Email + "A1");
+                        if (result.Succeeded)
+                        {
+                            TempData["confirmationText"] = "User Created but not confirmed";
+                        }
+                    }
                     return RedirectToAction(nameof(Index));
                 }
             }
-            var employee1 = _mapper.Map<EmployeeCreateVM>(employee);
-
-            employee1.GenderList = new SelectList(await _genderManager.GetAllAsync(), "Id", "Name", employee.GenderId).ToList();
-            employee1.ReligionList = new SelectList(await _religionManager.GetAllAsync(), "Id", "Name", employee.ReligionId).ToList();
-            employee1.NationalityList = new SelectList(await _nationalityManager.GetAllAsync(), "Id", "Name", employee.NationalityId).ToList();
-            employee1.EmpTypeList = new SelectList(await _empTypeManager.GetAllAsync(), "Id", "Name", employee.EmpTypeId).ToList();
-            employee1.DesignationList = new SelectList(await _designationManager.GetAllAsync(), "Id", "DesignationName",employee.DesignationId).ToList();
-            employee1.DivisionList = new SelectList(await _divisionManager.GetAllAsync(), "Id", "Name").ToList();
-            employee1.BloodGroupList = new SelectList(await _bloodGroupManager.GetAllAsync(), "Id", "Name",employee.BloodGroupId).ToList();
-
+            
             return View(employee1);
         }
 

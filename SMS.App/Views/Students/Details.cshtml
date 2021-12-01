@@ -1,4 +1,17 @@
-﻿@model SMS.App.ViewModels.Students.StudentDetailsVM
+﻿@using Microsoft.AspNetCore.Identity
+
+@model SMS.App.ViewModels.Students.StudentDetailsVM
+
+
+@inject UserManager<ApplicationUser> _userManager;
+
+@{ 
+    var user = await _userManager.GetUserAsync(User);
+    if (user.UserType == 's')
+    {
+        Layout = "~/Views/Shared/_StudentLayout.cshtml";
+    }
+}
 
 @{
     string stuName = Model.Student.Name;

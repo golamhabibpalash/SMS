@@ -24,7 +24,17 @@
             </div>
             <form class="p-3" method="post" asp-action="Register">
                 <div asp-validation-summary="All" class="text-danger"></div>
-                <input type="hidden" asp-for="UserType" value="@ViewBag.userType" />
+                <div class="form-group row">
+                    <label asp-for="UserType" class="control-label col-form-label col-md-3 text-md-right"></label>
+                    <div class="col-md-9">
+                        <select asp-for="UserType" class="form-control" >
+                            <option selected disabled>-Select User Type-</option>
+                            <option value="s">Student</option>
+                            <option value="e">Employee</option>
+                        </select>
+                        <span asp-validation-for="ReferenceId" class="text-danger"></span>
+                    </div>
+                </div>
                 <div class="form-group row">
                     <label asp-for="ReferenceId" class="control-label col-form-label col-md-3 text-md-right"></label>
                     <div class="col-md-9">
@@ -81,9 +91,37 @@
 @section Scripts{ 
 <script>
     $(document).ready(function () {
+        $('#UserType').on('change', function () {
+            let type = $(this).val();
+            $.ajax({
+                url: "/Accounts/GetUserByUserType",
+                data: { id: type},
+                type: 'JSON',
+                method: 'POST',
+                success: function (data) {
+                    $('#ReferenceId').empty();
+                    $('#ReferenceId').append('<option selected disabled>Select user</option>');
+                    $.each(data, function (i, obj) {
+                        if (obj.userType == 'e') {
+                            let o = '<option value="' + obj.value + '">' + obj.name +" ("+ obj.phone+")" + '</option>';
+                            $('#ReferenceId').append(o);
+                        }
+                        else if (obj.userType == 's') {
+                            let o = '<option value="' + obj.value + '">' + obj.roll + " " + obj.name + '</option>';
+                            $('#ReferenceId').append(o);
+                        }
+                        
+                    });
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        });
+
         $('#ReferenceId').change(function () {
             let userId = $(this).val();
-            let userType = '@ViewBag.userType';
+            let userType = $('#UserType').val();
             $.ajax({
                 url: "/Accounts/GetUserById",
                 data: { id: userId, type: userType },

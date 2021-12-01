@@ -32,22 +32,8 @@ namespace SMS.App.Controllers
         }
 
         [HttpGet, AllowAnonymous]
-        public async Task<IActionResult> Register(char userType)
+        public IActionResult Register()
         {
-            if (userType=='e')
-            {
-                var employees = await _employeeManager.GetAllAsync();
-                ViewBag.userList = new SelectList(employees, "Id", "EmployeeName");
-                ViewBag.userType = userType;
-                ViewBag.user = "Employee";
-            }
-            else if(userType == 's')
-            {
-                var students = await _studentManager.GetAllAsync();
-                ViewBag.userList = new SelectList(students, "Id", "Name");
-                ViewBag.userType = userType;
-                ViewBag.user = "Student";
-            }
             return View();
         }
 
@@ -56,6 +42,8 @@ namespace SMS.App.Controllers
         {
             if (ModelState.IsValid)
             {
+
+
                 string userName = "";
                 if (model.UserType == 's')
                 {
@@ -75,6 +63,7 @@ namespace SMS.App.Controllers
                     UserType = model.UserType
                 };
                 var result = await _userManager.CreateAsync(user, model.Password);
+                
                 if (result.Succeeded)
                 {
                     return RedirectToAction("login", "Accounts");
@@ -177,6 +166,27 @@ namespace SMS.App.Controllers
         public IActionResult CreateRole(string model)
         {
             return View();
+        }
+
+        [AllowAnonymous]
+        //[HttpPost]
+        public async Task<JsonResult> GetUserByUserType(char id)
+        {
+            if (id=='e')
+            {
+                var empList = await _employeeManager.GetAllAsync();
+                var eList = from e in empList
+                          select new {userType = 'e', name = e.EmployeeName, value = e.Id, image = e.Image, phone = e.Phone };
+                return Json(eList);
+            }
+            else
+            {
+                var stuList = from s in await _studentManager.GetAllAsync()
+                              select new { userType = 's', name = s.Name, value = s.Id, image = s.Photo, roll = s.ClassRoll };
+
+
+                return Json(stuList);
+            }
         }
 
         [AllowAnonymous]

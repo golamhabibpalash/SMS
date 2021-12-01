@@ -193,11 +193,16 @@
             <div class="top_nav pb-3">
                 <div class="nav_menu">
                     <div class="nav toggle">
-                        <a style="padding:5px;" id="menu_toggle"><i class="fa fa-bars"></i></a>
+                        <a style="padding:5px;" id="menu_toggle">
+                            
+                                
+                            <i class="fa fa-bars"></i></a>
+                        
+                    </div>
+                    <div class="nav">
                         @if (_signInManager.IsSignedIn(User))
                         {
-
-                            <span>@userName</span>
+                            <span class="pt-2">@userName</span>
                         }
                     </div>
                     <nav class="nav navbar-nav">

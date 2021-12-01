@@ -25,7 +25,6 @@
             </div>
             <form asp-action="Login" asp-controller="Accounts" method="post" class="p-3">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="UserType"  value="@ViewBag.userType" />
                 <div class="form-group row">
                     <label asp-for="AppUser" class="col-form-label text-md-right col-md-3"></label>
                     <div class="col-md-9">

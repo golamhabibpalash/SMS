@@ -120,25 +120,21 @@ namespace SMS.App.Controllers
         [HttpPost, AllowAnonymous]
         public async Task<IActionResult> Login(LoginVm model)
         {
-            ViewBag.userType = model.UserType;
             if (ModelState.IsValid)
             {
                 var result = await _signInManager.PasswordSignInAsync(model.AppUser, model.Password, model.RememberMe, false);
                 if (result.Succeeded)
                 {
                     var appUser = await _context.ApplicationUsers.FirstOrDefaultAsync(a => a.UserName == model.AppUser);
-                    IdentityUser identityUser = await _userManager.GetUserAsync(User);
-                    var us = await _userManager.GetUserAsync(HttpContext.User);
-
 
                     if (appUser.UserType == 's')
                     {
                         return RedirectToAction("profile", "students", new { id = appUser.ReferenceId });
                     }
+                    
                     return RedirectToAction("index", "home");
                 }
                 ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
-                
             }
             return View();
         }
@@ -162,6 +158,23 @@ namespace SMS.App.Controllers
         }
 
         public IActionResult ResetPassword()
+        {
+            return View();
+        }
+
+        public IActionResult RoleList()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult CreateRole()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult CreateRole(string model)
         {
             return View();
         }

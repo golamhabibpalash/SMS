@@ -18,6 +18,5 @@ namespace SMS.App.ViewModels.AdministrationVM
         [Display(Name ="Remember me")]
         public bool RememberMe { get; set; }
 
-        public char UserType { get; set; }
     }
 }

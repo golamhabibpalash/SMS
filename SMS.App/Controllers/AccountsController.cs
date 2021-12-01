@@ -154,7 +154,8 @@ namespace SMS.App.Controllers
 
         public IActionResult RoleList()
         {
-            return View();
+            var roleList = _roleManager.Roles;
+            return View(roleList);
         }
 
         [HttpGet]
@@ -164,8 +165,20 @@ namespace SMS.App.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateRole(string model)
+        public async Task<IActionResult> CreateRole(CreateRoleVM model)
         {
+            if (ModelState.IsValid)
+            {
+                IdentityRole identityRole = new IdentityRole
+                {
+                    Name = model.RoleName                    
+                };
+                IdentityResult result = await _roleManager.CreateAsync(identityRole);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("RoleList");
+                }
+            }
             return View();
         }
 

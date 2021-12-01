@@ -1,9 +1,11 @@
 ﻿@using Microsoft.AspNetCore.Identity;
 
-@inject SignInManager<IdentityUser> _signInManager;
+@inject SignInManager<ApplicationUser> _signInManager;
+@inject UserManager<ApplicationUser> _userManager;
 
 @{
     string instituteName = GlobalUI.InstituteName != null ? GlobalUI.InstituteName : "Institute Name";
+    var user = await _userManager.GetUserAsync(User);
 }
 
 <!DOCTYPE html>
@@ -63,7 +65,7 @@
                         <div class="menu_section">
                             <ul class="nav side-menu">
                                 <li>
-                                    <a asp-controller="Home" asp-action="Index"><i class="fa fa-home"></i> Profile <span class="fa fa-chevron-down"></span></a>
+                                    <a asp-controller="Students" asp-action="Details" asp-route-id="@user.ReferenceId"><i class="fa fa-home"></i> Profile <span class="fa fa-chevron-down"></span></a>
                                 </li>
                                 <li>
                                     <a><i class="fa fa-users"></i> Students <span class="fa fa-chevron-down"></span></a>

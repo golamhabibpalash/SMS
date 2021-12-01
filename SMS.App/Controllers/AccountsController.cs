@@ -16,13 +16,13 @@ namespace SMS.App.Controllers
     [Authorize]
     public class AccountsController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IStudentManager _studentManager;
         private readonly IEmployeeManager _employeeManager;
         private readonly ApplicationDbContext _context;
 
-        public AccountsController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IStudentManager studentManager, IEmployeeManager employeeManager, ApplicationDbContext context)
+        public AccountsController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IStudentManager studentManager, IEmployeeManager employeeManager, ApplicationDbContext context)
         {
             _signInManager = signInManager;
             _userManager = userManager;

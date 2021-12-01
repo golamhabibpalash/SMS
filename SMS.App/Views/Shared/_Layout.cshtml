@@ -1,7 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Identity;
 
-@inject SignInManager<IdentityUser> _signInManager;
-@inject UserManager<IdentityUser> _userManager;
+@inject SignInManager<ApplicationUser> _signInManager;
+@inject UserManager<ApplicationUser> _userManager;
 
 @{
     string instituteName = GlobalUI.InstituteName != null ? GlobalUI.InstituteName : "Institute Name";

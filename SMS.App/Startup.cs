@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using SMS.Entities;
 
 namespace SchoolManagementSystem
 {
@@ -36,10 +37,14 @@ namespace SchoolManagementSystem
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddIdentity<ApplicationUser, IdentityRole>(option =>
+            {
+                option.Password.RequiredLength = 6;
+                option.Password.RequiredUniqueChars = 3;
+            }).AddEntityFrameworkStores<ApplicationDbContext>();
 
+           
+           
             //services.AddDatabaseDeveloperPageExceptionFilter();
             services.ConfigureApplicationCookie(options =>
             {

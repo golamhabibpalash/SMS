@@ -190,7 +190,8 @@ namespace SMS.App.Controllers
                             Email = employee.Email,
                             NormalizedEmail = employee.Email,
                             ReferenceId = employee.Id,
-                            UserType = 'e'
+                            UserType = 'e',
+                            EmailConfirmed = true
                         };
                         var result = await _userManager.CreateAsync(identityUser, employee.Email + "A1");
                         if (result.Succeeded)

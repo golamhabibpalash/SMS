@@ -161,6 +161,11 @@ namespace SMS.App.Controllers
             return View();
         }
 
+        public IActionResult ResetPassword()
+        {
+            return View();
+        }
+
         [AllowAnonymous]
         [HttpPost]
         public async Task<JsonResult> GetUserById(int id, string type)

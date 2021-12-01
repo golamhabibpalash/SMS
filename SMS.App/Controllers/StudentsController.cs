@@ -17,6 +17,7 @@ using SMS.DAL.Repositories;
 using SMS.BLL.Contracts;
 using AutoMapper;
 using NodaTime;
+using Microsoft.AspNetCore.Identity;
 
 namespace SchoolManagementSystem.Controllers
 {
@@ -39,8 +40,9 @@ namespace SchoolManagementSystem.Controllers
         private readonly IReligionManager _religionManager;
         private readonly IStudentFeeHeadManager _studentFeeHeadManager;
         private readonly IClassFeeListManager _classFeeListManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public StudentsController(IStudentManager studentManager, IAcademicClassManager academicClassManager, IWebHostEnvironment host, IMapper mapper, IAcademicSessionManager academicSessionManager, IStudentPaymentManager studentPaymentManager, IDistrictManager districtManager, IUpazilaManager upazilaManager, IAcademicSectionManager academicSectionManager, IBloodGroupManager bloodGroupManager, IDivisionManager divisionManager, INationalityManager nationalityManager, IGenderManager genderManager, IReligionManager religionManager, IStudentFeeHeadManager studentFeeHeadManager, IClassFeeListManager classFeeListManager)
+        public StudentsController(IStudentManager studentManager, IAcademicClassManager academicClassManager, IWebHostEnvironment host, IMapper mapper, IAcademicSessionManager academicSessionManager, IStudentPaymentManager studentPaymentManager, IDistrictManager districtManager, IUpazilaManager upazilaManager, IAcademicSectionManager academicSectionManager, IBloodGroupManager bloodGroupManager, IDivisionManager divisionManager, INationalityManager nationalityManager, IGenderManager genderManager, IReligionManager religionManager, IStudentFeeHeadManager studentFeeHeadManager, IClassFeeListManager classFeeListManager, UserManager<ApplicationUser> userManager)
         {
             _academicClassManager = academicClassManager;
             _host = host;
@@ -58,6 +60,7 @@ namespace SchoolManagementSystem.Controllers
             _religionManager = religionManager;
             _studentFeeHeadManager = studentFeeHeadManager;
             _classFeeListManager = classFeeListManager;
+            _userManager = userManager;
         }
 
         // GET: Students
@@ -138,11 +141,25 @@ namespace SchoolManagementSystem.Controllers
                 if (saveStudent==true)
                 {
                     TempData["create"] = "Created Successfully";
+                    ApplicationUser newStudentUser = new() { 
+                        UserName = student.ClassRoll.ToString(),
+                        Email = student.Email,
+                        PhoneNumber = student.PhoneNo.ToString(),
+                        NormalizedUserName = student.Name,
+                        UserType = 's',
+                        ReferenceId = student.Id
+                    };
+                    Random random = new Random();
+                    string pass = random.Next(2, 4).ToString();
+
+                    var result = await _userManager.CreateAsync(newStudentUser, student.Name.Trim() + "A" + pass + "@");
+                    if (result.Succeeded)
+                    {
+
+                    }
                     return RedirectToAction(nameof(Index));
                 }
             }
-
-            
 
             newStudent.AcademicSessionList = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name",newStudent.AcademicSessionId).ToList();
             newStudent.AcademicClassList = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name",newStudent.AcademicClassId).ToList();
@@ -325,5 +342,6 @@ namespace SchoolManagementSystem.Controllers
 
             return months;
         }
+
     }
 }

@@ -16,19 +16,20 @@ namespace SMS.App.Controllers
     [Authorize]
     public class AccountsController : Controller
     {
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IStudentManager _studentManager;
         private readonly IEmployeeManager _employeeManager;
-        private readonly ApplicationDbContext _context;
+        //private readonly ApplicationDbContext _context;
 
-        public AccountsController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IStudentManager studentManager, IEmployeeManager employeeManager, ApplicationDbContext context)
+        public AccountsController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IStudentManager studentManager, IEmployeeManager employeeManager /*ApplicationDbContext context*/)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _studentManager = studentManager;
             _employeeManager = employeeManager;
-            _context = context;
+            //_context = context;
         }
 
         [HttpGet, AllowAnonymous]
@@ -114,7 +115,7 @@ namespace SMS.App.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.AppUser, model.Password, model.RememberMe, false);
                 if (result.Succeeded)
                 {
-                    var appUser = await _context.ApplicationUsers.FirstOrDefaultAsync(a => a.UserName == model.AppUser);
+                    var appUser = await _userManager.GetUserAsync(User);
 
                     if (appUser.UserType == 's')
                     {

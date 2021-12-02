@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace SMS.App.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "SuperAdmin, Admin")]
     public class UpazilasController : Controller
     {
         private readonly IUpazilaManager _upazilaManager;

@@ -14,7 +14,7 @@ using SMS.Entities;
 
 namespace SMS.App.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "SuperAdmin, Admin")]
     public class AcademicSectionsController : Controller
     {
         private readonly IAcademicSectionManager _academicSectionManager;

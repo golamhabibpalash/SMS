@@ -11,7 +11,7 @@ using SMS.Entities;
 
 namespace SMS.App.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "SuperAdmin, Admin")]
     public class AttachDocsController : Controller
     {
         private readonly ApplicationDbContext _context;

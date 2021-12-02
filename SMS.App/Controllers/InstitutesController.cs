@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "SuperAdmin, Admin")]
     public class InstitutesController : Controller
     {
         private readonly IInstituteManager _instituteManager;

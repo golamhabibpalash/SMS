@@ -21,7 +21,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace SchoolManagementSystem.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "SuperAdmin, Admin")]
     public class StudentsController : Controller
     {
         private readonly IWebHostEnvironment _host;

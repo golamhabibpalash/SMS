@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace SMS.App.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "SuperAdmin, Admin")]
     public class StudentPaymentsController : Controller
     {
         private readonly IStudentPaymentManager _studentPaymentManager;

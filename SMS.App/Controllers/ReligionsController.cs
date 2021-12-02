@@ -11,7 +11,7 @@ using SMS.BLL.Contracts;
 
 namespace SMS.App.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "SuperAdmin, Admin")]
     public class ReligionsController : Controller
     {
         private readonly IReligionManager _religionManager;

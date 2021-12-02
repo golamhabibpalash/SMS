@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
 {
+    [Authorize(Roles = "SuperAdmin, Admin")]
     public class AdministraionsController : Controller
     {
         public IActionResult AdminRegistration()

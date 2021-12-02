@@ -13,7 +13,7 @@ using SMS.Entities;
 
 namespace SMS.App.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "SuperAdmin, Admin")]
     public class EmpTypesController : Controller
     {
         private readonly IEmpTypeManager _empTypeManager;

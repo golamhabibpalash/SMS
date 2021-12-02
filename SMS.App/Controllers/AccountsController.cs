@@ -115,12 +115,14 @@ namespace SMS.App.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.AppUser, model.Password, model.RememberMe, false);
                 if (result.Succeeded)
                 {
-                    //var appUser = await _userManager.GetUserAsync(User);
+                    var userList = _userManager.Users;
 
-                    //if (appUser.UserType == 's')
-                    //{
-                    //    return RedirectToAction("profile", "students", new { id = appUser.ReferenceId });
-                    //}
+                    var appUser = await userList.FirstOrDefaultAsync(u => u.UserName == model.AppUser);
+
+                    if (appUser.UserType == 's')
+                    {
+                        return RedirectToAction("profile", "students", new { id = appUser.ReferenceId });
+                    }
 
                     return RedirectToAction("index", "home");
                 }

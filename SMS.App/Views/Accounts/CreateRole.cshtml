@@ -5,8 +5,11 @@
         <div class="form-group row">
             <label asp-for="RoleName" class="col-md-2 col-form-label text-md-right"></label>
             <div class="col-md-8">
-                <input asp-for="RoleName" class="form-control-sm" placeholder="Input role name" />
+                <input asp-for="RoleName" class="form-control" placeholder="Input role name" />
                 <span class="text-danger" asp-validation-for="RoleName"></span>
+            </div>
+            <div>
+                <input type="submit" class="btn btn-info btn-sm" value="Create" />
             </div>
         </div>
     </form>

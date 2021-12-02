@@ -23,13 +23,13 @@ namespace SMS.App.Controllers
         private readonly IEmployeeManager _employeeManager;
         //private readonly ApplicationDbContext _context;
 
-        public AccountsController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IStudentManager studentManager, IEmployeeManager employeeManager /*ApplicationDbContext context*/)
+        public AccountsController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IStudentManager studentManager, IEmployeeManager employeeManager, RoleManager<IdentityRole> roleManager)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _studentManager = studentManager;
             _employeeManager = employeeManager;
-            //_context = context;
+            _roleManager = roleManager;
         }
 
         [HttpGet, AllowAnonymous]
@@ -115,12 +115,12 @@ namespace SMS.App.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.AppUser, model.Password, model.RememberMe, false);
                 if (result.Succeeded)
                 {
-                    var appUser = await _userManager.GetUserAsync(User);
+                    //var appUser = await _userManager.GetUserAsync(User);
 
-                    if (appUser.UserType == 's')
-                    {
-                        return RedirectToAction("profile", "students", new { id = appUser.ReferenceId });
-                    }
+                    //if (appUser.UserType == 's')
+                    //{
+                    //    return RedirectToAction("profile", "students", new { id = appUser.ReferenceId });
+                    //}
                     
                     return RedirectToAction("index", "home");
                 }

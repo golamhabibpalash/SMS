@@ -121,7 +121,7 @@ namespace SMS.App.Controllers
                     //{
                     //    return RedirectToAction("profile", "students", new { id = appUser.ReferenceId });
                     //}
-                    
+
                     return RedirectToAction("index", "home");
                 }
                 ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
@@ -179,6 +179,12 @@ namespace SMS.App.Controllers
                     return RedirectToAction("RoleList");
                 }
             }
+            return View();
+        }
+
+        public async Task<IActionResult> EditRole(string id)
+        {
+            var role = await _roleManager.FindByIdAsync(id);
             return View();
         }
 

@@ -40,8 +40,8 @@ namespace SchoolManagementSystem
             services.AddIdentity<ApplicationUser, IdentityRole>(option =>
             {
                 option.Password.RequiredLength = 6;
-                option.Password.RequiredUniqueChars = 3;
-            }).AddEntityFrameworkStores<ApplicationDbContext>();
+                option.Password.RequiredUniqueChars = 3;                
+            }).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
            
            

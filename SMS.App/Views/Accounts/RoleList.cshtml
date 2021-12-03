@@ -1,6 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Identity
 
-@model IEnumerable<IdentityRole>
+@model IEnumerable<SMS.App.ViewModels.AdministrationVM.RoleListWIthUserVM>
 
 @{ 
     int sl = 0;
@@ -15,6 +15,7 @@
                 <th>
                     <a class="p-2 btn-sm btn-info rounded-pill" asp-action="CreateRole" asp-controller="Accounts"><i class="fa fa-plus"></i> Add</a>
                 </th>
+                <th>Total User</th>
             </tr>
         </thead>
         <tbody>
@@ -24,12 +25,20 @@
                 {
                     <tr>
                         <td>@(++sl)</td>
-                        <td>@role.Id</td>
-                        <td>@role.Name</td>
+                        <td>@role.IdentityRole.Id</td>
+                        <td>@role.IdentityRole.Name</td>
                         <td>
-                            <a class="p-2 btn-sm btn-info rounded-pill" asp-action="EditRole" asp-controller="Accounts" asp-route-id="@role.Id"> Edit</a>
+                            <a class="p-2 btn-sm btn-info rounded-pill" asp-action="EditRole" asp-controller="Accounts" asp-route-id="@role.IdentityRole.Id"> Edit</a>
                              | Delete
                         </td>
+                        @if (role.Users!=null || role.Users.Count > 0)
+                        {
+                            <td>@role.Users.Count</td>
+                        }
+                        else
+                        {
+                            <td>None <a class="btn-sm btn-info btn" asp-controller="Accounts" asp-action="AddOrRemoveUser" asp-route-id="@role.IdentityRole.Id">Add user</a></td>
+                        }
                     </tr>
                 }
             }

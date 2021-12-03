@@ -8,6 +8,7 @@ using SMS.App.ViewModels.AdministrationVM;
 using SMS.BLL.Contracts;
 using SMS.DB;
 using SMS.Entities;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -154,10 +155,26 @@ namespace SMS.App.Controllers
             return View();
         }
 
-        public IActionResult RoleList()
+        public async Task<IActionResult> RoleList()
         {
+            List<RoleListWIthUserVM> roleListWIthUserVMs = new List<RoleListWIthUserVM>();
+            var allUser = _userManager.Users;
             var roleList = _roleManager.Roles;
-            return View(roleList);
+            foreach (var role in roleList)
+            {
+                RoleListWIthUserVM roleListWIthUserVM = new RoleListWIthUserVM();
+                roleListWIthUserVM.IdentityRole = role;
+                var selectedUer =new List<ApplicationUser>();
+                foreach (var user in allUser)
+                {
+                    if (await _userManager.IsInRoleAsync(user,role.Name))
+                    {
+                        selectedUer.Add(user);
+                    }
+                }
+                roleListWIthUserVMs.Add(roleListWIthUserVM);
+            }
+            return View(roleListWIthUserVMs);
         }
 
         [HttpGet]
@@ -184,7 +201,7 @@ namespace SMS.App.Controllers
             return View();
         }
 
-        [HttpGet]
+        [HttpGet]        
         public async Task<IActionResult> EditRole(string id)
         {
             var role = await _roleManager.FindByIdAsync(id);
@@ -194,9 +211,10 @@ namespace SMS.App.Controllers
                 ViewBag.ErrorMessage = $"Role with Id = {id} cannot be found";
                 return View("Not Found");
             }
-            EditRoleVM editRoleVM = new() { 
+            EditRoleVM editRoleVM = new() {
                 Id = role.Id,
-                RoleName = role.Name
+                RoleName = role.Name,
+                ApplicationUsers = new List<string>()
             };
 
             //Retrive all the users
@@ -206,7 +224,6 @@ namespace SMS.App.Controllers
                 {
                     editRoleVM.ApplicationUsers.Add(user.UserName);
                 }
-                
             }
 
             return View(editRoleVM);
@@ -231,6 +248,72 @@ namespace SMS.App.Controllers
                 ModelState.AddModelError("", error.Description);
             }
             return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AddOrRemoveUser(string id)
+        {
+            var existRole = await _roleManager.FindByIdAsync(id);
+            if (existRole == null)
+            {
+                ViewBag.ErrorMessage = $"Role with Id ={id} cannot be found";
+                return View("Not Found");
+            }
+            ViewBag.RoleId = id;
+            ViewBag.RoleName = existRole.Name;
+            var model = new List<UserRoleVM>();
+            foreach (var user in _userManager.Users)
+            {
+                var userRoleVm = new UserRoleVM
+                { 
+                    UserId = user.Id,
+                    UserName = user.UserName,
+                    UserType = user.UserType
+                };
+                if (await _userManager.IsInRoleAsync(user, existRole.Name))
+                {
+                    userRoleVm.IsSelected = true;
+                }
+                else
+                {
+                    userRoleVm.IsSelected = false;
+                }
+                model.Add(userRoleVm);
+            }
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddOrRemoveUser(List<UserRoleVM> model,string roleId)
+        {
+            var role = await _roleManager.FindByIdAsync(roleId);
+            if (role == null)
+            {
+                ViewBag.ErrorMessage = $"Role with Id ={roleId} cannot be found";
+                return View("Not Found");
+            }
+
+            for (int i = 0; i < model.Count; i++)
+            {
+                var user = await _userManager.FindByIdAsync(model[i].UserId);
+                IdentityResult result = null;
+                if (model[i].IsSelected && !(await _userManager.IsInRoleAsync(user,role.Name)))
+                {
+                    result = await _userManager.AddToRoleAsync(user, role.Name);
+                }
+                else
+                {
+                    continue;
+                }
+                if (result.Succeeded)
+                {
+                    if (i<(model.Count-1))
+                    {
+                        continue;
+                    }
+                }
+            }
+            return RedirectToAction("EditRole",new { id = roleId});
         }
 
         [AllowAnonymous]

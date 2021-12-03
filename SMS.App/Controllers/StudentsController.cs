@@ -174,7 +174,7 @@ namespace SchoolManagementSystem.Controllers
             return View(newStudent);
         }
 
-        
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -273,7 +273,7 @@ namespace SchoolManagementSystem.Controllers
             return View(newStudent);
         }
 
-        [Authorize(Roles = "Admin")]
+        
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -310,6 +310,7 @@ namespace SchoolManagementSystem.Controllers
             
         }
 
+        [Authorize, AllowAnonymous]
         public async Task<IActionResult> Profile(int id)
         {
             var student = await _studentManager.GetByIdAsync(id);

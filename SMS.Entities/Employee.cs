@@ -36,7 +36,7 @@ namespace SMS.Entities
         public string NIDCard { get; set; }
 
         [Range(01300000000, 01999999999)] 
-        public long Phone { get; set; }
+        public string Phone { get; set; }
 
         [EmailAddress]
         public string Email { get; set; }

@@ -35,7 +35,7 @@ namespace SMS.Entities
         public string Email { get; set; }
 
         [Display(Name = "Phone No")]
-        public long PhoneNo { get; set; }
+        public string PhoneNo { get; set; }
 
         [Display(Name = "Guardian Phone")]
         public long GuardianPhone { get; set; }

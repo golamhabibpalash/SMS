@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
 {
-    [Authorize(Roles = "SuperAdmin, Admin")]
+    //[Authorize(Roles = "SuperAdmin, Admin")]
     public class AccountsController : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -184,12 +184,55 @@ namespace SMS.App.Controllers
             return View();
         }
 
+        [HttpGet]
         public async Task<IActionResult> EditRole(string id)
         {
             var role = await _roleManager.FindByIdAsync(id);
-            return View();
+
+            if (role == null)
+            {
+                ViewBag.ErrorMessage = $"Role with Id = {id} cannot be found";
+                return View("Not Found");
+            }
+            EditRoleVM editRoleVM = new() { 
+                Id = role.Id,
+                RoleName = role.Name
+            };
+
+            //Retrive all the users
+            foreach (var user in _userManager.Users)
+            {
+                if (await _userManager.IsInRoleAsync(user, role.Name))
+                {
+                    editRoleVM.ApplicationUsers.Add(user.UserName);
+                }
+                
+            }
+
+            return View(editRoleVM);
         }
         
+        public async Task<IActionResult> EditRole(EditRoleVM model)
+        {
+            IdentityRole role = await _roleManager.FindByIdAsync(model.Id);
+            if (role == null)
+            {
+                ViewBag.ErrorMessage = $"Role with Id={model.Id} cannot be found.";
+                return View("Not Found");
+            }
+            role.Name = model.RoleName;
+            var result = await _roleManager.UpdateAsync(role);
+            if (result.Succeeded)
+            {
+                return RedirectToAction("EditRole",new {id=model.Id });
+            }
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
+            return View(model);
+        }
+
         [AllowAnonymous]
         public IActionResult AccessDenied()
         {

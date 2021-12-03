@@ -27,7 +27,7 @@
                         <td>@role.Id</td>
                         <td>@role.Name</td>
                         <td>
-                            <a class="p-2 btn-sm btn-info rounded-pill" asp-action="EditRole" asp-controller="Accounts"> Edit</a>
+                            <a class="p-2 btn-sm btn-info rounded-pill" asp-action="EditRole" asp-controller="Accounts" asp-route-id="@role.Id"> Edit</a>
                              | Delete
                         </td>
                     </tr>

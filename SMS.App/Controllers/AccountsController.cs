@@ -189,9 +189,14 @@ namespace SMS.App.Controllers
             var role = await _roleManager.FindByIdAsync(id);
             return View();
         }
+        
+        [AllowAnonymous]
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
 
         [AllowAnonymous]
-        //[HttpPost]
         public async Task<JsonResult> GetUserByUserType(char id)
         {
             if (id=='e')

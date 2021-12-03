@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SMS.DAL.Repositories.Base;
 using SMS.DAL.Contracts;
+using System.Linq;
 
 namespace SMS.DAL.Repositories
 {
@@ -44,6 +45,12 @@ namespace SMS.DAL.Repositories
                 .Include(s => s.AcademicSection)
                 .FirstOrDefaultAsync(s => s.ClassRoll == classRoll);
             return student;
+        }
+
+        public async Task<List<Student>> GetStudentsByClassIdAndSessionIdAsync(int sessionId, int classId)
+        {
+            List<Student> students = await _context.Student.Where(s => s.AcademicSessionId == sessionId && s.AcademicClassId == classId).ToListAsync();
+            return students;
         }
     }
 }

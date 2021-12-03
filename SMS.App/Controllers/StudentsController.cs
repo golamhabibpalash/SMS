@@ -136,7 +136,7 @@ namespace SchoolManagementSystem.Controllers
                 newStudent.CreatedAt = DateTime.Now;
 
                 var student = _mapper.Map<Student>(newStudent);
-
+                student.ClassRoll = await CreateRoll(student.AcademicSessionId, student.AcademicClassId);
                 bool saveStudent = await _studentManager.AddAsync(student);
                 if (saveStudent==true)
                 {
@@ -344,6 +344,16 @@ namespace SchoolManagementSystem.Controllers
 
             return months;
         }
-
+        private async Task<int> CreateRoll(int sessionId, int ClassId)
+        {
+            var admissionSession = await _academicSessionManager.GetByIdAsync(sessionId);
+            var admissionClass = await _academicClassManager.GetByIdAsync(ClassId);
+            var totalStudent = await _studentManager.GetStudentsByClassIdAndSessionIdAsync(sessionId, ClassId);
+            string year = admissionSession.Name.Substring(admissionSession.Name.Length - 2);
+            string aClass = admissionClass.ClassSerial.ToString("d2");
+            string stuCount = (totalStudent.Count+1).ToString("d3");
+            int roll = Convert.ToInt32(year+aClass+stuCount);
+            return roll;
+        }
     }
 }

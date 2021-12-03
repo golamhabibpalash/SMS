@@ -29,7 +29,6 @@ namespace SMS.App.Controllers
         {
             await _instituteManager.GetAllAsync();
             return RedirectToAction("Edit", new { id = 1 });
-            
         }
 
         // GET: InstitutesController/Details/5

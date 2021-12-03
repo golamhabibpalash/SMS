@@ -39,18 +39,17 @@ namespace SMS.App.ViewModels.Students
 
         [Display(Name = "Phone")]
         [Range(01300000000, 01999999999)]
-        public long PhoneNo { get; set; }
+        public string PhoneNo { get; set; }
 
         [Display(Name = "Guardian Phone")]
         [Range(01300000000, 01999999999)]
-        public long GuardianPhone { get; set; }
+        public string GuardianPhone { get; set; }
 
         [Display(Name = "Student Image")]
         public string Photo { get; set; }
 
-        [MinimumAge(10)]
+        //[MinimumAge(10)]
         [Display(Name = "Date of Birth*"), DataType(DataType.Date)]
-        [Required(ErrorMessage = "Minimum Age(10) is Requered")]
         public DateTime DOB { get; set; }
 
         [Display(Name = "Religion")]

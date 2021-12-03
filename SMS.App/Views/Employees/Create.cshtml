@@ -143,9 +143,11 @@
                     <select asp-for="EmpTypeId" class="form-control form-control-sm rounded" asp-items="Model.EmpTypeList">
                         <option selected disabled>Select Type of Employee</option>
                     </select>
+                    
                     <div class="input-group-append">
                         <a asp-action="Create" asp-controller="EmpTypes" class="btn btn-sm btn-outline-info"><i class="fa fa-plus"></i> Add</a>
-                    </div>
+                    </div><br />
+                    <span asp-validation-for="EmpTypeId" class="text-danger"></span>
                 </div>
 
                 <label asp-for="DesignationId" class="control-label col-form-label col-md-2 text-right"></label>
@@ -153,9 +155,10 @@
                     <select asp-for="DesignationId" class="form-control form-control-sm rounded" asp-items="Model.DesignationList">
                         <option selected disabled>Select Designation</option>
                     </select>
+                    
                     <div>
                         <a asp-action="Create" asp-controller="Designations" class="btn btn-sm btn-outline-info"><i class="fa fa-plus"></i> Add</a>
-                    </div>
+                    </div><span asp-validation-for="DesignationId" class="text-danger"></span>
                 </div>
             </div>
 

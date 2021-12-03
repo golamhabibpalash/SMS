@@ -155,7 +155,8 @@ namespace SchoolManagementSystem.Controllers
                     var result = await _userManager.CreateAsync(newStudentUser, student.Name.Trim() + "A" + pass + "@");
                     if (result.Succeeded)
                     {
-
+                        ApplicationUser user = await _userManager.FindByNameAsync(student.ClassRoll.ToString());
+                        await _userManager.AddToRoleAsync(user, "Student");
                     }
                     return RedirectToAction(nameof(Index));
                 }

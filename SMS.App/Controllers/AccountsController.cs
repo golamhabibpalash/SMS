@@ -150,14 +150,62 @@ namespace SMS.App.Controllers
             return View();
         }
 
+        [AllowAnonymous]
         public IActionResult ForgotPassword() 
         {
             return View();
         }
 
-        public IActionResult ResetPassword()
+        [AllowAnonymous][HttpPost]        
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordVM model) 
         {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user != null && await _userManager.IsEmailConfirmedAsync(user))
+                {
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                    var passwordResetLink = Url.Action("ResetPassword", "Accounts", new { email = model.Email, token = token }, Request.Scheme);
+                    //Logger code
+                    
+                }
+                return View("ForgotPasswordConfirmation");
+            }
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult ResetPassword(string token, string email)
+        {
+            if (token == null || email ==null)
+            {
+                ModelState.AddModelError("", "Invalid password reset token");
+            }
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordVM model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user!=null)
+                {
+                    var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+                    if (result.Succeeded)
+                    {
+                        return View("ResetPasswordConfirmation");
+                    }
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+                    return View(model);
+                }
+                return View("ResetPasswordConfirmation");
+            }
+            return View(model);
         }
 
         public async Task<IActionResult> RoleList()

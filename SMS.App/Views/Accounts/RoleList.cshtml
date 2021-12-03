@@ -31,7 +31,7 @@
                             <a class="p-2 btn-sm btn-info rounded-pill" asp-action="EditRole" asp-controller="Accounts" asp-route-id="@role.IdentityRole.Id"> Edit</a>
                              | Delete
                         </td>
-                        @if (role.Users!=null || role.Users.Count > 0)
+                        @if (role.Users != null)
                         {
                             <td>@role.Users.Count</td>
                         }

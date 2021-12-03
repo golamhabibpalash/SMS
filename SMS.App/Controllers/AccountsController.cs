@@ -225,6 +225,7 @@ namespace SMS.App.Controllers
                         selectedUer.Add(user);
                     }
                 }
+                roleListWIthUserVM.Users = selectedUer;
                 roleListWIthUserVMs.Add(roleListWIthUserVM);
             }
             return View(roleListWIthUserVMs);

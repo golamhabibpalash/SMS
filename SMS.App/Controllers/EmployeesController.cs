@@ -102,14 +102,14 @@ namespace SMS.App.Controllers
         public async Task<IActionResult> Create([Bind("Id,EmployeeName,DOB,Image,GenderId,ReligionId,NationalityId,NIDNo,NIDCard,Phone,Email,Nominee,NomineePhone,EmpTypeId,DesignationId,JoiningDate,PresentAddress,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddress,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,CreatedBy,CreatedAt,EditedBy,EditedAt,Status,BloodGroupId")] EmployeeCreateVM employeeVM, IFormFile empImage, IFormFile nidCard)
         {
             var employee1 = employeeVM;
-
+            var bloodGroupList = await _bloodGroupManager.GetAllAsync();
             employee1.GenderList = new SelectList(await _genderManager.GetAllAsync(), "Id", "Name", employee1.GenderId).ToList();
             employee1.ReligionList = new SelectList(await _religionManager.GetAllAsync(), "Id", "Name", employee1.ReligionId).ToList();
             employee1.NationalityList = new SelectList(await _nationalityManager.GetAllAsync(), "Id", "Name", employee1.NationalityId).ToList();
             employee1.EmpTypeList = new SelectList(await _empTypeManager.GetAllAsync(), "Id", "Name", employee1.EmpTypeId).ToList();
             employee1.DesignationList = new SelectList(await _designationManager.GetAllAsync(), "Id", "DesignationName", employee1.DesignationId).ToList();
             employee1.DivisionList = new SelectList(await _divisionManager.GetAllAsync(), "Id", "Name", employee1.DivisionList).ToList();
-            employee1.BloodGroupList = new SelectList(await _bloodGroupManager.GetAllAsync(), "Id", "Name", employee1.BloodGroupId).ToList();
+            employee1.BloodGroupList = new SelectList(bloodGroupList.OrderBy(b => b.Name), "Id", "Name", employee1.BloodGroupId).ToList();
 
 
             string empPhoto = "";
@@ -153,6 +153,10 @@ namespace SMS.App.Controllers
                 if (empImage != null)
                 {
                     string root = _host.WebRootPath;
+                    if (string.IsNullOrEmpty(root))
+                    {
+                        root = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                    }
                     string folder = "Images/Employee/photo";
                     string fileExtension = Path.GetExtension(empImage.FileName);
                     empPhoto = "e_" + DateTime.Today.ToString("yyyy") + "_" + employeeVM.NIDNo + fileExtension;
@@ -260,6 +264,10 @@ namespace SMS.App.Controllers
             if (Image != null)
             {
                 string root = _host.WebRootPath;
+                if (string.IsNullOrEmpty(root))
+                {
+                    root = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                }
                 string folder = "Images/Employee/photo";
                 string fileExtension = Path.GetExtension(Image.FileName);
                 empPhoto = "e_" + DateTime.Today.ToString("yyyy") + "_" + employeeVM.NIDNo + fileExtension;

@@ -33,7 +33,7 @@ namespace SMS.App.Controllers
         {
             var AcademicClassList =await _academicClassManager.GetAllAsync();
 
-            return View(AcademicClassList);
+            return View(AcademicClassList.OrderBy(c => c.ClassSerial));
         }
 
         // GET: AcademicClasses/Details/5

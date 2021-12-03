@@ -41,15 +41,16 @@ namespace SMS.BLL.Managers
         }
         public override async Task<bool> UpdateAsync(AcademicClass entity)
         {
-            var exist =await _academicClassRepository.GetByNameAsync(entity.Name);
-            if (exist.Id!=entity.Id)
+            var existClass = await _academicClassRepository.GetByNameAsync(entity.Name);
+            if (existClass != null)
             {
-                return false;
+                if (entity.Id!=existClass.Id)
+                {
+                    return false;
+                }
+
             }
-            else
-            {
-                return await base.UpdateAsync(entity);
-            }
+            return await _academicClassRepository.UpdateAsync(entity);
         }
     }
 }

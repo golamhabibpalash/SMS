@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using MimeKit;
 using SMS.App.ViewModels.AdministrationVM;
 using SMS.BLL.Contracts;
 using SMS.DB;
@@ -162,12 +163,26 @@ namespace SMS.App.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByEmailAsync(model.Email);
+                string name = "";
+                if (user.UserType=='e')
+                {
+                    var emp = await _employeeManager.GetByIdAsync(user.ReferenceId);
+                    name = emp.EmployeeName;
+                    model.Name = name;
+                }
                 if (user != null && await _userManager.IsEmailConfirmedAsync(user))
                 {
                     var token = await _userManager.GeneratePasswordResetTokenAsync(user);
                     var passwordResetLink = Url.Action("ResetPassword", "Accounts", new { email = model.Email, token = token }, Request.Scheme);
                     //Logger code
-                    
+                    var message = new MimeMessage();
+                    message.From.Add(new MailboxAddress("Noble Residential School", "golamhabibpalash@hotmail.com"));
+                    message.To.Add(new MailboxAddress(model.Name, model.Email));
+                    message.Subject = "Reset Password";
+                    message.Body = new TextPart("plain")
+                    {
+                        Text = $"Hey {model.Name}, To reset your password go to <a href={passwordResetLink}> here </a>"
+                    };
                 }
                 return View("ForgotPasswordConfirmation");
             }

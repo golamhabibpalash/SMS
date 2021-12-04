@@ -37,7 +37,7 @@ namespace SMS.App.ViewModels.Students
         [Display(Name = "Email Address"), EmailAddress]
         public string Email { get; set; }
 
-        [Display(Name = "Phone")]
+        [Display(Name = "Phone"), Required]
         [Range(01300000000, 01999999999)]
         public string PhoneNo { get; set; }
 

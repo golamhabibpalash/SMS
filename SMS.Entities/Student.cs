@@ -37,8 +37,8 @@ namespace SMS.Entities
         [Display(Name = "Phone No")]
         public string PhoneNo { get; set; }
 
-        [Display(Name = "Guardian Phone")]
-        public long GuardianPhone { get; set; }
+        [Display(Name = "Guardian Phone")]        
+        public string GuardianPhone { get; set; }
 
         public string Photo { get; set; }
 

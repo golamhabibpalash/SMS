@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
 {
-    //[Authorize(Roles = "SuperAdmin, Admin")]
+    [Authorize(Roles = "SuperAdmin, Admin")]
     public class AccountsController : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -133,7 +133,7 @@ namespace SMS.App.Controllers
             return View();
         }
 
-        [HttpPost]
+        [HttpPost][Authorize]
         public async Task<IActionResult> LogOut()
         {
             await _signInManager.SignOutAsync();
@@ -189,7 +189,19 @@ namespace SMS.App.Controllers
             return View(model);
         }
 
-        [HttpGet]
+        public IActionResult OTPGenerate()
+        {
+
+            return View();
+        }
+
+        [HttpGet, AllowAnonymous]
+        public IActionResult OTPGenerate(OTPVM model)
+        {
+            return View();
+        }
+
+        [HttpGet, AllowAnonymous]
         public IActionResult ResetPassword(string token, string email)
         {
             if (token == null || email ==null)
@@ -425,6 +437,30 @@ namespace SMS.App.Controllers
             {
                 Student student = await _studentManager.GetByIdAsync(id);
                 return Json(new {email = student.Email, phone=student.PhoneNo});
+            }
+            return Json("");
+        }
+
+        [AllowAnonymous]
+        public async Task<JsonResult> GetUserByEmail(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            string phoneNumber = "";
+            if (user.UserType == 'e')
+            {
+                var emp = await _employeeManager.GetByIdAsync(user.ReferenceId);
+                phoneNumber = emp.Phone;
+            }
+            if (user.UserType == 's')
+            {
+                var std = await _studentManager.GetByIdAsync(user.ReferenceId);
+                phoneNumber = std.PhoneNo;
+            }
+            if (user != null && await _userManager.IsEmailConfirmedAsync(user))
+            {
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var passwordResetLink = Url.Action("ResetPassword", "Accounts", new { email = email, token = token }, Request.Scheme);
+                return Json(new {token = token, link = passwordResetLink, phone = phoneNumber });                
             }
             return Json("");
         }

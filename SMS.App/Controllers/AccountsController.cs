@@ -76,7 +76,11 @@ namespace SMS.App.Controllers
             return View();
         }
         
-
+        public IActionResult UserList()
+        {
+            var allUser = _userManager.Users;
+            return View(allUser);
+        }
 
         [HttpGet, AllowAnonymous]
         public IActionResult UserLogin()

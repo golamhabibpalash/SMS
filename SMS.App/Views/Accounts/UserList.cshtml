@@ -1,0 +1,38 @@
+﻿@model IEnumerable<SMS.Entities.ApplicationUser>
+@{
+    int sl = 0;
+    string userType = "";
+}
+
+@if (Model != null)
+{
+    <div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <td>#</td>
+                    <td>User</td>
+                    <td>Email</td>
+                    <td>User Type</td>
+                    <td>Action</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@(++sl)</td>
+                        <td>@item.UserName</td>
+                        <td>@item.Email</td>
+                        @{
+                            userType = item.UserType == 's' ? "Student" : item.UserType == 'e' ? "Employee" : "Other";                            
+                           }
+                        <td>@userType</td>
+                        <td>Action</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+}

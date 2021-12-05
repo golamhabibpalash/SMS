@@ -7,14 +7,16 @@
 @if (Model != null)
 {
     <div>
-        <table class="table">
+        <table class="table" id="myTable">
             <thead>
                 <tr>
-                    <td>#</td>
-                    <td>User</td>
-                    <td>Email</td>
-                    <td>User Type</td>
-                    <td>Action</td>
+                    <th>#</th>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>User Type</th>
+                    <th>
+                        <a class="p-2 btn-sm btn-info rounded-pill" asp-action="Register"><i class="fa fa-plus"></i> Add</a>
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -28,7 +30,11 @@
                             userType = item.UserType == 's' ? "Student" : item.UserType == 'e' ? "Employee" : "Other";                            
                            }
                         <td>@userType</td>
-                        <td>Action</td>
+                        <td>
+                            
+                            <a class="btn btn-sm btn-warning rounded mr-1" asp-action="EditUser" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-edit"></i> </a>
+                            <a class="btn btn-sm rounded btn-danger" asp-action="DeleteUser" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="right" title="Delete"><i class="fa fa-trash"></i> </a>
+                        </td>
                     </tr>
                 }
             </tbody>
@@ -36,3 +42,8 @@
     </div>
 
 }
+
+
+@section Scripts{
+    <script src="~/js/DataTable/dataTable.js"></script>
+            }

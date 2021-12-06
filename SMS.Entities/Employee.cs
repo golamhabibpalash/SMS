@@ -45,7 +45,7 @@ namespace SMS.Entities
         [Display(Name ="Nominee Name")]
         public string Nominee { get; set; }
 
-        [Range(01300000000, 01999999999), Display("Nominee Phone")]
+        [Range(01300000000, 01999999999), Display(Name ="Nominee Phone")]
         public long NomineePhone { get; set; }
 
         [Display(Name = "Employee Type")]

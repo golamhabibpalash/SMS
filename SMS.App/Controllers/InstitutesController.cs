@@ -27,8 +27,14 @@ namespace SMS.App.Controllers
         // GET: InstitutesController
         public async Task<ActionResult> Index()
         {
-            await _instituteManager.GetAllAsync();
-            return RedirectToAction("Edit", new { id = 1 });
+            var result = await _instituteManager.GetAllAsync();
+            if (result != null)
+            {
+                var instituteInfo = result.FirstOrDefault();
+                return View(instituteInfo);
+            }
+            
+            return RedirectToAction("Create");
         }
 
         // GET: InstitutesController/Details/5

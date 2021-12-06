@@ -166,9 +166,15 @@ namespace SMS.App.Controllers
         [AllowAnonymous][HttpPost]        
         public async Task<IActionResult> ForgotPassword(ForgotPasswordVM model) 
         {
+            
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user == null)
+                {
+                    ViewBag.msg = "please insert a varified email.";
+                    return View(model);
+                }
                 string name = "";
                 if (user.UserType=='e')
                 {
@@ -218,6 +224,7 @@ namespace SMS.App.Controllers
                 }
                 return View();
             }
+            
             return View(model);
         }
 

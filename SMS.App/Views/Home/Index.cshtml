@@ -2,6 +2,10 @@
 @{
     ViewData["Title"] = "Home Page";
     GlobalUI.PageTitle = "";
+    if (ViewBag.InstituteName != null)
+    {
+        GlobalUI.InstituteName = ViewBag.InstituteName;
+    }
 
     int totalStudent = 0;
     int totalTeacher = 0;

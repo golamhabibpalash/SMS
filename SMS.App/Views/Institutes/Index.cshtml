@@ -1,97 +1,36 @@
-﻿@model IEnumerable<SMS.Entities.Institute>
+﻿@model SMS.Entities.Institute
 
 @{
     ViewData["Title"] = "Institute info";
     GlobalUI.PageTitle = ViewBag.Title;
 }
 
-<table class="table">
-    <thead class="bg-orange">
-        <tr>
-            <th class="col-md-2">Items</th>
-            <th class="col-md-8">Information</th>
-            <th class="col-md-2">
-                <a href="#">
-                    <span class="btn-sm rounded-pill"><i class="fa fa-edit"></i> </span>
-                </a>
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td class="col-md-2">
-                @Html.DisplayNameFor(model => model.Name)
-            </td>
-            <td class="col-md-8">
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td class="col-md-2"></td>
-        </tr>
-        <tr>
-            <td class="col-md-2">
-                @Html.DisplayNameFor(model => model.ISO)
-            </td>
-            <td class="col-md-8">
-                @Html.DisplayFor(modelItem => item.ISO)
-            </td>
-            <td class="col-md-2"></td>
-        </tr>
-        <tr>
-            <td class="col-md-2">
-                @Html.DisplayNameFor(model => model.EIIN)
-            </td>
-            <td class="col-md-8">
-                @Html.DisplayFor(modelItem => item.EIIN)
-            </td>
-            <td class="col-md-2"></td>
-        </tr>
-        <tr>
-            <td class="col-md-2">
-                @Html.DisplayNameFor(model => model.Slogan)
-            </td>
-            <td class="col-md-8">
-                @Html.DisplayFor(modelItem => item.Slogan)
-            </td>
-            <td class="col-md-2"></td>
-        </tr>
-        <tr>
-            <td class="col-md-2">
-                @Html.DisplayNameFor(model => model.Banner)
-            </td>
-            <td class="col-md-8">
-                @Html.DisplayFor(modelItem => item.Banner)
-            </td>
-            <td class="col-md-2"></td>
-        </tr>
-        <tr>
-            <td class="col-md-2">
-                @Html.DisplayNameFor(model => model.Logo)
-            </td>
-            <td class="col-md-8">
-                @Html.DisplayFor(modelItem => item.Logo)
-            </td>
-            <td class="col-md-2"></td>
-
-        </tr>
-            <tr>
-                <td class="col-md-2">
-                    @Html.DisplayNameFor(model => model.Address)
-                </td>
-                <td class="col-md-8">
-                    @Html.DisplayFor(modelItem => item.Address)
-                </td>
-                <td class="col-md-2"></td>
-            </tr>
-            <tr>
-                <td class="col-md-2">
-                    @Html.DisplayNameFor(model => model.BranchName)
-                </td>
-                <td class="col-md-8">
-                    @Html.DisplayFor(modelItem => item.BranchName)
-                </td>
-                <td class="col-md-2"></td>
-            </tr>
-}
-    </tbody>
+<table class="table table-responsive-sm table-striped table-hover">
+    <tr class="bg-blue-sky">
+        <td>Items</td><td></td><td>Information</td>
+    </tr>
+    <tr>
+        <td>@Html.DisplayNameFor(model => model.Name)</td><td>:</td><td>@Html.DisplayFor(modelItem => modelItem.Name)</td>
+    </tr>
+    <tr>
+        <td>@Html.DisplayNameFor(model => model.ISO)</td><td>:</td><td>@Html.DisplayFor(modelItem => modelItem.ISO)</td>
+    </tr>
+    <tr>
+        <td>@Html.DisplayNameFor(model => model.EIIN)</td><td>:</td><td>@Html.DisplayFor(modelItem => modelItem.EIIN)</td>
+    </tr>
+    <tr>
+        <td>@Html.DisplayNameFor(model => model.Slogan)</td><td>:</td><td>@Html.DisplayFor(modelItem => modelItem.Slogan)</td>
+    </tr>
+    <tr>
+        <td>@Html.DisplayNameFor(model => model.Banner)</td><td>:</td><td>@Html.DisplayFor(modelItem => modelItem.Banner)</td>
+    </tr>
+    <tr>
+        <td>@Html.DisplayNameFor(model => model.Logo)</td><td>:</td><td>@Html.DisplayFor(modelItem => modelItem.Logo)</td>
+    </tr>
+    <tr>
+        <td>@Html.DisplayNameFor(model => model.Address)</td><td>:</td><td>@Html.DisplayFor(modelItem => modelItem.Address)</td>
+    </tr>
+    <tr>
+        <td>@Html.DisplayNameFor(model => model.BranchName)</td><td>:</td><td>@Html.DisplayFor(modelItem => modelItem.BranchName)</td>
+    </tr>
 </table>

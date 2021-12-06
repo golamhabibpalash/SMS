@@ -28,10 +28,13 @@ namespace SMS.App.Controllers
         public async Task<ActionResult> Index()
         {
             var result = await _instituteManager.GetAllAsync();
-            if (result != null)
+            if (result.Count() != 0)
             {
                 var instituteInfo = result.FirstOrDefault();
-                return View(instituteInfo);
+                if (instituteInfo!=null)
+                {
+                    return View(instituteInfo);
+                }
             }
             
             return RedirectToAction("Create");

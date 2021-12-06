@@ -5,6 +5,12 @@
     <UserSecretsId>aspnet-SchoolManagementSystem-75AC8697-780A-4215-A7FE-E83F96B3C344</UserSecretsId>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="wwwroot\FA\**" />
     <Content Remove="wwwroot\FA\**" />

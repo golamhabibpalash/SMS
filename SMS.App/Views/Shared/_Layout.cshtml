@@ -1,9 +1,15 @@
 ﻿@using Microsoft.AspNetCore.Identity;
+@using SMS.BLL.Contracts;
 
 @inject SignInManager<ApplicationUser> _signInManager;
 @inject UserManager<ApplicationUser> _userManager;
-
+@inject IInstituteManager _instituteManager;
 @{
+    var info = await _instituteManager.GetAllAsync();
+    if (info.Count()>0)
+    {
+        GlobalUI.InstituteName = info.FirstOrDefault().Name;
+    }
     string instituteName = GlobalUI.InstituteName != null ? GlobalUI.InstituteName : "Institute Name";
 }
 
@@ -56,7 +62,7 @@
             <div class="col-md-3 left_col menu_fixed">
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="border: 0;">
-                        <a asp-action="Index" asp-controller="Home" class="site_title"><i class="fa fa-paw"></i> <span>Institute Name</span></a>
+                        <a asp-action="Index" asp-controller="Home" class="site_title"><i class="fa fa-paw"></i> <span>@instituteName</span></a>
                     </div>
 
                     <div class="clearfix"></div>
@@ -156,7 +162,7 @@
 
                                     </ul>
                                 </li>
-                                
+
                             </ul>
                         </div>
                         <div class="menu_section">
@@ -203,10 +209,11 @@
                 <div class="nav_menu">
                     <div class="nav toggle">
                         <a style="padding:5px;" id="menu_toggle">
-                            
-                                
-                            <i class="fa fa-bars"></i></a>
-                        
+
+
+                            <i class="fa fa-bars"></i>
+                        </a>
+
                     </div>
                     <div class="nav">
                         @if (_signInManager.IsSignedIn(User))
@@ -215,14 +222,10 @@
 
                         }
                     </div>
-                    <nav class="nav navbar-nav">
-                        <ul style="list-style:none;" class="navbar">
-                            <li class="nav-item dropdown open" style="padding-left: 15px;">
-                                <text class="h5 text-info">@GlobalUI.PageTitle</text>
-                            </li>
-                        </ul>
-                    </nav>
+
                 </div>
+                <text class="h5 text-light">@GlobalUI.PageTitle</text>
+                
             </div>
             <!-- /top navigation -->
             <!-- page content -->

@@ -20,17 +20,26 @@ namespace SMS.App.Controllers
         private readonly IStudentManager _studentManager;
         private readonly IEmployeeManager _employeeManager;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IInstituteManager _instituteManager;
 
-        public HomeController(ILogger<HomeController> logger, IStudentManager studentManager, IEmployeeManager employeeManager, UserManager<ApplicationUser> userManager)
+        public HomeController(ILogger<HomeController> logger, IStudentManager studentManager, IEmployeeManager employeeManager, UserManager<ApplicationUser> userManager, IInstituteManager instituteManager)
         {
             _logger = logger;
             _studentManager = studentManager;
             _employeeManager = employeeManager;
             _userManager = userManager;
+            _instituteManager = instituteManager;
         }
 
         public async Task<IActionResult> Index()
         {
+            Institute institute = new Institute();
+            var allInfo = await _instituteManager.GetAllAsync();
+            if (allInfo.Count()>0)
+            {
+                institute = allInfo.FirstOrDefault();
+                ViewBag.InstituteName = institute.Name;
+            }
             var user = await _userManager.GetUserAsync(User);
             HttpContext.Session.SetString("UserId","user.Id");
             StudentDashboardVM stDashboardVM = new StudentDashboardVM();

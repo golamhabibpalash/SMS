@@ -54,8 +54,8 @@ namespace SMS.App.Controllers
 
         }
 
-        
-        // GET: Employees
+
+        [Authorize(Roles = "SuperAdmin, Admin,Teacher")] 
         public async Task<IActionResult> Index()
         {
             
@@ -63,7 +63,7 @@ namespace SMS.App.Controllers
             return View(empList);
         }
 
-        // GET: Employees/Details/5
+        [Authorize(Roles = "SuperAdmin, Admin,Teacher")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -159,7 +159,7 @@ namespace SMS.App.Controllers
                     }
                     string folder = "Images/Employee/photo";
                     string fileExtension = Path.GetExtension(empImage.FileName);
-                    empPhoto = "e_" + DateTime.Today.ToString("yyyy") + "_" + employeeVM.NIDNo + fileExtension;
+                    empPhoto = "e_" + DateTime.Today.ToString("yyyy") + "_" + employeeVM.Phone + fileExtension;
                     string pathCombine = Path.Combine(root, folder, empPhoto);
                     using var stream = new FileStream(pathCombine, FileMode.Create);
                     await empImage.CopyToAsync(stream);
@@ -171,7 +171,7 @@ namespace SMS.App.Controllers
                     string folder = "Images/Employee/NID";
 
                     string fileExtension = Path.GetExtension(nidCard.FileName);
-                    nidPhoto = "e_" + employeeVM.NIDNo + fileExtension;
+                    nidPhoto = "e_NID_" + employeeVM.NIDNo + fileExtension;
                     string pathCombine = Path.Combine(root, folder, nidPhoto);
                     using var stream = new FileStream(pathCombine, FileMode.Create);
                     await nidCard.CopyToAsync(stream);

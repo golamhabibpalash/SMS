@@ -63,7 +63,7 @@ namespace SchoolManagementSystem.Controllers
             _userManager = userManager;
         }
 
-        // GET: Students
+        [Authorize(Roles = "SuperAdmin, Admin,Teacher")]
         public async Task<IActionResult> Index()
         {
             var student = await _studentManager.GetAllAsync();

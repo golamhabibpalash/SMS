@@ -187,19 +187,24 @@ namespace SMS.App.Controllers
                     var token = await _userManager.GeneratePasswordResetTokenAsync(user);
                     var passwordResetLink = Url.Action("ResetPassword", "Accounts", new { email = model.Email, token = token }, Request.Scheme);
 
+                    HttpContext.Session.SetString("token", token);
+                    HttpContext.Session.SetString("passwordResetLink", passwordResetLink);
+                    HttpContext.Session.SetString("useremail", model.Email);
+
                     if (model.verificationBy=="SMS")
                     {
                         Random rnd = new Random();
                         int randomNumber = rnd.Next(100000, 999999);
-                        ViewBag.randomNumber = randomNumber;
-                        bool smsSend = await MobileSMS.SendSMS(user.PhoneNumber, randomNumber.ToString());
+                        HttpContext.Session.SetString("randomNumber", randomNumber.ToString());
+
+                        string text = "Your OTP is:" + randomNumber + " -Noble Residential School";
+                        bool smsSend = await MobileSMS.SendSMS(user.PhoneNumber, text);
                         if (smsSend == false)
                         {
-                            ViewBag.msg = "SMS not sent due to technical problem";
+                            ViewBag.msg = "SMS not sent due to technical problem, Try again.";
                             return View(model);
                         }
-                        TempData["OTP"] = randomNumber;
-                        TempData["passwordResetLink"] = passwordResetLink;
+                        
                         return RedirectToAction("OTPGenerate");
                     }
                     else if(model.verificationBy == "Email")
@@ -219,51 +224,42 @@ namespace SMS.App.Controllers
         [HttpGet, AllowAnonymous]
         public IActionResult OTPGenerate()
         {
-            OTPVM oTPVM = new OTPVM();
-
-            if (TempData["OTP"]!=null)
-            {
-                oTPVM.OTP = Convert.ToInt32(TempData["OTP"].ToString());
-            }
-            if (TempData["passwordResetLink"] != null)
-            {
-                oTPVM.Link = TempData["passwordResetLink"].ToString();
-            }
-
-            return View(oTPVM);
+            return View();
         }
 
         [HttpPost, AllowAnonymous]
-        public async Task<IActionResult> OTPGenerate(OTPVM model)
+        public IActionResult OTPGenerate(OTPVM model)
         {
+            var email = HttpContext.Session.GetString("useremail");
+            model.Email = email;
             if (ModelState.IsValid)
             {
-                if (model.OTP == Convert.ToInt32(TempData["OTP"].ToString()))
+                var token = HttpContext.Session.GetString("token");
+                
+                if (model.OTP.ToString() == HttpContext.Session.GetString("randomNumber"))
                 {
-                    return RedirectToAction("resetpassword");
+                    ResetPasswordVM resetPasswordVM = new ResetPasswordVM();
+                    resetPasswordVM.Email = model.Email;
+                    resetPasswordVM.Token = token;
+                    HttpContext.Session.Remove("randomNumber");
+                    HttpContext.Session.Remove("token");
+                    HttpContext.Session.Remove("useremail");
+                    return View("ResetPassword", resetPasswordVM);
                 }
-                var user =await _userManager.FindByEmailAsync(model.Email);
-                if (user != null)
+                else
                 {
-                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                    var passwordResetLink = Url.Action("ResetPassword", "Accounts", new { email = model.Email, token = token }, Request.Scheme);
-                    ViewBag.link = passwordResetLink;
-                    Random rnd = new Random();
-                    int randomNumber = rnd.Next(100000, 999999);
-                    ViewBag.randomNumber = randomNumber;
+                    ViewBag.msg = "OTP is not matched";
+                    return View(model);
                 }
+
             }
             
             return RedirectToAction("ForgotPassword");
         }
 
         [HttpGet, AllowAnonymous]
-        public IActionResult ResetPassword(string token, string email)
+        public IActionResult ResetPassword()
         {
-            if (token == null || email ==null)
-            {
-                ModelState.AddModelError("", "Invalid password reset token");
-            }
             return View();
         }
 
@@ -284,9 +280,9 @@ namespace SMS.App.Controllers
                     {
                         ModelState.AddModelError("", error.Description);
                     }
-                    return RedirectToAction("ForgotPassword");
+                    
                 }
-                return View();
+                return RedirectToAction("ForgotPassword");                
             }
             return View(model);
         }

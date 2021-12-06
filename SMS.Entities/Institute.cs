@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace SMS.Entities
 {
-    public class Institute
+    public class Institute :CommonProps
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public string ISO { get; set; }
         public string EIIN { get; set; }

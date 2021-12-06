@@ -4,13 +4,47 @@
 @inject SignInManager<ApplicationUser> _signInManager;
 @inject UserManager<ApplicationUser> _userManager;
 @inject IInstituteManager _instituteManager;
+@inject IEmployeeManager _employeeManager;
+@inject IStudentManager _studentManager;
+
 @{
+
     var info = await _instituteManager.GetAllAsync();
     if (info.Count()>0)
     {
         GlobalUI.InstituteName = info.FirstOrDefault().Name;
     }
     string instituteName = GlobalUI.InstituteName != null ? GlobalUI.InstituteName : "Institute Name";
+
+    string userImage = "";
+    if (_signInManager.IsSignedIn(User))
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user.UserType=='s')
+        {
+            var stu = await _studentManager.GetByIdAsync(user.ReferenceId);
+            if (stu.Photo != null)
+            {
+                userImage = "/Images/Student/Photo/" + stu.Photo;
+            }
+            else
+            {
+                userImage = "/Images/noProfileImage.png";
+            }
+        }
+        if (user.UserType == 'e')
+        {
+            var emp = await _employeeManager.GetByIdAsync(user.ReferenceId);
+            if (emp.Image != null)
+            {
+                userImage = "/Images/Employee/Photo/" + emp.Image;
+            }
+            else
+            {
+                userImage = "/Images/noProfileImage.png";
+            }
+        }
+    }
 }
 
 @{
@@ -215,10 +249,10 @@
                         </a>
 
                     </div>
-                    <div class="nav">
+                    <div class="nav d-flex justify-content-between">
                         @if (_signInManager.IsSignedIn(User))
                         {
-                            <span class="pt-2">@userName</span>
+                            <span class="p-2">@userName </span><span class="float-right p-2"><img src="@userImage" alt="profile Image" class="img-circle" style="width:25px;" /></span>
 
                         }
                     </div>
@@ -230,7 +264,7 @@
             <!-- /top navigation -->
             <!-- page content -->
             <div class="right_col" role="main" style="background:#c7c7c7">
-                <div class="shadow rounded mt-4 bg-light p-2">
+                <div class="shadow rounded mt-2 bg-light p-2">
                     @RenderBody()
                 </div>
             </div>

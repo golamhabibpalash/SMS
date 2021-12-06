@@ -5,62 +5,84 @@
     ViewData["Title"] = "Institution information";
 }
 
-
-<hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
+    <div class="col-md-6">
+        <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+            <div class="form-group row">
+                <label asp-for="Name" class="control-label col-md-2 text-md-right col-form-label"></label>
+                <div class="col-md-8">
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="ISO" class="control-label"></label>
-                <input asp-for="ISO" class="form-control" />
-                <span asp-validation-for="ISO" class="text-danger"></span>
+
+            <div class="form-group row">
+                <label asp-for="ISO" class="control-label col-md-2 text-md-right col-form-label"></label>
+                <div class="col-md-8">
+                    <input asp-for="ISO" class="form-control" />
+                    <span asp-validation-for="ISO" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="EIIN" class="control-label"></label>
-                <input asp-for="EIIN" class="form-control" />
-                <span asp-validation-for="EIIN" class="text-danger"></span>
+
+            <div class="form-group row">
+                <label asp-for="EIIN" class="control-label col-md-2 text-md-right col-form-label"></label>
+                <div class="col-md-8">
+                    <input asp-for="EIIN" class="form-control" />
+                    <span asp-validation-for="EIIN" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Slogan" class="control-label"></label>
-                <input asp-for="Slogan" class="form-control" />
-                <span asp-validation-for="Slogan" class="text-danger"></span>
+
+            <div class="form-group row">
+                <label asp-for="Slogan" class="control-label col-md-2 text-md-right col-form-label"></label>
+                <div class="col-md-8">
+                    <input asp-for="Slogan" class="form-control" />
+                    <span asp-validation-for="Slogan" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Banner" class="control-label"></label>
-                <input asp-for="Banner" class="form-control" />
-                <span asp-validation-for="Banner" class="text-danger"></span>
+            <div class="form-group row">
+                <label asp-for="Banner" class="control-label col-md-2 text-md-right col-form-label"></label>
+                <div class="col-md-8 input-group">
+                    <div class="custom-file">
+                        <input name="banner" type="file" class="custom-file-input" id="inputGroupFile01">
+                        <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                    </div>
+                    <span asp-validation-for="Banner" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Logo" class="control-label"></label>
-                <input asp-for="Logo" class="form-control" />
-                <span asp-validation-for="Logo" class="text-danger"></span>
+            <div class="form-group row">
+                <label asp-for="Logo" class="control-label col-md-2 text-md-right col-form-label"></label>
+                <div class="input-group col-md-8">
+                    <div class="custom-file">
+                        <input name="logo" type="file" class="custom-file-input" id="inputGroupFile02">
+                        <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                    </div>
+                    <span asp-validation-for="Logo" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Address" class="control-label"></label>
-                <input asp-for="Address" class="form-control" />
-                <span asp-validation-for="Address" class="text-danger"></span>
+            <div class="form-group row">
+                <label asp-for="Address" class="control-label col-md-2 text-md-right col-form-label"></label>
+                <div class="col-md-8">
+                    <input asp-for="Address" class="form-control" />
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="BranchName" class="control-label"></label>
-                <input asp-for="BranchName" class="form-control" />
-                <span asp-validation-for="BranchName" class="text-danger"></span>
+            <div class="form-group row">
+                <label asp-for="BranchName" class="control-label col-md-2 text-md-right col-form-label">Branch Name</label>
+                <div class="col-md-8">
+                    <input asp-for="BranchName" class="form-control" />
+                    <span asp-validation-for="BranchName" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+            <div class="form-group row">
+                <div class="col-md-2 offset-md-2">
+                    <input type="submit" value="Create" class="btn btn-primary btn-sm" />
+                </div>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

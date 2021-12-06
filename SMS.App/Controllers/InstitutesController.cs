@@ -31,7 +31,7 @@ namespace SMS.App.Controllers
             if (result.Count() != 0)
             {
                 var instituteInfo = result.FirstOrDefault();
-                if (instituteInfo!=null)
+                if (instituteInfo != null)
                 {
                     return View(instituteInfo);
                 }
@@ -55,11 +55,35 @@ namespace SMS.App.Controllers
         // POST: InstitutesController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(Institute institute)
+        public async Task<ActionResult> Create(Institute institute, IFormFile logo, IFormFile banner)
         {
             try
             {
-                
+                if (logo != null)
+                {
+                    string logoName = "";
+                    string root = _host.WebRootPath;
+                    string folder = "/Images/Institute";
+                    logoName = "instituteLogo_" + Guid.NewGuid() + Path.GetExtension(logo.FileName);
+                    var pathCombine = Path.Combine(root, folder, logoName);
+                    using var stream = new FileStream(pathCombine, FileMode.Create);
+                    await logo.CopyToAsync(stream);
+                    institute.Logo = logoName;
+                }
+                if (banner !=null)
+                {
+                    string banarName = "";
+                    string root = _host.WebRootPath;
+                    string folder = "/Images/Institiute";
+                    banarName = "instituteBanner_" + Guid.NewGuid() + Path.GetExtension(logo.FileName);
+                    var pathCombine = Path.Combine(root, folder, banarName);
+                    using var stream = new FileStream(pathCombine, FileMode.Create);
+                    institute.Banner = banarName;
+                }
+
+                institute.CreatedAt = DateTime.Now;
+                institute.CreatedBy = HttpContext.Session.GetString("UserId");
+
                 await _instituteManager.AddAsync(institute);
                 return RedirectToAction(nameof(Index));
             }
@@ -92,8 +116,8 @@ namespace SMS.App.Controllers
                         string fileExt = Path.GetExtension(logo.FileName);
                         string root = _host.WebRootPath;
                         string folder = "Images/Institute/";
-                        string fileName = "NLA_Logo"+fileExt;
-                        string pathCombine = Path.Combine(root, folder, fileName);
+                        InstituteLogo = "instituteLogo_" + Guid.NewGuid() + fileExt;
+                        string pathCombine = Path.Combine(root, folder, InstituteLogo);
                         using (var stream = new FileStream(pathCombine, FileMode.Create))
                         {
                             await logo.CopyToAsync(stream);
@@ -106,7 +130,7 @@ namespace SMS.App.Controllers
                         string fileExt = Path.GetExtension(banner.FileName);
                         string root = _host.WebRootPath;
                         string folder = "Images/Institute/";
-                        string fileName = "NLA_Banner" + fileExt;
+                        string fileName = "instituteBanner_" + Guid.NewGuid() + fileExt;
                         string pathCombine = Path.Combine(root, folder, fileName);
                         using (var stream = new FileStream(pathCombine, FileMode.Create))
                         {
@@ -115,6 +139,8 @@ namespace SMS.App.Controllers
                         existingInstitute.Banner = InstituteBanner;
                     }
 
+                    existingInstitute.EditedAt = DateTime.Now;
+                    existingInstitute.EditedBy = HttpContext.Session.GetString("UserId");
                     await _instituteManager.UpdateAsync(existingInstitute);
 
                     return View();

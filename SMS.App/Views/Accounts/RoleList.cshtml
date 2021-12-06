@@ -6,11 +6,10 @@
     int sl = 0;
 }
 <div>
-    <table class="table table-responsive">
+    <table class="table table-responsive-sm">
         <thead>
             <tr>
                 <th>#</th>
-                <th>Id</th>
                 <th>Role Name</th>
                 <th>
                     <a class="p-2 btn-sm btn-info rounded-pill" asp-action="CreateRole" asp-controller="Accounts"><i class="fa fa-plus"></i> Add</a>
@@ -25,7 +24,6 @@
                 {
                     <tr>
                         <td>@(++sl)</td>
-                        <td>@role.IdentityRole.Id</td>
                         <td>@role.IdentityRole.Name</td>
                         <td>
                             <a class="p-2 btn-sm btn-info rounded-pill" asp-action="EditRole" asp-controller="Accounts" asp-route-id="@role.IdentityRole.Id"> Edit</a>

@@ -56,10 +56,7 @@
             <div class="col-md-3 left_col menu_fixed">
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="border: 0;">
-
                         <a asp-action="Index" asp-controller="Home" class="site_title"><i class="fa fa-paw"></i> <span>Institute Name</span></a>
-
-
                     </div>
 
                     <div class="clearfix"></div>
@@ -146,7 +143,8 @@
                                     <a><i class="fa fa-cog"></i> Settings <span class="fa fa-chrome"></span></a>
                                     <ul class="nav child_menu">
                                         <li><a asp-action="Index" asp-controller="Institutes">Institute</a></li>
-                                        <li><a asp-action="roleList" asp-controller="Accounts">User Role</a></li>
+                                        <li><a asp-action="userList" asp-controller="Accounts">User List</a></li>
+                                        <li><a asp-action="roleList" asp-controller="Accounts">Role List</a></li>
                                         <li>
 
                                             <form asp-action="Logout" asp-controller="accounts" method="post">

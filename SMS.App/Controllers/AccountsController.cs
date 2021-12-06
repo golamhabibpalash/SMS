@@ -36,19 +36,17 @@ namespace SMS.App.Controllers
             _roleManager = roleManager;
         }
 
-        [HttpGet, AllowAnonymous]
+        [HttpGet]
         public IActionResult Register()
         {
             return View();
         }
 
-        [HttpPost, AllowAnonymous]
+        [HttpPost]
         public async Task<IActionResult> Register(RegisterVM model)
         {
             if (ModelState.IsValid)
             {
-
-
                 string userName = "";
                 if (model.UserType == 's')
                 {
@@ -169,7 +167,6 @@ namespace SMS.App.Controllers
         [AllowAnonymous][HttpPost]        
         public async Task<IActionResult> ForgotPassword(ForgotPasswordVM model) 
         {
-            
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByEmailAsync(model.Email);
@@ -222,12 +219,9 @@ namespace SMS.App.Controllers
                     }
                     
                     ViewBag.link = passwordResetLink;
-                    
-                    
                 }
                 return View();
             }
-            
             return View(model);
         }
 
@@ -261,9 +255,7 @@ namespace SMS.App.Controllers
                     ViewBag.msg = "OTP is not matched";
                     return View(model);
                 }
-
             }
-            
             return RedirectToAction("ForgotPassword");
         }
 
@@ -290,7 +282,6 @@ namespace SMS.App.Controllers
                     {
                         ModelState.AddModelError("", error.Description);
                     }
-                    
                 }
                 return RedirectToAction("ForgotPassword");                
             }

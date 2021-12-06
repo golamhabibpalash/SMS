@@ -33,6 +33,7 @@ namespace SMS.Entities
         [Range(100000000,999999999999999999)]
         public long NIDNo { get; set; }
 
+        [Display(Name ="NID Card")]
         public string NIDCard { get; set; }
 
         [Range(01300000000, 01999999999)] 
@@ -44,7 +45,7 @@ namespace SMS.Entities
         [Display(Name ="Nominee Name")]
         public string Nominee { get; set; }
 
-        [Range(01300000000, 01999999999)]
+        [Range(01300000000, 01999999999), Display("Nominee Phone")]
         public long NomineePhone { get; set; }
 
         [Display(Name = "Employee Type")]

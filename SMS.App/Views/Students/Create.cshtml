@@ -10,19 +10,19 @@
         <form asp-action="Create" asp-controller="Students" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="row">
-                <div class="col-md-10 offset-2">
+                <div class="col-md-10 offset-md-2">
                     <h6 class="alert alert-heading alert-info">Academic Information</h6>
                 </div>
             </div>
 
             <div class="form-group row">
-                <label asp-for="AcademicSessionId" class="control-label col-form-label text-right col-md-2"></label>
+                <label asp-for="AcademicSessionId" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
                     <select asp-for="AcademicSessionId" class="form-control input-sm" asp-items="Model.AcademicSessionList">
                         <option disabled selected>Select Academic Session</option>
                     </select>
                 </div>
-                <label asp-for="AcademicClassId" class="col-form-label text-right col-md-2"></label>
+                <label asp-for="AcademicClassId" class="col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
                     <select asp-for="AcademicClassId" class="form-control input-sm">
                         <option disabled selected>Select Session First</option>
@@ -31,7 +31,7 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="AcademicSectionId" class="control-label col-form-label text-right col-md-2"></label>
+                <label asp-for="AcademicSectionId" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
                     <select asp-for="AcademicSectionId" class="form-control input-sm" >
                         <option disabled selected>Select Class First</option>
@@ -40,24 +40,24 @@
                     <span asp-validation-for="AcademicSectionId" class="text-danger"></span>
                 </div>
 
-                <label asp-for="ClassRoll" class="control-label col-form-label text-right col-md-2"></label>
+                <label asp-for="ClassRoll" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
-                    <input type="text" placeholder="Auto Generated Code" readonly asp-for="ClassRoll" class="form-control input-sm" />
+                    <input placeholder="Auto Generated Code" readonly asp-for="ClassRoll" class="form-control input-sm" value="Auto Generated Code" />
                     <span asp-validation-for="ClassRoll" class="text-danger"></span>
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-10 offset-2">
+                <div class="col-md-10 offset-md-2">
                     <h6 class="alert alert-heading alert-info">Personal Information</h6>
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="Name" class="col-form-label text-right col-md-2"></label>
+                <label asp-for="Name" class="col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
                     <input asp-for="Name" class="form-control" />
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
-                <label asp-for="FatherName" class="control-label col-form-label text-right col-md-2"></label>
+                <label asp-for="FatherName" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
                     <input asp-for="FatherName" class="form-control" />
                     <span asp-validation-for="FatherName" class="text-danger"></span>
@@ -65,27 +65,27 @@
 
             </div>
             <div class="form-group row">
-                <label asp-for="PhoneNo" class="control-label col-form-label text-right col-md-2"></label>
+                <label asp-for="PhoneNo" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
                     <input asp-for="PhoneNo" class="form-control" />
                     <span asp-validation-for="PhoneNo" class="text-danger"></span>
                 </div>
                 
 
-                <label asp-for="MotherName" class="control-label col-form-label text-right col-md-2"></label>
+                <label asp-for="MotherName" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
                     <input asp-for="MotherName" class="form-control" />
                     <span asp-validation-for="MotherName" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="Email" class="control-label col-form-label text-right col-md-2"></label>
+                <label asp-for="Email" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
                     <input asp-for="Email" class="form-control" />
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
                 
-                <label asp-for="GuardianPhone" class="control-label col-form-label text-right col-md-2"></label>
+                <label asp-for="GuardianPhone" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
                     <input asp-for="GuardianPhone" class="form-control" />
                     <span asp-validation-for="GuardianPhone" class="text-danger"></span>
@@ -93,7 +93,7 @@
 
             </div>
             <div class="form-group row">
-                <label asp-for="Photo" class="control-label col-form-label text-right col-md-2"></label>
+                <label asp-for="Photo" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
                     <div class="row">
                         <div class="col-md-6">
@@ -105,7 +105,7 @@
                     </div>
                     <span asp-validation-for="Photo" class="text-danger"></span>
                 </div>
-                <label asp-for="AdmissionDate" class="control-label col-form-label text-right col-md-2"></label>
+                <label asp-for="AdmissionDate" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
                     <input asp-for="AdmissionDate" class="form-control" value="@DateTime.Now.Date" />
                     <span asp-validation-for="AdmissionDate" class="text-danger"></span>
@@ -113,37 +113,40 @@
             </div>
 
             <div class="form-group row">
-                <label asp-for="DOB" class="control-label col-form-label text-right col-md-2"></label>
+                <label asp-for="DOB" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
                     <input asp-for="DOB" class="form-control" min="1970-12-31" max="2016-01-01" />
                     <span asp-validation-for="DOB" class="text-danger"></span>
                 </div>
 
-                <label asp-for="ReligionId" class="control-label col-form-label text-right col-md-2"></label>
+                <label asp-for="ReligionId" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
                     <select asp-for="ReligionId" class="form-control" asp-items="Model.ReligionList">
                         <option selected disabled>Select Religion</option>
                     </select>
+                    <span asp-validation-for="ReligionId" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="GenderId" class="control-label col-form-label text-right col-md-2"></label>
+                <label asp-for="GenderId" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
                     <select asp-for="GenderId" class="form-control" asp-items="Model.GenderList">
                         <option selected disabled>Select Gender</option>
                     </select>
+                    <span asp-validation-for="GenderId" class="text-danger"></span>
                 </div>
 
-                <label asp-for="NationalityId" class="control-label col-form-label text-right col-md-2"></label>
+                <label asp-for="NationalityId" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
                     <select asp-for="NationalityId" class="form-control" asp-items="Model.NationalityList">
                         <option selected disabled>Select Nationality</option>
                     </select>
+                    <span asp-validation-for="NationalityId" class="text-danger"></span>
                 </div>
 
             </div>
             <div class="form-group row">
-                <label asp-for="BloodGroupId" class="control-label col-form-label text-right col-md-2"></label>
+                <label asp-for="BloodGroupId" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
                     <select asp-for="BloodGroupId" class="form-control" asp-items="Model.BloodGroupList">
                         <option selected disabled>Select Blood Group</option>
@@ -157,20 +160,20 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="PresentAddressArea" class="control-label col-form-label text-right col-md-2"></label>
+                <label asp-for="PresentAddressArea" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
                     <input asp-for="PresentAddressArea" class="form-control" />
                     <span asp-validation-for="PresentAddressArea" class="text-danger"></span>
                 </div>
 
-                <label asp-for="PresentAddressPO" class="control-label col-form-label text-right col-md-2"></label>
+                <label asp-for="PresentAddressPO" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
                     <input asp-for="PresentAddressPO" class="form-control" />
                     <span asp-validation-for="PresentAddressPO" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="PresentDivisionId" class="control-label col-form-label text-right col-md-2"></label>
+                <label asp-for="PresentDivisionId" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
                     <select asp-for="PresentDivisionId" class="form-control" asp-items="Model.DivisionList" style="width:100%;">
                         <option disabled selected>Select Division Name</option>
@@ -178,7 +181,7 @@
                     <span asp-validation-for="PresentDivisionId" class="text-danger"></span>
                 </div>
 
-                <label asp-for="PresentDistrictId" class="control-label col-form-label text-right col-md-2"></label>
+                <label asp-for="PresentDistrictId" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
                     <select asp-for="PresentDistrictId" class="form-control select2" style="width:100%;">
                         <option disabled selected>Select Division First</option>
@@ -187,7 +190,7 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="PresentUpazilaId" class="control-label col-form-label text-right col-md-2"></label>
+                <label asp-for="PresentUpazilaId" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
                     <select asp-for="PresentUpazilaId" class="form-control select2" style="width:100%;">
                         <option disabled selected>Select District First</option>
@@ -197,25 +200,25 @@
             </div>
 
             <div class="row">
-                <div class="col-md-10 offset-2">
+                <div class="col-md-10 offset-md-2">
                     <h6 class="alert alert-heading alert-info">Permanent Address Information <span>(<input type="checkbox" id="sameAddress" /> <label for="sameAddress">Same as Present Address</label> )</span></h6>
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="PermanentAddressArea" class="control-label col-form-label text-right col-md-2"></label>
+                <label asp-for="PermanentAddressArea" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
                     <input asp-for="PermanentAddressArea" class="form-control" />
                     <span asp-validation-for="PermanentAddressArea" class="text-danger"></span>
                 </div>
 
-                <label asp-for="PermanentAddressPO" class="control-label col-form-label text-right col-md-2"></label>
+                <label asp-for="PermanentAddressPO" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
                     <input asp-for="PermanentAddressPO" class="form-control" />
                     <span asp-validation-for="PermanentAddressPO" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="PermanentDivisionId" class="control-label col-form-label text-right col-md-2"></label>
+                <label asp-for="PermanentDivisionId" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
                     <select asp-for="PermanentDivisionId" class="form-control select2" asp-items="Model.DivisionList" style="width:100%;">
                         <option disabled selected>Select Division Name</option>
@@ -223,7 +226,7 @@
                     <span asp-validation-for="PermanentDivisionId" class="text-danger"></span>
                 </div>
 
-                <label asp-for="PermanentDistrictId" class="control-label col-form-label text-right col-md-2"></label>
+                <label asp-for="PermanentDistrictId" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
                     <select asp-for="PermanentDistrictId" class="form-control select2" style="width:100%;">
                         <option disabled selected>Select Division First</option>
@@ -232,7 +235,7 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="PermanentUpazilaId" class="control-label col-form-label text-right col-md-2"></label>
+                <label asp-for="PermanentUpazilaId" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
                     <select asp-for="PermanentUpazilaId" class="form-control select2" style="width:100%;">
                         <option disabled selected>Select District First</option>
@@ -241,21 +244,22 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="PreviousSchool" class="control-label col-form-label text-right col-md-2"></label>
+                <label asp-for="PreviousSchool" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-10">
                     <input asp-for="PreviousSchool" class="form-control" />
                     <span asp-validation-for="PreviousSchool" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
-                <label class="col-form-label col-md-4 offset-2">
+                <label class="col-form-label col-md-4 offset-md-2">
                     <input class="" asp-for="Status" /> @Html.DisplayNameFor(model => model.Status)
                 </label>
             </div>
             <div class="form-group row ">
                 <div class="col-md-8 offset-md-2">
-                    <input type="submit" value="Create" class="btn btn-primary" />
-                    <a class="btn btn-success" asp-action="Index" title="Go To List" data-toggle="tooltip" data-placement="top"><i class="fa fa-list"></i></a>
+                    <partial name="_Create_Back" />
+                    @*<input type="submit" value="Create" class="btn btn-primary" />
+                    <a class="btn btn-success" asp-action="Index" title="Go To List" data-toggle="tooltip" data-placement="top"><i class="fa fa-list"></i></a>*@
                 </div>
             </div>
         </form>

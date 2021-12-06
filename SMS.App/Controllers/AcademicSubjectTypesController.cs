@@ -64,7 +64,7 @@ namespace SMS.App.Controllers
             if (ModelState.IsValid)
             {
                 academicSubjectType.CreatedAt = DateTime.Now;
-                academicSubjectType.CreatedBy = HttpContext.Session.GetString("User");
+                academicSubjectType.CreatedBy = HttpContext.Session.GetString("UserId");
 
                 await _academicSubjectTypeManager.AddAsync(academicSubjectType);
                 return RedirectToAction(nameof(Index));
@@ -106,7 +106,7 @@ namespace SMS.App.Controllers
                 try
                 {
                     academicSubjectType.EditedAt = DateTime.Now;
-                    academicSubjectType.EditedBy = HttpContext.Session.GetString("User");
+                    academicSubjectType.EditedBy = HttpContext.Session.GetString("UserId");
 
                     await _academicSubjectTypeManager.UpdateAsync(academicSubjectType);
                 }

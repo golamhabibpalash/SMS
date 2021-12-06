@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -67,6 +68,8 @@ namespace SMS.App.Controllers
         {
             if (ModelState.IsValid)
             {
+                academicSubject.CreatedAt = DateTime.Now;
+                academicSubject.CreatedBy = HttpContext.Session.GetString("UserId");
                 var isSaved = await _academicSubjectManager.AddAsync(academicSubject);
                 if (isSaved)
                 {
@@ -116,6 +119,10 @@ namespace SMS.App.Controllers
             {
                 try
                 {
+
+                    academicSubject.EditedAt = DateTime.Now;
+                    academicSubject.EditedBy = HttpContext.Session.GetString("UserId");
+
                     TempData["updated"] = "Updated Successfully";
                     await _academicSubjectManager.UpdateAsync(academicSubject);
                 }

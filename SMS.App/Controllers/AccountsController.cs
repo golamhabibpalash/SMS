@@ -5,10 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
+using SMS.App.Utilities.ShortMessageService;
 using SMS.App.ViewModels.AdministrationVM;
 using SMS.BLL.Contracts;
 using SMS.DB;
 using SMS.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -174,35 +176,85 @@ namespace SMS.App.Controllers
                     name = emp.EmployeeName;
                     model.Name = name;
                 }
+                else if (user.UserType == 's')
+                {
+                    var student = await _studentManager.GetByIdAsync(user.ReferenceId);
+                    name = student.Name;
+                    model.Name = name;
+                }
                 if (user != null && await _userManager.IsEmailConfirmedAsync(user))
                 {
                     var token = await _userManager.GeneratePasswordResetTokenAsync(user);
                     var passwordResetLink = Url.Action("ResetPassword", "Accounts", new { email = model.Email, token = token }, Request.Scheme);
-                    //Logger code
-                    var message = new MimeMessage();
-                    message.From.Add(new MailboxAddress("Noble Residential School", "golamhabibpalash@hotmail.com"));
-                    message.To.Add(new MailboxAddress(model.Name, model.Email));
-                    message.Subject = "Reset Password";
-                    message.Body = new TextPart("plain")
+
+                    if (model.verificationBy=="SMS")
                     {
-                        Text = $"Hey {model.Name}, To reset your password go to <a href={passwordResetLink}> here </a>"
-                    };
+                        Random rnd = new Random();
+                        int randomNumber = rnd.Next(100000, 999999);
+                        ViewBag.randomNumber = randomNumber;
+                        bool smsSend = await MobileSMS.SendSMS(user.PhoneNumber, randomNumber.ToString());
+                        if (smsSend == false)
+                        {
+                            ViewBag.msg = "SMS not sent due to technical problem";
+                            return View(model);
+                        }
+                        TempData["OTP"] = randomNumber;
+                        TempData["passwordResetLink"] = passwordResetLink;
+                        return RedirectToAction("OTPGenerate");
+                    }
+                    else if(model.verificationBy == "Email")
+                    {
+
+                    }
+                    
+                    ViewBag.link = passwordResetLink;
+                    
+                    
                 }
-                return View("ForgotPasswordConfirmation");
+                return View();
             }
             return View(model);
         }
 
+        [HttpGet, AllowAnonymous]
         public IActionResult OTPGenerate()
         {
+            OTPVM oTPVM = new OTPVM();
 
-            return View();
+            if (TempData["OTP"]!=null)
+            {
+                oTPVM.OTP = Convert.ToInt32(TempData["OTP"].ToString());
+            }
+            if (TempData["passwordResetLink"] != null)
+            {
+                oTPVM.Link = TempData["passwordResetLink"].ToString();
+            }
+
+            return View(oTPVM);
         }
 
-        [HttpGet, AllowAnonymous]
-        public IActionResult OTPGenerate(OTPVM model)
+        [HttpPost, AllowAnonymous]
+        public async Task<IActionResult> OTPGenerate(OTPVM model)
         {
-            return View();
+            if (ModelState.IsValid)
+            {
+                if (model.OTP == Convert.ToInt32(TempData["OTP"].ToString()))
+                {
+                    return RedirectToAction("resetpassword");
+                }
+                var user =await _userManager.FindByEmailAsync(model.Email);
+                if (user != null)
+                {
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                    var passwordResetLink = Url.Action("ResetPassword", "Accounts", new { email = model.Email, token = token }, Request.Scheme);
+                    ViewBag.link = passwordResetLink;
+                    Random rnd = new Random();
+                    int randomNumber = rnd.Next(100000, 999999);
+                    ViewBag.randomNumber = randomNumber;
+                }
+            }
+            
+            return RedirectToAction("ForgotPassword");
         }
 
         [HttpGet, AllowAnonymous]
@@ -215,7 +267,7 @@ namespace SMS.App.Controllers
             return View();
         }
 
-        [HttpPost]
+        [HttpPost, AllowAnonymous]
         public async Task<IActionResult> ResetPassword(ResetPasswordVM model)
         {
             if (ModelState.IsValid)
@@ -232,9 +284,9 @@ namespace SMS.App.Controllers
                     {
                         ModelState.AddModelError("", error.Description);
                     }
-                    return View(model);
+                    return RedirectToAction("ForgotPassword");
                 }
-                return View("ResetPasswordConfirmation");
+                return View();
             }
             return View(model);
         }

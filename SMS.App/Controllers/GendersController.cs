@@ -59,7 +59,7 @@ namespace SMS.App.Controllers
             if (ModelState.IsValid)
             {
                 gender.CreatedAt = DateTime.Now;
-                gender.CreatedBy = HttpContext.Session.GetString("User");
+                gender.CreatedBy = HttpContext.Session.GetString("UserId");
 
                 await _genderManager.AddAsync(gender);
                 return RedirectToAction(nameof(Index));
@@ -84,9 +84,6 @@ namespace SMS.App.Controllers
             return View(gender);
         }
 
-        // POST: Genders/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] Gender gender)
@@ -100,6 +97,9 @@ namespace SMS.App.Controllers
             {
                 try
                 {
+                    gender.EditedAt = DateTime.Now;
+                    gender.EditedBy = HttpContext.Session.GetString("UserId");
+
                     await _genderManager.UpdateAsync(gender);
                 }
                 catch (DbUpdateConcurrencyException)

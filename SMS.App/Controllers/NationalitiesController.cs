@@ -62,7 +62,7 @@ namespace SMS.App.Controllers
                 if (ModelState.IsValid)
                 {
                     nationality.CreatedAt = DateTime.Now;
-                    nationality.CreatedBy = HttpContext.Session.GetString("User");
+                    nationality.CreatedBy = HttpContext.Session.GetString("UserId");
 
 
                     await _nationalityManager.AddAsync(nationality);
@@ -103,7 +103,7 @@ namespace SMS.App.Controllers
                 {
 
                     nationality.EditedAt = DateTime.Now;
-                    nationality.EditedBy = HttpContext.Session.GetString("User");
+                    nationality.EditedBy = HttpContext.Session.GetString("UserId");
 
                     
                     await _nationalityManager.UpdateAsync(nationality);

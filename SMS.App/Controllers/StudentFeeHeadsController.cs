@@ -70,7 +70,7 @@ namespace SMS.App.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    studentFeeHead.CreatedBy = HttpContext.Session.GetString("User");
+                    studentFeeHead.CreatedBy = HttpContext.Session.GetString("UserId");
                     studentFeeHead.CreatedAt = DateTime.Now;
 
                     await _studentFeeHeadManager.AddAsync(studentFeeHead);
@@ -123,7 +123,7 @@ namespace SMS.App.Controllers
                     try
                     {
                         studentFeeHead.EditedAt = DateTime.Now;
-                        studentFeeHead.EditedBy = HttpContext.Session.GetString("User");
+                        studentFeeHead.EditedBy = HttpContext.Session.GetString("UserId");
 
 
                         await _studentFeeHeadManager.UpdateAsync(studentFeeHead);

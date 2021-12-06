@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -56,15 +57,16 @@ namespace SMS.App.Controllers
             return View();
         }
 
-        // POST: AttachDocs/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+      
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,DocumentsName,Image,StudentId,EmployeeId")] AttachDoc attachDoc)
         {
             if (ModelState.IsValid)
             {
+                attachDoc.CreatedAt = DateTime.Now;
+                attachDoc.CreatedBy = HttpContext.Session.GetString("UserId");
+
                 _context.Add(attachDoc);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -92,9 +94,6 @@ namespace SMS.App.Controllers
             return View(attachDoc);
         }
 
-        // POST: AttachDocs/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,DocumentsName,Image,StudentId,EmployeeId")] AttachDoc attachDoc)
@@ -108,6 +107,9 @@ namespace SMS.App.Controllers
             {
                 try
                 {
+                    attachDoc.CreatedAt = DateTime.Now;
+                    attachDoc.CreatedBy = HttpContext.Session.GetString("UserId");
+
                     _context.Update(attachDoc);
                     await _context.SaveChangesAsync();
                 }

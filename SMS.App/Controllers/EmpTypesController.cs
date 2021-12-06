@@ -61,7 +61,7 @@ namespace SMS.App.Controllers
             if (ModelState.IsValid)
             {
                 empType.CreatedAt = DateTime.Now;
-                empType.CreatedBy = HttpContext.Session.GetString("User");
+                empType.CreatedBy = HttpContext.Session.GetString("UserId");
 
                 await _empTypeManager.AddAsync(empType);
                 return RedirectToAction(nameof(Index));
@@ -100,7 +100,7 @@ namespace SMS.App.Controllers
                 {
 
                     empType.EditedAt = DateTime.Now;
-                    empType.EditedBy = HttpContext.Session.GetString("User");
+                    empType.EditedBy = HttpContext.Session.GetString("UserId");
                     await _empTypeManager.UpdateAsync(empType);
                 }
                 catch (DbUpdateConcurrencyException)

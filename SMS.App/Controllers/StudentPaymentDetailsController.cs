@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -56,15 +57,15 @@ namespace SMS.App.Controllers
             return View();
         }
 
-        // POST: StudentPaymentDetails/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,StudentPaymentId,StudentFeeHeadId,CreatedBy,CreatedAt,EditedBy,EditedAt")] StudentPaymentDetails studentPaymentDetails)
         {
             if (ModelState.IsValid)
             {
+                studentPaymentDetails.CreatedAt = DateTime.Now;
+                studentPaymentDetails.CreatedBy = HttpContext.Session.GetString("UserId");
+
                 _context.Add(studentPaymentDetails);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -92,9 +93,6 @@ namespace SMS.App.Controllers
             return View(studentPaymentDetails);
         }
 
-        // POST: StudentPaymentDetails/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,StudentPaymentId,StudentFeeHeadId,CreatedBy,CreatedAt,EditedBy,EditedAt")] StudentPaymentDetails studentPaymentDetails)
@@ -108,6 +106,9 @@ namespace SMS.App.Controllers
             {
                 try
                 {
+                    studentPaymentDetails.EditedAt = DateTime.Now;
+                    studentPaymentDetails.EditedBy = HttpContext.Session.GetString("UserId");
+
                     _context.Update(studentPaymentDetails);
                     await _context.SaveChangesAsync();
                 }

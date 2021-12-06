@@ -4,17 +4,7 @@
     ViewBag.Title = "User Login";
     Layout = "~/Views/Shared/_LoginLayout.cshtml";
     string placeholderText = "";
-    if (ViewBag.userType != null)
-    {
-        if (ViewBag.userType == 's')
-        {
-            placeholderText = "Input your roll here";
-        }
-        else if (ViewBag.userType == 'e')
-        {
-            placeholderText = "Input your email here";
-        }
-    }
+    
 }
 
 <div class="row d-flex justify-content-center align-middle m-5">
@@ -57,10 +47,6 @@
                         <div class="col-md-6">
                             <span class="text-danger"><a asp-action="forgotPassword" asp-controller="Accounts">Forgot password?</a></span>
                         </div>
-                        @*<div class="col-md-6 text-right">
-                            <span class="text-right"><a asp-action="register" asp-controller="Accounts">Register</a> for a new user</span>
-
-                        </div>*@
 
                     </div>
                 </div>
@@ -68,7 +54,3 @@
         </div>
     </div>
 </div>
-@*<div class="jumbotron">
-    <a asp-action="Register" asp-controller="Accounts" asp-route-userType="s">Student Portal</a>
-    <a asp-action="Register" asp-controller="Accounts" asp-route-userType="e">Employee Portal</a>
-</div>*@

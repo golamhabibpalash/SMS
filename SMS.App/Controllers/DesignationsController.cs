@@ -67,7 +67,7 @@ namespace SMS.App.Controllers
             if (ModelState.IsValid)
             {
                 designation.CreatedAt = DateTime.Now;
-                designation.CreatedBy = HttpContext.Session.GetString("User");
+                designation.CreatedBy = HttpContext.Session.GetString("UserId");
 
                 await _designatinManager.AddAsync(designation);
                 return RedirectToAction(nameof(Index));
@@ -97,9 +97,6 @@ namespace SMS.App.Controllers
             return View(designation);
         }
 
-        // POST: Designations/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,DesignationName,DesignationTypeId,EmpTypeId,CreatedBy,CreatedAt,EditedBy,EditedAt")] Designation designation)
@@ -116,7 +113,7 @@ namespace SMS.App.Controllers
                 {
 
                     designation.EditedAt = DateTime.Now;
-                    designation.EditedBy = HttpContext.Session.GetString("User");
+                    designation.EditedBy = HttpContext.Session.GetString("UserId");
 
                     await _designatinManager.UpdateAsync(designation);
                 }

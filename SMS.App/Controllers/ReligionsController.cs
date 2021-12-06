@@ -50,9 +50,6 @@ namespace SMS.App.Controllers
             return View();
         }
 
-        // POST: Religions/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] Religion religion)
@@ -60,7 +57,7 @@ namespace SMS.App.Controllers
             if (ModelState.IsValid)
             {
                 religion.CreatedAt = DateTime.Now;
-                religion.CreatedBy = HttpContext.Session.GetString("User");
+                religion.CreatedBy = HttpContext.Session.GetString("UserId");
 
                 await _religionManager.AddAsync(religion);
                 return RedirectToAction(nameof(Index));
@@ -100,7 +97,7 @@ namespace SMS.App.Controllers
                 try
                 {
                     religion.EditedAt = DateTime.Now;
-                    religion.EditedBy = HttpContext.Session.GetString("User");
+                    religion.EditedBy = HttpContext.Session.GetString("UserId");
 
                     await _religionManager.UpdateAsync(religion);
                 }

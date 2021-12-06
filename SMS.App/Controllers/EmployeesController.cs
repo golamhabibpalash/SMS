@@ -177,7 +177,7 @@ namespace SMS.App.Controllers
                     await nidCard.CopyToAsync(stream);
                 }
 
-                employee.CreatedBy = HttpContext.Session.GetString("User");
+                employee.CreatedBy = HttpContext.Session.GetString("UserId");
                 employee.CreatedAt = DateTime.Now;
                 employee.Image = empPhoto;
                 employee.NIDCard = nidPhoto;

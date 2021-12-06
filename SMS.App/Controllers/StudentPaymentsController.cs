@@ -124,7 +124,7 @@ namespace SMS.App.Controllers
             if (ModelState.IsValid)
             {
                 studentyPaymentVM.StudentPayment.CreatedAt = DateTime.Now;
-                studentyPaymentVM.StudentPayment.CreatedBy = HttpContext.Session.GetString("User");
+                studentyPaymentVM.StudentPayment.CreatedBy = HttpContext.Session.GetString("UserId");
 
                 StudentPayment sPayment = new();
                 sPayment = studentyPaymentVM.StudentPayment;
@@ -178,6 +178,9 @@ namespace SMS.App.Controllers
             {
                 try
                 {
+                    studentPayment.EditedAt = DateTime.Now;
+                    studentPayment.EditedBy = HttpContext.Session.GetString("UserId");
+
                     await _studentPaymentManager.UpdateAsync(studentPayment);
                 }
                 catch (DbUpdateConcurrencyException)

@@ -71,7 +71,7 @@ namespace SMS.App.Controllers
             var academicClass =await _academicClassManager.GetByIdAsync(academicSection.AcademicClassId);
             if (ModelState.IsValid)
             {
-                academicSection.CreatedBy = HttpContext.Session.GetString("User");
+                academicSection.CreatedBy = HttpContext.Session.GetString("UserId");
                 academicSection.CreatedAt = DateTime.Now;
                 bool save = await _academicSectionManager.AddAsync(academicSection);
                 if (save == true)
@@ -116,7 +116,7 @@ namespace SMS.App.Controllers
             {
                 try
                 {
-                    academicSection.EditedBy = HttpContext.Session.GetString("User");
+                    academicSection.EditedBy = HttpContext.Session.GetString("UserId");
                     academicSection.EditedAt = DateTime.Now;
 
                     bool updated = await _academicSectionManager.UpdateAsync(academicSection);

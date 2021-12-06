@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace SMS.Entities
 {
-    public class AttachDoc
+    public class AttachDoc:CommonProps
     {
-        public int Id { get; set; }
         public string DocumentsName { get; set; }
         public string Image { get; set; }
         public int? StudentId { get; set; }

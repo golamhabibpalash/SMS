@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -59,6 +60,9 @@ namespace SMS.App.Controllers
         {
             if (ModelState.IsValid)
             {
+                division.CreatedAt = DateTime.Now;
+                division.CreatedBy = HttpContext.Session.GetString("UserId");
+
                 await _divisionManager.AddAsync(division);
                 return RedirectToAction(nameof(Index));
             }
@@ -81,9 +85,6 @@ namespace SMS.App.Controllers
             return View(division);
         }
 
-        // POST: Divisions/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] Division division)
@@ -97,6 +98,8 @@ namespace SMS.App.Controllers
             {
                 try
                 {
+                    division.EditedAt = DateTime.Now;
+                    division.EditedBy = HttpContext.Session.GetString("UserId");
 
                     await _divisionManager.UpdateAsync(division);
                 }

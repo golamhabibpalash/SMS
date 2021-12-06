@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using SMS.BLL.Contracts;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using System;
 
 namespace SMS.App.Controllers
 {
@@ -63,6 +65,10 @@ namespace SMS.App.Controllers
         {
             if (ModelState.IsValid)
             {
+
+                Upazila.CreatedAt = DateTime.Now;
+                Upazila.CreatedBy = HttpContext.Session.GetString("UserId");
+
                 await _upazilaManager.AddAsync(Upazila);
                 return RedirectToAction(nameof(Index));
             }
@@ -87,9 +93,6 @@ namespace SMS.App.Controllers
             return View(Upazila);
         }
 
-        // POST: Upazilas/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,DistrictId,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] Upazila Upazila)
@@ -103,6 +106,9 @@ namespace SMS.App.Controllers
             {
                 try
                 {
+                    Upazila.EditedAt = DateTime.Now;
+                    Upazila.EditedBy = HttpContext.Session.GetString("UserId");
+
                     await _upazilaManager.UpdateAsync(Upazila);
                 }
                 catch (DbUpdateConcurrencyException)

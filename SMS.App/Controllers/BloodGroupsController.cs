@@ -55,9 +55,6 @@ namespace SMS.App.Controllers
             return View();
         }
 
-        // POST: BloodGroups/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] BloodGroup bloodGroup)
@@ -74,7 +71,7 @@ namespace SMS.App.Controllers
                 if (ModelState.IsValid)
                 {
                     bloodGroup.CreatedAt = DateTime.Now;
-                    bloodGroup.CreatedBy = HttpContext.Session.GetString("User");
+                    bloodGroup.CreatedBy = HttpContext.Session.GetString("UserId");
 
                     _context.Add(bloodGroup);
                     await _context.SaveChangesAsync();
@@ -100,9 +97,6 @@ namespace SMS.App.Controllers
             return View(bloodGroup);
         }
 
-        // POST: BloodGroups/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] BloodGroup bloodGroup)
@@ -118,7 +112,7 @@ namespace SMS.App.Controllers
                 {
 
                     bloodGroup.EditedAt = DateTime.Now;
-                    bloodGroup.EditedBy = HttpContext.Session.GetString("User");
+                    bloodGroup.EditedBy = HttpContext.Session.GetString("UserId");
 
                     _context.Update(bloodGroup);
                     await _context.SaveChangesAsync();

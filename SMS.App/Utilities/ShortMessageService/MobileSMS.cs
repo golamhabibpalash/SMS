@@ -16,7 +16,7 @@ namespace SMS.App.Utilities.ShortMessageService
             {
                 var values = new Dictionary<string, string>
                 {
-                    {"token", "6a856059febeaab128231564cdace6ff" },
+                    {"token", "449291fd377e6c0d5c72f424c454145a" },
                     {"to", phoneNumber },
                     {"message", message }
                 };

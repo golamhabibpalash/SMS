@@ -58,7 +58,7 @@ namespace SMS.App.Controllers
             if (ModelState.IsValid)
             {
                 designationType.CreatedAt = DateTime.Now;
-                designationType.CreatedBy = HttpContext.Session.GetString("User");
+                designationType.CreatedBy = HttpContext.Session.GetString("UserId");
 
                 await _designationTypeManager.AddAsync(designationType);
                 return RedirectToAction(nameof(Index));
@@ -96,7 +96,7 @@ namespace SMS.App.Controllers
                 try
                 {
                     designationType.EditedAt = DateTime.Now;
-                    designationType.EditedBy = HttpContext.Session.GetString("User");
+                    designationType.EditedBy = HttpContext.Session.GetString("UserId");
 
                     await _designationTypeManager.UpdateAsync(designationType);
                 }

@@ -147,6 +147,15 @@
                                     <ul class="nav child_menu">
                                         <li><a asp-action="Index" asp-controller="Institutes">Institute</a></li>
                                         <li><a asp-action="roleList" asp-controller="Accounts">User Role</a></li>
+                                        <li>
+
+                                            <form asp-action="Logout" asp-controller="accounts" method="post">
+                                                <button class="btn btn-sm btn-warning" data-toggle="tooltip" data-placement="top" title="Logout" type="submit">
+                                                    Logout <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+                                                </button>
+                                            </form>
+                                        </li>
+
                                     </ul>
                                 </li>
                                 
@@ -205,6 +214,7 @@
                         @if (_signInManager.IsSignedIn(User))
                         {
                             <span class="pt-2">@userName</span>
+
                         }
                     </div>
                     <nav class="nav navbar-nav">

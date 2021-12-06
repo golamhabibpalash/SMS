@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
 {
-    [Authorize(Roles = "SuperAdmin, Admin")]
+    [Authorize(Roles = "SuperAdmin, Admin, Teacher")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

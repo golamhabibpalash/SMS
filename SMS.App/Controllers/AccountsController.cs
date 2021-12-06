@@ -63,12 +63,15 @@ namespace SMS.App.Controllers
                 {
                     UserName = userName,
                     Email = model.Email,
+                    EmailConfirmed = true,
                     PhoneNumber = model.Phone,
                     ReferenceId = model.ReferenceId,
                     UserType = model.UserType
                 };
                 var result = await _userManager.CreateAsync(user, model.Password);
-                
+                string roleName = model.UserType == 's' ? "Student" : model.UserType == 'e' ? "Teacher" : "Other";
+                result = await _userManager.AddToRoleAsync(user, roleName);
+
                 if (result.Succeeded)
                 {
                     return RedirectToAction("login", "Accounts");
@@ -139,7 +142,7 @@ namespace SMS.App.Controllers
             return View();
         }
 
-        [HttpPost][Authorize]
+        [HttpPost][AllowAnonymous]
         public async Task<IActionResult> LogOut()
         {
             await _signInManager.SignOutAsync();

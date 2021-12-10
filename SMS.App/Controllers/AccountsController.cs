@@ -85,6 +85,34 @@ namespace SMS.App.Controllers
             return View(allUser);
         }
 
+        public async Task<IActionResult> EditUser(string id)
+        {
+            ApplicationUser user = await _userManager.FindByIdAsync(id);
+            return View(user);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditUser(string id, EditUserVM model)
+        {
+            ApplicationUser user = await _userManager.FindByIdAsync(id);
+            
+                user.UserName = model.Email;
+                user.NormalizedEmail = model.Email.ToUpper();
+                user.Email = model.Email;
+                user.EmailConfirmed = model.EmailConfirmed;
+                user.EmailConfirmed = model.EmailConfirmed;
+                user.PhoneNumber = model.PhoneNumber;
+                user.PhoneNumberConfirmed = model.PhoneNumberConfirmed;
+                user.ReferenceId = model.ReferenceId;
+                user.UserType = model.UserType;
+            
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                return RedirectToAction("Userlist");
+            }
+            return View(user);
+        }
         [HttpGet, AllowAnonymous]
         public IActionResult UserLogin()
         {

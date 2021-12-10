@@ -36,6 +36,7 @@ namespace SMS.DB
         public DbSet<StudentPayment> StudentPayment { get; set; }
         public DbSet<StudentPaymentDetails> StudentPaymentDetails { get; set; }
         public DbSet<Upazila> Upazila { get; set; }
+        public DbSet<PhoneSMS> PhoneSMS { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

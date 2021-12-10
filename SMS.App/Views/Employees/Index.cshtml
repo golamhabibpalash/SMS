@@ -4,6 +4,7 @@
     ViewData["Title"] = "Employees";
     GlobalUI.PageTitle = ViewBag.Title;
     int sl = 0;
+    string image = "";
 }
 
 
@@ -42,7 +43,26 @@
         <tr>
             <td>@(++sl).</td>
             <td>
-                <img src="~/Images/Employee/photo/@item.Image" alt="Alternate Text" style="width:60px;" />
+                @if (item.Image == "")
+                {
+                    if (item.Gender.Name.ToLower() == "male")
+                    {
+                        image = "maleEmployee.png";
+                    }
+                    else if (item.Gender.Name.ToLower() == "female")
+                    {
+                        image = "femaleEmployee.png";
+                    }
+                    else
+                    {
+                        image = "otherEmployee.jpg";
+                    }
+                }
+                else
+                {
+                    image = item.Image;
+                }
+                <img src="~/Images/Employee/photo/@image" alt="Alternate Text" style="width:60px;" />
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.EmployeeName)

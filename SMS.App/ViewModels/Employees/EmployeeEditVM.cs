@@ -37,7 +37,7 @@ namespace SMS.App.ViewModels.Employees
         public string NIDCard { get; set; }
 
         [Range(01300000000, 01999999999)]
-        public long Phone { get; set; }
+        public string Phone { get; set; }
 
         [EmailAddress]
         public string Email { get; set; }
@@ -46,7 +46,7 @@ namespace SMS.App.ViewModels.Employees
         public string Nominee { get; set; }
 
         [Range(01300000000, 01999999999)]
-        public long NomineePhone { get; set; }
+        public string NomineePhone { get; set; }
 
         [Display(Name = "Employee Type")]
         public int EmpTypeId { get; set; }

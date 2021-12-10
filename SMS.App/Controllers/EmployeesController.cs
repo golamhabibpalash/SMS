@@ -58,7 +58,6 @@ namespace SMS.App.Controllers
         [Authorize(Roles = "SuperAdmin, Admin,Teacher")] 
         public async Task<IActionResult> Index()
         {
-            
             var empList = await _employeeManager.GetAllAsync();
             return View(empList);
         }
@@ -70,15 +69,15 @@ namespace SMS.App.Controllers
             {
                 return NotFound();
             }
-            int myid = Convert.ToInt32(id);
-            Employee employee = await _employeeManager.GetByIdAsync(myid);
-            var employeeDetailsVM = _mapper.Map<EmployeeDetailsVM>(employee);
 
-            if (employeeDetailsVM == null)
+            Employee employee = await _employeeManager.GetByIdAsync((int)id);
+            if (employee == null)
             {
                 return NotFound();
             }
+            var employeeDetailsVM = _mapper.Map<EmployeeDetailsVM>(employee);
 
+            employeeDetailsVM.Designation = await _designationManager.GetByIdAsync((int)employee.DesignationId);
             return View(employeeDetailsVM);
         }
 

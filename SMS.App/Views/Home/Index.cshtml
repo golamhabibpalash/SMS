@@ -35,20 +35,21 @@
     }
 </div>
 <div class="row">
-    <div class="col-md-3" ">
+    <div class="col-md-3">
         <div class="card text-white bg-primary mb-3 text-center" style="min-height:200px;">
             <div class="card-header">Total Student</div>
             <div class="card-body">
-                <h2>Total <span class="h1 text-warning">@totalStudent</span> Students</h2>
+                <a class="text-light" asp-action="Index" asp-controller="Students">
+                    <h2>Total <span class="h1 text-warning">@totalStudent</span> Students</h2>
+                </a>
             </div>
         </div>
     </div>
-
     <div class="col-md-3">
         <div class="card text-white bg-info mb-3 text-center"  style="min-height:200px;">
             <div class="card-header ">Total Teacher</div>
             <div class="card-body">
-                <h2>Total <span class="h1 text-warning">@totalTeacher</span> Teachers</h2>
+                <a class="text-light" asp-action="Index" asp-controller="Employees"><h2>Total <span class="h1 text-warning"> @totalTeacher</span> Teachers</h2></a>
             </div>
         </div>
     </div>
@@ -57,7 +58,9 @@
         <div class="card text-white bg-success mb-3 text-center"  style="min-height:200px;">
             <div class="card-header text-center">Total Employee</div>
             <div class="card-body">
-                <h2>Total <span class="h1 text-warning">@totalEmployee</span> Employee</h2>
+                <a class="text-light" asp-action="Index" asp-controller="Employees">
+                    <h2>Total <span class="h1 text-warning">@totalEmployee</span> Employee</h2>
+                </a>
             </div>
         </div>
     </div>

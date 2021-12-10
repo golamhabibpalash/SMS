@@ -20,14 +20,11 @@ namespace SMS.App.ViewModels.Employees
 
         public string Image { get; set; }
 
-        [Display(Name = "Gender")]
-        public int GenderId { get; set; }
+        public Gender Gender { get; set; }
 
-        [Display(Name = "Religion")]
-        public int ReligionId { get; set; }
+        public Religion Religion { get; set; }
 
-        [Display(Name = "Nationality")]
-        public int NationalityId { get; set; }
+        public Nationality Nationality { get; set; }
 
         [Display(Name = "National ID")]
         [Range(100000000, 999999999999999999)]
@@ -36,7 +33,7 @@ namespace SMS.App.ViewModels.Employees
         public string NIDCard { get; set; }
 
         [Range(01300000000, 01999999999)]
-        public long Phone { get; set; }
+        public string Phone { get; set; }
 
         [EmailAddress]
         public string Email { get; set; }
@@ -45,13 +42,13 @@ namespace SMS.App.ViewModels.Employees
         public string Nominee { get; set; }
 
         [Range(01300000000, 01999999999)]
-        public long NomineePhone { get; set; }
+        public string NomineePhone { get; set; }
 
         [Display(Name = "Employee Type")]
         public int EmpTypeId { get; set; }
 
         [Display(Name = "Designation Name")]
-        public int DesignationId { get; set; }
+        public Designation Designation { get; set; }
 
         [DataType(DataType.Date)]
         [Display(Name = "Joining Date")]
@@ -60,45 +57,35 @@ namespace SMS.App.ViewModels.Employees
         [Display(Name = "Present Address")]
         public string PresentAddress { get; set; }
 
-        [Display(Name = "Upazila")]
-        public int PresentUpazilaId { get; set; }
+        [Display(Name = "Present Upazila")]
+        public Upazila PresentUpazila { get; set; }
 
-        [Display(Name = "District")]
-        public int PresentDistrictId { get; set; }
+        [Display(Name = "Present District")]
+        public District PresentDistrict { get; set; }
 
-        [Display(Name = "Division")]
-        public int PresentDivisionId { get; set; }
+        [Display(Name = "Present Division")]
+        public Division PresentDivision { get; set; }
 
         [Display(Name = "Permanent Address")]
         public string PermanentAddress { get; set; }
 
-        [Display(Name = "Upazila")]
-        public int PermanentUpazilaId { get; set; }
+        [Display(Name = "Permanent Upazila")]
+        public Upazila PermanentUpazila { get; set; }
 
-        [Display(Name = "District")]
-        public int PermanentDistrictId { get; set; }
+        [Display(Name = "Permanent District")]
+        public District PermanentDistrict { get; set; }
 
         [Display(Name = "Division")]
-        public int PermanentDivisionId { get; set; }
+        public Division PermanentDivision { get; set; }
 
         public ICollection<AttachDoc> Documents { get; set; }
 
-        [Display(Name = "Created By")]
-        public string CreatedBy { get; set; }
-
-        [Display(Name = "Created At")]
-        public DateTime CreatedAt { get; set; }
-
-        [Display(Name = "Updated By")]
-        public string EditedBy { get; set; }
-
-        [Display(Name = "Updated At")]
-        public DateTime EditedAt { get; set; }
 
         [Display(Name = "Active/Inactive")]
         public bool Status { get; set; }
 
         [Display(Name = "Blood Group")]
-        public int BloodGroupId { get; set; }
+        public BloodGroup BloodGroup { get; set; }
+
     }
 }

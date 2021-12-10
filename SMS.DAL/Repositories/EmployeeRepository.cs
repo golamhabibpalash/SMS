@@ -23,7 +23,32 @@ namespace Repositories
         {
             return await _context.Employee
                 .Include(e => e.Designation)
+                .Include(e => e.PresentUpazila)
+                .Include(e => e.PresentDistrict)
+                .Include(e => e.PresentDivision)
+                .Include(e => e.PermanentDistrict)
+                .Include(e => e.PermanentDivision)
+                .Include(e => e.BloodGroup)
+                .Include(e => e.Religion)
+                .Include(e => e.Nationality)
+                .Include(e => e.Gender)
                 .ToListAsync();
+        }
+
+        public override async Task<Employee> GetByIdAsync(int id)
+        {
+            return await _context.Employee
+                .Include(e => e.Designation)
+                .Include(e => e.PresentUpazila)
+                .Include(e => e.PresentDistrict)
+                .Include(e => e.PresentDivision)
+                .Include(e => e.PermanentDistrict)
+                .Include(e => e.PermanentDivision)
+                .Include(e => e.BloodGroup)
+                .Include(e => e.Religion)
+                .Include(e => e.Nationality)
+                .Include(e => e.Gender)
+                .FirstOrDefaultAsync(e => e.Id == id);
         }
 
     }

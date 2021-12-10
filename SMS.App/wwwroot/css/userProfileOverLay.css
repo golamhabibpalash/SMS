@@ -1,8 +1,4 @@
-﻿/*body {
-    font-family: 'Lato', sans-serif;
-}*/
-
-.overlay {
+﻿.overlay {
     /*height: 100%;*/
     width: 0;
     position: fixed;
@@ -51,20 +47,25 @@
 }
 
 @media screen and (max-width: 450px) {
+    .overlay {
+        width: 0;
+    }
+    
+    
     .overlay a {
         font-size: 8px;
     }
     .overlay-content {
         position: relative;
-        width: 100%;
+        width: 120%;
         text-align: left;
         margin-top: 30%;
     }
     .overlay-content a{
-        font-size: 8px;
+        font-size: 9px;
     }
     .overlay-content button{
-        font-size: 8px;
+        font-size: 9px;
     }
     .userProfileIcon{
         display:none;

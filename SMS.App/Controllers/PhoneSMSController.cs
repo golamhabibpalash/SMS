@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SMS.BLL.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +9,16 @@ namespace SMS.App.Controllers
 {
     public class PhoneSMSController : Controller
     {
-        public IActionResult Index()
+        private readonly IPhoneSMSManager _phoneSMSManager;
+
+        public PhoneSMSController(IPhoneSMSManager phoneSMSManager)
         {
-            return View();
+            _phoneSMSManager = phoneSMSManager;
+        }
+        public async Task<IActionResult> Index()
+        {
+            var allSMS = await _phoneSMSManager.GetAllAsync();
+            return View(allSMS);
         }
     }
 }

@@ -23,6 +23,7 @@ namespace SMS.App.Utilities.ShortMessageService
                 var content = new FormUrlEncodedContent(values);
                 var response = await client.PostAsync("http://api.greenweb.com.bd/api.php?", content);
                 var responseString = await response.Content.ReadAsStringAsync();
+                
                 return true;
             }
             catch (Exception)

@@ -25,15 +25,17 @@ namespace SMS.App.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IStudentManager _studentManager;
         private readonly IEmployeeManager _employeeManager;
+        private readonly IPhoneSMSManager _phoneSMSManager;
         //private readonly ApplicationDbContext _context;
 
-        public AccountsController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IStudentManager studentManager, IEmployeeManager employeeManager, RoleManager<IdentityRole> roleManager)
+        public AccountsController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IStudentManager studentManager, IEmployeeManager employeeManager, RoleManager<IdentityRole> roleManager, IPhoneSMSManager phoneSMSManager)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _studentManager = studentManager;
             _employeeManager = employeeManager;
             _roleManager = roleManager;
+            _phoneSMSManager = phoneSMSManager;
         }
 
         [HttpGet]
@@ -85,13 +87,27 @@ namespace SMS.App.Controllers
             return View(allUser);
         }
 
+        [Authorize(Roles ="SuperAdmin")]
         public async Task<IActionResult> EditUser(string id)
         {
             ApplicationUser user = await _userManager.FindByIdAsync(id);
-            return View(user);
+            EditUserVM editUserVM = new EditUserVM()
+            {
+                Id = user.Id,
+                ReferenceId = user.ReferenceId,
+                UserName = user.UserName,
+                NormalizedEmail = user.NormalizedEmail,
+                Email = user.Email,
+                EmailConfirmed = user.EmailConfirmed,
+                PhoneNumber = user.PhoneNumber,
+                PhoneNumberConfirmed = user.PhoneNumberConfirmed,
+                UserType = user.UserType
+            };
+            return View(editUserVM);
         }
 
         [HttpPost]
+        [Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> EditUser(string id, EditUserVM model)
         {
             ApplicationUser user = await _userManager.FindByIdAsync(id);
@@ -99,7 +115,6 @@ namespace SMS.App.Controllers
                 user.UserName = model.Email;
                 user.NormalizedEmail = model.Email.ToUpper();
                 user.Email = model.Email;
-                user.EmailConfirmed = model.EmailConfirmed;
                 user.EmailConfirmed = model.EmailConfirmed;
                 user.PhoneNumber = model.PhoneNumber;
                 user.PhoneNumberConfirmed = model.PhoneNumberConfirmed;
@@ -237,6 +252,12 @@ namespace SMS.App.Controllers
                         {
                             ViewBag.msg = "SMS not sent due to technical problem, Try again.";
                             return View(model);
+                        }
+                        else if (smsSend == true)
+                        {
+                            PhoneSMS phoneSMS = new() {Text = text, CreatedAt=DateTime.Now, CreatedBy=model.Email, MobileNumber=user.PhoneNumber };
+                            await _phoneSMSManager.AddAsync(phoneSMS);
+
                         }
                         
                         return RedirectToAction("OTPGenerate");

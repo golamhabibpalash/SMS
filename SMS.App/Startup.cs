@@ -141,8 +141,8 @@ namespace SchoolManagementSystem
             services.AddScoped<IClassFeeListRepository, ClassFeeListRepository>();
             services.AddScoped<IClassFeeListManager, ClassFeeListManager>();
 
-            //services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
-            //services.AddScoped<IApplicationUserManager, ApplicationUserManager>();
+            services.AddScoped<IPhoneSMSRepository, PhoneSMSRepository>();
+            services.AddScoped<IPhoneSMSManager, PhoneSMSManager>();
 
         }
 

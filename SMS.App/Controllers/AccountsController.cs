@@ -83,11 +83,15 @@ namespace SMS.App.Controllers
         
         public IActionResult UserList()
         {
+            if (TempData["msg"] != null)
+            {
+                ViewBag.msg = TempData["msg"].ToString();
+            }
             var allUser = _userManager.Users;
             return View(allUser);
         }
 
-        [Authorize(Roles ="SuperAdmin")]
+        [Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> EditUser(string id)
         {
             ApplicationUser user = await _userManager.FindByIdAsync(id);
@@ -188,6 +192,43 @@ namespace SMS.App.Controllers
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Login","Accounts");
+        }
+
+
+        [Authorize(Roles = "SuperAdmin")]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            ApplicationUser user = await _userManager.FindByIdAsync(id);
+            if (user != null)
+            {
+                return View(user);
+            }
+            TempData["msg"] = "User Not Found";
+            return RedirectToAction("UserList");
+        }
+
+        [HttpPost]
+        [ActionName("DeleteUser")]
+        [Authorize(Roles = "SuperAdmin")]
+        public async Task<IActionResult> ConfirmDelete(string id,ApplicationUser model)
+        {
+            if (id != model.Id)
+            {
+                return NotFound();
+            }
+            ApplicationUser user = await _userManager.FindByIdAsync(model.Id);
+            if (user != null)
+            {
+                var result = await _userManager.DeleteAsync(user);
+                if (result.Succeeded)
+                {
+                    TempData["msg"] = "User is Deleted";
+                    return RedirectToAction("UserList");
+                }
+                return View(user);
+            }
+            TempData["msg"] = "User Not Found";
+            return RedirectToAction("UserList");
         }
 
         public IActionResult Confirmation(string userId)

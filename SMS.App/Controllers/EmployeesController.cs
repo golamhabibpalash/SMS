@@ -19,7 +19,7 @@ using SMS.Entities;
 
 namespace SMS.App.Controllers
 {
-    [Authorize(Roles = "SuperAdmin, Admin")]
+    [Authorize(Roles = "SuperAdmin, Admin, Teacher")]
     public class EmployeesController : Controller
     {
         private readonly IWebHostEnvironment _host;
@@ -352,6 +352,8 @@ namespace SMS.App.Controllers
         }
 
         // GET: Employees/Delete/5
+
+        [Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -371,6 +373,8 @@ namespace SMS.App.Controllers
         // POST: Employees/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+
+        [Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var emp = await _employeeManager.GetByIdAsync(id);

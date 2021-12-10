@@ -6,7 +6,11 @@
     int sl = 0;
     string userType = "";
 }
+@if (ViewBag.msg != null)
+{
+    <span class="alert alert-warning msg">@ViewBag.msg</span>
 
+}
 @if (Model != null)
 {
     <div>
@@ -49,4 +53,9 @@
 
 @section Scripts{
     <script src="~/js/DataTable/dataTable.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.msg').fadeOut(6000);
+    });
+</script>
             }

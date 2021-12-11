@@ -5,12 +5,6 @@
 @model SMS.App.ViewModels.Employees.EmployeeDetailsVM
 
 @{
-
-    if (await _userManager.IsInRoleAsync((await _userManager.GetUserAsync(User)), "Teacher"))
-    {
-        Layout = "~/Views/Shared/_TeacherLayout.cshtml";
-    }
-
     if (ViewBag.InstituteName != null)
     {
         GlobalUI.InstituteName = ViewBag.InstituteName;

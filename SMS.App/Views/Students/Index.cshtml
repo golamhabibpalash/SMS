@@ -1,6 +1,12 @@
-﻿@model IEnumerable<SMS.App.ViewModels.Students.StudentListVM>
+﻿@using Microsoft.AspNetCore.Identity;
+
+@inject UserManager<ApplicationUser> _userManager;
+
+@model IEnumerable<SMS.App.ViewModels.Students.StudentListVM>
 
 @{
+
+
     ViewData["Title"] = "Students";
     GlobalUI.PageTitle = ViewBag.Title;
     string phoneCode = "+880";
@@ -105,7 +111,7 @@
 
     </script>
 
-    
+
 
 
 }

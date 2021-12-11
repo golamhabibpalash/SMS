@@ -9,11 +9,8 @@
     GlobalUI.PageTitle = ViewBag.Title;
     int sl = 0;
     string image = "";
-    if (await _userManager.IsInRoleAsync((await _userManager.GetUserAsync(User)), "Teacher"))
-    {
-        Layout = "~/Views/Shared/_TeacherLayout.cshtml";
-    }
-}
+
+ }
 
 
 <table class="table table-responsive-sm table-hover table-striped table-sm" id="">

@@ -368,12 +368,17 @@ namespace SMS.App.Controllers
                     {
                         return View("ResetPasswordConfirmation");
                     }
+                    ViewBag.msg = "Password not changed. Please input proper password";
                     foreach (var error in result.Errors)
                     {
                         ModelState.AddModelError("", error.Description);
                     }
                 }
-                return RedirectToAction("ForgotPassword");                
+                else
+                {
+                    TempData["msg"] = "User doesn't found";
+                    return RedirectToAction("ForgotPassword");
+                }                
             }
             return View(model);
         }

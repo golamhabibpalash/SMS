@@ -1,5 +1,14 @@
-﻿@model SMS.App.ViewModels.Students.StudentDashboardVM
+﻿@using Microsoft.AspNetCore.Identity;
+
+@model SMS.App.ViewModels.Students.StudentDashboardVM
+
+@inject UserManager<ApplicationUser> _userManager;
+
 @{
+    if (await _userManager.IsInRoleAsync((await _userManager.GetUserAsync(User)), "Teacher"))
+    {
+        Layout = "~/Views/Shared/_TeacherLayout.cshtml";
+    }
     ViewData["Title"] = "Home Page";
     GlobalUI.PageTitle = "";
     if (ViewBag.InstituteName != null)
@@ -10,15 +19,15 @@
     int totalStudent = 0;
     int totalTeacher = 0;
     int totalEmployee = 0;
-    if (ViewBag.totalStudent!=null)
+    if (ViewBag.totalStudent != null)
     {
         totalStudent = ViewBag.totalStudent;
     }
-    if (ViewBag.totalTeacher!=null)
+    if (ViewBag.totalTeacher != null)
     {
         totalTeacher = ViewBag.totalTeacher;
     }
-    if (ViewBag.totalEmployee!=null)
+    if (ViewBag.totalEmployee != null)
     {
         totalEmployee = ViewBag.totalEmployee;
     }
@@ -46,7 +55,7 @@
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card text-white bg-info mb-3 text-center"  style="min-height:200px;">
+        <div class="card text-white bg-info mb-3 text-center" style="min-height:200px;">
             <div class="card-header ">Total Teacher</div>
             <div class="card-body">
                 <a class="text-light" asp-action="Index" asp-controller="Employees"><h2>Total <span class="h1 text-warning"> @totalTeacher</span> Teachers</h2></a>
@@ -55,7 +64,7 @@
     </div>
 
     <div class="col-md-3">
-        <div class="card text-white bg-success mb-3 text-center"  style="min-height:200px;">
+        <div class="card text-white bg-success mb-3 text-center" style="min-height:200px;">
             <div class="card-header text-center">Total Employee</div>
             <div class="card-body">
                 <a class="text-light" asp-action="Index" asp-controller="Employees">

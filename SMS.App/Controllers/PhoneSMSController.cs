@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SMS.BLL.Contracts;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,8 @@ using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
 {
+
+    [Authorize(Roles = "SuperAdmin, Admin")]
     public class PhoneSMSController : Controller
     {
         private readonly IPhoneSMSManager _phoneSMSManager;

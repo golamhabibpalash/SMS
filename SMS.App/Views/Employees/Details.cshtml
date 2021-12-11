@@ -1,6 +1,21 @@
-﻿@model SMS.App.ViewModels.Employees.EmployeeDetailsVM
+﻿@using Microsoft.AspNetCore.Identity;
+
+@inject UserManager<ApplicationUser> _userManager;
+
+@model SMS.App.ViewModels.Employees.EmployeeDetailsVM
 
 @{
+
+    if (await _userManager.IsInRoleAsync((await _userManager.GetUserAsync(User)), "Teacher"))
+    {
+        Layout = "~/Views/Shared/_TeacherLayout.cshtml";
+    }
+
+    if (ViewBag.InstituteName != null)
+    {
+        GlobalUI.InstituteName = ViewBag.InstituteName;
+    }
+
     ViewData["Title"] = "Details";
     GlobalUI.PageTitle = ViewBag.Title + " about " + Model.EmployeeName;
     string image = Model.Image;
@@ -25,7 +40,7 @@
 
 <div class="row">
     <div class="col-md-3">
-        <div class="row" >
+        <div class="row">
             <img class="rounded-circle img-thumbnail w-50 d-block mx-auto" src="~/Images/Employee/photo/@image" alt="Alternate Text" />
         </div>
         <div class="list-group">
@@ -80,15 +95,24 @@
                 <td>:</td>
                 <td>@Model.Religion.Name</td>
             </tr>
+            @{ 
+                string presentUpazila = Model.PresentUpazila != null ? Model.PresentUpazila.Name : "N/A";
+                string presentDistrict = Model.PresentDistrict != null ? Model.PresentDistrict.Name : "N/A";
+                string presentDivision = Model.PresentDivision != null ? Model.PresentDivision.Name : "N/A";
+                string permanentUpazila = Model.PermanentUpazila != null ? Model.PermanentUpazila.Name : "N/A";
+                string PermanentDistrict = Model.PermanentDistrict != null ? Model.PermanentDistrict.Name : "N/A";
+                string PermanentDivision = Model.PermanentDivision != null ? Model.PermanentDivision.Name : "N/A";
+            }
             <tr>
                 <td>Present Address</td>
                 <td>:</td>
-                <td>@Model.PresentAddress, Thana/Upazila:@Model.PresentUpazila.Name, Dist:@Model.PresentDistrict.Name, Div:@Model.PresentDivision.Name</td>
+                <td>@Model.PresentAddress, Thana/Upazila:@presentUpazila, Dist:@presentDistrict, Div:@presentDivision</td>
             </tr>
+           
             <tr>
                 <td>Permanent Address</td>
                 <td>:</td>
-                <td>@Model.PermanentAddress, Thana/Upazila:@Model.PermanentUpazila.Name, Dist:@Model.PermanentDistrict.Name, Div:@Model.PermanentDivision.Name</td>
+                <td>@Model.PermanentAddress, Thana/Upazila:@permanentUpazila, Dist:@PermanentDistrict, Div:@PermanentDivision</td>
             </tr>
         </table>
     </div>
@@ -103,6 +127,8 @@
 </div>
 
 
-<div class="row p-2 text-center">
-    <partial name="_Edit_Back" model="@Model.Id" />
+<div class="row">
+    <div class="col-md-12 p-2 text-center">
+        <partial name="_Edit_Back" model="@Model.Id" />
+    </div>
 </div>

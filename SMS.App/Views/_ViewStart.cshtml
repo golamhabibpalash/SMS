@@ -1,3 +1,11 @@
-﻿@{
-    Layout = "_Layout";
+﻿
+@{
+    if (this.User.IsInRole("Admin") || this.User.IsInRole("SuperAdmin"))
+    {
+        Layout = "_Layout";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_TeacherLayout.cshtml";
+    }
 }

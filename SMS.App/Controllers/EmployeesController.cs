@@ -222,7 +222,6 @@ namespace SMS.App.Controllers
                     return RedirectToAction(nameof(Index));
                 }
             }
-            
             return View(employee1);
         }
 

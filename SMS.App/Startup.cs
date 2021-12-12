@@ -147,6 +147,9 @@ namespace SchoolManagementSystem
             services.AddScoped<IPhoneSMSRepository, PhoneSMSRepository>();
             services.AddScoped<IPhoneSMSManager, PhoneSMSManager>();
 
+            services.AddScoped<IAttendanceRepository, AttendanceRepository>();
+            services.AddScoped<IAttendanceManager, AttendanceManager>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

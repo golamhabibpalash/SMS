@@ -13,7 +13,8 @@
             <div class="form-group row">
                 <label asp-for="StudentFeeHeadId" class="col-md-2 text-md-right col-form-label control-label"></label>
                 <div class="col-md-10">
-                    <input asp-for="StudentFeeHeadId" class="form-control" readonly />
+                    <input asp-for="StudentFeeHead.Name" class="form-control" readonly disabled />
+                    <input asp-for="StudentFeeHeadId" class="form-control" type="hidden" />
                     <span asp-validation-for="StudentFeeHeadId" class="text-danger"></span>
                 </div>
             </div>
@@ -21,18 +22,17 @@
             <div class="form-group row">
                 <label asp-for="AcademicSessionId" class="col-md-2 text-md-right col-form-label control-label"></label>
                 <div class="col-md-8">
-                    <select asp-for="AcademicSessionId" class="form-control" asp-items="ViewBag.AcademicSessionId">
-                        <option disabled selected value="0">Select Session</option>
-                    </select>
+                    
+                    <input asp-for="AcademicSession.Name" class="form-control" readonly disabled />
+                    <input asp-for="AcademicSessionId" type="hidden" />
                     <span asp-validation-for="AcademicSessionId"></span>
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="AcademicClassId" class="col-md-2 text-md-right col-form-label control-label"></label>
+                <label asp-for="AcademicClass.Name" class="col-md-2 text-md-right col-form-label control-label"></label>
                 <div class="col-md-6">
-                    <select asp-for="AcademicClassId" class="form-control" asp-items="ViewBag.AcademicClassId">
-                        
-                    </select>
+                    <input asp-for="AcademicClass.Name" class="form-control" readonly disabled />
+                    <input asp-for="AcademicClassId" type="hidden"/>
                     <span asp-validation-for="AcademicClassId"></span>
                 </div>
             </div>

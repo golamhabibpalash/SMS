@@ -17,17 +17,15 @@
             action = "Profile";
             controller = "Students";
             routeId = user.ReferenceId.ToString();
+            Layout = "~/Views/Shared/_StudentLayout.cshtml";
         }
         else if (user.UserType == 'e')
         {
             action = "Index";
             controller = "Home";
+            Layout = "~/Views/Shared/_TeacherLayout.cshtml";
         }
     }
-}
-
-@{
-    Layout = "~/Views/Shared/_LoginLayout.cshtml";
 }
 
 

@@ -48,10 +48,16 @@ namespace SMS.App.ViewModels.Students
         [Display(Name = "Student Image")]
         public string Photo { get; set; }
 
-        [MinimumAge(10)]
+
         [Display(Name = "Date of Birth*"), DataType(DataType.Date)]
         [Required(ErrorMessage = "Minimum Age(10) is Requered")]
         public DateTime DOB { get; set; }
+
+        [Display(Name = "Birth Certificate No"), StringLength(17, MinimumLength = 17)]
+        public string BirthCertificateNo { get; set; }
+
+        [Display(Name = "Birth Certificate Image")]
+        public string BirthCertificateImage { get; set; }
 
         [Display(Name = "Religion")]
         public int ReligionId { get; set; }

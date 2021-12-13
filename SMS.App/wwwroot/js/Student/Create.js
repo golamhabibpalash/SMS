@@ -140,6 +140,7 @@ $('#sameAddress').change(function () {
     }
     else {
         emptyAddress();
+        GetDivisionList('#PermanentDivisionId')
     }
 });
 

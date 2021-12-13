@@ -383,6 +383,7 @@ namespace SMS.App.Controllers
             return View(model);
         }
 
+        [Authorize(Roles ="SuperAdmin")]
         public async Task<IActionResult> RoleList()
         {
             List<RoleListWIthUserVM> roleListWIthUserVMs = new List<RoleListWIthUserVM>();

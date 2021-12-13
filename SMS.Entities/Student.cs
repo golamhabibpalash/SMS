@@ -44,6 +44,11 @@ namespace SMS.Entities
 
         public DateTime DOB { get; set; }
 
+        [Display(Name ="Birth Certificate No"), StringLength(17, MinimumLength =17)]
+        public string BirthCertificateNo { get; set; }
+        [Display(Name ="Birth Certificate Image")]
+        public string BirthCertificateImage { get; set; }
+
         [Display(Name = "Religion")]
         public int ReligionId { get; set; }
 

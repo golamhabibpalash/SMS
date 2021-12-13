@@ -52,6 +52,12 @@ namespace SMS.App.ViewModels.Students
         [Display(Name = "Date of Birth*"), DataType(DataType.Date)]
         public DateTime DOB { get; set; }
 
+        [Display(Name = "Birth Certificate No"), StringLength(17, MinimumLength = 17)]
+        public string BirthCertificateNo { get; set; }
+
+        [Display(Name = "Birth Certificate Image")]
+        public string BirthCertificateImage { get; set; }
+
         [Display(Name = "Religion")]
         public int ReligionId { get; set; }
 

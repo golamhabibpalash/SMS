@@ -119,7 +119,7 @@ namespace SchoolManagementSystem.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "SuperAdmin, Admin")]
-        public async Task<IActionResult> Create([Bind("Id,Name,ClassRoll,FatherName,MotherName,AdmissionDate,Email,PhoneNo,Photo,DOB,ReligionId,GenderId,BloodGroupId,NationalityId,PresentAddressArea,PresentAddressPO,PresentUpazilaId,PresentDistrictId,PresentDivisiontId,PermanentAddressArea,PermanentAddressPO,PermanentUpazilaId,PermanentDistrictId,PermanentDivisiontId,AcademicSessionId,AcademicClassId,AcademicSectionId,PreviousSchool,Status,CreatedBy,CreatedAt,EditedBy,EditedAt,GuardianPhone")] StudentCreateVM newStudent, IFormFile sPhoto)
+        public async Task<IActionResult> Create([Bind("Id,Name,ClassRoll,FatherName,MotherName,AdmissionDate,Email,PhoneNo,Photo,DOB,BirthCertificateNo,BirthCertificateImage,ReligionId,GenderId,BloodGroupId,NationalityId,PresentAddressArea,PresentAddressPO,PresentUpazilaId,PresentDistrictId,PresentDivisiontId,PermanentAddressArea,PermanentAddressPO,PermanentUpazilaId,PermanentDistrictId,PermanentDivisiontId,AcademicSessionId,AcademicClassId,AcademicSectionId,PreviousSchool,Status,CreatedBy,CreatedAt,EditedBy,EditedAt,GuardianPhone")] StudentCreateVM newStudent, IFormFile sPhoto, IFormFile DOBFile)
         {
             newStudent.ClassRoll = await CreateRoll(newStudent.AcademicSessionId, newStudent.AcademicClassId);
             if (ModelState.IsValid)
@@ -138,6 +138,19 @@ namespace SchoolManagementSystem.Controllers
                         await sPhoto.CopyToAsync(stream);
                     }
                     newStudent.Photo = fileName;
+                }
+                if (DOBFile != null)
+                {
+                    string fileExt = Path.GetExtension(DOBFile.FileName);
+                    string root = _host.WebRootPath;
+                    string folder = "Images/Student/";                    
+                    string fileName = "S_" + newStudent.DOB.ToString("ddMMyyyy") + "_" + newStudent.ClassRoll + fileExt;
+                    string pathCombine = Path.Combine(root, folder, fileName);
+                    using (var stream = new FileStream(pathCombine, FileMode.Create))
+                    {
+                        await sPhoto.CopyToAsync(stream);
+                    }
+                    newStudent.BirthCertificateImage = fileName;
                 }
                 newStudent.CreatedBy = HttpContext.Session.GetString("UserId");
                 newStudent.CreatedAt = DateTime.Now;
@@ -228,7 +241,7 @@ namespace SchoolManagementSystem.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "SuperAdmin, Admin")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ClassRoll,FatherName,MotherName,AdmissionDate,Email,PhoneNo,Photo,DOB,ReligionId,GenderId,BloodGroupId,NationalityId,PresentAddressArea,PresentAddressPO,PresentUpazilaId,PresentDistrictId,PresentDivisiontId,PermanentAddressArea,PermanentAddressPO,PermanentUpazilaId,PermanentDistrictId,PermanentDivisiontId,AcademicSessionId,AcademicClassId,AcademicSectionId,PreviousSchool,Status,CreatedBy,CreatedAt,EditedBy,EditedAt,GuardianPhone")] Student student, IFormFile sPhoto)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ClassRoll,FatherName,MotherName,AdmissionDate,Email,PhoneNo,Photo,DOB,BirthCertificateNo,BirthCertificateImage,ReligionId,GenderId,BloodGroupId,NationalityId,PresentAddressArea,PresentAddressPO,PresentUpazilaId,PresentDistrictId,PresentDivisiontId,PermanentAddressArea,PermanentAddressPO,PermanentUpazilaId,PermanentDistrictId,PermanentDivisiontId,AcademicSessionId,AcademicClassId,AcademicSectionId,PreviousSchool,Status,CreatedBy,CreatedAt,EditedBy,EditedAt,GuardianPhone")] Student student, IFormFile sPhoto, IFormFile DOBFile)
         {
             if (id != student.Id)
             {
@@ -255,7 +268,19 @@ namespace SchoolManagementSystem.Controllers
                         }
                         student.Photo = fileName;
                     }
-
+                    if (DOBFile != null)
+                    {
+                        string fileExt = Path.GetExtension(DOBFile.FileName);
+                        string root = _host.WebRootPath;
+                        string folder = "Images/Student/";
+                        string fileName = "S_" + student.DOB.ToString("ddMMyyyy") + "_" + student.ClassRoll + fileExt;
+                        string pathCombine = Path.Combine(root, folder, fileName);
+                        using (var stream = new FileStream(pathCombine, FileMode.Create))
+                        {
+                            await sPhoto.CopyToAsync(stream);
+                        }
+                        student.BirthCertificateImage = fileName;
+                    }
 
                     student.EditedBy = HttpContext.Session.GetString("UserId");
                     student.EditedAt = DateTime.Now;

@@ -46,6 +46,20 @@
                     <span asp-validation-for="ClassRoll" class="text-danger"></span>
                 </div>
             </div>
+            <div class="form-group row">
+                <label asp-for="AdmissionDate" class="control-label col-form-label text-md-right col-md-2"></label>
+                <div class="col-md-4">
+                    <input asp-for="AdmissionDate" class="form-control" value="@DateTime.Now.Date" />
+                    <span asp-validation-for="AdmissionDate" class="text-danger"></span>
+                </div>
+
+               
+            </div>
+
+
+
+
+
             <div class="row">
                 <div class="col-md-10 offset-md-2">
                     <h6 class="alert alert-heading alert-info">Personal Information</h6>
@@ -65,12 +79,19 @@
 
             </div>
             <div class="form-group row">
-                <label asp-for="PhoneNo" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="Photo" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
-                    <input asp-for="PhoneNo" class="form-control" />
-                    <span asp-validation-for="PhoneNo" class="text-danger"></span>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="file" name="sPhoto" class="form-control-plaintext" id="imgInp" />
+                        </div>
+                        <div class="col-md-6" id="photoDiv" style="display:none">
+                            <img id="sPhotoId" style="width:100px; border:1px solid black" />
+                        </div>
+                    </div>
+                    <span asp-validation-for="Photo" class="text-danger"></span>
                 </div>
-                
+
 
                 <label asp-for="MotherName" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
@@ -93,22 +114,16 @@
 
             </div>
             <div class="form-group row">
-                <label asp-for="Photo" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="PhoneNo" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <input type="file" name="sPhoto" class="form-control-plaintext" id="imgInp" />
-                        </div>
-                        <div class="col-md-6" id="photoDiv" style="display:none">
-                            <img id="sPhotoId" style="width:100px; border:1px solid black" />
-                        </div>
-                    </div>
-                    <span asp-validation-for="Photo" class="text-danger"></span>
+                    <input asp-for="PhoneNo" class="form-control" />
+                    <span asp-validation-for="PhoneNo" class="text-danger"></span>
                 </div>
-                <label asp-for="AdmissionDate" class="control-label col-form-label text-md-right col-md-2"></label>
+                
+                <label asp-for="BirthCertificateNo" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
-                    <input asp-for="AdmissionDate" class="form-control" value="@DateTime.Now.Date" />
-                    <span asp-validation-for="AdmissionDate" class="text-danger"></span>
+                    <input asp-for="BirthCertificateNo" class="form-control" />
+                    <span asp-validation-for="BirthCertificateNo" class="text-danger"></span>
                 </div>
             </div>
 
@@ -119,12 +134,10 @@
                     <span asp-validation-for="DOB" class="text-danger"></span>
                 </div>
 
-                <label asp-for="ReligionId" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="BirthCertificateImage" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
-                    <select asp-for="ReligionId" class="form-control" asp-items="Model.ReligionList">
-                        <option selected disabled>Select Religion</option>
-                    </select>
-                    <span asp-validation-for="ReligionId" class="text-danger"></span>
+                    <input type="file" name="DOBFile" class="form-control-plaintext" />
+                    <span asp-validation-for="BirthCertificateImage" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
@@ -151,6 +164,13 @@
                     <select asp-for="BloodGroupId" class="form-control" asp-items="Model.BloodGroupList">
                         <option selected disabled>Select Blood Group</option>
                     </select>
+                </div>
+                <label asp-for="ReligionId" class="control-label col-form-label text-md-right col-md-2"></label>
+                <div class="col-md-4">
+                    <select asp-for="ReligionId" class="form-control" asp-items="Model.ReligionList">
+                        <option selected disabled>Select Religion</option>
+                    </select>
+                    <span asp-validation-for="ReligionId" class="text-danger"></span>
                 </div>
             </div>
 

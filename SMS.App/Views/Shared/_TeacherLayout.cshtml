@@ -195,30 +195,7 @@
 
 
                                 <div class="overlay-content">
-
-                                    <div class="row">
-                                        <div class="col-md-12 text-center">
-                                            <img src="@userImage" alt="profile Image" class="img-thumbnail" style="width:100%;" />
-                                        </div><br />
-                                        <div class="  text-center">
-                                            <span class="p-2">@userName </span>
-                                        </div>
-                                    </div>
-
-                                    <ul class="list-group list-group-flush border-light">
-                                        <li class="list-group-item"><a class="" href="#"><span class="badge badge-light userProfileIcon"><i class="fa fa-cog"></i></span> Setting</a></li>
-                                        <li class="list-group-item">
-                                            <a class="" href="#"><span class="badge badge-light userProfileIcon"><i class="fa fa-question-circle"></i></span> Help</a>
-                                        </li>
-                                        <li class="list-group-item">
-                                            <a class="" href="#"><span class="badge badge-light userProfileIcon"><i class="fa fa-universal-access userProfileIcon"></i></span> Accessibility</a>
-                                        </li>
-                                        <li class="list-group-item p-0">
-                                            <form asp-action="Logout" asp-controller="Accounts">
-                                                <button style="width:100%;height:100%" type="submit" class="border-0 btn btn-block btn-danger text-left pl-4" asp-action="LogOut" asp-controller="Accounts"><span class="badge badge-light userProfileIcon"><i class="fa fa-sign-out"></i></span> Log Out</button>
-                                            </form>
-                                        </li>
-                                    </ul>
+                                    @await Component.InvokeAsync("ProfileOverlay")
                                 </div>
                             </div>
 

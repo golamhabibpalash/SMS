@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SMS.BLL.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,11 @@ namespace SMS.App.Controllers
 {
     public class AttendancesController1cs : Controller
     {
+        private readonly IAttendanceManager _attendanceManager;
+
         public AttendancesController1cs(IAttendanceManager attendanceManager)
         {
-
+            _attendanceManager = attendanceManager;
         }
         // GET: AttendancesController1cs
         public ActionResult Index()

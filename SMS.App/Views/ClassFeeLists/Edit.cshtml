@@ -11,12 +11,9 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group row">
-                <label asp-for="StudentFeeHeadId" class="col-md-2 text-right col-form-label control-label"></label>
+                <label asp-for="StudentFeeHeadId" class="col-md-2 text-md-right col-form-label control-label"></label>
                 <div class="col-md-10">
-
-                    <select asp-for="StudentFeeHeadId" class="form-control" asp-items="ViewBag.StudentFeeHeadId">
-                        <option disabled selected>Select Fee Head</option>
-                    </select>
+                    <input asp-for="StudentFeeHeadId" class="form-control" readonly />
                     <span asp-validation-for="StudentFeeHeadId" class="text-danger"></span>
                 </div>
             </div>
@@ -40,7 +37,7 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="Amount" class="col-md-2 text-right col-form-label control-label"></label>
+                <label asp-for="Amount" class="col-md-2 text-md-right col-form-label control-label"></label>
                 <div class="col-md-4">
                     <input asp-for="Amount" class="form-control" placeholder="Ex: Monthly Fee" />
                     <span asp-validation-for="Amount" class="text-danger"></span>

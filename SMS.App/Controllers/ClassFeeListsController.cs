@@ -36,9 +36,10 @@ namespace SMS.App.Controllers
             if (TempData["success"]!=null)
             {
                 msg = TempData["success"].ToString();
+                ViewBag.msg = msg;
             }
             var result = await _classFeeListManager.GetAllAsync();
-            ViewBag.msg = msg;
+            
             return View(result);
         }
 
@@ -75,7 +76,6 @@ namespace SMS.App.Controllers
         {
             string msg = "";
 
-
             var feeListExist = await _classFeeListManager.GetByClassIdAndFeeHeadIdAsync(classFeeList.AcademicClassId, classFeeList.StudentFeeHeadId);
 
             if (feeListExist!=null)
@@ -95,9 +95,8 @@ namespace SMS.App.Controllers
                     if (isSaved)
                     {
                         msg = "Saved Successfully.";
+                        TempData["success"] = msg;
                     }
-                    ViewBag.msg = msg;
-                    TempData["create"] = msg;
                     return RedirectToAction(nameof(Index));
                 }
             }
@@ -138,44 +137,37 @@ namespace SMS.App.Controllers
             {
                 return NotFound();
             }
-            var feeList = await _classFeeListManager.GetAllAsync();
-            var feeListExist =feeList.Where(s => s.AcademicClassId == classFeeList.AcademicClassId && s.Id !=id && s.AcademicSessionId==classFeeList.AcademicSessionId && s.StudentFeeHeadId==classFeeList.StudentFeeHeadId).FirstOrDefault();
+            
 
-            if (feeListExist!=null)
+            if (ModelState.IsValid)
             {
-                TempData["editFail"] = "Failed";
-            }
-            else
-            {
-                if (ModelState.IsValid)
+                try
                 {
-                    try
-                    {
-                        classFeeList.EditedAt = DateTime.Now;
-                        classFeeList.EditedBy = HttpContext.Session.GetString("UserId");
+                    classFeeList.EditedAt = DateTime.Now;
+                    classFeeList.EditedBy = HttpContext.Session.GetString("UserId");
 
-                        bool isUpdated = await _classFeeListManager.UpdateAsync(classFeeList);
-                        if (isUpdated)
-                        {
-                            TempData["edit"] = "Updated Successfully";
-                            return RedirectToAction(nameof(Index));
-                        }
-                    }
-                    catch (DbUpdateConcurrencyException)
+                    bool isUpdated = await _classFeeListManager.UpdateAsync(classFeeList);
+                    if (isUpdated==true)
                     {
-                        if (!StudentFeeListExists(classFeeList.Id))
-                        {
-                            return NotFound();
-                        }
-                        else
-                        {
-                            throw;
-                        }
+                        TempData["edit"] = "Updated Successfully";
+                        return RedirectToAction(nameof(Index));
                     }
-                    TempData["fail"] = "Fail to Update";
-                    return View();
                 }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!StudentFeeListExists(classFeeList.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                TempData["fail"] = "Fail to Update";
+                return View();
             }
+           
 
 
             ViewData["AcademicSessionId"] = new SelectList(await academicSessionManager.GetAllAsync(), "Id", "Name", classFeeList.AcademicSessionId);

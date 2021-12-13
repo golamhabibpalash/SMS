@@ -14,9 +14,9 @@ namespace SMS.BLL.Managers
     public class ApplicationUserManager : IApplicationUserManager
     {
         private readonly ApplicationUserRepository _applicationUserRepository;
-        //public ApplicationUserManager(ApplicationUser appUser) :base(appUser)
+        //public ApplicationUserManager(ApplicationUser appUser) : base(appUser)
         //{
-            
+
         //}
 
         public async Task<ApplicationUser> GetAppUserByUserIdAsync(string id)

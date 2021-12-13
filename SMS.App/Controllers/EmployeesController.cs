@@ -195,6 +195,8 @@ namespace SMS.App.Controllers
                             UserName = employee.Email,
                             NormalizedUserName= employee.EmployeeName,
                             Email = employee.Email,
+                            PhoneNumber = employee.Phone,
+                            PhoneNumberConfirmed = true,
                             NormalizedEmail = employee.Email,
                             ReferenceId = employee.Id,
                             UserType = 'e',

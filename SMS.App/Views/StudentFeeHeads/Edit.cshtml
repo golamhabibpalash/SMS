@@ -12,7 +12,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group row">
-                <label asp-for="Name" class="control-label col-md-2 col-form-label text-right">
+                <label asp-for="Name" class="control-label col-md-2 col-form-label text-md-right">
                     Fee Head Name
                 </label>
                 <div class="col-md-10">
@@ -22,7 +22,7 @@
 
             </div>
             <div class="form-group form-check">
-                <label class="form-check-label offset-2">
+                <label class="form-check-label offset-md-2">
                     <input class="form-check-input" asp-for="Repeatedly" />
                     @Html.DisplayNameFor(model => model.Repeatedly)
                 </label>

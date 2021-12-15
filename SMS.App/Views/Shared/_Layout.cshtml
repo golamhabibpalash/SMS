@@ -11,8 +11,10 @@
     if (info.Count()>0)
     {
         GlobalUI.InstituteName = info.FirstOrDefault().Name;
+        GlobalUI.Logo = info.FirstOrDefault().Logo;
     }
     string instituteName = GlobalUI.InstituteName != null ? GlobalUI.InstituteName : "Institute Name";
+    string instituteLogo = GlobalUI.Logo != null ? GlobalUI.Logo : @"<i class=""fa fa-paw""></i>";
 }
 
 @{
@@ -100,7 +102,7 @@
             <div class="col-md-3 left_col menu_fixed">
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="border: 0;">
-                        <a asp-action="Index" asp-controller="Home" class="site_title"><i class="fa fa-paw"></i> <span>@instituteName</span></a>
+                        <a asp-action="Index" asp-controller="Home" class="site_title"><span><img src="~/Images/Institute/@instituteLogo" alt="Logo" style="width:40px;" /></span> <span>@instituteName</span></a>
                     </div>
 
                     <div class="clearfix"></div>

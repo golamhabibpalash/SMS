@@ -22,10 +22,14 @@
         <td>@Html.DisplayNameFor(model => model.Slogan)</td><td>:</td><td>@Html.DisplayFor(modelItem => modelItem.Slogan)</td>
     </tr>
     <tr>
-        <td>@Html.DisplayNameFor(model => model.Banner)</td><td>:</td><td>@Html.DisplayFor(modelItem => modelItem.Banner)</td>
+        <td>@Html.DisplayNameFor(model => model.Banner)</td>
+        <td>:</td>
+        <td><img src="~/Images/Institute/@Model.Banner" alt="Institute Banner" style="max-height:100px"; /></td>
     </tr>
     <tr>
-        <td>@Html.DisplayNameFor(model => model.Logo)</td><td>:</td><td>@Html.DisplayFor(modelItem => modelItem.Logo)</td>
+        <td>@Html.DisplayNameFor(model => model.Logo)</td>
+        <td>:</td>
+        <td><img src="~/Images/Institute/@Model.Logo" alt="Institute Logo" style="max-width:100px;" /></td>
     </tr>
     <tr>
         <td>@Html.DisplayNameFor(model => model.Address)</td><td>:</td><td>@Html.DisplayFor(modelItem => modelItem.Address)</td>
@@ -34,3 +38,8 @@
         <td>@Html.DisplayNameFor(model => model.BranchName)</td><td>:</td><td>@Html.DisplayFor(modelItem => modelItem.BranchName)</td>
     </tr>
 </table>
+<div class="row">
+    <div class="col-sm-12 col-md-12 text-md-right text-sm-center">
+        <a asp-action="Edit" asp-controller="Institutes" asp-route-id="@Model.Id" class="btn btn-sm btn-success"  ><i class="fa fa-edit"></i> Edit Page</a>
+    </div>
+</div>

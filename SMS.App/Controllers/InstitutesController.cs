@@ -143,12 +143,12 @@ namespace SMS.App.Controllers
                     existingInstitute.EditedBy = HttpContext.Session.GetString("UserId");
                     await _instituteManager.UpdateAsync(existingInstitute);
 
-                    return View();
+                    return RedirectToAction("Index");
 
                 }
                 catch
                 {
-                    return View();
+                    return View(existingInstitute);
                 }
             }
             var institute = await _instituteManager.GetByIdAsync(id);

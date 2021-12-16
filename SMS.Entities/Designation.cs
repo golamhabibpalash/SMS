@@ -19,5 +19,6 @@ namespace SMS.Entities
 
         public DesignationType DesignationType { get; set; }
         public EmpType EmpType { get; set; }
+        public ICollection<Employee> Employees { get; set; }
     }
 }

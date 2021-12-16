@@ -24,5 +24,9 @@ namespace SMS.DAL.Repositories
             var aClass =await _db.AcademicClass.Where(ac => ac.Name.Trim() == entityName.Trim()).FirstOrDefaultAsync();
             return aClass;
         }
+        public override async Task<IReadOnlyCollection<AcademicClass>> GetAllAsync()
+        {
+            return await _db.AcademicClass.Include(s => s.Students).ToListAsync();
+        }
     }
 }

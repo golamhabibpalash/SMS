@@ -1,11 +1,10 @@
 ﻿@using Microsoft.AspNetCore.Identity;
 
-@model SMS.App.ViewModels.Students.StudentDashboardVM
+@model SMS.App.ViewModels.Students.DashboardIndexVM
 
 @inject UserManager<ApplicationUser> _userManager;
 
 @{
-
     ViewData["Title"] = "Home Page";
     GlobalUI.PageTitle = "";
     if (ViewBag.InstituteName != null)
@@ -41,32 +40,91 @@
     }
 </div>
 <div class="row">
-    <div class="col-md-3">
-        <div class="card text-white bg-primary mb-3 text-center" style="min-height:200px;">
-            <div class="card-header">Total Student</div>
-            <div class="card-body">
-                <a class="text-light" asp-action="Index" asp-controller="Students">
-                    <h2>Total <span class="h1 text-warning">@totalStudent</span> Students</h2>
-                </a>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-info mb-3 text-center" style="min-height:200px;">
-            <div class="card-header ">Total Teacher</div>
-            <div class="card-body">
-                <a class="text-light" asp-action="Index" asp-controller="Employees"><h2>Total <span class="h1 text-warning"> @totalTeacher</span> Teachers</h2></a>
-            </div>
-        </div>
+    @*<div class="col-md-3">
+        <table class="table table-responsive-sm table-info border table-striped rounded">
+            <thead class="font-weight-bold bg-info text-light">
+                <tr>
+                    <td>Total Students</td>
+                    <td>@Model.Students.Count()</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var sClass in Model.Classes.OrderBy(c => c.ClassSerial))
+                {
+                    <tr>
+                        <td>@sClass.Name</td>
+                        <td>@sClass.Students.Count()</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
 
     <div class="col-md-3">
-        <div class="card text-white bg-success mb-3 text-center" style="min-height:200px;">
-            <div class="card-header text-center">Total Employee</div>
+        <table class="table table-responsive-sm table-info border table-striped rounded">
+            <thead class="font-weight-bold bg-info text-light h5">
+                <tr>
+                    <td>Total Employess</td>
+                    <td>@Model.Employees.Count()</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var desig in Model.Designations)
+                {
+                    <tr>
+                        <td>@desig.DesignationName</td>
+                        <td>@desig.Employees.Count()</td>
+                    </tr>
+                }
+            </tbody>
+        </table>        
+    </div>*@
+
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header text-center h5">Todays Attendance</div>
             <div class="card-body">
-                <a class="text-light" asp-action="Index" asp-controller="Employees">
-                    <h2>Total <span class="h1 text-warning">@totalEmployee</span> Employee</h2>
-                </a>
+                <div class="row">
+                    <div class="col-md-6">
+                        <table class="table table-responsive-sm table-info border table-striped rounded">
+                            <thead class="font-weight-bold bg-info text-light h5">
+                                <tr>
+                                    <td>Total Employess</td>
+                                    <td>0/@Model.Employees.Count()</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var desig in Model.Designations)
+                                {
+                                    <tr>
+                                        <td>@desig.DesignationName</td>
+                                        <td>0/@desig.Employees.Count()</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-responsive-sm table-info border table-striped rounded">
+                            <thead class="font-weight-bold bg-info text-light">
+                                <tr>
+                                    <td>Total Students</td>
+                                    <td>0/@Model.Students.Count()</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var sClass in Model.Classes.OrderBy(c => c.ClassSerial))
+                                {
+                                    <tr>
+                                        <td>@sClass.Name</td>
+                                        <td>0/@sClass.Students.Count()</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

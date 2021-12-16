@@ -20,6 +20,7 @@ namespace SMS.DAL.Repositories
         public override async Task<IReadOnlyCollection<Designation>> GetAllAsync()
         {
             return await _context.Designation
+                .Include(d => d.Employees)
                 .Include(d => d.DesignationType)
                 .Include(d => d.EmpType)
                 .ToListAsync();

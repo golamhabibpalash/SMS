@@ -19,16 +19,20 @@ namespace SMS.App.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IStudentManager _studentManager;
         private readonly IEmployeeManager _employeeManager;
+        private readonly IAcademicClassManager _academicClassManager;
+        private readonly IDesignationManager _designationManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IInstituteManager _instituteManager;
 
-        public HomeController(ILogger<HomeController> logger, IStudentManager studentManager, IEmployeeManager employeeManager, UserManager<ApplicationUser> userManager, IInstituteManager instituteManager)
+        public HomeController(ILogger<HomeController> logger, IStudentManager studentManager, IEmployeeManager employeeManager, UserManager<ApplicationUser> userManager, IInstituteManager instituteManager, IAcademicClassManager academicClassManager, IDesignationManager designationManager)
         {
             _logger = logger;
             _studentManager = studentManager;
             _employeeManager = employeeManager;
             _userManager = userManager;
             _instituteManager = instituteManager;
+            _academicClassManager = academicClassManager;
+            _designationManager = designationManager;
         }
 
         public async Task<IActionResult> Index()
@@ -42,17 +46,15 @@ namespace SMS.App.Controllers
             }
             var user = await _userManager.GetUserAsync(User);
             HttpContext.Session.SetString("UserId","user.Id");
-            StudentDashboardVM stDashboardVM = new StudentDashboardVM();
+            DashboardIndexVM DashboardVM = new DashboardIndexVM();
             IReadOnlyCollection<Student> students = await _studentManager.GetAllAsync();
-            stDashboardVM.Students = (ICollection<Student>)students;
-            ViewBag.totalStudent = students.Count;
-
-            IReadOnlyCollection<Employee> employee = await _employeeManager.GetAllAsync();
-            ViewBag.totalEmployee = employee.Count();
-            ViewBag.totalTeacher = employee.Where(g => g.DesignationId==1).Count();
+            DashboardVM.Students = (ICollection<Student>)students;
+            DashboardVM.Employees = (ICollection<Employee>)await _employeeManager.GetAllAsync();
+            DashboardVM.Classes = (ICollection<AcademicClass>)await _academicClassManager.GetAllAsync();
+            DashboardVM.Designations = (ICollection<Designation>)await _designationManager.GetAllAsync();
 
 
-            return View(stDashboardVM);
+            return View(DashboardVM);
         }
 
         public IActionResult Privacy()

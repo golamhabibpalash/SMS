@@ -7,7 +7,7 @@
 
 <div class="row">
     <div class="col-md-6">
-        <form asp-action="Create" enctype="multipart/form-data">
+        <form asp-action="Create" enctype="multipart/form-data" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group row">
                 <label asp-for="Name" class="control-label col-md-2 text-md-right col-form-label"></label>
@@ -55,7 +55,7 @@
                 <div class="input-group col-md-8">
                     <div class="custom-file">
                         <input name="logo" type="file" class="custom-file-input" id="inputGroupFile02">
-                        <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                        <label class="custom-file-label" for="inputGroupFile02">Choose file</label>
                     </div>
                     <span asp-validation-for="Logo" class="text-danger"></span>
                 </div>
@@ -81,9 +81,44 @@
             </div>
         </form>
     </div>
+    <div class="col-md-6">
+        <div id="photoDiv" style="display:none">
+            <label>Banner :<img class="img-fluid" id="sPhotoId" src="#" alt="Banner" style="height:130px;" /></label>
+            
+        </div>
+        <div id="logoDiv" style="display:none">
+            <label>Logo: <img class="img-fluid" id="sLogoId" src="#" alt="Logo" style="height:130px;" /></label>
+            
+        </div>
+    </div>
 </div>
 
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script>
+    $(document).ready(function () {
+        function readURL(input, idName) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $(idName).attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]); // convert to base64 string
+            }
+        }
+        $("#inputGroupFile01").change(function () {
+            $("#photoDiv").show();
+            let imgId = "#sPhotoId";
+            readURL(this, imgId);
+        });
+        $("#inputGroupFile02").change(function () {
+            $("#logoDiv").show();
+            let imgId = "#sLogoId";
+            readURL(this, imgId);
+        });
+    });
+</script>
 }

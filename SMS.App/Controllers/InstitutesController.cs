@@ -57,40 +57,54 @@ namespace SMS.App.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(Institute institute, IFormFile logo, IFormFile banner)
         {
-            try
+            if (ModelState.IsValid)
             {
-                if (logo != null)
+                try
                 {
-                    string logoName = "";
-                    string root = _host.WebRootPath;
-                    string folder = "/Images/Institute";
-                    logoName = "instituteLogo_" + Guid.NewGuid() + Path.GetExtension(logo.FileName);
-                    var pathCombine = Path.Combine(root, folder, logoName);
-                    using var stream = new FileStream(pathCombine, FileMode.Create);
-                    await logo.CopyToAsync(stream);
-                    institute.Logo = logoName;
+                    if (banner != null)
+                    {
+                        string banarName = "";
+                        string root = _host.WebRootPath;
+                        string folder = "Images/Institute";
+                        banarName = "instituteBanner_" + Guid.NewGuid() + Path.GetExtension(banner.FileName);
+                        var pathCombine = Path.Combine(root, folder, banarName);
+                        using (var stream = new FileStream(pathCombine, FileMode.Create))
+                        {
+                            await banner.CopyToAsync(stream);
+                        }
+                            institute.Banner = banarName;
+                    }
+                    if (logo != null)
+                    {
+                        string logoName = "";
+                        string root = _host.WebRootPath;
+                        string folder = "Images/Institute";
+                        logoName = "instituteLogo_" + Guid.NewGuid() + Path.GetExtension(logo.FileName);
+                        var pathCombine = Path.Combine(root, folder, logoName);
+                        
+                        using (var stream = new FileStream(pathCombine, FileMode.Create))
+                        {
+                            await logo.CopyToAsync(stream);
+                        }
+                        institute.Logo = logoName;
+                    }
+
+                    institute.CreatedAt = DateTime.Now;
+                    institute.CreatedBy = HttpContext.Session.GetString("UserId");
+
+                    await _instituteManager.AddAsync(institute);
+                    return RedirectToAction(nameof(Index));
                 }
-                if (banner !=null)
+                catch
                 {
-                    string banarName = "";
-                    string root = _host.WebRootPath;
-                    string folder = "/Images/Institiute";
-                    banarName = "instituteBanner_" + Guid.NewGuid() + Path.GetExtension(logo.FileName);
-                    var pathCombine = Path.Combine(root, folder, banarName);
-                    using var stream = new FileStream(pathCombine, FileMode.Create);
-                    institute.Banner = banarName;
+                    return View();
                 }
-
-                institute.CreatedAt = DateTime.Now;
-                institute.CreatedBy = HttpContext.Session.GetString("UserId");
-
-                await _instituteManager.AddAsync(institute);
-                return RedirectToAction(nameof(Index));
             }
-            catch
+            else
             {
-                return View();
+                return View(institute);
             }
+            
         }
 
         // GET: InstitutesController/Edit/5
@@ -130,8 +144,8 @@ namespace SMS.App.Controllers
                         string fileExt = Path.GetExtension(banner.FileName);
                         string root = _host.WebRootPath;
                         string folder = "Images/Institute/";
-                        string fileName = "instituteBanner_" + Guid.NewGuid() + fileExt;
-                        string pathCombine = Path.Combine(root, folder, fileName);
+                        InstituteBanner = "instituteBanner_" + Guid.NewGuid() + fileExt;
+                        string pathCombine = Path.Combine(root, folder, InstituteBanner);
                         using (var stream = new FileStream(pathCombine, FileMode.Create))
                         {
                             await banner.CopyToAsync(stream);

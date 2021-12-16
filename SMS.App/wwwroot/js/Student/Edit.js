@@ -166,6 +166,7 @@ function readURL(input) {
 }
 $("#imgInp").change(function () {
     $("#photoDiv").show();
+    $("#previousImageId").hide();
     readURL(this);
 });
 

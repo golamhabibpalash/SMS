@@ -10,7 +10,7 @@ namespace SchoolManagementSystem
         public static string PageTitle { get; set; }
         public static string InstituteName { get; set; }
         public static string SiteTitle { get; set; }
-        public static byte[] Favicon { get; set; }
+        public static string Favicon { get; set; }
         public static string Logo { get; set; }
     }
 }

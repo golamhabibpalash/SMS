@@ -3,57 +3,7 @@
 @{
     ViewBag.Title = "User Login";
     Layout = "~/Views/Shared/_LoginLayout.cshtml";
-    
 }
-
-@*<div class="row d-flex justify-content-center align-middle m-5">
-    <div class="col-md-6">
-        <div class="card ">
-            <div class="card-header text-center">
-                <h4>Login</h4>
-            </div>
-            <form asp-action="Login" asp-controller="Accounts" method="post" class="p-3">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-group row">
-                    <label asp-for="AppUser" class="col-form-label text-md-right col-md-3"></label>
-                    <div class="col-md-9">
-                        <input asp-for="AppUser" class="form-control" aria-describedby="emailHelp" placeholder="@placeholderText">
-                        <span asp-validation-for="AppUser" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label asp-for="Password" class="col-form-label text-md-right col-md-3"></label>
-                    <div class="col-md-9">
-                        <input asp-for="Password" class="form-control" placeholder="Password">
-                        <span asp-validation-for="Password" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    
-                    <div class="offset-md-3 col-md-9">
-                        <input asp-for="RememberMe" class="">
-                        <label asp-for="RememberMe" class="form-check-label col-md-6 text-md-left"></label>
-                    </div>
-                </div>
-                <div class="form-group row text-md-center">
-                    <div class="col-md-12">
-                        <button type="submit" class="btn btn-primary btn-block">Login</button>
-                        
-                    </div>
-                </div>
-                <div class="form-group ">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <span class="text-danger"><a asp-action="forgotPassword" asp-controller="Accounts">Forgot password?</a></span>
-                        </div>
-
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>*@
-<hr />
 
 <div class="container d-flex justify-content-center align-items-center">
     <div class="card col-md-4">
@@ -63,7 +13,6 @@
         <div class="p-3 px-md-5 px-4 py-4 border-bottom">
             <form asp-action="login" asp-controller="accounts" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
                 <input asp-for="AppUser" class="form-control mb-2" placeholder="Email/Username" />
                 <span asp-validation-for="AppUser" class="text-danger"></span>
                 <input asp-for="Password" class="form-control mb-2" placeholder="Password" />
@@ -71,8 +20,6 @@
                 <label class="mb-2 form-check-inline"> <input asp-for="RememberMe" class="form-control-sm mr-1"> Remember Me</label>
                 <button type="submit" class="btn btn-info btn-block continue">Continue</button>
             </form>
-
-            @*<div class="d-flex justify-content-center align-items-center mt-3 mb-3"> <span class="line"></span> <small class="px-2 line-text">OR</small> <span class="line"></span> </div> <button class="btn btn-danger btn-block continue facebook-button d-flex justify-content-start align-items-center"> <i class="fa fa-facebook ml-2"></i> <span class="ml-5 px-4">Continue with facebook</span> </button> <button class="btn btn-danger btn-block continue google-button d-flex justify-content-start align-items-center"> <i class="fa fa-google ml-2"></i> <span class="ml-5 px-4">Continue with Google</span> </button>*@
         </div>
         <div class="p-3 d-flex flex-row justify-content-center align-items-center member"> <span>Forgot Password? </span> <a asp-action="forgotPassword" asp-controller="Accounts" class="text-decoration-none ml-2">Reset</a> </div>
     </div>

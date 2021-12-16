@@ -34,6 +34,7 @@
                 <label asp-for="AcademicSectionId" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
                     <select asp-for="AcademicSectionId" class="form-control input-sm" asp-items="Model.AcademicSectionList">
+                        <option selected disabled>Select Section</option>
                     </select>
                     <span asp-validation-for="AcademicSectionId" class="text-danger"></span>
                 </div>
@@ -48,7 +49,7 @@
             <div class="form-group row">
                 <label asp-for="AdmissionDate" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
-                    <input asp-for="AdmissionDate" class="form-control" value="@DateTime.Now.Date" />
+                    <input asp-for="AdmissionDate" class="form-control" />
                     <span asp-validation-for="AdmissionDate" class="text-danger"></span>
                 </div>
             </div>
@@ -82,6 +83,12 @@
                         <div class="col-md-6">
                             <input type="file" name="sPhoto" class="form-control-plaintext" id="imgInp" />
                         </div>
+                        @if (Model.Photo != null)
+	                        {
+                                <div class="col-md-6 " id="previousImageId">
+                                    <img src="~/Images/Student/@Model.Photo" style="width:100px; border:1px solid black" />
+                                </div>
+	                        }
                         <div class="col-md-6" id="photoDiv" style="display:none">
                             <img id="sPhotoId" style="width:100px; border:1px solid black" />
                         </div>
@@ -288,4 +295,12 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 <script src="~/js/Student/Edit.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#sPhotoId').on('change',function () {
+            alert();
+            $('#previousImageId').css('display', 'none');
+        });
+    });
+</script>
 }

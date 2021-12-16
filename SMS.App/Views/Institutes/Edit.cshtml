@@ -42,27 +42,39 @@
             <div class="form-group row">
                 <label asp-for="Banner" class="control-label col-form-label col-md-2 text-md-right bg-blue-sky rounded"></label>
                 <div class="col-md-5 imageClass" hidden>
-                    <input hidden asp-for="Banner" class="col-form-label imageClass" />
-                    <input hidden type="file" name="Banner" class="col-form-label imageClass" />
+                    <input type="hidden" asp-for="Banner"  />
+                    <input hidden type="file" name="Banner" class="col-form-label imageClass" id="BannerId" />
                     <span asp-validation-for="Banner" class="text-danger"></span>
                 </div>
                 <div class="col-md-5">
-                    @if (Model.Banner != null)
-                    {
-                        <img src="~/Images/Institiute/@Model.Banner" alt="Institute Banner" style="height:60px" />
-                    }
-
+                    <div id="existingBannerDiv">
+                        @if (Model.Banner != null)
+                        {
+                            <img src="~/Images/Institute/@Model.Banner" alt="Institute Banner" style="height:60px" />
+                        }
+                    </div>
+                    <div id="newBannerDiv" style="display:none">
+                        <img class="img-fluid" id="sBannerId" src="#" alt="Logo" style="height:130px;" />
+                    </div>
                 </div>
             </div>
             <div class="form-group row">
                 <label asp-for="Logo" class="control-label col-form-label col-md-2 text-md-right bg-blue-sky rounded"></label>
                 <div class="col-md-5 imageClass" hidden>
                     <input hidden asp-for="Logo" class="col-form-label" />
-                    <input hidden type="file" name="Logo" class="imageClass col-form-label" />
+                    <input hidden type="file" name="Logo" class="imageClass col-form-label" id="inputGroupFile02"/>
                     <span asp-validation-for="Logo" class="text-danger"></span>
                 </div>
                 <div class="col-md-5">
-                    <img src="~/Images/Institiute/@Model.Logo" alt="Institute Logo"  style="height:60px"/>
+                    <div id="existingLogoDiv">
+                        @if (Model.Logo != null)
+                        {
+                            <img src="~/Images/Institute/@Model.Logo" alt="Institute Logo" style="height:60px" />
+                        }
+                    </div>
+                    <div id="newLogoDiv" style="display:none">
+                        <img class="img-fluid" id="sLogoId" src="#" alt="Logo" style="height:130px;" />
+                    </div>
                 </div>
             </div>
             <div class="form-group row">
@@ -108,6 +120,31 @@
             $(this).hide();
             $('#editButton').show();
             $('.inputClass').addAttr('readonly');
+        });
+
+        function readURL(input, idName) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $(idName).attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]); // convert to base64 string
+            }
+        }
+        $("#BannerId").change(function () {
+            $("#newBannerDiv").show();
+            $("#existingBannerDiv").hide();
+            let imgId = "#sBannerId";
+            readURL(this, imgId);
+        });
+
+        $("#inputGroupFile02").change(function () {
+            $("#newLogoDiv").show();
+            $("#existingLogoDiv").hide();
+            let imgId = "#sLogoId";
+            readURL(this, imgId);
         });
     });
 </script>

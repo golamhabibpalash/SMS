@@ -2,9 +2,21 @@
 
 @inject SignInManager<ApplicationUser> _signInManager;
 @inject UserManager<ApplicationUser> _userManager;
+@inject IInstituteManager _instituteManager;
+@inject IEmployeeManager _employeeManager;
+@inject IStudentManager _studentManager;
 
 @{
+    var info = await _instituteManager.GetAllAsync();
+    if (info.Count() > 0)
+    {
+        GlobalUI.InstituteName = info.FirstOrDefault().Name;
+        GlobalUI.Logo = info.FirstOrDefault().Logo;
+    }
     string instituteName = GlobalUI.InstituteName != null ? GlobalUI.InstituteName : "Institute Name";
+    string instituteLogo = GlobalUI.Logo != null ? GlobalUI.Logo : "nobleLogo.png";
+}
+@{
     var user = await _userManager.GetUserAsync(User);
 }
 
@@ -52,11 +64,9 @@
         <div class="main_container">
             <div class="col-md-3 left_col menu_fixed">
                 <div class="left_col scroll-view">
-                    <div class="navbar nav_title" style="border: 0;">
 
-                        <a asp-action="Profile" asp-controller="Students" asp-route-id="1" class="site_title"><i class="fa fa-paw"></i> <span>Noble Residential School</span></a>
-
-
+                    <div class="navbar nav_title" style="overflow:hidden">
+                        <a asp-action="Index" asp-controller="Home" class="" style="font-size:20px;color:#fff;font-weight:bold;width:100%"><img class="img-circle img-fluid p-2" src="~/Images/Institute/@instituteLogo" alt="Alternate Text" style="width:60px;" /> @instituteName</a>
                     </div>
 
                     <div class="clearfix"></div>
@@ -86,7 +96,7 @@
                                         </li>
                                     </ul>
                                 </li>
-                                
+
                             </ul>
                         </div>
                         <div class="menu_section">

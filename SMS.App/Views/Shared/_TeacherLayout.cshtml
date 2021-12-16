@@ -8,19 +8,21 @@
 @inject IStudentManager _studentManager;
 
 @{
-
     var info = await _instituteManager.GetAllAsync();
-    if (info.Count()>0)
+    if (info.Count() > 0)
     {
         GlobalUI.InstituteName = info.FirstOrDefault().Name;
+        GlobalUI.Logo = info.FirstOrDefault().Logo;
     }
     string instituteName = GlobalUI.InstituteName != null ? GlobalUI.InstituteName : "Institute Name";
-
+    string instituteLogo = GlobalUI.Logo != null ? GlobalUI.Logo : "nobleLogo.png";
+}
+@{
     string userImage = "";
     if (_signInManager.IsSignedIn(User))
     {
         var user = await _userManager.GetUserAsync(User);
-        if (user.UserType=='s')
+        if (user.UserType == 's')
         {
             var stu = await _studentManager.GetByIdAsync(user.ReferenceId);
             if (stu.Photo != null)
@@ -90,7 +92,6 @@
     <!-- Data Table Style-->
     <link href="~/lib/DataTable/css/jquery.dataTables.min.css" rel="stylesheet" />
     <style>
-        
     </style>
 </head>
 
@@ -101,8 +102,9 @@
         <div class="main_container">
             <div class="col-md-3 left_col menu_fixed">
                 <div class="left_col scroll-view">
-                    <div class="navbar nav_title" style="border: 0;">
-                        <a asp-action="Index" asp-controller="Home" class="site_title"><i class="fa fa-paw"></i> <span>@instituteName</span></a>
+
+                    <div class="navbar nav_title" style="overflow:hidden">
+                        <a asp-action="Index" asp-controller="Home" class="" style="font-size:20px;color:#fff;font-weight:bold;width:100%"><img class="img-circle img-fluid p-2" src="~/Images/Institute/@instituteLogo" alt="Alternate Text" style="width:60px;" /> @instituteName</a>
                     </div>
 
                     <div class="clearfix"></div>
@@ -156,7 +158,7 @@
                                 </button>
                             </form>
 
-                            
+
                         }
                         else
                         {
@@ -204,7 +206,7 @@
 
                 </div>
                 <text class="h5 text-light">@GlobalUI.PageTitle</text>
-                
+
             </div>
             <!-- /top navigation -->
             <!-- page content -->
@@ -289,7 +291,7 @@
                 delay: { "show": 500, "hide": 100 },
                 template: '<div class="popover" role="tooltip"><div class="arrow"></div><h3 class="popover-header"></h3><div class="popover-body"></div></div>',
                 content: function () {
-                    
+
                     return $('#popover-content').html();
                 }
             });

@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using SMS.App.ViewModels.Students;
 using SMS.BLL.Contracts;
 using SMS.Entities;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -23,8 +24,9 @@ namespace SMS.App.Controllers
         private readonly IDesignationManager _designationManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IInstituteManager _instituteManager;
+        private readonly IAttendanceManager _attendanceManager;
 
-        public HomeController(ILogger<HomeController> logger, IStudentManager studentManager, IEmployeeManager employeeManager, UserManager<ApplicationUser> userManager, IInstituteManager instituteManager, IAcademicClassManager academicClassManager, IDesignationManager designationManager)
+        public HomeController(ILogger<HomeController> logger, IStudentManager studentManager, IEmployeeManager employeeManager, UserManager<ApplicationUser> userManager, IInstituteManager instituteManager, IAcademicClassManager academicClassManager, IDesignationManager designationManager, IAttendanceManager attendanceManager)
         {
             _logger = logger;
             _studentManager = studentManager;
@@ -33,6 +35,7 @@ namespace SMS.App.Controllers
             _instituteManager = instituteManager;
             _academicClassManager = academicClassManager;
             _designationManager = designationManager;
+            _attendanceManager = attendanceManager;
         }
 
         public async Task<IActionResult> Index()
@@ -53,6 +56,8 @@ namespace SMS.App.Controllers
             DashboardVM.Classes = (ICollection<AcademicClass>)await _academicClassManager.GetAllAsync();
             DashboardVM.Designations = (ICollection<Designation>)await _designationManager.GetAllAsync();
 
+            var allAttendances = await _attendanceManager.GetAllAsync();
+            DashboardVM.Attendances = (ICollection<Attendance>)allAttendances.Where(a => a.AttendanceDate.Date.ToString() == DateTime.Today.Date.ToString()).ToList();
 
             return View(DashboardVM);
         }

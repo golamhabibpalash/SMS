@@ -101,7 +101,7 @@
             <div class="col-md-3 left_col menu_fixed">
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="overflow:hidden" >
-                        <a asp-action="Index" asp-controller="Home" class="" style="font-size:20px;color:#fff;font-weight:bold;width:100%"><img class="img-circle img-fluid p-2" src="~/Images/Institute/@instituteLogo" alt="Logo" style="width:60px;" /> @instituteName</a> 
+                        <a asp-action="Index" asp-controller="Home" class="" style="color:#fff;font-weight:bold;width:100%"><img class="img-circle img-fluid p-2" src="~/Images/Institute/@instituteLogo" alt="Logo" style="font-size: 20px; width: 60px;" /> @instituteName</a> 
                     </div>
 
                     <div class="clearfix"></div>
@@ -109,9 +109,9 @@
                     <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
                         <div class="menu_section">
                             <ul class="nav side-menu">
-                                <li>
+                                @*<li>
                                     <a asp-controller="Home" asp-action="Index"><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>
-                                </li>
+                                </li>*@
                                 <li>
                                     <a><i class="fa fa-users"></i> Students <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
@@ -121,6 +121,9 @@
                                         <li>
                                             <a asp-action="Index" asp-controller="StudentPayments">Student Payment</a>
                                         </li>
+                                        <li>
+                                            <a href="#"><span class="glyphicon glyphicon-check"></span> Student Attendance</a>
+                                        </li>
                                     </ul>
                                 </li>
                                 <li>
@@ -129,37 +132,67 @@
                                         <li>
                                             <a asp-action="Index" asp-controller="Employees"><span class="glyphicon glyphicon-asterisk"></span> All Employee</a>
                                         </li>
+                                        <li>
+                                            <a href="#"><span class="glyphicon glyphicon-check"></span> Employees Attendance</a>
+                                        </li>
                                     </ul>
                                 </li>
                                 <li>
-                                    <a><i class="fa fa-table"></i> Setup Modules <span class="fa fa-chevron-down"></span></a>
+                                    <a><i class="fa fa-calendar"></i> Time Schedule <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li>
-                                            <a asp-action="Index" asp-controller="AcademicSessions">Academic Session</a>
+                                            <a href="#"><span class="glyphicon glyphicon-th"></span> Class Routine</a>
                                         </li>
                                         <li>
-                                            <a asp-action="Index" asp-controller="AcademicClasses">Academic Class</a>
+                                            <a href="#"><span class="glyphicon glyphicon-th-large"></span> Duty Roster</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a><i class="fa fa-sliders"></i> Setup Modules <span class="fa fa-chevron-down"></span></a>
+                                    <ul class="nav child_menu">
+                                        <li>
+                                            <a> Academic <span class="fa fa-chevron-down"></span></a>
+                                            <ul class="nav child_menu">
+                                                <li>
+                                                    <a asp-action="Index" asp-controller="AcademicSessions">Academic Session</a>
+                                                </li>
+                                                <li>
+                                                    <a asp-action="Index" asp-controller="AcademicClasses">Academic Class</a>
+                                                </li>
+                                                <li>
+                                                    <a asp-action="Index" asp-controller="AcademicSections">Academic Section</a>
+                                                </li>
+                                                <li>
+                                                    <a asp-action="Index" asp-controller="ClassFeeLists">Class Fee</a>
+                                                </li>
+                                                <li>
+                                                    <a asp-action="Index" asp-controller="AcademicSubjects">Academic Subject</a>
+                                                </li>
+                                                <li>
+                                                    <a asp-action="Index" asp-controller="AcademicSubjectTypes">Academic Subject Type</a>
+                                                </li>
+                                                <li>
+                                                    <a asp-action="Index" asp-controller="StudentFeeHeads">Fee Head</a>
+                                                </li>
+                                            </ul>
                                         </li>
                                         <li>
-                                            <a asp-action="Index" asp-controller="AcademicSections">Academic Section</a>
-                                        </li>
-                                        <li>
-                                            <a asp-action="Index" asp-controller="ClassFeeLists">Class Fee</a>
-                                        </li>
-                                        <li>
-                                            <a asp-action="Index" asp-controller="StudentFeeHeads">Fee Head</a>
-                                        </li>
-                                        <li>
-                                            <a asp-action="Index" asp-controller="Genders">Gender</a>
-                                        </li>
-                                        <li>
-                                            <a asp-action="Index" asp-controller="Nationalities">Nationality</a>
-                                        </li>
-                                        <li>
-                                            <a asp-action="Index" asp-controller="BloodGroups">Blood Group</a>
-                                        </li>
-                                        <li>
-                                            <a asp-action="Index" asp-controller="Religions">Religion</a>
+                                            <a> Others <span class="fa fa-chevron-down"></span></a>
+                                            <ul class="nav child_menu">
+                                                <li>
+                                                    <a asp-action="Index" asp-controller="Genders">Gender</a>
+                                                </li>
+                                                <li>
+                                                    <a asp-action="Index" asp-controller="Nationalities">Nationality</a>
+                                                </li>
+                                                <li>
+                                                    <a asp-action="Index" asp-controller="BloodGroups">Blood Group</a>
+                                                </li>
+                                                <li>
+                                                    <a asp-action="Index" asp-controller="Religions">Religion</a>
+                                                </li>
+                                            </ul>
                                         </li>
                                         <li>
                                             <a asp-action="Index" asp-controller="EmpTypes">Employee Type</a>
@@ -173,18 +206,6 @@
                                     </ul>
                                 </li>
                                 <li>
-                                    <a><i class="fa fa-bar-chart-o"></i> Subjects Setting<span class="fa fa-chevron-down"></span></a>
-                                    <ul class="nav child_menu">
-                                        <li>
-                                            <a asp-action="Index" asp-controller="AcademicSubjects">Academic Subject</a>
-                                        </li>
-                                        <li>
-                                            <a asp-action="Index" asp-controller="AcademicSubjectTypes">Academic Subject Type</a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li>
-
                                     <a><i class="fa fa-cog"></i> Settings <span class="fa fa-chrome"></span></a>
                                     <ul class="nav child_menu">
                                         <li><a asp-action="Index" asp-controller="Institutes">Institute</a></li>

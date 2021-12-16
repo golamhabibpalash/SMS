@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace SMS.Entities
 { 
-    public class Attendance
+    public class Attendance : CommonProps
     {
-        public int Id { get; set; }
-
         public DateTime AttendanceDate { get; set; }
 
         [Display(Name ="Attendance")]
@@ -24,7 +22,8 @@ namespace SMS.Entities
         public DateTime OutTime { get; set; }
 
         [Display(Name ="User")]
-        public int UserId { get; set; }
-        public char UserType { get; set; }
+        public string ApplicationUserId { get; set; }
+
+        public ApplicationUser ApplicationUser { get; set; }
     }
 }

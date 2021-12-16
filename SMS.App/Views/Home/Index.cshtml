@@ -12,21 +12,6 @@
         GlobalUI.InstituteName = ViewBag.InstituteName;
     }
 
-    int totalStudent = 0;
-    int totalTeacher = 0;
-    int totalEmployee = 0;
-    if (ViewBag.totalStudent != null)
-    {
-        totalStudent = ViewBag.totalStudent;
-    }
-    if (ViewBag.totalTeacher != null)
-    {
-        totalTeacher = ViewBag.totalTeacher;
-    }
-    if (ViewBag.totalEmployee != null)
-    {
-        totalEmployee = ViewBag.totalEmployee;
-    }
 }
 
 <div class="text-center">
@@ -40,46 +25,7 @@
     }
 </div>
 <div class="row">
-    @*<div class="col-md-3">
-        <table class="table table-responsive-sm table-info border table-striped rounded">
-            <thead class="font-weight-bold bg-info text-light">
-                <tr>
-                    <td>Total Students</td>
-                    <td>@Model.Students.Count()</td>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var sClass in Model.Classes.OrderBy(c => c.ClassSerial))
-                {
-                    <tr>
-                        <td>@sClass.Name</td>
-                        <td>@sClass.Students.Count()</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-
-    <div class="col-md-3">
-        <table class="table table-responsive-sm table-info border table-striped rounded">
-            <thead class="font-weight-bold bg-info text-light h5">
-                <tr>
-                    <td>Total Employess</td>
-                    <td>@Model.Employees.Count()</td>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var desig in Model.Designations)
-                {
-                    <tr>
-                        <td>@desig.DesignationName</td>
-                        <td>@desig.Employees.Count()</td>
-                    </tr>
-                }
-            </tbody>
-        </table>        
-    </div>*@
-
+    
 
     <div class="col-md-6">
         <div class="card">
@@ -88,10 +34,15 @@
                 <div class="row">
                     <div class="col-md-6">
                         <table class="table table-responsive-sm table-info border table-striped rounded">
-                            <thead class="font-weight-bold bg-info text-light h5">
-                                <tr>
-                                    <td>Total Employess</td>
-                                    <td>0/@Model.Employees.Count()</td>
+                            <thead class="bg-info text-light">
+                                <tr class="text-center font-weight-bold h5">
+                                    <td>Total Employes</td>
+                                    <td colspan="2">@Model.Attendances.Where(s => s.ApplicationUser.UserType == 'e').Count()/@Model.Employees.Count()</td>
+                                </tr>
+                                <tr class="bg-info text-light">
+                                    <td>Designation</td>
+                                    <td>Present</td>
+                                    <td>Total</td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -99,7 +50,8 @@
                                 {
                                     <tr>
                                         <td>@desig.DesignationName</td>
-                                        <td>0/@desig.Employees.Count()</td>
+                                        <td class="text-center">0</td>
+                                        <td class="text-center">@desig.Employees.Count()</td>
                                     </tr>
                                 }
                             </tbody>
@@ -107,10 +59,15 @@
                     </div>
                     <div class="col-md-6">
                         <table class="table table-responsive-sm table-info border table-striped rounded">
-                            <thead class="font-weight-bold bg-info text-light">
-                                <tr>
+                            <thead class="bg-info text-light">
+                                <tr class="font-weight-bold h5">
                                     <td>Total Students</td>
-                                    <td>0/@Model.Students.Count()</td>
+                                    <td colspan="2" class="text-center">@Model.Attendances.Where(s => s.ApplicationUser.UserType == 's').Count()/@Model.Students.Count()</td>
+                                </tr>
+                                <tr class="">
+                                    <td>Class Name</td>
+                                    <td>Present</td>
+                                    <td>Total</td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -118,7 +75,8 @@
                                 {
                                     <tr>
                                         <td>@sClass.Name</td>
-                                        <td>0/@sClass.Students.Count()</td>
+                                        <td class="text-center">0</td>
+                                        <td class="text-center">@sClass.Students.Count()</td>
                                     </tr>
                                 }
                             </tbody>

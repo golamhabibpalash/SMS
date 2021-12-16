@@ -15,6 +15,7 @@ namespace SMS.Entities
         public string Slogan { get; set; }
         public string Banner { get; set; }
         public string Logo { get; set; }
+        public string FavIcon { get; set; }
         public string Address { get; set; }
         public string BranchName { get; set; }
     }

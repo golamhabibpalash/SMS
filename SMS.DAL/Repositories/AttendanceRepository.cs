@@ -1,4 +1,5 @@
-﻿using SMS.DAL.Contracts;
+﻿using Microsoft.EntityFrameworkCore;
+using SMS.DAL.Contracts;
 using SMS.DAL.Repositories.Base;
 using SMS.DB;
 using SMS.Entities;
@@ -15,6 +16,10 @@ namespace SMS.DAL.Repositories
         public AttendanceRepository(ApplicationDbContext context):base(context)
         {
 
+        }
+        public override async Task<IReadOnlyCollection<Attendance>> GetAllAsync()
+        {
+            return await _context.Attendances.Include(a => a.ApplicationUser).ToListAsync();
         }
     }
 }

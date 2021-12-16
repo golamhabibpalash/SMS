@@ -12,5 +12,6 @@ namespace SMS.Entities
     {
         public char UserType { get; set; } //e =employee, s =student
         public int ReferenceId { get; set; }
+        public ICollection<Attendance> Attendances { get; set; }
     }
 }

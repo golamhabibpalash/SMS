@@ -12,5 +12,6 @@ namespace SMS.App.ViewModels.Students
         public ICollection<Employee> Employees { get; set; }
         public ICollection<AcademicClass> Classes { get; set; }
         public ICollection<Designation> Designations { get; set; }
+        public ICollection<Attendance> Attendances { get; set; }
     }
 }

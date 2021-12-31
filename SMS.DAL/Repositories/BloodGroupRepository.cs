@@ -1,4 +1,5 @@
-﻿using SMS.DAL.Contracts;
+﻿using Microsoft.EntityFrameworkCore;
+using SMS.DAL.Contracts;
 using SMS.DAL.Repositories.Base;
 using SMS.DB;
 using SMS.Entities;
@@ -15,6 +16,10 @@ namespace SMS.DAL.Repositories
         public BloodGroupRepository(ApplicationDbContext db) : base(db)
         {
 
+        }
+        public override async Task<IReadOnlyCollection<BloodGroup>> GetAllAsync()
+        {
+            return await _context.BloodGroup.OrderBy(b => b.Name).ToListAsync();
         }
     }
 }

@@ -37,12 +37,12 @@ namespace SMS.App.ViewModels.Students
         [Display(Name = "Email Address"), EmailAddress]
         public string Email { get; set; }
 
-        [Display(Name = "Phone"), Required]
-        [Range(01300000000, 01999999999)]
+        [Display(Name = "Phone"), Required, StringLength(11, MinimumLength =11, ErrorMessage = "Phone Number allow only 11 digit")]
+        [Range(01300000000, 01999999999, ErrorMessage ="Please Insert a valid phone number")]
         public string PhoneNo { get; set; }
 
-        [Display(Name = "Guardian Phone")]
-        [Range(01300000000, 01999999999)]
+        [Display(Name = "Guardian Phone"), StringLength(11, MinimumLength =11, ErrorMessage = "Phone Number allow only 11 digit")]
+        [Range(01300000000, 01999999999, ErrorMessage = "Please Insert a valid phone number")]
         public string GuardianPhone { get; set; }
 
         [Display(Name = "Student Image")]
@@ -52,7 +52,7 @@ namespace SMS.App.ViewModels.Students
         [Display(Name = "Date of Birth*"), DataType(DataType.Date)]
         public DateTime DOB { get; set; }
 
-        [Display(Name = "Birth Certificate No"), StringLength(17, MinimumLength = 17)]
+        [Display(Name = "Birth Certificate No"), StringLength(17, MinimumLength = 17,ErrorMessage = "Please Insert a 17 digit valid number")]
         public string BirthCertificateNo { get; set; }
 
         [Display(Name = "Birth Certificate Image")]

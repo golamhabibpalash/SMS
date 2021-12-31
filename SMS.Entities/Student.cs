@@ -34,10 +34,10 @@ namespace SMS.Entities
 
         public string Email { get; set; }
 
-        [Display(Name = "Phone No")]
+        [Display(Name = "Phone No"), StringLength(11)]
         public string PhoneNo { get; set; }
 
-        [Display(Name = "Guardian Phone")]        
+        [Display(Name = "Guardian Phone"), StringLength(11)]        
         public string GuardianPhone { get; set; }
 
         public string Photo { get; set; }

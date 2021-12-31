@@ -196,10 +196,11 @@ namespace SMS.App.Controllers
             }
         }
 
-        [Route("/api/academicClass/getAll")]
+        
         public async Task<IReadOnlyCollection<AcademicClass>> GetAll()
         {
-            return await _academicClassManager.GetAllAsync();
+            var aClassList = await _academicClassManager.GetAllAsync();
+            return aClassList;
         }
     }
 }

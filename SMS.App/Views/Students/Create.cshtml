@@ -4,7 +4,10 @@
     ViewData["Title"] = "Add New Student";
     GlobalUI.PageTitle = ViewBag.Title;
 }
-
+@if (ViewBag.msg != null)
+{
+    <span class="fadeOutMsg alert alert-danger">@ViewBag.msg</span>
+}
 <div class="row">
     <div class="col-md-12">
         <form asp-action="Create" asp-controller="Students" enctype="multipart/form-data">
@@ -42,7 +45,7 @@
 
                 <label asp-for="ClassRoll" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
-                    <input placeholder="Auto Generated Code" readonly class="form-control input-sm" />
+                    <input asp-for="ClassRoll" placeholder="Input Class roll" class="form-control input-sm" required max="999" min="1" />
                     <span asp-validation-for="ClassRoll" class="text-danger"></span>
                 </div>
             </div>
@@ -52,12 +55,7 @@
                     <input asp-for="AdmissionDate" class="form-control" value="@DateTime.Now.Date" />
                     <span asp-validation-for="AdmissionDate" class="text-danger"></span>
                 </div>
-
-               
             </div>
-
-
-
 
 
             <div class="row">
@@ -163,7 +161,9 @@
                 <div class="col-md-4">
                     <select asp-for="BloodGroupId" class="form-control" asp-items="Model.BloodGroupList">
                         <option selected disabled>Select Blood Group</option>
+                        <option value="0">N/A</option>
                     </select>
+                    <span asp-validation-for="BloodGroupId" class="text-danger"></span>
                 </div>
                 <label asp-for="ReligionId" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">

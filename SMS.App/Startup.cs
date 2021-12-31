@@ -46,8 +46,10 @@ namespace SchoolManagementSystem
                 option.Password.RequireNonAlphanumeric = false;
             }).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
-           
-           
+            services.AddControllers().AddNewtonsoftJson(options =>
+                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+             );
+
             //services.AddDatabaseDeveloperPageExceptionFilter();
             services.ConfigureApplicationCookie(options =>
             {

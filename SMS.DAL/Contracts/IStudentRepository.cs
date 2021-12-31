@@ -12,6 +12,5 @@ namespace SMS.DAL.Contracts
     {
         Task<Student> GetStudentByClassRollAsync(int classRoll);
         Task<List<Student>> GetStudentsByClassIdAndSessionIdAsync(int sessionId, int classId);
-
     }
 }

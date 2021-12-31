@@ -2,9 +2,12 @@
 
 @{
     ViewData["Title"] = "Edit Information";
-    GlobalUI.PageTitle = "Student ("+Model.Name+"-"+Model.ClassRoll+") Information Edit";
+    GlobalUI.PageTitle = "Student (" + Model.Name + "-" + Model.ClassRoll + ") Information Edit";
 }
-
+@if (ViewBag.msg != null)
+{
+    <span class="fadeOutMsg alert alert-danger">@ViewBag.msg</span>
+}
 <div class="row">
     <div class="col-md-12">
         <form asp-action="Edit" asp-controller="Students" enctype="multipart/form-data">
@@ -41,7 +44,7 @@
 
                 <label asp-for="ClassRoll" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
-                    <input asp-for="ClassRoll" class="form-control input-sm" />
+                    <input asp-for="ClassRoll" class="form-control input-sm" min="2006001" max="9999999" />
                     <span asp-validation-for="ClassRoll" class="text-danger"></span>
                 </div>
             </div>
@@ -53,7 +56,6 @@
                     <span asp-validation-for="AdmissionDate" class="text-danger"></span>
                 </div>
             </div>
-
 
 
 
@@ -84,11 +86,11 @@
                             <input type="file" name="sPhoto" class="form-control-plaintext" id="imgInp" />
                         </div>
                         @if (Model.Photo != null)
-	                        {
-                                <div class="col-md-6 " id="previousImageId">
-                                    <img src="~/Images/Student/@Model.Photo" style="width:100px; border:1px solid black" />
-                                </div>
-	                        }
+                        {
+                            <div class="col-md-6 " id="previousImageId">
+                                <img src="~/Images/Student/@Model.Photo" style="width:100px; border:1px solid black" />
+                            </div>
+                        }
                         <div class="col-md-6" id="photoDiv" style="display:none">
                             <img id="sPhotoId" style="width:100px; border:1px solid black" />
                         </div>
@@ -168,6 +170,7 @@
                     <select asp-for="BloodGroupId" class="form-control" asp-items="Model.BloodGroupList">
                         <option selected disabled>Select Blood Group</option>
                     </select>
+                    <span asp-validation-for="BloodGroupId" class="text-danger"></span>
                 </div>
                 <label asp-for="ReligionId" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
@@ -286,7 +289,7 @@
             <div class="form-group text-center">
                 <partial name="_Update_Back" model="@Model.Id" />
                 @*<input type="submit" value="Update" class="btn btn-primary" />
-            <a class="btn btn-success" asp-action="Index" title="Go To List" data-toggle="tooltip" data-placement="top"><i class="fa fa-list"></i></a>*@
+                    <a class="btn btn-success" asp-action="Index" title="Go To List" data-toggle="tooltip" data-placement="top"><i class="fa fa-list"></i></a>*@
             </div>
         </form>
     </div>
@@ -294,13 +297,13 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-<script src="~/js/Student/Edit.js"></script>
-<script>
-    $(document).ready(function () {
-        $('#sPhotoId').on('change',function () {
-            alert();
-            $('#previousImageId').css('display', 'none');
+    <script src="~/js/Student/Edit.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#sPhotoId').on('change', function () {
+                alert();
+                $('#previousImageId').css('display', 'none');
+            });
         });
-    });
-</script>
+    </script>
 }

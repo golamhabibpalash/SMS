@@ -1,4 +1,6 @@
 ﻿
+$(".fadeOutMsg").fadeOut(10000);
+
 $('#AcademicSessionId').change(function () {
     let id = $('#AcademicSessionId option:selected').val();
 
@@ -54,7 +56,7 @@ $('#AcademicClassId').change(function () {
     });
 });
 
-$('#PresentDivisiontId').change(function () {
+$('#PresentDivisionId').change(function () {
     let id = $('#PresentDivisiontId option:selected').val();
 
     $.ajax({
@@ -103,9 +105,9 @@ $('#PresentDistrictId').change(function () {
 });
 
 
-$('#PermanentDivisiontId').change(function () {
+$('#PermanentDivisionId').change(function () {
 
-    let id = $('#PermanentDivisiontId option:selected').val();
+    let id = $('#PermanentDivisionId option:selected').val();
 
     $.ajax({
         url: "/Students/GetDistrictList/" + id,

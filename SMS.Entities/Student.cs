@@ -75,7 +75,7 @@ namespace SMS.Entities
         public int PresentDistrictId { get; set; }
 
         [Display(Name = "Division")]
-        public int PresentDivisiontId { get; set; }
+        public int? PresentDivisionId { get; set; }
 
         [Display(Name = "Vill/Area")]
         public string PermanentAddressArea { get; set; }
@@ -90,7 +90,7 @@ namespace SMS.Entities
         public int PermanentDistrictId { get; set; }
 
         [Display(Name = "Division")]
-        public int PermanentDivisiontId { get; set; }
+        public int? PermanentDivisionId { get; set; }
 
         [Display(Name = "Session")]
         public int AcademicSessionId { get; set; }

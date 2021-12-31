@@ -1,6 +1,10 @@
-﻿$('#AcademicSessionId').change(function () {
+﻿$(document).ready(function () {
+    $(".fadeOutMsg").fadeOut(10000);
+
+
+$('#AcademicSessionId').change(function () {
     $.ajax({
-        url: "/api/academicClass/getAll",
+        url: "/academicClasses/getAll",
         dataType: "JSON",
         type: "POST",
         cache: false,
@@ -56,7 +60,7 @@ $('#AcademicClassId').change(function () {
 
 
 //Code for PresentDistrict Load
-$('#PresentDivisionId').change(function () {
+ $('#PresentDivisionId').change(function () {
     let divId = $('#PresentDivisionId option:selected').val();
     let disName = '#PresentDistrictId';
     GetDistrictByDivisionId(divId, disName);
@@ -81,6 +85,8 @@ $('#PermanentDistrictId').change(function () {
     let disId = $('#PermanentDistrictId option:selected').val();
     let upName = '#PermanentUpazilaId';
     GetUpazilaByDistrictId(disId, upName);
+});
+
 });
 
 //Image load to view

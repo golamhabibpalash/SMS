@@ -47,6 +47,11 @@ namespace SMS.DAL.Repositories
             return student;
         }
 
+        public async Task<Student> GetStudentByClassRollAsync(int id, int classRoll)
+        {
+            return await _context.Student.FirstOrDefaultAsync(s => s.Id != id && s.ClassRoll == classRoll);
+        }
+
         public async Task<List<Student>> GetStudentsByClassIdAndSessionIdAsync(int sessionId, int classId)
         {
             List<Student> students = await _context.Student.Where(s => s.AcademicSessionId == sessionId && s.AcademicClassId == classId).ToListAsync();

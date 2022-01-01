@@ -48,7 +48,8 @@ namespace SMS.App.Controllers
                 ViewBag.InstituteName = institute.Name;
             }
             var user = await _userManager.GetUserAsync(User);
-            HttpContext.Session.SetString("UserId","user.Id");
+            HttpContext.Session.SetString("UserId",user.Id);
+
             DashboardIndexVM DashboardVM = new DashboardIndexVM();
             IReadOnlyCollection<Student> students = await _studentManager.GetAllAsync();
             DashboardVM.Students = (ICollection<Student>)students;

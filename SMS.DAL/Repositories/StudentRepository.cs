@@ -17,7 +17,7 @@ namespace SMS.DAL.Repositories
         public override async Task<IReadOnlyCollection<Student>> GetAllAsync()
         {
             return await _context.Student.Include(s => s.AcademicClass)
-                .Include(s => s.AcademicSession).ToListAsync();
+                .Include(s => s.AcademicSession).OrderBy(s => s.AcademicClassId).ThenBy(s => s.ClassRoll).ToListAsync();
         }
         public override async Task<Student> GetByIdAsync(int id)
         {

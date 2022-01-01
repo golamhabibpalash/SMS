@@ -24,6 +24,8 @@
                     <select asp-for="AcademicSessionId" class="form-control input-sm" asp-items="Model.AcademicSessionList">
                         <option disabled selected>Select Academic Session</option>
                     </select>
+                    <span asp-validation-for="AcademicSessionId" class="text-danger"></span>
+
                 </div>
                 <label asp-for="AcademicClassId" class="col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
@@ -278,8 +280,6 @@
             <div class="form-group row ">
                 <div class="col-md-8 offset-md-2">
                     <partial name="_Create_Back" />
-                    @*<input type="submit" value="Create" class="btn btn-primary" />
-                    <a class="btn btn-success" asp-action="Index" title="Go To List" data-toggle="tooltip" data-placement="top"><i class="fa fa-list"></i></a>*@
                 </div>
             </div>
         </form>

@@ -19,7 +19,9 @@
         <table class="table table-hover table-bordered table-responsive-sm table-striped" id="myTable">
             <thead class="bg-blue text-light">
                 <tr>
-                    <th>#</th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ClassRoll)
+                    </th>
                     <th>
                         @Html.DisplayNameFor(model => model.Photo)
                     </th>
@@ -28,9 +30,6 @@
                     </th>
                     <th>
                         Class
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.ClassRoll)
                     </th>
 
                     <th>
@@ -41,6 +40,7 @@
                         Academic Session
                     </th>
 
+                    <th>Active Status</th>
 
                     <th><a asp-action="Create" class="p-2 btn-sm btn-info rounded-pill"><i class="fa fa-plus"></i> Add <i class="fa fa-user-alt"></i> </a></th>
                 </tr>
@@ -48,36 +48,53 @@
             <tbody>
                 @foreach (var item in Model)
                 {
-                    <tr>
-                        <td>@(++sl).</td>
-                        <td>
-                            <a asp-action="Details" asp-route-id="@item.Id" asp-controller="Students">
-                                <img src="~/Images/Student/@item.Photo" alt="Photo Not showing" style="width:50px;" />
-                            </a>
-                        </td>
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ClassRoll)
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id" asp-controller="Students">
+                            @if (item.Photo != null)
+                            {
+                                <img src="~/Images/Student/@item.Photo" alt="Photo Missing" style="max-width:50px; max-height:80px" />
+                            }
+                            else
+                            {
+                                <img src="~/Images/noProfileImage.png" alt="Default Image" style="max-width:50px; max-height:80px;" />
+                            }
+                        </a>
+                    </td>
 
-                        <td>
-                            <a asp-action="Details" asp-route-id="@item.Id" asp-controller="Students">
-                                @Html.DisplayFor(modelItem => item.Name)
-                            </a>
-                        </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id" asp-controller="Students">
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </a>
+                    </td>
 
-                        <td>
-                            @Html.DisplayFor(modelItem => item.AcademicClass.Name)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.ClassRoll)
-                        </td>
-                        <td>
-                            @phoneCode@item.PhoneNo
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.AcademicSession.Name)
-                        </td>
-                        <td>
-                            <partial name="_Edit_Details_Delete" model="@item.Id" />
-                        </td>
-                    </tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AcademicClass.Name)
+                    </td>
+                    <td>
+                        @phoneCode@item.PhoneNo
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AcademicSession.Name)
+                    </td>
+                    @if (item.Status)
+                    {
+
+                        <td> <input type="checkbox" checked disabled /> Active</td>
+
+                    }
+                    else
+                    {
+                        <td><input type="checkbox" disabled /> InActive</td>
+
+                    }
+                    <td>
+                        <partial name="_Edit_Details_Delete" model="@item.Id" />
+                    </td>
+                </tr>
                 }
             </tbody>
         </table>

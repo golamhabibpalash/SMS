@@ -169,6 +169,7 @@
                 <div class="col-md-4">
                     <select asp-for="BloodGroupId" class="form-control" asp-items="Model.BloodGroupList">
                         <option selected disabled>Select Blood Group</option>
+                        <option value="">N/A</option>
                     </select>
                     <span asp-validation-for="BloodGroupId" class="text-danger"></span>
                 </div>

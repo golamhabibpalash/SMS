@@ -66,7 +66,7 @@ namespace SMS.App.ViewModels.Students
         public int GenderId { get; set; }
 
         [Display(Name = "Blood Group")]
-        public int BloodGroupId { get; set; }
+        public int? BloodGroupId { get; set; }
 
         [Display(Name = "Nationality")]
         public int NationalityId { get; set; }

@@ -67,7 +67,7 @@
 
                     <td>
                         <a asp-action="Details" asp-route-id="@item.Id" asp-controller="Students">
-                            @Html.DisplayFor(modelItem => item.Name)
+                            @item.Name.ToUpper()
                         </a>
                     </td>
 

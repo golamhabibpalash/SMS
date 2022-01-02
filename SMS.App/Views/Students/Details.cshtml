@@ -140,7 +140,14 @@
                                 <tr>
                                     <td>Blood Group</td>
                                     <td>:</td>
-                                    <td>@Model.Student.BloodGroup.Name</td>
+                                    @if (Model.Student.BloodGroupId != null)
+                                    {
+                                        <td>@Model.Student.BloodGroup.Name</td>
+                                    }
+                                    else
+                                    {
+                                        <td>Not Provided</td>
+                                    }
                                 </tr>
                                 <tr class="table-info">
                                     <td class="p-1" colspan="3">

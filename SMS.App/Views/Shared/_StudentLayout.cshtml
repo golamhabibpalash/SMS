@@ -16,8 +16,38 @@
     string instituteName = GlobalUI.InstituteName != null ? GlobalUI.InstituteName : "Institute Name";
     string instituteLogo = GlobalUI.Logo != null ? GlobalUI.Logo : "nobleLogo.png";
 }
+
 @{
     var user = await _userManager.GetUserAsync(User);
+    var userName = _userManager.GetUserName(User);
+    string userImage = "";
+    if (_signInManager.IsSignedIn(User))
+    {
+        if (user.UserType == 's')
+        {
+            var stu = await _studentManager.GetByIdAsync(user.ReferenceId);
+            if (stu.Photo != null)
+            {
+                userImage = "/Images/Student/Photo/" + stu.Photo;
+            }
+            else
+            {
+                userImage = "/Images/noProfileImage.png";
+            }
+        }
+        if (user.UserType == 'e')
+        {
+            var emp = await _employeeManager.GetByIdAsync(user.ReferenceId);
+            if (emp.Image != null)
+            {
+                userImage = "/Images/Employee/Photo/" + emp.Image;
+            }
+            else
+            {
+                userImage = "/Images/noProfileImage.png";
+            }
+        }
+    }
 }
 
 <!DOCTYPE html>
@@ -52,6 +82,8 @@
     <!-- Custom Theme Style -->
     <link href="~/css/custom.min.css" rel="stylesheet" />
     <link href="~/css/site.css" rel="stylesheet" />
+    <!-- Overlay Style-->
+    <link href="~/css/userProfileOverLay.css" rel="stylesheet" />
 
     <!-- Data Table Style-->
     <link href="~/lib/DataTable/css/jquery.dataTables.min.css" rel="stylesheet" />
@@ -142,16 +174,36 @@
             <div class="top_nav pb-3">
                 <div class="nav_menu">
                     <div class="nav toggle">
-                        <a style="padding:5px;" id="menu_toggle"><i class="fa fa-bars"></i></a>
+                        <a style="padding:5px;" id="menu_toggle">
+
+
+                            <i class="fa fa-bars"></i>
+                        </a>
+
                     </div>
-                    <nav class="nav navbar-nav">
-                        <ul style="list-style:none;" class="navbar">
-                            <li class="nav-item dropdown open" style="padding-left: 15px;">
-                                <text class="h5 text-info">@GlobalUI.PageTitle</text>
-                            </li>
-                        </ul>
-                    </nav>
+                    <div class="nav d-flex justify-content-between">
+                        @if (_signInManager.IsSignedIn(User))
+                        {
+
+                            <span class="p-2">@userName </span>
+                            <span class="float-right p-2">
+                                <img src="@userImage" alt="profile Image" class="img-circle" data-toggle="popover" data-placement="bottom" style="width:25px;" onclick="openNav()" />
+                            </span>
+                            <div id="myNav" class="overlay">
+                                <button class="btn btn-sm btn-danger btn-block closebtn" onclick="closeNav()">Close</button>
+
+
+                                <div class="overlay-content">
+                                    @await Component.InvokeAsync("ProfileOverlay")
+                                </div>
+                            </div>
+
+                        }
+                    </div>
+
                 </div>
+                <text class="h5 text-light">@GlobalUI.PageTitle</text>
+
             </div>
             <!-- /top navigation -->
             <!-- page content -->
@@ -185,6 +237,9 @@
     <!-- NProgress -->
     <script src="~/lib/Theme/js/nprogress.js"></script>
 
+    <!-- User Profile Overlay -->
+    <script src="~/js/Accessories/userProfileOverLay.js"></script>
+
     <!-- Alertify -->
     <script src="~/lib/Alertify/alertify.min.js"></script>
     <!-- Datatable script -->
@@ -194,6 +249,11 @@
     <script src="~/js/custom.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
     <script>
+        $(function () {
+            $('[data-toggle="popover"]').popover()
+        })
+
+
         function menuToggle() {
             if ($('body').hasClass('nav-md')) {
                 $("#sidebar-menu").find('li.active ul').hide();
@@ -218,10 +278,19 @@
 
 
 
-
         $(document).ready(function () {
             menuToggle();
             //$('#menu_toggle').click();
+            $("[data-toggle=popover]").popover({
+                html: true,
+                animation: true,
+                delay: { "show": 500, "hide": 100 },
+                template: '<div class="popover" role="tooltip"><div class="arrow"></div><h3 class="popover-header"></h3><div class="popover-body"></div></div>',
+                content: function () {
+
+                    return $('#popover-content').html();
+                }
+            });
         });
     </script>
 </body>

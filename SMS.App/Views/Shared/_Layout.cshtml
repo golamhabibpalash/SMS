@@ -110,8 +110,8 @@
                         <div class="menu_section">
                             <ul class="nav side-menu">
                                 @*<li>
-                                    <a asp-controller="Home" asp-action="Index"><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>
-                                </li>*@
+            <a asp-controller="Home" asp-action="Index"><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>
+        </li>*@
                                 <li>
                                     <a><i class="fa fa-users"></i> Students <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
@@ -205,15 +205,21 @@
                                         </li>
                                     </ul>
                                 </li>
-                                <li>
-                                    <a><i class="fa fa-cog"></i> Settings <span class="fa fa-chrome"></span></a>
-                                    <ul class="nav child_menu">
-                                        <li><a asp-action="Index" asp-controller="Institutes">Institute</a></li>
-                                        <li><a asp-action="Index" asp-controller="PhoneSMS">SMS List</a></li>
-                                        <li><a asp-action="userList" asp-controller="Accounts">User List</a></li>
-                                        <li><a asp-action="roleList" asp-controller="Accounts">Role List</a></li>
-                                    </ul>
-                                </li>
+                                @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
+                                {
+                                    <li>
+                                        <a><i class="fa fa-cog"></i> Settings <span class="fa fa-chrome"></span></a>
+                                        <ul class="nav child_menu">
+                                            <li><a asp-action="Index" asp-controller="Institutes">Institute</a></li>
+                                            <li><a asp-action="Index" asp-controller="PhoneSMS">SMS List</a></li>
+                                            <li><a asp-action="userList" asp-controller="Accounts">User List</a></li>
+                                            @if (User.IsInRole("SuperAdmin"))
+                                            {
+                                                <li><a asp-action="roleList" asp-controller="Accounts">Role List</a></li>
+                                            }
+                                        </ul>
+                                    </li>
+                                }
 
                             </ul>
                         </div>

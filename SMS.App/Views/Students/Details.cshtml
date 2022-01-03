@@ -71,7 +71,7 @@
                         }
                         else
                         {
-                        <span>No Section</span>
+                            <span>No Section</span>
                         }
                     </dd>
                     <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
@@ -89,7 +89,7 @@
             <div class="card-header">
                 <ul class="nav nav-tabs card-header-tabs" id="bologna-list">
                     <li class="nav-item bg-Teal text-light">
-                        <a class="nav-link text-success active"  href="#personal" role="tab" aria-controls="personal" aria-selected="true">Personal Information</a>
+                        <a class="nav-link text-success active" href="#personal" role="tab" aria-controls="personal" aria-selected="true">Personal Information</a>
                     </li>
                     <li class="nav-item bg-Coffee text-light">
                         <a class="nav-link text-light" href="#academic" role="tab" aria-controls="academic" aria-selected="true">Academic Information</a>
@@ -221,7 +221,7 @@
                                 <div class="col-md-6 text-right">
                                     <a asp-action="Payment" asp-controller="StudentPayments" asp-route-stRoll="@Model.Student.ClassRoll" class="btn btn-info">Make Payment</a>
                                 </div>
-                                
+
                             </div>
                         </div>
                         <div class="row">
@@ -244,7 +244,6 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-
                                             </tbody>
                                             <tr>
                                                 <td></td>
@@ -326,13 +325,16 @@
             </div>
         </div>
     </div>
-    <div class="col-md-10 offset-1  p-1 mb-2">
-        <div class="row p-2">
-            <div class="col-md-12 text-center">
-                <partial name="_Edit_Back" model="@Model.Student.Id"/>
+    @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
+    {
+        <div class="col-md-10 offset-1  p-1 mb-2">
+            <div class="row p-2">
+                <div class="col-md-12 text-center">
+                    <partial name="_Edit_Back" model="@Model.Student.Id" />
+                </div>
             </div>
         </div>
-    </div>
+    }
 </div>
 
 

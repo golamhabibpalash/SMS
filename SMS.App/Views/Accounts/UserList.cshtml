@@ -19,8 +19,11 @@
                 <tr>
                     <th>#</th>
                     <th>User</th>
+                    <th>Phone</th>
                     <th>Email</th>
                     <th>User Type</th>
+                    <th>RefId</th>
+
                     <th>
                         <a class="p-2 btn-sm btn-info rounded-pill" asp-action="Register"><i class="fa fa-plus"></i> Add</a>
                     </th>
@@ -32,13 +35,14 @@
                     <tr>
                         <td>@(++sl)</td>
                         <td>@item.UserName</td>
+                        <td>@item.PhoneNumber</td>
                         <td>@item.Email</td>
                         @{
                             userType = item.UserType == 's' ? "Student" : item.UserType == 'e' ? "Employee" : "Other";                            
                            }
                         <td>@userType</td>
+                        <td>@item.ReferenceId</td>
                         <td>
-                            
                             <a class="btn btn-sm btn-warning rounded mr-1" asp-action="EditUser" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-edit"></i> </a>
                             <a class="btn btn-sm rounded btn-danger" asp-action="DeleteUser" asp-route-id="@item.Id" data-toggle="tooltip" data-placement="right" title="Delete"><i class="fa fa-trash"></i> </a>
                         </td>

@@ -13,7 +13,6 @@ namespace SMS.App.ViewModels.AdministrationVM
 
         public char UserType { get; set; }
         [EmailAddress]
-        [Required]
         public string Email { get; set; }
 
         [Required]

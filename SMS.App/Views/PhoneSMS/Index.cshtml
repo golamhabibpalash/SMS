@@ -6,7 +6,7 @@
 @if (Model != null || Model.Any() || Model.Count() > 0)
 {
 
-    <table class="table table-responsive-sm">
+    <table class="table table-responsive-sm table-striped table-hover" id="myTable">
         <thead>
             <tr>
                 <th>#</th>
@@ -22,12 +22,6 @@
                 <th>
                     @Html.DisplayNameFor(model => model.CreatedAt)
                 </th>
-                @*<th>
-                    @Html.DisplayNameFor(model => model.EditedBy)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.EditedAt)
-                </th>*@
                 <th></th>
             </tr>
         </thead>
@@ -50,12 +44,6 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.CreatedAt)
                     </td>
-                    @*<td>
-                        @Html.DisplayFor(modelItem => item.EditedBy)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.EditedAt)
-                    </td>*@
                     <td>
                         <partial name="_Edit_Details_Delete" model="@item.Id" />
                     </td>
@@ -63,4 +51,8 @@
             }
         </tbody>
     </table>
+}
+
+@section Scripts{
+    <script src="~/js/DataTable/dataTable.js"></script>
 }

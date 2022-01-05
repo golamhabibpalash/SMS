@@ -569,7 +569,7 @@ namespace SMS.App.Controllers
             else
             {
                 var stuList = from s in await _studentManager.GetAllAsync()
-                              select new { userType = 's', name = s.Name, value = s.Id, image = s.Photo, roll = s.ClassRoll };
+                              select new { userType = 's', name = s.Name, value = s.Id, image = s.Photo, roll = s.ClassRoll, phone = s.PhoneNo };
 
 
                 return Json(stuList);

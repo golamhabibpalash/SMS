@@ -62,7 +62,12 @@ namespace SchoolManagementSystem
                 options.SlidingExpiration = true;
             });
 
-            
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
 
             services.AddAutoMapper(typeof(Startup));
 

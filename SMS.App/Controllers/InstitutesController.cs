@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SchoolManagementSystem;
+using SMS.App.ViewModels.InstituteVM;
 using SMS.BLL.Contracts;
 using SMS.Entities;
 using System;
@@ -24,7 +25,8 @@ namespace SMS.App.Controllers
             _instituteManager = instituteManager;
             _host = host;
         }
-        // GET: InstitutesController
+        
+
         public async Task<ActionResult> Index()
         {
             var result = await _instituteManager.GetAllAsync();
@@ -40,21 +42,20 @@ namespace SMS.App.Controllers
             return RedirectToAction("Create");
         }
 
-        // GET: InstitutesController/Details/5
+
         public ActionResult Details(int id)
         {
             return View();
         }
 
-        // GET: InstitutesController/Create
+
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: InstitutesController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(Institute institute, IFormFile logo, IFormFile banner)
         {
             if (ModelState.IsValid)
@@ -107,16 +108,15 @@ namespace SMS.App.Controllers
             
         }
 
-        // GET: InstitutesController/Edit/5
+
         public async Task<ActionResult> Edit(int id)
         {
             var institute = await _instituteManager.GetByIdAsync(id);
             return View(institute);
         }
 
-        // POST: InstitutesController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+
+        [HttpPost,ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(int id,Institute existingInstitute, IFormFile logo, IFormFile banner)
         {
             string InstituteLogo = "";
@@ -169,15 +169,12 @@ namespace SMS.App.Controllers
             return View(institute);
         }
 
-        // GET: InstitutesController/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: InstitutesController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)
         {
             try
@@ -191,17 +188,39 @@ namespace SMS.App.Controllers
         }
 
         [HttpGet]
-        public ActionResult Setting()
+        public async Task<ActionResult> SchoolTimeTable()
         {
+            Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
+            InstituteTimeVM instituteTimeVM = new InstituteTimeVM() { };
+            
+                
+
+            
             return View();
         }
 
         [HttpPost]
-        public ActionResult Setting(string name)
+        public async Task<ActionResult> SchoolTimeTable(InstituteTimeVM model)
         {
-            GlobalUI.InstituteName = name;
+            if (ModelState.IsValid)
+            {
+                Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
+                if (institute != null)
+                {
+                    institute.StartingTime = model.StartingTime.ToString("t");
+                    institute.ClosingTime = model.ClosingTime.ToString("t");
+
+                    TimeSpan span = model.LateTimeStart.Subtract(model.StartingTime);
+
+                    institute.LateStartAfter = (int)span.TotalMinutes;
+
+                    await _instituteManager.UpdateAsync(institute);
+                    return RedirectToAction(nameof(Index));
+                }
+            }
             return View();
         }
+
 
     }
 }

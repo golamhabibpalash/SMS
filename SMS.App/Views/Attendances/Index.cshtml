@@ -1,57 +1,72 @@
 ﻿@model IEnumerable<SMS.Entities.Attendance>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Attendances";
+    GlobalUI.PageTitle = ViewBag.Title;
+    int i = 0;
 }
-
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+@if(Model.Count()>0)
+{
+<table class="table table-responsive-sm table-hover table-striped">
     <thead>
         <tr>
+            <th>#</th>
             <th>
-                @Html.DisplayNameFor(model => model.AttendanceDate)
+                @Html.DisplayNameFor(model => model.CardNo)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.IsPresent)
+                @Html.DisplayNameFor(model => model.PunchDatetime)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.InTime)
+                @Html.DisplayNameFor(model => model.StartingTime)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.OutTime)
+                @Html.DisplayNameFor(model => model.ClosingTime)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ApplicationUser)
+                @Html.DisplayNameFor(model => model.LateStartAfter)
             </th>
-            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.MachineNo)
+            </th>
+            <th><partial name="_Create" /></th>
         </tr>
     </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.AttendanceDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsPresent)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.InTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OutTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ApplicationUser.Id)
-            </td>
-            <td>
-                <partial name="_Edit_Details_Delete" model="@item.Id" />
-            </td>
-        </tr>
+	<tbody>
+		@foreach (var item in Model)
+		{
+			<tr>
+				<td>@(++i)</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.CardNo)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.PunchDatetime)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.StartingTime)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.ClosingTime)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.LateStartAfter)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.MachineNo)
+				</td>
+				<td>
+					<partial name="_Edit_Details_Delete" model="@item.Id" />
+				</td>
+			</tr>
+		}
+	</tbody>
+	</table>
 }
-    </tbody>
-</table>
+else
+{
+	<div class="jumbotron">
+	<span>Data Not found <partial name="_Create" /></span>
+
+	</div>
+}

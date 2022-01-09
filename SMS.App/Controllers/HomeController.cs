@@ -57,8 +57,8 @@ namespace SMS.App.Controllers
             DashboardVM.Classes = (ICollection<AcademicClass>)await _academicClassManager.GetAllAsync();
             DashboardVM.Designations = (ICollection<Designation>)await _designationManager.GetAllAsync();
 
-            var allAttendances = await _attendanceManager.GetAllAsync();
-            DashboardVM.Attendances = (ICollection<Attendance>)allAttendances.Where(a => a.AttendanceDate.Date.ToString() == DateTime.Today.Date.ToString()).ToList();
+            //var allAttendances = await _attendanceManager.GetAllAsync();
+            //DashboardVM.Attendances = (ICollection<Attendance>)allAttendances.Where(a => a.AttendanceDate.Date.ToString() == DateTime.Today.Date.ToString()).ToList();
 
             return View(DashboardVM);
         }

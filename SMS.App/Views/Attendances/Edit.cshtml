@@ -13,29 +13,34 @@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="AttendanceDate" class="control-label"></label>
-                <input asp-for="AttendanceDate" class="form-control" />
-                <span asp-validation-for="AttendanceDate" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsPresent" /> @Html.DisplayNameFor(model => model.IsPresent)
-                </label>
+                <label asp-for="CardNo" class="control-label"></label>
+                <input asp-for="CardNo" class="form-control" />
+                <span asp-validation-for="CardNo" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="InTime" class="control-label"></label>
-                <input asp-for="InTime" class="form-control" />
-                <span asp-validation-for="InTime" class="text-danger"></span>
+                <label asp-for="PunchDatetime" class="control-label"></label>
+                <input asp-for="PunchDatetime" class="form-control" />
+                <span asp-validation-for="PunchDatetime" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="OutTime" class="control-label"></label>
-                <input asp-for="OutTime" class="form-control" />
-                <span asp-validation-for="OutTime" class="text-danger"></span>
+                <label asp-for="StartingTime" class="control-label"></label>
+                <input asp-for="StartingTime" class="form-control" />
+                <span asp-validation-for="StartingTime" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ApplicationUserId" class="control-label"></label>
-                <select asp-for="ApplicationUserId" class="form-control" asp-items="ViewBag.ApplicationUserId"></select>
-                <span asp-validation-for="ApplicationUserId" class="text-danger"></span>
+                <label asp-for="ClosingTime" class="control-label"></label>
+                <input asp-for="ClosingTime" class="form-control" />
+                <span asp-validation-for="ClosingTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LateStartAfter" class="control-label"></label>
+                <input asp-for="LateStartAfter" class="form-control" />
+                <span asp-validation-for="LateStartAfter" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MachineNo" class="control-label"></label>
+                <input asp-for="MachineNo" class="form-control" />
+                <span asp-validation-for="MachineNo" class="text-danger"></span>
             </div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
@@ -69,3 +74,6 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

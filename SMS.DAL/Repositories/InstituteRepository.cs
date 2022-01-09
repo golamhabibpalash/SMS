@@ -1,4 +1,5 @@
-﻿using SMS.DAL.Contracts;
+﻿using Microsoft.EntityFrameworkCore;
+using SMS.DAL.Contracts;
 using SMS.DAL.Contracts.Base;
 using SMS.DAL.Repositories.Base;
 using SMS.DB;
@@ -16,6 +17,11 @@ namespace SMS.DAL.Repositories
         public InstituteRepository(ApplicationDbContext db):base(db)
         {
 
+        }
+
+        public async Task<Institute> GetFirstOrDefaultAsync()
+        {
+            return await _context.Institute.FirstOrDefaultAsync();
         }
     }
 }

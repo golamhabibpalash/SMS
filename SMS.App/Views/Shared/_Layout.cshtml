@@ -146,6 +146,15 @@
                                         <li>
                                             <a href="#"><span class="glyphicon glyphicon-th-large"></span> Duty Roster</a>
                                         </li>
+                                        @if(User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
+                                        {
+                                        <li>
+                                            <a asp-action="SchoolTimeTable" asp-controller="Institutes"><span class="glyphicon glyphicon-th-large"></span> School Time setting</a>
+                                        </li>
+                                        <li>
+                                            <a asp-action="Index" asp-controller="Attendances"><span class="glyphicon glyphicon-th-large"></span> Attendance</a>
+                                        </li>
+                                        }
                                     </ul>
                                 </li>
                                 <li>

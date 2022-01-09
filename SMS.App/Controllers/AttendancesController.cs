@@ -93,24 +93,33 @@ namespace SMS.App.Controllers
         }
 
         // GET: AttendancesController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
+            Attendance existingAttendances = await _attendanceManager.GetByIdAsync(id);
+            if (existingAttendances != null)
+            {
+                return View(existingAttendances);
+            }
+            ViewBag.msg = "Attendance not found";
             return View();
         }
 
         // POST: AttendancesController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> Delete(int id, Attendance attendance)
         {
-            try
+            if (ModelState.IsValid)
             {
+                if (id != attendance.Id)
+                {
+                    return NotFound();
+                }
+                await _attendanceManager.RemoveAsync(attendance);
                 return RedirectToAction(nameof(Index));
             }
-            catch
-            {
-                return View();
-            }
+            return View();
+            
         }
     }
 }

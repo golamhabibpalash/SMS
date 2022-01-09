@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SMS.DB;
 
 namespace SMS.DB.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220106174118_StartingTImeEndTimeLateTimeAddedInInstitute")]
+    partial class StartingTImeEndTimeLateTimeAddedInInstitute
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -454,12 +456,8 @@ namespace SMS.DB.Migrations
                     b.Property<string>("ApplicationUserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("CardNo")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<string>("ClosingTime")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("AttendanceDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -476,18 +474,14 @@ namespace SMS.DB.Migrations
                     b.Property<int?>("EmployeeId")
                         .HasColumnType("int");
 
-                    b.Property<int>("LateStartAfter")
-                        .HasColumnType("int");
-
-                    b.Property<string>("MachineNo")
-                        .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
-
-                    b.Property<DateTime>("PunchDatetime")
+                    b.Property<DateTime>("InTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("StartingTime")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("IsPresent")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("OutTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("StudentId")
                         .HasColumnType("int");
@@ -1478,7 +1472,7 @@ namespace SMS.DB.Migrations
 
             modelBuilder.Entity("SMS.Entities.Attendance", b =>
                 {
-                    b.HasOne("SMS.Entities.ApplicationUser", null)
+                    b.HasOne("SMS.Entities.ApplicationUser", "ApplicationUser")
                         .WithMany("Attendances")
                         .HasForeignKey("ApplicationUserId");
 
@@ -1489,6 +1483,8 @@ namespace SMS.DB.Migrations
                     b.HasOne("SMS.Entities.Student", null)
                         .WithMany("Attendances")
                         .HasForeignKey("StudentId");
+
+                    b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("SMS.Entities.ClassFeeList", b =>

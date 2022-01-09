@@ -10,5 +10,6 @@ namespace SMS.DAL.Contracts
 {
     public interface IInstituteRepository: IRepository<Institute>
     {
+        Task<Institute> GetFirstOrDefaultAsync();
     }
 }

@@ -12,9 +12,9 @@
     <tr>
         <td>@Html.DisplayNameFor(model => model.Name)</td><td>:</td><td>@Html.DisplayFor(modelItem => modelItem.Name)</td>
     </tr>
-    <tr>
+@*    <tr>
         <td>@Html.DisplayNameFor(model => model.ISO)</td><td>:</td><td>@Html.DisplayFor(modelItem => modelItem.ISO)</td>
-    </tr>
+    </tr>*@
     <tr>
         <td>@Html.DisplayNameFor(model => model.EIIN)</td><td>:</td><td>@Html.DisplayFor(modelItem => modelItem.EIIN)</td>
     </tr>
@@ -36,6 +36,15 @@
     </tr>
     <tr>
         <td>@Html.DisplayNameFor(model => model.BranchName)</td><td>:</td><td>@Html.DisplayFor(modelItem => modelItem.BranchName)</td>
+    </tr>
+    <tr>
+        <td>@Html.DisplayNameFor(model => model.StartingTime)</td><td>:</td><td>@Html.DisplayFor(modelItem => modelItem.StartingTime)</td>
+    </tr>
+    <tr>
+        <td>@Html.DisplayNameFor(model => model.ClosingTime)</td><td>:</td><td>@Html.DisplayFor(modelItem => modelItem.ClosingTime)</td>
+    </tr>
+    <tr>
+        <td>@Html.DisplayNameFor(model => model.LateStartAfter)</td><td>:</td><td>@Html.DisplayFor(modelItem => modelItem.LateStartAfter)min</td>
     </tr>
 </table>
 <div class="row">

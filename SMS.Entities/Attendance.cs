@@ -8,22 +8,22 @@ namespace SMS.Entities
 { 
     public class Attendance : CommonProps
     {
-        public DateTime AttendanceDate { get; set; }
+        [StringLength(10)]
+        public string CardNo { get; set; }
 
-        [Display(Name ="Attendance")]
-        public bool IsPresent { get; set; }
+        [Display(Name ="Punching Time")]
+        public DateTime PunchDatetime { get; set; }
 
-        [DataType(DataType.Time)]
-        [DisplayFormat(DataFormatString ="{0:hh:mm:ss}")]
-        public DateTime InTime { get; set; }
+        [Display(Name = "School Opening Time")]
+        public string StartingTime { get; set; }
 
-        [DataType(DataType.Time)]
-        [DisplayFormat(DataFormatString = "{0:hh:mm:ss}")]
-        public DateTime OutTime { get; set; }
+        [Display(Name = "School Closing Time")]
+        public string ClosingTime { get; set; }
 
-        [Display(Name ="User")]
-        public string ApplicationUserId { get; set; }
+        [Display(Name = "Late Start Time(minutes)")]
+        public int LateStartAfter { get; set; } = 30;
 
-        public ApplicationUser ApplicationUser { get; set; }
+        [StringLength(5)]
+        public string MachineNo { get; set; }
     }
 }

@@ -76,14 +76,6 @@ namespace SchoolManagementSystem
 
             services.AddRazorPages();
 
-            services.AddSession(options =>
-            {
-                //options.Cookie.Name = ".AdventureWorks.Session";
-                //options.IdleTimeout = TimeSpan.FromSeconds(10);
-                options.IdleTimeout = TimeSpan.FromMinutes(30);
-                options.Cookie.HttpOnly = true;
-                options.Cookie.IsEssential = true;
-            });
 
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<IEmployeeManager, EmployeeManager>();

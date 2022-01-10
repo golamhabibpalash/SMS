@@ -10,5 +10,6 @@ namespace SMS.BLL.Contracts
 {
     public interface IAttendanceManager : IManager<Attendance>
     {
+        Task<List<Attendance>> GetTodaysAllAttendanceAsync();
     }
 }

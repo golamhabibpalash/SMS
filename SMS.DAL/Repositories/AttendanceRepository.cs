@@ -25,5 +25,13 @@ namespace SMS.DAL.Repositories
         {
             return await _context.Attendances.Include(a => a.ApplicationUser).FirstOrDefaultAsync(a => a.Id == id);
         }
+
+        public async Task<List<Attendance>> GetTodaysAllAttendanceAsync()
+        {
+            return await _context.Attendances
+                .Include(a => a.ApplicationUser)
+                .Where(a => a.PunchDatetime.Date == DateTime.Today.Date)
+                .ToListAsync();
+        }
     }
 }

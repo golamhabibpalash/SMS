@@ -56,10 +56,10 @@ namespace SMS.App.Controllers
             DashboardVM.Employees = (ICollection<Employee>)await _employeeManager.GetAllAsync();
             DashboardVM.Classes = (ICollection<AcademicClass>)await _academicClassManager.GetAllAsync();
             DashboardVM.Designations = (ICollection<Designation>)await _designationManager.GetAllAsync();
-
-            DashboardVM.Attendances = await _attendanceManager.GetTodaysAllAttendanceAsync();
-            
-
+            var todaysAttendances = await _attendanceManager.GetTodaysAllAttendanceAsync();
+            DashboardVM.Attendances = todaysAttendances.GroupBy(p => new { p.CardNo }).Select(g => g.First()).ToList();
+            ViewBag.TotalTeacherPresent = DashboardVM.Attendances.Where(a => a.ApplicationUser.UserType == 'e').Count();
+            ViewBag.TotalStudentPresent = DashboardVM.Attendances.Where(a => a.ApplicationUser.UserType == 's').Count();
             return View(DashboardVM);
         }
 

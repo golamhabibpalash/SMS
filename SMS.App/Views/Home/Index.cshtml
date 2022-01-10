@@ -36,7 +36,7 @@
                             <thead class="bg-info text-light">
                                 <tr class="text-center font-weight-bold h5">
                                     <td>Total Employes</td>
-                                    <td colspan="2">@Model.Attendances.Where(s => s.ApplicationUser.UserType == 'e').Count()/ @Model.Employees.Count()</td>
+                                    <td colspan="2">@*@Model.Attendances.Where(s => s.ApplicationUser.UserType == 'e').Count()*@ @ViewBag.TotalTeacherPresent/ @Model.Employees.Count()</td>
                                 </tr>
                                 <tr class="bg-info text-light">
                                     <td>Designation</td>
@@ -45,7 +45,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var desig in Model.Designations)
+                                @foreach (var desig in Model.Designations.OrderBy(c => c.Employees.Count()))
                                 {
                                     <tr>
                                         <td>@desig.DesignationName</td>
@@ -61,7 +61,7 @@
                             <thead class="bg-info text-light">
                                 <tr class="font-weight-bold h5">
                                     <td>Total Students</td>
-                                    <td colspan="2" class="text-center">@Model.Attendances.Where(s => s.ApplicationUser.UserType == 's').Count()/@Model.Students.Count()</td>
+                                    <td colspan="2" class="text-center">@*@Model.Attendances.Where(s => s.ApplicationUser.UserType == 's').Count()*@ @ViewBag.TotalStudentPresent/@Model.Students.Count()</td>
                                 </tr>
                                 <tr class="">
                                     <td>Class Name</td>

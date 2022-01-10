@@ -80,11 +80,22 @@ namespace SMS.App.Controllers
         // POST: AttendancesController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(int id, Attendance model)
         {
+            if (id != model.Id)
+            {
+                return NotFound();
+            }
             try
             {
-                return RedirectToAction(nameof(Index));
+                model.EditedAt = DateTime.Now;
+                model.EditedBy = HttpContext.Session.GetString("UserId");
+                bool isUpdated = await _attendanceManager.UpdateAsync(model);
+                if (isUpdated)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(model);
             }
             catch
             {

@@ -17,5 +17,13 @@ namespace SMS.DAL.Repositories
         {
 
         }
+        public override async Task<IReadOnlyCollection<Attendance>> GetAllAsync()
+        {
+            return await _context.Attendances.Include(a => a.ApplicationUser).ToListAsync();
+        }
+        public override async Task<Attendance> GetByIdAsync(int id)
+        {
+            return await _context.Attendances.Include(a => a.ApplicationUser).FirstOrDefaultAsync(a => a.Id == id);
+        }
     }
 }

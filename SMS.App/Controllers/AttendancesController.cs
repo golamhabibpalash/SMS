@@ -130,7 +130,12 @@ namespace SMS.App.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View();
-            
+        }
+
+        public async Task<JsonResult> GetAllTodaysEmployeeByDegis(int desigId)
+        {
+            var attendedEmployee = await _attendanceManager.GetTodaysAllAttendanceByDesigIdAsync(desigId, DateTime.Now);
+            return Json(attendedEmployee);
         }
     }
 }

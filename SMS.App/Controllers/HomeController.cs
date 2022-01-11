@@ -58,8 +58,13 @@ namespace SMS.App.Controllers
             DashboardVM.Designations = (ICollection<Designation>)await _designationManager.GetAllAsync();
             var todaysAttendances = await _attendanceManager.GetTodaysAllAttendanceAsync();
             DashboardVM.Attendances = todaysAttendances.GroupBy(p => new { p.CardNo }).Select(g => g.First()).ToList();
-            ViewBag.TotalTeacherPresent = DashboardVM.Attendances.Where(a => a.ApplicationUser.UserType == 'e').Count();
+            ViewBag.TotalEmployeePresent = DashboardVM.Attendances.Where(a => a.ApplicationUser.UserType == 'e').Count();
             ViewBag.TotalStudentPresent = DashboardVM.Attendances.Where(a => a.ApplicationUser.UserType == 's').Count();
+
+            foreach (var designation in DashboardVM.Designations)
+            {
+                var emp = await _attendanceManager.GetTodaysAllAttendanceByDesigIdAsync(designation.Id, DateTime.Now);
+            }
             return View(DashboardVM);
         }
 
@@ -73,5 +78,6 @@ namespace SMS.App.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+        
     }
 }

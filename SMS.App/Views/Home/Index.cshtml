@@ -36,7 +36,7 @@
                             <thead class="bg-info text-light">
                                 <tr class="text-center font-weight-bold h5">
                                     <td>Total Employes</td>
-                                    <td colspan="2">@*@Model.Attendances.Where(s => s.ApplicationUser.UserType == 'e').Count()*@ @ViewBag.TotalTeacherPresent/ @Model.Employees.Count()</td>
+                                    <td colspan="2">@*@Model.Attendances.Where(s => s.ApplicationUser.UserType == 'e').Count()*@ @ViewBag.TotalEmployeePresent/ @Model.Employees.Count()</td>
                                 </tr>
                                 <tr class="bg-info text-light">
                                     <td>Designation</td>
@@ -49,7 +49,7 @@
                                 {
                                     <tr>
                                         <td>@desig.DesignationName</td>
-                                        <td class="text-center">0</td>
+                                        <td class="text-center"> 0</td>
                                         <td class="text-center">@desig.Employees.Count()</td>
                                     </tr>
                                 }
@@ -86,3 +86,19 @@
         </div>
     </div>
 </div>
+
+@section Scripts{ 
+<script>
+    $(document).ready(function () {
+        let desigId = 1;
+        $.ajax({
+            type: 'post',
+            url: 'include/ajax.php',
+            data: {},
+            success: function (response) {
+                $('#search_display').html(response);
+            }
+        });
+    });
+</script>
+}

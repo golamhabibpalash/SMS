@@ -22,5 +22,10 @@ namespace SMS.BLL.Managers
         {
             return await _attendanceRepository.GetTodaysAllAttendanceAsync();
         }
+
+        public async Task<List<Attendance>> GetTodaysAllAttendanceByDesigIdAsync(int desigId, DateTime dateTime)
+        {
+            return await _attendanceRepository.GetTodaysAllAttendanceByDesigIdAsync(desigId, dateTime);
+        }
     }
 }

@@ -33,5 +33,17 @@ namespace SMS.DAL.Repositories
                 .Where(a => a.PunchDatetime.Date == DateTime.Today.Date)
                 .ToListAsync();
         }
+
+        public async Task<List<Attendance>> GetTodaysAllAttendanceByDesigIdAsync(int desigId, DateTime dateTime)
+        {
+            var todaysAllAttendance =await GetTodaysAllAttendanceAsync();
+            List<Employee> employees = await _context.Employee.Where(e => e.DesignationId == desigId).ToListAsync();
+            var todaysUniqAttendances = todaysAllAttendance.GroupBy(p => new { p.CardNo }).Select(g => g.First()).ToList();
+            List<Attendance> attendances = (from att in todaysUniqAttendances
+                                            from emp in employees
+                                            where att.ApplicationUser.ReferenceId == emp.Id
+                                            select att).ToList();
+            return attendances;
+        }
     }
 }

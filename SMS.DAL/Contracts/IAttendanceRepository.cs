@@ -11,5 +11,6 @@ namespace SMS.DAL.Contracts
     public interface IAttendanceRepository : IRepository<Attendance>
     {
         Task<List<Attendance>> GetTodaysAllAttendanceAsync();
+        Task<List<Attendance>> GetTodaysAllAttendanceByDesigIdAsync(int desigId, DateTime dateTime);
     }
 }

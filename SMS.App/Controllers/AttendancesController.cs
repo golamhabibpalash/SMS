@@ -35,16 +35,21 @@ namespace SMS.App.Controllers
         }
 
         // GET: AttendancesController/Details/5
-        public ActionResult Details(int id)
+        public async Task<ActionResult> Details(int id)
         {
-            return View();
+            var att = await _attendanceManager.GetByIdAsync(id);
+            if (att != null)
+            {
+                return View(att);
+            }
+            return NotFound();
         }
 
         // GET: AttendancesController/Create
         public ActionResult Create()
         {
             var allUser = _userManager.Users;
-            ViewBag.ApplicationUserId = new SelectList(allUser, "Id", "UserName");
+            ViewBag.UserList = new SelectList(allUser, "Id", "UserName");
             return View();
         }
 
@@ -70,12 +75,21 @@ namespace SMS.App.Controllers
                 }
                 
             }
+            var allUser = _userManager.Users;
+            ViewBag.UserList = new SelectList(allUser, "Id", "UserName",model.ApplicationUserId);
             return View();
         }
 
         // GET: AttendancesController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
+            var att = await _attendanceManager.GetByIdAsync(id);
+            var allUser = _userManager.Users;
+            ViewBag.UserList = new SelectList(allUser, "Id", "UserName", att.ApplicationUserId);
+            if (att != null)
+            {
+                return View(att);
+            }
             return View();
         }
 
@@ -97,6 +111,8 @@ namespace SMS.App.Controllers
                 {
                     return RedirectToAction(nameof(Index));
                 }
+                var allUser = _userManager.Users;
+                ViewBag.UserList = new SelectList(allUser, "Id", "UserName", model.ApplicationUserId);
                 return View(model);
             }
             catch

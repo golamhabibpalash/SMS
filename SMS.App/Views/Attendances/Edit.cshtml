@@ -1,63 +1,76 @@
 ﻿@model SMS.Entities.Attendance
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Attendance";
+    GlobalUI.PageTitle = ViewBag.Title;
 }
 
-<h1>Edit</h1>
-
-<h4>Attendance</h4>
-<hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
+    <div class="col-md-10 offset-md-1">
+        <form asp-action="Edit" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="CardNo" class="control-label"></label>
-                <input asp-for="CardNo" class="form-control" />
-                <span asp-validation-for="CardNo" class="text-danger"></span>
+            <div class="form-group row">
+                <label asp-for="CardNo" class="control-label col-form-label text-md-right col-md-3"></label>
+                <div class="col-md-9">
+                    <input asp-for="CardNo" class="form-control" />
+                    <span asp-validation-for="CardNo" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="PunchDatetime" class="control-label"></label>
-                <input asp-for="PunchDatetime" class="form-control" />
-                <span asp-validation-for="PunchDatetime" class="text-danger"></span>
+            <div class="form-group row">
+                <label asp-for="PunchDatetime" class="control-label col-form-label text-md-right col-md-3"></label>
+                <div class="col-md-9">
+                    <input asp-for="PunchDatetime" class="form-control" />
+                    <span asp-validation-for="PunchDatetime" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="StartingTime" class="control-label"></label>
-                <input asp-for="StartingTime" class="form-control" />
-                <span asp-validation-for="StartingTime" class="text-danger"></span>
+            <div class="form-group row">
+                <label asp-for="StartingTime" class="control-label col-form-label text-md-right col-md-3"></label>
+                <div class="col-md-9">
+                    <input asp-for="StartingTime" class="form-control" />
+                    <span asp-validation-for="StartingTime" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="ClosingTime" class="control-label"></label>
-                <input asp-for="ClosingTime" class="form-control" />
-                <span asp-validation-for="ClosingTime" class="text-danger"></span>
+            <div class="form-group row">
+                <label asp-for="ClosingTime" class="control-label col-form-label text-md-right col-md-3"></label>
+                <div class="col-md-9">
+                    <input asp-for="ClosingTime" class="form-control" />
+                    <span asp-validation-for="ClosingTime" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="LateStartAfter" class="control-label"></label>
-                <input asp-for="LateStartAfter" class="form-control" />
-                <span asp-validation-for="LateStartAfter" class="text-danger"></span>
+            <div class="form-group row">
+                <label asp-for="LateStartAfter" class="control-label col-form-label text-md-right col-md-3"></label>
+                <div class="col-md-9">
+                    <input asp-for="LateStartAfter" class="form-control" />
+                    <span asp-validation-for="LateStartAfter" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="MachineNo" class="control-label"></label>
-                <input asp-for="MachineNo" class="form-control" />
-                <span asp-validation-for="MachineNo" class="text-danger"></span>
+            <div class="form-group row">
+                <label asp-for="MachineNo" class="control-label col-form-label text-md-right col-md-3"></label>
+                <div class="col-md-9">
+                    <input asp-for="MachineNo" class="form-control" />
+                    <span asp-validation-for="MachineNo" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="ApplicationUserId" class="control-label"></label>
-                <input asp-for="ApplicationUserId" class="form-control" />
-                <span asp-validation-for="ApplicationUserId" class="text-danger"></span>
+            <div class="form-group row">
+                <label asp-for="ApplicationUserId" class="control-label col-form-label text-md-right col-md-3"></label>
+                <div class="col-md-9">
+                    <select asp-for="ApplicationUserId" asp-items="ViewBag.UserList" class="form-control">
+                        <option selected disabled>Select user</option>
+                    </select>
+                    <span asp-validation-for="ApplicationUserId" class="text-danger"></span>
+                </div>
             </div>
             <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+            
+            <div class="form-group row">
+                <div class="offset-md-3 col-md-5">
+                    <partial name="_Update_Back" model="@Model.Id" />
+                </div>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

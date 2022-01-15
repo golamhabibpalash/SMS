@@ -1,4 +1,5 @@
-﻿using SMS.Entities;
+﻿using SMS.App.ViewModels.AttendanceVM;
+using SMS.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +11,8 @@ namespace SMS.App.ViewModels.Students
     {
         public ICollection<Student> Students { get; set; }
         public ICollection<Employee> Employees { get; set; }
-        public ICollection<AcademicClass> Classes { get; set; }
-        public ICollection<Designation> Designations { get; set; }
-        public ICollection<Attendance> Attendances { get; set; }
+
+        public ICollection<TodaysAttendanceEmpVM> TodaysAttendanceEmpVMs { get; set; }
+        public ICollection<TodaysAttendanceStuVM> TodaysAttendanceStuVMs { get; set; }
     }
 }

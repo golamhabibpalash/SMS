@@ -3,12 +3,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SMS.App.ViewModels.AttendanceVM;
 using SMS.App.ViewModels.Students;
 using SMS.BLL.Contracts;
 using SMS.Entities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -54,17 +56,41 @@ namespace SMS.App.Controllers
             IReadOnlyCollection<Student> students = await _studentManager.GetAllAsync();
             DashboardVM.Students = (ICollection<Student>)students;
             DashboardVM.Employees = (ICollection<Employee>)await _employeeManager.GetAllAsync();
-            DashboardVM.Classes = (ICollection<AcademicClass>)await _academicClassManager.GetAllAsync();
-            DashboardVM.Designations = (ICollection<Designation>)await _designationManager.GetAllAsync();
-            var todaysAttendances = await _attendanceManager.GetTodaysAllAttendanceAsync();
-            DashboardVM.Attendances = todaysAttendances.GroupBy(p => new { p.CardNo }).Select(g => g.First()).ToList();
-            ViewBag.TotalEmployeePresent = DashboardVM.Attendances.Where(a => a.ApplicationUser.UserType == 'e').Count();
-            ViewBag.TotalStudentPresent = DashboardVM.Attendances.Where(a => a.ApplicationUser.UserType == 's').Count();
 
-            foreach (var designation in DashboardVM.Designations)
+            var todaysAllAttendance = await _attendanceManager.GetTodaysAllAttendanceAsync();
+            var todaysAllUniqeAttendance = todaysAllAttendance.GroupBy(a => a.CardNo).ToList();
+            var allDesignations = await _designationManager.GetAllAsync();
+            allDesignations = allDesignations.Where(d => d.Employees.Count() > 0).ToList();
+
+            List<TodaysAttendanceEmpVM> todaysAttendanceEmpVMs = new List<TodaysAttendanceEmpVM>();
+            foreach (var designation in allDesignations)
             {
-                var emp = await _attendanceManager.GetTodaysAllAttendanceByDesigIdAsync(designation.Id, DateTime.Now);
+                TodaysAttendanceEmpVM todaysAttendanceEmpVM = new TodaysAttendanceEmpVM();
+                todaysAttendanceEmpVM.Designation = designation;
+                todaysAttendanceEmpVM.AttendedEmployees = (from e in designation.Employees
+                                                          from a in todaysAllUniqeAttendance
+                                                          where a.Key == e.Phone.Substring(e.Phone.Length - 9) 
+                                                          select e).ToList();
+                todaysAttendanceEmpVM.TotalEmployee = designation.Employees.Count();
+                todaysAttendanceEmpVMs.Add(todaysAttendanceEmpVM);
             }
+            DashboardVM.TodaysAttendanceEmpVMs = todaysAttendanceEmpVMs;
+            var allAcademicClass = await _academicClassManager.GetAllAsync();
+            
+            List<TodaysAttendanceStuVM> todaysAttendanceStuVMs = new List<TodaysAttendanceStuVM>();
+            foreach (var aClass in allAcademicClass.Where(c => c.Students.Count() > 0))
+            {
+                TodaysAttendanceStuVM todaysAttendanceStuVM = new TodaysAttendanceStuVM();
+                todaysAttendanceStuVM.AcademicClass = aClass;
+                todaysAttendanceStuVM.AttendedStudents = (from s in aClass.Students
+                                                          from a in todaysAllUniqeAttendance
+                                                          where s.ClassRoll.ToString() == a.Key
+                                                          select s).ToList();
+                todaysAttendanceStuVM.TotalStudent = aClass.Students.Count();
+
+                todaysAttendanceStuVMs.Add(todaysAttendanceStuVM);
+            }
+            DashboardVM.TodaysAttendanceStuVMs = todaysAttendanceStuVMs;
             return View(DashboardVM);
         }
 

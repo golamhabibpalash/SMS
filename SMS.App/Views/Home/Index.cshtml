@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Identity;
+@using SMS.App.ViewModels.AttendanceVM
 
 @model SMS.App.ViewModels.Students.DashboardIndexVM
 
@@ -11,7 +12,6 @@
     {
         GlobalUI.InstituteName = ViewBag.InstituteName;
     }
-
 }
 
 <div class="text-center">
@@ -24,7 +24,7 @@
         <h1 class="display-4">Welcome to School Management System</h1>
     }
 </div>
-
+<hr />
 <div class="row">
     <div class="col-md-6">
         <div class="card">
@@ -36,23 +36,30 @@
                             <thead class="bg-info text-light">
                                 <tr class="text-center font-weight-bold h5">
                                     <td>Total Employes</td>
-                                    <td colspan="2">@*@Model.Attendances.Where(s => s.ApplicationUser.UserType == 'e').Count()*@ @ViewBag.TotalEmployeePresent/ @Model.Employees.Count()</td>
+                                    <td colspan="2" class="text-right">@Model.Employees.Count()</td>
                                 </tr>
                                 <tr class="bg-info text-light">
                                     <td>Designation</td>
-                                    <td>Attended</td>
-                                    <td>Total</td>
+                                    <td class="text-right">Attended</td>
+                                    <td class="text-right">Total</td>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var desig in Model.Designations.OrderBy(c => c.Employees.Count()))
+                                    @{int totalAttendedEmployees = 0;}
+                                @foreach (TodaysAttendanceEmpVM item in Model.TodaysAttendanceEmpVMs.OrderBy(e => e.TotalEmployee))
                                 {
                                     <tr>
-                                        <td>@desig.DesignationName</td>
-                                        <td class="text-center"> 0</td>
-                                        <td class="text-center">@desig.Employees.Count()</td>
+                                        <td>@item.Designation.DesignationName</td>
+                                        <td class="text-right">@item.AttendedEmployees.Count()</td>
+                                        <td class="text-right">@item.TotalEmployee</td>
+                                        @{totalAttendedEmployees += @item.AttendedEmployees.Count();}
                                     </tr>
                                 }
+                                <tr class="font-weight-bold bg-info">
+                                    <td>Total Employees</td>
+                                    <td class="text-right">@totalAttendedEmployees</td>
+                                    <td class="text-right">@Model.Employees.Count()</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -61,23 +68,30 @@
                             <thead class="bg-info text-light">
                                 <tr class="font-weight-bold h5">
                                     <td>Total Students</td>
-                                    <td colspan="2" class="text-center">@*@Model.Attendances.Where(s => s.ApplicationUser.UserType == 's').Count()*@ @ViewBag.TotalStudentPresent/@Model.Students.Count()</td>
+                                    <td colspan="2" class="text-right">@Model.Students.Count()</td>
                                 </tr>
                                 <tr class="">
                                     <td>Class Name</td>
-                                    <td>Attended</td>
-                                    <td>Total</td>
+                                    <td class="text-right">Attended</td>
+                                    <td class="text-right">Total</td>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var sClass in Model.Classes.OrderBy(c => c.ClassSerial))
+                                @{int totalAttendedStudents = 0;}
+                                @foreach (TodaysAttendanceStuVM sClass in Model.TodaysAttendanceStuVMs)
                                 {
                                     <tr>
-                                        <td>@sClass.Name</td>
-                                        <td class="text-center">0</td>
-                                        <td class="text-center">@sClass.Students.Count()</td>
+                                        <td>@sClass.AcademicClass.Name</td>
+                                        <td class="text-right">@sClass.AttendedStudents.Count()</td>
+                                        <td class="text-right">@sClass.TotalStudent</td>
+                                        @{totalAttendedStudents += @sClass.AttendedStudents.Count();}
                                     </tr>
                                 }
+                                <tr class="font-weight-bold bg-info">
+                                    <td>Total Students</td>
+                                    <td class="text-right">@totalAttendedStudents</td>
+                                    <td class="text-right">@Model.Students.Count()</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -87,18 +101,12 @@
     </div>
 </div>
 
+
 @section Scripts{ 
 <script>
     $(document).ready(function () {
-        let desigId = 1;
-        $.ajax({
-            type: 'post',
-            url: 'include/ajax.php',
-            data: {},
-            success: function (response) {
-                $('#search_display').html(response);
-            }
-        });
+        
+        
     });
 </script>
 }

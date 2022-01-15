@@ -16,13 +16,15 @@ namespace SMS.App.Controllers
         private readonly IAttendanceManager _attendanceManager;
         private readonly IStudentManager _studentManager;
         private readonly IEmployeeManager _employeeManager;
+        private readonly IDesignationManager _designationManager;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public AttendancesController(IAttendanceManager attendanceManager, IStudentManager studentManager, IEmployeeManager employeeManager, UserManager<ApplicationUser> userManager)
+        public AttendancesController(IAttendanceManager attendanceManager, IStudentManager studentManager, IEmployeeManager employeeManager, UserManager<ApplicationUser> userManager, IDesignationManager designationManager)
         {
             _attendanceManager = attendanceManager;
             _studentManager = studentManager;
             _employeeManager = employeeManager;
+            _designationManager = designationManager;
             _userManager = userManager;
         }
         // GET: AttendancesController
@@ -132,10 +134,26 @@ namespace SMS.App.Controllers
             return View();
         }
 
-        public async Task<JsonResult> GetAllTodaysEmployeeByDegis(int desigId)
+
+        public async Task<JsonResult> GetAllTodaysEmployeeByDesig(int desigId)
         {
-            var attendedEmployee = await _attendanceManager.GetTodaysAllAttendanceByDesigIdAsync(desigId, DateTime.Now);
-            return Json(attendedEmployee);
+            var designation = await _designationManager.GetByIdAsync(desigId);
+            var applicationUserEmp = _userManager.Users.Where(u => u.UserType == 'e');
+            var employees = await _employeeManager.GetAllAsync();
+            var todaysAttendance = await _attendanceManager.GetTodaysAllAttendanceByDesigIdAsync(desigId, DateTime.Now);
+
+            //var attendenceOfAllEmployee = from appU in applicationUserEmp
+            //                              from att in todaysAttendance.Where(t => t.ApplicationUserId == appU.Id)
+            //                              from e in employees
+            //                              where 
+
+            var designations = await _designationManager.GetAllAsync();
+            designations = designations.Where(d => d.Employees.Count() > 0).ToList();
+
+            var attendance = from d in designations
+                             select new {designationName=d.DesignationName, attended = 1, total = d.Employees.Count() };
+                             
+            return Json("");
         }
     }
 }

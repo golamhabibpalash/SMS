@@ -36,8 +36,9 @@ namespace SMS.DAL.Repositories
 
         public async Task<List<Attendance>> GetTodaysAllAttendanceByDesigIdAsync(int desigId, DateTime dateTime)
         {
-            var todaysAllAttendance =await GetTodaysAllAttendanceAsync();
+            
             List<Employee> employees = await _context.Employee.Where(e => e.DesignationId == desigId).ToListAsync();
+            var todaysAllAttendance =await GetTodaysAllAttendanceAsync();
             var todaysUniqAttendances = todaysAllAttendance.GroupBy(p => new { p.CardNo }).Select(g => g.First()).ToList();
             List<Attendance> attendances = (from att in todaysUniqAttendances
                                             from emp in employees

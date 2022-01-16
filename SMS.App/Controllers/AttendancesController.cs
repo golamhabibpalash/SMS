@@ -28,9 +28,19 @@ namespace SMS.App.Controllers
             _userManager = userManager;
         }
         // GET: AttendancesController
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(DateTime date, string userType)
         {
             var allAttendances = await _attendanceManager.GetAllAsync();
+            if (date != null)
+            {
+                allAttendances = allAttendances.Where(a => a.PunchDatetime.Date == date.Date).ToList();
+            }
+            if (userType != null)
+            {
+                allAttendances = (from a in allAttendances
+                                 where a.ApplicationUser.UserType.ToString().ToLower() == userType
+                                 select a).ToList();
+            }
             return View(allAttendances);
         }
 

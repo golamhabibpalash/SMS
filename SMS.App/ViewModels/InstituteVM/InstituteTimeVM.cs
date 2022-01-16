@@ -9,7 +9,7 @@ namespace SMS.App.ViewModels.InstituteVM
         [Display(Name=("Starting Time"))]
         public DateTime StartingTime { get; set; }
 
-        [Display(Name = ("Starting Time"))]
+        [Display(Name = ("Closing Time"))]
         public DateTime ClosingTime { get; set; }
 
         [Display(Name = ("Late Start Time"))]

@@ -20,8 +20,8 @@ namespace SMS.Entities
         [Display(Name = "School Closing Time")]
         public string ClosingTime { get; set; }
 
-        [Display(Name = "Late Start Time(minutes)")]
-        public int LateStartAfter { get; set; } = 30;
+        [Display(Name = "Late Start Time")]
+        public string LateTime { get; set; }
 
         [StringLength(5)]
         public string MachineNo { get; set; }

@@ -27,8 +27,9 @@ namespace SMS.App.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IInstituteManager _instituteManager;
         private readonly IAttendanceManager _attendanceManager;
+        private readonly IAttendanceMachineManager _attendanceMachineManager;
 
-        public HomeController(ILogger<HomeController> logger, IStudentManager studentManager, IEmployeeManager employeeManager, UserManager<ApplicationUser> userManager, IInstituteManager instituteManager, IAcademicClassManager academicClassManager, IDesignationManager designationManager, IAttendanceManager attendanceManager)
+        public HomeController(ILogger<HomeController> logger, IStudentManager studentManager, IEmployeeManager employeeManager, UserManager<ApplicationUser> userManager, IInstituteManager instituteManager, IAcademicClassManager academicClassManager, IDesignationManager designationManager, IAttendanceManager attendanceManager, IAttendanceMachineManager attendanceMachineManager)
         {
             _logger = logger;
             _studentManager = studentManager;
@@ -38,6 +39,7 @@ namespace SMS.App.Controllers
             _academicClassManager = academicClassManager;
             _designationManager = designationManager;
             _attendanceManager = attendanceManager;
+            _attendanceMachineManager = attendanceMachineManager;
         }
 
         public async Task<IActionResult> Index()
@@ -57,7 +59,7 @@ namespace SMS.App.Controllers
             DashboardVM.Students = (ICollection<Student>)students;
             DashboardVM.Employees = (ICollection<Employee>)await _employeeManager.GetAllAsync();
 
-            var todaysAllAttendance = await _attendanceManager.GetTodaysAllAttendanceAsync();
+            var todaysAllAttendance = await _attendanceMachineManager.GetTodaysAllAttendanceAsync();
             var todaysAllUniqeAttendance = todaysAllAttendance.GroupBy(a => a.CardNo).ToList();
             var allDesignations = await _designationManager.GetAllAsync();
             allDesignations = allDesignations.Where(d => d.Employees.Count() > 0).ToList();

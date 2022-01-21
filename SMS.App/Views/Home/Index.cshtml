@@ -50,14 +50,14 @@
                                 {
                                     <tr>
                                         <td>@item.Designation.DesignationName</td>
-                                        <td class="text-right"><a class="btn btn-block" asp-action="Index" asp-controller="Attendances" asp-route-date="@DateTime.Today.Date" asp-route-userType="s">@item.AttendedEmployees.Count()</a></td>
+                                        <td class="text-right"><a class="btn-block" asp-action="Index" asp-controller="Attendances" asp-route-date="@DateTime.Today.Date" asp-route-userType="s">@item.AttendedEmployees.Count()</a></td>
                                         <td class="text-right">@item.TotalEmployee</td>
                                         @{totalAttendedEmployees += @item.AttendedEmployees.Count();}
                                     </tr>
                                 }
-                                <tr class="font-weight-bold bg-info">
+                                <tr class="font-weight-bold bg-info text-light">
                                     <td>Total Employees</td>
-                                    <td class="text-right"> <a class="btn btn-block" asp-action="Index" asp-controller="Attendances" asp-route-date="@DateTime.Today.Date" asp-route-userType="e">@totalAttendedEmployees</a> </td>
+                                    <td class="text-right"> <a class="btn-block" asp-action="Index" asp-controller="Attendances" asp-route-date="@DateTime.Today.Date" asp-route-userType="e">@totalAttendedEmployees</a> </td>
                                     <td class="text-right">@Model.Employees.Count()</td>
                                 </tr>
                             </tbody>
@@ -82,14 +82,14 @@
                                 {
                                     <tr>
                                         <td>@sClass.AcademicClass.Name</td>
-                                        <td class="text-right"><a class="btn btn-block" asp-action="Index" asp-controller="Attendances" asp-route-date="@DateTime.Today.Date" asp-route-userType="s">@sClass.AttendedStudents.Count()</a></td>
+                                        <td class="text-right"><a class="btn-block" asp-action="Index" asp-controller="Attendances" asp-route-date="@DateTime.Today.Date" asp-route-userType="s">@sClass.AttendedStudents.Count()</a></td>
                                         <td class="text-right">@sClass.TotalStudent</td>
                                         @{totalAttendedStudents += @sClass.AttendedStudents.Count();}
                                     </tr>
                                 }
-                                <tr class="font-weight-bold bg-info">
+                                <tr class="font-weight-bold bg-info text-light">
                                     <td>Total Students</td>
-                                    <td class="text-right"><a class="btn btn-block" asp-action="Index" asp-controller="Attendances" asp-route-date="@DateTime.Today.Date" asp-route-userType="s">@totalAttendedStudents</a> </td>
+                                    <td class="text-right"><a class="btn-block" asp-action="Index" asp-controller="Attendances" asp-route-date="@DateTime.Today.Date" asp-route-userType="s">@totalAttendedStudents</a> </td>
                                     <td class="text-right">@Model.Students.Count()</td>
                                 </tr>
                             </tbody>

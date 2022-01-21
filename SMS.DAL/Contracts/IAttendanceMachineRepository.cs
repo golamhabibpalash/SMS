@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace SMS.DAL.Contracts
 {
-    public interface IAttendanceRepository : IRepository<Attendance>
+    public interface IAttendanceMachineRepository : IRepository<Tran_MachineRawPunch>
     {
-        
+        Task<List<Tran_MachineRawPunch>> GetTodaysAllAttendanceAsync();
     }
 }

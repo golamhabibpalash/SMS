@@ -149,6 +149,9 @@ namespace SchoolManagementSystem
             services.AddScoped<IAttendanceRepository, AttendanceRepository>();
             services.AddScoped<IAttendanceManager, AttendanceManager>();
 
+            services.AddScoped<IAttendanceMachineRepository, AttendanceMachineRepository>();
+            services.AddScoped<IAttendanceMachineManager, AttendanceMachineManager>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

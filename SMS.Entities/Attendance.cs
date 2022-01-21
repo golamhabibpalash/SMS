@@ -26,8 +26,8 @@ namespace SMS.Entities
         [StringLength(5)]
         public string MachineNo { get; set; }
 
-        public string ApplicationUserId { get; set; }
+        //public string ApplicationUserId { get; set; }
 
-        public ApplicationUser ApplicationUser { get; set; }
+        //public ApplicationUser ApplicationUser { get; set; }
     }
 }

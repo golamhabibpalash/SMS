@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace SMS.BLL.Contracts
 {
-    public interface IAttendanceManager : IManager<Attendance>
+    public interface IAttendanceMachineManager : IManager<Tran_MachineRawPunch>
     {
-        
+        Task<List<Tran_MachineRawPunch>> GetTodaysAllAttendanceAsync();
     }
 }

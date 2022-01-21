@@ -1,0 +1,65 @@
+﻿@model IEnumerable<SMS.Entities.Tran_MachineRawPunch>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CardNo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PunchDatetime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.P_Day)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ISManual)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PayCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MachineNo)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CardNo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PunchDatetime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.P_Day)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ISManual)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PayCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MachineNo)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Tran_MachineRawPunchId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Tran_MachineRawPunchId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Tran_MachineRawPunchId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

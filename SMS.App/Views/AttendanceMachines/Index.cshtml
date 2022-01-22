@@ -1,65 +1,83 @@
-﻿@model IEnumerable<SMS.Entities.Tran_MachineRawPunch>
+﻿@inject UserManager<ApplicationUser> _userManger
+
+@model IEnumerable<SMS.App.ViewModels.AttendanceVM.AttendanceMachineIndexVM>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Attendances";
+    GlobalUI.PageTitle = ViewBag.Title;
+
+    int sl = 0;
 }
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+<table class="table table-responsive-sm table-striped table-hover shadow" id="myTable">
     <thead>
         <tr>
+            <th>#</th>
             <th>
                 @Html.DisplayNameFor(model => model.CardNo)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PunchDatetime)
+                Punch Date
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.P_Day)
+                Punch Time
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ISManual)
+                Name
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PayCode)
+                User Type
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.MachineNo)
             </th>
-            <th></th>
+			<th>
+                @if(User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
+                {
+                    <partial name="_create" />
+                }
+                else
+                {
+                    <span>Action</span>
+                }
+            </th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            <td>@(++sl).</td>
             <td>
                 @Html.DisplayFor(modelItem => item.CardNo)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PunchDatetime)
+                @item.PunchDateTime.Date.ToString("dd MMM yyyy")
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.P_Day)
+                @string.Format("{0:hh:mm:ss tt}",item.PunchDateTime)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ISManual)
+                @if(item.Name != null)
+                {
+                    <span>@item.Name</span>
+                }
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PayCode)
+                @Html.DisplayFor(modelItem => item.UserType)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.MachineNo)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Tran_MachineRawPunchId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Tran_MachineRawPunchId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Tran_MachineRawPunchId">Delete</a>
+                <partial name="_edit_details_delete" model="@item.Id" />
             </td>
         </tr>
 }
     </tbody>
 </table>
+
+@section Scripts
+{
+    
+    <script src="~/js/DataTable/dataTable.js"></script>
+}

@@ -13,6 +13,8 @@ namespace SMS.Entities
         public int Tran_MachineRawPunchId { get; set; }
         [StringLength(10)]
         public string CardNo { get; set; }
+
+        [Display(Name ="Punch Date Time")]
         public DateTime PunchDatetime { get; set; }
         public char P_Day { get; set; }
         public char ISManual { get; set; }

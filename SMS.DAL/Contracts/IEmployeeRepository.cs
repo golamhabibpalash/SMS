@@ -10,5 +10,6 @@ namespace SMS.DAL.Contracts
 {
     public interface IEmployeeRepository : IRepository<Employee>
     {
+        Task<Employee> GetByPhoneAttendance(string phoneLast9Digit);
     }
 }

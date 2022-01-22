@@ -53,5 +53,10 @@ namespace Repositories
                 .FirstOrDefaultAsync(e => e.Id == id);
         }
 
+        public async Task<Employee> GetByPhoneAttendance(string phoneLast9Digit)
+        {
+            var employee = await _context.Employee.FirstOrDefaultAsync(e => e.Phone.Substring(2,e.Phone.Length) == phoneLast9Digit);
+            return employee;
+        }
     }
 }

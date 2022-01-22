@@ -89,7 +89,11 @@
                                 @foreach (TodaysAttendanceStuVM sClass in Model.TodaysAttendanceStuVMs)
                                 {
                                     <tr>
-                                        <td>@sClass.AcademicClass.Name</td>
+										<td>
+											<a class="text-dark" asp-action="Index" asp-controller="Students" asp-route-academicClassId="@sClass.AcademicClass.Id">
+												@sClass.AcademicClass.Name
+											</a>
+										</td>
 										<td class="text-center">
 											<a class="text-light" asp-action="Index" asp-controller="AttendanceMachines" asp-route-dateTime="@DateTime.Today.Date" asp-route-userType="s">
 												<div class="w-100 bg-info">

@@ -64,9 +64,13 @@ namespace SchoolManagementSystem.Controllers
         }
 
         [Authorize(Roles = "SuperAdmin, Admin,Teacher")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int academicSessionid, int academicClassId)
         {
             var student = await _studentManager.GetAllAsync();
+            if (academicClassId > 0)
+            {
+                student = student.Where(s => s.AcademicClassId == academicClassId).ToList();
+            }
             var studentList = _mapper.Map<IEnumerable<StudentListVM>>(student);
             return View(studentList);
         }

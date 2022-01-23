@@ -8,7 +8,39 @@
 
     int sl = 0;
 }
+<div class="row">
+    <div class="col-md-12 p-4">
+        <form asp-action="index" asp-controller="AttendanceMachines" method="get">
+            <div class="form-group row">
+                <label class="col-form-label">User Type</label>
+                <div class="col-md-2">
+                    <select class="form-control">
+                        <option selected disabled>Select Type</option>
+                    </select>
+                </div>
 
+                <label class="col-form-label designationArea" style="display:none">Designation</label>
+                <div class="col-md-2 designationArea" style="display:none">
+                    <select class="form-control">
+                        <option selected disabled>Select Designation</option>
+                    </select>
+                </div>
+
+
+                <label class="col-form-label classArea" style="display:none">Class</label>
+                <div class="col-md-2 classArea" style="display:none">
+                    <select class="form-control">
+                        <option selected disabled>Select Class</option>
+                    </select>
+                </div>
+ 
+                <div id="submitArea">
+                    <input class="form-control" value="Search" type="submit" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 <table class="table table-responsive-sm table-striped table-hover shadow" id="myTable">
     <thead>
         <tr>

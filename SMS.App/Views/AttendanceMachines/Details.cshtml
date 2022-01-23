@@ -1,0 +1,54 @@
+﻿@model SMS.Entities.Tran_MachineRawPunch
+
+@{
+    ViewData["Title"] = "Attendance Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Tran_MachineRawPunch</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.CardNo)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CardNo)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PunchDatetime)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PunchDatetime)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.P_Day)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.P_Day)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ISManual)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ISManual)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PayCode)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PayCode)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.MachineNo)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.MachineNo)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Tran_MachineRawPunchId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

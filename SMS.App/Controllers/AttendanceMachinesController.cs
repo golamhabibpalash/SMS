@@ -69,52 +69,55 @@ namespace SMS.App.Controllers
             return View(attendanceMachineIndexVMs);
         }
 
-        // GET: AttendanceMachinesController/Details/5
-        public ActionResult Details(int id)
+
+        public async Task<ActionResult> Details(int id)
         {
-            return View();
+            var attendance = await _attendanceMachineManager.GetByIdAsync(id);
+            return View(attendance);
         }
 
-        // GET: AttendanceMachinesController/Create
+
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: AttendanceMachinesController/Create
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create(Tran_MachineRawPunch model)
         {
-            try
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                await _attendanceMachineManager.AddAsync(model);
+                return RedirectToAction("Index");
             }
-            catch
-            {
-                return View();
-            }
+            return View(model);
         }
 
         // GET: AttendanceMachinesController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
-            return View();
+            var attendance = await _attendanceMachineManager.GetByIdAsync(id);
+            return View(attendance);
         }
 
         // POST: AttendanceMachinesController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(int id, Tran_MachineRawPunch model)
         {
-            try
+            if (id != model.Tran_MachineRawPunchId)
             {
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            catch
+            if (ModelState.IsValid)
             {
-                return View();
+                await _attendanceMachineManager.UpdateAsync(model);
+                return RedirectToAction("Index");
             }
+
+            return View(model);
         }
 
         // GET: AttendanceMachinesController/Delete/5

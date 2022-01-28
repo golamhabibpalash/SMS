@@ -18,8 +18,9 @@ namespace SMS.App.Controllers
         private readonly IStudentManager _studentManager;
         private readonly IDesignationManager _designationManager;
         private readonly IAcademicClassManager _academicClassManager;
+        private readonly IAcademicSessionManager _academicSessionManager;
 
-        public AttendanceMachinesController(IHttpContextAccessor contextAccessor, IAttendanceMachineManager attendanceMachineManager, IEmployeeManager employeeManager, IStudentManager studentManager, IDesignationManager designationManager, IAcademicClassManager academicClassManager)
+        public AttendanceMachinesController(IHttpContextAccessor contextAccessor, IAttendanceMachineManager attendanceMachineManager, IEmployeeManager employeeManager, IStudentManager studentManager, IDesignationManager designationManager, IAcademicClassManager academicClassManager, IAcademicSessionManager academicSessionManager)
         {
             _contextAccessor = contextAccessor;
             _attendanceMachineManager = attendanceMachineManager;
@@ -27,9 +28,10 @@ namespace SMS.App.Controllers
             _studentManager = studentManager;
             _designationManager = designationManager;
             _academicClassManager = academicClassManager;
+            _academicSessionManager = academicSessionManager;
         }
         // GET: AttendanceMachinesController
-        public async Task<ActionResult> Index(DateTime? dateTime)
+        public async Task<ActionResult> Index(DateTime? dateTime, string userType,int designationId, int sessionId, int classId, string attendanceType)
         {
             var allAttendance = await _attendanceMachineManager.GetAllAsync();
             List<AttendanceMachineIndexVM> attendanceMachineIndexVMs = new List<AttendanceMachineIndexVM>();
@@ -47,7 +49,9 @@ namespace SMS.App.Controllers
                     {
                         attendanceMachineIndexVM.Name = emp.EmployeeName;
                         Designation designation = await _designationManager.GetByIdAsync(emp.DesignationId);
-                        attendanceMachineIndexVM.UserType = "Employee ("+designation.DesignationName+")";
+                        attendanceMachineIndexVM.UserInfo = "Employee (" + designation.DesignationName + ")";
+                        attendanceMachineIndexVM.UserType = "e";
+                        attendanceMachineIndexVMs.Add(attendanceMachineIndexVM);
                     }
                 }
                 else
@@ -57,15 +61,97 @@ namespace SMS.App.Controllers
                     {
                         attendanceMachineIndexVM.Name = student.Name;
                         AcademicClass academicClass = await _academicClassManager.GetByIdAsync(student.AcademicClassId);
-                        attendanceMachineIndexVM.UserType = "Student ("+academicClass.Name+")";
+                        attendanceMachineIndexVM.UserInfo = "Student (" + academicClass.Name + ")";
+                        attendanceMachineIndexVM.UserType = "s";
+                        attendanceMachineIndexVMs.Add(attendanceMachineIndexVM);
                     }
                 }
-                attendanceMachineIndexVMs.Add(attendanceMachineIndexVM);
+            }
+            
+
+                                        
+            if (attendanceType != null)
+            {
+                if (attendanceType.ToLower() == "attended")
+                {
+                    if (userType != null)
+                    {
+                        attendanceMachineIndexVMs = attendanceMachineIndexVMs.Where(a => a.UserType.ToLower() == userType.ToLower()).ToList();
+                        if (userType == "e")
+                        {
+                            if (designationId > 0)
+                            {
+                                var allEmployee = await _employeeManager.GetAllAsync();
+                                attendanceMachineIndexVMs = (from a in attendanceMachineIndexVMs
+                                                             from e in allEmployee.Where(r => r.Phone.Substring(2, r.Phone.Length) == a.CardNo)
+                                                             where e.DesignationId == designationId
+                                                             select a).ToList();
+                            }
+                        }
+                        else if (userType == "s")
+                        {
+                            if (classId > 0)
+                            {
+                                var allStudent = await _studentManager.GetAllAsync();
+                                attendanceMachineIndexVMs = (from a in attendanceMachineIndexVMs
+                                                             from s in allStudent.Where(t => t.ClassRoll.ToString() == a.CardNo)
+                                                             where s.AcademicClassId == classId
+                                                             select a).ToList();
+                                if (sessionId > 0)
+                                {
+                                    var allSession = await _academicSessionManager.GetAllAsync();
+                                    attendanceMachineIndexVMs = (from a in attendanceMachineIndexVMs
+                                                                 from s in allStudent.Where(t => t.ClassRoll.ToString() == a.CardNo)
+                                                                 where s.AcademicSessionId == sessionId
+                                                                 select a).ToList();
+                                }
+                            }
+                        }
+                    }
+                }
+                else if (attendanceType == "absent")
+                {
+                    if (userType != null)
+                    {
+                        attendanceMachineIndexVMs = attendanceMachineIndexVMs.Where(a => a.UserType.ToLower() == userType.ToLower()).ToList();
+                        if (userType == "e")
+                        {
+                            if (designationId > 0)
+                            {
+                                var allEmployee = await _employeeManager.GetAllAsync();
+                                attendanceMachineIndexVMs = (from a in attendanceMachineIndexVMs
+                                                             from e in allEmployee.Where(r => r.Phone.Substring(2, r.Phone.Length) != a.CardNo)
+                                                             where e.DesignationId == designationId
+                                                             select a).ToList();
+                            }
+                        }
+                        else if (userType == "s")
+                        {
+                            if (classId > 0)
+                            {
+                                var allStudent = await _studentManager.GetAllAsync();
+                                attendanceMachineIndexVMs = (from a in attendanceMachineIndexVMs
+                                                             from s in allStudent.Where(t => t.ClassRoll.ToString() != a.CardNo)
+                                                             where s.AcademicClassId == classId
+                                                             select a).ToList();
+                                if (sessionId > 0)
+                                {
+                                    var allSession = await _academicSessionManager.GetAllAsync();
+                                    attendanceMachineIndexVMs = (from a in attendanceMachineIndexVMs
+                                                                 from s in allStudent.Where(t => t.ClassRoll.ToString() != a.CardNo)
+                                                                 where s.AcademicSessionId == sessionId
+                                                                 select a).ToList();
+                                }
+                            }
+                        }
+                    }
+                }
             }
             if (dateTime != null)
             {
                 attendanceMachineIndexVMs = attendanceMachineIndexVMs.Where(a => a.PunchDateTime.Date == Convert.ToDateTime(dateTime).Date).ToList();
             }
+            attendanceMachineIndexVMs = attendanceMachineIndexVMs.GroupBy(x => x.CardNo).Select(y => y.FirstOrDefault()).ToList();
             return View(attendanceMachineIndexVMs);
         }
 

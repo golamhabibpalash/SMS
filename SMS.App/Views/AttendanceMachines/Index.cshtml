@@ -1,4 +1,7 @@
-﻿@inject UserManager<ApplicationUser> _userManger
+﻿@inject IDesignationManager _designationManager
+@inject IAcademicClassManager _academicClassManager
+@inject IAcademicSessionManager _academicSessionManager
+@inject UserManager<ApplicationUser> _userManger
 
 @model IEnumerable<SMS.App.ViewModels.AttendanceVM.AttendanceMachineIndexVM>
 
@@ -7,35 +10,68 @@
     GlobalUI.PageTitle = ViewBag.Title;
 
     int sl = 0;
+    var designationList = await _designationManager.GetAllAsync();
+    var academicClassList = await _academicClassManager.GetAllAsync();
+    var academicSessionList = await _academicSessionManager.GetAllAsync();
 }
 <div class="row">
     <div class="col-md-12 p-4">
         <form asp-action="index" asp-controller="AttendanceMachines" method="get">
             <div class="form-group row">
-                <label class="col-form-label">User Type</label>
                 <div class="col-md-2">
-                    <select class="form-control">
-                        <option selected disabled>Select Type</option>
+                    <select class="form-control" name="userType" id="userTypeId">
+                        <option selected disabled>User Type</option>
+                        <option value="e">Employee</option>
+                        <option value="s">Student</option>
                     </select>
                 </div>
 
-                <label class="col-form-label designationArea" style="display:none">Designation</label>
+                @*<label class="col-form-label designationArea" style="display:none">Designation</label>*@
                 <div class="col-md-2 designationArea" style="display:none">
-                    <select class="form-control">
+                    <select class="form-control" name="designationId">
                         <option selected disabled>Select Designation</option>
+                        @foreach(Designation designation in designationList)
+                        {
+                            <option value="@designation.Id">@designation.DesignationName</option> 
+                        }
                     </select>
                 </div>
 
+                @*<label class="col-form-label sessionArea" style="display:none">Session</label>*@
+                <div class="col-md-2 sessionArea" style="display:none">
+                    <select class="form-control" name="sessionId">
+                        <option selected disabled>Select Session</option>
+                        @foreach(AcademicSession session in academicSessionList)
+                        {
+                            <option value="@session.Id">@session.Name</option> 
+                        }
+                    </select>
+                </div>
 
-                <label class="col-form-label classArea" style="display:none">Class</label>
+                @*<label class="col-form-label classArea" style="display:none">Class</label>*@
                 <div class="col-md-2 classArea" style="display:none">
-                    <select class="form-control">
+                    <select class="form-control" name="classId">
                         <option selected disabled>Select Class</option>
+                        @foreach(AcademicClass academicClass in academicClassList)
+                        {
+                            <option value="@academicClass.Id">@academicClass.Name</option> 
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-2 dateArea">
+                    <input type="date" class="form-control" name="dateTime" value="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                </div>
+                <div class="col-md-2">
+                    <select class="form-control" name="attendanceType" id="attendanceType">
+                        <option selected disabled>Select Attendance Type</option>
+                        <option class="btn-sm btn-info" value="attended">Attended</option>
+                        <option class="btn-sm btn-danger" value="absent">Absent</option>
                     </select>
                 </div>
  
-                <div id="submitArea">
-                    <input class="form-control" value="Search" type="submit" />
+                <div class="col-md-2" id="submitArea">
+                    <input class="btn-info btn-sm btn-block" value="Search" type="submit" />
                 </div>
             </div>
         </form>
@@ -58,7 +94,7 @@
                 Name
             </th>
             <th>
-                User Type
+                User
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.MachineNo)
@@ -95,7 +131,7 @@
                 }
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UserType)
+                @Html.DisplayFor(modelItem => item.UserInfo)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.MachineNo)
@@ -108,8 +144,25 @@
     </tbody>
 </table>
 
-@section Scripts
-{
-    
+@section Scripts{
     <script src="~/js/DataTable/dataTable.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('#userTypeId').change(function(){
+                let uType = $('#userTypeId option:selected').val();
+                if(uType == 'e')
+                {
+                    $('.designationArea').css("display", "block");
+                    $('.classArea').css("display", "none");
+                    $('.sessionArea').css("display", "none");
+                }
+                if(uType == 's')
+                {
+                    $('.designationArea').css("display", "none");
+                    $('.sessionArea').css("display", "block");
+                    $('.classArea').css("display", "block");
+                }
+            });
+        });
+    </script>
 }

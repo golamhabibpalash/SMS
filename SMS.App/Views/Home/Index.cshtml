@@ -95,7 +95,7 @@
 											</a>
 										</td>
 										<td class="text-center">
-											<a class="text-light" asp-action="Index" asp-controller="AttendanceMachines" asp-route-dateTime="@DateTime.Today.Date" asp-route-userType="s">
+											<a class="text-light" asp-action="Index" asp-controller="AttendanceMachines" asp-route-dateTime="@DateTime.Today.Date" asp-route-classId="@sClass.AcademicClass.Id" asp-route-userType="s">
 												<div class="w-100 bg-info">
 													@sClass.AttendedStudents.Count()
 												</div>

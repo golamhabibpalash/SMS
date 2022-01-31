@@ -149,6 +149,9 @@
                                         @if(User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
                                         {
                                         <li>
+                                            <a asp-action="Index" asp-controller="PhoneSMS"><span class="glyphicon glyphicon-th-large"></span> SMS Panel</a>
+                                        </li>
+                                        <li>
                                             <a asp-action="SchoolTimeTable" asp-controller="Institutes"><span class="glyphicon glyphicon-th-large"></span> School Time setting</a>
                                         </li>
                                         <li>

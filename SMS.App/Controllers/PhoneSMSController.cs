@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SMS.BLL.Contracts;
 using System;
@@ -23,5 +24,18 @@ namespace SMS.App.Controllers
             var allSMS = await _phoneSMSManager.GetAllAsync();
             return View(allSMS);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Create()
+        {
+            return View();
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> Create(IFormCollection formCollection)
+        {
+            return View();
+        }
+        
     }
 }

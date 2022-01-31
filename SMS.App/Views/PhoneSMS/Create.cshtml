@@ -1,0 +1,160 @@
+﻿@model SMS.App.ViewModels.SMSVM.SMSCreateVM
+
+@inject IDesignationManager _designationManager;
+@inject IAcademicSessionManager _academicSessionManager;
+@inject IAcademicClassManager _academicClassManager;
+@inject IEmployeeManager _employeeManager;
+@inject IStudentManager _studentManager;
+
+@{
+    ViewData["Title"] = "SMS";
+    GlobalUI.PageTitle = "SMS Panel";
+}
+@{
+    var designationList = await _designationManager.GetAllAsync();
+    var sessionList = await _academicSessionManager.GetAllAsync();
+    var academicClassList = await _academicClassManager.GetAllAsync();
+    var employeeList = await _employeeManager.GetAllAsync();
+    var studentList = await _studentManager.GetAllAsync();
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="">
+            <form asp-action="" asp-controller="" method="post">
+                <div class="col-md-6 col-lg-6 col-sm-12">
+                    <div class="jumbotron">
+                        <div class="form-group row">
+                            <label class="text-md-right col-form-label col-md-4">SMS For</label>
+                            <div class="col-md-8">
+                                <select asp-for="SMSFor" class="form-control">
+                                    <option selected disabled>Select Type</option>
+                                    <option value="indivisual">Individual/Single</option>
+                                    <option value="multiple">Multiple/Group</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="text-md-right col-form-label col-md-4">Recipient Type</label>
+                            <div class="col-md-8">
+                                <select asp-for="SMSType" class="form-control">
+                                    <option selected disabled>Select Recipient</option>
+                                    <option value="e">Employee</option>
+                                    <option value="s">Student</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="text-md-right col-form-label col-md-4">Designation</label>
+                            <div class="col-md-8">
+                                <select asp-for="DesignationId" class="form-control">
+                                    <option selected disabled>Select Designation</option>
+                                    @foreach (Designation desig in designationList)
+                                    {
+                                        <option value="@desig.Id">@desig.DesignationName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="text-md-right col-form-label col-md-4">Session</label>
+                            <div class="col-md-8">
+                                <select asp-for="AcademicSessionId" class="form-control">
+                                    <option selected disabled>Select Session</option>
+                                    @foreach (AcademicSession aSession in sessionList)
+                                    {
+                                        <option value="@aSession.Id">@aSession.Name</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="text-md-right col-form-label col-md-4">Class</label>
+                            <div class="col-md-8">
+                                <select asp-for="AcademicClassId" class="form-control">
+                                    <option selected disabled>Select Class</option>
+                                    @foreach (AcademicClass aClass in academicClassList)
+                                    {
+                                        <option value="@aClass.Id">@aClass.Name</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="text-md-right col-form-label col-md-4">Employeee</label>
+                            <div class="col-md-8">
+                                <select asp-for="EmployeeId" class="form-control">
+                                    <option selected disabled>Select Employee</option>
+                                    @foreach (Employee emp in employeeList)
+                                    {
+                                        <option value="@emp.Id">@emp.EmployeeName (@emp.Designation.DesignationName)</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="text-md-right col-form-label col-md-4">Student</label>
+                            <div class="col-md-8">
+                                <select asp-for="StudentId" class="form-control">
+                                    <option selected disabled>Select Student</option>
+                                    @foreach (Student stu in studentList)
+                                    {
+                                        <option value="@stu.Id">@stu.Name -@stu.AcademicClass.Name (@stu.ClassRoll)</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-6 col-sm-12">
+                    <div class="jumbotron">
+                        <div class="row">
+                            <div class="col-md-12 text-right">
+                                <span class="btn-sm disabled alert-warning">Total SMS - 120</span>
+                            </div>
+                        </div><br />
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group row">
+                                    <label class="col-md-2 text-md-right col-form-label">Phone Number</label>
+                                    <div class="col-md-10">
+                                        <input type="number" name="phoneNumber" class="form-control"  />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-2 text-md-right col-form-label">SMS Text</label>
+                                    <div class="col-md-10">
+                                        <textarea name="smsText" class="form-control" rows="3"></textarea>
+                                    </div>
+                                    <div class="offset-md-2">
+                                        <span class="font-italic">Total Charecter: <span id="charecterCount"></span></span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <div class="col-md-12 text-md-right">
+                                        <input type="submit"  value="Send SMS" class="btn-sm btn-info" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts{ 
+<script>
+    $(document).ready(function () {
+        
+    });
+</script>
+}

@@ -33,8 +33,15 @@ namespace SMS.App.Controllers
         // GET: AttendanceMachinesController
         public async Task<ActionResult> Index(DateTime? dateTime, string userType,int designationId, int sessionId, int classId, string attendanceType)
         {
-            var allAttendance = await _attendanceMachineManager.GetAllAsync();
+            
             List<AttendanceMachineIndexVM> attendanceMachineIndexVMs = new List<AttendanceMachineIndexVM>();
+            
+            if (dateTime == null)
+            {
+                return View(attendanceMachineIndexVMs);
+            }
+
+            var allAttendance = await _attendanceMachineManager.GetAllAsync();
             foreach (var item in allAttendance)
             {
                 AttendanceMachineIndexVM attendanceMachineIndexVM = new AttendanceMachineIndexVM();
@@ -83,7 +90,7 @@ namespace SMS.App.Controllers
                             {
                                 var allEmployee = await _employeeManager.GetAllAsync();
                                 attendanceMachineIndexVMs = (from a in attendanceMachineIndexVMs
-                                                             from e in allEmployee.Where(r => r.Phone.Substring(2, r.Phone.Length) == a.CardNo)
+                                                             from e in allEmployee.Where(r => r.Phone.Substring(r.Phone.Length-9) == a.CardNo)
                                                              where e.DesignationId == designationId
                                                              select a).ToList();
                             }

@@ -91,20 +91,39 @@
     <style>
         
     </style>
-    <style> 
-        #pageTitleId p{
-  color: white;
-  animation-name: example;
-  animation-duration: 10s;
-  animation-iteration-count: infinite;
+    <style>
+        #pageTitleId p {
+            color: white;
+            animation-name: example;
+            animation-duration: 6s;
+            animation-iteration-count: infinite;
+        }
+
+        @@keyframes example {
+            0% {
+                color: red;
+                left: 0px;
+                top: 0px;
             }
 
-            @@keyframes example {
-             20%   {color:red; left:0px; top:0px;}
-  25%  {color:yellow; left:200px; top:0px;}
-  25%  {color:gray; left:200px; top:0px;}
-  50% {color:white; left:0px; top:0px;}
+            26% {
+                color: yellow;
+                left: 200px;
+                top: 0px;
             }
+
+            50% {
+                color: gray;
+                left: 200px;
+                top: 0px;
+            }
+
+            75% {
+                color: white;
+                left: 0px;
+                top: 0px;
+            }
+        }
     </style>
 </head>
 

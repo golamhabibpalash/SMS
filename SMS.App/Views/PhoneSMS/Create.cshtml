@@ -132,7 +132,7 @@
                                 <div class="form-group row">
                                     <label class="col-md-3 text-md-right col-form-label">Phone Number</label>
                                     <div class="col-md-9">
-                                        <input type="number" name="phoneNumber" class="form-control" id="phoneNumberInput"  />
+                                        <input name="phoneNumber" class="form-control" id="phoneNumberInput"  />
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -169,6 +169,7 @@
             
             $('#phoneNumberInput').val("");
 
+            $('#session_Area').css('display','none');
             $('#employee_Area').css('display','none');
             $('#student_Area').css('display','none');
             $('#class_Area').css('display','none');
@@ -229,7 +230,10 @@
 
                         $('#AcademicClassId').change(function(){
                             let aCId = $('#AcademicClassId option:selected').val();
-                            GetPhoneNumber(SMS_Type," ",aSId,aCId);
+                            if(aCId > 0)
+                            {
+                                GetPhoneNumber(SMS_Type," ",aSId,aCId);
+                            }
                         });
                     });
                 }
@@ -281,9 +285,19 @@
             data:{smsType:smsType,designationId:designationId, sessionId:sessionId, classId:classId},
             success:function(data){
                 let phoneCount = 0;
+                let phone="";
                 $.each(data, function(i, obj){
+                    console.log(obj);
+                    if(i==0)
+                    {
+                        phone=obj+",";
+                    }
+                    else{
+                        phone=phone+obj+",";
+                    }
                     phoneCount++;
                 });
+                $('#phoneNumberInput').val(phone);
             $('#phoneNumberCount').html(phoneCount);
             },
             error:function(){}

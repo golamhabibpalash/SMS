@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace SMS.App.Controllers
 {
@@ -26,7 +27,7 @@ namespace SMS.App.Controllers
         public async Task<IActionResult> Index()
         {
             var allSMS = await _phoneSMSManager.GetAllAsync();
-            return View(allSMS);
+            return View(allSMS.OrderByDescending(a => a.CreatedAt));
         }
 
         [HttpGet]
@@ -46,8 +47,7 @@ namespace SMS.App.Controllers
         {
 
             List<string> phoneNumbers = new();
-            string phoneNumber = null;
-            phoneNumbers.Add(phoneNumber);
+
             if (smsType != null)
             {
                 if (smsType=="e")
@@ -67,11 +67,14 @@ namespace SMS.App.Controllers
                     var allStudents = await _studentManager.GetAllAsync();
                     if (sessionId!=null)
                     {
-                        allStudents = allStudents.Where(s => s.AcademicSectionId == sessionId).ToList();
-                    }
-                    if (classId != null)
-                    {
-                        allStudents = allStudents.Where(s => s.AcademicClassId == classId).ToList();
+                        allStudents =(from s in allStudents
+                                     where s.AcademicSessionId == sessionId
+                                     select s).ToList();
+                        if (classId != null)
+                        {
+                            allStudents = allStudents.Where(s => s.AcademicClassId == classId).ToList();
+                        }
+
                     }
                     foreach(var student in allStudents)
                     {

@@ -22,6 +22,7 @@ namespace SchoolManagementSystem.Controllers
     [Authorize]
     public class StudentsController : Controller
     {
+        #region Initialization
         private readonly IWebHostEnvironment _host;
         private readonly IStudentManager _studentManager;
         private readonly IAcademicClassManager _academicClassManager;
@@ -40,7 +41,9 @@ namespace SchoolManagementSystem.Controllers
         private readonly IClassFeeListManager _classFeeListManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IPhoneSMSManager _phoneSMSManager;
+        #endregion
 
+        #region Constructor
         public StudentsController(IStudentManager studentManager, IAcademicClassManager academicClassManager, IWebHostEnvironment host, IMapper mapper, IAcademicSessionManager academicSessionManager, IStudentPaymentManager studentPaymentManager, IDistrictManager districtManager, IUpazilaManager upazilaManager, IAcademicSectionManager academicSectionManager, IBloodGroupManager bloodGroupManager, IDivisionManager divisionManager, INationalityManager nationalityManager, IGenderManager genderManager, IReligionManager religionManager, IStudentFeeHeadManager studentFeeHeadManager, IClassFeeListManager classFeeListManager, UserManager<ApplicationUser> userManager, IPhoneSMSManager phoneSMSManager)
         {
             _academicClassManager = academicClassManager;
@@ -62,7 +65,9 @@ namespace SchoolManagementSystem.Controllers
             _userManager = userManager;
             _phoneSMSManager = phoneSMSManager;
         }
+        #endregion
 
+        #region Index
         [Authorize(Roles = "SuperAdmin, Admin,Teacher")]
         public async Task<IActionResult> Index(int academicSessionid, int academicClassId)
         {
@@ -74,7 +79,9 @@ namespace SchoolManagementSystem.Controllers
             var studentList = _mapper.Map<IEnumerable<StudentListVM>>(student);
             return View(studentList);
         }
+        #endregion
 
+        #region Details
         // GET: Students/Details/5
         [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
@@ -99,9 +106,9 @@ namespace SchoolManagementSystem.Controllers
 
             return View(sd);
         }
+        #endregion
 
-        // GET: Students/Create
-
+        #region Create
         [Authorize(Roles = "SuperAdmin, Admin")]
         public async Task<IActionResult> Create()
         {
@@ -215,7 +222,9 @@ namespace SchoolManagementSystem.Controllers
 
             return View(newStudent);
         }
+        #endregion
 
+        #region Edit
         [HttpGet]
         [Authorize(Roles = "SuperAdmin, Admin")]
         public async Task<IActionResult> Edit(int? id)
@@ -335,9 +344,9 @@ namespace SchoolManagementSystem.Controllers
 
             return View(exitStudent);
         }
+        #endregion
 
-
-
+        #region Delete
         [Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -355,7 +364,6 @@ namespace SchoolManagementSystem.Controllers
 
             return View(student);
         }
-
 
 
         [Authorize(Roles = "SuperAdmin")]
@@ -376,13 +384,16 @@ namespace SchoolManagementSystem.Controllers
             }
             
         }
+        #endregion
 
+        #region Profile
         [Authorize, AllowAnonymous]
         public async Task<IActionResult> Profile(int id)
         {
             var student = await _studentManager.GetByIdAsync(id);
             return View(student);
         }
+        #endregion
 
         private bool StudentExists(int id)
         {

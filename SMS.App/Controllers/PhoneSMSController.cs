@@ -2,11 +2,9 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SMS.BLL.Contracts;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Linq;
 
 namespace SMS.App.Controllers
 {
@@ -31,7 +29,7 @@ namespace SMS.App.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
             return View();
         }
@@ -39,7 +37,8 @@ namespace SMS.App.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(IFormCollection formCollection)
         {
-            return View();
+            var allSMS = await _phoneSMSManager.GetAllAsync();
+            return View(allSMS);
         }
         
         [AllowAnonymous]

@@ -15,5 +15,6 @@ namespace SMS.App.ViewModels.SMSVM
         public int EmployeeId { get; set; }
         public int StudentId { get; set; }
         public string SMSText { get; set; }
+        public string PhoneNo { get; set; }
     }
 }

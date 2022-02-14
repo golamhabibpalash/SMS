@@ -132,23 +132,31 @@
                                 <div class="form-group row">
                                     <label class="col-md-3 text-md-right col-form-label">Phone Number</label>
                                     <div class="col-md-9">
-                                        <input name="phoneNumber" class="form-control" id="phoneNumberInput"  />
+                                        <input asp-for="PhoneNo" class="form-control"  />
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-md-3 text-md-right col-form-label">SMS Text</label>
                                     <div class="col-md-9">
-                                        <textarea id="smsTextArea" name="smsText" class="form-control" rows="3"></textarea>
+                                        <textarea asp-for="SMSText" class="form-control" rows="3"></textarea>
                                     </div>
-                                    <div class="offset-md-3">
-                                        <span class="font-italic">Total Charecter: <span id="charecterCount"></span></span>
+                                    <div class="offset-md-3 col-md-9">
+                                        <div class="row">
+
+                                            <div class="col-md-6 text-md-left">
+                                                <span class="font-italic">Total Charecter: <span id="charecterCount"></span></span>
+                                            </div>
+                                            <div class="col-md-6 text-md-right">
+                                                <span class="font-italic">SMS Count: <span id="smsCount"></span></span>
+                                            </div>
+                                        </div>
                                         <span id="alertNote" class="alert alert-warning" style="display:none">*[1(one) sms will consider 160 charecter]</span>
                                     </div>
                                 </div>
 
                                 <div class="form-group row">
                                     <div class="col-md-12 text-md-right">
-                                        <input type="submit"  value="Send SMS" class="btn-sm btn-info" />
+                                        <input id="sendSMSBtn" type="submit"  value="Send SMS" class="btn-sm btn-info" />
                                     </div>
                                 </div>
                             </div>
@@ -167,7 +175,7 @@
             $('#recipient_Type_Area').css('display','block');
             RefreshSMSTypeSelectList();
             
-            $('#phoneNumberInput').val("");
+            $('#PhoneNo').val("");
 
             $('#session_Area').css('display','none');
             $('#employee_Area').css('display','none');
@@ -242,20 +250,30 @@
 
         $('#EmployeeId').change(function(){
             let mobile = $('#EmployeeId option:selected').attr('data-mobile');
-            $('#phoneNumberInput').val("");
-            $('#phoneNumberInput').val(mobile);
+            $('#PhoneNo').val("");
+            $('#PhoneNo').val(mobile);
             $('#phoneNumberCount').html(1);
         });
         $('#StudentId').change(function(){
             let mobile = $('#StudentId option:selected').attr('data-mobile');
-            $('#phoneNumberInput').val("");
-            $('#phoneNumberInput').val(mobile);
+            $('#PhoneNo').val("");
+            $('#PhoneNo').val(mobile);
             $('#phoneNumberCount').html(1);
         });
 
-        $('#smsTextArea').on('click keydown keyup keypress', function(){
+        $('#SMSText').on('click keydown keyup keypress', function(){
             let totalCharecter = $(this).val().length;
             $('#charecterCount').html(totalCharecter);
+            let smsCount = Math.ceil(totalCharecter / 160);
+            $('#smsCount').html(smsCount);
+
+            if (totalCharecter > 0) {
+                $('#sendSMSBtn').attr('disabled', false);
+            }
+            else {
+                $('#sendSMSBtn').attr('disabled', true);
+            }
+
             if(totalCharecter > 160)
             {
                 $('#charecterCount').css('color','red');
@@ -297,7 +315,7 @@
                     }
                     phoneCount++;
                 });
-                $('#phoneNumberInput').val(phone);
+                $('#PhoneNo').val(phone);
             $('#phoneNumberCount').html(phoneCount);
             },
             error:function(){}

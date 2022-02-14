@@ -22,7 +22,9 @@
                 <th>
                     @Html.DisplayNameFor(model => model.CreatedAt)
                 </th>
-                <th></th>
+                <th>
+                    <partial name="_Create" />
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -42,7 +44,8 @@
                         @Html.DisplayFor(modelItem => item.CreatedBy)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.CreatedAt)
+                        @*@Html.DisplayFor(modelItem => item.CreatedAt)*@
+                        @item.CreatedAt.ToString("dd MMM yyyy hh:mm tt")
                     </td>
                     <td>
                         <partial name="_Edit_Details_Delete" model="@item.Id" />

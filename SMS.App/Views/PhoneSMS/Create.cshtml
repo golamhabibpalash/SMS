@@ -20,7 +20,7 @@
 <div class="row">
     <div class="col-md-12">
         <div class="">
-            <form asp-action="" asp-controller="" method="post">
+            <form asp-action="Create" asp-controller="PhoneSMS" method="post">
                 <div class="col-md-6 col-lg-6 col-sm-12">
                     <div class="jumbotron">
                         <div class="row">
@@ -47,6 +47,7 @@
                                     <option selected disabled>Select Recipient</option>
                                     <option value="e">Employee</option>
                                     <option value="s">Student</option>
+                                    <option value="g">Guardian</option>
                                 </select>
                             </div>
                         </div>
@@ -290,7 +291,7 @@
     function RefreshSMSTypeSelectList()
     {
         $('#SMSType').empty();
-        let op = '<option selected disabled>Select Recipient</option><option value="e">Employee</option><option value="s">Student</option>';
+        let op = '<option selected disabled>Select Recipient</option><option value="e">Employee</option><option value="s">Student</option><option value="g">Guardian</option>';
         $('#SMSType').append(op);
     }
 

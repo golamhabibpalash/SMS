@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SMS.App.Utilities.ShortMessageService;
+using SMS.App.ViewModels.SMSVM;
 using SMS.BLL.Contracts;
+using SMS.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,6 +28,7 @@ namespace SMS.App.Controllers
         }
         public async Task<IActionResult> Index()
         {
+            
             var allSMS = await _phoneSMSManager.GetAllAsync();
             return View(allSMS.OrderByDescending(a => a.CreatedAt));
         }
@@ -35,10 +40,45 @@ namespace SMS.App.Controllers
         }
         
         [HttpPost]
-        public async Task<IActionResult> Create(IFormCollection formCollection)
+        public async Task<IActionResult> Create(SMSCreateVM model)
         {
-            var allSMS = await _phoneSMSManager.GetAllAsync();
-            return View(allSMS);
+            if (ModelState.IsValid)
+            {
+                List<string> phoneNumbers = new List<string>();
+                string[] phoneNumberArray = model.PhoneNo.Split(',');
+                int sentSMSCount = 0;
+                foreach (var number in phoneNumberArray)
+                {
+                    if (number.Length==11)
+                    {
+                        phoneNumbers.Add(number);
+                    }
+                }
+                if (phoneNumbers.Count>0)
+                {
+                    foreach (var item in phoneNumbers)
+                    {
+                        bool smsSend =await MobileSMS.SendSMS(item, model.SMSText);
+                        string user = HttpContext.Session.GetString("UserId");
+                        
+                        if (smsSend)
+                        {
+                            PhoneSMS phoneSMS = new() { Text = model.SMSText, CreatedAt = DateTime.Now, CreatedBy = user, MobileNumber = item };
+                            await _phoneSMSManager.AddAsync(phoneSMS);
+                            sentSMSCount++;
+                        }
+                    }
+                }
+                if (sentSMSCount > 0)
+                {
+                    TempData["smsSent"] = "Total " + sentSMSCount + " SMS has been sent.";
+                }
+                else
+                {
+                    TempData["smsNotSent"] = "Sorry, no SMS has been sent.";
+                }
+            }
+            return RedirectToAction("Index");
         }
         
         [AllowAnonymous]

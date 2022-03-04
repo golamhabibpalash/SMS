@@ -3,6 +3,7 @@
 @{
     int sl = 0;
 }
+
 @if (Model != null || Model.Any() || Model.Count() > 0)
 {
 
@@ -20,7 +21,7 @@
                     @Html.DisplayNameFor(model => model.CreatedBy)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.CreatedAt)
+                    Created Time
                 </th>
                 <th>
                     <partial name="_Create" />
@@ -58,4 +59,22 @@
 
 @section Scripts{
     <script src="~/js/DataTable/dataTable.js"></script>
+    <script>
+        $(document).ready(function () {
+
+        $(function () {
+            let sent = '@TempData["smsSent"]';
+            let notSent = '@TempData["smsNotSent"]';
+
+
+            if (sent != "") {
+                    alertify.success(sent);
+                }
+            if (notSent != "") {
+                alertify.error(notSent);
+                }
+           
+        });
+
+    </script>
 }

@@ -2,6 +2,49 @@
 @{
     Layout = "~/Views/Shared/_StudentLayout.cshtml";
 }
+<div class="row">
+    <div class="col-md-12">
+        @if (ViewBag.activeStatus != null)
+        {
+            <span class="alert alert-warning">@ViewBag.activeStatus</span>
+        }
+        @if (ViewBag.attendance != null)
+        {
+            <span class="alert alert-info">@ViewBag.attendance</span>
+        }
+        @if (ViewBag.absent != null)
+        {
+            <span class="alert alert-danger">@ViewBag.absent</span>
+        }
+        @if (ViewBag.lateAttendance != null)
+        {
+            <span class="alert alert-warning">@ViewBag.lateAttendance</span>
+        }
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-md-3">
+        <div class="card bg-info">
+            <div class="card-header">Todays Exam</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info">
+            <div class="card-header">Todays Class</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info">
+            <div class="card-header">Todays Class</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info">
+            <div class="card-header">Todays Exam</div>
+        </div>
+    </div>
+</div>
 <div class="card">
     <table>
         <tr>

@@ -28,7 +28,7 @@
             var stu = await _studentManager.GetByIdAsync(user.ReferenceId);
             if (stu.Photo != null)
             {
-                userImage = "/Images/Student/Photo/" + stu.Photo;
+                userImage = "/Images/Student/" + stu.Photo;
             }
             else
             {
@@ -98,7 +98,7 @@
                 <div class="left_col scroll-view">
 
                     <div class="navbar nav_title" style="overflow:hidden">
-                        <a asp-action="Index" asp-controller="Home" class="" style="font-size:20px;color:#fff;font-weight:bold;width:100%"><img class="img-circle img-fluid p-2" src="~/Images/Institute/@instituteLogo" alt="Logo" style="width:60px;" /> @instituteName</a>
+                        <a asp-action="Profile" asp-controller="Students" asp-route-id="@user.ReferenceId" class="" style="font-size:20px;color:#fff;font-weight:bold;width:100%"><img class="img-circle img-fluid p-2" src="~/Images/Institute/@instituteLogo" alt="Logo" style="width:60px;" /> @instituteName</a>
                     </div>
 
                     <div class="clearfix"></div>
@@ -106,6 +106,9 @@
                     <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
                         <div class="menu_section">
                             <ul class="nav side-menu">
+                                @*<li>
+                                    <a asp-controller="Students" asp-action="Dashboard" asp-route-id="@user.ReferenceId"><i class="fa fa-dashboard"></i> Dashboard <span class="fa fa-chevron-down"></span></a>
+                                </li>*@
                                 <li>
                                     <a asp-controller="Students" asp-action="Details" asp-route-id="@user.ReferenceId"><i class="fa fa-home"></i> Profile <span class="fa fa-chevron-down"></span></a>
                                 </li>
@@ -185,7 +188,7 @@
                         @if (_signInManager.IsSignedIn(User))
                         {
 
-                            <span class="p-2">@userName </span>
+                            <span class="p-1 h5">@userName </span>
                             <span class="float-right p-2">
                                 <img src="@userImage" alt="profile Image" class="img-circle" data-toggle="popover" data-placement="bottom" style="width:25px;" onclick="openNav()" />
                             </span>

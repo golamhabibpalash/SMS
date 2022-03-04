@@ -1,9 +1,9 @@
 @charset "UTF-8";
-@font-face {
+/*@font-face {
   font-family: 'Glyphicons Halflings';
   src: url("https://netdna.bootstrapcdn.com/bootstrap/3.0.0/fonts/glyphicons-halflings-regular.eot");
   src: url("https://netdna.bootstrapcdn.com/bootstrap/3.0.0/fonts/glyphicons-halflings-regular.eot?#iefix") format("embedded-opentype"), url("https://netdna.bootstrapcdn.com/bootstrap/3.0.0/fonts/glyphicons-halflings-regular.woff") format("woff"), url("https://netdna.bootstrapcdn.com/bootstrap/3.0.0/fonts/glyphicons-halflings-regular.ttf") format("truetype"), url("https://netdna.bootstrapcdn.com/bootstrap/3.0.0/fonts/glyphicons-halflings-regular.svg#glyphicons-halflingsregular") format("svg"); }
-
+*/
 .glyphicon {
   position: relative;
   top: 1px;
@@ -1462,7 +1462,7 @@ a:hover, a:focus {
 .toggle {
   float: left;
   margin: 0;
-  width: 70px; }
+  width: 30px; }
 
 .toggle a {
   padding: 15px 15px 0;

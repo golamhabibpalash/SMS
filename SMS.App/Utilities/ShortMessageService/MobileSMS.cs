@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -23,7 +24,12 @@ namespace SMS.App.Utilities.ShortMessageService
                 var content = new FormUrlEncodedContent(values);
                 var response = await client.PostAsync("http://api.greenweb.com.bd/api.php?", content);
                 var responseString = await response.Content.ReadAsStringAsync();
-                
+
+                string responseStatus = responseString.Split(' ').FirstOrDefault();
+                if (responseStatus == "Error:")
+                {
+                    return false;
+                }
                 return true;
             }
             catch (Exception)

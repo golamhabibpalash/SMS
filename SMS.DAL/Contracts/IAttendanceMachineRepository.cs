@@ -11,5 +11,6 @@ namespace SMS.DAL.Contracts
     public interface IAttendanceMachineRepository : IRepository<Tran_MachineRawPunch>
     {
         Task<List<Tran_MachineRawPunch>> GetTodaysAllAttendanceAsync();
+        Task<Tran_MachineRawPunch> GetTodaysAttendanceByUserIdAsync(int attendanceId);
     }
 }

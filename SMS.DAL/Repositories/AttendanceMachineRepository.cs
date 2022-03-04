@@ -24,5 +24,14 @@ namespace SMS.DAL.Repositories
                 .Where(t => t.PunchDatetime.Date == DateTime.Now.Date)
                 .ToListAsync();
         }
+
+
+        public async Task<Tran_MachineRawPunch> GetTodaysAttendanceByUserIdAsync(int attendanceId)
+        {
+            var allAttendance = await _context.Tran_MachineRawPunch.Where(t => t.PunchDatetime.Date == DateTime.Now.Date).ToListAsync();
+            var existAttendance = await _context.Tran_MachineRawPunch.FirstOrDefaultAsync(m => m.CardNo == attendanceId.ToString() && m.PunchDatetime.Date == DateTime.Now.Date);
+
+            return existAttendance;
+        }
     }
 }

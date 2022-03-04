@@ -41,10 +41,12 @@ namespace SchoolManagementSystem.Controllers
         private readonly IClassFeeListManager _classFeeListManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IPhoneSMSManager _phoneSMSManager;
+        private readonly IAttendanceMachineManager _attendanceMachineManager;
+        private readonly IInstituteManager _instituteManager;
         #endregion
 
         #region Constructor
-        public StudentsController(IStudentManager studentManager, IAcademicClassManager academicClassManager, IWebHostEnvironment host, IMapper mapper, IAcademicSessionManager academicSessionManager, IStudentPaymentManager studentPaymentManager, IDistrictManager districtManager, IUpazilaManager upazilaManager, IAcademicSectionManager academicSectionManager, IBloodGroupManager bloodGroupManager, IDivisionManager divisionManager, INationalityManager nationalityManager, IGenderManager genderManager, IReligionManager religionManager, IStudentFeeHeadManager studentFeeHeadManager, IClassFeeListManager classFeeListManager, UserManager<ApplicationUser> userManager, IPhoneSMSManager phoneSMSManager)
+        public StudentsController(IStudentManager studentManager, IAcademicClassManager academicClassManager, IWebHostEnvironment host, IMapper mapper, IAcademicSessionManager academicSessionManager, IStudentPaymentManager studentPaymentManager, IDistrictManager districtManager, IUpazilaManager upazilaManager, IAcademicSectionManager academicSectionManager, IBloodGroupManager bloodGroupManager, IDivisionManager divisionManager, INationalityManager nationalityManager, IGenderManager genderManager, IReligionManager religionManager, IStudentFeeHeadManager studentFeeHeadManager, IClassFeeListManager classFeeListManager, UserManager<ApplicationUser> userManager, IPhoneSMSManager phoneSMSManager, IAttendanceMachineManager attendanceMachineManager, IInstituteManager instituteManager)
         {
             _academicClassManager = academicClassManager;
             _host = host;
@@ -64,6 +66,8 @@ namespace SchoolManagementSystem.Controllers
             _classFeeListManager = classFeeListManager;
             _userManager = userManager;
             _phoneSMSManager = phoneSMSManager;
+            _attendanceMachineManager = attendanceMachineManager;
+            _instituteManager = instituteManager;
         }
         #endregion
 
@@ -391,6 +395,33 @@ namespace SchoolManagementSystem.Controllers
         public async Task<IActionResult> Profile(int id)
         {
             var student = await _studentManager.GetByIdAsync(id);
+            if (student.Status == true)
+            {
+                var attendance = await _attendanceMachineManager.GetTodaysAttendanceByUserIdAsync(student.ClassRoll);
+                if (attendance == null)
+                {
+                    ViewBag.absent = "You are absent today";
+                }
+                else
+                {
+                    var instituteInfo = await _instituteManager.GetFirstOrDefaultAsync();
+                    
+                    DateTime schoolLateTime = Convert.ToDateTime(instituteInfo.LateTime);
+                    if (attendance.PunchDatetime.Hour > schoolLateTime.Hour)
+                    {
+                        ViewBag.lateAttendance = "You are late today ( "+attendance.PunchDatetime.ToString("hh:mm tt")+")";
+                    }
+                    else
+                    {
+                        ViewBag.attendance = "You are attended ("+ attendance.PunchDatetime.ToString("hh:mm tt") + ") today";
+                    }
+                }
+                
+            }
+            else
+            {
+                ViewBag.activeStatus = "You are not an active student.";
+            }
             return View(student);
         }
         #endregion

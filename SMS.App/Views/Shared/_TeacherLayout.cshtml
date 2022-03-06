@@ -187,7 +187,7 @@
                         {
 
                             <span class="p-2">@userName </span>
-                            <span class="float-right p-2">
+                            <span class="float-right p-2" id="userProfileIcon">
                                 <img src="@userImage" alt="profile Image" class="img-circle" data-toggle="popover" data-placement="bottom" style="width:25px;" onclick="openNav()" />
                             </span>
                             <div id="myNav" class="overlay">
@@ -254,6 +254,13 @@
             $('[data-toggle="popover"]').popover()
         })
 
+        $(document).click(function (e) {
+            let sss1 = $(e.target).parents("#myNav").length === 0;
+            let sss2 = $(e.target).parents("#userProfileIcon").length === 0;
+            if (sss1 == true && sss2 == true) {
+                closeNav();
+            }
+        });
 
         function menuToggle() {
             if ($('body').hasClass('nav-md')) {

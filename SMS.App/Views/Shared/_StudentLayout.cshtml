@@ -178,29 +178,22 @@
                 <div class="nav_menu">
                     <div class="nav toggle">
                         <a style="padding:5px;" id="menu_toggle">
-
-
                             <i class="fa fa-bars"></i>
                         </a>
-
                     </div>
                     <div class="nav d-flex justify-content-between">
                         @if (_signInManager.IsSignedIn(User))
                         {
-
                             <span class="p-1 h5">@userName </span>
-                            <span class="float-right p-2">
-                                <img src="@userImage" alt="profile Image" class="img-circle" data-toggle="popover" data-placement="bottom" style="width:25px;" onclick="openNav()" />
+                            <span class="float-right p-2" id="userProfileIcon">
+                                <img  src="@userImage" alt="profile Image" class="img-circle" data-toggle="popover" data-placement="bottom" style="width:25px;" onclick="openNav()" />
                             </span>
                             <div id="myNav" class="overlay">
                                 <button class="btn btn-sm btn-danger btn-block closebtn" onclick="closeNav()">Close</button>
-
-
                                 <div class="overlay-content">
                                     @await Component.InvokeAsync("ProfileOverlay")
                                 </div>
                             </div>
-
                         }
                     </div>
 
@@ -256,6 +249,13 @@
             $('[data-toggle="popover"]').popover()
         })
 
+        $(document).click(function (e) {
+            let sss1 = $(e.target).parents("#myNav").length === 0;
+            let sss2 = $(e.target).parents("#userProfileIcon").length === 0;
+            if (sss1 == true && sss2 == true) {
+                closeNav();
+            }
+        });
 
         function menuToggle() {
             if ($('body').hasClass('nav-md')) {

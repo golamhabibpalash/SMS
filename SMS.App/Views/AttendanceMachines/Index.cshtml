@@ -14,6 +14,29 @@
     var academicClassList = await _academicClassManager.GetAllAsync();
     var academicSessionList = await _academicSessionManager.GetAllAsync();
 }
+@section Styles{
+    <style>
+        @@media print
+        {
+            body, body *
+            {
+                display: none;
+            }
+            .heading_part{
+                display:block !important;
+            }
+        }
+    </style>
+}
+<div class="heading_part" >
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h3>Noble Residential School</h3>
+            <h4>( @ViewBag.attendanceFor Attendance Sheet)</h4>
+            <h6>@DateTime.Now.Date</h6><hr />
+        </div>
+    </div>
+</div>
 <div class="row">
     <div class="col-md-12 p-4">
         <form asp-action="index" asp-controller="AttendanceMachines" method="get">
@@ -30,9 +53,10 @@
                 <div class="col-md-2 designationArea" style="display:none">
                     <select class="form-control" name="designationId">
                         <option selected disabled>Select Designation</option>
-                        @foreach(Designation designation in designationList)
+                        @foreach (Designation designation in designationList)
                         {
-                            <option value="@designation.Id">@designation.DesignationName</option> 
+                            <option value="@designation.Id">@designation.DesignationName</option>
+
                         }
                     </select>
                 </div>
@@ -41,9 +65,10 @@
                 <div class="col-md-2 sessionArea" style="display:none">
                     <select class="form-control" name="sessionId">
                         <option selected disabled>Select Session</option>
-                        @foreach(AcademicSession session in academicSessionList)
+                        @foreach (AcademicSession session in academicSessionList)
                         {
-                            <option value="@session.Id">@session.Name</option> 
+                            <option value="@session.Id">@session.Name</option>
+
                         }
                     </select>
                 </div>
@@ -52,9 +77,10 @@
                 <div class="col-md-2 classArea" style="display:none">
                     <select class="form-control" name="classId">
                         <option selected disabled>Select Class</option>
-                        @foreach(AcademicClass academicClass in academicClassList)
+                        @foreach (AcademicClass academicClass in academicClassList)
                         {
-                            <option value="@academicClass.Id">@academicClass.Name</option> 
+                            <option value="@academicClass.Id">@academicClass.Name</option>
+
                         }
                     </select>
                 </div>
@@ -69,7 +95,7 @@
                         <option class="btn-sm btn-danger" value="absent">Absent</option>
                     </select>
                 </div>
- 
+
                 <div class="col-md-2" id="submitArea">
                     <input class="btn-info btn-sm btn-block" value="Search" type="submit" />
                 </div>
@@ -125,7 +151,7 @@
                         @item.PunchDateTime.Date.ToString("dd MMM yyyy")
                     </td>
                     <td>
-                        @string.Format("{0:hh:mm:ss tt}",item.PunchDateTime)
+                        @string.Format("{0:hh:mm:ss tt}", item.PunchDateTime)
                     </td>
                     <td>
                         @if (item.Name != null)
@@ -163,17 +189,15 @@ else
 @section Scripts{
     <script src="~/js/DataTable/dataTable.js"></script>
     <script>
-        $(document).ready(function(){
-            $('#userTypeId').change(function(){
+        $(document).ready(function () {
+            $('#userTypeId').change(function () {
                 let uType = $('#userTypeId option:selected').val();
-                if(uType == 'e')
-                {
+                if (uType == 'e') {
                     $('.designationArea').css("display", "block");
                     $('.classArea').css("display", "none");
                     $('.sessionArea').css("display", "none");
                 }
-                if(uType == 's')
-                {
+                if (uType == 's') {
                     $('.designationArea').css("display", "none");
                     $('.sessionArea').css("display", "block");
                     $('.classArea').css("display", "block");

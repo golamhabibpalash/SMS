@@ -8,42 +8,33 @@
     <!-- Bootstrap CSS -->
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <!-- Font Awesome -->
-    <link href="~/lib/Theme/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <!--<link href="~/lib/Theme/font-awesome/css/font-awesome.min.css" rel="stylesheet" />-->
 
     <title>@ViewBag.Title</title>
-    @await RenderSectionAsync("Styles", required: false);
-    <style>
-        body {
-            font-family: "SF Pro Text","SF Pro Icons","Helvetica Neue","Helvetica","Arial";
-            font-size: 10px;
-        }
-    </style>
-    <style>
-        
-
-        body .login-body {
-            padding-top: 20px;
-        }
-    </style>
+    <link href="~/css/style.css" rel="stylesheet" />
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 
-<body class="bg-info">
-    <div class="login-body">
-        <div class="container h-100">
-            @RenderBody()
+<body>
+    <section>
+        <div class="imgBx">
+            <img src="~/Images/Institute/bg2.jpg" />
         </div>
-    </div>
+        <div class="contentBx">
+            <div class="formBx">
+                @RenderBody()
 
-
-
+            </div>
+        </div>
+    </section>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <!-- Validation -->
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 
-    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    @*<script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>*@
     @await RenderSectionAsync("Scripts", required: false);
 </body>
 </html>

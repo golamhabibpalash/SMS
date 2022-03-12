@@ -40,8 +40,16 @@ namespace SMS.App.Controllers
             {
                 return View(attendanceMachineIndexVMs);
             }
-
+            if (userType == "e")
+            {
+                ViewBag.attendanceFor = "Employees";
+            }
+            else if (userType == "s")
+            {
+                ViewBag.attendanceFor = "Students";
+            }
             var allAttendance = await _attendanceMachineManager.GetAllAsync();
+
             foreach (var item in allAttendance)
             {
                 AttendanceMachineIndexVM attendanceMachineIndexVM = new AttendanceMachineIndexVM();
@@ -94,6 +102,7 @@ namespace SMS.App.Controllers
                                                              where e.DesignationId == designationId
                                                              select a).ToList();
                             }
+                            
                         }
                         else if (userType == "s")
                         {

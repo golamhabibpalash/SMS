@@ -107,11 +107,11 @@
                                 }
                                 <tr class="font-weight-bold bg-info text-light">
                                     <td>Total Students</td>
-									<td class="text-center">
-										<a class="text-info" asp-action="Index" asp-controller="AttendanceMachines" asp-route-date="@DateTime.Today.Date" asp-route-userType="s">
-											<div class="w-100 bg-light">@totalAttendedStudents</div>
-										</a>
-									</td>
+                                    <td class="text-center">
+                                        <a class="text-info" asp-action="Index" asp-controller="AttendanceMachines" asp-route-dateTime="@DateTime.Today.Date" asp-route-userType="s">
+                                            <div class="w-100 bg-light">@totalAttendedStudents</div>
+                                        </a>
+                                    </td>
                                     <td class="text-right">@Model.Students.Count()</td>
                                 </tr>
                             </tbody>

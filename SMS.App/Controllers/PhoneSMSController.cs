@@ -120,6 +120,25 @@ namespace SMS.App.Controllers
                         phoneNumbers.Add(student.PhoneNo);
                     }
                 }
+                else if(smsType=="g")
+                {
+                    var allStudents = await _studentManager.GetAllAsync();
+                    if (sessionId != null)
+                    {
+                        allStudents = (from s in allStudents
+                                       where s.AcademicSessionId == sessionId
+                                       select s).ToList();
+                        if (classId != null)
+                        {
+                            allStudents = allStudents.Where(s => s.AcademicClassId == classId).ToList();
+                        }
+
+                    }
+                    foreach (var student in allStudents)
+                    {
+                        phoneNumbers.Add(student.GuardianPhone);
+                    }
+                }
             }
             return Json(phoneNumbers);
         }

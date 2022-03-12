@@ -172,6 +172,7 @@
 @section Scripts{ 
 <script>
     $(document).ready(function () {
+
         $('#SMSFor').change(function(){
             $('#recipient_Type_Area').css('display','block');
             RefreshSMSTypeSelectList();
@@ -212,36 +213,51 @@
                 $('#employee_Area').css('display','none');
                 $('#session_Area').css('display','none');
 
-                if (SMS_Type=='e')
-                {
-                    $('#class_Area').css('display','none');
-                    $('#session_Area').css('display','none');
-                    $('#designation_Area').css('display','block');
+                if (SMS_Type == 'e') {
+                    $('#class_Area').css('display', 'none');
+                    $('#session_Area').css('display', 'none');
+                    $('#designation_Area').css('display', 'block');
 
-                    $('#DesignationId').change(function(){
+                    $('#DesignationId').change(function () {
                         let desigId = $('#DesignationId option:selected').val();
-                        GetPhoneNumber(SMS_Type,desigId);
+                        GetPhoneNumber(SMS_Type, desigId);
                     });
-                    
+
 
                 }
-                else if(SMS_Type=='s')
-                {
+                else if (SMS_Type == 's') {
                     GetPhoneNumber(SMS_Type);
 
-                    $('#designation_Area').css('display','none');
-                    $('#session_Area').css('display','block');
-                    $('#AcademicSessionId').change(function(){
+                    $('#designation_Area').css('display', 'none');
+                    $('#session_Area').css('display', 'block');
+                    $('#AcademicSessionId').change(function () {
                         let aSId = $('#AcademicSessionId option:selected').val();
-                        $('#class_Area').css('display','block');
+                        $('#class_Area').css('display', 'block');
 
-                        GetPhoneNumber(SMS_Type," ",aSId," ");
+                        GetPhoneNumber(SMS_Type, " ", aSId, " ");
 
-                        $('#AcademicClassId').change(function(){
+                        $('#AcademicClassId').change(function () {
                             let aCId = $('#AcademicClassId option:selected').val();
-                            if(aCId > 0)
-                            {
-                                GetPhoneNumber(SMS_Type," ",aSId,aCId);
+                            if (aCId > 0) {
+                                GetPhoneNumber(SMS_Type, " ", aSId, aCId);
+                            }
+                        });
+                    });
+                }
+                else if (SMS_Type == 'g') {
+                    GetPhoneNumber(SMS_Type);
+                    $('#designation_Area').css('display', 'none');
+                    $('#session_Area').css('display', 'block');
+                    $('#AcademicSessionId').change(function () {
+                        let aSId = $('#AcademicSessionId option:selected').val();
+                        $('#class_Area').css('display', 'block');
+
+                        GetPhoneNumber(SMS_Type, " ", aSId, " ");
+
+                        $('#AcademicClassId').change(function () {
+                            let aCId = $('#AcademicClassId option:selected').val();
+                            if (aCId > 0) {
+                                GetPhoneNumber(SMS_Type, " ", aSId, aCId);
                             }
                         });
                     });
@@ -306,7 +322,6 @@
                 let phoneCount = 0;
                 let phone="";
                 $.each(data, function(i, obj){
-                    console.log(obj);
                     if(i==0)
                     {
                         phone=obj+",";
@@ -319,7 +334,9 @@
                 $('#PhoneNo').val(phone);
             $('#phoneNumberCount').html(phoneCount);
             },
-            error:function(){}
+            error: function (er) {
+                console.log(er);
+            }
         });
     }
 </script>

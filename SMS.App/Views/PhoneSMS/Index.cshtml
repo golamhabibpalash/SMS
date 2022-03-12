@@ -61,8 +61,6 @@
     <script src="~/js/DataTable/dataTable.js"></script>
     <script>
         $(document).ready(function () {
-
-        $(function () {
             let sent = '@TempData["smsSent"]';
             let notSent = '@TempData["smsNotSent"]';
 
@@ -73,7 +71,6 @@
             if (notSent != "") {
                 alertify.error(notSent);
                 }
-           
         });
 
     </script>

@@ -18,13 +18,12 @@ namespace SMS.DAL.Repositories
 
         }
 
-        public async Task<List<Tran_MachineRawPunch>> GetTodaysAllAttendanceAsync()
+        public async Task<List<Tran_MachineRawPunch>> GetAllAttendanceByDateAsync(DateTime dateTime)
         {
             return await _context.Tran_MachineRawPunch
-                .Where(t => t.PunchDatetime.Date == DateTime.Now.Date)
+                .Where(t => t.PunchDatetime.Date == dateTime.Date)
                 .ToListAsync();
         }
-
 
         public async Task<Tran_MachineRawPunch> GetTodaysAttendanceByUserIdAsync(int attendanceId)
         {

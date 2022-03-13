@@ -67,7 +67,7 @@
     {
         <title>@instituteName</title>
     }
-
+    <link rel="icon" type="image/x-icon" href="~/images/Institute/favicon.ico">
     <!-- Bootstrap -->
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <!-- Font Awesome -->
@@ -353,8 +353,8 @@
             </div>
             <!-- /top navigation -->
             <!-- page content -->
-            <div class="right_col" role="main" style="background:#c7c7c7">
-                <div class="shadow rounded mt-2 bg-light p-2">
+            <div id="body_content_part" class="right_col" role="main" style="background:#c7c7c7">
+                <div id="printable_area" class="shadow rounded mt-2 bg-light p-2">
                     @RenderBody()
                 </div>
             </div>
@@ -362,7 +362,7 @@
             <!-- footer content -->
             <footer class="fixed-bottom">
                 <div class="pull-right">
-                    &copy; Powerd By GH Palash
+                    &copy; Powerd By NRS
                 </div>
                 <div class="clearfix"></div>
             </footer>

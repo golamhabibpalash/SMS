@@ -59,7 +59,7 @@ namespace SMS.App.Controllers
             DashboardVM.Students = (ICollection<Student>)students;
             DashboardVM.Employees = (ICollection<Employee>)await _employeeManager.GetAllAsync();
 
-            var todaysAllAttendance = await _attendanceMachineManager.GetTodaysAllAttendanceAsync();
+            var todaysAllAttendance = await _attendanceMachineManager.GetAllAttendanceByDateAsync(DateTime.Now.Date);
             var todaysAllUniqeAttendance = todaysAllAttendance.GroupBy(a => a.CardNo).ToList();
             var allDesignations = await _designationManager.GetAllAsync();
             allDesignations = allDesignations.Where(d => d.Employees.Count() > 0).ToList();

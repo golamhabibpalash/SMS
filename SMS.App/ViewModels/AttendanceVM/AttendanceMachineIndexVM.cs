@@ -18,5 +18,7 @@ namespace SMS.App.ViewModels.AttendanceVM
 
         [Display(Name ="User Type")]
         public string UserInfo { get; set; }
+
+        public string Remarks { get; set; }
     }
 }

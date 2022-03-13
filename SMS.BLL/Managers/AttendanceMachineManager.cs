@@ -20,9 +20,9 @@ namespace SMS.BLL.Managers
            _attendanceMachineRepository = attendanceMachineRepository;
         }
 
-        public async Task<List<Tran_MachineRawPunch>> GetTodaysAllAttendanceAsync()
+        public async Task<List<Tran_MachineRawPunch>> GetAllAttendanceByDateAsync(DateTime dateTime)
         {
-            return await _attendanceMachineRepository.GetTodaysAllAttendanceAsync();
+            return await _attendanceMachineRepository.GetAllAttendanceByDateAsync(dateTime);
         }
 
         public async Task<Tran_MachineRawPunch> GetTodaysAttendanceByUserIdAsync(int attendanceId)

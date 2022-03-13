@@ -13,31 +13,90 @@
     var designationList = await _designationManager.GetAllAsync();
     var academicClassList = await _academicClassManager.GetAllAsync();
     var academicSessionList = await _academicSessionManager.GetAllAsync();
+    string datetime = "";
+
+    @if (ViewBag.attendanceDate != null)
+    {
+        datetime = DateTime.Now.Date.ToString("dd MMM yyyy");
+    }
+    else
+    {
+        datetime = ViewBag.attendanceDate;
+    }
+    int total = 0;
+    if (Model.Count() > 0)
+    {
+        total = Model.Count();
+    }
 }
 @section Styles{
-    <style>
-        @@media print
+    <style type="text/css">
+        @@page
         {
-            body, body *
+            size: A4 portrait;
+        }
+        @@media screen
+        {
+            #heading_part
             {
                 display: none;
             }
-            .heading_part{
-                display:block !important;
+        }
+        @@media print
+        {
+            body *
+            {
+                visibility: hidden;
             }
+            #printable_area *
+            {
+                visibility: visible;
+            }
+
+            #printable_area
+            {
+                position: absolute;
+                top:20px;
+                left:15px;
+                right:15px;
+
+                width:98%;
+            }
+            #searching_div, #myTable_length, #myTable_filter, #myTable_paginate
+            {
+                display: none;
+            }
+            #myTable *{
+                border:1px solid #000;
+            }
+            .tableBody_last_td, .tableBody_last_td *, #tableHead_last_th, #tableHead_last_th *, .body_machine_no, .body_machine_no *, #head_machine_no
+            {
+                display: none;
+            }
+            #heading_part{
+                display:block;
+            }
+
         }
     </style>
 }
-<div class="heading_part" >
+<div id="heading_part">
     <div class="row">
         <div class="col-md-12 text-center">
-            <h3>Noble Residential School</h3>
-            <h4>( @ViewBag.attendanceFor Attendance Sheet)</h4>
-            <h6>@DateTime.Now.Date</h6><hr />
+            <h3 >Noble Residential School</h3>
+            <h4 >(@ViewBag.attendanceFor Attendance Sheet)</h4>
+            <div class="row border-bottom border-dark">
+                <div class="col-md-6">
+                    <h6 class="text-md-left">Date: @datetime</h6>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="text-md-right">Total: @total</h6>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-<div class="row">
+<div class="row" id="searching_div">
     <div class="col-md-12 p-4">
         <form asp-action="index" asp-controller="AttendanceMachines" method="get">
             <div class="form-group row">
@@ -97,7 +156,8 @@
                 </div>
 
                 <div class="col-md-2" id="submitArea">
-                    <input class="btn-info btn-sm btn-block" value="Search" type="submit" />
+                    <input class="btn-info btn-sm" value="Search" type="submit" />
+                    <button class="btn-outline-warning btn-sm" onclick="window.print()"><i class="fa fa-print"></i></button>
                 </div>
             </div>
         </form>
@@ -124,10 +184,13 @@
                 <th>
                     User
                 </th>
-                <th>
+                <th id="head_machine_no">
                     @Html.DisplayNameFor(model => model.MachineNo)
                 </th>
                 <th>
+                    Remarks
+                </th>
+                <th id="tableHead_last_th">
                     @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
                     {
                         <partial name="_create" />
@@ -156,16 +219,19 @@
                     <td>
                         @if (item.Name != null)
                         {
-                            <span>@item.Name</span>
+                            @item.Name
                         }
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.UserInfo)
                     </td>
-                    <td>
+                    <td class="text-md-center body_machine_no">
                         @Html.DisplayFor(modelItem => item.MachineNo)
                     </td>
                     <td>
+                        Present
+                    </td>
+                    <td class="tableBody_last_td">
                         <partial name="_edit_details_delete" model="@item.Id" />
                     </td>
                 </tr>
@@ -177,10 +243,8 @@ else
 {
     <div class="row">
         <div class="col-md-12 text-center">
-
             <div class="jumbotron">
-                <span>Data not found. To get data search with type of user and date.</span>
-
+                <span>Data not found. To get data, search with type of user and date.</span>
             </div>
         </div>
     </div>

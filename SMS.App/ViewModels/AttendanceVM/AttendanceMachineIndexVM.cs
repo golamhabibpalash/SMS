@@ -11,6 +11,10 @@ namespace SMS.App.ViewModels.AttendanceVM
         public string CardNo { get; set; }
         public DateTime PunchDateTime { get; set; }
         public string Name { get; set; }
+        public string GuardianPhone { get; set; }
+        public string Designation { get; set; }
+        public string Phone { get; set; }
+        public string Attendance { get; set; }
         public string UserType { get; set; }
 
         [Display(Name = "Machine No")]
@@ -20,5 +24,6 @@ namespace SMS.App.ViewModels.AttendanceVM
         public string UserInfo { get; set; }
 
         public string Remarks { get; set; }
+
     }
 }

@@ -29,6 +29,7 @@
         total = Model.Count();
     }
 }
+
 @section Styles{
     <style type="text/css">
         @@page
@@ -48,6 +49,7 @@
             {
                 visibility: hidden;
             }
+
             #printable_area *
             {
                 visibility: visible;
@@ -62,21 +64,24 @@
 
                 width:98%;
             }
+
             #searching_div, #myTable_length, #myTable_filter, #myTable_paginate
             {
                 display: none;
             }
+
             #myTable *{
                 border:1px solid #000;
             }
+
             .tableBody_last_td, .tableBody_last_td *, #tableHead_last_th, #tableHead_last_th *, .body_machine_no, .body_machine_no *, #head_machine_no
             {
                 display: none;
             }
+
             #heading_part{
                 display:block;
             }
-
         }
     </style>
 }
@@ -84,8 +89,8 @@
     <div class="row">
         <div class="col-md-12 text-center">
             <h3 >Noble Residential School</h3>
-            <h4 >(@ViewBag.attendanceFor Attendance Sheet)</h4>
-            <div class="row border-bottom border-dark">
+            <h4 class="border-bottom text-dark">(@ViewBag.attendanceFor Attendance Sheet)</h4>
+            <div class="row">
                 <div class="col-md-6">
                     <h6 class="text-md-left">Date: @datetime</h6>
                 </div>
@@ -100,7 +105,7 @@
     <div class="col-md-12 p-4">
         <form asp-action="index" asp-controller="AttendanceMachines" method="get">
             <div class="form-group row">
-                <div class="col-md-2">
+                <div class="col-md-2 mb-2">
                     <select class="form-control" name="userType" id="userTypeId">
                         <option selected disabled>User Type</option>
                         <option value="e">Employee</option>
@@ -108,33 +113,28 @@
                     </select>
                 </div>
 
-                @*<label class="col-form-label designationArea" style="display:none">Designation</label>*@
                 <div class="col-md-2 designationArea" style="display:none">
-                    <select class="form-control" name="designationId">
+                    <select class="form-control mb-2" name="designationId">
                         <option selected disabled>Select Designation</option>
                         @foreach (Designation designation in designationList)
                         {
                             <option value="@designation.Id">@designation.DesignationName</option>
-
                         }
                     </select>
                 </div>
 
-                @*<label class="col-form-label sessionArea" style="display:none">Session</label>*@
                 <div class="col-md-2 sessionArea" style="display:none">
-                    <select class="form-control" name="sessionId">
+                    <select class="form-control mb-2" name="sessionId">
                         <option selected disabled>Select Session</option>
                         @foreach (AcademicSession session in academicSessionList)
                         {
                             <option value="@session.Id">@session.Name</option>
-
                         }
                     </select>
                 </div>
 
-                @*<label class="col-form-label classArea" style="display:none">Class</label>*@
                 <div class="col-md-2 classArea" style="display:none">
-                    <select class="form-control" name="classId">
+                    <select class="form-control mb-2" name="classId">
                         <option selected disabled>Select Class</option>
                         @foreach (AcademicClass academicClass in academicClassList)
                         {
@@ -144,11 +144,12 @@
                     </select>
                 </div>
 
-                <div class="col-md-2 dateArea">
+                <div class="col-md-2 dateArea mb-2">
                     <input type="date" class="form-control" name="dateTime" value="@DateTime.Today.ToString("yyyy-MM-dd")" />
                 </div>
+
                 <div class="col-md-2">
-                    <select class="form-control" name="attendanceType" id="attendanceType">
+                    <select class="form-control mb-2" name="attendanceType" id="attendanceType">
                         <option selected disabled>Select Attendance Type</option>
                         <option class="btn-sm btn-info" value="attended">Attended</option>
                         <option class="btn-sm btn-danger" value="absent">Absent</option>
@@ -165,30 +166,31 @@
 </div>
 @if (Model.Count() > 0)
 {
-    <table class="table table-responsive-sm table-striped table-hover shadow" id="myTable">
+<table class="table table-responsive-sm table-striped table-hover shadow" id="myTable">
+    @if (ViewBag.attendanceFor == "Students")
+    {
         <thead>
             <tr>
-                <th>#</th>
+                <th>
+                    #
+                </th>
+                <th>
+                    Student Name
+                </th>
                 <th>
                     @Html.DisplayNameFor(model => model.CardNo)
                 </th>
                 <th>
-                    Punch Date
+                    @Html.DisplayNameFor(model => model.GuardianPhone)
                 </th>
                 <th>
-                    Punch Time
+                    Attendance
                 </th>
                 <th>
-                    Name
+                    Time
                 </th>
                 <th>
-                    User
-                </th>
-                <th id="head_machine_no">
-                    @Html.DisplayNameFor(model => model.MachineNo)
-                </th>
-                <th>
-                    Remarks
+                    @Html.DisplayNameFor(model => model.Remarks)
                 </th>
                 <th id="tableHead_last_th">
                     @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
@@ -202,34 +204,82 @@
                 </th>
             </tr>
         </thead>
+    }
+    else
+    {
+        <thead>
+            <tr>
+                <th>
+                    #
+                </th>
+                <th>
+                    Employee Name
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Designation)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Phone)
+                </th>
+                <th>
+                    Attendance
+                </th>
+                <th>
+                    Time
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Remarks)
+                </th>
+                <th id="tableHead_last_th">
+                    @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
+                    {
+                        <partial name="_create" />
+                    }
+                    else
+                    {
+                        <span>Action</span>
+                    }
+                </th>
+            </tr>
+        </thead>
+    }
+</table>
+    
+    <table >
+        
         <tbody>
             @foreach (var item in Model)
             {
                 <tr>
                     <td>@(++sl).</td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.CardNo)
+                        @Html.DisplayFor(modelItem => item.Name)
                     </td>
+                    @if (ViewBag.attendanceFor == "Students")
+                    {
+                        <td>@item.CardNo</td>
+                        <td>@item.GuardianPhone</td>
+                    }
+                    else
+                    {
+                        <td>@item.Designation</td>
+                        <td>@item.Phone</td>
+                    }
                     <td>
-                        @item.PunchDateTime.Date.ToString("dd MMM yyyy")
+                        Attendance
                     </td>
                     <td>
                         @string.Format("{0:hh:mm:ss tt}", item.PunchDateTime)
                     </td>
                     <td>
-                        @if (item.Name != null)
-                        {
-                            @item.Name
-                        }
+                        @Html.DisplayFor(modelItem => item.Remarks)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.UserInfo)
                     </td>
-                    <td class="text-md-center body_machine_no">
-                        @Html.DisplayFor(modelItem => item.MachineNo)
-                    </td>
+                   
                     <td>
-                        Present
+                        @Html.DisplayFor(modelItem => item.Remarks)
                     </td>
                     <td class="tableBody_last_td">
                         <partial name="_edit_details_delete" model="@item.Id" />

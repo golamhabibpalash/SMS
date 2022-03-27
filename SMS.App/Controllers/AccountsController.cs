@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
+using SMS.App.Utilities.EmailServices;
 using SMS.App.Utilities.ShortMessageService;
 using SMS.App.ViewModels.AdministrationVM;
 using SMS.BLL.Contracts;
@@ -281,13 +282,14 @@ namespace SMS.App.Controllers
                     HttpContext.Session.SetString("passwordResetLink", passwordResetLink);
                     HttpContext.Session.SetString("useremail", model.Email);
 
+                    Random rnd = new Random();
+                    int randomNumber = rnd.Next(100000, 999999);
+                    HttpContext.Session.SetString("randomNumber", randomNumber.ToString());
+
+                    string text = "Your OTP is:" + randomNumber + " -Noble Residential School";
+
                     if (model.verificationBy=="SMS")
                     {
-                        Random rnd = new Random();
-                        int randomNumber = rnd.Next(100000, 999999);
-                        HttpContext.Session.SetString("randomNumber", randomNumber.ToString());
-
-                        string text = "Your OTP is:" + randomNumber + " -Noble Residential School";
                         bool smsSend = await MobileSMS.SendSMS(user.PhoneNumber, text);
                         if (smsSend == false)
                         {
@@ -297,8 +299,15 @@ namespace SMS.App.Controllers
                         else if (smsSend == true)
                         {
                             PhoneSMS phoneSMS = new() {Text = text, CreatedAt=DateTime.Now, CreatedBy=model.Email, MobileNumber=user.PhoneNumber };
-                            await _phoneSMSManager.AddAsync(phoneSMS);
+                            try
+                            {
+                                await _phoneSMSManager.AddAsync(phoneSMS);
+                            }
+                            catch (Exception)
+                            {
 
+                                throw;
+                            }
                         }
                         
                         return RedirectToAction("OTPGenerate");
@@ -306,6 +315,11 @@ namespace SMS.App.Controllers
                     else if(model.verificationBy == "Email")
                     {
 
+                        bool isSend = EmailService.SendEmail(model.Email,"OTP for Password reset", text);
+                        if (isSend)
+                        {
+                            return RedirectToAction("OTPGenerate");
+                        }
                     }
                     
                     ViewBag.link = passwordResetLink;

@@ -204,6 +204,11 @@ namespace SchoolManagementSystem.Controllers
                                     PhoneSMS phoneSMS = new() { Text = text, CreatedAt = DateTime.Now, CreatedBy = student.Email, MobileNumber = student.PhoneNo };
                                     await _phoneSMSManager.AddAsync(phoneSMS);
                                 }
+
+                                if (newStudent.Email != null)
+                                {
+
+                                }
                             }
                         }
                         return RedirectToAction(nameof(Index));

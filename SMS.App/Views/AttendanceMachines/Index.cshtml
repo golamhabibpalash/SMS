@@ -36,6 +36,7 @@
         {
             size: A4 portrait;
         }
+
         @@media screen
         {
             #heading_part
@@ -43,6 +44,7 @@
                 display: none;
             }
         }
+
         @@media print
         {
             body *
@@ -58,11 +60,10 @@
             #printable_area
             {
                 position: absolute;
-                top:20px;
-                left:15px;
-                right:15px;
-
-                width:98%;
+                top: 20px;
+                left: 15px;
+                right: 15px;
+                width: 98%;
             }
 
             #searching_div, #myTable_length, #myTable_filter, #myTable_paginate
@@ -70,8 +71,9 @@
                 display: none;
             }
 
-            #myTable *{
-                border:1px solid #000;
+            #myTable *
+            {
+                border: 1px solid #000;
             }
 
             .tableBody_last_td, .tableBody_last_td *, #tableHead_last_th, #tableHead_last_th *, .body_machine_no, .body_machine_no *, #head_machine_no
@@ -79,8 +81,9 @@
                 display: none;
             }
 
-            #heading_part{
-                display:block;
+            #heading_part
+            {
+                display: block;
             }
         }
     </style>
@@ -88,7 +91,7 @@
 <div id="heading_part">
     <div class="row">
         <div class="col-md-12 text-center">
-            <h3 >Noble Residential School</h3>
+            <h3>Noble Residential School</h3>
             <h4 class="border-bottom text-dark">(@ViewBag.attendanceFor Attendance Sheet)</h4>
             <div class="row">
                 <div class="col-md-6">
@@ -166,125 +169,125 @@
 </div>
 @if (Model.Count() > 0)
 {
-<table class="table table-responsive-sm table-striped table-hover shadow" id="myTable">
-    @if (ViewBag.attendanceFor == "Students")
-    {
-        <thead>
-            <tr>
-                <th>
-                    #
-                </th>
-                <th>
-                    Student Name
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.CardNo)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.GuardianPhone)
-                </th>
-                <th>
-                    Attendance
-                </th>
-                <th>
-                    Time
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Remarks)
-                </th>
-                <th id="tableHead_last_th">
-                    @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
-                    {
-                        <partial name="_create" />
-                    }
-                    else
-                    {
-                        <span>Action</span>
-                    }
-                </th>
-            </tr>
-        </thead>
-    }
-    else
-    {
-        <thead>
-            <tr>
-                <th>
-                    #
-                </th>
-                <th>
-                    Employee Name
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Designation)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Phone)
-                </th>
-                <th>
-                    Attendance
-                </th>
-                <th>
-                    Time
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Remarks)
-                </th>
-                <th id="tableHead_last_th">
-                    @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
-                    {
-                        <partial name="_create" />
-                    }
-                    else
-                    {
-                        <span>Action</span>
-                    }
-                </th>
-            </tr>
-        </thead>
-    }
-</table>
-    
-    <table >
-        
-        <tbody>
-            @foreach (var item in Model)
-            {
+    <table class="table table-responsive-sm table-striped table-hover shadow" id="myTable">
+        @if (ViewBag.attendanceFor == "Students")
+        {
+            <thead>
                 <tr>
-                    <td>@(++sl).</td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Name)
-                    </td>
-                    @if (ViewBag.attendanceFor == "Students")
-                    {
-                        <td>@item.CardNo</td>
-                        <td>@item.GuardianPhone</td>
-                    }
-                    else
-                    {
-                        <td>@item.Designation</td>
-                        <td>@item.Phone</td>
-                    }
-                    <td>
+                    <th>
+                        #
+                    </th>
+                    <th>
+                        Student Name
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.CardNo)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.GuardianPhone)
+                    </th>
+                    <th>
                         Attendance
-                    </td>
-                    <td>
-                        @string.Format("{0:hh:mm:ss tt}", item.PunchDateTime)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Remarks)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.UserInfo)
-                    </td>
-                   
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Remarks)
-                    </td>
-                    <td class="tableBody_last_td">
-                        <partial name="_edit_details_delete" model="@item.Id" />
-                    </td>
+                    </th>
+                    <th>
+                        Time
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.UserInfo)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Remarks)
+                    </th>
+                    <th id="tableHead_last_th">
+                        @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
+                        {
+                            <partial name="_create" />
+                        }
+                        else
+                        {
+                            <span>Action</span>
+                        }
+                    </th>
                 </tr>
+            </thead>
+        }
+        else
+        {
+            <thead>
+                <tr>
+                    <th>
+                        #
+                    </th>
+                    <th>
+                        Employee Name
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Designation)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Phone)
+                    </th>
+                    <th>
+                        Attendance
+                    </th>
+                    <th>
+                        Time
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.UserInfo)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Remarks)
+                    </th>
+                    <th id="tableHead_last_th">
+                        @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
+                        {
+                            <partial name="_create" />
+                        }
+                        else
+                        {
+                            <span>Action</span>
+                        }
+                    </th>
+                </tr>
+            </thead>
+        }
+
+
+        <tbody>
+            @foreach (var item in Model.DistinctBy(m => m.CardNo))
+            {
+            <tr>
+                <td>@(++sl).</td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                @if (ViewBag.attendanceFor == "Students")
+                {
+                    <td>@item.CardNo</td>
+                    <td>@item.GuardianPhone</td>
+                }
+                else
+                {
+                    <td>@item.Designation</td>
+                    <td>@item.Phone</td>
+                }
+                <td>
+                    Attended
+                </td>
+                <td>
+                    @string.Format("{0:hh:mm:ss tt}", item.PunchDateTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserInfo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Remarks)
+                </td>
+                <td class="tableBody_last_td">
+                    <partial name="_edit_details_delete" model="@item.Id" />
+                </td>
+            </tr>
             }
         </tbody>
     </table>

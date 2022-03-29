@@ -14,6 +14,10 @@
     }
 }
 
+@section Styles{
+    @*<link href="~/lib/fullCalendar/bootstrap/main.min.css" rel="stylesheet" />*@
+}
+
 @*<div class="text-center">
     @if (GlobalUI.InstituteName != null)
     {
@@ -121,14 +125,44 @@
             </div>
         </div>
     </div>
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div id="calendar">
+
+            </div>
+        </div>
+    </div>
 </div>
 
 
 @section Scripts{ 
+    @*<script src="~/lib/fullCalendar/bootstrap/main.min.js"></script>*@
 <script>
-    $(document).ready(function () {
+    //$(document).ready(function () {
+    //    var events = [
+    //        { Title: "Birthday", Date: new Date("12/12/2019") },
+    //        { Title: "Christmas", Date: new Date("12/25/2019") },
+    //        { Title: "Boxing Day", Date: new Date("12/26/2019") }
+    //    ];
+
+    //    $("#calendar").datepicker({
+    //        beforeShowDay: function (date) {
+    //            var result = [true, '', null];
+    //            var tooltip = "";
+    //            var matching = $.grep(events, function (event) {
+    //                if (event.Date.valueOf() === date.valueOf()) {
+    //                    tooltip = event.Title;
+    //                    return true;
+    //                }
+    //            });
+
+    //            if (matching.length > 0) {
+    //                result = [true, 'event', tooltip];
+    //            }
+    //            return result;
+    //        }
+    //    });
         
-        
-    });
+    //});
 </script>
 }

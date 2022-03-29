@@ -86,7 +86,7 @@ namespace SMS.App.Controllers
                 todaysAttendanceStuVM.AcademicClass = aClass;
                 todaysAttendanceStuVM.AttendedStudents = (from s in aClass.Students
                                                           from a in todaysAllUniqeAttendance
-                                                          where s.ClassRoll.ToString() == a.Key
+                                                          where a.Key == s.ClassRoll.ToString().PadLeft(8, '0')
                                                           select s).ToList();
                 todaysAttendanceStuVM.TotalStudent = aClass.Students.Count();
 

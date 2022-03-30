@@ -90,33 +90,7 @@ namespace SMS.App.Controllers
                     ViewBag.attendanceFor = "Students";
                 }
 
-                //else
-                //{
-                //    if (attended.CardNo.Length > 7)
-                //    {
-                //        Employee emp = await _employeeManager.GetByPhoneAttendance(attended.CardNo);
-                //        if (emp != null)
-                //        {
-                //            attendanceMachineIndexVM.Name = emp.EmployeeName;
-                //            Designation designation = await _designationManager.GetByIdAsync(emp.DesignationId);
-                //            attendanceMachineIndexVM.UserInfo = "Employee (" + designation.DesignationName + ")";
-                //            attendanceMachineIndexVM.UserType = "e";
-                //            attendanceMachineIndexVMs.Add(attendanceMachineIndexVM);
-                //        }
-                //    }
-                //    else
-                //    {
-                //        Student student = await _studentManager.GetStudentByClassRollAsync(Convert.ToInt32(attended.CardNo));
-                //        if (student != null)
-                //        {
-                //            attendanceMachineIndexVM.Name = student.Name;
-                //            AcademicClass academicClass = await _academicClassManager.GetByIdAsync(student.AcademicClassId);
-                //            attendanceMachineIndexVM.UserInfo = "Student (" + academicClass.Name + ")";
-                //            attendanceMachineIndexVM.UserType = "s";
-                //            attendanceMachineIndexVMs.Add(attendanceMachineIndexVM);
-                //        }
-                //    }
-                //}
+                
             }
             return View(attendanceMachineIndexVMs);
 

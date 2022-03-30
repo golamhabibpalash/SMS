@@ -15,20 +15,9 @@
 }
 
 @section Styles{
-    @*<link href="~/lib/fullCalendar/bootstrap/main.min.css" rel="stylesheet" />*@
+    @*<link href="~/lib/fullCalendar/main.min.css" rel="stylesheet" />*@
 }
 
-@*<div class="text-center">
-    @if (GlobalUI.InstituteName != null)
-    {
-        <h1 class="display-4">Welcome to @GlobalUI.InstituteName</h1>
-    }
-    else
-    {
-        <h1 class="display-4">Welcome to School Management System</h1>
-    }
-</div>
-<hr />*@
 <div class="row">
     <div class="col-md-6">
         <div class="card shadow">
@@ -49,26 +38,28 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                    @{int totalAttendedEmployees = 0;}
+                                @{int totalAttendedEmployees = 0;}
                                 @foreach (TodaysAttendanceEmpVM item in Model.TodaysAttendanceEmpVMs.OrderBy(e => e.TotalEmployee))
                                 {
                                     <tr>
                                         <td>@item.Designation.DesignationName</td>
-                                        <td class="text-center" ><a  class="text-light" asp-action="Index" asp-controller="AttendanceMachines" asp-route-dateTime="@DateTime.Today.Date" asp-route-userType="e">
-                                            <div class="w-100 bg-info">@item.AttendedEmployees.Count()</div>
-                                            </a></td>
+                                        <td class="text-center">
+                                            <a class="text-light" asp-action="Index" asp-controller="AttendanceMachines" asp-route-dateTime="@DateTime.Today.Date" asp-route-userType="e">
+                                                <div class="w-100 bg-info">@item.AttendedEmployees.Count()</div>
+                                            </a>
+                                        </td>
                                         <td class="text-right">@item.TotalEmployee</td>
                                         @{totalAttendedEmployees += @item.AttendedEmployees.Count();}
                                     </tr>
                                 }
                                 <tr class="font-weight-bold bg-info text-light">
                                     <td>Total Employees</td>
-                                    <td class="text-center"> 
+                                    <td class="text-center">
                                         <a class="text-info" asp-action="Index" asp-controller="AttendanceMachines" asp-route-dateTime="@DateTime.Today.Date" asp-route-userType="e">
                                             <div class="w-100 bg-light">
                                                 @totalAttendedEmployees
                                             </div>
-                                        </a> 
+                                        </a>
                                     </td>
                                     <td class="text-right">@Model.Employees.Count()</td>
                                 </tr>
@@ -93,18 +84,18 @@
                                 @foreach (TodaysAttendanceStuVM sClass in Model.TodaysAttendanceStuVMs)
                                 {
                                     <tr>
-										<td>
-											<a class="text-dark" asp-action="Index" asp-controller="Students" asp-route-academicClassId="@sClass.AcademicClass.Id">
-												@sClass.AcademicClass.Name
-											</a>
-										</td>
-										<td class="text-center">
-											<a class="text-light" asp-action="Index" asp-controller="AttendanceMachines" asp-route-dateTime="@DateTime.Today.Date" asp-route-classId="@sClass.AcademicClass.Id" asp-route-userType="s">
-												<div class="w-100 bg-info">
-													@sClass.AttendedStudents.Count()
-												</div>
-											</a>
-										</td>
+                                        <td>
+                                            <a class="text-dark" asp-action="Index" asp-controller="Students" asp-route-academicClassId="@sClass.AcademicClass.Id">
+                                                @sClass.AcademicClass.Name
+                                            </a>
+                                        </td>
+                                        <td class="text-center">
+                                            <a class="text-light" asp-action="Index" asp-controller="AttendanceMachines" asp-route-dateTime="@DateTime.Today.Date" asp-route-classId="@sClass.AcademicClass.Id" asp-route-userType="s">
+                                                <div class="w-100 bg-info">
+                                                    @sClass.AttendedStudents.Count()
+                                                </div>
+                                            </a>
+                                        </td>
                                         <td class="text-right">@sClass.TotalStudent</td>
                                         @{totalAttendedStudents += @sClass.AttendedStudents.Count();}
                                     </tr>
@@ -125,44 +116,30 @@
             </div>
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="card shadow">
-            <div id="calendar">
-
+    <div class="col-md-5">
+        <div class="card shadow ">
+            <div class="card-header h5 text-center">
+                Academic Calendar
+            </div>
+            <div class="card-body">
+                <div id='calendar'></div>
             </div>
         </div>
     </div>
 </div>
 
 
-@section Scripts{ 
-    @*<script src="~/lib/fullCalendar/bootstrap/main.min.js"></script>*@
-<script>
-    //$(document).ready(function () {
-    //    var events = [
-    //        { Title: "Birthday", Date: new Date("12/12/2019") },
-    //        { Title: "Christmas", Date: new Date("12/25/2019") },
-    //        { Title: "Boxing Day", Date: new Date("12/26/2019") }
-    //    ];
+@section Scripts{
 
-    //    $("#calendar").datepicker({
-    //        beforeShowDay: function (date) {
-    //            var result = [true, '', null];
-    //            var tooltip = "";
-    //            var matching = $.grep(events, function (event) {
-    //                if (event.Date.valueOf() === date.valueOf()) {
-    //                    tooltip = event.Title;
-    //                    return true;
-    //                }
-    //            });
 
-    //            if (matching.length > 0) {
-    //                result = [true, 'event', tooltip];
-    //            }
-    //            return result;
-    //        }
-    //    });
-        
-    //});
-</script>
+    @*<script src="~/lib/fullCalendar/main.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth'
+            });
+            calendar.render();
+        });
+    </script>*@
 }

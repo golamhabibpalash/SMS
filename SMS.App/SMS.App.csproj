@@ -45,7 +45,6 @@
     <Folder Include="wwwroot\Images\Employee\NID\" />
     <Folder Include="wwwroot\Images\Student\Photo\" />
     <Folder Include="wwwroot\js\Upazila\" />
-    <Folder Include="wwwroot\lib\fullCalendar\" />
   </ItemGroup>
 
   <ItemGroup>

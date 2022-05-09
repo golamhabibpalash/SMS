@@ -18,6 +18,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using SMS.Entities;
+using SchoolManagementSystem;
+
+
 
 namespace SchoolManagementSystem
 {

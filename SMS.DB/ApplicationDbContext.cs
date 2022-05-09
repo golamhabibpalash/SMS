@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SMS.Entities;
 
@@ -11,6 +12,8 @@ namespace SMS.DB
             : base(options)
         {
         }
+
+       
         public DbSet<AcademicClass> AcademicClass { get; set; }
         public DbSet<AcademicSection> AcademicSection { get; set; }
         public DbSet<AcademicSession> AcademicSession { get; set; }

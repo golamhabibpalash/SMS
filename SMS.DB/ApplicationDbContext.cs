@@ -13,7 +13,6 @@ namespace SMS.DB
         {
         }
 
-       
         public DbSet<AcademicClass> AcademicClass { get; set; }
         public DbSet<AcademicSection> AcademicSection { get; set; }
         public DbSet<AcademicSession> AcademicSession { get; set; }
@@ -41,6 +40,9 @@ namespace SMS.DB
         public DbSet<Upazila> Upazila { get; set; }
         public DbSet<PhoneSMS> PhoneSMS { get; set; }
         public DbSet<Tran_MachineRawPunch> Tran_MachineRawPunch { get; set; }
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<QuestionDetails> QuestionDetails { get; set; }
+        public DbSet<QuestionType> QuestionTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

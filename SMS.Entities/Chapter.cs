@@ -17,6 +17,6 @@ namespace SMS.Entities
         public int AcademicSubjectId { get; set; }
         public AcademicSubject AcademicSubject { get; set; }
 
-        public ICollection<Question>? Questions { get; set; }
+        public ICollection<Question> Questions { get; set; }
     }
 }

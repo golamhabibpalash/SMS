@@ -17,7 +17,11 @@
 @section Styles{
     @*<link href="~/lib/fullCalendar/main.min.css" rel="stylesheet" />*@
 }
-
+<div class="row">
+    <div class="col-md-12">
+        <h3>@DateTime.Now.ToString("dd MMM yyyy hh:mm tt")</h3>
+    </div>
+</div>
 <div class="row">
     <div class="col-md-6">
         <div class="card shadow">
@@ -96,7 +100,7 @@
                                                 </div>
                                             </a>
                                         </td>
-                                        <td class="text-right">@sClass.TotalStudent</td>
+                                        <td class="text-right"><a asp-action="Index" asp-controller="Students" asp-route-academicClassId="@sClass.AcademicClass.Id"> @sClass.TotalStudent</a></td>
                                         @{totalAttendedStudents += @sClass.AttendedStudents.Count();}
                                     </tr>
                                 }
@@ -107,7 +111,7 @@
                                             <div class="w-100 bg-light">@totalAttendedStudents</div>
                                         </a>
                                     </td>
-                                    <td class="text-right">@Model.Students.Count()</td>
+                                    <td class="text-right"><a asp-action="Index" asp-controller="Students"> @Model.Students.Count()</a></td>
                                 </tr>
                             </tbody>
                         </table>

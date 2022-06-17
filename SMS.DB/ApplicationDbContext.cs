@@ -40,6 +40,7 @@ namespace SMS.DB
         public DbSet<Upazila> Upazila { get; set; }
         public DbSet<PhoneSMS> PhoneSMS { get; set; }
         public DbSet<Tran_MachineRawPunch> Tran_MachineRawPunch { get; set; }
+        public DbSet<Chapter> Chapters { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<QuestionDetails> QuestionDetails { get; set; }
         public DbSet<QuestionType> QuestionTypes { get; set; }

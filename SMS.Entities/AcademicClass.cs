@@ -26,5 +26,7 @@ namespace SMS.Entities
         public List<Student> Students { get; set; }
         public List<AcademicSection> AcademicSections { get; set; }
         public List<ClassFeeList> StudentFeeLists { get; set; }
+
+        public List<AcademicSubject> AcademicSubjects { get; set; }
     }
 }

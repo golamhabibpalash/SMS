@@ -8,7 +8,7 @@ namespace SMS.Entities
 {
     public class QuestionType : CommonProps
     {
-        public string TypeName { get; set; }
+        public string TypeName { get; set; } = string.Empty;
         public double MarkValue { get; set; }
     }
 }

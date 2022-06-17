@@ -31,7 +31,7 @@ namespace SMS.App.Controllers
             _academicSessionManager = academicSessionManager;
         }
         // GET: AttendanceMachinesController
-        public async Task<ActionResult> Index(DateTime? dateTime, string? userType, int designationId, int sessionId, int classId, string attendanceType)
+        public async Task<ActionResult> Index(DateTime? dateTime, string userType, int designationId, int sessionId, int classId, string attendanceType)
         {
 
             List<AttendanceMachineIndexVM> attendanceMachineIndexVMs = new List<AttendanceMachineIndexVM>();

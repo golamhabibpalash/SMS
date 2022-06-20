@@ -19,18 +19,22 @@ namespace SMS.App.Controllers
     {
         private readonly IAcademicSubjectManager _academicSubjectManager;
         private readonly IAcademicSubjectTypeManager _academicSubjectTypeManager;
+        private readonly IAcademicClassManager _academicClassManager;
         private readonly ILogger<AcademicSubjectsController> logger;
 
-        public AcademicSubjectsController(IAcademicSubjectManager academicSubjectManger, IAcademicSubjectTypeManager academicSubjectTypeManager, ILogger<AcademicSubjectsController> _Logger)
+        public AcademicSubjectsController(IAcademicSubjectManager academicSubjectManger, IAcademicSubjectTypeManager academicSubjectTypeManager, IAcademicClassManager academicClassManager, ILogger<AcademicSubjectsController> _Logger)
         {
             _academicSubjectManager = academicSubjectManger;
             _academicSubjectTypeManager = academicSubjectTypeManager;
+            _academicClassManager = academicClassManager;
             logger = _Logger;
         }
 
         // GET: AcademicSubjects
         public async Task<IActionResult> Index()
         {
+            ViewData["AcademicSubjectTypeId"] = new SelectList(await _academicSubjectTypeManager.GetAllAsync(), "Id", "SubjectTypeName");
+            ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name");
             var academicSubject =await _academicSubjectManager.GetAllAsync();
             return View(academicSubject);
         }
@@ -59,17 +63,17 @@ namespace SMS.App.Controllers
             return View();
         }
 
-        // POST: AcademicSubjects/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,SubjectName,AcademicSubjectTypeId,SubjectCode,SubjectFor,TotalMarks,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSubject academicSubject)
+        public async Task<IActionResult> Create([Bind("Id,SubjectName,AcademicSubjectTypeId,AcademicClassId,SubjectCode,SubjectFor,TotalMarks,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSubject academicSubject)
         {
+            academicSubject.Status = true;
             if (ModelState.IsValid)
             {
                 academicSubject.CreatedAt = DateTime.Now;
                 academicSubject.CreatedBy = HttpContext.Session.GetString("UserId");
+                academicSubject.SubjectFor = 's';
                 var isSaved = await _academicSubjectManager.AddAsync(academicSubject);
                 if (isSaved)
                 {

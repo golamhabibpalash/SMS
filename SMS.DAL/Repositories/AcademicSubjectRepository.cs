@@ -33,10 +33,11 @@ namespace SMS.DAL.Repositories
 
         public override async Task<bool> IsExistAsync(AcademicSubject entity)
         {
-            var existSubject = await _context.AcademicSubject
-                .Where(s => (s.SubjectName.Trim() == entity.SubjectName.Trim() || s.SubjectCode == entity.SubjectCode) && s.SubjectFor.ToString().Trim() == entity.SubjectFor.ToString().Trim())
-                .FirstOrDefaultAsync();
+            //var existSubject = await _context.AcademicSubject
+            //    .Where(s => (s.SubjectName.Trim() == entity.SubjectName.Trim() || s.SubjectCode == entity.SubjectCode) && s.SubjectFor.ToString().Trim() == entity.SubjectFor.ToString().Trim())
+            //    .FirstOrDefaultAsync();
 
+           var existSubject =  await _context.AcademicSubject.Where(s => s.SubjectName.Trim() == entity.SubjectName.Trim() && s.AcademicClassId == entity.AcademicClassId).FirstOrDefaultAsync();
             if (existSubject != null)
             {
                 return true;

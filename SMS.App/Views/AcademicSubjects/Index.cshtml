@@ -5,7 +5,13 @@
     GlobalUI.PageTitle = ViewBag.Title;
     int sl = 0;
 }
-
+@section Styles{ 
+    <style>
+        .errors{
+            color:red;
+        }
+    </style>
+}
 
 <table class="table table-responsive-sm" id="myTable">
     <thead>
@@ -13,6 +19,9 @@
             <th>#</th>
             <th>
                 @Html.DisplayNameFor(model => model.SubjectName)
+            </th>
+            <th>
+                Class
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.SubjectCode)
@@ -30,7 +39,9 @@
                 @Html.DisplayNameFor(model => model.Status)
             </th>
             <th>
-                <partial name="_Create" />
+                <button id="addButton" type="button" class="btn-sm btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+                    add New
+                </button>
             </th>
         </tr>
     </thead>
@@ -43,6 +54,9 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.SubjectName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AcademicClass.Name)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.SubjectCode)
@@ -74,14 +88,134 @@
     </tbody>
 </table>
 
+<!-- Button trigger modal -->
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLongTitle">Create new subject</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form name="subjectCreateForm" asp-action="Create">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                                <div class="form-group row">
+                                    <label for="AcademicClassId" class="control-label col-form-label col-md-3 text-md-right ">Academic Class</label>
+                                    <div class="col-md-9">
+                                        <select class="form-control" name="AcademicClassId" asp-items="ViewBag.AcademicClassId">
+                                            <option disabled selected>Select Academic Class</option>
+                                        </select>
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="SubjectName" class="control-label col-form-label col-md-3 text-md-right ">Subject Name</label>
+                                    <div class="col-md-9">
+                                        <input name="SubjectName" class="form-control rounded" />
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="SubjectCode" class="control-label  col-form-label col-md-3 text-md-right">Subject Code</label>
+                                    <div class="col-md-9">
+                                        <input name="SubjectCode" class="form-control rounded" placeholder="Ex: 103" />
+                                        <span  class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="control-label col-form-label col-md-3 text-md-right  ">Subject Type</label>
+                                    <div class="col-md-9 input-group">
+                                        <select name="AcademicSubjectTypeId" class="form-control rounded" asp-items="ViewBag.AcademicSubjectTypeId">
+                                            <option selected disabled>Select Subject Type</option>
+                                        </select>
+                                        <div>
+                                            <a class="btn btn-sm btn-outline-info" asp-action="Create" asp-controller="AcademicSubjectTypes"><i class="fa fa-plus"></i> Add</a>
+                                        </div>
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="TotalMarks" class="control-label col-form-label col-md-3 text-md-right">Total Marks</label>
+                                    <div class="col-md-9">
+                                        <input name="TotalMarks" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="offset-md-3 col-md-9">
+                                        <label class="">
+                                            <input name="Status" class="" type="checkbox" value="true"  /> Active Status
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="offset-md-3 col-md-9">
+                                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary btn-sm">Create</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts{
+
+
     <script src="~/js/DataTable/dataTable.js"></script>
+    <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
 
     <script>
-    let deleted = '@TempData["deleted"]';
-    let created = '@TempData["created"]';
-    let updated = '@TempData["updated"]';
-    let failed = '@TempData["error"]';
+        let deleted = '@TempData["deleted"]';
+        let created = '@TempData["created"]';
+        let updated = '@TempData["updated"]';
+        let failed = '@TempData["error"]';
+
+        $(document).ready(function () {
+            $(function () {
+                // Initialize form validation on the registration form.
+                // It has the name attribute "registration"
+                $("form[name='subjectCreateForm']").validate({
+                    errorClass: 'errors',
+                    rules: {
+                        // The key name on the left side is the name attribute
+                        // of an input field. Validation rules are defined
+                        // on the right side
+                        SubjectName: "required",
+                        TotalMarks: "required",
+                        AcademicClassId:"required"
+                    },
+                    // Specify validation error messages
+                    messages: {
+                        SubjectName: "subject name required",
+                        TotalMarks: "Total marks is required",
+                        AcademicClassId: "Select Academic Class"
+                    },
+                    // Make sure the form is submitted to the destination defined
+                    // in the "action" attribute of the form when valid
+                    submitHandler: function (form) {
+                        form.submit();
+                    }
+                });
+            });
+
+            $("form[name='subjectCreateForm']").on('change', function () {
+                let inputName = $(this).find('input["name=SubjectName"]').val();
+                alert(inputName);
+            });
+        });
     </script>
-    <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
 }

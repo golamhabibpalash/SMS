@@ -19,7 +19,7 @@
 }
 <div class="row">
     <div class="col-md-12">
-        <h3>@DateTime.Now.ToString("dd MMM yyyy hh:mm tt")</h3>
+        <h3 id="liveDateTime">@DateTime.Now.ToString("dd MMM yyyy hh:mm tt")</h3>
     </div>
 </div>
 <div class="row">
@@ -135,7 +135,22 @@
 
 @section Scripts{
 
+    <script>
+        const zeroFill = n => {
+            return ('0' + n).slice(-2);
+        }
+        // Creates interval
+        const interval = setInterval(() => {
+            // Get current time
+            const now = new Date();
+            
+            // Format date as in mm/dd/aaaa hh:ii:ss
+            const dateTime = zeroFill(now.getUTCDate()) + '/' + zeroFill((now.getMonth() + 1)) + '/' + now.getFullYear() + ' ' + zeroFill(now.getHours()) + ':' + zeroFill(now.getMinutes()) + ':' + zeroFill(now.getSeconds() );
 
+            // Display the date and time on the screen using div#date-time
+            document.getElementById('liveDateTime').innerHTML = dateTime;
+        }, 1000);
+    </script>
     @*<script src="~/lib/fullCalendar/main.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {

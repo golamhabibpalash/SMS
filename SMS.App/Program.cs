@@ -55,7 +55,7 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-builder.Services.AddAutoMapper(typeof(Program));
+//builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddControllersWithViews()
                 .AddRazorRuntimeCompilation();
@@ -64,6 +64,9 @@ builder.Services.AddControllersWithViews()
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
+//builder.Services.AddAutoMapper();
+builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IEmployeeManager, EmployeeManager>();

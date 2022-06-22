@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace SMS.BLL.Managers
 {
-    internal class ChapterManager : Manager<Chapter>, IChapterManager
+    public class ChapterManager : Manager<Chapter>, IChapterManager
     {
         private readonly IChapterRepository _repository;
         public ChapterManager(IChapterRepository repository) : base(repository)

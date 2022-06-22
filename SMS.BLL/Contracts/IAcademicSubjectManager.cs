@@ -10,6 +10,6 @@ namespace SMS.BLL.Contracts
 {
     public interface IAcademicSubjectManager :IManager<AcademicSubject>
     {
-        
+        Task<IEnumerable<AcademicSubject>> GetSubjectsByClassIdAsync(int classId);
     }
 }

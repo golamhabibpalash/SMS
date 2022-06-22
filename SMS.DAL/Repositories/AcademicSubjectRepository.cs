@@ -47,5 +47,11 @@ namespace SMS.DAL.Repositories
                 return false;
             }
         }
+
+        public async Task<IEnumerable<AcademicSubject>> GetSubjectsByClassIdAsync(int classId)
+        {
+            var subjects = await _context.AcademicSubject.Where(a => a.AcademicClassId == classId).ToListAsync();
+            return subjects;
+        }
     }
 }

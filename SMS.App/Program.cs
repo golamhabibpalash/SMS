@@ -143,6 +143,9 @@ builder.Services.AddScoped<IAttendanceManager, AttendanceManager>();
 builder.Services.AddScoped<IAttendanceMachineRepository, AttendanceMachineRepository>();
 builder.Services.AddScoped<IAttendanceMachineManager, AttendanceMachineManager>();
 
+builder.Services.AddScoped<IChapterRepository, ChapterRepository>();
+builder.Services.AddScoped<IChapterManager, ChapterManager>();
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())

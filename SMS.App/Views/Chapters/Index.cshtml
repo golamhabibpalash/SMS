@@ -1,1 +1,97 @@
-﻿
+﻿@model IEnumerable<Chapter>
+
+@if (Model.Count()>0)
+{
+
+}
+ else
+{
+		<div class="row">
+            <h2>There have no any chapter created yet!</h2> <br />
+                <button id="addButton" type="button" class="btn-sm btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+                    add New
+                </button>
+		</div>
+}
+
+
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLongTitle">Create new Chapter</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form name="chapterCreateForm" asp-action="Create">
+
+                                <div class="form-group row">
+                                    <label for="AcademicClassId" class="control-label col-form-label col-md-3 text-md-right ">Academic Class</label>
+                                    <div class="col-md-9">
+                                        <select class="form-control" name="AcademicClassId" asp-items="ViewBag.AcademicClassId" id="AcademicClassId">
+                                            <option disabled selected>Select Academic Class</option>
+                                        </select>
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="AcademicSubjectId" class="control-label col-form-label col-md-3 text-md-right ">Subject Name</label>
+                                    <div class="col-md-9">
+                                        <select class="form-control" name="AcademicSubjectId" id="AcademicSubjectId">
+                                            <option disabled selected>Select Subject</option>
+                                        </select>
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="ChapterName" class="control-label  col-form-label col-md-3 text-md-right">Chapter Name</label>
+                                    <div class="col-md-9">
+                                        <input name="ChapterName" class="form-control rounded" placeholder="Input Chapter Name" id="ChapterName"/>
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                               
+                                <div class="form-group row">
+                                    <div class="offset-md-3 col-md-9">
+                                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary btn-sm">Create</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{ 
+    <script>
+        $(document).ready(function () {
+            $('#AcademicClassId').change(function () {
+                let classId = $('#AcademicClassId option:selected').val();
+                $.ajax({
+                    url: '/AcademicSubjects/GetSubjectsByClassId?classId=' + classId,
+                    method: 'Post',
+                    type: 'JSON',
+                    success: function (data) {
+                        $('#AcademicSubjectId').empty();
+                        var op = '<option disabled selected>Select Subject</option>';
+                        $('#AcademicSubjectId').append(op);
+                        $.each(data, function (i, obj) {
+                            var op = "<option value='" + obj.id + "'>" + obj.subjectName + "</option>";
+                            $('#AcademicSubjectId').append(op);
+                        });
+                    },
+                    error: function () { }
+                });
+            });
+        });
+    </script>
+}

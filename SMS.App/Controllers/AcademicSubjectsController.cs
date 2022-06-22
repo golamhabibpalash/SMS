@@ -188,5 +188,12 @@ namespace SMS.App.Controllers
                 return false;
             }
         }
+
+        public async Task<JsonResult> GetSubjectsByClassId(int classId)
+        {
+            var subjects = await _academicSubjectManager.GetSubjectsByClassIdAsync(classId);
+
+            return Json(subjects);
+        }
     }
 }

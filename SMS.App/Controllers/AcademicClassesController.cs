@@ -11,6 +11,7 @@ using SMS.Entities;
 using SMS.BLL.Contracts;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
+using System.Net.NetworkInformation;
 
 namespace SMS.App.Controllers
 {
@@ -202,5 +203,7 @@ namespace SMS.App.Controllers
             var aClassList = await _academicClassManager.GetAllAsync();
             return aClassList;
         }
+
+        
     }
 }

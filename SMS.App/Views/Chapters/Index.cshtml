@@ -28,7 +28,7 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-md-12">
-                            <form name="chapterCreateForm" asp-action="Create">
+                            <form name="chapterCreateForm">
 
                                 <div class="form-group row">
                                     <label for="AcademicClassId" class="control-label col-form-label col-md-3 text-md-right ">Academic Class</label>
@@ -52,6 +52,13 @@
                                     <label for="ChapterName" class="control-label  col-form-label col-md-3 text-md-right">Chapter Name</label>
                                     <div class="col-md-9">
                                         <input name="ChapterName" class="form-control rounded" placeholder="Input Chapter Name" id="ChapterName"/>
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="ChapterNumber" class="control-label  col-form-label col-md-3 text-md-right">Chapter Name</label>
+                                    <div class="col-md-9">
+                                        <input type="number" name="ChapterNumber" class="form-control rounded" placeholder="Input Chapter Number" id="ChapterNumber"/>
                                         <span class="text-danger"></span>
                                     </div>
                                 </div>
@@ -92,6 +99,42 @@
                     error: function () { }
                 });
             });
+
+
+            $(function () {
+                // Initialize form validation on the registration form.
+                // It has the name attribute "registration"
+                $("form[name='chapterCreateForm']").validate({
+                    errorClass: 'errors',
+                    rules: {
+                        // The key name on the left side is the name attribute
+                        // of an input field. Validation rules are defined
+                        // on the right side
+                        AcademicClassId: "required",
+                        AcademicSubjectId: "required",
+                        ChapterName: "required",
+                        ChapterNumber: "required"
+                    },
+                    // Specify validation error messages
+                    messages: {
+                        AcademicClassId: "Please Select Class",
+                        AcademicSubjectId: "Subject is not selected",
+                        ChapterName: "Input a proper chapter name",
+                        ChapterNumber: "Chapter Number is needed"
+                    },
+                    // Make sure the form is submitted to the destination defined
+                    // in the "action" attribute of the form when valid
+                    submitHandler: function (form) {
+                        form.submit();
+                    }
+                });
+            });
+
+            //$("form[name='subjectCreateForm']").on('change', function () {
+            //    let inputName = $(this).find('input["name=SubjectName"]').val();
+            //    alert(inputName);
+            //});
         });
+
     </script>
 }

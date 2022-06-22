@@ -25,6 +25,7 @@ namespace SMS.App.Controllers
             return View(chapters);
         }
 
+        [HttpPost]
         public async Task<JsonResult> Create(Chapter chapter)
         {
             try

@@ -1,4 +1,5 @@
-﻿using SMS.DAL.Contracts;
+﻿using Microsoft.EntityFrameworkCore;
+using SMS.DAL.Contracts;
 using SMS.DAL.Repositories.Base;
 using SMS.DB;
 using SMS.Entities;
@@ -12,10 +13,18 @@ namespace SMS.DAL.Repositories
 {
     public class ChapterRepository : Repository<Chapter>, IChapterRepository
     {
-        private readonly ApplicationDbContext _context;
+        //private readonly ApplicationDbContext _context;
         public ChapterRepository(ApplicationDbContext context) : base(context)
         {
-            _context = context;
+            
+        }
+
+        public override async Task<IReadOnlyCollection<Chapter>> GetAllAsync()
+        {
+            var chapters = await _context.Chapters
+                .Include(c => c.AcademicSubject)
+                    .ThenInclude(d => d.AcademicClass).ToListAsync();
+            return chapters;
         }
     }
 }

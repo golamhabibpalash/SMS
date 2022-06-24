@@ -36,9 +36,11 @@ namespace SMS.App.Controllers
                 var isSaved =await _chapterManager.AddAsync(chData);
                 if (!isSaved)
                 {
+                    TempData["error"] = "Already Exist";
                     return Json(new {errorMsg ="Not Saved"});
                 }
                 Chapter newChapter = await _chapterManager.GetByIdAsync(chData.Id);
+                TempData["created"] = "Created Successful";
                 return Json(newChapter);
             }
             catch (System.Exception)

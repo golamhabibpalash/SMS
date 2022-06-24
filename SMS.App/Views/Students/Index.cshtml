@@ -1,6 +1,9 @@
 ﻿@using Microsoft.AspNetCore.Identity;
+@using System.IO;
+@using Microsoft.AspNetCore.Hosting;
 
 @inject UserManager<ApplicationUser> _userManager;
+@inject IWebHostEnvironment env;
 
 @model IEnumerable<SMS.App.ViewModels.Students.StudentListVM>
 
@@ -48,53 +51,66 @@
             <tbody>
                 @foreach (var item in Model)
                 {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ClassRoll)
-                    </td>
-                    <td>
-                        <a asp-action="Details" asp-route-id="@item.Id" asp-controller="Students">
-                            @if (item.Photo != null)
-                            {
-                                <img src="~/Images/Student/@item.Photo" alt="Photo Missing" style="max-width:50px; max-height:80px" />
-                            }
-                            else
-                            {
-                                <img src="~/Images/noProfileImage.png" alt="Default Image" style="max-width:50px; max-height:80px;" />
-                            }
-                        </a>
-                    </td>
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ClassRoll)
+                        </td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@item.Id" asp-controller="Students">
+                                @{
+                                    var avatar = !string.IsNullOrEmpty(item.Photo) ? "/Images/Student/" + item.Photo : "/Images/noProfileImage.png";
+                                }
+                                @{
+                                    string root = env.WebRootPath;
+                                    string folder = "Images/Student/";
+                                    if (!string.IsNullOrEmpty(item.Photo))
+                                    {
+                                        var path = System.IO.Path.Combine(root, folder, item.Photo);
 
-                    <td>
-                        <a asp-action="Details" asp-route-id="@item.Id" asp-controller="Students">
-                            @item.Name.ToUpper()
-                        </a>
-                    </td>
+                                        if (!File.Exists(path))
+                                        {
+                                            avatar = $"/Images/noProfileImage.png";
+                                        }
+                                    }
 
-                    <td>
-                        @Html.DisplayFor(modelItem => item.AcademicClass.Name)
-                    </td>
-                    <td>
-                        @phoneCode@item.PhoneNo
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.AcademicSession.Name)
-                    </td>
-                    @if (item.Status)
-                    {
+                                }
+                                
 
-                        <td> <input type="checkbox" checked disabled /> Active</td>
+                                <img src=@avatar alt="@item.Name" style="max-width:50px; max-height:80px" />
 
-                    }
-                    else
-                    {
-                        <td><input type="checkbox" disabled /> InActive</td>
+                            </a>
+                        </td>
 
-                    }
-                    <td>
-                        <partial name="_Edit_Details_Delete" model="@item.Id" />
-                    </td>
-                </tr>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@item.Id" asp-controller="Students">
+                                @item.Name.ToUpper()
+                            </a>
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AcademicClass.Name)
+                        </td>
+                        <td>
+                            @phoneCode@item.PhoneNo
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AcademicSession.Name)
+                        </td>
+                        @if (item.Status)
+                        {
+
+                            <td> <input type="checkbox" checked disabled /> Active</td>
+
+                        }
+                        else
+                        {
+                            <td><input type="checkbox" disabled /> InActive</td>
+
+                        }
+                        <td>
+                            <partial name="_Edit_Details_Delete" model="@item.Id" />
+                        </td>
+                    </tr>
                 }
             </tbody>
         </table>

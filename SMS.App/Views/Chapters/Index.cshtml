@@ -1,7 +1,8 @@
 ﻿@model IEnumerable<Chapter>
 
 @{
-    ViewData["Title"] = "Chapter";
+    ViewData["Title"] = "Chapter List";
+    GlobalUI.PageTitle = ViewBag.Title;
     int i = 1;
 }
 
@@ -16,50 +17,50 @@
 
 @if (Model.Count() > 0)
 {
-    <table class="table table-hover table-striped table-sm" id="myTable">
-        <thead>
-            <tr>
-                <td>#</td>
-                <td>Chapter</td>
-                <td>Class</td>
-                <td>Subject</td>
-                <td>
-                    <button id="addButton" type="button" class="btn-sm btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
-                        add New
-                    </button>
-                </td>
-            </tr>
-        </thead>
-        <tbody id="tableBody">
-            @foreach (var item in Model)
+<table class="table table-hover table-striped table-sm" id="myTable">
+    <thead>
+        <tr>
+            <td>#</td>
+            <td>Chapter</td>
+            <td>Class</td>
+            <td>Subject</td>
+            <td>
+                <button id="addButton" type="button" class="btn-sm btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+                    add New
+                </button>
+            </td>
+        </tr>
+    </thead>
+    <tbody id="tableBody">
+        @foreach (var item in Model)
             {
-                <tr>
-                    <td>@(i++)</td>
-                    <td><input id="ChapterName_@item.Id" type="text" class="form-control-plaintext" name="ChapterName" value="@item.ChapterName" /> </td>
-                    <td>@item.AcademicSubject.AcademicClass.Name</td>
-                    <td>@item.AcademicSubject.SubjectName</td>
-                    <td>
-                        <div class="btn-group">
-                            <span class="btn btn-sm btn-success" id="edit_@item.Id" onclick="editChapter(@item.Id)">Edit</span>
-                            <span class="btn btn-sm btn-warning" id="update_@item.Id" style="display:none" onclick="updateChapter(@item.Id)">Update</span>
-                            <span class="btn btn-sm btn-danger" id="delete_@item.Id">Delete</span>
-                        </div>
-                    </td>
+        <tr>
+            <td>@(i++)</td>
+            <td><input id="ChapterName_@item.Id" type="text" class="form-control-plaintext" name="ChapterName" value="@item.ChapterName" /> </td>
+            <td>@item.AcademicSubject.AcademicClass.Name</td>
+            <td>@item.AcademicSubject.SubjectName</td>
+            <td>
+                <div class="btn-group">
+                    <span class="btn btn-sm btn-success" id="edit_@item.Id" onclick="editChapter(@item.Id)">Edit</span>
+                    <span class="btn btn-sm btn-warning" id="update_@item.Id" style="display:none" onclick="updateChapter(@item.Id)">Update</span>
+                    <span class="btn btn-sm btn-danger" id="delete_@item.Id">Delete</span>
+                </div>
+            </td>
 
-                </tr>
+        </tr>
             }
 
-        </tbody>
-    </table>
+    </tbody>
+</table>
 }
 else
 {
-    <div class="row">
-        <h2>There have no any chapter created yet!</h2> <br />
-        <button type="button" class="btn-sm btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
-            add New
-        </button>
-    </div>
+<div class="row">
+    <h2>There have no any chapter created yet!</h2> <br />
+    <button type="button" class="btn-sm btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+        add New
+    </button>
+</div>
 }
 
 
@@ -104,7 +105,7 @@ else
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="ChapterNumber" class="control-label  col-form-label col-md-3 text-md-right">Chapter Name</label>
+                                    <label for="ChapterNumber" class="control-label  col-form-label col-md-3 text-md-right">Chapter Number</label>
                                     <div class="col-md-9">
                                         <input type="number" name="ChapterNumber" class="form-control rounded" placeholder="Input Chapter Number" id="ChapterNumber" />
                                         <span id="ChapterNumberMsg" class="text-danger" style="display:none">Input Chapter Number</span>
@@ -127,7 +128,15 @@ else
 </div>
 
 @section Scripts{
+
+    <script src="~/js/DataTable/dataTable.js"></script>
+    <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
     <script>
+        let deleted = '';
+        let created = '';
+        let updated = '';
+        let failed = '';
+
         $(document).ready(function () {
             $('#AcademicClassId').change(function () {
                 let classId = $('#AcademicClassId option:selected').val();
@@ -181,6 +190,7 @@ else
 
                             $('#tableBody').append(tr);
                             $('#modalCancelId').trigger("click");
+                            created = "New Chapter Created";
                         }
                     });
                 }

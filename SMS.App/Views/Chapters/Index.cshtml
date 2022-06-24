@@ -74,7 +74,7 @@ else
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-md-12">
-                            <form name="chapterCreateForm">
+                            <form id="chapterCreateForm" name="chapterCreateForm" >
 
                                 <div class="form-group row">
                                     <label for="AcademicClassId" class="control-label col-form-label col-md-3 text-md-right ">Academic Class</label>
@@ -112,7 +112,7 @@ else
                                 <div class="form-group row">
                                     <div class="offset-md-3 col-md-9">
                                         <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary btn-sm">Create</button>
+                                        <button type="submit" class="btn btn-primary btn-sm" onclick="createChapter()">Create</button>
                                     </div>
                                 </div>
                             </form>
@@ -160,32 +160,6 @@ else
                         AcademicSubjectId: "Subject is not selected",
                         ChapterName: "Input a proper chapter name",
                         ChapterNumber: "Chapter Number is needed"
-                    },
-                    submitHandler: function (form) {
-                        let chapter = {
-                            ChapterName: form.ChapterName,
-                            ChapterNumber: form.ChapterNumber,
-                            AcademicSubjectId: form.AcademicSubjectId
-                        }
-                        $.ajax({
-                            url: '/Chapters/Create',
-                            data: { chapter: chapter },
-                            method: 'Post',
-                            type: 'JSON',
-                            success: function (data) {
-                                console.log(data);
-                                let slTd = '<td>#</td>';
-                                let nameTd = '<td>Chapter</td>';
-                                let classTd = '<td>Class</td>';
-                                let subjectTd = '<td>Subject</td>';
-                                let actionTd = '<td>Subject</td>';
-
-                                let tr = slTd + nameTd + classTd + subjectTd + actionTd;
-
-                                $('#tableBody tr').append(tr);
-                            },
-                            error: function () { }
-                        });
                     }
                 });
             });
@@ -205,6 +179,36 @@ else
             document.getElementById("update_" + id).style.display = "none";
             document.getElementById("ChapterName_" + id).classList.add("form-control-plaintext");
             document.getElementById("ChapterName_" + id).classList.remove("form-control-sm");
+        }
+        function createChapter() {
+            var isValid = $('#chapterCreateForm').valid();
+            if (isValid) {
+                var myData = {
+                    AcademicSubjectId: $('#AcademicSubjectId option:selected').val(),
+                    ChapterName: $('#ChapterName').val(),
+                    ChapterNumber: $('#ChapterNumber').val()
+                }
+
+                $.ajax({
+                    url: '/Chapters/Create',
+                    data: { 'chData': myData },
+                    method: 'Post',
+                    type: 'JSON',
+                    success: function (data) {
+                        console.log(data);
+                        let slTd = '<td>#<input type="hidden" value="' + data.id + '" /></td>';
+                        let nameTd = '<td>' + data.chapterName + '</td>';
+                        let classTd = '<td>' + data.academicSubject.academicClass.name + '</td>';
+                        let subjectTd = '<td>' + data.academicSubject.subjectName + '</td>';
+                        let actionTd = '<td>Subject</td>';
+
+                        let tr ='<tr>'+slTd + nameTd + classTd + subjectTd + actionTd+'</tr>';
+
+                        $('#tableBody tr').append(tr);
+                    },
+                    error: function () { }
+                });
+            }
         }
     </script>
 }

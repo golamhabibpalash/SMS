@@ -45,6 +45,8 @@ namespace SMS.App.Controllers
 
         public async Task<IActionResult> Index()
         {
+            HttpContext.Session.SetString("macAddress", MACService.GetMAC());
+
             Institute institute = new Institute();
             var allInfo = await _instituteManager.GetAllAsync();
             if (allInfo.Count()>0)

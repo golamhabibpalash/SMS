@@ -26,7 +26,11 @@ namespace SMS.DAL.Repositories
         }
         public override async Task<IReadOnlyCollection<AcademicClass>> GetAllAsync()
         {
-            var aClassList = await _db.AcademicClass.OrderBy(a => a.ClassSerial).Include(s => s.Students).ToListAsync();
+            var aClassList = await _db.AcademicClass
+                .OrderBy(a => a.ClassSerial)
+                .Include(s => s.Students)
+                .Include(s => s.AcademicSubjects)
+                .ToListAsync();
             return aClassList;
         }
     }

@@ -1,6 +1,14 @@
 ﻿@model int
 
-<a class="btn btn-sm btn-warning rounded-1" asp-action="Edit" asp-route-id="@Model" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-edit"></i> </a>
+
+@using Microsoft.AspNetCore.Identity;
+
+@inject UserManager<ApplicationUser> _userManager;
+
+@if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
+{
+    <a class="btn btn-sm btn-warning rounded-1" asp-action="Edit" asp-route-id="@Model" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-edit"></i> </a>
+}
 <a asp-action="Index" class="btn btn-success btn-sm rounded-1" data-toggle="tooltip" data-placement="top" title="List"><i class="fa fa-list"></i></a>
 
 @*<partial name="_Edit_Back" model="@Model.Id" />*@

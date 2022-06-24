@@ -26,18 +26,19 @@ namespace SMS.App.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> Create(Chapter chapter)
+        public async Task<JsonResult> Create(Chapter chData)
         {
             try
             {
-                chapter.CreatedAt = DateTime.Now;
-                chapter.CreatedBy = HttpContext.Session.GetString("UserId");
-                var isSaved =await _chapterManager.AddAsync(chapter);
+                chData.CreatedAt = DateTime.Now;
+                chData.CreatedBy = HttpContext.Session.GetString("UserId");
+                chData.MACAddress = HttpContext.Session.GetString("macAddress");
+                var isSaved =await _chapterManager.AddAsync(chData);
                 if (!isSaved)
                 {
                     return Json(new {errorMsg ="Not Saved"});
                 }
-                Chapter newChapter = await _chapterManager.GetByIdAsync(chapter.Id);
+                Chapter newChapter = await _chapterManager.GetByIdAsync(chData.Id);
                 return Json(newChapter);
             }
             catch (System.Exception)

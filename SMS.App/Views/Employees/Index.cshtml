@@ -1,98 +1,89 @@
 ﻿@using Microsoft.AspNetCore.Identity;
+@using System.IO;
+@using Microsoft.AspNetCore.Hosting;
 
 @model IEnumerable<SMS.Entities.Employee>
 
 
 @inject UserManager<ApplicationUser> _userManager;
+@inject IWebHostEnvironment env;
 @{
-    
+
     ViewData["Title"] = "Employees";
     GlobalUI.PageTitle = ViewBag.Title;
-    int sl = 0;
-    string image = "";
+    //int sl = 0;
+    //string image = "";
 
- }
-
-
-<table class="table table-responsive-sm table-hover table-striped table-sm" id="">
-    <thead class="bg-Teal">
-        <tr>
-            <th style="width:20px;">#</th>
-
-            <th class="text-center" style="width:60px;">
-                @Html.DisplayNameFor(model => model.Image)
-            </th>
-
-            <th>
-                @Html.DisplayNameFor(model => model.EmployeeName)
-            </th>
-
-            <th>
-                @Html.DisplayNameFor(model => model.Designation.DesignationName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Phone)
-            </th>
-            @*<th>
-                    @Html.DisplayNameFor(model => model.NIDNo)
-                </th>*@
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                <a class="btn-sm btn-info rounded-pill" asp-action="Create"><i class="fa fa-plus-square"></i> Add New</a>
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
+}
+@section Styles{
+    <style>
+        .img-responsive
         {
-            <tr>
-                <td>@(++sl).</td>
-                <td>
-                    @if (item.Image == "")
-                    {
-                        if (item.Gender.Name.ToLower() == "male")
-                        {
-                            image = "maleEmployee.png";
-                        }
-                        else if (item.Gender.Name.ToLower() == "female")
-                        {
-                            image = "femaleEmployee.png";
-                        }
-                        else
-                        {
-                            image = "otherEmployee.jpg";
-                        }
-                    }
-                    else
-                    {
-                        image = item.Image;
-                    }
-                    <img src="~/Images/Employee/photo/@image" alt="Alternate Text" style="width:60px;" />
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.EmployeeName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Designation.DesignationName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Phone)
-                </td>
-                @*<td>
-                        @Html.DisplayFor(modelItem => item.NIDNo)
-                    </td>*@
-                <td>
-                    @Html.DisplayFor(modelItem => item.Email)
-                </td>
-                <td>
-                    <partial name="_Edit_Details_Delete" model="@item.Id" />
-                </td>
-            </tr>
+            max-width: 100%;
+            height: auto;
         }
-    </tbody>
-</table>
+
+        .img-circle
+        {
+            border-radius: 100%;
+        }
+    </style>
+}
+
+<div class="row">
+    <div class="col-md-12 text-right pb-2">
+        <partial name="_Create" />
+    </div>
+</div>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4">
+            <div class="card mb-2">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 col-sm-12 text-center">
+                            <a href="#">
+                                @{
+                                    var avatarImg = !string.IsNullOrEmpty(item.Image) ? $"/Images/Employee/photo/" + @item.Image : $"/Images/Employee/photo/maleEmployee.png";
+                                    string root = env.WebRootPath;
+                                    string folder = "Images/Employee/photo/";
+
+                                    var path = System.IO.Path.Combine(root, folder, item.Image);
+                                    if (!File.Exists(path))
+                                    {
+                                        avatarImg = $"/Images/Employee/photo/maleEmployee.png";
+                                    }
+                                }
+                                <img src="@avatarImg" class="img-circle img-responsive" style="height:200px;" alt="@item.EmployeeName" />
+
+                            </a>
+                        </div>
+                        <div class="col-md-8">
+                            <h5 class="card-title mb-0 text-primary" style="text-transform:uppercase">@item.EmployeeName</h5>
+                            <small>(@item.Designation.DesignationName)</small>
+                            <hr class="p-0 m-0" />
+                            <address>
+                                <span class="text-capitalize">@item.PresentAddress</span>, @item.PresentUpazila.Name,<br />
+                                @item.PresentDistrict.Name<br />
+                                <abbr title="Phone"><i class="fa fa-mobile-phone fa-lg text-info"></i></abbr> @item.Phone <br />
+                                <abbr title="Email"><i class="fa fa-envelope text-primary"></i></abbr> @item.Email
+                            </address>
+                            <div class="btn-group">
+                                @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
+                                {
+                                    <a class=" btn-primary btn-sm" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                                }
+                                <a class=" btn-info btn-sm" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
 
 @section Scripts{
     @*<script src="~/js/AlertifyNotify/successNotify.js"></script>*@

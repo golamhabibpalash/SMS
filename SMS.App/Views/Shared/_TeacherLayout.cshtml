@@ -188,6 +188,8 @@
 
                             <span class="p-2">@userName </span>
                             <span class="float-right p-2" id="userProfileIcon">
+
+                                <span id="liveDateTime">Live Time</span>
                                 <img src="@userImage" alt="profile Image" class="img-circle" data-toggle="popover" data-placement="bottom" style="width:25px;" onclick="openNav()" />
                             </span>
                             <div id="myNav" class="overlay">
@@ -250,6 +252,20 @@
     <script src="~/js/custom.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
     <script>
+        const zeroFill = n => {
+            return ('0' + n).slice(-2);
+        }
+        // Creates interval
+        const interval = setInterval(() => {
+            // Get current time
+            const now = new Date();
+            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            // Format date as in mm/dd/aaaa hh:ii:ss
+            const dateTime = zeroFill(now.getUTCDate()) + ' ' + months[now.getMonth()] + ' ' + now.getFullYear() + ' ' + zeroFill(now.getHours()) + ':' + zeroFill(now.getMinutes()) + ':' + zeroFill(now.getSeconds());
+
+            // Display the date and time on the screen using div#date-time
+            document.getElementById('liveDateTime').innerHTML = dateTime;
+        }, 1000);
         $(function () {
             $('[data-toggle="popover"]').popover()
         })

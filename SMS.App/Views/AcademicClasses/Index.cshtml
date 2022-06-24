@@ -5,7 +5,8 @@
     GlobalUI.PageTitle = ViewBag.Title;
     int i = 0;
     string[] classPosition = { "", "1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th", "11th", "12th" };
-    string positionText = "";
+    string[] bgColor = { "bg-primary", "bg-secondary", "bg-success", "bg-danger", "bg-warning", "bg-info", "bg-light", "bg-dark" };
+    //string positionText = "";
 }
 
 
@@ -67,28 +68,30 @@
 <div class="row">
     @foreach (var item in Model)
     {
-
+        if (i>Model.Count())
+        {
+            i = 0;
+        }
         <div class="col-md-3 mb-3">
-            <div class="card">
-
-                <div class="card-body">
-                    <h5 class="card-title"></h5>
-                    <p class="card-text"></p>
+            <div class="card @bgColor[i]">
+                <div class="card-header text-center">
+                    <h3>@item.Name</h3>
                 </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item"></li>
-                    <li class="list-group-item"></li>
-                    <li class="list-group-item"></li>
-                </ul>
                 <div class="card-body">
-                    <a href="#" class="card-link"></a>
-                    <a href="#" class="card-link"></a>
+                    <ul class="list-group">
+                        <li class="list-group-item h4 text-info">Total Students: @item.Students.Count</li>
+                        <li class="list-group-item h4 text-info">Total Subjects: @item.AcademicSubjects.Count</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <span class="text-md-left"><a class="btn btn-warning btn-sm" asp-action="Edit" asp-controller="AcademicClasses" asp-route-id="@item.Id">Edit</a></span>
+                    <span class="text-md-right"><a class="btn btn-info btn-sm" asp-action="Details" asp-controller="AcademicClasses" asp-route-id="@item.Id">Details</a></span>
                 </div>
             </div>
         </div>
-
+        i++;
     }
-
+    
 </div>
 @section Scripts{
     @if (TempData["create"] != null)

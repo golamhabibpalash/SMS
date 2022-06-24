@@ -26,5 +26,14 @@ namespace SMS.DAL.Repositories
                     .ThenInclude(d => d.AcademicClass).ToListAsync();
             return chapters;
         }
+
+        public override async Task<Chapter> GetByIdAsync(int id)
+        {
+            var chapter = await _context.Chapters
+                .Include(a => a.AcademicSubject)
+                    .ThenInclude(c => c.AcademicClass)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            return chapter;
+        }
     }
 }

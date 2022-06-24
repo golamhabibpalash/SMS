@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<Chapter>
 
 @{
+    ViewData["Title"] = "Chapter";
     int i = 1;
 }
 
@@ -47,6 +48,7 @@
 
                 </tr>
             }
+
         </tbody>
     </table>
 }
@@ -74,7 +76,7 @@ else
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-md-12">
-                            <form id="chapterCreateForm" name="chapterCreateForm" >
+                            <form id="chapterCreateForm" name="chapterCreateForm" method="post">
 
                                 <div class="form-group row">
                                     <label for="AcademicClassId" class="control-label col-form-label col-md-3 text-md-right ">Academic Class</label>
@@ -82,7 +84,7 @@ else
                                         <select class="form-control" name="AcademicClassId" asp-items="ViewBag.AcademicClassId" id="AcademicClassId">
                                             <option disabled selected>Select Academic Class</option>
                                         </select>
-                                        <span class="text-danger"></span>
+                                        <span id="AcademicClassIdMsg" class="text-danger" style="display:none">please select class</span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -91,28 +93,28 @@ else
                                         <select class="form-control" name="AcademicSubjectId" id="AcademicSubjectId">
                                             <option disabled selected>Select Subject</option>
                                         </select>
-                                        <span class="text-danger"></span>
+                                        <span id="AcademicSubjectIdMsg" class="text-danger" style="display:none">please select Subject</span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label for="ChapterName" class="control-label  col-form-label col-md-3 text-md-right">Chapter Name</label>
                                     <div class="col-md-9">
                                         <input name="ChapterName" class="form-control rounded" placeholder="Input Chapter Name" id="ChapterName" />
-                                        <span class="text-danger"></span>
+                                        <span id="ChapterNameMsg" class="text-danger" style="display:none">Input Chapter name</span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label for="ChapterNumber" class="control-label  col-form-label col-md-3 text-md-right">Chapter Name</label>
                                     <div class="col-md-9">
                                         <input type="number" name="ChapterNumber" class="form-control rounded" placeholder="Input Chapter Number" id="ChapterNumber" />
-                                        <span class="text-danger"></span>
+                                        <span id="ChapterNumberMsg" class="text-danger" style="display:none">Input Chapter Number</span>
                                     </div>
                                 </div>
 
                                 <div class="form-group row">
                                     <div class="offset-md-3 col-md-9">
-                                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary btn-sm" onclick="createChapter()">Create</button>
+                                        <button id="modalCancelId" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary btn-sm">Create</button>
                                     </div>
                                 </div>
                             </form>
@@ -146,25 +148,44 @@ else
                 });
             });
 
-            $(function formSubmition() {
-                $("form[name='chapterCreateForm']").validate({
-                    errorClass: 'errors',
-                    rules: {
-                        AcademicClassId: "required",
-                        AcademicSubjectId: "required",
-                        ChapterName: "required",
-                        ChapterNumber: "required"
-                    },
-                    messages: {
-                        AcademicClassId: "Please Select Class",
-                        AcademicSubjectId: "Subject is not selected",
-                        ChapterName: "Input a proper chapter name",
-                        ChapterNumber: "Chapter Number is needed"
-                    }
-                });
+
+            $("form#chapterCreateForm").validate({
+                rules: {
+                    AcademicSubjectId: { required: true, },
+                    ChapterName: { required: true, },
+                    ChapterNumber: { required: true, },
+                },
+                messages: {
+                    AcademicSubjectId: { required: "Please select Subject", },
+                    ChapterName: { required: "Please enter chapter name", },
+                    ChapterNumber: { required: "Chapter number needed", },
+                },
+                submitHandler: function (form) {
+                    /*var formData = new FormData($("#image")[0]);*/
+                    $.ajax({
+                        url: "/Chapters/Create",
+                        type: "post",
+                        data: $("form#chapterCreateForm").serialize(),
+                        success: function (data, status) {
+                            console.log(data);
+                            let totalTr = $('#tableBody tr').length + 1;
+                            let slTd = '<td>' + totalTr + '</td>';
+                            let nameTd = '<td> <input id="ChapterName_' + data.id + '" type="text" class="form-control-plaintext" name="ChapterName" value="' + data.chapterName + '" /></td>';
+
+                            let classTd = '<td>' + data.academicSubject.academicClass.name + '</td>';
+                            let subjectTd = '<td>' + data.academicSubject.subjectName + '</td>';
+                            let btnGroup = '<div class="btn-group"><span class="btn btn-sm btn-success" id="edit_' + data.id + '" onclick="editChapter(' + data.id + ')">Edit</span><span class="btn btn-sm btn-warning" id="update_' + data.id + '" style="display:none" onclick="updateChapter(' + data.id + ')">Update</span><span class="btn btn-sm btn-danger" id="delete_' + data.id + '">Delete</span></div>';
+                            let actionTd = '<td>' + btnGroup + '</td>';
+
+                            let tr = '<tr>' + slTd + nameTd + classTd + subjectTd + actionTd + '</tr>';
+
+                            $('#tableBody').append(tr);
+                            $('#modalCancelId').trigger("click");
+                        }
+                    });
+                }
             });
 
-            
         });
         function editChapter(id) {
             document.getElementById("edit_" + id).style.display = "none";
@@ -172,7 +193,7 @@ else
             let nameInput = document.getElementById("ChapterName_" + id);
             nameInput.classList.remove("form-control-plaintext");
             nameInput.classList.add("form-control-sm");
-            
+
         }
         function updateChapter(id) {
             document.getElementById("edit_" + id).style.display = "block";
@@ -180,35 +201,7 @@ else
             document.getElementById("ChapterName_" + id).classList.add("form-control-plaintext");
             document.getElementById("ChapterName_" + id).classList.remove("form-control-sm");
         }
-        function createChapter() {
-            var isValid = $('#chapterCreateForm').valid();
-            if (isValid) {
-                var myData = {
-                    AcademicSubjectId: $('#AcademicSubjectId option:selected').val(),
-                    ChapterName: $('#ChapterName').val(),
-                    ChapterNumber: $('#ChapterNumber').val()
-                }
 
-                $.ajax({
-                    url: '/Chapters/Create',
-                    data: { 'chData': myData },
-                    method: 'Post',
-                    type: 'JSON',
-                    success: function (data) {
-                        console.log(data);
-                        let slTd = '<td>#<input type="hidden" value="' + data.id + '" /></td>';
-                        let nameTd = '<td>' + data.chapterName + '</td>';
-                        let classTd = '<td>' + data.academicSubject.academicClass.name + '</td>';
-                        let subjectTd = '<td>' + data.academicSubject.subjectName + '</td>';
-                        let actionTd = '<td>Subject</td>';
 
-                        let tr ='<tr>'+slTd + nameTd + classTd + subjectTd + actionTd+'</tr>';
-
-                        $('#tableBody tr').append(tr);
-                    },
-                    error: function () { }
-                });
-            }
-        }
     </script>
 }

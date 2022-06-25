@@ -105,7 +105,7 @@ else
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="ChapterNumber" class="control-label  col-form-label col-md-3 text-md-right">Chapter Number</label>
+                                    <label for="ChapterNumber" class="control-label  col-form-label col-md-3 text-md-right">Ch. Number</label>
                                     <div class="col-md-9">
                                         <input type="number" name="ChapterNumber" class="form-control rounded" placeholder="Input Chapter Number" id="ChapterNumber" />
                                         <span id="ChapterNumberMsg" class="text-danger" style="display:none">Input Chapter Number</span>
@@ -130,13 +130,8 @@ else
 @section Scripts{
 
     <script src="~/js/DataTable/dataTable.js"></script>
-    <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
     <script>
-        let deleted = '';
-        let created = '';
-        let updated = '';
-        let failed = '';
-
+        
         $(document).ready(function () {
             $('#AcademicClassId').change(function () {
                 let classId = $('#AcademicClassId option:selected').val();
@@ -170,7 +165,6 @@ else
                     ChapterNumber: { required: "Chapter number needed", },
                 },
                 submitHandler: function (form) {
-                    /*var formData = new FormData($("#image")[0]);*/
                     $.ajax({
                         url: "/Chapters/Create",
                         type: "post",
@@ -190,7 +184,7 @@ else
 
                             $('#tableBody').append(tr);
                             $('#modalCancelId').trigger("click");
-                            created = "New Chapter Created";
+                            alertify.success('New Chapter Created');
                         }
                     });
                 }
@@ -211,7 +205,5 @@ else
             document.getElementById("ChapterName_" + id).classList.add("form-control-plaintext");
             document.getElementById("ChapterName_" + id).classList.remove("form-control-sm");
         }
-
-
     </script>
 }

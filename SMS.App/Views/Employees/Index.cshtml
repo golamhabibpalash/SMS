@@ -43,7 +43,7 @@
             <div class="card mb-2">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-4 col-sm-12 text-center">
+                        <div class="col-md-4 col-sm-4 text-center pb-2">
                             <a href="#">
                                 @{
                                     var avatarImg = !string.IsNullOrEmpty(item.Image) ? $"/Images/Employee/photo/" + @item.Image : $"/Images/Employee/photo/maleEmployee.png";
@@ -56,19 +56,37 @@
                                         avatarImg = $"/Images/Employee/photo/maleEmployee.png";
                                     }
                                 }
-                                <img src="@avatarImg" class="img-circle img-responsive" style="max-height:200px;" alt="@item.EmployeeName" />
+                                <img src="@avatarImg" class="img-circle img-responsive" style= "max-height:210px" alt="@item.EmployeeName" />
 
                             </a>
                         </div>
-                        <div class="col-md-8">
-                            <h5 class="card-title mb-0 text-primary" style="text-transform:uppercase">@item.EmployeeName</h5>
+                        <div class="col-md-8 text-lg-left text-md-left text-center">
+                            @if (item.EmployeeName.Length > 18)
+                            {
+                                <h6 class="card-title mb-0 text-primary" style="text-transform:capitalize">@item.EmployeeName</h6>
+                            }
+                            else
+                            {
+                                <h5 class="card-title mb-0 text-primary" style="text-transform:capitalize">@item.EmployeeName</h5>
+                            }
+
                             <small>(@item.Designation.DesignationName)</small>
                             <hr class="p-0 m-0" />
                             <address>
                                 <span class="text-capitalize">@item.PresentAddress</span>, @item.PresentUpazila.Name,<br />
                                 @item.PresentDistrict.Name<br />
                                 <abbr title="Phone"><i class="fa fa-mobile-phone fa-lg text-info"></i></abbr> @item.Phone <br />
-                                <abbr title="Email"><i class="fa fa-envelope text-primary"></i></abbr> @item.Email
+
+                                <abbr title="Email"><i class="fa fa-envelope text-primary"></i></abbr>
+                                @if (item.Email.Length > 25)
+                                {
+                                    <span style="font-size:10px">@item.Email</span>
+                                }
+                                else
+                                {
+                                    <span style="">@item.Email</span>
+                                }
+
                             </address>
                             <div class="btn-group">
                                 @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))

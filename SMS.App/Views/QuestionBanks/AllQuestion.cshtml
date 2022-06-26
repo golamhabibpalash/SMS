@@ -1,3 +1,65 @@
-﻿
+﻿@model IEnumerable<Question>
 @{
+    ViewData["Title"] = "Questions";
+    GlobalUI.PageTitle = ViewBag.Title;
+}
+
+@{
+    int sl = 1;
+    string[] number = { "i", "ii", "iii", "iv" };
+
+}
+
+@if (Model.Count() > 0)
+{
+    foreach (var item in Model)
+    {
+        @*<div class="row">
+                <div class="col-md-11 offset-md-1">
+
+                </div>
+            </div>*@
+        <div class="row">
+            <div class="col-md-1 text-md-right">
+                <label class="col-form-label">@(sl++).</label>
+            </div>
+            <div class="col-md-11">
+                <span class="form-control-plaintext" readonly>
+                    @item.Uddipok
+                    (<span class="text-secondary pb-0">
+                        <span>Class:@item.Chapter.AcademicSubject.AcademicClass.Name; </span>
+                        <span>Subject:@item.Chapter.AcademicSubject.SubjectName; </span>
+                        <span>Chapter:(@item.Chapter.ChapterNumber) @item.Chapter.ChapterName  </span>
+                    </span>) <span class="text-warning" tooltips="Edit"><i class="fa fa-edit"></i></span>
+                </span>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-11 offset-md-1">
+                <ul class="list-group">
+                    @if (item.QuestionDetails != null || item.QuestionDetails.Count() > 0)
+                    {
+                        int i = 0;
+                        foreach (var qd in item.QuestionDetails)
+                        {
+                            <li class="d-flex justify-content-between align-items-center">
+                                <div class="row col-md-12">
+                                    <div class="col-md-1 text-md-right">
+                                        @(number[i++]))
+                                    </div>
+                                    <div class="col-md-10">
+                                        @qd.QuestionText
+                                    </div>
+                                    <div class="col-md-1">
+                                        <span class="badge badge-primary badge-pill">@i</span>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+
 }

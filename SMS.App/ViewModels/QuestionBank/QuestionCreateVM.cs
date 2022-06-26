@@ -13,15 +13,7 @@ namespace SMS.App.ViewModels.QuestionBank
 
         [Display(Name ="Position")]
         public string ImagePosition { get; set; }
-
-        [Required, Display(Name ="Question 01")]
-        public string Question_1 { get; set; }
-        [Required, Display(Name = "Question 01")]
-        public string Question_2 { get; set; }
-        [Required, Display(Name = "Question 01")]
-        public string Question_3 { get; set; }
-        [Required, Display(Name = "Question 01")]
-        public string Question_4 { get; set; }
+        public List<QuestionDetails> QuestionDetails { get; set; }        
 
         [Required, Display(Name = "Chapter")]
         public int ChapterId { get; set; }

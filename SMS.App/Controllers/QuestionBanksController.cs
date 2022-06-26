@@ -26,10 +26,17 @@ namespace SMS.App.Controllers
             return View();
         }
 
+        public async Task<IActionResult> AllQuestion() 
+        {
+            var questionBanks = await _questionManager.GetAllAsync();
+            return View(questionBanks);
+        }
+
         [HttpPost]
         public async Task<JsonResult> CreateQuestion(QuestionVM model)
         {
             Question nQuestion = new Question();
+            nQuestion.QuestionDetails = new List<QuestionDetails>();
             nQuestion.Uddipok = model.QCreateVM.Uddipok;
             if (model.QCreateVM.Image != null)
             {
@@ -37,22 +44,23 @@ namespace SMS.App.Controllers
                 nQuestion.ImagePosition = model.QCreateVM.ImagePosition;
             }
             nQuestion.ChapterId = model.QCreateVM.ChapterId;
+            
+            if (model.QCreateVM.QuestionDetails.Count==4)
+            {
+                foreach (var qd in model.QCreateVM.QuestionDetails)
+                {
+                    qd.QuestionId = nQuestion.Id;
+                    qd.MACAddress = MACService.GetMAC();
+                    qd.CreatedBy = HttpContext.Session.GetString("UserId");
+                    qd.CreatedAt = DateTime.Now;
+                    nQuestion.QuestionDetails.Add(qd);
+                }
+            }
+            else
+            {
+                return Json("");
+            }
 
-            List<QuestionDetails> nQuestionDetails = new List<QuestionDetails>();
-
-            QuestionDetails questionDetails1 = new QuestionDetails() {QuestionId = nQuestion.Id,QuestionText =model.QCreateVM.Question_1, CreatedAt = DateTime.Now, CreatedBy = HttpContext.Session.GetString("UserId"), MACAddress = MACService.GetMAC() };
-            nQuestionDetails.Add(questionDetails1);
-
-            QuestionDetails questionDetails2 = new QuestionDetails() { QuestionId = nQuestion.Id, QuestionText = model.QCreateVM.Question_2, CreatedAt = DateTime.Now, CreatedBy = HttpContext.Session.GetString("UserId"), MACAddress = MACService.GetMAC() };
-            nQuestionDetails.Add(questionDetails2);
-
-            QuestionDetails questionDetails3 = new QuestionDetails() { QuestionId = nQuestion.Id, QuestionText = model.QCreateVM.Question_3, CreatedAt = DateTime.Now, CreatedBy = HttpContext.Session.GetString("UserId"), MACAddress = MACService.GetMAC() };
-            nQuestionDetails.Add(questionDetails3);
-
-            QuestionDetails questionDetails4 = new QuestionDetails() { QuestionId = nQuestion.Id, QuestionText = model.QCreateVM.Question_4, CreatedAt = DateTime.Now, CreatedBy = HttpContext.Session.GetString("UserId"), MACAddress = MACService.GetMAC() };
-            nQuestionDetails.Add(questionDetails4);
-
-            nQuestion.QuestionDetails=nQuestionDetails;
             nQuestion.CreatedAt = DateTime.Now;
             nQuestion.CreatedBy = HttpContext.Session.GetString("UserId");
             nQuestion.MACAddress = MACService.GetMAC();
@@ -64,7 +72,7 @@ namespace SMS.App.Controllers
                    bool isSaved = await _questionManager.AddAsync(nQuestion);
                     if (isSaved)
                     {
-                        return Json(nQuestion);
+                        return Json(new {newQuestion=nQuestion, msg = "New Question added successfully."});
                     }
                 }
                 catch (System.Exception)
@@ -75,5 +83,6 @@ namespace SMS.App.Controllers
             }
             return Json("");
         }
+
     }
 }

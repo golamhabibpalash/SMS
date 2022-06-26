@@ -198,7 +198,7 @@
                                             <a href="#"><span class="glyphicon glyphicon-th-large"></span> Academic Result</a>
                                         </li>
                                         <li>
-                                            <a href="#"><span class="glyphicon glyphicon-question-sign"></span> Question Bank</a>
+                                            <a><span class="glyphicon glyphicon-question-sign"></span> Question Bank <span class="fa fa-chevron-down"></span></a>
                                             <ul class="nav child_menu">
                                                 <li>
                                                     <a asp-action="Index" asp-controller="QuestionBanks"> <span class="glyphicon glyphicon-th-large"></span> Questions </a>
@@ -316,12 +316,9 @@
                                     <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
                                 </button>
                             </form>
-
-
                         }
                         else
                         {
-
                             <a data-toggle="tooltip" data-placement="top" title="Login" asp-action="login" asp-controller="Accounts">
                                 <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>
                             </a>
@@ -426,6 +423,15 @@
 
             // Display the date and time on the screen using div#date-time
             document.getElementById('liveDateTime').innerHTML = dateTime;
+            let width = window.screen.availWidth;
+            if (width < 462 && width>386) {
+                let Time = zeroFill(now.getHours()) + ':' + zeroFill(now.getMinutes()) + ':' + zeroFill(now.getSeconds());
+                document.getElementById('liveDateTime').innerHTML = Time;
+            }
+            else if (width<386) {
+                document.getElementById('liveDateTime').innerHTML = "";
+            }
+            
         }, 1000);
 
         $(function () {

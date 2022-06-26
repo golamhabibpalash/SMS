@@ -13,7 +13,7 @@
     <div class="col-md-12 text-md-right">
         <!-- Button trigger modal -->
         <button type="button" class="btn btn-info" data-toggle="modal" data-target="#createQuestionModal">
-            Create New Question
+            Add New Question
         </button>
     </div>
 </div>
@@ -47,7 +47,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLongTitle">Create New Question</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button id="modalCloseButton" type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -112,32 +112,15 @@
 
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <div class="form-group row pb-2">
-                                            <label asp-for="QCreateVM.Question_1" class="form-label col-md-2 text-md-right col-form-label bg-lightgray"></label>
-                                            <div class="col-md-10">
-                                                <input asp-for="QCreateVM.Question_1" class="form-control" required/>
+                                        @for (int i = 0; i < 4; i++)
+                                        {
+                                            <div class="form-group row pb-2">
+                                                <label asp-for="QCreateVM.QuestionDetails[i].QuestionText" class="form-label col-md-2 text-md-right col-form-label bg-lightgray">Question @(i+1)</label>
+                                                <div class="col-md-10">
+                                                    <input asp-for="QCreateVM.QuestionDetails[i].QuestionText" class="form-control" required />
+                                                </div>
                                             </div>
-                                        </div>
-
-                                        <div class="form-group row pb-2">
-                                            <label asp-for="QCreateVM.Question_2" class="form-label col-md-2 text-md-right col-form-label bg-lightgray"></label>
-                                            <div class="col-md-10">
-                                                <input asp-for="QCreateVM.Question_2" class="form-control" required/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row pb-2">
-                                            <label asp-for="QCreateVM.Question_3" class="form-label col-md-2 text-md-right col-form-label bg-lightgray"></label>
-                                            <div class="col-md-10">
-                                                <input asp-for="QCreateVM.Question_3" class="form-control" required/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row pb-2">
-                                            <label asp-for="QCreateVM.Question_4" class="form-label col-md-2 text-md-right col-form-label bg-lightgray"></label>
-                                            <div class="col-md-10">
-                                                <input asp-for="QCreateVM.Question_4" class="form-control" required/>
-                                            </div>
-                                        </div>
-
+                                        }                                        
                                     </div>
                                 </div>
 
@@ -166,6 +149,8 @@
 
 @section Scripts {
     @*@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}*@
+
+    <script src="~/lib/Alertify/alertify.min.js"></script>
     <script>
         $(document).ready(function () {
             $('#QCreateVM_AcademicClassId').change(function () {
@@ -213,18 +198,18 @@
             rules: {
                 'QCreateVM.ChapterId': { required: true, minlength: 1 },
                 'QCreateVM.Uddipok': { required: true, minlength: 10 },
-                'QCreateVM.Question_1': { required: true, minlength: 5 },
-                'QCreateVM.Question_2': { required: true, minlength: 5 },
-                'QCreateVM.Question_3': { required: true, minlength: 5 },
-                'QCreateVM.Question_4': { required: true, minlength: 5 }
+                'QCreateVM.QuestionDetails[0].QuestionText': { required: true, minlength: 5 },
+                'QCreateVM.QuestionDetails[1].QuestionText': { required: true, minlength: 5 },
+                'QCreateVM.QuestionDetails[2].QuestionText': { required: true, minlength: 5 },
+                'QCreateVM.QuestionDetails[3].QuestionText': { required: true, minlength: 5 }
             },
             messages: {
                 'QCreateVM.ChapterId': "Please Select Chapter",
                 'QCreateVM.Uddipok': { required: "Uddipak is missing", minlength: "You have to write clearly something" },
-                'QCreateVM.Question_1': { required: "Question 1 is missing", minlength: "You have to ask clearly something" },
-                'QCreateVM.Question_2': { required: "Question 2 is missing", minlength: "You have to ask clearly something" },
-                'QCreateVM.Question_3': { required: "Question 3 is missing", minlength: "You have to ask clearly something" },
-                'QCreateVM.Question_4': { required: "Question 4 is missing", minlength: "You have to ask clearly something" },
+                'QCreateVM.QuestionDetails[0].QuestionText': { required: "Question 1 is missing", minlength: "You have to ask clearly something" },
+                'QCreateVM.QuestionDetails[1].QuestionText': { required: "Question 2 is missing", minlength: "You have to ask clearly something" },
+                'QCreateVM.QuestionDetails[2].QuestionText': { required: "Question 3 is missing", minlength: "You have to ask clearly something" },
+                'QCreateVM.QuestionDetails[3].QuestionText': { required: "Question 4 is missing", minlength: "You have to ask clearly something" },
             },
             submitHandler: function (form) {
                 $.ajax({
@@ -232,21 +217,21 @@
                     type: "post",
                     data: $("form#questionCreateForm").serialize(),
                     success: function (data, status) {
-                        console.log(data);
-                        let totalTr = $('#tableBody tr').length + 1;
-                        let slTd = '<td>' + totalTr + '</td>';
-                        let nameTd = '<td> <input id="ChapterName_' + data.id + '" type="text" class="form-control-plaintext" name="ChapterName" value="' + data.chapterName + '" /></td>';
+                        //let totalTr = $('#tableBody tr').length + 1;
+                        //let slTd = '<td>' + totalTr + '</td>';
+                        //let nameTd = '<td> <input id="ChapterName_' + data.id + '" type="text" class="form-control-plaintext" name="ChapterName" value="' + data.chapterName + '" /></td>';
 
-                        let classTd = '<td>' + data.academicSubject.academicClass.name + '</td>';
-                        let subjectTd = '<td>' + data.academicSubject.subjectName + '</td>';
-                        let btnGroup = '<div class="btn-group"><span class="btn btn-sm btn-success" id="edit_' + data.id + '" onclick="editChapter(' + data.id + ')">Edit</span><span class="btn btn-sm btn-warning" id="update_' + data.id + '" style="display:none" onclick="updateChapter(' + data.id + ')">Update</span><span class="btn btn-sm btn-danger" id="delete_' + data.id + '">Delete</span></div>';
-                        let actionTd = '<td>' + btnGroup + '</td>';
+                        //let classTd = '<td>' + data.academicSubject.academicClass.name + '</td>';
+                        //let subjectTd = '<td>' + data.academicSubject.subjectName + '</td>';
+                        //let btnGroup = '<div class="btn-group"><span class="btn btn-sm btn-success" id="edit_' + data.id + '" onclick="editChapter(' + data.id + ')">Edit</span><span class="btn btn-sm btn-warning" id="update_' + data.id + '" style="display:none" onclick="updateChapter(' + data.id + ')">Update</span><span class="btn btn-sm btn-danger" id="delete_' + data.id + '">Delete</span></div>';
+                        //let actionTd = '<td>' + btnGroup + '</td>';
 
-                        let tr = '<tr>' + slTd + nameTd + classTd + subjectTd + actionTd + '</tr>';
+                        //let tr = '<tr>' + slTd + nameTd + classTd + subjectTd + actionTd + '</tr>';
 
-                        $('#tableBody').append(tr);
-                        $('#modalCancelId').trigger("click");
-                        alertify.success('New Chapter Created');
+                        //$('#tableBody').append(tr);
+
+                        $('#modalCloseButton').trigger("click");
+                        alertify.success(data.msg);
                     }
                 });
             }

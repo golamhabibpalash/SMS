@@ -12,10 +12,10 @@ namespace SMS.BLL.Managers
 {
     public class AcademicSubjectManager : Manager<AcademicSubject>,IAcademicSubjectManager
     {
-        private readonly IAcademicSubjectRepository _repository;
+        private readonly IAcademicSubjectRepository _academicSubjectRepository;
         public AcademicSubjectManager(IAcademicSubjectRepository academicSubjectRepository):base(academicSubjectRepository)
         {
-            _repository = academicSubjectRepository;
+            _academicSubjectRepository = academicSubjectRepository;
         }
         public override async Task<bool> AddAsync(AcademicSubject entity)
         {
@@ -35,7 +35,7 @@ namespace SMS.BLL.Managers
         {
             try
             {
-                var subjects = await _repository.GetSubjectsByClassIdAsync(classId);
+                var subjects = await _academicSubjectRepository.GetSubjectsByClassIdAsync(classId);
                 return subjects;
             }
             catch (Exception)

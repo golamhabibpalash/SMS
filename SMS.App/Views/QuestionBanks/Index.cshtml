@@ -1,4 +1,23 @@
-﻿<div class="row">
+﻿@model SMS.App.ViewModels.QuestionBank.QuestionVM
+
+@section Styles{
+    <style>
+        .errors
+        {
+            color: red;
+        }
+    </style>
+}
+
+<div class="row">
+    <div class="col-md-12 text-md-right">
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#createQuestionModal">
+            Create New Question
+        </button>
+    </div>
+</div>
+<div class="row">
     <div class="col-md-3">
         <div class="card text-white bg-primary mb-3">
             <div class="card-header"> Question </div>
@@ -19,3 +38,218 @@
 
     </div>
 </div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="createQuestionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Create New Question</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form id="questionCreateForm" method="post" enctype="multipart/form-data">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group row pb-2">
+                                            <label asp-for="QCreateVM.AcademicClassId" class="col-md-4 text-md-right col-form-label bg-lightgray">Class</label>
+                                            <div class="col-md-8">
+                                                <select asp-for="QCreateVM.AcademicClassId" class="form-control" asp-items="ViewBag.AcademicClassId">
+                                                    <option disabled selected>Select Class</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row pb-2">
+                                            <label asp-for="QCreateVM.AcademicSubjectId" class="col-md-4 text-md-right col-form-label bg-lightgray">Subject</label>
+                                            <div class="col-md-8">
+                                                <select asp-for="QCreateVM.AcademicSubjectId" class="form-control">
+                                                    <option disabled selected>Select Class First</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row pb-2">
+                                            <label asp-for="QCreateVM.ChapterId" class="col-md-4 text-md-right col-form-label bg-lightgray">Chapter</label>
+                                            <div class="col-md-8">
+                                                <select asp-for="QCreateVM.ChapterId" class="form-control" required>
+                                                    <option disabled selected>Select Subject First</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group row">
+                                            @*<label asp-for="Uddipok" class="col-md-1 control-label col-form-label text-md-end"></label>*@
+                                            <div class="col-md-12">
+                                                <textarea asp-for="QCreateVM.Uddipok" class="form-control" rows="5" placeholder="Write your uddipok here"></textarea>                                                
+                                            </div>
+                                        </div>
+                                        <div class="form-group row pt-2">
+                                            <div class="col-md-6">
+                                                <input asp-for="QCreateVM.Image" />
+                                            </div>
+
+                                            <label asp-for="QCreateVM.ImagePosition" class="control-label col-form-label col-md-2 text-md-end"></label>
+                                            <div class="col-md-4">
+                                                <select asp-for="QCreateVM.ImagePosition" class="form-control">
+                                                    <option value="" disabled selected>Select Position</option>
+                                                    <option value="Top">Top</option>
+                                                    <option value="Bottom">Bottom</option>
+                                                    <option value="Center">Center</option>
+                                                </select>
+                                                <span asp-validation-for="QCreateVM.ImagePosition" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group row pb-2">
+                                            <label asp-for="QCreateVM.Question_1" class="form-label col-md-2 text-md-right col-form-label bg-lightgray"></label>
+                                            <div class="col-md-10">
+                                                <input asp-for="QCreateVM.Question_1" class="form-control" required/>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row pb-2">
+                                            <label asp-for="QCreateVM.Question_2" class="form-label col-md-2 text-md-right col-form-label bg-lightgray"></label>
+                                            <div class="col-md-10">
+                                                <input asp-for="QCreateVM.Question_2" class="form-control" required/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row pb-2">
+                                            <label asp-for="QCreateVM.Question_3" class="form-label col-md-2 text-md-right col-form-label bg-lightgray"></label>
+                                            <div class="col-md-10">
+                                                <input asp-for="QCreateVM.Question_3" class="form-control" required/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row pb-2">
+                                            <label asp-for="QCreateVM.Question_4" class="form-label col-md-2 text-md-right col-form-label bg-lightgray"></label>
+                                            <div class="col-md-10">
+                                                <input asp-for="QCreateVM.Question_4" class="form-control" required/>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <div class="col-md-12">
+
+                                        <div class="col-md-6 text-md-left">
+                                            <a class="btn btn-info" asp-action="Index">Back to List</a>
+                                        </div>
+                                        <div class="col-md-6 text-md-right">
+                                            <span class="btn btn-warning">Clear</span>
+                                            <input type="submit" value="Create" class="btn btn-primary" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @*@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}*@
+    <script>
+        $(document).ready(function () {
+            $('#QCreateVM_AcademicClassId').change(function () {
+                let classId = $('#QCreateVM_AcademicClassId option:selected').val();
+                $.ajax({
+                    url: '/AcademicSubjects/GetSubjectsByClassId?classId=' + classId,
+                    method: 'Post',
+                    type: 'JSON',
+                    success: function (data) {
+                        $('#QCreateVM_AcademicSubjectId').empty();
+                        var op = '<option disabled selected> Select Subject </option>';
+                        $('#QCreateVM_AcademicSubjectId').append(op);
+                        $.each(data, function (i, obj) {
+                            var op = "<option value='" + obj.id + "'>" + obj.subjectName + "</option>";
+                            $('#QCreateVM_AcademicSubjectId').append(op);
+                        });
+                    },
+                    error: function () { }
+                });
+            });
+
+            $('#QCreateVM_AcademicSubjectId').change(function () {
+                let subjectId = $('#QCreateVM_AcademicSubjectId option:selected').val();
+                $.ajax({
+                    url: '/Chapters/GetChapterBySubject?SubjectId=' + subjectId,
+                    method: 'Post',
+                    type: 'JSON',
+                    success: function (data) {
+                        $('#QCreateVM_ChapterId').empty();
+                        var op = '<option disabled selected> Select Chapter </option>';
+                        $('#QCreateVM_ChapterId').append(op);
+                        $.each(data, function (i, obj) {
+                            var op = "<option value='" + obj.id + "'>" + obj.chapterName + "</option>";
+                            $('#QCreateVM_ChapterId').append(op);
+                        });
+                    },
+                    error: function () { }
+                });
+            });
+
+            
+        });
+        $("#questionCreateForm").validate({
+            errorClass: 'errors',
+            rules: {
+                'QCreateVM.ChapterId': { required: true, minlength: 1 },
+                'QCreateVM.Uddipok': { required: true, minlength: 10 },
+                'QCreateVM.Question_1': { required: true, minlength: 5 },
+                'QCreateVM.Question_2': { required: true, minlength: 5 },
+                'QCreateVM.Question_3': { required: true, minlength: 5 },
+                'QCreateVM.Question_4': { required: true, minlength: 5 }
+            },
+            messages: {
+                'QCreateVM.ChapterId': "Please Select Chapter",
+                'QCreateVM.Uddipok': { required: "Uddipak is missing", minlength: "You have to write clearly something" },
+                'QCreateVM.Question_1': { required: "Question 1 is missing", minlength: "You have to ask clearly something" },
+                'QCreateVM.Question_2': { required: "Question 2 is missing", minlength: "You have to ask clearly something" },
+                'QCreateVM.Question_3': { required: "Question 3 is missing", minlength: "You have to ask clearly something" },
+                'QCreateVM.Question_4': { required: "Question 4 is missing", minlength: "You have to ask clearly something" },
+            },
+            submitHandler: function (form) {
+                $.ajax({
+                    url: "/QuestionBanks/CreateQuestion",
+                    type: "post",
+                    data: $("form#questionCreateForm").serialize(),
+                    success: function (data, status) {
+                        console.log(data);
+                        let totalTr = $('#tableBody tr').length + 1;
+                        let slTd = '<td>' + totalTr + '</td>';
+                        let nameTd = '<td> <input id="ChapterName_' + data.id + '" type="text" class="form-control-plaintext" name="ChapterName" value="' + data.chapterName + '" /></td>';
+
+                        let classTd = '<td>' + data.academicSubject.academicClass.name + '</td>';
+                        let subjectTd = '<td>' + data.academicSubject.subjectName + '</td>';
+                        let btnGroup = '<div class="btn-group"><span class="btn btn-sm btn-success" id="edit_' + data.id + '" onclick="editChapter(' + data.id + ')">Edit</span><span class="btn btn-sm btn-warning" id="update_' + data.id + '" style="display:none" onclick="updateChapter(' + data.id + ')">Update</span><span class="btn btn-sm btn-danger" id="delete_' + data.id + '">Delete</span></div>';
+                        let actionTd = '<td>' + btnGroup + '</td>';
+
+                        let tr = '<tr>' + slTd + nameTd + classTd + subjectTd + actionTd + '</tr>';
+
+                        $('#tableBody').append(tr);
+                        $('#modalCancelId').trigger("click");
+                        alertify.success('New Chapter Created');
+                    }
+                });
+            }
+        });
+    </script>
+}

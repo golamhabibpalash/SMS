@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using SMS.BLL.Contracts;
 using SMS.Entities;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
@@ -17,6 +19,7 @@ namespace SMS.App.Controllers
             this._chapterManager = _chapterManager;
             _academicClassManager = academicClassManager;
         }
+
         public async Task<IActionResult> Index()
         {
             var chapters = await _chapterManager.GetAllAsync();
@@ -48,6 +51,14 @@ namespace SMS.App.Controllers
                 throw;
             }
             
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GetChapterBySubject(int subjectId)
+        {
+            var chapters = await _chapterManager.GetAllAsync();
+            chapters = chapters.Where(c => c.AcademicSubjectId == subjectId).ToList();
+            return Json(chapters);
         }
     }
 }

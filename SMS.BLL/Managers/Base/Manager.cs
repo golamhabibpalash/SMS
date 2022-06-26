@@ -8,8 +8,8 @@ namespace BLL.Managers.Base
 {
     public abstract class Manager<T> : IManager<T> where T : class
     {
-        protected readonly IRepository<T> _repository;
-        public Manager(IRepository<T> repository)
+        protected readonly SMS.DAL.Contracts.Base.IRepository<T> _repository;
+        public Manager(SMS.DAL.Contracts.Base.IRepository<T> repository)
         {
             _repository = repository;
         }

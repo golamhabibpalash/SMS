@@ -1,6 +1,7 @@
 ﻿using BLL.Managers.Base;
 using SMS.BLL.Contracts;
 using SMS.DAL.Contracts;
+using SMS.DAL.Repositories;
 using SMS.Entities;
 using System;
 using System.Collections.Generic;
@@ -10,12 +11,11 @@ using System.Threading.Tasks;
 
 namespace SMS.BLL.Managers
 {
-    public class ChapterManager : Manager<Chapter>, IChapterManager
+    public class QuestionManager : Manager<Question>, IQuestionManager
     {
-        private readonly IChapterRepository _chapterRepository;
-        public ChapterManager(IChapterRepository repository) : base(repository)
+        public QuestionManager(IQuestionRepository repository):base(repository)
         {
-            _chapterRepository = repository;
+
         }
     }
 }

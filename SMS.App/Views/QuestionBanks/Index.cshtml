@@ -15,9 +15,11 @@
     </style>
 }
 <div class="sticky-top text-right">
-    <button id="createFormSwitchButtonId" class="btn btn-outline-info" onclick="showCreateForm();"><i class="fa fa-plus"></i>  </button>
+    <button type="button" class="btn-sm btn-primary" data-toggle="modal" data-target="#exampleModalCenter" data-placement="top" title="Add New Question">
+        <i class="fa fa-plus"></i>
+    </button>
 </div>
-<div id="questionCreateDivId" class="p-2" style="position:fixed;background-color:aliceblue;left:25%;z-index:999; display:none">
+<div id="questionCreateDivId" class="p-1" >
     @await Component.InvokeAsync("QuestionCreate")
 </div>
 <div class="row">

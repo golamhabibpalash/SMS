@@ -45,6 +45,7 @@
   <ItemGroup>
     <Folder Include="wwwroot\Images\Employee\photo\" />
     <Folder Include="wwwroot\Images\Employee\NID\" />
+    <Folder Include="wwwroot\Images\Question\" />
     <Folder Include="wwwroot\Images\Student\Photo\" />
     <Folder Include="wwwroot\js\Upazila\" />
   </ItemGroup>

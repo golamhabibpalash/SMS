@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SMS.App.Utilities.MACIPServices;
@@ -7,6 +8,7 @@ using SMS.BLL.Contracts;
 using SMS.Entities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
@@ -15,10 +17,12 @@ namespace SMS.App.Controllers
     {
         private readonly IAcademicClassManager _academicClassManager;
         private readonly IQuestionManager _questionManager;
-        public QuestionBanksController(IAcademicClassManager academicClassManager, IQuestionManager questionManager)
+        private readonly IWebHostEnvironment _host;
+        public QuestionBanksController(IAcademicClassManager academicClassManager, IQuestionManager questionManager, IWebHostEnvironment host)
         {
             _academicClassManager = academicClassManager;
             _questionManager = questionManager;
+            _host = host;
         }
         public async Task<IActionResult> Index()
         {
@@ -33,14 +37,26 @@ namespace SMS.App.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> CreateQuestion(QuestionVM model)
+        public async Task<JsonResult> CreateQuestion(QuestionVM model, IFormFile qImage, IFormCollection collection)
         {
             Question nQuestion = new Question();
             nQuestion.QuestionDetails = new List<QuestionDetails>();
             nQuestion.Uddipok = model.QCreateVM.Uddipok;
             if (model.QCreateVM.Image != null)
             {
-                nQuestion.Image = model.QCreateVM.Image.ToString();
+                string questionImage = "";
+                string root = _host.WebRootPath;
+                if (string.IsNullOrEmpty(root))
+                {
+                    root = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                }
+                string folder = "Images/Question";
+                string fileExtension = Path.GetExtension(qImage.FileName);
+                questionImage ="q_"+model.QCreateVM.AcademicClassId+"_"+model.QCreateVM.AcademicSubjectId+"_"+"_"+model.QCreateVM.ChapterId+"_"+nQuestion.Id+ fileExtension;
+                string pathCombine = Path.Combine(root, folder, questionImage);
+                using var stream = new FileStream(pathCombine, FileMode.Create);
+                await qImage.CopyToAsync(stream);                
+
                 nQuestion.ImagePosition = model.QCreateVM.ImagePosition;
             }
             nQuestion.ChapterId = model.QCreateVM.ChapterId;

@@ -1,0 +1,95 @@
+﻿@model SMS.App.ViewModels.QuestionBank.QuestionVM
+
+
+    <div class="container-fluid shadow" style="z-index: 9999; background: #2A3F54">
+        <div class="row">
+            <button id="divCloseButton" onclick="hideCreateForm()">x</button>
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-light">
+                <form id="questionCreateForm" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group row pb-2">
+                                <label asp-for="QCreateVM.AcademicClassId" class="col-md-4 text-md-right col-form-label bg-lightgray">Class</label>
+                                <div class="col-md-8">
+                                    <select asp-for="QCreateVM.AcademicClassId" class="form-control" asp-items="ViewBag.AcademicClassId">
+                                        <option disabled selected>Select Class</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row pb-2">
+                                <label asp-for="QCreateVM.AcademicSubjectId" class="col-md-4 text-md-right col-form-label bg-lightgray">Subject</label>
+                                <div class="col-md-8">
+                                    <select asp-for="QCreateVM.AcademicSubjectId" class="form-control">
+                                        <option disabled selected>Select Class First</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row pb-2">
+                                <label asp-for="QCreateVM.ChapterId" class="col-md-4 text-md-right col-form-label bg-lightgray">Chapter</label>
+                                <div class="col-md-8">
+                                    <select asp-for="QCreateVM.ChapterId" class="form-control" required>
+                                        <option disabled selected>Select Subject First</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <div class="col-md-12">
+                                    <textarea asp-for="QCreateVM.Uddipok" class="form-control" rows="5" placeholder="Write your uddipok here"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group row pt-2">
+                                <div class="col-md-6">
+                                    <input asp-for="QCreateVM.Image" />
+                                </div>
+
+                                <label asp-for="QCreateVM.ImagePosition" class="control-label col-form-label col-md-2 text-md-end"></label>
+                                <div class="col-md-4">
+                                    <select asp-for="QCreateVM.ImagePosition" class="form-control">
+                                        <option value="" disabled selected>Select Position</option>
+                                        <option value="Top">Top</option>
+                                        <option value="Bottom">Bottom</option>
+                                        <option value="Center">Center</option>
+                                    </select>
+                                    <span asp-validation-for="QCreateVM.ImagePosition" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            @for (int i = 0; i < 4; i++)
+                            {
+                                <div class="form-group row pb-2">
+                                    <label asp-for="QCreateVM.QuestionDetails[i].QuestionText" class="form-label col-md-2 text-md-right col-form-label bg-lightgray">Question @(i+1)</label>
+                                    <div class="col-md-10">
+                                        <input asp-for="QCreateVM.QuestionDetails[i].QuestionText" class="form-control" required />
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <div class="col-md-12">
+
+                            <div class="col-md-6 text-md-left">
+                                <a class="btn btn-info" asp-action="Index">Back to List</a>
+                            </div>
+                            <div class="col-md-6 text-md-right">
+                                <span class="btn btn-warning">Clear</span>
+                                <input type="submit" value="Create" class="btn btn-primary" />
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+

@@ -74,22 +74,19 @@ $("#questionCreateForm").validate({
     },
 
     submitHandler: function (form) {
-        //let formData = $("form#questionCreateForm").serialize();
-        //formData.append
-        var fd = new FormData();
-        //var files = $('#QCreateVM_Image')[0].files;
-        //fd.append('file', files[0]);
-        var formdata = new FormData($('form#questionCreateForm').get(0));
-        var files = $("#QCreateVM_Image")[0].files;
-        var formData = new FormData();
-        formData.append("image", files[0]);
-        console.log(files); // I just check here and in browser I can see file name and size
-        console.log(formData);
-
+        //var image = document.getElementById("QCreateVM_Image");
+        //var files = image.files;
+        //var formData = new FormData();
+        //for (var i = 0; i !== files.length; i++) {
+        //    formData.append("files", files[i]);
+        //}
+        var formData = new FormData($('#questionCreateForm').get(0));
         $.ajax({
             url: "/QuestionBanks/CreateQuestion",
             type: "post",
             data: formData,
+            processData: false,
+            contentType: false,
             success: function (data, status) {
                 //let totalTr = $('#tableBody tr').length + 1;
                 //let slTd = '<td>' + totalTr + '</td>';

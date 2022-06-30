@@ -37,7 +37,7 @@ namespace SMS.App.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> CreateQuestion(QuestionVM model, IFormFile qImage, IFormCollection collection)
+        public async Task<JsonResult> CreateQuestion(QuestionVM model, IList<IFormFile> files, IFormFile qImage, IFormCollection collection)
         {
             Question nQuestion = new Question();
             nQuestion.QuestionDetails = new List<QuestionDetails>();
@@ -76,7 +76,6 @@ namespace SMS.App.Controllers
             {
                 return Json("");
             }
-
             nQuestion.CreatedAt = DateTime.Now;
             nQuestion.CreatedBy = HttpContext.Session.GetString("UserId");
             nQuestion.MACAddress = MACService.GetMAC();
@@ -99,6 +98,5 @@ namespace SMS.App.Controllers
             }
             return Json("");
         }
-
     }
 }

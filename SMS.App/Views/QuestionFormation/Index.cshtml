@@ -1,0 +1,155 @@
+﻿@model IEnumerable<SMS.Entities.QuestionFormat>
+@{
+    ViewData["Title"] = "Question Formation";
+    GlobalUI.PageTitle = ViewBag.Title;
+}
+@{ 
+    int sl = 1;
+}
+@section Styles{ 
+    <style>
+        .errors{
+            color:red;
+        }
+    </style>
+}
+<div class="row">
+    <div class="col-md-8 card">
+        @if (Model.Count() > 0 && Model != null)
+        {
+            <table class="table table-striped table-hover shadow">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Formation</th>
+                        <th>Q. Count</th>
+                        <th>Edit</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@(sl++)</td>
+                            <td>@item.Name </td>
+                            <td>@item.QFormat</td>
+                            <td>@item.NumberOfQuestion</td>
+                            <td><span class="btn-sm btn-warning editButton" data-id="@item.Id"> <i class="fa fa-edit"></i></span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <h3>There has no any formation available</h3>
+        }
+    </div>
+    <div class="col-md-4 card bg-blue">
+        <div class="card-header text-center"><span class="h6">Create Question Format</span> </div>
+
+        <form id="FormationForm" method="post">
+            <input type="hidden" name="id" id="id" value="" />
+            <div class="card-body shadow">
+                <div class="form-group">
+                    <label for="formGroupExampleInput"> Formation Name <i class="fa fa-info-circle" data-placement="top" title="Give any kind of name" data-toggle="tooltip"></i></label>
+                    <input type="text" class="form-control" id="Name" name="Name" placeholder="Name of the formation; eg:1:3 / 1:4">
+                </div>
+                <div class="form-group">
+                    <label for="formGroupExampleInput2">Number of Question <i class="fa fa-info-circle" data-placement="top" title="Number of question for an uddipak" data-toggle="tooltip"></i> </label>
+                    <input type="text" class="form-control" id="NumberOfQuestion" name="NumberOfQuestion" placeholder="How many question? 3/4">
+                </div>
+                <div class="form-group">
+                    <label for="formGroupExampleInput2"> Formation  <i class="fa fa-info-circle" data-placement="top" title="mark of every question one by one" data-toggle="tooltip"></i> </label>
+                    <input type="text" class="form-control" id="QFormat" name="QFormat" placeholder="e.g:1,2,3,4 or 2,4,4 ">
+                </div>
+            </div>
+            <div class="card-footer text-right">
+                <button type="submit" class="btn btn-light btn-sm">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+        });
+
+        const myForm = document.getElementById('FormationForm');
+
+        $("#FormationForm").validate({
+            errorClass: 'errors',
+            rules: {
+                'Name': { required: true, minlength: 2 },
+                'NumberOfQuestion': { required: true, minlength: 1 },
+                'QFormat': { required: true, minlength: 2 }
+            },
+            messages: {
+                'Name': "Please input a name",
+                'NumberOfQuestion': { required: "How many question do you have?", minlength: "You have to write clearly something" },
+                'QFormat': { required: "Provide a formation", minlength: "You have to write clearly something" }
+            },
+
+            submitHandler: function (form) {
+                var formData = new FormData($('#FormationForm').get(0));
+                let url = "/QuestionFormation/EditFormation";
+                if ($('#id').val() == '') {
+                    url = "/QuestionFormation/CreatFormation";
+                }
+                $.ajax({
+                    url: url,
+                    type: "post",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (data, status) {
+                        if (data.qf == '') {
+                            alertify.error(data.msg);
+                        }
+                        else {
+                            myForm.reset();
+                            if ($('#id').val() == '') {
+                                let totalTr = $('#tableBody tr').length + 1;
+                                let slTd = '<td>' + totalTr + '</td>';
+                                let nameTd = '<td> ' + data.qf.name + '/></td>';
+                                let formationTd = '<td> ' + data.qf.qFormat + '</td>';
+                                let countTd = '<td> ' + data.qf.numberOfQuestion + '/></td>';
+                                let actionTd = '<td> <span class="btn-sm btn-warning editButton" data-id="' + data.qf.id + '"><i class="fa fa-edit"></i></td>';
+                                let tr = '<tr>' + slTd + nameTd + formationTd + countTd + actionTd + '</tr>';
+                                $('#tableBody').append(tr);
+                            }
+                            else {
+                                location.reload(true);
+                            }
+                            alertify.success(data.msg);
+                        }                        
+                    },
+                    error: function () {
+                    }
+                });
+            }
+        });
+        $('.editButton').click(function () {
+            let myId = $(this).data("id");
+
+            $.ajax({
+                url: "/QuestionFormation/GetById?id=" + myId,
+                type: "post",
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    $('#id').val(data.id);
+                    $('#Name').val(data.name);
+                    $('#NumberOfQuestion').val(data.numberOfQuestion);
+                    $('#QFormat').val(data.qFormat);
+                },
+                error: function () {
+
+                }
+            });
+        });
+    </script>
+}

@@ -125,12 +125,16 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
+                                    <label for="TotalMarks" class="control-label col-form-label col-md-3 text-md-right">Total Marks</label>
+                                    <div class="col-md-3">
+                                        <input name="TotalMarks" class="form-control" />
+                                    </div>
                                     <label for="SubjectCode" class="control-label  col-form-label col-md-3 text-md-right">Subject Code</label>
-                                    <div class="col-md-9">
+                                    <div class="col-md-3">
                                         <input name="SubjectCode" class="form-control rounded" placeholder="Ex: 103" />
-                                        <span  class="text-danger"></span>
                                     </div>
                                 </div>
+
                                 <div class="form-group row">
                                     <label class="control-label col-form-label col-md-3 text-md-right  ">Subject Type</label>
                                     <div class="col-md-9 input-group">
@@ -140,20 +144,21 @@
                                         <div>
                                             <a class="btn btn-sm btn-outline-info" asp-action="Create" asp-controller="AcademicSubjectTypes"><i class="fa fa-plus"></i> Add</a>
                                         </div>
-                                        <span class="text-danger"></span>
                                     </div>
                                 </div>
 
                                 <div class="form-group row">
-                                    <label for="TotalMarks" class="control-label col-form-label col-md-3 text-md-right">Total Marks</label>
+                                    <label for="AcademicClassId" class="control-label col-form-label col-md-3 text-md-right ">Question</label>
                                     <div class="col-md-9">
-                                        <input name="TotalMarks" class="form-control" />
+                                        <select class="form-control" name="QuestionFormatId" asp-items="ViewBag.QuestionFormatId">
+                                            <option disabled selected>Select Quesetion Formation</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <div class="offset-md-3 col-md-9">
                                         <label class="">
-                                            <input name="Status" class="" type="checkbox" value="true"  /> Active Status
+                                            <input name="Status" class="" type="checkbox" value="true" /> Active Status
                                         </label>
                                     </div>
                                 </div>

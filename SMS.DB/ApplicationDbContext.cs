@@ -43,7 +43,7 @@ namespace SMS.DB
         public DbSet<Chapter> Chapters { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<QuestionDetails> QuestionDetails { get; set; }
-        public DbSet<QuestionType> QuestionTypes { get; set; }
+        public DbSet<QuestionFormat> QuestionFormats { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

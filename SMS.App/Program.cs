@@ -149,6 +149,9 @@ builder.Services.AddScoped<IChapterManager, ChapterManager>();
 builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
 builder.Services.AddScoped<IQuestionManager, QuestionManager>();
 
+builder.Services.AddScoped<IQuestionFormationRepository, QuestionFormationRepository>();
+builder.Services.AddScoped<IQuestionFormationManager, QuestionFormationManager>();
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())

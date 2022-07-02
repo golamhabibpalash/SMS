@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using SMS.App.Utilities.MACIPServices;
 using SMS.BLL.Contracts;
 using SMS.DB;
 using SMS.Entities;
@@ -20,14 +21,16 @@ namespace SMS.App.Controllers
         private readonly IAcademicSubjectManager _academicSubjectManager;
         private readonly IAcademicSubjectTypeManager _academicSubjectTypeManager;
         private readonly IAcademicClassManager _academicClassManager;
-        private readonly ILogger<AcademicSubjectsController> logger;
+        private readonly IQuestionFormationManager _questionFormationManager;
+        //private readonly ILogger<AcademicSubjectsController> logger;
 
-        public AcademicSubjectsController(IAcademicSubjectManager academicSubjectManger, IAcademicSubjectTypeManager academicSubjectTypeManager, IAcademicClassManager academicClassManager, ILogger<AcademicSubjectsController> _Logger)
+        public AcademicSubjectsController(IAcademicSubjectManager academicSubjectManger, IAcademicSubjectTypeManager academicSubjectTypeManager, IAcademicClassManager academicClassManager, ILogger<AcademicSubjectsController> _Logger, IQuestionFormationManager questionFormationManager)
         {
             _academicSubjectManager = academicSubjectManger;
             _academicSubjectTypeManager = academicSubjectTypeManager;
             _academicClassManager = academicClassManager;
-            logger = _Logger;
+            _questionFormationManager = questionFormationManager;
+            //logger = _Logger;
         }
 
         // GET: AcademicSubjects
@@ -35,7 +38,8 @@ namespace SMS.App.Controllers
         {
             ViewData["AcademicSubjectTypeId"] = new SelectList(await _academicSubjectTypeManager.GetAllAsync(), "Id", "SubjectTypeName");
             ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name");
-            var academicSubject =await _academicSubjectManager.GetAllAsync();
+            ViewData["QuestionFormatId"] = new SelectList(await _questionFormationManager.GetAllAsync(), "Id", "Name");
+            var academicSubject = await _academicSubjectManager.GetAllAsync();
             return View(academicSubject);
         }
 
@@ -60,17 +64,19 @@ namespace SMS.App.Controllers
         public async Task<IActionResult> Create()
         {
             ViewData["AcademicSubjectTypeId"] = new SelectList(await _academicSubjectTypeManager.GetAllAsync(), "Id", "SubjectTypeName");
+            ViewData["QuestionFormatId"] = new SelectList(await _questionFormationManager.GetAllAsync(), "Id", "Name");
             return View();
         }
 
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,SubjectName,AcademicSubjectTypeId,AcademicClassId,SubjectCode,SubjectFor,TotalMarks,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSubject academicSubject)
+        public async Task<IActionResult> Create([Bind("Id,SubjectName,AcademicSubjectTypeId,AcademicClassId,SubjectCode,SubjectFor,TotalMarks,Status,CreatedBy,CreatedAt,EditedBy,EditedAt,QuestionFormatId")] AcademicSubject academicSubject)
         {
             academicSubject.Status = true;
             if (ModelState.IsValid)
             {
+                academicSubject.MACAddress = MACService.GetMAC();
                 academicSubject.CreatedAt = DateTime.Now;
                 academicSubject.CreatedBy = HttpContext.Session.GetString("UserId");
                 academicSubject.SubjectFor = 's';
@@ -87,6 +93,7 @@ namespace SMS.App.Controllers
             }
 
             ViewData["AcademicSubjectTypeId"] = new SelectList(await _academicSubjectTypeManager.GetAllAsync(), "Id", "SubjectTypeName", academicSubject.AcademicSubjectTypeId);
+            ViewData["QuestionFormatId"] = new SelectList(await _questionFormationManager.GetAllAsync(), "Id", "Name", academicSubject.QuestionFormatId);
             return View(academicSubject);
         }
 
@@ -104,15 +111,14 @@ namespace SMS.App.Controllers
                 return NotFound();
             }
             ViewData["AcademicSubjectTypeId"] = new SelectList(await _academicSubjectTypeManager.GetAllAsync(), "Id", "SubjectTypeName", academicSubject.AcademicSubjectTypeId);
+            ViewData["QuestionFormatId"] = new SelectList(await _questionFormationManager.GetAllAsync(), "Id", "Name", academicSubject.QuestionFormatId);
+            ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", academicSubject.AcademicClassId);
             return View(academicSubject);
         }
 
-        // POST: AcademicSubjects/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,SubjectName,AcademicSubjectTypeId,SubjectCode,SubjectFor,TotalMarks,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSubject academicSubject)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,SubjectName,AcademicSubjectTypeId,SubjectCode,SubjectFor,TotalMarks,Status,CreatedBy,CreatedAt,EditedBy,EditedAt,QuestionFormatId,AcademicClassId")] AcademicSubject academicSubject)
         {
             if (id != academicSubject.Id)
             {
@@ -123,9 +129,9 @@ namespace SMS.App.Controllers
             {
                 try
                 {
-
                     academicSubject.EditedAt = DateTime.Now;
                     academicSubject.EditedBy = HttpContext.Session.GetString("UserId");
+                    academicSubject.MACAddress = MACService.GetMAC();
 
                     TempData["updated"] = "Updated Successfully";
                     await _academicSubjectManager.UpdateAsync(academicSubject);
@@ -144,6 +150,8 @@ namespace SMS.App.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["AcademicSubjectTypeId"] = new SelectList(await _academicSubjectTypeManager.GetAllAsync(), "Id", "SubjectTypeId", academicSubject.AcademicSubjectTypeId);
+            ViewData["QuestionFormatId"] = new SelectList(await _questionFormationManager.GetAllAsync(), "Id", "Name", academicSubject.QuestionFormatId);
+            ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", academicSubject.AcademicClassId);
             return View(academicSubject);
         }
 
@@ -169,10 +177,10 @@ namespace SMS.App.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var academicSubject =await _academicSubjectManager.GetByIdAsync(id);
-            
+            var academicSubject = await _academicSubjectManager.GetByIdAsync(id);
+
             await _academicSubjectManager.RemoveAsync(academicSubject);
-            TempData["deleted"]= "Deleted Successfully";
+            TempData["deleted"] = "Deleted Successfully";
             return RedirectToAction(nameof(Index));
         }
 

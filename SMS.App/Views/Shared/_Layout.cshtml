@@ -155,13 +155,13 @@
                                     <a><i class="fa fa-users"></i> Students <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li>
-                                            <a asp-action="Index" asp-controller="Students"><span class="glyphicon glyphicon-list"></span> All Students</a>
+                                            <a asp-action="Index" asp-controller="Students"> All Students <i class="fa fa-users text-warning"></i></a>
                                         </li>
                                         <li>
-                                            <a asp-action="Index" asp-controller="StudentPayments"><span class="glyphicon glyphicon-usd"></span> Student Payment</a>
+                                            <a asp-action="Index" asp-controller="StudentPayments">Student Payment <i class="fa fa-money text-info"></i></a>
                                         </li>
                                         <li>
-                                            <a href="#"><span class="glyphicon glyphicon-check"></span> Student Attendance</a>
+                                            <a href="#"> Student Attendance <i class="fa fa-clock-o"></i></a>
                                         </li>
                                     </ul>
                                 </li>
@@ -169,10 +169,10 @@
                                     <a><i class="fa fa-user"></i> Employee <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li>
-                                            <a asp-action="Index" asp-controller="Employees"><span class="glyphicon glyphicon-list"></span> All Employee</a>
+                                            <a asp-action="Index" asp-controller="Employees"> All Employee <i class="fa fa-users text-primary"></i></a>
                                         </li>
                                         <li>
-                                            <a href="#"><span class="glyphicon glyphicon-check"></span> Employees Attendance</a>
+                                            <a href="#"> Employees Attendance</a>
                                         </li>
                                     </ul>
                                 </li>
@@ -180,31 +180,34 @@
                                     <a><i class="fa fa-medkit"></i> Modules <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li>
-                                            <a href="#"><span class="glyphicon glyphicon-th"></span> Class Routine</a>
+                                            <a href="#"> Class Routine</a>
                                         </li>
                                         <li>
-                                            <a href="#"><span class="glyphicon glyphicon-th-large"></span> Duty Roster</a>
+                                            <a href="#"> Duty Roster</a>
                                         </li>
                                         <li>
-                                            <a asp-action="Index" asp-controller="AttendanceMachines"><span class="glyphicon glyphicon-th-large"></span> Attendance</a>
+                                            <a asp-action="Index" asp-controller="AttendanceMachines"> Attendance</a>
                                         </li>
                                         <li>
-                                            <a asp-action="Index" asp-controller="PhoneSMS"><span class="glyphicon glyphicon-th-large"></span> SMS Panel</a>
+                                            <a asp-action="Index" asp-controller="PhoneSMS"> SMS Panel</a>
                                         </li>
                                         <li>
-                                            <a href="#"><span class="glyphicon glyphicon-th-large"></span>  Exam</a>
+                                            <a href="#">  Exam</a>
                                         </li>
                                         <li>
-                                            <a href="#"><span class="glyphicon glyphicon-th-large"></span> Academic Result</a>
+                                            <a href="#"> Academic Result</a>
                                         </li>
                                         <li>
-                                            <a><span class="glyphicon glyphicon-question-sign"></span> Question Bank <span class="fa fa-chevron-down"></span></a>
+                                            <a> Question Bank <span class="fa fa-chevron-down"></span></a>
                                             <ul class="nav child_menu">
                                                 <li>
-                                                    <a asp-action="Index" asp-controller="QuestionBanks"> <span class="glyphicon glyphicon-th-large"></span> Questions </a>
+                                                    <a asp-action="Index" asp-controller="QuestionBanks"> Questions </a>
                                                 </li>
                                                 <li>
-                                                    <a asp-action="Index" asp-controller="Chapters"> <span class="glyphicon glyphicon-th-large"></span> Chapters </a>
+                                                    <a asp-action="Index" asp-controller="QuestionFormation"> Question Formation</a>
+                                                </li>
+                                                <li>
+                                                    <a asp-action="Index" asp-controller="Chapters"> Chapters </a>
                                                 </li>
                                             </ul>
                                         </li>
@@ -213,7 +216,7 @@
                                 @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
                                 {
                                     <li>
-                                        <a><i class="fa fa-cog"></i> Settings <span class="fa fa-chrome"></span></a>
+                                        <a><i class="fa fa-cog"></i> Settings <span class="fa fa-chevron-down"></span></a>
                                         <ul class="nav child_menu">
                                             <li>
                                                 <a> Academic <span class="fa fa-chevron-down"></span></a>
@@ -284,8 +287,6 @@
                                                     </li>
                                                 </ul>
                                             </li>
-
-
                                         </ul>
                                     </li>
                                 }
@@ -301,20 +302,20 @@
                     <!-- /menu footer buttons -->
                     <div class="sidebar-footer hidden-small">
                         <a data-toggle="tooltip" data-placement="top" title="Settings">
-                            <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+                            <i class="fa fa-cog"></i>
                         </a>
                         <a data-toggle="tooltip" data-placement="top" title="FullScreen">
-                            <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+                            <i class="fa fa-expand"></i>
                         </a>
                         <a data-toggle="tooltip" data-placement="top" title="Lock">
-                            <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+                            <i class="fa fa-lock text-light"></i>
                         </a>
                         @if (_signInManager.IsSignedIn(User))
                         {
-                            <form asp-action="Logout" asp-controller="accounts" method="post">
-                                <button data-toggle="tooltip" data-placement="top" title="Logout" type="submit">
-                                    <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
-                                </button>
+                            <form id="logoutFormId" asp-action="Logout" asp-controller="accounts" method="post">
+                                <a href="javascript:$('#logoutFormId').submit();" data-toggle="tooltip" data-placement="top" title="Logout" type="submit">
+                                    <i class="fa fa-sign-out text-danger"></i>
+                                </a>                                
                             </form>
                         }
                         else

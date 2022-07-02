@@ -13,6 +13,7 @@ namespace SMS.Entities
 
         [Display(Name = "Subject Type")]
         public int AcademicSubjectTypeId { get; set; }
+        public AcademicSubjectType AcademicSubjectType { get; set; }
 
         [Display(Name ="Subject Code")]
         public int? SubjectCode { get; set; }
@@ -26,9 +27,12 @@ namespace SMS.Entities
         [Display(Name = "Is Active")]
         public bool Status { get; set; }
 
-        public AcademicSubjectType AcademicSubjectType { get; set; }
 
-        public int? AcademicClassId { get; set; }
+        public int AcademicClassId { get; set; }
         public AcademicClass AcademicClass { get; set; }
+
+        public int? QuestionFormatId { get; set; }
+        public QuestionFormat QuestionFormat { get; set; }
+        public IList<Chapter> Chapters { get; set; }
     }
 }

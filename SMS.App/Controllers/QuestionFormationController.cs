@@ -26,6 +26,7 @@ namespace SMS.App.Controllers
         [HttpPost]
         public async Task<JsonResult> CreatFormation(QuestionFormat model)
         {
+            model.Id = 0;
             if (ModelState.IsValid)
             {
                 try

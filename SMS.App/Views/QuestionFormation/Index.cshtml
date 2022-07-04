@@ -50,7 +50,7 @@
         <div class="card-header text-center"><span class="h6">Create Question Format</span> </div>
 
         <form id="FormationForm" method="post">
-            <input type="hidden" name="id" id="id" value="" />
+            <input type="hidden" id="id" name="id" />
             <div class="card-body shadow">
                 <div class="form-group">
                     <label for="formGroupExampleInput"> Formation Name <i class="fa fa-info-circle" data-placement="top" title="Give any kind of name" data-toggle="tooltip"></i></label>
@@ -95,6 +95,7 @@
 
             submitHandler: function (form) {
                 var formData = new FormData($('#FormationForm').get(0));
+
                 let url = "/QuestionFormation/EditFormation";
                 if ($('#id').val() == '') {
                     url = "/QuestionFormation/CreatFormation";
@@ -114,9 +115,9 @@
                             if ($('#id').val() == '') {
                                 let totalTr = $('#tableBody tr').length + 1;
                                 let slTd = '<td>' + totalTr + '</td>';
-                                let nameTd = '<td> ' + data.qf.name + '/></td>';
+                                let nameTd = '<td> ' + data.qf.name + '</td>';
                                 let formationTd = '<td> ' + data.qf.qFormat + '</td>';
-                                let countTd = '<td> ' + data.qf.numberOfQuestion + '/></td>';
+                                let countTd = '<td> ' + data.qf.numberOfQuestion + '</td>';
                                 let actionTd = '<td> <span class="btn-sm btn-warning editButton" data-id="' + data.qf.id + '"><i class="fa fa-edit"></i></td>';
                                 let tr = '<tr>' + slTd + nameTd + formationTd + countTd + actionTd + '</tr>';
                                 $('#tableBody').append(tr);

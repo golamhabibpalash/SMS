@@ -48,6 +48,22 @@ $('#QCreateVM_AcademicSubjectId').change(function () {
                 var op = "<option value='" + obj.id + "'>" + obj.chapterName + "</option>";
                 $('#QCreateVM_ChapterId').append(op);
             });
+
+        },
+        error: function () { }
+    });
+
+    $.ajax({
+        url: '/AcademicSubjects/GetSubjectDetailsBySubjectId?SubjectId=' + subjectId,
+        method: 'Post',
+        type: 'JSON',
+        success: function (data) {
+            $('#qDetailsDivId').empty();
+            for (var i = 0; i < data.questionFormat.numberOfQuestion; i++) {
+                let lbl = '<label asp-for="QCreateVM.QuestionDetails['+i+'].QuestionText" class="form-label col-md-2 col-2 text-md-right col-form-label bg-lightgray">Q. ('+i+++')</label>'
+                let myDiv = '<div class="form-group row pb-2">' + lbl + '</div>';
+                $('#qDetailsDivId').append(myDiv);
+            }
         },
         error: function () { }
     });

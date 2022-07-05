@@ -53,5 +53,15 @@ namespace SMS.DAL.Repositories
             var subjects = await _context.AcademicSubject.Where(a => a.AcademicClassId == classId).ToListAsync();
             return subjects;
         }
+
+        public override async Task<AcademicSubject> GetByIdAsync(int id)
+        {
+            var existingSubject = await _context.AcademicSubject
+                .Include(a => a.QuestionFormat)
+                .Where(m => m.Id == id)
+                .FirstOrDefaultAsync();
+
+            return existingSubject;
+        }
     }
 }

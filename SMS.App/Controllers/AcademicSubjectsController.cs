@@ -203,5 +203,11 @@ namespace SMS.App.Controllers
 
             return Json(subjects);
         }
+        
+        public async Task<JsonResult> GetSubjectDetailsBySubjectId(int SubjectId)
+        {
+            var existingSubject = await _academicSubjectManager.GetByIdAsync(SubjectId);
+            return Json(existingSubject);
+        }
     }
 }

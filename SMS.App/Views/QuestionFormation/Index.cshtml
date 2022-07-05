@@ -50,7 +50,7 @@
         <div class="card-header text-center"><span class="h6">Create Question Format</span> </div>
 
         <form id="FormationForm" method="post">
-            <input type="hidden" id="id" name="id" />
+            <input type="hidden" id="id" name="id" disabled/>
             <div class="card-body shadow">
                 <div class="form-group">
                     <label for="formGroupExampleInput"> Formation Name <i class="fa fa-info-circle" data-placement="top" title="Give any kind of name" data-toggle="tooltip"></i></label>
@@ -142,10 +142,13 @@
                 processData: false,
                 contentType: false,
                 success: function (data) {
+                    $('#id').removeAttr("disabled");
                     $('#id').val(data.id);
                     $('#Name').val(data.name);
                     $('#NumberOfQuestion').val(data.numberOfQuestion);
                     $('#QFormat').val(data.qFormat);
+                    $('#id').attr("disabled","disabled");
+
                 },
                 error: function () {
 

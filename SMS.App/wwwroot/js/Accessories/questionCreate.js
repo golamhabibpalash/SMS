@@ -16,6 +16,7 @@ function hideCreateForm() {
 }
 
 $('#QCreateVM_AcademicClassId').change(function () {
+    $('#qDetailsDivId').empty();
     let classId = $('#QCreateVM_AcademicClassId option:selected').val();
     $.ajax({
         url: '/AcademicSubjects/GetSubjectsByClassId?classId=' + classId,
@@ -29,6 +30,7 @@ $('#QCreateVM_AcademicClassId').change(function () {
                 var op = "<option value='" + obj.id + "'>" + obj.subjectName + "</option>";
                 $('#QCreateVM_AcademicSubjectId').append(op);
             });
+
         },
         error: function () { }
     });
@@ -59,10 +61,14 @@ $('#QCreateVM_AcademicSubjectId').change(function () {
         type: 'JSON',
         success: function (data) {
             $('#qDetailsDivId').empty();
+            let j = 1;
             for (var i = 0; i < data.questionFormat.numberOfQuestion; i++) {
-                let lbl = '<label asp-for="QCreateVM.QuestionDetails['+i+'].QuestionText" class="form-label col-md-2 col-2 text-md-right col-form-label bg-lightgray">Q. ('+i+++')</label>'
-                let myDiv = '<div class="form-group row pb-2">' + lbl + '</div>';
+                
+                let lbl = '<label asp-for="QCreateVM.QuestionDetails[' + i + '].QuestionText" class="form-label col-md-2 col-2 text-md-right col-form-label bg-lightgray">Q. (' + j + ')</label>';
+                let inputDiv = '<div class="col-md-10 col-10"><input asp-for="QCreateVM.QuestionDetails[' + i + '].QuestionText" class="form-control" required /></div>';
+                let myDiv = '<div class="form-group row pb-2">' + lbl + inputDiv + '</div>';
                 $('#qDetailsDivId').append(myDiv);
+                j++;
             }
         },
         error: function () { }

@@ -109,7 +109,19 @@ namespace SMS.App.Controllers
             var existingQuestion = await _questionManager.GetByIdAsync(id);
 
             QuestionEditVM questionEditVM = new QuestionEditVM();
-            questionEditVM.Question = existingQuestion;
+            questionEditVM.Id = id; 
+            List<QuestionDetails> questionDetails = new List<QuestionDetails>();
+            foreach (var item in existingQuestion.QuestionDetails)
+            {
+                questionDetails.Add(item);
+            }
+            questionEditVM.QuestionDetails = questionDetails;
+            questionEditVM.Uddipok = existingQuestion.Uddipok;
+            questionEditVM.ChapterId = existingQuestion.ChapterId;
+            //questionEditVM.Image = existingQuestion.Image;
+            questionEditVM.ImagePosition = existingQuestion.ImagePosition;
+            
+
             var aClass = await _academicClassManager.GetByIdAsync(existingQuestion.Chapter.AcademicSubject.AcademicClassId);
             questionEditVM.AcademicClassId = aClass.Id;
             var aSubject = await _academicSubjectManager.GetByIdAsync(existingQuestion.Chapter.AcademicSubjectId);
@@ -123,15 +135,36 @@ namespace SMS.App.Controllers
 
             ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name",questionEditVM.AcademicClassId);
             ViewData["AcademicSubjectId"] = new SelectList(academicSubjects, "Id", "SubjectName", questionEditVM.AcademicSubjectId);
-            ViewData["ChapterId"] = new SelectList(chapters, "Id", "ChapterName", questionEditVM.Question.ChapterId);
+            ViewData["ChapterId"] = new SelectList(chapters, "Id", "ChapterName", questionEditVM.ChapterId);
 
             return View(questionEditVM);
         }
         [HttpPost]
-        public async Task<IActionResult> EditQuestion(QuestionEditVM question)
+        public async Task<IActionResult> Edit(QuestionEditVM model, IFormCollection form)
         {
-            
-            return View();
+            Question question = await _questionManager.GetByIdAsync(model.Id);
+            question.ChapterId = model.ChapterId;
+            question.MACAddress = MACService.GetMAC();
+            question.EditedAt = DateTime.Now;
+            question.EditedBy = HttpContext.Session.GetString("UserId");
+            question.Uddipok = model.Uddipok;
+            foreach (var item in model.QuestionDetails)
+            {
+                QuestionDetails qDetails = (from q in question.QuestionDetails
+                                           where q.Id == item.Id
+                                           select q).FirstOrDefault();
+
+                qDetails.MACAddress = MACService.GetMAC();
+                qDetails.EditedAt = DateTime.Now;
+                qDetails.EditedBy = HttpContext.Session.GetString("UserId");
+                qDetails.QuestionText = item.QuestionText;                
+            }
+            bool isUpdated = await _questionManager.UpdateAsync(question);
+            if (isUpdated)
+            {
+                return RedirectToAction("AllQuestion");
+            }
+            return RedirectToAction("Edit", new {id=model.Id});
         }
     }
 }

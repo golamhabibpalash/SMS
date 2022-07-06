@@ -102,5 +102,36 @@ namespace SMS.App.Controllers
             }
             return Json("");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var existingQuestion = await _questionManager.GetByIdAsync(id);
+
+            QuestionEditVM questionEditVM = new QuestionEditVM();
+            questionEditVM.Question = existingQuestion;
+            var aClass = await _academicClassManager.GetByIdAsync(existingQuestion.Chapter.AcademicSubject.AcademicClassId);
+            questionEditVM.AcademicClassId = aClass.Id;
+            var aSubject = await _academicSubjectManager.GetByIdAsync(existingQuestion.Chapter.AcademicSubjectId);
+            questionEditVM.AcademicSubjectId = aSubject.Id;
+            
+            List<AcademicSubject> academicSubjects = new List<AcademicSubject>();
+            academicSubjects.Add(aSubject);
+
+            List<Chapter> chapters = new List<Chapter>();
+            chapters.Add(existingQuestion.Chapter);
+
+            ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name",questionEditVM.AcademicClassId);
+            ViewData["AcademicSubjectId"] = new SelectList(academicSubjects, "Id", "SubjectName", questionEditVM.AcademicSubjectId);
+            ViewData["ChapterId"] = new SelectList(chapters, "Id", "ChapterName", questionEditVM.Question.ChapterId);
+
+            return View(questionEditVM);
+        }
+        [HttpPost]
+        public async Task<IActionResult> EditQuestion(QuestionEditVM question)
+        {
+            
+            return View();
+        }
     }
 }

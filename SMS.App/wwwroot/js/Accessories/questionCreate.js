@@ -24,7 +24,6 @@ $('#QCreateVM_AcademicClassId').change(function () {
                 var op = "<option value='" + obj.id + "'>" + obj.subjectName + "</option>";
                 $('#QCreateVM_AcademicSubjectId').append(op);
             });
-
         },
         error: function () { }
     });

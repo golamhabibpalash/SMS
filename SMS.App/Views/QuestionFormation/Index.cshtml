@@ -109,6 +109,7 @@
                     success: function (data, status) {
                         if (data.qf == '') {
                             alertify.error(data.msg);
+                            $('#id').attr("disabled", "disabled");
                         }
                         else {
                             myForm.reset();
@@ -135,19 +136,17 @@
         });
         $('.editButton').click(function () {
             let myId = $(this).data("id");
-
+            $('#id').removeAttr("disabled");
             $.ajax({
                 url: "/QuestionFormation/GetById?id=" + myId,
                 type: "post",
                 processData: false,
                 contentType: false,
                 success: function (data) {
-                    $('#id').removeAttr("disabled");
                     $('#id').val(data.id);
                     $('#Name').val(data.name);
                     $('#NumberOfQuestion').val(data.numberOfQuestion);
                     $('#QFormat').val(data.qFormat);
-                    $('#id').attr("disabled","disabled");
 
                 },
                 error: function () {

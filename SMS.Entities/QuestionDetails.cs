@@ -11,5 +11,6 @@ namespace SMS.Entities
         public int QuestionId { get; set; }
         public Question Question { get; set; }
         public string QuestionText { get; set; }
+        public double QMark { get; set; } 
     }
 }

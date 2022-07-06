@@ -9,6 +9,7 @@ using SMS.Entities;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
@@ -41,8 +42,9 @@ namespace SMS.App.Controllers
         [HttpPost]
         public async Task<JsonResult> CreateQuestion(QuestionVM model, IList<IFormFile> files, IFormFile qImage, IFormCollection collection)
         {
-            Question nQuestion = new Question();
+            Question nQuestion = new Question();            
             nQuestion.QuestionDetails = new List<QuestionDetails>();
+            
             nQuestion.Uddipok = model.QCreateVM.Uddipok;
             if (model.QCreateVM.Image != null)
             {
@@ -62,16 +64,23 @@ namespace SMS.App.Controllers
                 nQuestion.ImagePosition = model.QCreateVM.ImagePosition;
             }
             nQuestion.ChapterId = model.QCreateVM.ChapterId;
-            var existingSubject = await _academicSubjectManager.GetByIdAsync(model.QCreateVM.AcademicSubjectId);
-            
-                foreach (var qd in model.QCreateVM.QuestionDetails)
-                {
-                    qd.QuestionId = nQuestion.Id;
-                    qd.MACAddress = MACService.GetMAC();
-                    qd.CreatedBy = HttpContext.Session.GetString("UserId");
-                    qd.CreatedAt = DateTime.Now;
-                    nQuestion.QuestionDetails.Add(qd);
-                }
+            if (model.QCreateVM.QuestionDetails.Count<=0)
+            {
+                return Json(new {msg="Questions did not found, try again."});
+            }
+            var existingSubject = await _academicSubjectManager.GetByIdAsync(model.QCreateVM.AcademicSubjectId);            
+            List<int> qMarks = existingSubject.QuestionFormat.QFormat.Split(',').Select(int.Parse).ToList();
+            int qSl = 0;
+            foreach (var qd in model.QCreateVM.QuestionDetails)
+            {
+                qd.QuestionId = nQuestion.Id;
+                qd.MACAddress = MACService.GetMAC();
+                qd.CreatedBy = HttpContext.Session.GetString("UserId");
+                qd.CreatedAt = DateTime.Now;
+                qd.QMark = qMarks.ElementAt(qSl);
+                nQuestion.QuestionDetails.Add(qd);
+                qSl++;
+            }
             nQuestion.CreatedAt = DateTime.Now;
             nQuestion.CreatedBy = HttpContext.Session.GetString("UserId");
             nQuestion.MACAddress = MACService.GetMAC();
@@ -88,7 +97,6 @@ namespace SMS.App.Controllers
                 }
                 catch (System.Exception)
                 {
-
                     throw;
                 }
             }

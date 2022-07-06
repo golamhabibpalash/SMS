@@ -1,10 +1,4 @@
-﻿////$(document).click(function (e) {
-////    if (!$(e.target).hasClass("btn") && $(e.target).parents(".questionCreateDivArea").length === 0)
-////    {
-////        $(".questionCreateDivArea").hide();
-////    }
-////});
-
+﻿
 function showCreateForm() {
     document.getElementById("questionCreateDivId").style.display = "block";
     document.getElementById("myPage").style.opacity = "0.5";    
@@ -65,7 +59,7 @@ $('#QCreateVM_AcademicSubjectId').change(function () {
             for (var i = 0; i < data.questionFormat.numberOfQuestion; i++) {
                 
                 let lbl = '<label asp-for="QCreateVM.QuestionDetails[' + i + '].QuestionText" class="form-label col-md-2 col-2 text-md-right col-form-label bg-lightgray">Q. (' + j + ')</label>';
-                let inputDiv = '<div class="col-md-10 col-10"><input asp-for="QCreateVM.QuestionDetails[' + i + '].QuestionText" class="form-control" required /></div>';
+                let inputDiv = '<div class="col-md-10 col-10"><input name="QCreateVM.QuestionDetails[' + i + '].QuestionText" class="form-control" required /></div>';
                 let myDiv = '<div class="form-group row pb-2">' + lbl + inputDiv + '</div>';
                 $('#qDetailsDivId').append(myDiv);
                 j++;

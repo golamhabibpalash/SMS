@@ -16,10 +16,12 @@ namespace SMS.App.Controllers
     public class QuestionBanksController : Controller
     {
         private readonly IAcademicClassManager _academicClassManager;
+        private readonly IAcademicSubjectManager _academicSubjectManager;
         private readonly IQuestionManager _questionManager;
         private readonly IWebHostEnvironment _host;
-        public QuestionBanksController(IAcademicClassManager academicClassManager, IQuestionManager questionManager, IWebHostEnvironment host)
+        public QuestionBanksController(IAcademicClassManager academicClassManager, IQuestionManager questionManager, IAcademicSubjectManager academicSubjectManager, IWebHostEnvironment host)
         {
+            _academicSubjectManager = academicSubjectManager;
             _academicClassManager = academicClassManager;
             _questionManager = questionManager;
             _host = host;
@@ -60,9 +62,8 @@ namespace SMS.App.Controllers
                 nQuestion.ImagePosition = model.QCreateVM.ImagePosition;
             }
             nQuestion.ChapterId = model.QCreateVM.ChapterId;
+            var existingSubject = await _academicSubjectManager.GetByIdAsync(model.QCreateVM.AcademicSubjectId);
             
-            if (model.QCreateVM.QuestionDetails.Count==4)
-            {
                 foreach (var qd in model.QCreateVM.QuestionDetails)
                 {
                     qd.QuestionId = nQuestion.Id;
@@ -71,11 +72,6 @@ namespace SMS.App.Controllers
                     qd.CreatedAt = DateTime.Now;
                     nQuestion.QuestionDetails.Add(qd);
                 }
-            }
-            else
-            {
-                return Json("");
-            }
             nQuestion.CreatedAt = DateTime.Now;
             nQuestion.CreatedBy = HttpContext.Session.GetString("UserId");
             nQuestion.MACAddress = MACService.GetMAC();

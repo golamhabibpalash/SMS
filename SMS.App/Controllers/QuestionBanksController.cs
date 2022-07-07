@@ -49,6 +49,7 @@ namespace SMS.App.Controllers
             if (model.QCreateVM.Image != null)
             {
                 string questionImage = "";
+                string timeDate = DateTime.Now.Year.ToString() + "_" + DateTime.Now.Month.ToString().PadLeft(2,'0') + "_" + DateTime.Now.Day.ToString().PadLeft(2, '0') + "_" + DateTime.Now.ToString("hhmmss");
                 string root = _host.WebRootPath;
                 if (string.IsNullOrEmpty(root))
                 {
@@ -56,7 +57,7 @@ namespace SMS.App.Controllers
                 }
                 string folder = "Images/Question";
                 string fileExtension = Path.GetExtension(model.QCreateVM.Image.FileName);
-                questionImage ="q_"+model.QCreateVM.AcademicClassId+"_"+model.QCreateVM.AcademicSubjectId+"_"+"_"+model.QCreateVM.ChapterId+"_"+nQuestion.Id+ fileExtension;
+                questionImage ="q_"+model.QCreateVM.AcademicClassId+"_"+model.QCreateVM.AcademicSubjectId+"_"+"_"+model.QCreateVM.ChapterId+"_"+ timeDate + fileExtension;
                 string pathCombine = Path.Combine(root, folder, questionImage);
                 using var stream = new FileStream(pathCombine, FileMode.Create);
                 await model.QCreateVM.Image.CopyToAsync(stream);
@@ -119,10 +120,12 @@ namespace SMS.App.Controllers
             questionEditVM.QuestionDetails = questionDetails;
             questionEditVM.Uddipok = existingQuestion.Uddipok;
             questionEditVM.ChapterId = existingQuestion.ChapterId;
-            questionEditVM.ImageUrl = existingQuestion.Image;
+            if (existingQuestion.Image!=null)
+            {
+                questionEditVM.ImageUrl = existingQuestion.Image;
+            }
             questionEditVM.ImagePosition = existingQuestion.ImagePosition;
             
-
             var aClass = await _academicClassManager.GetByIdAsync(existingQuestion.Chapter.AcademicSubject.AcademicClassId);
             questionEditVM.AcademicClassId = aClass.Id;
             var aSubject = await _academicSubjectManager.GetByIdAsync(existingQuestion.Chapter.AcademicSubjectId);
@@ -140,6 +143,8 @@ namespace SMS.App.Controllers
 
             return View(questionEditVM);
         }
+
+
         [HttpPost]
         public async Task<IActionResult> Edit(QuestionEditVM model, IFormCollection form)
         {
@@ -150,6 +155,29 @@ namespace SMS.App.Controllers
             question.EditedBy = HttpContext.Session.GetString("UserId");
             question.Uddipok = model.Uddipok;
             question.ImagePosition = model.ImagePosition;
+            if (model.Image != null)
+            {
+                string questionImage = "";
+                string timeDate = DateTime.Now.Year.ToString() + "_" + DateTime.Now.Month.ToString().PadLeft(2, '0') + "_" + DateTime.Now.Day.ToString().PadLeft(2, '0') + "_" + DateTime.Now.ToString("hhmmss"); 
+                string root = _host.WebRootPath;
+                if (string.IsNullOrEmpty(root))
+                {
+                    root = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                }
+                string folder = "Images/Question";
+                string fileExtension = Path.GetExtension(model.Image.FileName);
+                questionImage = model.ImageUrl;
+                if (string.IsNullOrEmpty(model.ImageUrl))
+                {
+                    questionImage = "q_" + model.AcademicClassId + "_" + model.AcademicSubjectId + "_" + "_" + model.ChapterId + "_" + timeDate + fileExtension;
+                }
+                string pathCombine = Path.Combine(root, folder, questionImage);
+                using var stream = new FileStream(pathCombine, FileMode.Create);
+                await model.Image.CopyToAsync(stream);
+
+                question.Image = questionImage;
+            }
+
             foreach (var item in model.QuestionDetails)
             {
                 QuestionDetails qDetails = (from q in question.QuestionDetails

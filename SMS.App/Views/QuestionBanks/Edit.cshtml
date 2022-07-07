@@ -4,6 +4,7 @@
     ViewData["Title"] = "Question Edit";
     GlobalUI.PageTitle = ViewBag.Title;
     int qSl = 0;
+    string imgSrc = "";
 }
 
 
@@ -49,15 +50,17 @@
                         <div class="col-md-6 col-12 pb-2 pb-md-0 pb-lg-0">
                             <input type="file" asp-for="Image" />
                         </div>
-
+                        <input type="hidden" asp-for="ImageUrl" />
                         
                         <div class="col-md-4 col-10">
+
                             @if (Model.ImageUrl != null)
                             {
-                                <div id="imageHolderDiv">
-                                    <img id="blah" src="~/Images/Question/@Model.ImageUrl" alt="Image" style="width:100%;" />
-                                </div>
+                                imgSrc = "/Images/Question/"+@Model.ImageUrl;
                             }
+                            <div id="imageHolderDiv">
+                                <img id="blah" src=@imgSrc alt="Image" style="width:100%;" />
+                            </div>
                             <select asp-for="ImagePosition" class="form-control form-control-sm">
                                 <option value="" disabled selected>Select Image Position</option>
                                 <option value="Top">Top</option>

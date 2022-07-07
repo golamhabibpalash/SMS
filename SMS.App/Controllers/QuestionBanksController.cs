@@ -40,7 +40,7 @@ namespace SMS.App.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> CreateQuestion(QuestionVM model, IList<IFormFile> files, IFormFile qImage, IFormCollection collection)
+        public async Task<JsonResult> CreateQuestion(QuestionVM model, IList<IFormFile> files, IFormFile Image)
         {
             Question nQuestion = new Question();            
             nQuestion.QuestionDetails = new List<QuestionDetails>();
@@ -55,14 +55,15 @@ namespace SMS.App.Controllers
                     root = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
                 }
                 string folder = "Images/Question";
-                string fileExtension = Path.GetExtension(qImage.FileName);
+                string fileExtension = Path.GetExtension(model.QCreateVM.Image.FileName);
                 questionImage ="q_"+model.QCreateVM.AcademicClassId+"_"+model.QCreateVM.AcademicSubjectId+"_"+"_"+model.QCreateVM.ChapterId+"_"+nQuestion.Id+ fileExtension;
                 string pathCombine = Path.Combine(root, folder, questionImage);
                 using var stream = new FileStream(pathCombine, FileMode.Create);
-                await qImage.CopyToAsync(stream);                
+                await model.QCreateVM.Image.CopyToAsync(stream);
 
-                nQuestion.ImagePosition = model.QCreateVM.ImagePosition;
+                nQuestion.Image = questionImage;
             }
+            nQuestion.ImagePosition = model.QCreateVM.ImagePosition;
             nQuestion.ChapterId = model.QCreateVM.ChapterId;
             if (model.QCreateVM.QuestionDetails.Count<=0)
             {
@@ -118,7 +119,7 @@ namespace SMS.App.Controllers
             questionEditVM.QuestionDetails = questionDetails;
             questionEditVM.Uddipok = existingQuestion.Uddipok;
             questionEditVM.ChapterId = existingQuestion.ChapterId;
-            //questionEditVM.Image = existingQuestion.Image;
+            questionEditVM.ImageUrl = existingQuestion.Image;
             questionEditVM.ImagePosition = existingQuestion.ImagePosition;
             
 
@@ -148,6 +149,7 @@ namespace SMS.App.Controllers
             question.EditedAt = DateTime.Now;
             question.EditedBy = HttpContext.Session.GetString("UserId");
             question.Uddipok = model.Uddipok;
+            question.ImagePosition = model.ImagePosition;
             foreach (var item in model.QuestionDetails)
             {
                 QuestionDetails qDetails = (from q in question.QuestionDetails

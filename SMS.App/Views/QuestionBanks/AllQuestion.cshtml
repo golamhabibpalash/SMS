@@ -45,14 +45,52 @@
                     <label class="col-form-label">@(sl++).</label>
                 </div>
                 <div class="col-11 col-md-11 col-sm-11">
-                    <span class="form-control-plaintext" readonly>
-                        @item.Uddipok
-                        (<span class="text-secondary pb-0">
-                            <span>Class:@item.Chapter.AcademicSubject.AcademicClass.Name; </span>
-                            <span>Subject:@item.Chapter.AcademicSubject.SubjectName; </span>
-                            <span>Chapter:(@item.Chapter.ChapterNumber) @item.Chapter.ChapterName  </span>
-                        </span>) <a asp-action="Edit" asp-controller="QuestionBanks" asp-route-id="@item.Id" class="text-warning" tooltips="Edit"><i class="fa fa-edit" data-toggle="tooltip" data-placement="top" title="Edit"></i></a> 
-                    </span>
+                    @if (item.Image != null)
+                    {
+                        if (item.ImagePosition != null)
+                        {
+                            if (item.ImagePosition == "Top")
+                            {
+                                <img src="~/Images/Question/@item.Image" alt="Image" style="width:250px;" />
+                                <span class="form-control-plaintext" readonly>
+                                    @item.Uddipok
+                                    (<span class="text-secondary pb-0">
+                                        <span>Class:@item.Chapter.AcademicSubject.AcademicClass.Name; </span>
+                                        <span>Subject:@item.Chapter.AcademicSubject.SubjectName; </span>
+                                        <span>Chapter:(@item.Chapter.ChapterNumber) @item.Chapter.ChapterName  </span>
+                                    </span>) <a asp-action="Edit" asp-controller="QuestionBanks" asp-route-id="@item.Id" class="text-warning" tooltips="Edit"><i class="fa fa-edit" data-toggle="tooltip" data-placement="top" title="Edit"></i></a>
+                                </span>
+                            }
+                            //else if (item.ImagePosition == "center")
+                            //{
+
+                            //}
+                            else
+                            {
+                                <span class="form-control-plaintext" readonly>
+                                    @item.Uddipok
+                                    (<span class="text-secondary pb-0">
+                                        <span>Class:@item.Chapter.AcademicSubject.AcademicClass.Name; </span>
+                                        <span>Subject:@item.Chapter.AcademicSubject.SubjectName; </span>
+                                        <span>Chapter:(@item.Chapter.ChapterNumber) @item.Chapter.ChapterName  </span>
+                                    </span>) <a asp-action="Edit" asp-controller="QuestionBanks" asp-route-id="@item.Id" class="text-warning" tooltips="Edit"><i class="fa fa-edit" data-toggle="tooltip" data-placement="top" title="Edit"></i></a>
+                                </span>
+                                <img src="~/Images/Question/@item.Image" alt="Image" style="width:250px;" />
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        <span class="form-control-plaintext" readonly>
+                            @item.Uddipok
+                            (<span class="text-secondary pb-0">
+                                <span>Class:@item.Chapter.AcademicSubject.AcademicClass.Name; </span>
+                                <span>Subject:@item.Chapter.AcademicSubject.SubjectName; </span>
+                                <span>Chapter:(@item.Chapter.ChapterNumber) @item.Chapter.ChapterName  </span>
+                            </span>) <a asp-action="Edit" asp-controller="QuestionBanks" asp-route-id="@item.Id" class="text-warning" tooltips="Edit"><i class="fa fa-edit" data-toggle="tooltip" data-placement="top" title="Edit"></i></a>
+                        </span>
+                    }
                 </div>
             </div>
             <div class="row mb-3">

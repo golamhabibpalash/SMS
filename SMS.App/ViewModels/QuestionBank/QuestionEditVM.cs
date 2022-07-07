@@ -11,7 +11,7 @@ namespace SMS.App.ViewModels.QuestionBank
         [Required]
         public string Uddipok { get; set; } = string.Empty;
         public IFormFile Image { get; set; }
-
+        public string ImageUrl { get; set; } = string.Empty;
         [Display(Name = "Position")]
         public string ImagePosition { get; set; }
         public List<QuestionDetails> QuestionDetails { get; set; }

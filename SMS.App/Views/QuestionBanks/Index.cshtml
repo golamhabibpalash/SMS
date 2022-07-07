@@ -15,20 +15,20 @@
     </style>
 }
 <div class="sticky-top text-right">
-    <button type="button" class="btn-sm btn-primary" data-toggle="modal" data-target="#exampleModalCenter" data-placement="top" title="Add New Question">
-        <i class="fa fa-plus"></i>
+    <a asp-action="AllQuestion" asp-controller="QuestionBanks" class="btn btn-sm btn-info">
+        All Questions
+    </a>
+    <button type="button" class="btn-sm btn-info" data-toggle="modal" data-target="#makeQuestion">
+        <i class="fa fa-plus" data-toggle="tooltip" data-placement="top" title="Make Question"> Make Question</i>
+    </button>
+    <button type="button" class="btn-sm btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+        <i class="fa fa-plus" data-toggle="tooltip" data-placement="top" title="Add New Question"> Add</i>
     </button>
 </div>
 <div id="questionCreateDivId" class="p-1" >
     @await Component.InvokeAsync("QuestionCreate")
 </div>
-<div class="row">
-    <div class="col-md-12 text-md-right">
-        <a asp-action="AllQuestion" asp-controller="QuestionBanks" class="btn btn-info">
-            All Questions
-        </a>
-    </div>
-</div>
+
 <div class="row">
     <div class="col-md-3">
         <div class="card text-white bg-primary mb-3">

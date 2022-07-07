@@ -10,9 +10,6 @@
                 </div>
                 <div class="modal-body">
                     <div class="container-fluid" >
-                        @*<div class="row">
-                            <button id="divCloseButton" onclick="hideCreateForm()">x</button>
-                        </div>*@
                         <div class="row">
                             <div class="col-md-12">
                                 <form id="questionCreateForm" method="post" enctype="multipart/form-data">
@@ -70,24 +67,14 @@
 
                                     <div class="row">
                                         <div class="col-md-12" id="qDetailsDivId">
-                                            @*@for (int i = 0; i < 4; i++)
-                                            {
-                                                <div class="form-group row pb-2">
-                                                    <label asp-for="QCreateVM.QuestionDetails[i].QuestionText" class="form-label col-md-2 col-2 text-md-right col-form-label bg-lightgray">Q. @(i+1)</label>
-                                                    <div class="col-md-10 col-10">
-                                                        <input asp-for="QCreateVM.QuestionDetails[i].QuestionText" class="form-control" required />
-                                                    </div>
-                                                </div>
-                                            }*@
+                                            
                                         </div>
                                     </div>
 
                                     <div class="modal-footer">
                                         <div class="col-md-12">
 
-                                            @*<div class="col-md-6 text-md-left">
-                                                <a class="btn btn-info" asp-action="Index">Back to List</a>
-                                            </div>*@
+                                            
                                             <div class="col-md-6 text-md-right">
                                                 <span class="btn btn-warning">Clear</span>
                                                 <input type="submit" value="Create" class="btn btn-primary" />

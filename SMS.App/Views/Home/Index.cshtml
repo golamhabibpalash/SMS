@@ -44,7 +44,7 @@
                                     <tr>
                                         <td>@item.Designation.DesignationName</td>
                                         <td class="text-center">
-                                            <a class="text-light" asp-action="Index" asp-controller="AttendanceMachines" asp-route-dateTime="@DateTime.Today.Date" asp-route-userType="e">
+                                            <a class="text-light" asp-action="Index" asp-controller="AttendanceMachines" asp-route-attendanceFor="employees" asp-route-date="@DateTime.Today.ToString("yyyy-MM-dd")" asp-route-attendanceType="all">
                                                 <div class="w-100 bg-info">@item.AttendedEmployees.Count()</div>
                                             </a>
                                         </td>
@@ -55,7 +55,7 @@
                                 <tr class="font-weight-bold bg-info text-light">
                                     <td>Total Employees</td>
                                     <td class="text-center">
-                                        <a class="text-info" asp-action="Index" asp-controller="AttendanceMachines" asp-route-dateTime="@DateTime.Today.Date" asp-route-userType="e">
+                                        <a class="text-info" asp-action="Index" asp-controller="AttendanceMachines" asp-route-attendanceFor="employees" asp-route-date="@DateTime.Today.ToString("yyyy-MM-dd")" asp-route-attendanceType="all">
                                             <div class="w-100 bg-light">
                                                 @totalAttendedEmployees
                                             </div>
@@ -90,7 +90,7 @@
                                             </a>
                                         </td>
                                         <td class="text-center">
-                                            <a class="text-light" asp-action="Index" asp-controller="AttendanceMachines" asp-route-dateTime="@DateTime.Today.Date" asp-route-classId="@sClass.AcademicClass.Id" asp-route-userType="s">
+                                            <a class="text-light" asp-action="Index" asp-controller="AttendanceMachines" asp-route-attendanceFor="students" asp-route-dateTime="@DateTime.Today.ToString("yyyy-MM-dd")" asp-route-attendanceType="attended" asp-route-aSessionId="1" asp-route-aClassId="@sClass.AcademicClass.Id">
                                                 <div class="w-100 bg-info">
                                                     @sClass.AttendedStudents.Count()
                                                 </div>

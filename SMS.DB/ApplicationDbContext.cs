@@ -1,7 +1,13 @@
 ﻿
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using SMS.Entities;
+using SMS.Entities.AdditionalModels;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Reflection.Emit;
+using System.Threading.Tasks;
 
 namespace SMS.DB
 {
@@ -45,9 +51,22 @@ namespace SMS.DB
         public DbSet<QuestionDetails> QuestionDetails { get; set; }
         public DbSet<QuestionFormat> QuestionFormats { get; set; }
 
+        [NotMapped]
+        public DbSet<AttendanceVM> AttendanceVMs { get; set; }
+
+        
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            builder.Entity<AttendanceVM>(entity => entity.HasNoKey());
         }
+        //public async Task<IEnumerable<AttendanceVM>> GetAttendanceResult(string attendanceFor, string date, string attendanceType, int? aSessionId, int? aClassId)
+        //{
+        //    var pAttendanceFor = new SqlParameter("attendanceFor", attendanceFor);
+        //    var pDate = new SqlParameter("date", date);
+        //    var pAttendanceType = new SqlParameter("attendanceType", attendanceType);
+
+        //    return await this.AttendanceVMs.FromSqlInterpolated($"sp_get_attendance_by_date {pAttendanceFor},{pDate},{pAttendanceType}").ToArrayAsync();
+        //}
     }
 }

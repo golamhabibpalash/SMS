@@ -3,6 +3,7 @@ using SMS.BLL.Contracts;
 using SMS.DAL.Contracts;
 using SMS.DAL.Repositories;
 using SMS.Entities;
+using SMS.Entities.AdditionalModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,10 +21,17 @@ namespace SMS.BLL.Managers
            _attendanceMachineRepository = attendanceMachineRepository;
         }
 
+
         public async Task<List<Tran_MachineRawPunch>> GetAllAttendanceByDateAsync(DateTime dateTime)
         {
             return await _attendanceMachineRepository.GetAllAttendanceByDateAsync(dateTime);
         }
+
+        public async Task<IEnumerable<AttendanceVM>> GetAttendanceByDateAsync(string attendanceFor, string date, string attendanceType, int? aSessionId, int? aClassId)
+        {
+            return await _attendanceMachineRepository.GetAttendanceByDateAsync(attendanceFor, date, attendanceType, aSessionId, aClassId);
+        }
+
 
         public async Task<Tran_MachineRawPunch> GetTodaysAttendanceByUserIdAsync(int attendanceId)
         {

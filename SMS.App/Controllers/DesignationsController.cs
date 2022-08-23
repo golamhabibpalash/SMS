@@ -30,6 +30,7 @@ namespace SMS.App.Controllers
         // GET: Designations
         public async Task<IActionResult> Index()
         {
+
             return View(await _designatinManager.GetAllAsync());
         }
 
@@ -180,7 +181,8 @@ namespace SMS.App.Controllers
         [Route("/api/designations/GetByEmpType")]
         public async Task<IReadOnlyCollection<Designation>> GetByEmpType(int id)
         {
-            return await _designatinManager.GetByEmpType(id);
+            List<Designation> employees = (List<Designation>)await _designatinManager.GetByEmpType(id);
+            return employees;
         }
     }
 }

@@ -25,6 +25,15 @@
                     <span asp-validation-for="DesignationTypeId" class="text-danger"></span>
                 </div>
             </div>
+            <div class="form-group row">
+                <label asp-for="EmpTypeId" class="control-label col-form-label col-md-2 text-right"></label>
+                <div class="col-md-10">
+                    <select asp-for="EmpTypeId" asp-items="@ViewBag.EmpTypeList" class="form-control">
+                        <option selected disabled>Select Type</option>
+                    </select>
+                    <span asp-validation-for="EmpTypeId" class="text-danger"></span>
+                </div>
+            </div>
 
             <div class="form-group row offset-2">
                 <div class="col-md-12 text-center">

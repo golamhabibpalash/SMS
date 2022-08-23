@@ -39,10 +39,7 @@ namespace SMS.App.Controllers
             
             List<AttendanceVM> attendanceVMs = new List<AttendanceVM>();
 
-            if (dateTime == null)
-            {
-                return View(attendanceVMs);
-            }
+            
             ViewBag.attendanceDate = Convert.ToDateTime(dateTime).ToString("yyyy-MM-dd");
 
             if (!string.IsNullOrEmpty(attendanceFor) && !string.IsNullOrEmpty(attendanceType))

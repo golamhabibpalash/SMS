@@ -264,28 +264,28 @@
         });
 
         //Code for Designation name Load
-        $('#EmpTypeId').change(function () {
-            let id = $('#EmpTypeId option:selected').val();
+        //$('#EmpTypeId').change(function () {
+        //    let id = $('#EmpTypeId option:selected').val();
 
-            $.ajax({
-                url: "/api/designations/GetByEmpType?id="+id,
-                dataType: 'JSON',
-                type: 'POST',
-                cache: false,
-                success: function (data) {
-                    $('#DesignationId').empty();
-                    var op = '<option disabled selected>Select Designation Name</option>';
-                    $('#DesignationId').append(op);
-                    $.each(data, function (i, obj) {
-                        var ob = '<option value="' + obj.id + '">' + obj.designationName + '</option>';
-                        $('#DesignationId').append(ob);
-                    });
-                },
-                error: function (err) {
+        //    $.ajax({
+        //        url: "/api/designations/GetByEmpType?id="+id,
+        //        dataType: 'JSON',
+        //        type: 'POST',
+        //        cache: false,
+        //        success: function (data) {
+        //            $('#DesignationId').empty();
+        //            var op = '<option disabled selected>Select Designation Name</option>';
+        //            $('#DesignationId').append(op);
+        //            $.each(data, function (i, obj) {
+        //                var ob = '<option value="' + obj.id + '">' + obj.designationName + '</option>';
+        //                $('#DesignationId').append(ob);
+        //            });
+        //        },
+        //        error: function (err) {
 
-                }
-            });
-        });
+        //        }
+        //    });
+        //});
 
         //Code for PresentDistrict Load
         $('#PresentDivisionId').change(function () {

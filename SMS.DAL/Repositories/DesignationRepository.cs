@@ -29,7 +29,9 @@ namespace SMS.DAL.Repositories
 
         public async Task<IReadOnlyCollection<Designation>> GetByEmpType(int id)
         {
-            return await _context.Designation.Where(d => d.EmpTypeId == id).ToListAsync();
+            var employees = await _context.Designation.Where(d => d.EmpTypeId == id).ToListAsync();
+
+            return employees;
         }
     }
 }

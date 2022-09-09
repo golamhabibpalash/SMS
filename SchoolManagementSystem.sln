@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMS.DAL", "SMS.DAL\SMS.DAL.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMS.BLL", "SMS.BLL\SMS.BLL.csproj", "{369A13F5-179F-4C8E-9F2E-44EA717B21EE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMS.Reports", "SMS.Reports\SMS.Reports.csproj", "{70DA310B-14D1-4FB5-85FE-E9464A4696E5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{369A13F5-179F-4C8E-9F2E-44EA717B21EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{369A13F5-179F-4C8E-9F2E-44EA717B21EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{369A13F5-179F-4C8E-9F2E-44EA717B21EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70DA310B-14D1-4FB5-85FE-E9464A4696E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70DA310B-14D1-4FB5-85FE-E9464A4696E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70DA310B-14D1-4FB5-85FE-E9464A4696E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70DA310B-14D1-4FB5-85FE-E9464A4696E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

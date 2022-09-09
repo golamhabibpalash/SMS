@@ -8,7 +8,6 @@ namespace SMS.Entities
 {
     public class StudentPaymentDetails : CommonProps
     {
-
         public int StudentPaymentId { get; set; }
 
         public int StudentFeeHeadId { get; set; }

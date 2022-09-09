@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Update="ReportDS\Rpt_Student_Summary.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Rpt_Student_Summary.xsd</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="ReportDS\Rpt_Student_Summary.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>Rpt_Student_Summary.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+</Project>

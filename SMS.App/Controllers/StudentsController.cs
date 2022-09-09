@@ -469,5 +469,12 @@ namespace SchoolManagementSystem.Controllers
             int roll = Convert.ToInt32(year+aClass+cRoll);
             return roll;
         }
+
+        public async Task<IActionResult> StudentReport()
+        {
+            var students = await _studentManager.GetAllAsync();
+            
+            return View();
+        }
     }
 }

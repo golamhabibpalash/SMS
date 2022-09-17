@@ -3,6 +3,14 @@
 @{
     ViewData["Title"] = "Edit Information";
     GlobalUI.PageTitle = "Student (" + Model.Name + "-" + Model.ClassRoll + ") Information Edit";
+
+    string isCheckedActive = string.Empty;
+    string isCheckedInActive = string.Empty;
+    isCheckedActive = Model.Status == true ? "Checked" : "";
+    isCheckedInActive = Model.Status == true ? "" : "Checked";
+    string studentStatus = Model.Status == true ? "Active" : "Inactive";
+    string isSelectedActive = Model.Status == true ? "Selected" : "";
+    string isSelectedInActive = Model.Status == true ? "" : "Selected";
 }
 @if (ViewBag.msg != null)
 {
@@ -15,7 +23,7 @@
             <input type="hidden" asp-for="Id" />
             <div class="row">
                 <div class="col-md-10 offset-md-2">
-                    <h6 class="alert alert-heading alert-info">Academic Information</h6>
+                    <h6 class="alert-info p-2">Academic Information</h6>
                 </div>
             </div>
 
@@ -61,7 +69,7 @@
 
             <div class="row">
                 <div class="col-md-10 offset-md-2">
-                    <h6 class="alert alert-heading alert-info">Personal Information</h6>
+                    <h6 class="p-2 alert-heading alert-info">Personal Information</h6>
                 </div>
             </div>
             <div class="form-group row">
@@ -184,7 +192,7 @@
 
             <div class="row">
                 <div class="col-md-10 offset-md-2">
-                    <h6 class="alert alert-heading alert-info">Present Address Information</h6>
+                    <h6 class="p-2 alert-info">Present Address Information</h6>
                 </div>
             </div>
             <div class="form-group row">
@@ -232,7 +240,7 @@
 
             <div class="row">
                 <div class="col-md-10 offset-md-2">
-                    <h6 class="alert alert-heading alert-info">Permanent Address Information <span>(<input type="checkbox" id="sameAddress" /> <label for="sameAddress">Same as Present Address</label> )</span></h6>
+                    <h6 class="p-2 alert-info">Permanent Address Information <span>(<input type="checkbox" id="sameAddress" /> <label for="sameAddress">Same as Present Address</label> )</span></h6>
                 </div>
             </div>
             <div class="form-group row">
@@ -284,13 +292,61 @@
             </div>
             <div class="form-group form-check row">
                 <label class="form-check-label control-label col-form-label col-md-4 offset-2">
-                    <input class="form-check-input" asp-for="Status" /> @Html.DisplayNameFor(model => model.Status)
+                    <span class="alert alert-info">@Model.Name is @studentStatus</span> <i class="btn btn-info"  data-toggle="modal" data-target="#exampleModalCenter">Change</i>;
+                    @*<input class="form-check-input" asp-for="Status" data-toggle="modal" data-target="#exampleModalCenter" /> @Html.DisplayNameFor(model => model.Status)*@
                 </label>
             </div>
             <div class="form-group text-center">
                 <partial name="_Update_Back" model="@Model.Id" />
-                @*<input type="submit" value="Update" class="btn btn-primary" />
-                    <a class="btn btn-success" asp-action="Index" title="Go To List" data-toggle="tooltip" data-placement="top"><i class="fa fa-list"></i></a>*@
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <form id="statusForm" asp-action="ChangeStatus" asp-controller="Students" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Student Active/Inactive</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="studentId" value="@Model.Id" />
+                    <div class="form-group row">
+                        <label class="col-md-3 col-form-label">Date</label>
+                        <div class="col-md-9">
+                            <input class="date form-control" type="date" name="operationDate"  />
+                        </div>
+                    </div>     
+                    <div class="form-group row">                        
+                        <label class="col-md-3 col-form-label" for="studentStatus1">
+                            Status
+                        </label>
+                        <div class="col-md-9">
+                            <select class="form-control" name="studentStatus">
+                                @if (Model.Status)
+                                {
+                                    <option value="True" selected>Active</option>
+                                    <option value="False">Inactive</option>
+                                }
+                                else
+                                {
+                                    <option value="True">Active</option>
+                                    <option value="False" selected>Inactive</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="submitStatusForm()">Save changes</button>
+                </div>
             </div>
         </form>
     </div>
@@ -306,5 +362,8 @@
                 $('#previousImageId').css('display', 'none');
             });
         });
+        function submitStatusForm() {
+            document.getElementById("statusForm").submit();
+        }
     </script>
 }

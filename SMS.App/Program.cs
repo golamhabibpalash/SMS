@@ -65,7 +65,6 @@ builder.Services.AddControllersWithViews()
 // Add services to the container.
 builder.Services.AddRazorPages();
 
-//builder.Services.AddAutoMapper();
 builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
@@ -151,6 +150,13 @@ builder.Services.AddScoped<IQuestionManager, QuestionManager>();
 
 builder.Services.AddScoped<IQuestionFormationRepository, QuestionFormationRepository>();
 builder.Services.AddScoped<IQuestionFormationManager, QuestionFormationManager>();
+
+builder.Services.AddTransient<IStudentActivateHistRepository, StudentActivateHistRepository>();
+builder.Services.AddTransient<IStudentActivateHistManager, StudentActivateHistManager>();
+
+builder.Services.AddScoped<IEmployeeActivateHistRepository, EmployeeActivateHistRepository>();
+builder.Services.AddScoped<IEmployeeActivateHistManager, EmployeeActivateHistManager>();
+
 
 var app = builder.Build();
 

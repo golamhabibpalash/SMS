@@ -16,6 +16,7 @@ using AutoMapper;
 using NodaTime;
 using Microsoft.AspNetCore.Identity;
 using SMS.App.Utilities.ShortMessageService;
+using SMS.App.Utilities.MACIPServices;
 
 namespace SchoolManagementSystem.Controllers
 {
@@ -43,10 +44,11 @@ namespace SchoolManagementSystem.Controllers
         private readonly IPhoneSMSManager _phoneSMSManager;
         private readonly IAttendanceMachineManager _attendanceMachineManager;
         private readonly IInstituteManager _instituteManager;
+        private readonly IStudentActivateHistManager _studentActivateHistManager;
         #endregion
 
         #region Constructor
-        public StudentsController(IStudentManager studentManager, IAcademicClassManager academicClassManager, IWebHostEnvironment host, IMapper mapper, IAcademicSessionManager academicSessionManager, IStudentPaymentManager studentPaymentManager, IDistrictManager districtManager, IUpazilaManager upazilaManager, IAcademicSectionManager academicSectionManager, IBloodGroupManager bloodGroupManager, IDivisionManager divisionManager, INationalityManager nationalityManager, IGenderManager genderManager, IReligionManager religionManager, IStudentFeeHeadManager studentFeeHeadManager, IClassFeeListManager classFeeListManager, UserManager<ApplicationUser> userManager, IPhoneSMSManager phoneSMSManager, IAttendanceMachineManager attendanceMachineManager, IInstituteManager instituteManager)
+        public StudentsController(IStudentManager studentManager, IAcademicClassManager academicClassManager, IWebHostEnvironment host, IMapper mapper, IAcademicSessionManager academicSessionManager, IStudentPaymentManager studentPaymentManager, IDistrictManager districtManager, IUpazilaManager upazilaManager, IAcademicSectionManager academicSectionManager, IBloodGroupManager bloodGroupManager, IDivisionManager divisionManager, INationalityManager nationalityManager, IGenderManager genderManager, IReligionManager religionManager, IStudentFeeHeadManager studentFeeHeadManager, IClassFeeListManager classFeeListManager, UserManager<ApplicationUser> userManager, IPhoneSMSManager phoneSMSManager, IAttendanceMachineManager attendanceMachineManager, IInstituteManager instituteManager, IStudentActivateHistManager studentActivateHistManager)
         {
             _academicClassManager = academicClassManager;
             _host = host;
@@ -68,6 +70,7 @@ namespace SchoolManagementSystem.Controllers
             _phoneSMSManager = phoneSMSManager;
             _attendanceMachineManager = attendanceMachineManager;
             _instituteManager = instituteManager;
+            _studentActivateHistManager = studentActivateHistManager;
         }
         #endregion
 
@@ -267,7 +270,7 @@ namespace SchoolManagementSystem.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "SuperAdmin, Admin")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ClassRoll,FatherName,MotherName,AdmissionDate,Email,PhoneNo,Photo,DOB,BirthCertificateNo,BirthCertificateImage,ReligionId,GenderId,BloodGroupId,NationalityId,PresentAddressArea,PresentAddressPO,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddressArea,PermanentAddressPO,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,AcademicSessionId,AcademicClassId,AcademicSectionId,PreviousSchool,Status,CreatedBy,CreatedAt,EditedBy,EditedAt,GuardianPhone")] Student student, IFormFile sPhoto, IFormFile DOBFile)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ClassRoll,FatherName,MotherName,AdmissionDate,Email,PhoneNo,Photo,DOB,BirthCertificateNo,BirthCertificateImage,ReligionId,GenderId,BloodGroupId,NationalityId,PresentAddressArea,PresentAddressPO,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddressArea,PermanentAddressPO,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,AcademicSessionId,AcademicClassId,AcademicSectionId,PreviousSchool,CreatedBy,CreatedAt,EditedBy,EditedAt,GuardianPhone")] Student student, IFormFile sPhoto, IFormFile DOBFile)
         {
             if (id != student.Id)
             {
@@ -313,6 +316,7 @@ namespace SchoolManagementSystem.Controllers
 
                         student.EditedBy = HttpContext.Session.GetString("UserId");
                         student.EditedAt = DateTime.Now;
+                        student.MACAddress = MACService.GetMAC();
 
                         isUpdated = await _studentManager.UpdateAsync(student);
                         if (isUpdated ==true)
@@ -320,7 +324,6 @@ namespace SchoolManagementSystem.Controllers
                             TempData["edit"] = "Updated Successfully";
                             return RedirectToAction(nameof(Index));
                         }
-
                     }
                     catch (DbUpdateConcurrencyException)
                     {
@@ -475,6 +478,59 @@ namespace SchoolManagementSystem.Controllers
             var students = await _studentManager.GetAllAsync();
             
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangeStatus(int studentId, string operationDate, bool studentStatus)
+        {
+            bool existingStatus = await _studentActivateHistManager.IsStudentActive(studentId, operationDate);
+            if (existingStatus != studentStatus)
+            {
+                bool isStudentUpdated = false;
+                bool isStatusAdded = false;
+                string activeStatus = studentStatus == true ? "Active" : "Inactive";
+                Student existingStudent = await _studentManager.GetByIdAsync(studentId);
+                if (existingStudent != null)
+                {
+                    if (existingStudent.AdmissionDate.Date <= Convert.ToDateTime(operationDate).Date)
+                    {
+                        existingStudent.Status = studentStatus;
+                        existingStudent.EditedBy = HttpContext.Session.GetString("UserId");
+                        existingStudent.EditedAt = DateTime.Now;
+                        existingStudent.MACAddress = MACService.GetMAC();
+                        isStudentUpdated = await _studentManager.UpdateAsync(existingStudent);
+                    }
+                }
+                else
+                {
+                    ViewBag.msg = "Falied to update";
+                }
+                if (isStudentUpdated)
+                {
+                    StudentActivateHist studentActivateHist = new StudentActivateHist();
+                    studentActivateHist.StudentId = studentId;
+                    studentActivateHist.IsActive = studentStatus;
+                    studentActivateHist.ActionDateTime = Convert.ToDateTime(operationDate);
+                    studentActivateHist.CreatedBy = HttpContext.Session.GetString("UserId");
+                    studentActivateHist.CreatedAt = DateTime.Now;
+                    studentActivateHist.MACAddress = MACService.GetMAC();
+                    studentActivateHist.LastAction = "Add";
+
+                    isStatusAdded = await _studentActivateHistManager.AddAsync(studentActivateHist);
+
+                    if (isStatusAdded)
+                    {
+                        TempData["edit"] = "Updated Successfully";
+                        ViewBag.msg = existingStudent.Name + " is " + activeStatus + " now";
+                    }
+                }
+            }
+            else
+            {
+                TempData["edit"] = "Updated Successfully";
+            }
+            
+            return RedirectToAction("Edit", new {id=studentId });        
         }
     }
 }

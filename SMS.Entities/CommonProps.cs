@@ -22,6 +22,6 @@ namespace SMS.Entities
 
         [Display(Name = "Edited At")]
         public DateTime EditedAt { get; set; }
-        public string? MACAddress { get; set; }
+        public string MACAddress { get; set; } = String.Empty;
     }
 }

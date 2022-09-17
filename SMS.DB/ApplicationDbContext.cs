@@ -50,6 +50,8 @@ namespace SMS.DB
         public DbSet<Question> Questions { get; set; }
         public DbSet<QuestionDetails> QuestionDetails { get; set; }
         public DbSet<QuestionFormat> QuestionFormats { get; set; }
+        public DbSet<StudentActivateHist> StudentActivateHists { get; set; }
+        public DbSet<EmployeeActivateHist> EmployeeActivateHists { get; set; }
 
         [NotMapped]
         public DbSet<AttendanceVM> AttendanceVMs { get; set; }

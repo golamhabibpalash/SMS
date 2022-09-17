@@ -6,14 +6,19 @@ using Microsoft.EntityFrameworkCore;
 using SMS.DAL.Repositories.Base;
 using SMS.DAL.Contracts;
 using System.Linq;
+using Microsoft.Data.SqlClient;
+using System;
 
 namespace SMS.DAL.Repositories
 {
     public class StudentRepository : Repository<Student>,IStudentRepository
     {
-        public StudentRepository(ApplicationDbContext context):base(context)
+        
+        public StudentRepository(ApplicationDbContext context ) : base(context)
         {
+           
         }
+        
         public override async Task<IReadOnlyCollection<Student>> GetAllAsync()
         {
             return await _context.Student.Include(s => s.AcademicClass)
@@ -57,5 +62,37 @@ namespace SMS.DAL.Repositories
             List<Student> students = await _context.Student.Where(s => s.AcademicSessionId == sessionId && s.AcademicClassId == classId).ToListAsync();
             return students;
         }
+
+        //public override async Task<bool> UpdateAsync(Student entity)
+        //{
+        //    Student existingStudenet = await GetByIdAsync(entity.Id); 
+        //    List<StudentActivateHist> previousHist= await GetExistingHistory(entity.Id, entity.EditedAt.ToString("yyyy-MM-dd"));
+
+        //    DateTime qDate = entity.AdmissionDate;
+        //    if (existingStudenet.AdmissionDate.Date < qDate.Date)
+        //    {
+        //        var listOfActivationHistory = await GetExistingHistory(entity.Id, entity.EditedAt.Date.ToString("yyyy-MM-dd"));
+        //        StudentActivateHist objStudentActivateHist = (from t in listOfActivationHistory
+        //                                                      where t.ActionDateTime.Date < qDate.Date
+        //                                                      select t).Last();
+        //        return objStudentActivateHist.IsActive;
+        //    }
+        //    else
+        //    {
+        //        return false;
+        //    }
+            
+
+        //    _context.Entry(entity).State = EntityState.Modified;
+        //    bool isUpdated = await _context.SaveChangesAsync() > 0;
+        //    if (isUpdated)
+        //    {
+        //        bool isChangeActiveStatus = true;
+
+        //    }
+
+        //    return isUpdated;
+        //}
+
     }
 }

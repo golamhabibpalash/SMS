@@ -123,6 +123,6 @@ namespace SMS.Entities
         public Religion Religion { get; set; }
 
         public List<Attendance> Attendances { get; set; }
-
+        //public string LastAction { get; set; } = string.Empty;
     }
 }

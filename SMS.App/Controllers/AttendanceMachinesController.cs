@@ -51,6 +51,10 @@ namespace SMS.App.Controllers
                 var result = await _attendanceMachineManager.GetAttendanceByDateAsync(attendanceFor, date, attendanceType, aSessionId, aClassId);
                 foreach (var item in result)
                 {
+                    if (item.CardNo.Length<=7)
+                    {
+                        Student objStudent = await _studentManager.GetStudentByClassRollAsync(Convert.ToInt32(item.CardNo));
+                    }
                     attendanceVMs.Add(item);
                 }
             }

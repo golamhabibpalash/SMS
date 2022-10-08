@@ -8,6 +8,7 @@ using SMS.DAL.Contracts;
 using System.Linq;
 using Microsoft.Data.SqlClient;
 using System;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace SMS.DAL.Repositories
 {
@@ -63,36 +64,6 @@ namespace SMS.DAL.Repositories
             return students;
         }
 
-        //public override async Task<bool> UpdateAsync(Student entity)
-        //{
-        //    Student existingStudenet = await GetByIdAsync(entity.Id); 
-        //    List<StudentActivateHist> previousHist= await GetExistingHistory(entity.Id, entity.EditedAt.ToString("yyyy-MM-dd"));
-
-        //    DateTime qDate = entity.AdmissionDate;
-        //    if (existingStudenet.AdmissionDate.Date < qDate.Date)
-        //    {
-        //        var listOfActivationHistory = await GetExistingHistory(entity.Id, entity.EditedAt.Date.ToString("yyyy-MM-dd"));
-        //        StudentActivateHist objStudentActivateHist = (from t in listOfActivationHistory
-        //                                                      where t.ActionDateTime.Date < qDate.Date
-        //                                                      select t).Last();
-        //        return objStudentActivateHist.IsActive;
-        //    }
-        //    else
-        //    {
-        //        return false;
-        //    }
-            
-
-        //    _context.Entry(entity).State = EntityState.Modified;
-        //    bool isUpdated = await _context.SaveChangesAsync() > 0;
-        //    if (isUpdated)
-        //    {
-        //        bool isChangeActiveStatus = true;
-
-        //    }
-
-        //    return isUpdated;
-        //}
 
     }
 }

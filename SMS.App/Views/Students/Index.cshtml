@@ -8,14 +8,38 @@
 @model IEnumerable<SMS.App.ViewModels.Students.StudentListVM>
 
 @{
-
-
     ViewData["Title"] = "Students";
     GlobalUI.PageTitle = ViewBag.Title;
     string phoneCode = "+880";
-    //int sl = 0;
 }
+<div class="col-md-12">
+    <form asp-action="Index" asp-controller="Students" >
+        <div class="alert mb-0">
+            <div class="form-group row mb-0">
+                <label for="aAcademicSessionId" class="col-form-label text-md-right">Academic Session</label>
+                <div class="col-md-2">
+                    <select asp-items="ViewBag.academicSessionId" class="form-control" id="aAcademicSessionId" name="academicSessionid">
+                        <option selected disabled>Select Session</option>
+                    </select>
+                </div>
+                <label for="aAcademicClassId" class="col-form-label text-md-right">Academic Class</label>
+                <div class="col-md-2">
+                    <select class="form-control" id="aAcademicClassId" name="academicClassId" asp-items="ViewBag.academicClassId">
+                        <option selected disabled>Select Class</option>
+                    </select>
+                </div>
+                <label for="aStatus" class="col-form-label text-md-right">Status</label>
+                <div class="col-md-2">
+                    <select class="form-control" id="aStatus" name="aStatus" asp-items="ViewBag.aStatus" >
+                        <option selected disabled>Select Status</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm">Search</button>
+            </div>
 
+        </div>
+    </form>
+</div>
 <div class="row p-1">
     <div class="col-md-12">
 

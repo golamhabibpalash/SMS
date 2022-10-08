@@ -29,7 +29,8 @@ namespace SMS.BLL.Managers
 
         public async Task<IEnumerable<AttendanceVM>> GetAttendanceByDateAsync(string attendanceFor, string date, string attendanceType, int? aSessionId, int? aClassId)
         {
-            return await _attendanceMachineRepository.GetAttendanceByDateAsync(attendanceFor, date, attendanceType, aSessionId, aClassId);
+            var result =  await _attendanceMachineRepository.GetAttendanceByDateAsync(attendanceFor, date, attendanceType, aSessionId, aClassId);
+            return result.OrderByDescending(m => m.CardNo);
         }
 
 

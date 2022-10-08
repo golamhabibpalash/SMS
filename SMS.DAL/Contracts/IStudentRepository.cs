@@ -13,6 +13,6 @@ namespace SMS.DAL.Contracts
         Task<Student> GetStudentByClassRollAsync(int classRoll);
         Task<Student> GetStudentByClassRollAsync(int id, int classRoll);
         Task<List<Student>> GetStudentsByClassIdAndSessionIdAsync(int sessionId, int classId);
-        //Task<bool> UpdateAsync(Student entity);
+        
     }
 }

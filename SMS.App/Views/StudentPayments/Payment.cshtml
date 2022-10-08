@@ -11,6 +11,7 @@
         GlobalUI.PageTitle = "Student Payment";
     }
     int sl = 0;
+    string studentPhoto = !string.IsNullOrEmpty(Model.StudentPayment.Student.Photo) ? Model.StudentPayment.Student.Photo : "noimage.jpg";
 }
 <div class="row pt-3 pb-2 bg-orange">
     <div class="col-md-12 text-center">
@@ -43,7 +44,7 @@
         <div class="col-md-5 mh-100 p-3" style="background-color: #2A3F54;">
             <div class="row">
                 <div class="col-md-6 offset-3 text-center pb-3">
-                    <img src="~/Images/Student/@Model.StudentPayment.Student.Photo" alt="Alternate Text" class="rounded-circle" style="width:50%;" />
+                    <img src="~/Images/Student/@studentPhoto" alt="Alternate Text" class="rounded-circle" style="width:50%;" />
                 </div>
             </div>
             <div class="row">
@@ -83,11 +84,11 @@
         </div>
         <div class="col-md-7 bg-info mh-100 border-left border-light">
             <div class="row">
-                <div class="col-md-9">
-                    <div class="form-group row pt-3">
-                        <label class="col-form-label offset-2 col-md-2 text-right">Receipt No</label>
+                <div class="offset-md-3 col-md-9">
+                    <div class="form-group row pt-2">
+                        <label class="col-form-label offset-1 col-md-3 text-right">Receipt No</label>
                         <div class="col-md-8">
-                            <input asp-for="StudentPayment.ReceiptNo" value="" class="form-control form-control-sm" />
+                            <input asp-for="StudentPayment.ReceiptNo" value="" placeholder="Auto Generated Number" readonly class="form-control form-control-sm" />
                         </div>
                         <span asp-validation-for="StudentPayment.ReceiptNo" class="text-danger col-form-label"></span>
                     </div>
@@ -100,44 +101,25 @@
                     </div>
                     <div class="form-group row">
                         <label class="col-md-4 col-form-label text-right">Payment For </label>
-                        <div class="col-md-5">
+                        <div class="col-md-4">
                             <select id="feeSelectId" class="form-control" asp-items="@ViewBag.FeeList">
                                 <option selected disabled>Select Payment</option>
                             </select>
                         </div>
-                        <div class="col-md-3">
-                            <div class="input-group mb-0">
-                                <div class="">
-                                    <button class="btn btn-light form-control-sm mr-0" id="minusButton">-</button>
-                                </div>
-                                <div class="custom-file">
-                                    @*<input type="file" class="custom-file-input" id="inputGroupFile03">*@
-                                    <input readonly type="text" id="FeeAmountId" class="form-control" />
-
-                                </div>
-                                <div class="">
-                                    <button class="btn btn-light form-control-sm" id="plusButton">+</button>
-                                </div>
-                            </div>
-                            @*<label>
-                                <button class="btn btn-primary form-control">-</button>
-                                <input readonly type="text" id="FeeAmountId" class="form-control" />
-                                <button class="btn btn-success form-control">+</button>
-                            </label>*@
+                        <div class="col-md-4">   
+                            <input type="text" class="form-control" placeholder="Amount" name="name" value="" />
                             <input type="hidden" id="academicClassId" value="@Model.StudentPayment.Student.AcademicClassId" />
                         </div>
                         
                         <span asp-validation-for="StudentPayment.PaidDate" class="text-danger col-form-label"></span>
                     </div>
                     <div class="form-group row">
-                        <label class="col-md-4 col-form-label text-right">Waiver(If Any) </label>
-                        <div class="col-md-4">
-                            <input asp-for="StudentPayment.WaiverAmount" class="form-control form-control-sm"/>
+                        <label class="col-md-4 col-form-label text-right">Total</label>
+                        <div class="col-md-8">
+                            <input asp-for="StudentPayment.TotalPayment" class="form-control form-control-sm text-right"/>
                         </div>
-                        <div class="col-md-4">
-                            <input type="file" />
-                        </div>
-                        <span asp-validation-for="StudentPayment.PaidDate" class="text-danger col-form-label"></span>
+                        
+                        <span asp-validation-for="StudentPayment.Remarks" class="text-danger col-form-label"></span>
                     </div>
                     <div class="form-group row">
                         <label class="col-md-4 col-form-label text-right">Remark</label>
@@ -147,16 +129,8 @@
                         
                         <span asp-validation-for="StudentPayment.Remarks" class="text-danger col-form-label"></span>
                     </div>
+                </div>
 
-                </div>
-                <div class="col-md-3 bg-light d-flex align-items-center text-dark mb-3 mb-2">
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text " id="inputGroup-sizing-default">Total</span>
-                        </div>
-                        <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"><br /><button>+Add</button>
-                    </div>
-                </div>
             </div>
             <div class="">
                 <table class="table table-hover table-bordered">

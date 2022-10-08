@@ -104,9 +104,9 @@
     </div>
 </div>
 <div class="row" id="searching_div">
-    <div class="col-md-12 p-4">
+    <div class="col-md-12 p-2">
         <form asp-action="index" asp-controller="AttendanceMachines" method="get">
-            <div class="form-group row">
+            <div class="form-group row mb-0">
                 <div class="col-md-2 mb-2">
                     <select class="form-control" name="attendanceFor" id="userTypeId">
                         <option selected disabled>User Type</option>
@@ -123,7 +123,6 @@
                         }
                     </select>
                 </div>
-
                 <div class="col-md-2 classArea" style="display:none">
                     <select class="form-control mb-2" name="aClassId" id="aClassId">
                         <option selected disabled>Select Class</option>
@@ -135,6 +134,9 @@
                         }
                     </select>
                 </div>
+               
+
+
 
                 <div class="col-md-2 dateArea mb-2">
                     <input type="date" class="form-control" placeholder="dd-mmm-yyyy" name="dateTime" value="@datetime" max="@DateTime.Today.ToString("yyyy-MM-dd")" />
@@ -150,9 +152,9 @@
                         {
                             <option selected disabled>Attendance Type</option>
                         }
-                        <option class="btn-sm btn-primary" value="all">All</option>
-                        <option class="btn-sm btn-info" value="attended">Attended</option>
-                        <option class="btn-sm btn-danger" value="absent">Absent</option>
+                        <option class="btn-sm" value="all">All</option>
+                        <option class="btn-sm" value="attended">Attended</option>
+                        <option class="btn-sm" value="absent">Absent</option>
                     </select>
                 </div>
 
@@ -292,16 +294,16 @@ else
     <script src="~/js/DataTable/dataTable.js"></script>
     <script>
         $(document).ready(function () {
-            let aSessionId = "@ViewBag.aSessionId" != null ?'@ViewBag.aSessionId':"";
+            let aSessionId = "@ViewBag.aSessionId";
 
-            let aClassId = '@ViewBag.aClassId' != null? '@ViewBag.aClassId':"";
-            let attendanceFor = "@ViewBag.attendanceFor" != null? "@ViewBag.attendanceFor":"";
-            let attendanceType ="@ViewBag.attendanceType" != null? "@ViewBag.attendanceType":"";
-            if (aSessionId != null) {
+            let aClassId = '@ViewBag.aClassId';
+            let attendanceFor = "@ViewBag.attendanceFor" ;
+            let attendanceType ="@ViewBag.attendanceType" ;
+            if (aSessionId !='') {
                 $('.sessionArea').css("display", "block");
                 $('#aSessionId').val(aSessionId).change();
             }
-            if (aClassId != null) {
+            if (aClassId != '') {
                 $('.classArea').css("display", "block");
                 $('#aClassId').val(aClassId).change();
             }
@@ -316,15 +318,16 @@ else
 
             $('#userTypeId').change(function () {
                 let uType = $('#userTypeId option:selected').val();
-                if (uType == 'employees') {
-                    $('.designationArea').css("display", "block");
-                    $('.classArea').css("display", "none");
-                    $('.sessionArea').css("display", "none");
-                }
+                
                 if (uType == 'students') {
                     $('.designationArea').css("display", "none");
                     $('.sessionArea').css("display", "block");
                     $('.classArea').css("display", "block");
+                }
+                else {
+                    $('.designationArea').css("display", "block");
+                    $('.sessionArea').css("display", "none");
+                    $('.classArea').css("display", "none");
                 }
             });
         });

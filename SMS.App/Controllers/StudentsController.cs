@@ -1,22 +1,23 @@
-﻿using System;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using NodaTime;
+using SMS.App.Utilities.MACIPServices;
+using SMS.App.Utilities.ShortMessageService;
+using SMS.App.ViewModels;
+using SMS.App.ViewModels.Students;
+using SMS.BLL.Contracts;
+using SMS.Entities;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using SMS.Entities;
-using SMS.App.ViewModels.Students;
-using SMS.BLL.Contracts;
-using AutoMapper;
-using NodaTime;
-using Microsoft.AspNetCore.Identity;
-using SMS.App.Utilities.ShortMessageService;
-using SMS.App.Utilities.MACIPServices;
 
 namespace SchoolManagementSystem.Controllers
 {
@@ -76,15 +77,43 @@ namespace SchoolManagementSystem.Controllers
 
         #region Index
         [Authorize(Roles = "SuperAdmin, Admin,Teacher")]
-        public async Task<IActionResult> Index(int academicSessionid, int academicClassId)
+        public async Task<IActionResult> Index(int academicSessionid, int? academicClassId, string aStatus)
         {
             var student = await _studentManager.GetAllAsync();
+            if (academicSessionid>0)
+            {
+                student = student.Where(s => s.AcademicSessionId == academicSessionid).ToList();
+            }
             if (academicClassId > 0)
             {
                 student = student.Where(s => s.AcademicClassId == academicClassId).ToList();
             }
+            if (aStatus == "0" || aStatus == "1")
+            {
+                bool isActive = aStatus == "1" ? true : false;
+                student = student.Where(s => s.Status == isActive).ToList();
+            }
             var studentList = _mapper.Map<IEnumerable<StudentListVM>>(student);
-            return View(studentList);
+            List<IsActiveVM> isActiveVMs = new List<IsActiveVM>();
+            IsActiveVM status1 = new IsActiveVM();
+            status1.Id = 0;
+            status1.sName = "Inactive";
+            isActiveVMs.Add(status1);
+
+            IsActiveVM status2 = new IsActiveVM();
+            status2.Id = 1;
+            status2.sName = "Active";
+            isActiveVMs.Add(status2);
+
+            IsActiveVM status3 = new IsActiveVM();
+            status3.Id = 2;
+            status3.sName = "All";
+            isActiveVMs.Add(status3);
+
+            ViewBag.academicSessionId = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name",academicSessionid);
+            ViewBag.academicClassId = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name",academicClassId);
+            ViewBag.aStatus = new SelectList(isActiveVMs.ToList(), "Id", "sName", aStatus);
+            return View(studentList.OrderByDescending(s => s.Status).ThenBy(s => s.ClassRoll));
         }
         #endregion
 
@@ -172,11 +201,23 @@ namespace SchoolManagementSystem.Controllers
                     }
                     newStudent.CreatedBy = HttpContext.Session.GetString("UserId");
                     newStudent.CreatedAt = DateTime.Now;
+                    
 
                     var student = _mapper.Map<Student>(newStudent);
                     bool saveStudent = await _studentManager.AddAsync(student);
                     if (saveStudent == true)
                     {
+                        StudentActivateHist studentActivateHist = new() {
+                            StudentId = student.Id,
+                            IsActive = true,
+                            ActionDateTime = DateTime.Now,
+                            LastAction = "Add",
+                            CreatedAt = DateTime.Now,
+                            CreatedBy = HttpContext.Session.GetString("UserId"),
+                            MACAddress = MACService.GetMAC()
+                        };
+                        await _studentActivateHistManager.AddAsync(studentActivateHist);
+
                         TempData["create"] = "Created Successfully";
                         ApplicationUser newStudentUser = new() {
                             UserName = student.ClassRoll.ToString(),
@@ -186,7 +227,7 @@ namespace SchoolManagementSystem.Controllers
                             PhoneNumber = student.PhoneNo,
                             NormalizedUserName = student.Name,
                             UserType = 's',
-                            ReferenceId = student.Id
+                            ReferenceId = student.Id                            
                         };
 
                         const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

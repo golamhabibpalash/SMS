@@ -61,7 +61,7 @@ namespace SMS.App.Controllers
         public async Task<IActionResult> Index()
         {
             var empList = await _employeeManager.GetAllAsync();
-            return View(empList.OrderBy(e => e.JoiningDate));
+            return View(empList.OrderByDescending(e => e.Status).ThenBy(e => e.JoiningDate));
         }
 
         [Authorize(Roles = "SuperAdmin, Admin,Teacher")]

@@ -161,7 +161,7 @@
                                             <a asp-action="Index" asp-controller="StudentPayments">Student Payment <i class="fa fa-money text-info"></i></a>
                                         </li>
                                         <li>
-                                            <a href="#"> Student Attendance <i class="fa fa-clock-o"></i></a>
+                                            <a asp-action="index" asp-controller="attendancemachines" asp-route-attendanceFor="students" asp-route-dateTime="@DateTime.Today.ToString("yyyy-MM-dd")"> Student Attendance <i class="fa fa-clock-o"></i></a>
                                         </li>
                                     </ul>
                                 </li>
@@ -172,7 +172,7 @@
                                             <a asp-action="Index" asp-controller="Employees"> All Employee <i class="fa fa-users text-primary"></i></a>
                                         </li>
                                         <li>
-                                            <a href="#"> Employees Attendance</a>
+                                            <a asp-action="Index" asp-controller="attendancemachines" asp-route-attendanceFor="employees" asp-route-dateTime="@DateTime.Today.ToString("yyyy-MM-dd")"> Employees Attendance</a>
                                         </li>
                                     </ul>
                                 </li>

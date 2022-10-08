@@ -7,6 +7,7 @@ using SMS.Entities;
 using SMS.Entities.AdditionalModels;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -41,6 +42,7 @@ namespace SMS.App.Controllers
 
             
             ViewBag.attendanceDate = Convert.ToDateTime(dateTime).ToString("yyyy-MM-dd");
+            attendanceType = String.IsNullOrEmpty(attendanceType) ? "all" : attendanceType;
 
             if (!string.IsNullOrEmpty(attendanceFor) && !string.IsNullOrEmpty(attendanceType))
             {
@@ -51,15 +53,16 @@ namespace SMS.App.Controllers
                 var result = await _attendanceMachineManager.GetAttendanceByDateAsync(attendanceFor, date, attendanceType, aSessionId, aClassId);
                 foreach (var item in result)
                 {
-                    if (item.CardNo.Length<=7)
+                    if (!string.IsNullOrEmpty(item.CardNo))
                     {
-                        Student objStudent = await _studentManager.GetStudentByClassRollAsync(Convert.ToInt32(item.CardNo));
-                    }
+                        if (item.CardNo.Length <= 7)
+                        {
+                            Student objStudent = await _studentManager.GetStudentByClassRollAsync(Convert.ToInt32(item.CardNo));
+                        }
+                    }                    
                     attendanceVMs.Add(item);
                 }
-            }
-            
-            
+            }            
             return View(attendanceVMs);
         }
 

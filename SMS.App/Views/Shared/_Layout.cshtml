@@ -248,14 +248,20 @@
                                                 <a> Administrations <span class="fa fa-chevron-down"></span></a>
                                                 <ul class="nav child_menu">
                                                     <li>
-                                                        <a asp-action="Index" asp-controller="EmpTypes">Employee Type</a>
+                                                        <a> Employee Related <span class="fa fa-chevron-down"></span></a>
+                                                        <ul class="nav child_menu">
+                                                            <li>
+                                                                <a asp-action="Index" asp-controller="EmpTypes">Employee Type</a>
+                                                            </li>
+                                                            <li>
+                                                                <a asp-action="Index" asp-controller="Designations">Designation</a>
+                                                            </li>
+                                                            <li>
+                                                                <a asp-action="Index" asp-controller="DesignationTypes">Designation Type</a>
+                                                            </li>
+                                                        </ul>
                                                     </li>
-                                                    <li>
-                                                        <a asp-action="Index" asp-controller="Designations">Designation</a>
-                                                    </li>
-                                                    <li>
-                                                        <a asp-action="Index" asp-controller="DesignationTypes">Designation Type</a>
-                                                    </li>
+                                                    
                                                     <li>
                                                         <a asp-action="SchoolTimeTable" asp-controller="Institutes"><span class="glyphicon glyphicon-th-large"></span> School Time setting</a>
                                                     </li>

@@ -21,6 +21,7 @@
         <form asp-action="Edit" asp-controller="Students" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Status" value="@Model.Status" />
             <div class="row">
                 <div class="col-md-10 offset-md-2">
                     <h6 class="alert-info p-2">Academic Information</h6>
@@ -92,6 +93,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <input type="file" name="sPhoto" class="form-control-plaintext" id="imgInp" />
+                            <input type="hidden" asp-for="Photo" value="@Model.Photo" />
                         </div>
                         @if (Model.Photo != null)
                         {
@@ -292,8 +294,7 @@
             </div>
             <div class="form-group form-check row">
                 <label class="form-check-label control-label col-form-label col-md-4 offset-2">
-                    <span class="alert alert-info">@Model.Name is @studentStatus</span> <i class="btn btn-info"  data-toggle="modal" data-target="#exampleModalCenter">Change</i>;
-                    @*<input class="form-check-input" asp-for="Status" data-toggle="modal" data-target="#exampleModalCenter" /> @Html.DisplayNameFor(model => model.Status)*@
+                    <span class="alert alert-info">@Model.Name is @studentStatus</span> <i class="btn btn-info"  data-toggle="modal" data-target="#exampleModalCenter">Change</i>;                   
                 </label>
             </div>
             <div class="form-group text-center">

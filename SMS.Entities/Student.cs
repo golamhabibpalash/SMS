@@ -100,7 +100,7 @@ namespace SMS.Entities
 
         public ICollection<AttachDoc> Documents { get; set; }
 
-        public bool Status { get; set; }
+        public bool Status { get; set; } = true;
 
         public Division PresentDivision { get; set; }
 

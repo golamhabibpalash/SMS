@@ -11,6 +11,7 @@ using SMS.Entities;
 using SMS.App.ViewModels;
 using SMS.BLL.Contracts;
 using Microsoft.AspNetCore.Authorization;
+using SMS.App.Utilities.MACIPServices;
 
 namespace SMS.App.Controllers
 {
@@ -36,33 +37,50 @@ namespace SMS.App.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var msg = "";
-            if (TempData["msg"]!=null)
+            try
             {
-                msg = TempData["msg"].ToString();
+                var msg = "";
+                if (TempData["success"] != null)
+                {
+                    msg = TempData["success"].ToString();
+                }
+                if (TempData["msg"] != null)
+                {
+                    msg = TempData["msg"].ToString();
+                }
+                ViewBag.msg = msg;
             }
-            ViewBag.msg = msg;
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
             return View();
-        }        
-        
+        }
+
+        [HttpGet]
         public async Task<IActionResult> Payment(int? stRoll)
         {
             if (stRoll < 0 || stRoll == 0 || stRoll ==null)
             {
+                
                 return RedirectToAction("Index");
             }
 
             List<StudentPayment> studentPayments = new ();
-            StudentyPaymentVM spvm = new ();
+            StudentPaymentVM spvm = new ();
 
             var student = await _studentManager.GetStudentByClassRollAsync((int)stRoll);
             if (student!=null)
             {
                 StudentPayment sp = new();
                 sp.Student = student;
+               
                 spvm.StudentPayment = sp;
                 studentPayments = (List<StudentPayment>)await _studentPaymentManager.GetAllByStudentIdAsync(student.Id);
-                spvm.StudentPayments = studentPayments;                
+                spvm.StudentPayments = studentPayments.OrderBy(p => p.PaidDate).ToList();
+                spvm.StudentId = student.Id;
                 List<ClassFeeList> feeList = new();
                 var classfeelist = await _classFeeListManager.GetAllByClassIdAsync(student.AcademicClassId);
 
@@ -83,6 +101,54 @@ namespace SMS.App.Controllers
             
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Payment(StudentPaymentVM paymentObject)
+        {
+            try
+            {
+                paymentObject.StudentPayment.ReceiptNo = await GetReceiptNo(paymentObject.StudentPayment.StudentId, paymentObject.ClassFeeHeadId);
+                StudentPayment studentPaymentObject = new StudentPayment();
+                List<StudentPaymentDetails> studentPaymentDetailsObject = new List<StudentPaymentDetails>();
+                studentPaymentObject.StudentId = paymentObject.StudentPayment.StudentId;
+                studentPaymentObject.TotalPayment = paymentObject.StudentPayment.TotalPayment;
+                studentPaymentObject.PaidDate = paymentObject.StudentPayment.PaidDate;
+                studentPaymentObject.Remarks = paymentObject.StudentPayment.Remarks;
+                if (paymentObject.StudentPayment.StudentPaymentDetails != null)
+                {
+                    foreach (var paymentDetails in paymentObject.StudentPayment.StudentPaymentDetails)
+                    {
+                        paymentDetails.CreatedAt = DateTime.Now;
+                        paymentDetails.CreatedBy = HttpContext.Session.GetString("UserId");
+                        paymentDetails.MACAddress = MACService.GetMAC();
+                        studentPaymentDetailsObject.Add(paymentDetails);                 
+                    }
+                    studentPaymentObject.ReceiptNo = paymentObject.StudentPayment.ReceiptNo;
+                    studentPaymentObject.CreatedAt = DateTime.Now;
+                    studentPaymentObject.CreatedBy = HttpContext.Session.GetString("UserId");
+                    studentPaymentObject.MACAddress = MACService.GetMAC();
+                    studentPaymentObject.StudentPaymentDetails = studentPaymentDetailsObject;
+
+                    bool isSaved = await _studentPaymentManager.AddAsync(studentPaymentObject);
+                    if (isSaved)
+                    {
+                        TempData["success"] = ViewBag.msg = "New payment added successfully!";
+                    }
+                    else
+                    {
+                        TempData["fail"] = ViewBag.msg = "Failed to payment";
+                        return RedirectToAction("Payment", new { id = paymentObject.StudentId });
+                    }
+                }
+
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Payment", new { id = paymentObject.StudentId });
+                throw;
+            }
+            
+            return RedirectToAction("Index");
+        }
         // GET: StudentPayments/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -113,7 +179,7 @@ namespace SMS.App.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create( StudentyPaymentVM studentyPaymentVM, IFormFile waiverAttachment)
+        public async Task<IActionResult> Create( StudentPaymentVM studentyPaymentVM, IFormFile waiverAttachment)
         {
             Student student = new();
             if (studentyPaymentVM != null)
@@ -259,5 +325,34 @@ namespace SMS.App.Controllers
 
             return 0.0;
         }
+        public async Task<string> GetReceiptNo(int studentId, int feeHeadId)
+        {
+            if (studentId >= 0)
+            {
+                Student stu = await _studentManager.GetByIdAsync(studentId);
+                if (stu == null)
+                {
+                    return "";
+                }
+            }
+            else
+            {
+                TempData["errorMsg"] = "Student Id is not provide due to Get Receipt No";
+                return "";
+            }
+            var receiptNo = string.Empty;
+            
+            try
+            {
+                receiptNo = await _studentPaymentManager.GetNewReceipt(studentId, feeHeadId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return receiptNo;
+        }
     }
 }
+

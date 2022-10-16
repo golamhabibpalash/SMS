@@ -1,7 +1,7 @@
 ﻿/////////////////////// 2nd time(Current) created code
 //Payment for select list option chooose
-$('#feeSelectId').change(function () {
-    let id = $('#feeSelectId option:selected').val();
+$('#StudentPayment_StudentPaymentDetails_0__StudentFeeHeadId').change(function () {
+    let id = $('#StudentPayment_StudentPaymentDetails_0__StudentFeeHeadId option:selected').val();
     let classId = $('#academicClassId').val();
     $.ajax({
         url: '/StudentFeeHeads/GetById',
@@ -9,8 +9,13 @@ $('#feeSelectId').change(function () {
         cache: false,
         type: 'POST',
         dataType: 'json',
-        success: function (data) {
-            $('#FeeAmountId').val(data.amount);
+        success: function (d) {
+            let pAmount = d.amount;
+            d.studentFeeHead.repeatedly == true ? $('#howManyTimes').show() : $('#howManyTimes').hide();
+            $('#amountId').val(d.amount);
+            let times = $('#howManyTimes option:selected').val();
+            let total = GetTotalPayment(pAmount, times);
+            $('#StudentPayment_TotalPayment').val(total);
         },
         error: function (err) {
             console.log(err);
@@ -18,6 +23,31 @@ $('#feeSelectId').change(function () {
         
     });
 });
+
+//Payment for select list option chooose
+$('#howManyTimes').change(function () {
+    let id = $('#StudentPayment_StudentPaymentDetails_0__StudentFeeHeadId option:selected').val();
+    let howManyTimes = $('#howManyTimes option:selected').val();
+    let classId = $('#academicClassId').val();
+    $.ajax({
+        url: '/StudentFeeHeads/GetById',
+        data: { id: id, classId: classId },
+        cache: false,
+        type: 'POST',
+        dataType: 'json',
+        success: function (d) {
+            let pAmount = d.amount;
+            let times = $('#howManyTimes option:selected').val();
+            let total = GetTotalPayment(pAmount, times);
+            $('#StudentPayment_TotalPayment').val(total);
+        },
+        error: function (err) {
+            console.log(err);
+        }
+
+    });
+});
+
 //Minus Button Click
 $('#minusButton').click(function () {
     let id = $('#feeSelectId').val();
@@ -124,3 +154,8 @@ $('#modalViewId').click(function () {
     $('#receiptNo').html(receiptNo);
     $('#paidDateId').html(myDate);
 });
+
+function GetTotalPayment(amount, howTimes) {
+    var total = amount * howTimes;
+    return total;
+}

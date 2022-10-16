@@ -1,8 +1,8 @@
-﻿@model SMS.App.ViewModels.StudentyPaymentVM
+﻿@model SMS.App.ViewModels.StudentPaymentVM
 
 @{
     ViewData["Title"] = "Payment page";
-    if (Model.StudentPayment.Student!=null)
+    if (Model.StudentPayment.Student != null)
     {
         GlobalUI.PageTitle = "Payment for " + Model.StudentPayment.Student.Name;
     }
@@ -13,9 +13,22 @@
     int sl = 0;
     string studentPhoto = !string.IsNullOrEmpty(Model.StudentPayment.Student.Photo) ? Model.StudentPayment.Student.Photo : "noimage.jpg";
 }
+
+@section Styles{
+    <style>
+         @@media print {
+          *{ 
+              display: none; 
+          }
+            #exampleModalCenter{
+                display:block;
+            }
+        }
+    </style>
+}
 <div class="row pt-3 pb-2 bg-orange">
     <div class="col-md-12 text-center">
-        <form asp-action="Payment" asp-controller="StudentPayments" class="">
+        <form asp-action="Payment" asp-controller="StudentPayments" method="get" class="">
             <div class="form-group row">
                 <label class="col-md-2 offset-2 col-form-label text-right">
                     <span class="h5">Student Roll</span>
@@ -83,60 +96,86 @@
             </div>
         </div>
         <div class="col-md-7 bg-info mh-100 border-left border-light">
-            <div class="row">
-                <div class="offset-md-3 col-md-9">
-                    <div class="form-group row pt-2">
-                        <label class="col-form-label offset-1 col-md-3 text-right">Receipt No</label>
-                        <div class="col-md-8">
-                            <input asp-for="StudentPayment.ReceiptNo" value="" placeholder="Auto Generated Number" readonly class="form-control form-control-sm" />
+            <form asp-action="payment" asp-controller="StudentPayments" method="post">
+                <input type="hidden" asp-for="StudentPayment.StudentId" value="@Model.StudentId" />
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group row pt-2">
+                            <label class="col-form-label col-md-2 text-right">Receipt No</label>
+                            <div class="col-md-4">
+                                <input disabled asp-for="StudentPayment.ReceiptNo" value="" placeholder="Auto Generated" readonly class="form-control form-control-sm" />
+                            </div>
+                            <span asp-validation-for="StudentPayment.ReceiptNo" class="text-danger col-form-label"></span>
                         </div>
-                        <span asp-validation-for="StudentPayment.ReceiptNo" class="text-danger col-form-label"></span>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-md-4 col-form-label text-right">Date </label>
-                        <div class="col-md-8">
-                            <input asp-for="StudentPayment.PaidDate" class="form-control form-control-sm" value="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                        <div class="form-group row pt-2">
+                            <label class="col-md-2 col-form-label text-right">Date </label>
+                            <div class="col-md-4">
+                                <input type="date" asp-for="StudentPayment.PaidDate" class="form-control form-control-sm" value="@DateTime.Today.ToString("yyyy-MM-dd")" min="2020-01-01" max="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" />
+                            </div>
+                            <div class="col-md-6">
+                                <span asp-validation-for="StudentPayment.PaidDate" class="text-danger col-form-label"></span>
+
+                            </div>
                         </div>
-                        <span asp-validation-for="StudentPayment.PaidDate" class="text-danger col-form-label"></span>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-md-4 col-form-label text-right">Payment For </label>
-                        <div class="col-md-4">
-                            <select id="feeSelectId" class="form-control" asp-items="@ViewBag.FeeList">
-                                <option selected disabled>Select Payment</option>
-                            </select>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label text-right">Payment For </label>
+                            <div class="col-md-4">
+                                <select class="form-control" asp-items="@ViewBag.FeeList" asp-for="StudentPayment.StudentPaymentDetails[0].StudentFeeHeadId">
+                                    <option selected disabled>Select Payment</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <select class="form-control" id="howManyTimes" style="display:none">
+                                    <option value="1" selected>1</option>
+                                    @for (int i = 2; i <= 12; i++)
+                                    {
+                                        <option value="@i">@i</option>
+                                    }
+                                </select>
+                            </div>
+                            <span asp-validation-for="ClassFeeHeadId" class="text-danger col-form-label"></span>
                         </div>
-                        <div class="col-md-4">   
-                            <input type="text" class="form-control" placeholder="Amount" name="name" value="" />
-                            <input type="hidden" id="academicClassId" value="@Model.StudentPayment.Student.AcademicClassId" />
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label text-right">Amount</label>
+                            <div class="col-md-4">
+                                <input type="text" id="amountId" class="form-control" placeholder="Amount" disabled />
+                                <input type="hidden" id="academicClassId" value="@Model.StudentPayment.Student.AcademicClassId" />
+                            </div>
+
+                            <span asp-validation-for="StudentPayment.PaidDate" class="text-danger col-form-label"></span>
                         </div>
-                        
-                        <span asp-validation-for="StudentPayment.PaidDate" class="text-danger col-form-label"></span>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-md-4 col-form-label text-right">Total</label>
-                        <div class="col-md-8">
-                            <input asp-for="StudentPayment.TotalPayment" class="form-control form-control-sm text-right"/>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label text-right">Total</label>
+                            <div class="col-md-4">
+                                <input asp-for="StudentPayment.TotalPayment" class="form-control form-control-sm text-right" />
+                            </div>
+
+                            <span asp-validation-for="StudentPayment.Remarks" class="text-danger col-form-label"></span>
                         </div>
-                        
-                        <span asp-validation-for="StudentPayment.Remarks" class="text-danger col-form-label"></span>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-md-4 col-form-label text-right">Remark</label>
-                        <div class="col-md-8">
-                            <input asp-for="StudentPayment.Remarks" class="form-control form-control-sm"/>
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label text-right">Remark</label>
+                            <div class="col-md-10">
+                                <input asp-for="StudentPayment.Remarks" class="form-control form-control-sm" />
+                            </div>
+
+                            <span asp-validation-for="StudentPayment.Remarks" class="text-danger col-form-label"></span>
                         </div>
-                        
-                        <span asp-validation-for="StudentPayment.Remarks" class="text-danger col-form-label"></span>
+                        <div class="form-group row">
+                            <div class="col-md-12 text-md-right">
+                                <input type="submit" class="btn btn-success" value="Submit" />
+                            </div>
+                        </div>
                     </div>
                 </div>
-
-            </div>
-            <div class="">
+            </form>
+            @*<div class="">
                 <table class="table table-hover table-bordered">
                     <thead>
                         <tr>
-                            <td>#</td>                            
+                            <td>#</td>
                             <td>Paid For</td>
                             <td>Amount</td>
                             <td>Remark</td>
@@ -144,10 +183,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        
                     </tbody>
                 </table>
-            </div>
+            </div>*@
 
         </div>
     </div>
@@ -158,40 +196,40 @@
         <div class="col-md-12 bg-secondary mh-100">
             @if (Model.StudentPayments != null && Model.StudentPayments.Count > 0)
             {
-            <table class="table table-striped table-sm text-light">
-                <thead class="bg-info">
-                    <tr>
-                        <td>#</td>
-                        <td>Receipt No</td>
-                        <td>Paid Date</td>
-                        <td>Payment Type</td>
-                        <td>Paid Amount</td>
-                        <td>Remark</td>
-                        <td>Action</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.StudentPayments)
-                    {
+                <table class="table table-striped table-sm text-light">
+                    <thead class="bg-info">
                         <tr>
-                            @foreach (var payDetail in item.StudentPaymentDetails)
-                            {
-                                <td>@(++sl)</td>
-                                <td>@payDetail.StudentPayment.ReceiptNo</td>
-                                <td>@payDetail.StudentPayment.PaidDate.ToString("dd MMM yyyy")</td>
-                                <td>@payDetail.StudentFeeHead.Name</td>
-                                <td>@payDetail.StudentPayment.TotalPayment</td>
-                                <td>@payDetail.StudentPayment.Remarks</td>
-                                <td>
-                                    <button data-paidDate="@item.PaidDate.ToString()" data-receipt="@item.ReceiptNo" type="button" class="btn btn-light btn-outline-info btn-sm" data-toggle="modal" data-target="#exampleModalCenter" id="modalViewId">
-                                        View
-                                    </button>
-                                </td>
-                            }
+                            <td>#</td>
+                            <td>Receipt No</td>
+                            <td>Paid Date</td>
+                            <td>Payment Type</td>
+                            <td>Paid Amount</td>
+                            <td>Remark</td>
+                            <td>Action</td>
                         </tr>
-                    }
-                </tbody>
-                <tfoot></tfoot>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.StudentPayments)
+                        {
+                            <tr>
+                                @foreach (var payDetail in item.StudentPaymentDetails)
+                                {
+                                    <td>@(++sl)</td>
+                                    <td>@payDetail.StudentPayment.ReceiptNo</td>
+                                    <td>@payDetail.StudentPayment.PaidDate.ToString("dd MMM yyyy")</td>
+                                    <td>@payDetail.StudentFeeHead.Name</td>
+                                    <td>@payDetail.StudentPayment.TotalPayment</td>
+                                    <td>@payDetail.StudentPayment.Remarks</td>
+                                    <td>
+                                        <button data-paidDate="@item.PaidDate.ToString()" data-receipt="@item.ReceiptNo" type="button" class="btn btn-light btn-outline-info btn-sm" data-toggle="modal" data-target="#exampleModalCenter" id="modalViewId">
+                                            View
+                                        </button>
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot></tfoot>
                 </table>
             }
             else
@@ -205,171 +243,72 @@
 }
 
 <!-- Modal -->
-<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content ">
 
-            <div class="container bootdey">
-                <div class="row invoice row-printable">
-                    <div class="col-md-10">
-                        <!-- col-lg-12 start here -->
-                        <div class="panel panel-default plain" id="dash_0">
-                            <!-- Start .panel -->
-                            <div class="panel-body p30">
-                                <div class="row">
-                                    <div class="col-lg-6 col-md-6">
-                                        <!-- col-lg-6 start here -->
-                                        <div class="invoice-logo"></div>
-                                    </div>
-                                    <!-- col-lg-6 end here -->
-                                    <div class="col-lg-6 col-md-6 text-right">
-                                        <!-- col-lg-6 start here -->
-                                        <div class="invoice-from">
-                                            <ul class="list-unstyled text-right">
-                                                <li>Dash LLC</li>
-                                                <li>2500 Ridgepoint Dr, Suite 105-C</li>
-                                                <li>Austin TX 78754</li>
-                                                <li>VAT Number EU826113958</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="invoice-details mt25">
-                                        <div class="well">
-                                            <ul class="list-unstyled mb0">
-                                                <li><strong>Invoice</strong> #936988</li>
-                                                <li><strong>Invoice Date:</strong> Monday, October 10th, 2015</li>
-                                                <li><strong>Due Date:</strong> Thursday, December 1th, 2015</li>
-                                                <li><strong>Status:</strong> <span class="label label-danger">UNPAID</span></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="invoice-to mt25">
-                                        <ul class="list-unstyled">
-                                            <li><strong>Invoiced To</strong></li>
-                                            <div class="row">
-                                                <div class="col-md-2">
-                                                    Name:
-                                                </div>
-                                                <div class="col-md-8">
-                                                    ash
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-2">
-                                                    Class:
-                                                </div>
-                                                <div class="col-md-8">
-                                                    Ten
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-2">
-                                                    Shift:
-                                                </div>
-                                                <div class="col-md-8">
-                                                    Morning
-                                                </div>
-                                            </div>
-
-                                        </ul>
-                                    </div>
-                                </div>
-                                <!-- Start .row -->
-                                <div class="row">
-
-
-                                    <!-- col-lg-6 end here -->
-                                    <div class="col-lg-12">
-                                        <!-- col-lg-12 start here -->
-
-
-                                        <div class="invoice-items">
-                                            <div class="table-responsive" style="overflow: hidden; outline: none;" tabindex="0">
-                                                <table class="table table-bordered">
-                                                    <thead>
-                                                        <tr>
-                                                            <th class="per70 text-center">Description</th>
-                                                            <th class="per5 text-center">Qty</th>
-                                                            <th class="per25 text-center">Total</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>1024MB Cloud 2.0 Server - elisium.dynamic.com (12/04/2014 - 01/03/2015)</td>
-                                                            <td class="text-center">1</td>
-                                                            <td class="text-center">$25.00 USD</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Logo design</td>
-                                                            <td class="text-center">1</td>
-                                                            <td class="text-center">$200.00 USD</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Backup - 1024MB Cloud 2.0 Server - elisium.dynamic.com</td>
-                                                            <td class="text-center">12</td>
-                                                            <td class="text-center">$12.00 USD</td>
-                                                        </tr>
-                                                    </tbody>
-                                                    <tfoot>
-                                                        <tr>
-                                                            <th colspan="2" class="text-right">Sub Total:</th>
-                                                            <th class="text-center">$237.00 USD</th>
-                                                        </tr>
-                                                        <tr>
-                                                            <th colspan="2" class="text-right">20% VAT:</th>
-                                                            <th class="text-center">$47.40 USD</th>
-                                                        </tr>
-                                                        <tr>
-                                                            <th colspan="2" class="text-right">Credit:</th>
-                                                            <th class="text-center">$00.00 USD</th>
-                                                        </tr>
-                                                        <tr>
-                                                            <th colspan="2" class="text-right">Total:</th>
-                                                            <th class="text-center">$284.4.40 USD</th>
-                                                        </tr>
-                                                    </tfoot>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <div class="invoice-footer mt25">
-                                            <p class="text-center">Generated on Monday, October 08th, 2015 <a href="#" class="btn btn-default ml15"><i class="fa fa-print mr5"></i> Print</a></p>
-                                        </div>
-                                    </div>
-                                    <!-- col-lg-12 end here -->
-                                </div>
-                                <!-- End .row -->
-                            </div>
-                        </div>
-                        <!-- End .panel -->
-                    </div>
-                    <!-- col-lg-12 end here -->
+    <div style="color:black;font-weight:100" class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content p-3">
+                <div class="modal-body">
+                    <table class="table">
+                        <tr>
+                            <td colspan="12" class="text-center">
+                                <h4>Noble Residential School</h4>
+                                <h6>(Payment Receipt)</h6>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Recipt</td>
+                            <td>:</td>
+                            <td colspan="4">102030456</td>
+                            <td colspan="2">Payment Date</td>
+                            <td>:</td>
+                            <td colspan="3">@DateTime.Today.ToString("dd MMM, yyyy")</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Academic Class</td>
+                            <td>:</td>
+                            <td colspan="4">Six(6)</td>
+                            <td colspan="2">Class Roll</td>
+                            <td>:</td>
+                            <td colspan="3">2022002</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Studunt Name</td>
+                            <td>:</td>
+                            <td colspan="4">Name of the Studunt</td>
+                            <td colspan="2">Academic Session</td>
+                            <td>:</td>
+                            <td colspan="3">2021-2022</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Amount</td>
+                            <td>:</td>
+                            <td colspan="4">1850/=</td>
+                            <td colspan="2">Payment Type</td>
+                            <td>:</td>
+                            <td colspan="3">Monthly payment</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Amount in words</td>
+                            <td>:</td>
+                            <td colspan="10">Eighteen Thousand Fifty six taka only</td>
+                        </tr>
+                    </table>                   
                 </div>
-            </div>
 
-
-
-
-
-            <div class="row">
-                <div class="col-md-12 text-right">
+                <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-primary" onclick="window.print()"><i class="fa fa-print"></i></button>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
 
 
 
 @section Scripts{
     <script src="~/js/StudentPayments/Payment.js"></script>
-    
+
     @if (TempData["Saved"] != null)
     {
         <script src="~/js/AlertifyNotify/successNotify.js"></script>
@@ -378,19 +317,19 @@
     {
         <script src="~/js/AlertifyNotify/errorNotify.js"></script>
     }
-    @if (TempData["createWarning"]!=null)
+    @if (TempData["createWarning"] != null)
     {
         <script src="~/js/AlertifyNotify/warningCreateNotify.js"></script>
     }
-    @if (TempData["Warning"]!=null)
+    @if (TempData["Warning"] != null)
     {
         <script src="~/js/AlertifyNotify/warningNotify.js"></script>
     }
-    @if (TempData["updateFail"]!=null)
+    @if (TempData["updateFail"] != null)
     {
-<script src="~/js/AlertifyNotify/warningUpdateFailNotify.js"></script>
+        <script src="~/js/AlertifyNotify/warningUpdateFailNotify.js"></script>
     }
-    
-    
-    
+
+
+
 }

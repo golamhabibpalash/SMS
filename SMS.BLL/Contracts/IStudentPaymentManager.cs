@@ -11,5 +11,7 @@ namespace SMS.BLL.Contracts
     public interface IStudentPaymentManager : IManager<StudentPayment>
     {
         Task<IReadOnlyCollection<StudentPayment>> GetAllByStudentIdAsync(int id);
+        //Task<IReadOnlyCollection<StudentPayment>> GetAllMonthPaymentsByThisDate(string date);
+        Task<string> GetNewReceipt(int studentId, int feeHeadId);
     }
 }

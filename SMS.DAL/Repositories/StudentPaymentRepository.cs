@@ -33,5 +33,7 @@ namespace SMS.DAL.Repositories
                 .ThenInclude(sp => sp.StudentFeeHead)
                 .Where(sp => sp.StudentId == id).ToListAsync();
         }
+
+    
     }
 }

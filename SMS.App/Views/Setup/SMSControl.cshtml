@@ -1,7 +1,130 @@
-﻿
-@{ 
+﻿@*@model MobileSMSControl*@
+
+
+@{
     ViewData["Title"] = "SMS Setup";
     GlobalUI.PageTitle = ViewBag.Title;
 }
+@section Styles{
+    <link href="~/css/switch.css" rel="stylesheet" />
+}
 
-<form action="/" method="post"></form>
+
+<form action="/" method="post">
+    <div class="col-md-6">
+        <table class="table-sm table-bordered">
+            <tr>
+                <td colspan="2">SMS Service</td>
+                <td>
+                    <label class="col-form-label">
+                        Off
+                        <label class="switch">
+                            <input type="checkbox" checked="checked">
+                            <span class="slider round"></span>
+                        </label>
+                        On
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">Attendance SMS Service</td>
+                <td>
+                    <label class="col-form-label">
+                        Off
+                        <label class="switch">
+                            <input type="checkbox" checked="checked">
+                            <span class="slider round"></span>
+                        </label>
+                        On
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="6">Attendance SMS Service</td>
+                <td>Attendance For Boys Student In</td>
+                <td>
+                    <label class="col-form-label">
+                        Off
+                        <label class="switch">
+                            <input type="checkbox" checked="checked">
+                            <span class="slider round"></span>
+                        </label>
+                        On
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td>Attendance For Boys Student Out</td>
+                <td><label class="col-form-label">
+                        Off
+                        <label class="switch">
+                            <input type="checkbox" checked="checked">
+                            <span class="slider round"></span>
+                        </label>
+                        On
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td>Attendance For Girls Student In</td>
+                <td><label class="col-form-label">
+                        Off
+                        <label class="switch">
+                            <input type="checkbox" checked="checked">
+                            <span class="slider round"></span>
+                        </label>
+                        On
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td>Attendance For Girls Student Out</td>
+                <td><label class="col-form-label">
+                        Off
+                        <label class="switch">
+                            <input type="checkbox" checked="checked">
+                            <span class="slider round"></span>
+                        </label>
+                        On
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td>Attendance For Employee In</td>
+                <td><label class="col-form-label">
+                        Off
+                        <label class="switch">
+                            <input type="checkbox" checked="checked">
+                            <span class="slider round"></span>
+                        </label>
+                        On
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td>Attendance For Employee Out</td>
+                <td><label class="col-form-label">
+                        Off
+                        <label class="switch">
+                            <input type="checkbox" checked="checked">
+                            <span class="slider round"></span>
+                        </label>
+                        On
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">SMS For Payment</td>
+                <td><label class="col-form-label">
+                        Off
+                        <label class="switch">
+                            <input type="checkbox" checked="checked">
+                            <span class="slider round"></span>
+                        </label>
+                        On
+                    </label>
+                </td>
+            </tr>
+        </table>
+    </div>
+</form>

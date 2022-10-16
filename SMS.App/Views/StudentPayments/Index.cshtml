@@ -1,4 +1,4 @@
-﻿@model SMS.App.ViewModels.StudentyPaymentVM
+﻿@model SMS.App.ViewModels.StudentPaymentVM
 
 @{
     ViewData["Title"] = "Student Payment";
@@ -6,7 +6,7 @@
 }
 <div class="row pt-3 pb-2 bg-orange">
     <div class="col-md-12 text-center">
-        <form asp-action="Payment" asp-controller="StudentPayments" class="">
+        <form asp-action="Payment" asp-controller="StudentPayments" class="" method="get">
             <div class="form-group row">
                 <label class="col-md-2 offset-2 col-form-label text-right">
                     <span class="h5">Student Roll</span>

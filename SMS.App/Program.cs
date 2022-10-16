@@ -109,6 +109,7 @@ builder.Services.AddScoped<INationalityManager, NationalityManager>();
 builder.Services.AddScoped<IStudentPaymentRepository, StudentPaymentRepository>();
 builder.Services.AddScoped<IStudentPaymentManager, StudentPaymentManager>();
 
+
 builder.Services.AddScoped<IStudentPaymentDetailsRepository, StudentPaymentDetailsRepository>();
 builder.Services.AddScoped<IStudentPaymentDetailsManager, StudentPaymentDetailsManager>();
 

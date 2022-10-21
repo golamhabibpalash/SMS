@@ -12,6 +12,9 @@ namespace SMS.Entities
         [Display(Name = "Employee Name"),Required,StringLength(40)]
         public string EmployeeName { get; set; }
 
+        [Display(Name = "Emp. Name (Bangla)"),Required,StringLength(100)]
+        public string EmployeeNameBangla { get; set; }
+
         [DataType(DataType.Date)]
         [Required, Display(Name ="Date of Birth")]
         public DateTime DOB { get; set; }

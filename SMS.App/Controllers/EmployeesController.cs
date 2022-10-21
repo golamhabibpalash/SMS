@@ -102,7 +102,7 @@ namespace SMS.App.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "SuperAdmin, Admin")]
-        public async Task<IActionResult> Create([Bind("Id,EmployeeName,DOB,Image,GenderId,ReligionId,NationalityId,NIDNo,NIDCard,Phone,Email,Nominee,NomineePhone,EmpTypeId,DesignationId,JoiningDate,PresentAddress,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddress,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,CreatedBy,CreatedAt,EditedBy,EditedAt,Status,BloodGroupId")] EmployeeCreateVM employeeVM, IFormFile empImage, IFormFile nidCard)
+        public async Task<IActionResult> Create([Bind("Id,EmployeeName,EmployeeNameBangla,DOB,Image,GenderId,ReligionId,NationalityId,NIDNo,NIDCard,Phone,Email,Nominee,NomineePhone,EmpTypeId,DesignationId,JoiningDate,PresentAddress,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddress,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,CreatedBy,CreatedAt,EditedBy,EditedAt,Status,BloodGroupId")] EmployeeCreateVM employeeVM, IFormFile empImage, IFormFile nidCard)
         {
             var employee1 = employeeVM;
             var bloodGroupList = await _bloodGroupManager.GetAllAsync();
@@ -279,7 +279,7 @@ namespace SMS.App.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "SuperAdmin, Admin")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,EmployeeName,DOB,Image,GenderId,ReligionId,NationalityId,NIDNo,NIDCard,Phone,Email,Nominee,NomineePhone,EmpTypeId,DesignationId,JoiningDate,PresentAddress,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddress,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,CreatedBy,CreatedAt,EditedBy,EditedAt,Status,BloodGroupId")] EmployeeEditVM employeeVM, IFormFile Image, IFormFile NIDCard)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,EmployeeName,EmployeeNameBangla,DOB,Image,GenderId,ReligionId,NationalityId,NIDNo,NIDCard,Phone,Email,Nominee,NomineePhone,EmpTypeId,DesignationId,JoiningDate,PresentAddress,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddress,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,CreatedBy,CreatedAt,EditedBy,EditedAt,Status,BloodGroupId")] EmployeeEditVM employeeVM, IFormFile Image, IFormFile NIDCard)
         {
             string msg = "";
             string empPhoto = "";

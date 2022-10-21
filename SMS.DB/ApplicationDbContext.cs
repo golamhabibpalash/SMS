@@ -52,6 +52,7 @@ namespace SMS.DB
         public DbSet<QuestionFormat> QuestionFormats { get; set; }
         public DbSet<StudentActivateHist> StudentActivateHists { get; set; }
         public DbSet<EmployeeActivateHist> EmployeeActivateHists { get; set; }
+        public DbSet<SetupMobileSMS> SetupMobileSMSs { get; set; }
 
         [NotMapped]
         public DbSet<AttendanceVM> AttendanceVMs { get; set; }

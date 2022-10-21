@@ -158,6 +158,9 @@ builder.Services.AddTransient<IStudentActivateHistManager, StudentActivateHistMa
 builder.Services.AddScoped<IEmployeeActivateHistRepository, EmployeeActivateHistRepository>();
 builder.Services.AddScoped<IEmployeeActivateHistManager, EmployeeActivateHistManager>();
 
+builder.Services.AddScoped<ISetupMobileSMSRepository, SetupMobileSMSRepository>();
+builder.Services.AddScoped<ISetupMobileSMSManager, SetupMobileSMSManager>();
+
 
 var app = builder.Build();
 

@@ -14,6 +14,9 @@ namespace SMS.Entities
         [Display(Name ="Student Name")]
         public string Name { get; set; }
 
+        [Display(Name ="Student Name Bangla")]
+        public string NameBangla { get; set; }
+
         [Display(Name = "Class Roll")]
         public int ClassRoll { get; set; }
 

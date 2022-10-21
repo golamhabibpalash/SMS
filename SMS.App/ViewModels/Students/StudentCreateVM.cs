@@ -16,6 +16,9 @@ namespace SMS.App.ViewModels.Students
         [Display(Name = "Student Name"), StringLength(30), Required]
         public string Name { get; set; }
 
+        [Display(Name ="Student Name(Bangla)")]
+        public string NameBangla { get; set; }
+
         [Display(Name = "Class Roll")]
         public int ClassRoll { get; set; }
 

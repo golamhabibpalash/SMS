@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SMS.App.Utilities.MACIPServices;
 using SMS.App.Utilities.ShortMessageService;
 using SMS.App.ViewModels.Employees;
 using SMS.BLL.Contracts;
@@ -215,7 +216,15 @@ namespace SMS.App.Controllers
                                 bool smsSend = await MobileSMS.SendSMS(employee.Phone, text);
                                 if (smsSend == true)
                                 {
-                                    PhoneSMS phoneSMS = new() { Text = text, CreatedAt = DateTime.Now, CreatedBy = employee.Email, MobileNumber = employee.Phone };
+                                    PhoneSMS phoneSMS = new() { 
+                                        Text = text, 
+                                        CreatedAt = DateTime.Now, 
+                                        CreatedBy = employee.Email, 
+                                        MobileNumber = employee.Phone, 
+                                        MACAddress = MACService.GetMAC(),
+                                        SMSType = "NewUser" 
+                                    };
+
                                     await _phoneSMSManager.AddAsync(phoneSMS);
                                 }
                             }

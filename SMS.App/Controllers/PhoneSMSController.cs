@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SMS.App.Utilities.MACIPServices;
 using SMS.App.Utilities.ShortMessageService;
 using SMS.App.ViewModels.SMSVM;
 using SMS.BLL.Contracts;
@@ -63,7 +64,14 @@ namespace SMS.App.Controllers
                         
                         if (smsSend)
                         {
-                            PhoneSMS phoneSMS = new() { Text = model.SMSText, CreatedAt = DateTime.Now, CreatedBy = user, MobileNumber = item };
+                            PhoneSMS phoneSMS = new() { 
+                                Text = model.SMSText, 
+                                CreatedAt = DateTime.Now, 
+                                CreatedBy = user, 
+                                MobileNumber = item,
+                                MACAddress = MACService.GetMAC(),
+                                SMSType = "Custom"
+                            };
                             await _phoneSMSManager.AddAsync(phoneSMS);
                             sentSMSCount++;
                         }

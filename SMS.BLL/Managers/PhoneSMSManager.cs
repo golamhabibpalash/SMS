@@ -12,8 +12,24 @@ namespace SMS.BLL.Managers
 {
     public class PhoneSMSManager : Manager<PhoneSMS>, IPhoneSMSManager
     {
+        private readonly IPhoneSMSRepository _phoneSMSRepository;
         public PhoneSMSManager(IPhoneSMSRepository phoneSMSRepository) : base(phoneSMSRepository)
         {
+            _phoneSMSRepository = phoneSMSRepository;
+        }
+
+        public async Task<bool> IsSMSSendForAttendance(string phoneNumber, string smsType, string dateTime)
+        {
+            try
+            {
+                bool isSend = await _phoneSMSRepository.IsSMSSendForAttendance(phoneNumber, smsType, dateTime);
+                return isSend;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            
 
         }
     }

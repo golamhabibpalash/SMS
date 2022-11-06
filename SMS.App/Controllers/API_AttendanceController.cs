@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace SMS.App.Controllers
 {
@@ -39,10 +38,12 @@ namespace SMS.App.Controllers
         {
             return new string[] { "value1", "value2" };
         }
+
         [HttpGet]
         public async Task<IActionResult> SendSMS(int Tran_MachineRawPunchId)
+        
         {
-            string msg = string.Empty;
+            string msg = string.Empty;            
             string attendanceType = string.Empty;//CheckIn or CheckOut
             string attendanceFor = string.Empty;//student, employee
             
@@ -53,11 +54,13 @@ namespace SMS.App.Controllers
             TimeOnly vInstituteClosingTime = TimeOnly.FromDateTime(DateTime.Parse(instituteInfo.ClosingTime));
             TimeOnly vSMSStartingTime = vInstituteStartingTime.AddHours(-1.00);
             TimeOnly vSMSClosingTime = vInstituteClosingTime.AddHours(1.00);
+          
             if (TimeOnly.FromDateTime(DateTime.Now)<vSMSStartingTime || TimeOnly.FromDateTime(DateTime.Now) > vSMSClosingTime)
             {
                 msg = "SMS sending time from " + vSMSStartingTime.ToString() + " to " + vSMSClosingTime.ToString();
-                return NotFound(msg);
+                return Ok(msg);
             }
+
             SetupMobileSMS smsService = await _setupMobileSMSManager.GetByIdAsync(1);
             
             if (smsService.SMSService == true)
@@ -65,6 +68,18 @@ namespace SMS.App.Controllers
                 if (smsService.AttendanceSMSService == true)
                 {
                     Tran_MachineRawPunch attendanceObject = await _attendanceMachineManager.GetByIdAsync(Tran_MachineRawPunchId);
+                    if (attendanceObject == null)
+                    {
+                        msg = "Attendance Not Found";
+                        return NotFound(msg);
+                    }
+                    if (attendanceObject.PunchDatetime.Date != DateTime.Today.Date)
+                    {
+                        msg = "Your entered on " + attendanceObject.PunchDatetime.Date.ToString("dd MMM yyyy") + " but Today is " + DateTime.Today.Date.ToString("dd MMM yyyy");
+                        return Ok(msg);
+                    }
+                    string vName = string.Empty;
+                    string vAttendanceTime = string.Empty;
                     try
                     {
                         PhoneSMS phoneSMSObject = new PhoneSMS() {
@@ -72,26 +87,30 @@ namespace SMS.App.Controllers
                             CreatedAt = DateTime.Now,
                             CreatedBy = "Punch Machine"
                         };
-                        
+
                         if (attendanceObject != null)
                         {
                             if (attendanceObject.PunchDatetime.ToString("yyyyMMdd") != DateTime.Today.ToString("yyyyMMdd"))
                             {
                                 msg = "Information date is not valid";
-                                return BadRequest(msg);
+                                return Ok(msg);
                             }
                             if (TimeOnly.FromDateTime(attendanceObject.PunchDatetime) < vSMSStartingTime || TimeOnly.FromDateTime(attendanceObject.PunchDatetime) > vSMSClosingTime)
                             {
                                 msg = "Information time is not valid";
-                                return BadRequest(msg);
+                                return Ok(msg);
                             }
+
+                            vAttendanceTime = TimeOnly.FromDateTime(attendanceObject.PunchDatetime).ToString();
                             attendanceType = attendanceObject.PunchDatetime.TimeOfDay > middleTime.TimeOfDay ? "CheckOut" : "CheckIn";
+                            phoneSMSObject.SMSType = attendanceType;
                             attendanceFor = attendanceObject.CardNo.Length > 7 ? "employee" : "student";
                             if (attendanceFor == "student")
                             {
                                 Student studentObject = await _studentManager.GetStudentByClassRollAsync(int.Parse(attendanceObject.CardNo));
                                 if (studentObject != null)
                                 {
+                                    vName = string.IsNullOrEmpty(studentObject.NameBangla) ? studentObject.Name : studentObject.NameBangla;
                                     //For boys student
                                     if (studentObject.GenderId == 1)
                                     {
@@ -99,7 +118,7 @@ namespace SMS.App.Controllers
                                         {
                                             if (smsService.CheckInSMSServiceForMaleStudent == true)
                                             {
-                                                phoneSMSObject.Text = GenerateCheckInSMS(studentObject.Name, attendanceObject.PunchDatetime.ToString("hh:mm tt"));
+                                                phoneSMSObject.Text = GenerateCheckInSMS(vName, vAttendanceTime);
                                                 phoneSMSObject.MobileNumber = studentObject.GuardianPhone;
                                             }
                                             else
@@ -111,7 +130,7 @@ namespace SMS.App.Controllers
                                         {
                                             if (smsService.CheckOutSMSServiceForMaleStudent == true)
                                             {
-                                                phoneSMSObject.Text = GenerateCheckOutSMS(studentObject.Name, attendanceObject.PunchDatetime.ToString("hh:mm tt"));
+                                                phoneSMSObject.Text = GenerateCheckOutSMS(vName, vAttendanceTime);
                                                 phoneSMSObject.MobileNumber = studentObject.GuardianPhone;
                                             }
                                             else
@@ -126,7 +145,7 @@ namespace SMS.App.Controllers
                                         {
                                             if (smsService.CheckInSMSServiceForGirlsStudent == true)
                                             {
-                                                phoneSMSObject.Text = GenerateCheckInSMS(studentObject.Name, attendanceObject.PunchDatetime.ToString("hh:mm tt"));
+                                                phoneSMSObject.Text = GenerateCheckInSMS(vName, vAttendanceTime);
                                                 phoneSMSObject.MobileNumber = studentObject.GuardianPhone;
                                             }
                                             else
@@ -138,7 +157,7 @@ namespace SMS.App.Controllers
                                         {
                                             if (smsService.CheckOutSMSServiceForGirlsStudent == true)
                                             {
-                                                phoneSMSObject.Text = GenerateCheckOutSMS(studentObject.Name, attendanceObject.PunchDatetime.ToString("hh:mm tt"));
+                                                phoneSMSObject.Text = GenerateCheckOutSMS(vName, vAttendanceTime);
                                                 phoneSMSObject.MobileNumber = studentObject.GuardianPhone;
                                             }
                                             else
@@ -152,19 +171,21 @@ namespace SMS.App.Controllers
                                 else
                                 {
                                     msg = "Student Not Found";
-                                    return NotFound(msg);
+                                    return Ok(msg);
                                 }
                             }
                             else //For Employees 
                             {
                                 Employee employee = await _employeeManager.GetByPhoneAttendance(attendanceObject.CardNo);
+
                                 if (employee != null)
                                 {
+                                    vName = string.IsNullOrEmpty(employee.EmployeeNameBangla) ? employee.EmployeeName : employee.EmployeeNameBangla;
                                     if (attendanceType == "CheckIn")
                                     {
                                         if (smsService.CheckInSMSServiceForEmployees == true)
                                         {
-                                            phoneSMSObject.Text = GenerateCheckInSMS(employee.EmployeeName, attendanceObject.PunchDatetime.ToString("hh:mm tt"));
+                                            phoneSMSObject.Text = GenerateCheckInSMS(vName, vAttendanceTime);
                                             phoneSMSObject.MobileNumber = employee.Phone;
                                         }
                                         else
@@ -176,7 +197,7 @@ namespace SMS.App.Controllers
                                     {
                                         if (smsService.CheckOutSMSServiceForEmployees == true)
                                         {
-                                            phoneSMSObject.Text = GenerateCheckOutSMS(employee.EmployeeName, attendanceObject.PunchDatetime.ToString("hh:mm tt"));
+                                            phoneSMSObject.Text = GenerateCheckOutSMS(vName,vAttendanceTime);
                                             phoneSMSObject.MobileNumber = employee.Phone;
                                         }
                                         else
@@ -188,33 +209,45 @@ namespace SMS.App.Controllers
                                 else
                                 {
                                     msg = "Employee Not Found";
-                                    return NotFound(msg);
+                                    return Ok(msg);
                                 }
                             }
                         }
                         else
                         {
                             msg = "Attendance not found";
-                            return NotFound(msg);
+                            return Ok(msg);
                         }
-                        if (!string.IsNullOrEmpty(phoneSMSObject.Text))
-                        {
-                            bool isSend = await MobileSMS.SendSMS(phoneSMSObject.Text, phoneSMSObject.MobileNumber);
-                            if (isSend)
+                            if (!string.IsNullOrEmpty(phoneSMSObject.Text))
                             {
-                                bool isSaved = await _phoneSMSManager.AddAsync(phoneSMSObject);
-                                if (isSaved)
-                                {
-                                    msg = "SMS Save and Send Succeffulyy";
-                                }
+                            int tLength = phoneSMSObject.Text.Length;
+
+                            bool isSMSAlreadySent = await _phoneSMSManager.IsSMSSendForAttendance(phoneSMSObject.MobileNumber, phoneSMSObject.SMSType,phoneSMSObject.CreatedAt.ToString("yyyyMMdd"));
+                            if (isSMSAlreadySent)
+                            {
+                                msg = phoneSMSObject.SMSType + " SMS already sent for this user";
+                                return Ok(msg);
                             }
-                        }
-                    }
+
+                            bool isSend = await MobileSMS.SendSMS(phoneSMSObject.MobileNumber,phoneSMSObject.Text);
+                                if (isSend)
+                                {
+                                    bool isSaved = await _phoneSMSManager.AddAsync(phoneSMSObject);
+                                    if (isSaved)
+                                    {
+                                        msg = "SMS Save and Send Successfuly";
+                                    }
+                                }
+                                else
+                                {
+                                msg = "Service balance finished or SMS Service provider problem.";
+                                }
+                            } 
+                        } 
                     catch (Exception)
                     {
                         throw;
                     }
-                    
                 }
                 else
                 {
@@ -228,6 +261,7 @@ namespace SMS.App.Controllers
 
             return Ok(msg);
         }
+
         // GET api/<API_AttendanceController>/5
         [HttpGet("{id}")]
         public string Get(int id)
@@ -260,7 +294,8 @@ namespace SMS.App.Controllers
             {
                 try
                 {
-                    msg =name+" সকাল "+attendanceTime+" মিনিটে স্কুলে উপস্থিত হয়েছে। -নোবেল।";
+                    msg =name+" আজ "+attendanceTime+" মিনিটে স্কুলে উপস্থিত হয়েছে। -নোবেল ।";
+                    var tLength = msg.Length;
                 }
                 catch (Exception ex)
                 {
@@ -277,7 +312,7 @@ namespace SMS.App.Controllers
             {
                 try
                 {
-                    msg = name + " স্কুল থেকে " + attendanceTime + " মিনিটে প্রস্থান করেছে। -নোবেল।";
+                    msg = name + " স্কুল থেকে " + attendanceTime + " মিনিটে প্রস্থান করেছে। -নোবেল ।";
                 }
                 catch (Exception ex)
                 {

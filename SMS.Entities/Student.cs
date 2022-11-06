@@ -68,6 +68,9 @@ namespace SMS.Entities
         [Display(Name = "Vill/Area")]
         public string PresentAddressArea { get; set; }
 
+        [Display(Name = "Address Info")]
+        public string AddressInfo { get; set; } = String.Empty;
+
         [Display(Name = "Post Office")]
         public string PresentAddressPO { get; set; }
 

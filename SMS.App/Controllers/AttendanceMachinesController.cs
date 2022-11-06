@@ -63,7 +63,7 @@ namespace SMS.App.Controllers
                     attendanceVMs.Add(item);
                 }
             }            
-            return View(attendanceVMs);
+            return View(attendanceVMs.OrderByDescending(m => m.PunchTime.Length).ThenBy(n => n.PunchTime.Substring(0,2)));
         }
 
 

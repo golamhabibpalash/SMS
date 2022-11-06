@@ -10,5 +10,6 @@ namespace SMS.BLL.Contracts
 {
     public interface IPhoneSMSManager : IManager<PhoneSMS>
     {
+        Task<bool> IsSMSSendForAttendance(string phoneNumber,string smsType,string dateTime);
     }
 }

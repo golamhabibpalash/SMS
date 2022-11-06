@@ -210,6 +210,14 @@
                                     <td>Vill/Area - @Model.Student.PermanentAddressArea, Post Office - @Model.Student.PermanentAddressPO, Polic Station - @Model.Student.PermanentUpazila.Name, @Model.Student.PermanentDistrict.Name</td>
                                     @*<td>Vill/Area - @Model.Student.PermanentAddressArea, Post Office - @Model.Student.PermanentAddressPO, Polic Station - @Model.Student.PermanentUpazila.Name, @Model.Student.PresentDistrict.Name, @Model.Student.PresentDivision.Name</td>*@
                                 </tr>
+                                @if (!string.IsNullOrEmpty(Model.Student.AddressInfo))
+                                {
+                                    <tr>
+                                        <td>Address Information:</td>
+                                        <td>:</td>
+                                        <td>@Model.Student.AddressInfo</td>
+                                    </tr>
+                                }
                             </tbody>
                             <tfoot></tfoot>
                         </table>

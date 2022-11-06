@@ -16,14 +16,37 @@
 
 @section Styles{
     <style>
-         @@media print {
-          *{ 
-              display: none; 
-          }
-            #exampleModalCenter{
-                display:block;
+        @@media print{
+            body
+            {
+                margin: 0 !important;
+                padding: 0 !important;
+                height: 100% !important;
+                visibility: hidden;
             }
+            body.modal-open .modal
+            {
+                position: absolute;
+                left: 0;
+                top: 0;
+                margin: 0;
+                padding: 0;
+                overflow: visible !important;
+            }
+            .modal-dialog
+            {
+                top:0;
+                max-width: 100%;
+                width: 100%;
+            }
+            .modal-body{
+                visibility:visible;
+                font-size:20px;
+            }
+           
+            
         }
+
     </style>
 }
 <div class="row pt-3 pb-2 bg-orange">
@@ -171,21 +194,6 @@
                     </div>
                 </div>
             </form>
-            @*<div class="">
-                <table class="table table-hover table-bordered">
-                    <thead>
-                        <tr>
-                            <td>#</td>
-                            <td>Paid For</td>
-                            <td>Amount</td>
-                            <td>Remark</td>
-                            <td>Action</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>*@
 
         </div>
     </div>
@@ -221,7 +229,7 @@
                                     <td>@payDetail.StudentPayment.TotalPayment</td>
                                     <td>@payDetail.StudentPayment.Remarks</td>
                                     <td>
-                                        <button data-paidDate="@item.PaidDate.ToString()" data-receipt="@item.ReceiptNo" type="button" class="btn btn-light btn-outline-info btn-sm" data-toggle="modal" data-target="#exampleModalCenter" id="modalViewId">
+                                        <button data-studentName="@item.Student.Name" data-academicClass="@item.Student.AcademicClass.Name" data-classRoll="@item.Student.ClassRoll" data-academicSession="@item.Student.AcademicSession.Name" data-paidDate="@item.PaidDate.ToString()" data-receipt="@payDetail.StudentPayment.ReceiptNo" data-amount="@payDetail.StudentPayment.TotalPayment" data-paymentType="@payDetail.StudentFeeHead.Name" type="button" class="btn btn-light btn-outline-info btn-sm modalViewId" data-toggle="modal" data-target="#exampleModalCenter" id="modalViewId_">
                                             View
                                         </button>
                                     </td>
@@ -239,69 +247,84 @@
             }
         </div>
     </div>
-
 }
 
 <!-- Modal -->
 
-    <div style="color:black;font-weight:100" class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content p-3">
-                <div class="modal-body">
-                    <table class="table">
+<div style="color:black;font-weight:100" class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg pb-0" role="document">
+        <div class="modal-content p-3">
+
+
+
+                <div class="modal-body page" id="receiptPrintingArea">
+                    <table class="table table-sm table-borderless table-striped">
                         <tr>
                             <td colspan="12" class="text-center">
-                                <h4>Noble Residential School</h4>
-                                <h6>(Payment Receipt)</h6>
+                                <h1 style="color:navy; font-weight:bolder">Noble Residential School</h1>
+                                <h5 class="">(Payment Receipt)</h5>
+                                <hr />
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="2">Recipt</td>
+                            <td colspan="2">Recipt No</td>
                             <td>:</td>
-                            <td colspan="4">102030456</td>
+                            <td colspan="4" id="rctReciptNo"></td>
                             <td colspan="2">Payment Date</td>
                             <td>:</td>
-                            <td colspan="3">@DateTime.Today.ToString("dd MMM, yyyy")</td>
+                            <td colspan="3" id="rctPaymentDate"></td>
                         </tr>
                         <tr>
                             <td colspan="2">Academic Class</td>
                             <td>:</td>
-                            <td colspan="4">Six(6)</td>
+                            <td colspan="4" id="rctAcademicClass"></td>
                             <td colspan="2">Class Roll</td>
                             <td>:</td>
-                            <td colspan="3">2022002</td>
+                            <td colspan="3" id="rctClassRoll"></td>
                         </tr>
                         <tr>
                             <td colspan="2">Studunt Name</td>
                             <td>:</td>
-                            <td colspan="4">Name of the Studunt</td>
+                            <td colspan="4" id="rctStudentName"></td>
                             <td colspan="2">Academic Session</td>
                             <td>:</td>
-                            <td colspan="3">2021-2022</td>
+                            <td colspan="3" id="rctAcademicSession"></td>
                         </tr>
                         <tr>
                             <td colspan="2">Amount</td>
                             <td>:</td>
-                            <td colspan="4">1850/=</td>
+                            <td colspan="4" id="rctAmount"></td>
                             <td colspan="2">Payment Type</td>
                             <td>:</td>
-                            <td colspan="3">Monthly payment</td>
+                            <td colspan="3" id="rctPaymentType"></td>
                         </tr>
                         <tr>
                             <td colspan="2">Amount in words</td>
                             <td>:</td>
-                            <td colspan="10">Eighteen Thousand Fifty six taka only</td>
+                            <td colspan="9" id="rctAmountInWords"></td>
                         </tr>
-                    </table>                   
-                </div>
+                        
+                    </table>
+                    <table class="table table-borderless">
+                        <tfoot class="pt-2 mt-2">
 
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="window.print()"><i class="fa fa-print"></i></button>
+                            <tr>
+                                <td colspan="7"></td>
+                                <td colspan="5" class="text-center">
+                                    <span class="nowrap pt-3"> <hr /> Authority Signature</span>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
                 </div>
+          
+            <div class="modal-footer p-0">
+                <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-sm btn-primary" onclick="window.print()" ><i class="fa fa-print"></i></button>
             </div>
         </div>
     </div>
+</div>
 
 
 
@@ -329,7 +352,5 @@
     {
         <script src="~/js/AlertifyNotify/warningUpdateFailNotify.js"></script>
     }
-
-
-
+   
 }

@@ -147,15 +147,50 @@ let mkdate = function (dateObject) {
 };
 
 //Modal Code for Payment Slip
-$('#modalViewId').click(function () {
+$('.modalViewId').click(function () {
+    
     let receiptNo = $(this).data('receipt');
-    let getData = $(this).data('paidDate');
+    let getData = $(this).data('paiddate');
     let myDate = mkdate(getData);
-    $('#receiptNo').html(receiptNo);
-    $('#paidDateId').html(myDate);
+    let academicClass = $(this).data('academicclass');
+    let classRoll = $(this).data('classroll');
+    let studentName = $(this).data('studentname');
+    let academicSession = $(this).data('academicsession');
+    let totalAmount = $(this).data('amount');
+    let paymentType = $(this).data('paymenttype');
+    let amountInWord = inWords($(this).data('amount'));
+
+    $('#rctReciptNo').html(receiptNo);
+    $('#rctPaymentDate').html(myDate);
+    $('#rctAcademicClass').html(academicClass);
+    $('#rctClassRoll').html(classRoll);
+    $('#rctStudentName').html(studentName);
+    $('#rctAcademicSession').html(academicSession);
+    $('#rctAmount').html(totalAmount+'Tk');
+    $('#rctPaymentType').html(paymentType);
+    $('#rctAmountInWords').html('Taka '+amountInWord+'Only');
+
 });
 
 function GetTotalPayment(amount, howTimes) {
     var total = amount * howTimes;
     return total;
 }
+
+
+
+var a = ['', 'one ', 'two ', 'three ', 'four ', 'five ', 'six ', 'seven ', 'eight ', 'nine ', 'ten ', 'eleven ', 'twelve ', 'thirteen ', 'fourteen ', 'fifteen ', 'sixteen ', 'seventeen ', 'eighteen ', 'nineteen '];
+var b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+
+function inWords(num) {
+    if ((num = num.toString()).length > 9) return 'overflow';
+    n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+    if (!n) return; var str = '';
+    str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'crore ' : '';
+    str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'lakh ' : '';
+    str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'thousand ' : '';
+    str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'hundred ' : '';
+    str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) + 'only ' : '';
+    return str;
+}
+

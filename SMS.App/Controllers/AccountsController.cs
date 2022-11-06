@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
 using SMS.App.Utilities.EmailServices;
+using SMS.App.Utilities.MACIPServices;
 using SMS.App.Utilities.ShortMessageService;
 using SMS.App.ViewModels.AdministrationVM;
 using SMS.BLL.Contracts;
@@ -298,7 +299,14 @@ namespace SMS.App.Controllers
                         }
                         else if (smsSend == true)
                         {
-                            PhoneSMS phoneSMS = new() {Text = text, CreatedAt=DateTime.Now, CreatedBy=model.Email, MobileNumber=user.PhoneNumber };
+                            PhoneSMS phoneSMS = new() {
+                                Text = text,
+                                CreatedAt = DateTime.Now,
+                                CreatedBy = model.Email,
+                                MobileNumber = user.PhoneNumber,
+                                MACAddress = MACService.GetMAC(),
+                                SMSType = "OTP"
+                            };
                             try
                             {
                                 await _phoneSMSManager.AddAsync(phoneSMS);

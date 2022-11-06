@@ -1193,6 +1193,10 @@ namespace SMS.DB.Migrations
                     b.Property<string>("MobileNumber")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("SMSType")
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
+
                     b.Property<string>("Text")
                         .HasColumnType("nvarchar(max)");
 
@@ -1435,6 +1439,9 @@ namespace SMS.DB.Migrations
 
                     b.Property<int>("AcademicSessionId")
                         .HasColumnType("int");
+
+                    b.Property<string>("AddressInfo")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("AdmissionDate")
                         .HasColumnType("datetime2");

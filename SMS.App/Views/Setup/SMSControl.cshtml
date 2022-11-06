@@ -1,4 +1,4 @@
-﻿@*@model MobileSMSControl*@
+﻿@model SMS.Entities.SetupMobileSMS
 
 
 @{
@@ -19,7 +19,7 @@
                     <label class="col-form-label">
                         Off
                         <label class="switch">
-                            <input type="checkbox" checked="checked">
+                            <input asp-for="SMSService" type="checkbox" checked="checked">
                             <span class="slider round"></span>
                         </label>
                         On
@@ -144,13 +144,13 @@
                         Attendance SMS Controls
                     </label>
                     <div class="text-md-right">
-                        <label class= switch text-md-right">
+                        <label class=switch text-md-right">
                             <input type="checkbox" checked="checked">
                             <span class="slider round"></span>
                         </label>
                     </div>
                 </div>
-               </div>
+            </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">

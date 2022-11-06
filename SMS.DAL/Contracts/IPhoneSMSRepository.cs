@@ -10,5 +10,6 @@ namespace SMS.DAL.Contracts
 {
     public interface IPhoneSMSRepository : IRepository<PhoneSMS>
     {
+        Task<bool> IsSMSSendForAttendance(string phoneNumber, string smsType, string dateTime);
     }
 }

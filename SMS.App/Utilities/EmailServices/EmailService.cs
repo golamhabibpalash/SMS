@@ -112,9 +112,7 @@ namespace SMS.App.Utilities.EmailServices
             }
             catch (System.Exception)
             {
-
                 return false;
-                
             }
         }
     }

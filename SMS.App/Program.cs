@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Repositories;
+using SMS.App.Utilities.Automation;
 using SMS.BLL.Contracts;
 using SMS.BLL.Managers;
 using SMS.DAL.Contracts;
@@ -21,7 +22,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
-
+builder.Services.AddHostedService<AttendanceNotification>();
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(option =>
 {
     option.Password.RequiredLength = 5;

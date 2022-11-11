@@ -44,6 +44,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Views\Reports\RPT\" />
     <Folder Include="wwwroot\Images\Employee\photo\" />
     <Folder Include="wwwroot\Images\Employee\NID\" />
     <Folder Include="wwwroot\Images\Question\" />

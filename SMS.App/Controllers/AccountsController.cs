@@ -322,7 +322,6 @@ namespace SMS.App.Controllers
                     }
                     else if(model.verificationBy == "Email")
                     {
-
                         bool isSend = EmailService.SendEmail(model.Email,"OTP for Password reset", text);
                         if (isSend)
                         {

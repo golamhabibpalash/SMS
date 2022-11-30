@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Hangfire;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -7,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Repositories;
-using SMS.App.Utilities.Automation;
+using SMS.App.Utilities.Automation.Hangfire;
 using SMS.BLL.Contracts;
 using SMS.BLL.Managers;
 using SMS.DAL.Contracts;
@@ -22,7 +23,9 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
-builder.Services.AddHostedService<AttendanceNotification>();
+builder.Services.AddHangfire(x => x.UseSqlServerStorage(connectionString));
+builder.Services.AddHangfireServer();
+
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(option =>
 {
     option.Password.RequiredLength = 5;
@@ -30,9 +33,12 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(option =>
     option.Password.RequireLowercase = false;
     option.Password.RequireUppercase = false;
     option.Password.RequireNonAlphanumeric = false;
-}).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+}).AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultUI()
+.AddDefaultTokenProviders();
 
-builder.Services.AddControllers().AddNewtonsoftJson(options =>
+builder.Services.AddControllers()
+    .AddNewtonsoftJson(options =>
      options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
  );
 
@@ -48,6 +54,8 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
     options.SlidingExpiration = true;
 });
+builder.Services.AddMvc()
+    .AddSessionStateTempDataProvider();
 
 builder.Services.AddSession(options =>
 {
@@ -56,7 +64,6 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-//builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddControllersWithViews()
                 .AddRazorRuntimeCompilation();
@@ -65,6 +72,8 @@ builder.Services.AddControllersWithViews()
 builder.Services.AddRazorPages();
 
 builder.Services.AddAutoMapper(typeof(Program));
+
+//builder.Services.AddHostedService<ScopedBackgroundService>();
 
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IEmployeeManager, EmployeeManager>();
@@ -151,15 +160,15 @@ builder.Services.AddScoped<IQuestionManager, QuestionManager>();
 builder.Services.AddScoped<IQuestionFormationRepository, QuestionFormationRepository>();
 builder.Services.AddScoped<IQuestionFormationManager, QuestionFormationManager>();
 
-builder.Services.AddTransient<IStudentActivateHistRepository, StudentActivateHistRepository>();
-builder.Services.AddTransient<IStudentActivateHistManager, StudentActivateHistManager>();
+builder.Services.AddScoped<IStudentActivateHistRepository, StudentActivateHistRepository>();
+builder.Services.AddScoped<IStudentActivateHistManager, StudentActivateHistManager>();
 
 builder.Services.AddScoped<IEmployeeActivateHistRepository, EmployeeActivateHistRepository>();
 builder.Services.AddScoped<IEmployeeActivateHistManager, EmployeeActivateHistManager>();
 
 builder.Services.AddScoped<ISetupMobileSMSRepository, SetupMobileSMSRepository>();
 builder.Services.AddScoped<ISetupMobileSMSManager, SetupMobileSMSManager>();
-
+  
 
 var app = builder.Build();
 
@@ -173,14 +182,19 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseSession();
 app.UseRouting();
+var options = new DashboardOptions
+{
+    Authorization = new[] { new HangfireAuthorizationFilter() }
+};
+
+
 
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseHangfireDashboard("/hangfire",options);
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapRazorPages();
-
 app.Run();

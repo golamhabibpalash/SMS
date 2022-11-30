@@ -580,5 +580,10 @@ namespace SchoolManagementSystem.Controllers
             
             return RedirectToAction("Edit", new {id=studentId });        
         }
+
+        public int StudentCount()
+        {
+            return 5;
+        }
     }
 }

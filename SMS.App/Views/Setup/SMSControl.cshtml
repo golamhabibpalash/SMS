@@ -1,4 +1,4 @@
-﻿@model SMS.Entities.SetupMobileSMS
+﻿@model SMS.App.ViewModels.SetupVM.AttendanceSetupVM
 
 
 @{
@@ -10,182 +10,206 @@
 }
 
 
-<form action="/" method="post">
-    <div class="col-md-6">
-        <table class="table-sm table-bordered">
-            <tr>
-                <td colspan="2">SMS Service</td>
-                <td>
-                    <label class="col-form-label">
-                        Off
-                        <label class="switch">
-                            <input asp-for="SMSService" type="checkbox" checked="checked">
-                            <span class="slider round"></span>
-                        </label>
-                        On
+<form asp-action="smscontrol" method="post">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header text-primary font-weight-bolder h4">Attendance SMS Service
+                    <label class="switch">
+                        <input asp-for="AttendanceSMSService" type="checkbox">
+                        <span class="slider round"></span>
                     </label>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">Attendance SMS Service</td>
-                <td>
-                    <label class="col-form-label">
-                        Off
-                        <label class="switch">
-                            <input type="checkbox" checked="checked">
-                            <span class="slider round"></span>
-                        </label>
-                        On
-                    </label>
-                </td>
-            </tr>
-            <tr>
-                <td rowspan="6">Attendance SMS Service</td>
-                <td>Attendance For Boys Student In</td>
-                <td>
-                    <label class="col-form-label">
-                        Off
-                        <label class="switch">
-                            <input type="checkbox" checked="checked">
-                            <span class="slider round"></span>
-                        </label>
-                        On
-                    </label>
-                </td>
-            </tr>
-            <tr>
-                <td>Attendance For Boys Student Out</td>
-                <td>
-                    <label class="col-form-label">
-                        Off
-                        <label class="switch">
-                            <input type="checkbox" checked="checked">
-                            <span class="slider round"></span>
-                        </label>
-                        On
-                    </label>
-                </td>
-            </tr>
-            <tr>
-                <td>Attendance For Girls Student In</td>
-                <td>
-                    <label class="col-form-label">
-                        Off
-                        <label class="switch">
-                            <input type="checkbox" checked="checked">
-                            <span class="slider round"></span>
-                        </label>
-                        On
-                    </label>
-                </td>
-            </tr>
-            <tr>
-                <td>Attendance For Girls Student Out</td>
-                <td>
-                    <label class="col-form-label">
-                        Off
-                        <label class="switch">
-                            <input type="checkbox" checked="checked">
-                            <span class="slider round"></span>
-                        </label>
-                        On
-                    </label>
-                </td>
-            </tr>
-            <tr>
-                <td>Attendance For Employee In</td>
-                <td>
-                    <label class="col-form-label">
-                        Off
-                        <label class="switch">
-                            <input type="checkbox" checked="checked">
-                            <span class="slider round"></span>
-                        </label>
-                        On
-                    </label>
-                </td>
-            </tr>
-            <tr>
-                <td>Attendance For Employee Out</td>
-                <td>
-                    <label class="col-form-label">
-                        Off
-                        <label class="switch">
-                            <input type="checkbox" checked="checked">
-                            <span class="slider round"></span>
-                        </label>
-                        On
-                    </label>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">SMS For Payment</td>
-                <td>
-                    <label class="col-form-label">
-                        Off
-                        <label class="switch">
-                            <input type="checkbox" checked="checked">
-                            <span class="slider round"></span>
-                        </label>
-                        On
-                    </label>
-                </td>
-            </tr>
-        </table>
+                </div>
+                <div class="card-body p-0">
+                    <input type="hidden" asp-for="Id" />
+                    <table class="table table-sm table-bordered text-center mb-0">
+                        <tr>
+                            <td rowspan="3" class="align-middle font-weight-bold h5">
+                                Checkin SMS <br />                                
+                                <label class="switch">
+                                    <input asp-for="CheckInSMS" title="CheckIn SMS Switch" />
+                                    <span class="slider round"></span>
+                                </label>
+                            </td>
+                            <td class="font-weight-bold">
+                                Employee <br />
+                                <label class="col-form-label">
+
+                                    <label class="switch">
+                                        <input asp-for="CheckInSMSEmployees" type="checkbox">
+                                        <span class="slider round"></span>
+                                    </label>
+
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="font-weight-bold">
+                                Students (Boys) <br />
+                                <label class="col-form-label">
+                                    
+                                    <label class="switch">
+                                        <input asp-for="CheckInSMSStudentBoys" type="checkbox">
+                                        <span class="slider round"></span>
+                                    </label>
+                                    
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="font-weight-bold">
+                                Students (Girls) <br />
+                                <label class="col-form-label">
+                                    <label class="switch">
+                                        <input asp-for="CheckInSMSStudentGirls" type="checkbox">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </label>
+                            </td>
+                        </tr>
+
+
+                        <tr>
+                            <td rowspan="3" class="align-middle h5 font-weight-bold">
+                                Checkout SMS<br />
+                                <label class="switch">
+                                    <input asp-for="CheckOutSMS" />
+                                    <span class="slider round"></span>
+                                </label>
+                            </td>
+                            <td class="font-weight-bold">
+                                Employee <br />
+                                <label class="col-form-label">
+                                    <label class="switch">
+                                        <input asp-for="CheckOutSMSEmployees" type="checkbox">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="font-weight-bold">
+                                Students (Boys) <br />
+                                <label class="col-form-label">
+                                    <label class="switch">
+                                        <input asp-for="CheckOutSMSStudentBoys" type="checkbox">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="font-weight-bold">
+                                Students (Girls) <br />
+                                <label class="col-form-label">
+                                    <label class="switch">
+                                        <input asp-for="CheckOutSMSStudentGirls" type="checkbox">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </label>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header text-primary font-weight-bolder h4">Other SMS Service</div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header text-center">
+                    <input type="submit" value="Submit" class="btn btn-sm btn-primary rounded-1" />
+                    <input type="button" class="btn-danger btn btn-sm rounded-1"  value="Cancel"/>
+                </div>
+            </div>
+        </div>
     </div>
 </form>
 
-<div class="row">
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <div class="form-group row">
-                    <label class="text-md-left">
-                        Attendance SMS Controls
-                    </label>
-                    <div class="text-md-right">
-                        <label class=switch text-md-right">
-                            <input type="checkbox" checked="checked">
-                            <span class="slider round"></span>
-                        </label>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <ol class="list-group list-group-numbered">
-                            <li class="list-group-item d-flex justify-content-between align-items-start">
-                                <div class="ms-2 me-auto">
-                                    <div class="fw-bold">Subheading</div>
-                                    Cras justo odio
-                                </div>
-                                <span class="badge bg-primary rounded-pill">14</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-start">
-                                <div class="ms-2 me-auto">
-                                    <div class="fw-bold">Subheading</div>
-                                    Cras justo odio
-                                </div>
-                                <span class="badge bg-primary rounded-pill">14</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-start">
-                                <div class="ms-2 me-auto">
-                                    <div class="fw-bold">Subheading</div>
-                                    Cras justo odio
-                                </div>
-                                <span class="badge bg-primary rounded-pill">14</span>
-                            </li>
-                        </ol>
-                    </div>
-                    <div class="col-md-6">
-                        <ul>
-                            <li>Out SMS</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="card-footer"></div>
-        </div>
-    </div>
-</div>
+
+@section Scripts{
+
+<script>
+    $(document).ready(function () {
+
+        $('#CheckInSMSEmployees').change(function () {
+            if ($(this).prop('checked')) {
+                $('#CheckInSMS').prop('checked', true);
+                $('#AttendanceSMSService').prop('checked', true);
+            } 
+        });
+
+        $('#CheckInSMSStudentBoys').change(function () {
+            if ($(this).prop('checked')) {
+                $('#CheckInSMS').prop('checked', true);
+                $('#AttendanceSMSService').prop('checked', true);
+            } 
+        });
+
+        $('#CheckInSMSStudentGirls').change(function () {
+            if ($(this).prop('checked')) {
+                $('#CheckInSMS').prop('checked', true);
+                $('#AttendanceSMSService').prop('checked', true);
+            } 
+        });
+
+        $('#CheckInSMS').change(function () {
+            if (!$(this).prop('checked')) {
+                $('#CheckInSMSEmployees').prop('checked', false);
+                $('#CheckInSMSStudentBoys').prop('checked', false);
+                $('#CheckInSMSStudentGirls').prop('checked', false);
+            } 
+        });
+
+        $('#CheckOutSMSEmployees').change(function () {
+            if ($(this).prop('checked')) {
+                $('#CheckOutSMS').prop('checked', true);
+                $('#AttendanceSMSService').prop('checked', true);
+            }
+        });
+
+        $('#CheckOutSMSStudentBoys').change(function () {
+            if ($(this).prop('checked')) {
+                $('#CheckOutSMS').prop('checked', true);
+                $('#AttendanceSMSService').prop('checked', true);
+            }
+        });
+
+        $('#CheckOutSMSStudentGirls').change(function () {
+            if ($(this).prop('checked')) {
+                $('#CheckOutSMS').prop('checked', true);
+                $('#AttendanceSMSService').prop('checked', true);
+            }
+        });
+
+        $('#CheckOutSMS').change(function () {
+            if (!$(this).prop('checked')) {
+                $('#CheckOutSMSEmployees').prop('checked', false);
+                $('#CheckOutSMSStudentBoys').prop('checked', false);
+                $('#CheckOutSMSStudentGirls').prop('checked', false);
+            } 
+        });
+        $('#AttendanceSMSService').change(function () {
+            if (!$(this).prop('checked')) {
+
+                $('#CheckInSMS').prop('checked', false);
+                $('#CheckOutSMS').prop('checked', false);
+
+                $('#CheckInSMSEmployees').prop('checked', false);
+                $('#CheckInSMSStudentBoys').prop('checked', false);
+                $('#CheckInSMSStudentGirls').prop('checked', false);
+
+                $('#CheckOutSMSEmployees').prop('checked', false);
+                $('#CheckOutSMSStudentBoys').prop('checked', false);
+                $('#CheckOutSMSStudentGirls').prop('checked', false);
+            } 
+        });
+
+    });
+</script>
+}

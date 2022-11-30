@@ -297,7 +297,7 @@ namespace SMS.App.Controllers
                     msg =name+" আজ "+attendanceTime+" মিনিটে স্কুলে উপস্থিত হয়েছে। -নোবেল ।";
                     var tLength = msg.Length;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
 
                     throw;
@@ -314,7 +314,7 @@ namespace SMS.App.Controllers
                 {
                     msg = name + " স্কুল থেকে " + attendanceTime + " মিনিটে প্রস্থান করেছে। -নোবেল ।";
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
 
                     throw;

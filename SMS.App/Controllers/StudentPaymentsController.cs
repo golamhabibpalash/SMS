@@ -347,9 +347,9 @@ namespace SMS.App.Controllers
                 receiptNo = await _studentPaymentManager.GetNewReceipt(studentId, feeHeadId);
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
             return receiptNo;
         }

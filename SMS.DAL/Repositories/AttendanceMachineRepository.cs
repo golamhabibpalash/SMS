@@ -8,7 +8,6 @@ using SMS.Entities.AdditionalModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SMS.DAL.Repositories
@@ -23,9 +22,10 @@ namespace SMS.DAL.Repositories
 
         public async Task<List<Tran_MachineRawPunch>> GetAllAttendanceByDateAsync(DateTime dateTime)
         {
-            return await _context.Tran_MachineRawPunch
+            List<Tran_MachineRawPunch> allAttendance = await _context.Tran_MachineRawPunch
                 .Where(t => t.PunchDatetime.Date == dateTime.Date)
-                .ToListAsync();
+                .ToListAsync(); 
+            return allAttendance;
 
         }
 
@@ -41,6 +41,21 @@ namespace SMS.DAL.Repositories
             return result;            
         }
 
+        public async Task<List<Tran_MachineRawPunch>> GetCheckinDataEmpByDate(string date)
+        {
+            string myS = $"sp_Get_Checkin_Data_Emp '" + date+"'";
+            try
+            {
+                var result = await _context.Tran_MachineRawPunch.FromSqlRaw($"sp_Get_Checkin_Data_Emp '"+date+"'").ToListAsync();
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
+        }
 
         public async Task<Tran_MachineRawPunch> GetTodaysAttendanceByUserIdAsync(int attendanceId)
         {

@@ -33,6 +33,16 @@ namespace SMS.BLL.Managers
             return result.OrderByDescending(m => m.CardNo);
         }
 
+        public async Task<List<Tran_MachineRawPunch>> GetCheckinDataEmpByDate(string date)
+        {
+            List<Tran_MachineRawPunch> employeesAttendants = new List<Tran_MachineRawPunch>();
+            var result =await _attendanceMachineRepository.GetCheckinDataEmpByDate(date);
+            if (result.Count>0)
+            {
+                employeesAttendants = result;
+            }
+            return employeesAttendants;
+        }
 
         public async Task<Tran_MachineRawPunch> GetTodaysAttendanceByUserIdAsync(int attendanceId)
         {

@@ -12,6 +12,7 @@ namespace SMS.DAL.Contracts
         Task<List<Tran_MachineRawPunch>> GetAllAttendanceByDateAsync(DateTime dateTime);
         Task<IEnumerable<AttendanceVM>> GetAttendanceByDateAsync(string attendanceFor, string date, string attendanceType, int? aSessionId, int? aClassId);
 
-        Task<Tran_MachineRawPunch> GetTodaysAttendanceByUserIdAsync(int attendanceId);        
+        Task<Tran_MachineRawPunch> GetTodaysAttendanceByUserIdAsync(int attendanceId);
+        Task<List<Tran_MachineRawPunch>> GetCheckinDataEmpByDate(string date);
     }
 }

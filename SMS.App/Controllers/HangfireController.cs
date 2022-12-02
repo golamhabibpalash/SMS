@@ -108,18 +108,19 @@ namespace SMS.App.Controllers
             }
         }
         
-        private async Task<IActionResult> CheckInSMSSendDailyAttendanceStudentBoys()
-        {
-            var attendanceSMSSetup = await _setupMobileSMSManager.GetByIdAsync(1);
-            if (attendanceSMSSetup.CheckInSMSService == false)
-            {
-                return Ok("CheckIn SMS Service is Inactive");
-            }
-            if (attendanceSMSSetup.CheckInSMSServiceForMaleStudent == false)
-            {
-                return Ok("CheckIn SMS Service for Boys is Inactive");
-            }
-        }
+        //private async Task<IActionResult> CheckInSMSSendDailyAttendanceStudentBoys()
+        //{
+        //    var attendanceSMSSetup = await _setupMobileSMSManager.GetByIdAsync(1);
+        //    if (attendanceSMSSetup.CheckInSMSService == false)
+        //    {
+        //        return Ok("CheckIn SMS Service is Inactive");
+        //    }
+        //    if (attendanceSMSSetup.CheckInSMSServiceForMaleStudent == false)
+        //    {
+        //        return Ok("CheckIn SMS Service for Boys is Inactive");
+        //    }
+        //    List<Tran_MachineRawPunch> todaysAllAttendance = await _attendanceMachineManager.GetAllAttendanceByDateAsync(DateTime.Today.ToString("dd-MM-yyyy"));
+        //}
 
         private async Task<IActionResult> CheckInSMSSendDailyAttendanceStudentGirls()
         {

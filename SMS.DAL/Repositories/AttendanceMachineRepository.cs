@@ -22,9 +22,8 @@ namespace SMS.DAL.Repositories
 
         public async Task<List<Tran_MachineRawPunch>> GetAllAttendanceByDateAsync(DateTime dateTime)
         {
-            List<Tran_MachineRawPunch> allAttendance = await _context.Tran_MachineRawPunch
-                .Where(t => t.PunchDatetime.Date == dateTime.Date)
-                .ToListAsync(); 
+            var pDateTime = new SqlParameter("date", dateTime.ToString("dd-MM-yyyy"));
+            List<Tran_MachineRawPunch> allAttendance = await _context.Tran_MachineRawPunch.FromSqlInterpolated($"sp_Get_Checkin_Data {pDateTime}").ToListAsync();
             return allAttendance;
 
         }

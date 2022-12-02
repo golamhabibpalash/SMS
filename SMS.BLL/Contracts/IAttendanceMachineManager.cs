@@ -16,5 +16,6 @@ namespace SMS.BLL.Contracts
         
         Task<Tran_MachineRawPunch> GetTodaysAttendanceByUserIdAsync(int attendanceId);
         Task<List<Tran_MachineRawPunch>> GetCheckinDataEmpByDate(string date);
+
     }
 }

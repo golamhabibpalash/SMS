@@ -1,19 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SMS.App.ViewModels.InstituteVM
 {
     public class InstituteTimeVM
     {
         [Display(Name=("Starting Time"))]
-        public DateTime StartingTime { get; set; }
+        [Column(TypeName ="time")]
+        public TimeOnly StartingTime { get; set; }
 
         [Display(Name = ("Closing Time"))]
-        public DateTime ClosingTime { get; set; }
+        [Column(TypeName = "time")]
+        public TimeOnly ClosingTime { get; set; }
 
         [Display(Name = ("Late Start Time"))]
-        public DateTime LateTimeStart { get ; set; }
+        [Column(TypeName = "time")]
+        public TimeOnly LateTimeStart { get ; set; }
 
         public IEquatable<ValidationResult> Validate(ValidationContext validationContext)
         {

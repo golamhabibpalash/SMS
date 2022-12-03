@@ -192,9 +192,9 @@ namespace SMS.App.Controllers
         {
             Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
             InstituteTimeVM instituteTimeVM = new InstituteTimeVM() { };
-            instituteTimeVM.StartingTime = Convert.ToDateTime(institute.StartingTime);
-            instituteTimeVM.ClosingTime = Convert.ToDateTime(institute.ClosingTime);
-            instituteTimeVM.LateTimeStart = Convert.ToDateTime(institute.LateTime);
+            instituteTimeVM.StartingTime = TimeOnly.FromDateTime(institute.StartingTime);
+            instituteTimeVM.ClosingTime = TimeOnly.FromDateTime(institute.ClosingTime);
+            instituteTimeVM.LateTimeStart = TimeOnly.FromDateTime(institute.LateTime);
             return View(instituteTimeVM);
         }
 
@@ -206,12 +206,12 @@ namespace SMS.App.Controllers
                 Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
                 if (institute != null)
                 {
-                    institute.StartingTime = model.StartingTime.ToString("t");
-                    institute.ClosingTime = model.ClosingTime.ToString("t");
+                    institute.StartingTime = Convert.ToDateTime(model.StartingTime);
+                    institute.ClosingTime = Convert.ToDateTime(model.ClosingTime);
 
-                    TimeSpan span = model.LateTimeStart.Subtract(model.StartingTime);
+                    TimeSpan span = model.LateTimeStart-model.StartingTime;
 
-                    institute.LateTime = model.LateTimeStart.ToString("t");
+                    institute.LateTime =Convert.ToDateTime(model.LateTimeStart);
 
                     await _instituteManager.UpdateAsync(institute);
                     return RedirectToAction(nameof(Index));

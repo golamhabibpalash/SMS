@@ -48,10 +48,10 @@ namespace SMS.App.Controllers
             string attendanceFor = string.Empty;//student, employee
             
             Institute instituteInfo = await _instituteManager.GetByIdAsync(1);
-            TimeSpan duration = DateTime.Parse(instituteInfo.ClosingTime).Subtract(DateTime.Parse(instituteInfo.StartingTime));
-            DateTime middleTime = DateTime.Parse(instituteInfo.StartingTime).Add(duration / 2);
-            TimeOnly vInstituteStartingTime = TimeOnly.FromDateTime(DateTime.Parse(instituteInfo.StartingTime));
-            TimeOnly vInstituteClosingTime = TimeOnly.FromDateTime(DateTime.Parse(instituteInfo.ClosingTime));
+            TimeSpan duration =instituteInfo.ClosingTime-instituteInfo.StartingTime;
+            TimeOnly middleTime =TimeOnly.FromDateTime(instituteInfo.StartingTime).Add(duration / 2);
+            TimeOnly vInstituteStartingTime = TimeOnly.FromDateTime(instituteInfo.StartingTime);
+            TimeOnly vInstituteClosingTime = TimeOnly.FromDateTime(instituteInfo.ClosingTime);
             TimeOnly vSMSStartingTime = vInstituteStartingTime.AddHours(-1.00);
             TimeOnly vSMSClosingTime = vInstituteClosingTime.AddHours(1.00);
           
@@ -102,7 +102,7 @@ namespace SMS.App.Controllers
                             }
 
                             vAttendanceTime = TimeOnly.FromDateTime(attendanceObject.PunchDatetime).ToString();
-                            attendanceType = attendanceObject.PunchDatetime.TimeOfDay > middleTime.TimeOfDay ? "CheckOut" : "CheckIn";
+                            attendanceType = TimeOnly.FromDateTime(attendanceObject.PunchDatetime) > middleTime ? "CheckOut" : "CheckIn";
                             phoneSMSObject.SMSType = attendanceType;
                             attendanceFor = attendanceObject.CardNo.Length > 7 ? "employee" : "student";
                             if (attendanceFor == "student")

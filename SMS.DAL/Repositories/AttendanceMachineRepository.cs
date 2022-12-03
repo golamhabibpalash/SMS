@@ -40,20 +40,32 @@ namespace SMS.DAL.Repositories
             return result;            
         }
 
-        public async Task<List<Tran_MachineRawPunch>> GetCheckinDataEmpByDate(string date)
+        public async Task<List<Tran_MachineRawPunch>> GetCheckinDataByDate(string date)
         {
-            string myS = $"sp_Get_Checkin_Data_Emp '" + date+"'";
+            var pDate = new SqlParameter("date", date);
             try
             {
-                var result = await _context.Tran_MachineRawPunch.FromSqlRaw($"sp_Get_Checkin_Data_Emp '"+date+"'").ToListAsync();
+                var result = await _context.Tran_MachineRawPunch.FromSqlInterpolated($"sp_Get_Checkin_Data {date}").ToListAsync();
                 return result;
             }
             catch (Exception)
             {
-
                 throw;
             }
-            
+        }
+
+        public async Task<List<Tran_MachineRawPunch>> GetCheckOutDataByDate(string date)
+        {
+            var pDate = new SqlParameter("date", date);
+            try
+            {
+                var result = await _context.Tran_MachineRawPunch.FromSqlRaw($"sp_Get_CheckOut_Data {pDate}").ToListAsync();
+                return result;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<Tran_MachineRawPunch> GetTodaysAttendanceByUserIdAsync(int attendanceId)

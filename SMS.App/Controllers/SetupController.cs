@@ -72,7 +72,7 @@ namespace SMS.App.Controllers
                     {
                         msg = "SMS Setup Updated successful";
                         TempData["edited"] = msg;
-                        return RedirectToAction("Index","Home");
+                        return RedirectToAction("AttendanceBackgroundJob", "Hangfire");
                     }
                     else
                     {

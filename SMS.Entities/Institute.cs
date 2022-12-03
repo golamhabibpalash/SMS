@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,12 +20,12 @@ namespace SMS.Entities
         public string BranchName { get; set; }
 
         [Display(Name ="School Opening Time")]
-        public string StartingTime { get; set; }
+        public DateTime StartingTime { get; set; }
 
         [Display(Name = "School Closing Time")]
-        public string ClosingTime { get; set; }
+        public DateTime ClosingTime { get; set; }
 
         [Display(Name = "Late Time")]
-        public string LateTime { get; set; }
+        public DateTime LateTime { get; set; }
     }
 }

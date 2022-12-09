@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SMS.App.ViewModels.SetupVM;
 using SMS.BLL.Contracts;
 using SMS.Entities;
+using System.Data;
 using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
 {
+    [Authorize(Roles = "SuperAdmin")]
     public class SetupController : Controller
     {
         private readonly ISetupMobileSMSManager _setupMobileSMSManager;

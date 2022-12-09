@@ -8,16 +8,13 @@ namespace SMS.App.ViewModels.InstituteVM
     public class InstituteTimeVM
     {
         [Display(Name=("Starting Time"))]
-        [Column(TypeName ="time")]
-        public TimeOnly StartingTime { get; set; }
+        public DateTime StartingTime { get; set; }
 
         [Display(Name = ("Closing Time"))]
-        [Column(TypeName = "time")]
-        public TimeOnly ClosingTime { get; set; }
+        public DateTime ClosingTime { get; set; }
 
         [Display(Name = ("Late Start Time"))]
-        [Column(TypeName = "time")]
-        public TimeOnly LateTimeStart { get ; set; }
+        public DateTime LateTimeStart { get ; set; }
 
         public IEquatable<ValidationResult> Validate(ValidationContext validationContext)
         {

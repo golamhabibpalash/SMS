@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using Microsoft.Extensions.Logging;
 using SMS.App.Utilities.MACIPServices;
 using SMS.App.ViewModels.AttendanceVM;
@@ -59,8 +60,12 @@ namespace SMS.App.Controllers
 
             DashboardIndexVM DashboardVM = new DashboardIndexVM();
             IReadOnlyCollection<Student> students = await _studentManager.GetAllAsync();
+            students = students.Where(s => s.Status == true).ToList();
+
             DashboardVM.Students = (ICollection<Student>)students;
             DashboardVM.Employees = (ICollection<Employee>)await _employeeManager.GetAllAsync();
+
+            DashboardVM.Employees = DashboardVM.Employees.Where(s => s.Status== true).ToList(); 
 
             var todaysAllAttendance = await _attendanceMachineManager.GetAllAttendanceByDateAsync(DateTime.Now.Date);
             var todaysAllUniqeAttendance = todaysAllAttendance.GroupBy(a => a.CardNo).ToList();
@@ -75,6 +80,7 @@ namespace SMS.App.Controllers
                 todaysAttendanceEmpVM.AttendedEmployees = (from e in designation.Employees
                                                           from a in todaysAllUniqeAttendance
                                                           where a.Key == e.Phone.Substring(e.Phone.Length - 9) 
+                                                          && e.Status == true
                                                           select e).ToList();
                 todaysAttendanceEmpVM.TotalEmployee = designation.Employees.Count();
                 todaysAttendanceEmpVMs.Add(todaysAttendanceEmpVM);
@@ -90,6 +96,7 @@ namespace SMS.App.Controllers
                 todaysAttendanceStuVM.AttendedStudents = (from s in aClass.Students
                                                           from a in todaysAllUniqeAttendance
                                                           where a.Key == s.ClassRoll.ToString().PadLeft(8, '0')
+                                                          && s.Status == true
                                                           select s).ToList();
                 todaysAttendanceStuVM.TotalStudent = aClass.Students.Count();
 

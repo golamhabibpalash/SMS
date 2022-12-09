@@ -35,16 +35,16 @@
         <td>@Html.DisplayNameFor(model => model.Address)</td><td>:</td><td>@Html.DisplayFor(modelItem => modelItem.Address)</td>
     </tr>
     <tr>
-        <td>@Html.DisplayNameFor(model => model.BranchName)</td><td>:</td><td>@Html.DisplayFor(modelItem => modelItem.BranchName)</td>
+        <td>@Html.DisplayNameFor(model => model.BranchName)</td><td>:</td><td>@Model.BranchName.ToString()</td>
     </tr>
     <tr>
-        <td>@Html.DisplayNameFor(model => model.StartingTime)</td><td>:</td><td>@Html.DisplayFor(modelItem => modelItem.StartingTime)</td>
+        <td>@Html.DisplayNameFor(model => model.StartingTime)</td><td>:</td><td>@Model.StartingTime.ToString("hh:mm:ss tt")</td>
     </tr>
     <tr>
-        <td>@Html.DisplayNameFor(model => model.ClosingTime)</td><td>:</td><td>@Html.DisplayFor(modelItem => modelItem.ClosingTime)</td>
+        <td>@Html.DisplayNameFor(model => model.ClosingTime)</td><td>:</td><td>@Model.ClosingTime.ToString("hh:mm:ss tt")</td>
     </tr>
     <tr>
-        <td>@Html.DisplayNameFor(model => model.LateTime)</td><td>:</td><td>@Html.DisplayFor(modelItem => modelItem.LateTime)</td>
+        <td>@Html.DisplayNameFor(model => model.LateTime)</td><td>:</td><td>@Model.LateTime.ToString("hh:mm:ss tt")</td>
     </tr>
 </table>
 <div class="row">

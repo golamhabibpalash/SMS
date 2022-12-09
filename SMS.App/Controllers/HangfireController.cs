@@ -69,6 +69,7 @@ namespace SMS.App.Controllers
         #region CheckIn SMS Section Start===========================================
         public async Task<string> SendCheckInSMS()
         {
+            string msg = string.Empty;
             SetupMobileSMS setupMobileSMS = await _setupMobileSMSManager.GetByIdAsync(1);
             if (setupMobileSMS!=null)
             {
@@ -90,22 +91,29 @@ namespace SMS.App.Controllers
                             {
                                 await CheckInSMSSendDailyAttendanceStudentBoys();
                             }
+                            msg = "CheckIn SMS Service has been started.";
                         }
-                        if (setupMobileSMS.CheckOutSMSService == true)
-                        {
-                            if (setupMobileSMS.CheckOutSMSServiceForEmployees == true)
-                            {
+                        //if (setupMobileSMS.CheckOutSMSService == true)
+                        //{
+                        //    if (setupMobileSMS.CheckOutSMSServiceForEmployees == true)
+                        //    {
+                        //        await CheckOutSMSSendDailyAttendanceEmployees();
+                        //    }
+                        //    if (setupMobileSMS.CheckOutSMSServiceForGirlsStudent == true)
+                        //    {
+                        //        await CheckOutSMSSendDailyAttendanceGirls();
+                        //    }
+                        //    if (setupMobileSMS.CheckOutSMSServiceForMaleStudent == true)
+                        //    {
+                        //        await CheckOutSMSSendDailyAttendanceBoys();
+                        //    }
 
-                            }
-                            if (setupMobileSMS.CheckOutSMSServiceForGirlsStudent == true)
-                            {
-
-                            }
-                            if (setupMobileSMS.CheckOutSMSServiceForMaleStudent == true)
-                            {
-
-                            }
-                        }
+                        //    msg += " CheckOut SMS Service has been started.";
+                        //}
+                    }
+                    else
+                    {
+                        msg = "SMS Service is Off";
                     }
                 }
                 catch (Exception)
@@ -114,7 +122,7 @@ namespace SMS.App.Controllers
                     throw;
                 }
             }
-            return "Checkin SMS Service started.";
+            return msg;
         }
 
         private async Task<IActionResult> CheckInSMSSendDailyAttendanceStudentBoys()
@@ -136,8 +144,13 @@ namespace SMS.App.Controllers
                 {
                     foreach (Tran_MachineRawPunch attendance in todaysAllCheckInAttendance)
                     {
+                        if (attendance.CardNo.Length>8)
+                        {
+                            continue;
+                        }
                         Student student = await _studentManager.GetStudentByClassRollAsync(Convert.ToInt32(attendance.CardNo.Trim()));
-                        if (student == null || student.GenderId != 1)
+                        
+                        if (student == null || student.GenderId != 1 || student.Status == false)
                         {
                             continue;
                         }
@@ -206,8 +219,13 @@ namespace SMS.App.Controllers
                 {
                     foreach (Tran_MachineRawPunch attendance in todaysAllCheckInAttendance)
                     {
+                        if (attendance.CardNo.Length>8)
+                        {
+                            continue;
+                        }
                         Student student = await _studentManager.GetStudentByClassRollAsync(Convert.ToInt32(attendance.CardNo.Trim()));
-                        if (student == null || student.GenderId != 2)
+                        
+                        if (student == null || student.GenderId != 2 || student.Status == false)
                         {
                             continue;
                         }
@@ -258,6 +276,7 @@ namespace SMS.App.Controllers
         }
 
 
+        [HttpGet]
         private async Task<IActionResult> CheckInSMSSendDailyAttendanceEmployee()
         {
             var attendanceSMSSetup = await _setupMobileSMSManager.GetByIdAsync(1);
@@ -272,6 +291,7 @@ namespace SMS.App.Controllers
             var todaysAllAttendance = await _attendanceMachineManager.GetCheckinDataByDate(DateTime.Now.ToString("dd-MM-yyyy"));
             if (todaysAllAttendance.Count > 0)
             {
+                
                 try
                 {
                     string phoneNumber = string.Empty;
@@ -281,8 +301,15 @@ namespace SMS.App.Controllers
                     string attTime = string.Empty;
                     foreach (var att in todaysAllAttendance)
                     {
+                        if (att.CardNo.Length <= 8)
+                        {
+                            continue;
+                        }
                         Employee empObject = await _employeeManager.GetByPhoneAttendance(att.CardNo);
-                        
+                        if (empObject == null)
+                        {
+                            continue;
+                        }
                         if (empObject!=null || empObject.Status!= false)
                         {
                             phoneNumber = empObject.Phone;
@@ -360,8 +387,16 @@ namespace SMS.App.Controllers
                 {
                     foreach (Tran_MachineRawPunch attendance in todaysCheckOutAttendances)
                     {
+                        if (attendance.CardNo.Length != 8)
+                        {
+                            continue;
+                        }
                         Student student = await _studentManager.GetStudentByClassRollAsync(Convert.ToInt32(attendance.CardNo.Trim()));
-                        if (student == null || student.GenderId == 2 || student.GenderId == 3)
+                        if (student == null) 
+                        {
+                            continue;
+                        }
+                        if (student.GenderId == 2 || student.GenderId == 3 || student.Status == false)
                         {
                             continue;
                         }
@@ -423,8 +458,16 @@ namespace SMS.App.Controllers
                 {
                     foreach (Tran_MachineRawPunch attendance in todaysCheckOutAttendances)
                     {
+                        if (attendance.CardNo.Length != 8)
+                        {
+                            continue;
+                        }
                         Student student = await _studentManager.GetStudentByClassRollAsync(Convert.ToInt32(attendance.CardNo.Trim()));
-                        if (student == null || student.GenderId==1)
+                        if (student==null)
+                        {
+                            continue;
+                        }
+                        if ( student.GenderId==1)
                         {
                             continue;
                         }
@@ -487,7 +530,15 @@ namespace SMS.App.Controllers
                 {
                     foreach (Tran_MachineRawPunch attendance in todaysCheckOutAttendances)
                     {
+                        if (attendance.CardNo.Length <= 8)
+                        {
+                            continue;
+                        }
                         Employee objEmployee = await _employeeManager.GetByPhoneAttendance(attendance.CardNo);
+                        if (objEmployee == null)
+                        {
+                            continue;
+                        }
                         if (objEmployee.Status == false)
                         {
                             continue;

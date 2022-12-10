@@ -15,8 +15,9 @@ namespace SMS.BLL.Contracts
         Task<IEnumerable<AttendanceVM>> GetAttendanceByDateAsync(string attendanceFor, string date, string attendanceType, int? aSessionId, int? aClassId);
         
         Task<Tran_MachineRawPunch> GetTodaysAttendanceByUserIdAsync(int attendanceId);
-        Task<List<Tran_MachineRawPunch>> GetCheckinDataByDate(string date);
-        Task<List<Tran_MachineRawPunch>> GetCheckOutDataByDate(string date);
+        Task<List<Tran_MachineRawPunch>> GetCheckinDataByDateAsync(string date);
+        Task<List<Tran_MachineRawPunch>> GetCheckOutDataByDateAsync(string date);
+        Task<List<Student>> GetTodaysAbsentStudentAsync(string date);
 
     }
 }

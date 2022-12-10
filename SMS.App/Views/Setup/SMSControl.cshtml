@@ -109,6 +109,33 @@
                                 </label>
                             </td>
                         </tr>
+
+
+                        <tr>
+                            <td rowspan="2" class="align-middle h5 font-weight-bold">
+                                Others Attendance SMS Service<br />                                
+                            </td>
+                            <td class="font-weight-bold">
+                                Summary SMS Service <br />
+                                <label class="col-form-label">
+                                    <label class="switch">
+                                        <input asp-for="CheckInSMSSummary" type="checkbox">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>                           
+                            <td class="font-weight-bold">
+                                Absent Student Notification <br />
+                                <label class="col-form-label">
+                                    <label class="switch">
+                                        <input asp-for="AbsentNotification" type="checkbox">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </label>
+                            </td>
+                        </tr>
                     </table>
                 </div>
             </div>
@@ -163,7 +190,10 @@
                 $('#CheckInSMSEmployees').prop('checked', false);
                 $('#CheckInSMSStudentBoys').prop('checked', false);
                 $('#CheckInSMSStudentGirls').prop('checked', false);
-            } 
+            }
+            else {
+                $('#AttendanceSMSService').prop('checked', true);
+            }
         });
 
         $('#CheckOutSMSEmployees').change(function () {
@@ -192,8 +222,28 @@
                 $('#CheckOutSMSEmployees').prop('checked', false);
                 $('#CheckOutSMSStudentBoys').prop('checked', false);
                 $('#CheckOutSMSStudentGirls').prop('checked', false);
-            } 
+            }
+            else {
+                $('#AttendanceSMSService').prop('checked', true);
+            }
         });
+
+        $('#CheckInSMSSummary').change(function () {
+            if (!$(this).prop('checked')) {                
+            }
+            else {
+                $('#AttendanceSMSService').prop('checked', true);
+            }
+        });
+
+        $('#AbsentNotification').change(function () {
+            if (!$(this).prop('checked')) {                
+            }
+            else {
+                $('#AttendanceSMSService').prop('checked', true);
+            }
+        });
+
         $('#AttendanceSMSService').change(function () {
             if (!$(this).prop('checked')) {
 
@@ -207,6 +257,9 @@
                 $('#CheckOutSMSEmployees').prop('checked', false);
                 $('#CheckOutSMSStudentBoys').prop('checked', false);
                 $('#CheckOutSMSStudentGirls').prop('checked', false);
+
+                $('#CheckInSMSSummary').prop('checked', false);
+                $('#AbsentNotification').prop('checked', false);
             } 
         });
 

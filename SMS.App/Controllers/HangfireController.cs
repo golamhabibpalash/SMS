@@ -22,6 +22,8 @@ using static System.Net.Mime.MediaTypeNames;
 using SMS.Entities.AdditionalModels;
 using System.Web;
 using System.Collections;
+using Microsoft.CodeAnalysis.FlowAnalysis;
+using Hangfire.Storage;
 
 namespace SMS.App.Controllers
 {
@@ -41,28 +43,45 @@ namespace SMS.App.Controllers
             _attendanceMachineManager = attendanceMachineManager;
             _employeeManager = employeeManager;
             _phoneSMSManager = phoneSMSManager;
-            _setupMobileSMSManager = setupMobileSMSManager; 
+            _setupMobileSMSManager = setupMobileSMSManager;
+
+
         }
         #endregion Constructor Finished xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxX
+
 
         [HttpGet]
         public async Task<IActionResult> AttendanceBackgroundJob()
         {
+            var jobs = JobStorage.Current.GetConnection().GetRecurringJobs();
+            
+            foreach (var item in jobs)
+            {
+                BackgroundJob.Delete(item.Id);
+                RecurringJob.RemoveIfExists(item.Id);
+            }
+
+
             SetupMobileSMS setupMobileSMS = await _setupMobileSMSManager.GetByIdAsync(1);
             if (setupMobileSMS != null)
             {
-                if (setupMobileSMS.CheckInSMSService)
+                if (setupMobileSMS.CheckInSMSSummary)
                 {
                     RecurringJob.AddOrUpdate(() => SMSSendDailyAttendanceSummary(), "0 0 10 * * SAT-THU", TimeZoneInfo.Local);
-
+                }
+                if (setupMobileSMS.CheckInSMSService)
+                {
                     RecurringJob.AddOrUpdate(() => SendCheckInSMS(), "*/20 * 8-11 * * sat-thu", TimeZoneInfo.Local);
                 }
                 if (setupMobileSMS.CheckOutSMSService)
                 {
                     RecurringJob.AddOrUpdate(() => SendCheckOutSMS(), "*/20 * 13-15 * * sat-thu", TimeZoneInfo.Local);
                 }
+                if (setupMobileSMS.AbsentNotification)
+                {
+                    RecurringJob.AddOrUpdate(() => SendAbsentNotificationSMS(), "0 15 10 * * SAT-THU", TimeZoneInfo.Local);
+                }
             }
-
             return RedirectToAction("Index", "Home");
         }
 
@@ -275,8 +294,6 @@ namespace SMS.App.Controllers
             return Ok();
         }
 
-
-        [HttpGet]
         private async Task<IActionResult> CheckInSMSSendDailyAttendanceEmployee()
         {
             var attendanceSMSSetup = await _setupMobileSMSManager.GetByIdAsync(1);
@@ -288,7 +305,7 @@ namespace SMS.App.Controllers
             {
                 return Ok("CheckIn SMS Service for Employees is Inactive");
             }
-            var todaysAllAttendance = await _attendanceMachineManager.GetCheckinDataByDate(DateTime.Now.ToString("dd-MM-yyyy"));
+            var todaysAllAttendance = await _attendanceMachineManager.GetCheckinDataByDateAsync(DateTime.Now.ToString("dd-MM-yyyy"));
             if (todaysAllAttendance.Count > 0)
             {
                 
@@ -380,7 +397,7 @@ namespace SMS.App.Controllers
         {
             DateTime date = DateTime.Today;
             List<Tran_MachineRawPunch> todaysCheckOutAttendances = new List<Tran_MachineRawPunch>();
-            todaysCheckOutAttendances = await _attendanceMachineManager.GetCheckinDataByDate(date.ToString("dd-MM-yyyy"));
+            todaysCheckOutAttendances = await _attendanceMachineManager.GetCheckinDataByDateAsync(date.ToString("dd-MM-yyyy"));
             try
             {
                 if (todaysCheckOutAttendances != null || todaysCheckOutAttendances.Count > 0)
@@ -451,7 +468,7 @@ namespace SMS.App.Controllers
         {
             DateTime date = DateTime.Today;
             List<Tran_MachineRawPunch> todaysCheckOutAttendances = new List<Tran_MachineRawPunch>();
-            todaysCheckOutAttendances = await _attendanceMachineManager.GetCheckinDataByDate(date.ToString("dd-MM-yyyy"));
+            todaysCheckOutAttendances = await _attendanceMachineManager.GetCheckinDataByDateAsync(date.ToString("dd-MM-yyyy"));
             try
             {
                 if (todaysCheckOutAttendances!=null)
@@ -523,7 +540,7 @@ namespace SMS.App.Controllers
         {
             DateTime date = DateTime.Today;
             List<Tran_MachineRawPunch> todaysCheckOutAttendances = new List<Tran_MachineRawPunch>();
-            todaysCheckOutAttendances = await _attendanceMachineManager.GetCheckinDataByDate(date.ToString("dd-MM-yyyy"));
+            todaysCheckOutAttendances = await _attendanceMachineManager.GetCheckinDataByDateAsync(date.ToString("dd-MM-yyyy"));
             try
             {
                 if (todaysCheckOutAttendances != null || todaysCheckOutAttendances.Count > 0)
@@ -599,7 +616,7 @@ namespace SMS.App.Controllers
             try
             {
                 DateTime tDate = DateTime.Today;
-                var allCheckInAttendance = await _attendanceMachineManager.GetCheckinDataByDate(tDate.ToString("dd-MM-yyyy"));
+                var allCheckInAttendance = await _attendanceMachineManager.GetCheckinDataByDateAsync(tDate.ToString("dd-MM-yyyy"));
                 if (allCheckInAttendance != null || allCheckInAttendance.Count() > 0)
                 {
                     var students = await _studentManager.GetAllAsync();
@@ -624,11 +641,15 @@ namespace SMS.App.Controllers
                                      join e in employees on a.CardNo equals e.Phone.Substring(e.Phone.Length - 9)
                                      select a).Count();
                     string msgText = string.Empty;
-
                     msgText = $"Attendance Summary ({DateTime.Today.ToString("dd MMM yyyy")}):\n" +
                         $"Employees: {totalEmployee} \n" +
                         $"Students:({totalBoysStudent}+{totalGirlsStudent})= {totalStudent} \n" +                        
                         $"-Noble Residential School";
+
+                    if (totalStudent <= 0)
+                    {
+                        msgText = "Your attendance machine is off or disconnected!";
+                    }
 
                     //Email Send
                     string[] toEmail = { "golamhabibpalash@gmail.com", "sss139157@gmail.com" };
@@ -689,6 +710,77 @@ namespace SMS.App.Controllers
         }
         #endregion Summary SMS Region Finished Here XXXXXXXXXXXXXXXXXXXXXXX
 
+        
+        #region Absent Student Notification by SMS Start here ======================
+        public async Task<IActionResult> SendAbsentNotificationSMS()
+        {
+            string msg = string.Empty;
+            SetupMobileSMS setupMobileSMS = await _setupMobileSMSManager.GetByIdAsync(1);
+            if (setupMobileSMS.AbsentNotification)
+            {
+
+            }
+            return Ok(msg);
+        }
+
+        private async Task<IActionResult> AbsentStudentSendSMS()
+        {
+            string date = DateTime.Now.ToString("dd-MM-yyyy");
+            List<Student> absentStudents = await _attendanceMachineManager.GetTodaysAbsentStudentAsync(date);
+            if (absentStudents == null || absentStudents.Count <=0)
+            {
+                return null;
+            }
+            else
+            {
+                try
+                {
+                    foreach (Student student in absentStudents)
+                    {
+                        if (student.Status == false)
+                        {
+                            continue;
+                        }
+                        string phoneNumber = student.GuardianPhone != null ? student.GuardianPhone : student.PhoneNo != null ? student.PhoneNo : string.Empty;
+
+                        if (string.IsNullOrEmpty(phoneNumber))
+                        {
+                            continue;
+                        }
+                        string studentName = student.NameBangla != null ? student.NameBangla : student.Name != null ? student.Name : string.Empty;
+                        string smsType = "absent";
+                        bool isAlreadySMSSent = await _phoneSMSManager.IsSMSSendForAttendance(phoneNumber, smsType, date);
+                        if (isAlreadySMSSent)
+                        {
+                            continue;
+                        }
+                        string smsText = GenerateAbsentNotificationText(studentName, 1);
+                        bool isSMSSent = await MobileSMS.SendSMS(phoneNumber, smsText);
+                        if (isSMSSent)
+                        {
+                            PhoneSMS phoneSMS = new PhoneSMS()
+                            {
+                                Text = smsText,
+                                CreatedAt = DateTime.Now,
+                                CreatedBy = "Automation",
+                                MobileNumber = phoneNumber,
+                                MACAddress = MACService.GetMAC(),
+                                SMSType = smsType
+                            };
+                            await _phoneSMSManager.AddAsync(phoneSMS);
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+            return Ok();
+        }
+        #endregion Absent Student Notification by SMS Finished here xxxxxxxxxxxxxxxxxxx
+
         #region SMS Generate Section Start Here ====================================
         private string GenerateCheckInSMSText(string name, string attendanceTime)
         {
@@ -723,6 +815,22 @@ namespace SMS.App.Controllers
                     throw;
                 }
             }
+            return msg;
+        }
+
+        private string GenerateAbsentNotificationText(string name, int absentDayCount)
+        {
+            string msg = string.Empty;
+            if (absentDayCount==1)
+            {
+                string dateTime = DateTime.Now.ToString("dd MMM yyyy");
+                msg = name + " আজ (" + dateTime + ") স্কুলে আসেনি । -নোবেল।";
+            }
+            if (absentDayCount>1)
+            {
+                msg = name + "গত " + absentDayCount + " দিন থেকে স্কুলে আসছে না । -নোবেল।";
+            }
+
             return msg;
         }
         #endregion SMS Generate Section Finished Here XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX

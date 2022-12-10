@@ -40,6 +40,9 @@ namespace SMS.App.Controllers
             attendanceSetupVM.CheckOutSMSEmployees = setupMobileSMS.CheckOutSMSServiceForEmployees;
             attendanceSetupVM.CheckOutSMSStudentBoys = setupMobileSMS.CheckOutSMSServiceForMaleStudent;
             attendanceSetupVM.CheckOutSMSStudentGirls = setupMobileSMS.CheckOutSMSServiceForGirlsStudent;
+
+            attendanceSetupVM.CheckInSMSSummary = setupMobileSMS.CheckInSMSSummary;
+            attendanceSetupVM.AbsentNotification = setupMobileSMS.AbsentNotification;
             //if (setupMobileSMS != null)
             //{
             //    return View(setupMobileSMS);
@@ -67,6 +70,8 @@ namespace SMS.App.Controllers
                 objSetupMobileSMS.CheckOutSMSServiceForEmployees = attendanceSetupVM.CheckOutSMSEmployees;
                 objSetupMobileSMS.CheckOutSMSServiceForMaleStudent = attendanceSetupVM.CheckOutSMSStudentBoys;
                 objSetupMobileSMS.CheckOutSMSServiceForGirlsStudent = attendanceSetupVM.CheckOutSMSStudentGirls;
+                objSetupMobileSMS.AbsentNotification = attendanceSetupVM.AbsentNotification;
+                objSetupMobileSMS.CheckInSMSSummary = attendanceSetupVM.CheckInSMSSummary;
 
                 try
                 {

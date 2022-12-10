@@ -45,11 +45,12 @@
                                         <td>@item.Designation.DesignationName</td>
                                         <td class="text-center">
                                             <a class="text-light" asp-action="Index" asp-controller="AttendanceMachines" asp-route-attendanceFor="employees" asp-route-dateTime="@DateTime.Today.ToString("yyyy-MM-dd")" asp-route-attendanceType="all">
-                                                <div class="w-100 bg-info">@item.AttendedEmployees.Count()</div>
+                                                <div class="w-100 bg-info">@item.AttendedEmployees.Where(e => e.Status == true).Count()</div>
                                             </a>
                                         </td>
                                         <td class="text-right">@item.TotalEmployee</td>
-                                        @{totalAttendedEmployees += @item.AttendedEmployees.Count();}
+                                       
+                                        @{totalAttendedEmployees += @item.AttendedEmployees.Where(e => e.Status == true).Count();}
                                     </tr>
                                 }
                                 <tr class="font-weight-bold bg-info text-light">
@@ -61,7 +62,7 @@
                                             </div>
                                         </a>
                                     </td>
-                                    <td class="text-right">@Model.Employees.Count()</td>
+                                    <td class="text-right">@Model.Employees.Where(e => e.Status == true).Count()</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -71,7 +72,7 @@
                             <thead class="bg-info text-light">
                                 <tr class="font-weight-bold h6">
                                     <td colspan="2">Total Students</td>
-                                    <td class="text-right">@Model.Students.Count()</td>
+                                    <td class="text-right">@Model.Students.Where(s => s.Status == true).Count()</td>
                                 </tr>
                                 <tr class="">
                                     <td>Class Name</td>
@@ -92,12 +93,12 @@
                                         <td class="text-center">
                                             <a class="text-light" asp-action="Index" asp-controller="AttendanceMachines" asp-route-attendanceFor="students" asp-route-dateTime="@DateTime.Today.ToString("yyyy-MM-dd")" asp-route-attendanceType="attended" asp-route-aSessionId="1" asp-route-aClassId="@sClass.AcademicClass.Id">
                                                 <div class="w-100 bg-info">
-                                                    @sClass.AttendedStudents.Count()
+                                                    @sClass.AttendedStudents.Where(s => s.Status == true).Count()
                                                 </div>
                                             </a>
                                         </td>
                                         <td class="text-right"><a asp-action="Index" asp-controller="Students" asp-route-academicClassId="@sClass.AcademicClass.Id"> @sClass.TotalStudent</a></td>
-                                        @{totalAttendedStudents += @sClass.AttendedStudents.Count();}
+                                        @{totalAttendedStudents += @sClass.AttendedStudents.Where(s => s.Status==true).Count();}
                                     </tr>
                                 }
                                 <tr class="font-weight-bold bg-info text-light">
@@ -107,7 +108,7 @@
                                             <div class="w-100 bg-light">@totalAttendedStudents</div>
                                         </a>
                                     </td>
-                                    <td class="text-right"><a asp-action="Index" asp-controller="Students"> @Model.Students.Count()</a></td>
+                                    <td class="text-right"><a asp-action="Index" asp-controller="Students"> @Model.Students.Where(s => s.Status == true).Count()</a></td>
                                 </tr>
                             </tbody>
                         </table>

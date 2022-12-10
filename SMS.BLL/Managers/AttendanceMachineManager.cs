@@ -33,10 +33,10 @@ namespace SMS.BLL.Managers
             return result.OrderByDescending(m => m.CardNo);
         }
 
-        public async Task<List<Tran_MachineRawPunch>> GetCheckinDataByDate(string date)
+        public async Task<List<Tran_MachineRawPunch>> GetCheckinDataByDateAsync(string date)
         {
             List<Tran_MachineRawPunch> allCheckInAttendnace = new List<Tran_MachineRawPunch>();
-            var result =await _attendanceMachineRepository.GetCheckinDataByDate(date);
+            var result =await _attendanceMachineRepository.GetCheckinDataByDateAsync(date);
             if (result.Count>0)
             {
                 allCheckInAttendnace = result;
@@ -44,15 +44,22 @@ namespace SMS.BLL.Managers
             return allCheckInAttendnace;
         }
 
-        public async Task<List<Tran_MachineRawPunch>> GetCheckOutDataByDate(string date)
+        public async Task<List<Tran_MachineRawPunch>> GetCheckOutDataByDateAsync(string date)
         {
             List<Tran_MachineRawPunch> allCheckOutAttendnace = new List<Tran_MachineRawPunch>();
-            var result = await _attendanceMachineRepository.GetCheckOutDataByDate(date);
+            var result = await _attendanceMachineRepository.GetCheckOutDataByDateAsync(date);
             if (result.Count > 0)
             {
                 allCheckOutAttendnace = result;
             }
             return allCheckOutAttendnace;
+        }
+
+        public async Task<List<Student>> GetTodaysAbsentStudentAsync(string date)
+        {
+            List<Student> students = new List<Student>();
+            students = await _attendanceMachineRepository.GetTodaysAbsentStudentAsync(date);
+            return students;
         }
 
         public async Task<Tran_MachineRawPunch> GetTodaysAttendanceByUserIdAsync(int attendanceId)

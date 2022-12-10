@@ -40,7 +40,7 @@ namespace SMS.DAL.Repositories
             return result;            
         }
 
-        public async Task<List<Tran_MachineRawPunch>> GetCheckinDataByDate(string date)
+        public async Task<List<Tran_MachineRawPunch>> GetCheckinDataByDateAsync(string date)
         {
             var pDate = new SqlParameter("date", date);
             try
@@ -54,12 +54,26 @@ namespace SMS.DAL.Repositories
             }
         }
 
-        public async Task<List<Tran_MachineRawPunch>> GetCheckOutDataByDate(string date)
+        public async Task<List<Tran_MachineRawPunch>> GetCheckOutDataByDateAsync(string date)
         {
             var pDate = new SqlParameter("date", date);
             try
             {
                 var result = await _context.Tran_MachineRawPunch.FromSqlRaw($"sp_Get_CheckOut_Data {pDate}").ToListAsync();
+                return result;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<List<Student>> GetTodaysAbsentStudentAsync(string date)
+        {
+            var pDate = new SqlParameter("date", date);
+            try
+            {
+                var result = await _context.Student.FromSqlRaw($"sp_get_todays_absent_students_by_date {pDate}").ToListAsync();
                 return result;
             }
             catch (Exception)

@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace SMS.Entities
 {
-    public class Exam : CommonProps
+    public class AcademicExamType : CommonProps
     {
-        public string ExamName { get; set; }
-
+        public string ExamTypeName { get; set; }
     }
 }

@@ -59,7 +59,7 @@ namespace SMS.DAL.Repositories
             var pDate = new SqlParameter("date", date);
             try
             {
-                var result = await _context.Tran_MachineRawPunch.FromSqlRaw($"sp_Get_CheckOut_Data {pDate}").ToListAsync();
+                var result = await _context.Tran_MachineRawPunch.FromSqlInterpolated($"sp_Get_CheckOut_Data {date}").ToListAsync();
                 return result;
             }
             catch (Exception)
@@ -73,7 +73,7 @@ namespace SMS.DAL.Repositories
             var pDate = new SqlParameter("date", date);
             try
             {
-                var result = await _context.Student.FromSqlRaw($"sp_get_todays_absent_students_by_date {pDate}").ToListAsync();
+                var result = await _context.Student.FromSqlInterpolated($"sp_get_todays_absent_students_by_date {date}").ToListAsync();
                 return result;
             }
             catch (Exception)

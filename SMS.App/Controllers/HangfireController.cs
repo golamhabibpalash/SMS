@@ -112,23 +112,6 @@ namespace SMS.App.Controllers
                             }
                             msg = "CheckIn SMS Service has been started.";
                         }
-                        //if (setupMobileSMS.CheckOutSMSService == true)
-                        //{
-                        //    if (setupMobileSMS.CheckOutSMSServiceForEmployees == true)
-                        //    {
-                        //        await CheckOutSMSSendDailyAttendanceEmployees();
-                        //    }
-                        //    if (setupMobileSMS.CheckOutSMSServiceForGirlsStudent == true)
-                        //    {
-                        //        await CheckOutSMSSendDailyAttendanceGirls();
-                        //    }
-                        //    if (setupMobileSMS.CheckOutSMSServiceForMaleStudent == true)
-                        //    {
-                        //        await CheckOutSMSSendDailyAttendanceBoys();
-                        //    }
-
-                        //    msg += " CheckOut SMS Service has been started.";
-                        //}
                     }
                     else
                     {
@@ -183,7 +166,7 @@ namespace SMS.App.Controllers
                             }
                             else
                             {
-                                bool isAlreadySMSSent = await _phoneSMSManager.IsSMSSendForAttendance(phoneNumber, smsType, attendance.PunchDatetime.ToString("dd-MM-yyyy"));
+                                bool isAlreadySMSSent = await _phoneSMSManager.IsSMSSendForAttendance(phoneNumber, smsType, DateTime.Now.ToString("dd-MM-yyyy"));
                                 if (isAlreadySMSSent)
                                 {
                                     continue;
@@ -258,7 +241,7 @@ namespace SMS.App.Controllers
                             }
                             else
                             {
-                                bool isAlreadySMSSent = await _phoneSMSManager.IsSMSSendForAttendance(phoneNumber, smsType, attendance.PunchDatetime.ToString("dd-MM-yyyy"));
+                                bool isAlreadySMSSent = await _phoneSMSManager.IsSMSSendForAttendance(phoneNumber, smsType, DateTime.Now.ToString("dd-MM-yyyy"));
                                 if (isAlreadySMSSent)
                                 {
                                     continue;
@@ -710,7 +693,7 @@ namespace SMS.App.Controllers
         }
         #endregion Summary SMS Region Finished Here XXXXXXXXXXXXXXXXXXXXXXX
 
-        
+
         #region Absent Student Notification by SMS Start here ======================
         public async Task<IActionResult> SendAbsentNotificationSMS()
         {
@@ -718,7 +701,7 @@ namespace SMS.App.Controllers
             SetupMobileSMS setupMobileSMS = await _setupMobileSMSManager.GetByIdAsync(1);
             if (setupMobileSMS.AbsentNotification)
             {
-
+                await AbsentStudentSendSMS();
             }
             return Ok(msg);
         }

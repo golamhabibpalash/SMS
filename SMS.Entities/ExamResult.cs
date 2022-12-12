@@ -16,7 +16,7 @@ namespace SMS.Entities
         public Student Student { get; set; }
        
         public int ExamId { get; set; }
-        public Exam Exam { get; set; }
+        public AcademicExam Exam { get; set; }
 
         public double TotalMarks { get; set; }
 

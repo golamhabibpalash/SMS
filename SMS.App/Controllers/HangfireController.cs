@@ -24,6 +24,7 @@ using System.Web;
 using System.Collections;
 using Microsoft.CodeAnalysis.FlowAnalysis;
 using Hangfire.Storage;
+using System.Drawing.Imaging;
 
 namespace SMS.App.Controllers
 {
@@ -175,20 +176,23 @@ namespace SMS.App.Controllers
                                 {
                                     string studentName = !string.IsNullOrEmpty(student.NameBangla) ? student.NameBangla : student.Name;
                                     string smsText = GenerateCheckInSMSText(studentName, attendance.PunchDatetime.ToString("hh:mm tt"));
-                                    bool isSMSSent = await MobileSMS.SendSMS(phoneNumber, smsText);
-                                    if (isSMSSent)
+                                    if (PhoneNumberValidate(phoneNumber) == false)
                                     {
-                                        PhoneSMS phoneSMS = new PhoneSMS()
-                                        {
-                                            Text = smsText,
-                                            MobileNumber = phoneNumber,
-                                            SMSType = smsType,
-                                            CreatedBy = "Automation",
-                                            CreatedAt = DateTime.Now,
-                                            MACAddress = MACService.GetMAC()
-                                        };
-                                        bool isSave = await _phoneSMSManager.AddAsync(phoneSMS);
+                                        continue;
                                     }
+                                    bool isSMSSent = await MobileSMS.SendSMS(phoneNumber, smsText);
+                                    
+                                    PhoneSMS phoneSMS = new PhoneSMS()
+                                    {
+                                        Text = smsText,
+                                        MobileNumber = phoneNumber,
+                                        SMSType = smsType,
+                                        CreatedBy = "Automation",
+                                        CreatedAt = DateTime.Now,
+                                        MACAddress = MACService.GetMAC()
+                                    };
+                                    bool isSave = await _phoneSMSManager.AddAsync(phoneSMS);
+                                    
                                 }
                             }
                         }
@@ -250,20 +254,22 @@ namespace SMS.App.Controllers
                                 {
                                     string studentName = !string.IsNullOrEmpty(student.NameBangla) ? student.NameBangla : student.Name;
                                     string smsText = GenerateCheckInSMSText(studentName, attendance.PunchDatetime.ToString("hh:mm tt"));
-                                    bool isSMSSent = await MobileSMS.SendSMS(phoneNumber,smsText);
-                                    if (isSMSSent)
+                                    if (PhoneNumberValidate(phoneNumber) == false)
                                     {
-                                        PhoneSMS phoneSMS = new PhoneSMS() 
-                                        {
-                                            Text = smsText,
-                                            MobileNumber = phoneNumber,
-                                            SMSType = smsType,
-                                            CreatedBy = "Automation",
-                                            CreatedAt = DateTime.Now,
-                                            MACAddress = MACService.GetMAC()
-                                        };
-                                        bool isSave = await _phoneSMSManager.AddAsync(phoneSMS);
+                                        continue;
                                     }
+                                    bool isSMSSent = await MobileSMS.SendSMS(phoneNumber,smsText);
+                                    
+                                    PhoneSMS phoneSMS = new PhoneSMS()
+                                    {
+                                        Text = smsText,
+                                        MobileNumber = phoneNumber,
+                                        SMSType = smsType,
+                                        CreatedBy = "Automation",
+                                        CreatedAt = DateTime.Now,
+                                        MACAddress = MACService.GetMAC()
+                                    };
+                                    bool isSave = await _phoneSMSManager.AddAsync(phoneSMS);                                    
                                 }
                             }
                         }
@@ -324,19 +330,22 @@ namespace SMS.App.Controllers
                                 employeeName = !string.IsNullOrEmpty(empObject.EmployeeNameBangla)?empObject.EmployeeNameBangla:empObject.EmployeeName;
                                 attTime = att.PunchDatetime.ToString("hh:mm tt");
                                 smsText = GenerateCheckInSMSText(employeeName,attTime);
-                                bool isSend = await MobileSMS.SendSMS(phoneNumber,smsText);
-                                if (isSend)
+
+                                if (PhoneNumberValidate(phoneNumber) == false)
                                 {
-                                    PhoneSMS phoneSMS = new PhoneSMS() {
-                                        Text = smsText,
-                                        CreatedAt = DateTime.Now,
-                                        CreatedBy = "Automation",
-                                        MobileNumber = phoneNumber,
-                                        MACAddress = MACService.GetMAC(),
-                                        SMSType = smsType
-                                    };
-                                    await _phoneSMSManager.AddAsync(phoneSMS);
+                                    continue;
                                 }
+                                bool isSend = await MobileSMS.SendSMS(phoneNumber,smsText);
+                                
+                                PhoneSMS phoneSMS = new PhoneSMS() {
+                                    Text = smsText,
+                                    CreatedAt = DateTime.Now,
+                                    CreatedBy = "Automation",
+                                    MobileNumber = phoneNumber,
+                                    MACAddress = MACService.GetMAC(),
+                                    SMSType = smsType
+                                };
+                                await _phoneSMSManager.AddAsync(phoneSMS);                                
                             }
                         }
                     }
@@ -818,5 +827,14 @@ namespace SMS.App.Controllers
         }
         #endregion SMS Generate Section Finished Here XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
+        private bool PhoneNumberValidate(string phoneNumber)
+        {
+            long pNumber = Convert.ToInt64(phoneNumber.Trim());
+            if (pNumber>=01300000000 && pNumber<=01999999999)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

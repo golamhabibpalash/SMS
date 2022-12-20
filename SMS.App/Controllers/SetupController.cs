@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
 {
-    [Authorize(Roles = "SuperAdmin")]
+    [Authorize(Roles = "SuperAdmin,Admin")]
     public class SetupController : Controller
     {
         private readonly ISetupMobileSMSManager _setupMobileSMSManager;

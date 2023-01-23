@@ -719,6 +719,11 @@ namespace SMS.App.Controllers
         {
             string date = DateTime.Now.ToString("dd-MM-yyyy");
             List<Student> absentStudents = await _attendanceMachineManager.GetTodaysAbsentStudentAsync(date);
+            List<Student> totalStudent = (List<Student>)await _studentManager.GetAllAsync();
+            //if (absentStudents.Count>=Convert.ToInt32(totalStudent.Where(s => s.Status==true).Count/2))
+            //{
+            //    return null;
+            //}
             if (absentStudents == null || absentStudents.Count <=0)
             {
                 return null;

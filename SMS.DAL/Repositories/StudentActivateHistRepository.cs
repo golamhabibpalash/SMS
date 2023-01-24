@@ -26,10 +26,19 @@ namespace SMS.DAL.Repositories
             if (existingStudenet.AdmissionDate.Date < qDate.Date)
             {
                 var listOfActivationHistory = await GetExistingHistory(id, date);
-                StudentActivateHist objStudentActivateHist = (from t in listOfActivationHistory
+                StudentActivateHist objStudentActivateHist;
+                if (listOfActivationHistory.Count>0)
+                {
+                    objStudentActivateHist = (from t in listOfActivationHistory
                                                              where t.ActionDateTime.Date < qDate.Date
                                                              select t).Last();
-                return objStudentActivateHist.IsActive;
+                    return objStudentActivateHist.IsActive;
+                }
+                else
+                {
+                    return existingStudenet.Status;
+                }
+                
             }
             else
             {

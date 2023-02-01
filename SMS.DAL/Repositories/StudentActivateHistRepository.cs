@@ -23,16 +23,23 @@ namespace SMS.DAL.Repositories
         {
             Student existingStudenet = await _studentRepository.GetByIdAsync(id);
             DateTime qDate = Convert.ToDateTime(date);
-            if (existingStudenet.AdmissionDate.Date < qDate.Date)
+            if (existingStudenet.AdmissionDate.Date <= qDate.Date)
             {
                 var listOfActivationHistory = await GetExistingHistory(id, date);
                 StudentActivateHist objStudentActivateHist;
                 if (listOfActivationHistory.Count>0)
                 {
                     objStudentActivateHist = (from t in listOfActivationHistory
-                                                             where t.ActionDateTime.Date < qDate.Date
-                                                             select t).Last();
+                                              where t.ActionDateTime.Date <= qDate.Date
+                                              select t).OrderByDescending(t => t.ActionDateTime).FirstOrDefault();
+
+                    var mmmmm = await _context.StudentActivateHists.FromSqlRaw("sp_Get_Student_Active_By_Date @studentId, @qDate",new SqlParameter("studentId",id),new SqlParameter("qDate",date)).ToListAsync();
+                    
+                    objStudentActivateHist = (from s in mmmmm
+                                             select s).FirstOrDefault();
+                    
                     return objStudentActivateHist.IsActive;
+                    
                 }
                 else
                 {

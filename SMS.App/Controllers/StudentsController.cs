@@ -542,6 +542,7 @@ namespace SchoolManagementSystem.Controllers
                 {
                     if (existingStudent.AdmissionDate.Date <= Convert.ToDateTime(operationDate).Date)
                     {
+                        
                         existingStudent.Status = studentStatus;
                         existingStudent.EditedBy = HttpContext.Session.GetString("UserId");
                         existingStudent.EditedAt = DateTime.Now;

@@ -16,8 +16,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMS.DAL", "SMS.DAL\SMS.DAL.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMS.BLL", "SMS.BLL\SMS.BLL.csproj", "{369A13F5-179F-4C8E-9F2E-44EA717B21EE}"
 EndProject
-Project("{F14B399A-7131-4C87-9E4B-1186C45EF12D}") = "SMS.Reports", "SMS.Reports\SMS.Reports.rptproj", "{05A3795C-1F6B-416B-9C51-983CB61C47A2}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,13 +53,6 @@ Global
 		{369A13F5-179F-4C8E-9F2E-44EA717B21EE}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
 		{369A13F5-179F-4C8E-9F2E-44EA717B21EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{369A13F5-179F-4C8E-9F2E-44EA717B21EE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{05A3795C-1F6B-416B-9C51-983CB61C47A2}.Debug|Any CPU.ActiveCfg = Debug
-		{05A3795C-1F6B-416B-9C51-983CB61C47A2}.Debug|Any CPU.Build.0 = Debug
-		{05A3795C-1F6B-416B-9C51-983CB61C47A2}.DebugLocal|Any CPU.ActiveCfg = DebugLocal
-		{05A3795C-1F6B-416B-9C51-983CB61C47A2}.DebugLocal|Any CPU.Build.0 = DebugLocal
-		{05A3795C-1F6B-416B-9C51-983CB61C47A2}.Release|Any CPU.ActiveCfg = Release
-		{05A3795C-1F6B-416B-9C51-983CB61C47A2}.Release|Any CPU.Build.0 = Release
-		{05A3795C-1F6B-416B-9C51-983CB61C47A2}.Release|Any CPU.Deploy.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

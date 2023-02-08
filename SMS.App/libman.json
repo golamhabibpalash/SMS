@@ -3,8 +3,8 @@
   "defaultProvider": "cdnjs",
   "libraries": [
     {
-      "library": "fullcalendar@4.2.0",
-      "destination": "wwwroot/lib/fullcalendar/"
+      "library": "font-awesome@4.6.3",
+      "destination": "wwwroot/lib/font-awesome/"
     }
   ]
 }

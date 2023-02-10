@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualBasic;
 using SMS.App.Utilities.MACIPServices;
 using SMS.App.ViewModels.AttendanceVM;
 using SMS.App.ViewModels.Students;
@@ -103,6 +104,18 @@ namespace SMS.App.Controllers
                 todaysAttendanceStuVMs.Add(todaysAttendanceStuVM);
             }
             DashboardVM.TodaysAttendanceStuVMs = todaysAttendanceStuVMs;
+            List<PaymentCollection> dPaymentCollections = new List<PaymentCollection>();
+            ICollection<AcademicClass> academicClasses = (ICollection<AcademicClass>)await _academicClassManager.GetAllAsync();
+            foreach (var cl in academicClasses)
+            {
+                PaymentCollection paymentCollection = new PaymentCollection();
+                paymentCollection.academicClass = cl;
+                paymentCollection.Amount = 500.0;
+                dPaymentCollections.Add(paymentCollection);
+            }
+            DashboardVM.DailyCollections = dPaymentCollections;
+            DashboardVM.MonthlyCollections = dPaymentCollections;
+
             return View(DashboardVM);
         }
 

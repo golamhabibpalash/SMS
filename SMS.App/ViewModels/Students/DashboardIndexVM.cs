@@ -14,5 +14,13 @@ namespace SMS.App.ViewModels.Students
 
         public ICollection<TodaysAttendanceEmpVM> TodaysAttendanceEmpVMs { get; set; }
         public ICollection<TodaysAttendanceStuVM> TodaysAttendanceStuVMs { get; set; }
+        public ICollection<PaymentCollection> MonthlyCollections { get; set; }
+        public ICollection<PaymentCollection> DailyCollections { get; set; }=new List<PaymentCollection>();
     }
+    public class PaymentCollection
+    {
+        public AcademicClass academicClass { get; set; }
+        public double Amount { get; set; }
+    }
+    
 }

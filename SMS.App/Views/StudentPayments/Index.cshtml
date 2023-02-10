@@ -30,24 +30,28 @@
     </div>
 </div>
 
-@if (ViewBag.msg != null)
+@if (!string.IsNullOrEmpty(ViewBag.msg))
 {
     <div class="row mt-3" id="msgId">
         <div class="col-md-12 text-center">
-
             <h6 class="alert alert-warning">@ViewBag.msg</h6>
-            
+
         </div>
     </div>
 
 }
+@section Scripts {
 
-    @section Scripts {
-        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
 
-        <script>
-            $(document).ready(function () {
-                $('#msgId').fadeOut(6000);
-            });
-        </script>
-    }
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+<script>
+        let created = '@TempData["created"]';
+
+
+        $(document).ready(function () {
+            $('#msgId').fadeOut(6000);
+        });
+</script>
+}

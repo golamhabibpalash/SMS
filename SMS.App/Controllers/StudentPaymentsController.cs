@@ -43,6 +43,7 @@ namespace SMS.App.Controllers
                 if (TempData["success"] != null)
                 {
                     msg = TempData["success"].ToString();
+                    TempData["created"] = msg;
                 }
                 if (TempData["msg"] != null)
                 {
@@ -56,6 +57,10 @@ namespace SMS.App.Controllers
                 throw;
             }
             
+            return View();
+        }
+        public IActionResult PaymentNew()
+        {
             return View();
         }
 

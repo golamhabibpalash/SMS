@@ -12,6 +12,9 @@
     {
         GlobalUI.InstituteName = ViewBag.InstituteName;
     }
+    double monthlyTotal = 0.0;
+    double dailyTotal = 0.0;
+
 }
 
 @section Styles{
@@ -120,10 +123,83 @@
     <div class="col-md-6 col-12 col-sm-5">
         <div class="card shadow ">
             <div class="card-header h5 text-center">
-                Academic Calendar
+                Collection
             </div>
-            <div class="card-body">
-                <div id='calendar'></div>
+            <div class="">
+                <div class="row">
+                    <div id='monthlyCollection' class="col-md-6">
+                        <table class="table table-primary">
+                            <thead class="bg-blue-sky">
+                                <tr class="text-center font-weight-bold h6">
+                                    <td colspan="2" class="text-center">Todays (@DateTime.Today.ToString("dd/MM/yyyy")) Collection</td>
+                                </tr>
+                                <tr class="font-weight-bold bg-info text-light">
+                                    <td>Class Name</td>
+                                    <td class="text-right">Amount</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.DailyCollections != null)
+                                {
+                                    foreach (var item in Model.DailyCollections)
+                                    {
+                                        <tr>
+                                            <td>@item.academicClass.Name</td>
+                                            <td class="text-right">@item.Amount</td>
+
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr class="font-weight-bold">
+                                    <td>Total</td>
+                                    @{ 
+                                        monthlyTotal = (from m in Model.DailyCollections
+                                                     select m.Amount).Sum();
+                                    }
+                                    <td class="text-right">@monthlyTotal</td>
+                                </tr>
+
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div id='dailyCollection' class="col-md-6">
+                        <table class="table table-primary">
+                            <thead class="bg-blue-sky">
+                                <tr class="bg-primary text-center font-weight-bold h6">
+                                    <td colspan="2" class="text-center">Monthly Collection</td>
+                                </tr>
+                                <tr>
+                                    <td>Class Name</td>
+                                    <td class="text-right">Amount</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.MonthlyCollections)
+                                {
+                                    <tr>
+                                        <td>@item.academicClass.Name</td>
+                                        <td class="text-right">@item.Amount</td>
+
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr class="font-weight-bold">
+                                    <td>Total</td>
+                                    @{
+                                        monthlyTotal = (from m in Model.MonthlyCollections
+                                                        select m.Amount).Sum();
+                                    }
+                                    <td class="text-right">@monthlyTotal</td>
+                                </tr>
+
+                            </tfoot>
+                        </table>
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>

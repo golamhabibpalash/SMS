@@ -19,8 +19,8 @@ namespace SMS.App.ViewModels.Students
     }
     public class PaymentCollection
     {
-        public AcademicClass academicClass { get; set; }
-        public double Amount { get; set; }
+        public string AcademicClassName { get; set; }
+        public double Amount { get; set; } 
     }
     
 }

@@ -3,6 +3,7 @@ using SMS.DAL.Contracts;
 using SMS.DAL.Repositories.Base;
 using SMS.DB;
 using SMS.Entities;
+using SMS.Entities.AdditionalModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,21 +20,71 @@ namespace SMS.DAL.Repositories
         }
         public override async Task<IReadOnlyCollection<StudentPayment>> GetAllAsync()
         {
-            var payments = await _context
+            List<StudentPayment> payments = new List<StudentPayment>();
+            try
+            {
+                payments = await _context
                 .StudentPayment
                 .Include(sp => sp.Student)
                 .Include(sp => sp.StudentPaymentDetails)
                 .ToListAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
             return payments;
         }
         public async Task<IReadOnlyCollection<StudentPayment>> GetAllByStudentIdAsync(int id)
         {
-            return await _context.StudentPayment
+            List<StudentPayment> payments = new List<StudentPayment>();
+            try
+            {
+                payments = await _context.StudentPayment
                 .Include(sp => sp.StudentPaymentDetails)
                 .ThenInclude(sp => sp.StudentFeeHead)
                 .Where(sp => sp.StudentId == id).ToListAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return payments;
         }
 
-    
+        public async Task<IReadOnlyCollection<StudentPaymentSummeryVM>> GetPaymentSummeryByDate(string date)
+        {
+            List<StudentPaymentSummeryVM> paymentSummery = new List<StudentPaymentSummeryVM>();
+            try
+            {
+                paymentSummery = await _context.StudentPaymentSummeryVMs.FromSqlInterpolated($"sp_get_payWithClass_by_date {date}").ToListAsync();
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return paymentSummery;
+        }
+
+        public async Task<IReadOnlyCollection<StudentPaymentSummeryVM>> GetPaymentSummeryByMonthYear(string monthYear)
+        {
+            List<StudentPaymentSummeryVM> paymentSummery = new List<StudentPaymentSummeryVM>();
+            try
+            {
+                paymentSummery = await _context.StudentPaymentSummeryVMs.FromSqlInterpolated($"sp_get_payWithClass_by_monthyear {monthYear}").ToListAsync();
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return paymentSummery;
+        }
     }
 }

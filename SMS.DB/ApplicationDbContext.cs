@@ -62,11 +62,14 @@ namespace SMS.DB
         [NotMapped]
         public DbSet<AttendanceVM> AttendanceVMs { get; set; }
 
-        
+        [NotMapped]
+        public DbSet<StudentPaymentSummeryVM> StudentPaymentSummeryVMs { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
             builder.Entity<AttendanceVM>(entity => entity.HasNoKey());
+            builder.Entity<StudentPaymentSummeryVM>(entity => entity.HasNoKey());
         }
         //public async Task<IEnumerable<AttendanceVM>> GetAttendanceResult(string attendanceFor, string date, string attendanceType, int? aSessionId, int? aClassId)
         //{

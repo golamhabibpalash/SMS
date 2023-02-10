@@ -9,7 +9,9 @@ using SMS.App.Utilities.MACIPServices;
 using SMS.App.ViewModels.AttendanceVM;
 using SMS.App.ViewModels.Students;
 using SMS.BLL.Contracts;
+using SMS.DAL.Contracts;
 using SMS.Entities;
+using SMS.Entities.AdditionalModels;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -31,8 +33,9 @@ namespace SMS.App.Controllers
         private readonly IInstituteManager _instituteManager;
         private readonly IAttendanceManager _attendanceManager;
         private readonly IAttendanceMachineManager _attendanceMachineManager;
+        private readonly IStudentPaymentManager _studentPaymentManager;
 
-        public HomeController(ILogger<HomeController> logger, IStudentManager studentManager, IEmployeeManager employeeManager, UserManager<ApplicationUser> userManager, IInstituteManager instituteManager, IAcademicClassManager academicClassManager, IDesignationManager designationManager, IAttendanceManager attendanceManager, IAttendanceMachineManager attendanceMachineManager)
+        public HomeController(ILogger<HomeController> logger, IStudentManager studentManager, IEmployeeManager employeeManager, UserManager<ApplicationUser> userManager, IInstituteManager instituteManager, IAcademicClassManager academicClassManager, IDesignationManager designationManager, IAttendanceManager attendanceManager, IAttendanceMachineManager attendanceMachineManager, IStudentPaymentManager studentPaymentManager)
         {
             _logger = logger;
             _studentManager = studentManager;
@@ -43,6 +46,7 @@ namespace SMS.App.Controllers
             _designationManager = designationManager;
             _attendanceManager = attendanceManager;
             _attendanceMachineManager = attendanceMachineManager;
+            _studentPaymentManager = studentPaymentManager;
         }
 
         public async Task<IActionResult> Index()
@@ -104,18 +108,50 @@ namespace SMS.App.Controllers
                 todaysAttendanceStuVMs.Add(todaysAttendanceStuVM);
             }
             DashboardVM.TodaysAttendanceStuVMs = todaysAttendanceStuVMs;
+
+            //Daily Collection Start here=====================
             List<PaymentCollection> dPaymentCollections = new List<PaymentCollection>();
-            ICollection<AcademicClass> academicClasses = (ICollection<AcademicClass>)await _academicClassManager.GetAllAsync();
-            foreach (var cl in academicClasses)
+            try
             {
-                PaymentCollection paymentCollection = new PaymentCollection();
-                paymentCollection.academicClass = cl;
-                paymentCollection.Amount = 500.0;
-                dPaymentCollections.Add(paymentCollection);
+                List<StudentPaymentSummeryVM> dailyPaymentSummery  = (List<StudentPaymentSummeryVM>) await _studentPaymentManager.GetPaymentSummeryByDate(DateTime.Now.ToString("ddMMyyyy"));
+                foreach (var item in dailyPaymentSummery)
+                {
+                    PaymentCollection dPC = new PaymentCollection();
+                    dPC.AcademicClassName = item.AcademicClassName;
+                    dPC.Amount = item.Payments;
+
+                    dPaymentCollections.Add(dPC);
+                }
+
+            }
+            catch (Exception)
+            {
+
+                throw;
             }
             DashboardVM.DailyCollections = dPaymentCollections;
-            DashboardVM.MonthlyCollections = dPaymentCollections;
 
+
+            //Monthly Collection Start here ===================
+            List<PaymentCollection> mPaymentCollections = new List<PaymentCollection>();
+            try
+            {
+                List<StudentPaymentSummeryVM> monthlyPaymentSummery = (List<StudentPaymentSummeryVM>)await _studentPaymentManager.GetPaymentSummeryByMonthYear(DateTime.Now.ToString("MMyyyy"));
+                foreach (var item in monthlyPaymentSummery)
+                {
+                    PaymentCollection dPC = new PaymentCollection();
+                    dPC.AcademicClassName = item.AcademicClassName;
+                    dPC.Amount = item.Payments;
+                    mPaymentCollections.Add(dPC);
+                }
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            DashboardVM.MonthlyCollections = mPaymentCollections;
             return View(DashboardVM);
         }
 

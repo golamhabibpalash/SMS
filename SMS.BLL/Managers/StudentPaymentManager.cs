@@ -3,6 +3,7 @@ using SMS.BLL.Contracts;
 using SMS.DAL.Contracts;
 using SMS.DAL.Repositories;
 using SMS.Entities;
+using SMS.Entities.AdditionalModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,6 +44,36 @@ namespace SMS.BLL.Managers
                       select p).Count()+1).ToString().PadLeft(3,'0');
             receiptsNo = student.AcademicClassId.ToString()+feeHeadId.ToString()+DateTime.Now.ToString("yyMM")+sl;
             return receiptsNo;
+        }
+
+        public async Task<IReadOnlyCollection<StudentPaymentSummeryVM>> GetPaymentSummeryByDate(string date)
+        {
+            List<StudentPaymentSummeryVM> paymentSummery = new List<StudentPaymentSummeryVM>();
+            try
+            {
+                paymentSummery = (List<StudentPaymentSummeryVM>)await _studentPaymentRepository.GetPaymentSummeryByDate(date);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return paymentSummery;
+        }
+
+        public async Task<IReadOnlyCollection<StudentPaymentSummeryVM>> GetPaymentSummeryByMonthYear(string monthYear)
+        {
+            List<StudentPaymentSummeryVM> paymentSummery = new List<StudentPaymentSummeryVM>();
+            try
+            {
+                paymentSummery = (List<StudentPaymentSummeryVM>)await _studentPaymentRepository.GetPaymentSummeryByMonthYear(monthYear);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return paymentSummery;
         }
     }
 }

@@ -314,8 +314,10 @@
                     <span class="alert alert-info">@Model.Name is @studentStatus</span> <i class="btn btn-info" data-toggle="modal" data-target="#exampleModalCenter">Change</i>;
                 </label>
             </div>
-            <div class="form-group text-center">
-                <partial name="_Update_Back" model="@Model.Id" />
+            <div class="form-group text-right">
+                @*<partial name="_Update_Back" model="@Model.Id" />*@
+                <button class="btn btn-sm btn-warning rounded-1 mr-2" type="submit" value="Update" data-toggle="tooltip" data-placement="bottom" title="Update"><i class="fa fa-edit"></i> Update</button>
+                <a asp-action="Index" class="btn btn-info btn-sm rounded-1" data-toggle="tooltip" data-placement="right" title="List"><i class="fa fa-list"></i> Back to List</a>
             </div>
         </form>
     </div>

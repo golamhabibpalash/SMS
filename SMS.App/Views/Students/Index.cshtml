@@ -56,6 +56,9 @@
                         Name
                     </th>
                     <th>
+                        নাম
+                    </th>
+                    <th>
                         Class
                     </th>
 
@@ -96,9 +99,7 @@
                                             avatar = $"/Images/noProfileImage.png";
                                         }
                                     }
-
-                                }
-                                
+                                }                               
 
                                 <img src=@avatar alt="@item.Name" style="max-width:50px; max-height:80px" />
 
@@ -110,7 +111,9 @@
                                 @item.Name.ToUpper()
                             </a>
                         </td>
-
+                        <td>
+                            @item.NameBangla
+                        </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.AcademicClass.Name)
                         </td>

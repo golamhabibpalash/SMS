@@ -77,7 +77,7 @@ namespace SchoolManagementSystem.Controllers
 
         #region Index
         [Authorize(Roles = "SuperAdmin, Admin,Teacher")]
-        public async Task<IActionResult> Index(int academicSessionid, int? academicClassId, string aStatus)
+        public async Task<IActionResult> Index(int academicSessionid, int? academicClassId,int?academicSectionId, string aStatus)
         {
             var student = await _studentManager.GetAllAsync();
             if (academicSessionid>0)
@@ -112,6 +112,7 @@ namespace SchoolManagementSystem.Controllers
 
             ViewBag.academicSessionId = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name",academicSessionid);
             ViewBag.academicClassId = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name",academicClassId);
+            ViewBag.academicSectionId = new SelectList(await _academicSectionManager.GetAllAsync(), "Id", "Name", academicSectionId);
             ViewBag.aStatus = new SelectList(isActiveVMs.ToList(), "Id", "sName", aStatus);
             return View(studentList.OrderByDescending(s => s.Status).ThenBy(s => s.ClassRoll));
         }

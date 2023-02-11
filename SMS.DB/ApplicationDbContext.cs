@@ -71,13 +71,6 @@ namespace SMS.DB
             builder.Entity<AttendanceVM>(entity => entity.HasNoKey());
             builder.Entity<StudentPaymentSummeryVM>(entity => entity.HasNoKey());
         }
-        //public async Task<IEnumerable<AttendanceVM>> GetAttendanceResult(string attendanceFor, string date, string attendanceType, int? aSessionId, int? aClassId)
-        //{
-        //    var pAttendanceFor = new SqlParameter("attendanceFor", attendanceFor);
-        //    var pDate = new SqlParameter("date", date);
-        //    var pAttendanceType = new SqlParameter("attendanceType", attendanceType);
-
-        //    return await this.AttendanceVMs.FromSqlInterpolated($"sp_get_attendance_by_date {pAttendanceFor},{pDate},{pAttendanceType}").ToArrayAsync();
-        //}
+        
     }
 }

@@ -22,8 +22,13 @@ namespace SMS.DAL.Repositories
         
         public override async Task<IReadOnlyCollection<Student>> GetAllAsync()
         {
-            return await _context.Student.Include(s => s.AcademicClass)
-                .Include(s => s.AcademicSession).OrderBy(s => s.AcademicClassId).ThenBy(s => s.ClassRoll).ToListAsync();
+            return await _context.Student
+                .Include(s => s.AcademicClass)
+                .Include(s => s.AcademicSession)
+                .Include(s => s.AcademicSection)
+                .OrderBy(s => s.AcademicClassId)
+                .ThenBy(s => s.ClassRoll)
+                .ToListAsync();
         }
         public override async Task<Student> GetByIdAsync(int id)
         {
@@ -63,7 +68,6 @@ namespace SMS.DAL.Repositories
             List<Student> students = await _context.Student.Where(s => s.AcademicSessionId == sessionId && s.AcademicClassId == classId).ToListAsync();
             return students;
         }
-
 
     }
 }

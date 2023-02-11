@@ -5,6 +5,37 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="obj\Debug\net6.0\.NETCoreApp,Version=v6.0.AssemblyAttributes.cs" />
+    <Compile Include="obj\Debug\net6.0\SMS.Entities.AssemblyInfo.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="bin\Debug\net6.0\SMS.Entities.deps.json" />
+    <Content Include="obj\Debug\net6.0\SMS.Entities.csproj.FileListAbsolute.txt" />
+    <Content Include="obj\project.assets.json" />
+    <Content Include="obj\SMS.Entities.csproj.nuget.dgspec.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="bin\Debug\net6.0\SMS.Entities.dll" />
+    <None Include="bin\Debug\net6.0\SMS.Entities.pdb" />
+    <None Include="obj\Debug\net6.0\refint\SMS.Entities.dll" />
+    <None Include="obj\Debug\net6.0\ref\SMS.Entities.dll" />
+    <None Include="obj\Debug\net6.0\SMS.Entities.AssemblyInfoInputs.cache" />
+    <None Include="obj\Debug\net6.0\SMS.Entities.assets.cache" />
+    <None Include="obj\Debug\net6.0\SMS.Entities.csproj.AssemblyReference.cache" />
+    <None Include="obj\Debug\net6.0\SMS.Entities.csproj.BuildWithSkipAnalyzers" />
+    <None Include="obj\Debug\net6.0\SMS.Entities.csproj.CoreCompileInputs.cache" />
+    <None Include="obj\Debug\net6.0\SMS.Entities.dll" />
+    <None Include="obj\Debug\net6.0\SMS.Entities.GeneratedMSBuildEditorConfig.editorconfig" />
+    <None Include="obj\Debug\net6.0\SMS.Entities.pdb" />
+    <None Include="obj\Debug\net6.0\_IsIncrementalBuild" />
+    <None Include="obj\project.nuget.cache" />
+    <None Include="obj\SMS.Entities.csproj.nuget.g.props" />
+    <None Include="obj\SMS.Entities.csproj.nuget.g.targets" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="5.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.7" />

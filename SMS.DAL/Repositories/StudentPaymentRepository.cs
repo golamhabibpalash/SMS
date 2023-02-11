@@ -55,36 +55,39 @@ namespace SMS.DAL.Repositories
             return payments;
         }
 
-        public async Task<IReadOnlyCollection<StudentPaymentSummeryVM>> GetPaymentSummeryByDate(string date)
+        public async Task<List<StudentPaymentSummeryVM>> GetPaymentSummeryByDate(string date)
         {
-            List<StudentPaymentSummeryVM> paymentSummery = new List<StudentPaymentSummeryVM>();
+            List<StudentPaymentSummeryVM> payments = new List<StudentPaymentSummeryVM>();
             try
             {
-                paymentSummery = await _context.StudentPaymentSummeryVMs.FromSqlInterpolated($"sp_get_payWithClass_by_date {date}").ToListAsync();
-
+                payments = await _context.StudentPaymentSummeryVMs.FromSqlInterpolated($"sp_get_payWithClass_by_date {date}").ToListAsync();
             }
             catch (Exception)
             {
 
                 throw;
             }
-            return paymentSummery;
+            
+           
+            return payments;
         }
 
-        public async Task<IReadOnlyCollection<StudentPaymentSummeryVM>> GetPaymentSummeryByMonthYear(string monthYear)
+
+
+        public async Task<List<StudentPaymentSummeryVM>> GetPaymentSummeryByMonthYear(string monthYear)
         {
-            List<StudentPaymentSummeryVM> paymentSummery = new List<StudentPaymentSummeryVM>();
+            List<StudentPaymentSummeryVM> payments = new List<StudentPaymentSummeryVM>();
             try
             {
-                paymentSummery = await _context.StudentPaymentSummeryVMs.FromSqlInterpolated($"sp_get_payWithClass_by_monthyear {monthYear}").ToListAsync();
-
+                payments = await _context.StudentPaymentSummeryVMs.FromSqlInterpolated($"sp_get_payWithClass_by_monthyear {monthYear}").ToListAsync();
             }
             catch (Exception)
             {
 
                 throw;
             }
-            return paymentSummery;
+            
+            return payments;
         }
     }
 }

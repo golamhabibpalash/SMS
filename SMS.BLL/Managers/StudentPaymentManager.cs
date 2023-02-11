@@ -51,7 +51,7 @@ namespace SMS.BLL.Managers
             List<StudentPaymentSummeryVM> paymentSummery = new List<StudentPaymentSummeryVM>();
             try
             {
-                paymentSummery = (List<StudentPaymentSummeryVM>)await _studentPaymentRepository.GetPaymentSummeryByDate(date);
+                paymentSummery = await _studentPaymentRepository.GetPaymentSummeryByDate(date);
             }
             catch (Exception)
             {
@@ -66,7 +66,7 @@ namespace SMS.BLL.Managers
             List<StudentPaymentSummeryVM> paymentSummery = new List<StudentPaymentSummeryVM>();
             try
             {
-                paymentSummery = (List<StudentPaymentSummeryVM>)await _studentPaymentRepository.GetPaymentSummeryByMonthYear(monthYear);
+                paymentSummery = await _studentPaymentRepository.GetPaymentSummeryByMonthYear(monthYear);
             }
             catch (Exception)
             {

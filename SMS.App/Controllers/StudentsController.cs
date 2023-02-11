@@ -88,11 +88,16 @@ namespace SchoolManagementSystem.Controllers
             {
                 student = student.Where(s => s.AcademicClassId == academicClassId).ToList();
             }
+            if (academicSectionId>0)
+            {
+                student = student.Where(s => s.AcademicSectionId == academicSectionId).ToList();
+            }
             if (aStatus == "0" || aStatus == "1")
             {
                 bool isActive = aStatus == "1" ? true : false;
                 student = student.Where(s => s.Status == isActive).ToList();
             }
+            int totalFound = ViewBag.totalFound = student.Count();
             var studentList = _mapper.Map<IEnumerable<StudentListVM>>(student);
             List<IsActiveVM> isActiveVMs = new List<IsActiveVM>();
             IsActiveVM status1 = new IsActiveVM();
@@ -299,10 +304,13 @@ namespace SchoolManagementSystem.Controllers
             {
                 return NotFound();
             }
+            List<AcademicSection> academicSections = (List<AcademicSection>)await _academicSectionManager.GetAllAsync();
+
             var newStudent = _mapper.Map<StudentEditVM>(student);
             newStudent.AcademicSessionList = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name", newStudent.AcademicSessionId).ToList();
             newStudent.AcademicClassList = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", newStudent.AcademicClassId).ToList();
-            newStudent.AcademicSectionList = new SelectList(await _academicSectionManager.GetAllAsync(), "Id", "Name", newStudent.AcademicSectionId).ToList();
+
+            newStudent.AcademicSectionList = new SelectList(academicSections.Where(m => m.AcademicClassId==student.AcademicClassId), "Id", "Name", newStudent.AcademicSectionId).ToList();
             newStudent.BloodGroupList = new SelectList(await _bloodGroupManager.GetAllAsync(), "Id", "Name", newStudent.BloodGroupId).ToList();
             newStudent.GenderList = new SelectList(await _genderManager.GetAllAsync(), "Id", "Name", newStudent.GenderId).ToList();
             newStudent.NationalityList = new SelectList(await _nationalityManager.GetAllAsync(), "Id", "Name", newStudent.NationalityId).ToList();
@@ -587,5 +595,6 @@ namespace SchoolManagementSystem.Controllers
         {
             return 5;
         }
+
     }
 }

@@ -11,6 +11,7 @@
     ViewData["Title"] = "Students";
     GlobalUI.PageTitle = ViewBag.Title;
     string phoneCode = "+880";
+    string totalFound = ViewBag.totalFound ==null ? "Nothing Found" : ViewBag.totalFound + " Found";
 }
 <div class="col-md-12">
     <form asp-action="Index" asp-controller="Students" >
@@ -28,7 +29,7 @@
                         <option selected disabled>Select Class</option>
                     </select>
                 </div>
-                <label for="aAcademicSectionId" class="col-form-label text-md-right">Academic Class</label>
+                <label for="aAcademicSectionId" class="col-form-label text-md-right">Academic Section</label>
                 <div class="col-md-2">
                     <select class="form-control" id="aAcademicSectionId" name="academicSectionId" asp-items="ViewBag.academicSectionId">
                         <option selected disabled>Select Section</option>
@@ -40,7 +41,8 @@
                         <option selected disabled>Select Status</option>
                     </select>
                 </div>
-                <button type="submit" class="btn btn-primary btn-sm">Search</button>
+                <button type="submit" class="btn btn-primary btn-sm">Search</button> 
+                <label class="col-form-label text-primary">@totalFound</label>
             </div>
 
         </div>
@@ -88,7 +90,7 @@
                                             avatar = $"/Images/noProfileImage.png";
                                         }
                                     }
-                                }                               
+                                }
 
                                 <img src=@avatar alt="@item.Name" style="max-width:50px; max-height:80px" />
 
@@ -100,19 +102,18 @@
                                 @item.Name.ToUpper()
                             </a>
                         </td>
-                        <td>
-                            @item.NameBangla
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.AcademicClass.Name)
-                        </td>
-                        <td>@item.AcademicSection.Name</td>
-                        <td>
-                            @phoneCode@item.PhoneNo
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.AcademicSession.Name)
-                        </td>
+                        <td> @item.NameBangla</td>
+                        <td> @Html.DisplayFor(modelItem => item.AcademicClass.Name)</td>
+                        @if (item.AcademicSection != null)
+                        {
+                            <td>@item.AcademicSection.Name</td>
+                        }
+                        else
+                        {
+                            <td>N/A</td>
+                        }
+                        <td> @phoneCode@item.PhoneNo</td>
+                        <td> @Html.DisplayFor(modelItem => item.AcademicSession.Name)</td>
                         @if (item.Status)
                         {
 
@@ -137,6 +138,8 @@
 @section Scripts{
     <script src="~/js/DataTable/dataTable.js"></script>
     <script>
+        $("#myTable_info").detach().insertAfter('#myTable_length');
+
         $(document).ready(function () {
 
         $(function () {
@@ -155,6 +158,63 @@
                 }
             if (failed != "") {
                 alertify.error(failed);
+                }
+            });
+        });
+        
+
+        $('#aAcademicClassId').change(function () {
+            let id = $('#aAcademicClassId option:selected').val();
+            let sessionId = $('#aAcademicSessionId option:selected').val();
+
+            $.ajax({
+                url: "/api/academicsections/getbyclasswithsessionId?classId=" + id + "&sessionId=" + sessionId,
+                dataType: "JSON",
+                type: "POST",
+                cache: false,
+                success: function (data) {
+                    $('#aAcademicSectionId').empty();
+
+                    if (data != null || data != '') {
+                        var o = '<option disabled selected>Select Section Name</option>';
+                        var o2 = '<option value="">No Section</option>';
+                        $('#aAcademicSectionId').append(o);
+                        $('#aAcademicSectionId').append(o2);
+                        $.each(data, function (i, obj) {
+                            console.log(obj.name);
+                            var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
+                            $('#aAcademicSectionId').append(op);
+                        });
+                    }
+                    else {
+                        var o = '<option disabled selected>Section Not Found</option>';
+                        $('#aAcademicSectionId').append(o);
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        });
+        $('#aAcademicSessionId').change(function () {
+            $('#aAcademicSectionId').empty();
+            $.ajax({
+                url: "/academicClasses/getAll",
+                dataType: "JSON",
+                type: "POST",
+                cache: false,
+                success: function (data) {
+                    $('#aAcademicClassId').empty();
+                    var o = '<option disabled selected>Select Class Name</option>';
+                    $('#aAcademicClassId').append(o);
+                    $.each(data, function (i, obj) {
+                        console.log(obj.name);
+                        var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
+                        $('#aAcademicClassId').append(op);
+                    });
+                },
+                error: function (err) {
+                    console.log(err);
                 }
             });
         });

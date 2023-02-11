@@ -2,7 +2,7 @@
 $(function () {
     $('#myTable').DataTable({
         "stateSave": true,
-
+        "pagingType": "full_numbers",
         stateSaveCallback: function (settings, data) {
             localStorage.setItem('DataTables_' + settings.sInstance, JSON.stringify(data))
         },
@@ -18,4 +18,3 @@ $(function () {
         }]
     });
 });
-

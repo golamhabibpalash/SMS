@@ -88,7 +88,7 @@ namespace SchoolManagementSystem.Controllers
             {
                 student = student.Where(s => s.AcademicClassId == academicClassId).ToList();
             }
-            if (academicSectionId>0)
+            if (academicSectionId>=0)
             {
                 student = student.Where(s => s.AcademicSectionId == academicSectionId).ToList();
             }

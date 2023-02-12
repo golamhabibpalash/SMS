@@ -11,10 +11,10 @@
     ViewData["Title"] = "Students";
     GlobalUI.PageTitle = ViewBag.Title;
     string phoneCode = "+880";
-    string totalFound = ViewBag.totalFound ==null ? "Nothing Found" : ViewBag.totalFound + " Found";
+    string totalFound = ViewBag.totalFound == null ? "Nothing Found" : ViewBag.totalFound + " Found";
 }
 <div class="col-md-12">
-    <form asp-action="Index" asp-controller="Students" >
+    <form asp-action="Index" asp-controller="Students">
         <div class="alert mb-0">
             <div class="form-group row mb-0">
                 <label for="aAcademicSessionId" class="col-form-label text-md-right">Academic Session</label>
@@ -37,11 +37,11 @@
                 </div>
                 <label for="aStatus" class="col-form-label text-md-right">Status</label>
                 <div class="col-md-2">
-                    <select class="form-control" id="aStatus" name="aStatus" asp-items="ViewBag.aStatus" >
+                    <select class="form-control" id="aStatus" name="aStatus" asp-items="ViewBag.aStatus">
                         <option selected disabled>Select Status</option>
                     </select>
                 </div>
-                <button type="submit" class="btn btn-primary btn-sm">Search</button> 
+                <button type="submit" class="btn btn-primary btn-sm">Search</button>
                 <label class="col-form-label text-primary">@totalFound</label>
             </div>
 
@@ -137,10 +137,25 @@
 
 @section Scripts{
     <script src="~/js/DataTable/dataTable.js"></script>
+
+    <script src="~/js/DataTable/dataTables.buttons.min.js"></script>
+    <script src="~/js/DataTable/jszip.min.js"></script>
+    <script src="~/js/DataTable/pdfmake.min.js"></script>
+    <script src="~/js/DataTable/vfs_fonts.js"></script>
+    <script src="~/js/DataTable/buttons.html5.min.js"></script>
+
     <script>
         $("#myTable_info").detach().insertAfter('#myTable_length');
 
         $(document).ready(function () {
+
+            //$('#myTable').DataTable({
+            //    dom: 'Bfrtip',
+            //    buttons: [
+            //        'copy', 'csv', 'excel', 'pdf', 'print'
+            //    ]
+            //});
+
 
         $(function () {
             let saved = '@TempData["saved"]';
@@ -161,7 +176,7 @@
                 }
             });
         });
-        
+
 
         $('#aAcademicClassId').change(function () {
             let id = $('#aAcademicClassId option:selected').val();

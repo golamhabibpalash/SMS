@@ -23,8 +23,15 @@
     int dob = int.Parse(Model.Student.DOB.ToString("yyyyMMdd"));
     int age = (now - dob) / 10000;
     string phonePrefix = "+880";
+<<<<<<< HEAD
     int paySL = 0;
     double totalPaid = 0;
+=======
+    double currentDue = 0;
+    double totalDue = 0;
+    double totalPaid = 0;
+    int paymentSL = 1;
+>>>>>>> b497f223cbd99b53d4333572dee3910d63d1c64b
 
 }
 @section Styles{ 
@@ -232,24 +239,32 @@
                     </div>
                     <div id="academic" class="tab-pane" role="tabpanel">
                         <h2>This is for academic information</h2>
-                        <h1>System is under construction</h1>
                     </div>
 
 
                     <div id="financials" class="tab-pane" role="tabpanel">
+<<<<<<< HEAD
                         <div class="row">
                             <div class="col-md-12 alert alert-warning">
                                 <div class="col-md-6 text-left">
                                     <h5 class="">Current Due Amount: <span class="text-danger">2200tk</span></h5>
                                     <h5 class="">Total Due Amount: <span class="text-danger">2200tk</span></h5>
+=======
+                        <h1>System is under construction</h1>
+                        <div class="row">
+                            <div class="col-md-12 alert alert-warning">
+                                <div class="col-md-6 text-left">
+                                    <h5 class="h5">Current Due Amount: <span class="text-danger">2200tk</span></h5>
+                                    <h5 class="h5">Total Due Amount: <span class="text-danger">2200tk</span></h5>
+>>>>>>> b497f223cbd99b53d4333572dee3910d63d1c64b
                                 </div>
                                 <div class="col-md-6 text-right">
                                     <a asp-action="Payment" asp-controller="StudentPayments" asp-route-stRoll="@Model.Student.ClassRoll" class="btn btn-info">Make Payment</a>
                                 </div>
-
                             </div>
                         </div>
                         <div class="row">
+<<<<<<< HEAD
                             <div class="card-columns p-2">
                                 <div class="card">
                                     <div class="card-header">
@@ -289,6 +304,53 @@
                                         <div class="text-center">
                                             <span class="h6 font-weight-bold text-black-50">Total Paid : @totalPaid tk</span>
                                         </div>
+=======
+                            <div class="card ">
+                                <div class="card-header">
+                                    <span class="h6">Payment Schedule</span>
+                                </div>
+                                <div class="">
+                                    <table class="table table-info table-bordered">
+                                        <thead class="bg-blue-sky">
+                                            <tr>
+                                                <td>#</td>
+                                                <td>Receipt No</td>
+                                                <td>Paid For</td>
+                                                <td>Payment Date</td>
+                                                <td>Remarks</td>
+                                                <td class="text-right">Amount (BDT)</td>
+                                                <td>Action</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var payment in Model.StudentPayments)
+                                            {
+                                                <tr>
+                                                    <td>@(paymentSL++)</td>
+                                                    <td>@payment.ReceiptNo</td>
+                                                    <td>Paid For</td>
+                                                    <td>@payment.PaidDate.ToString("dd MMM yyyy")</td>
+                                                    <td>@payment.Remarks</td>
+                                                    <td class="text-right">@payment.TotalPayment</td>
+                                                    <td>Details</td>
+                                                </tr>
+                                                totalPaid += payment.TotalPayment;
+                                            }
+                                        </tbody>
+                                        <tfoot class="bg-blue-sky">
+                                            <tr>
+                                                <td class="text-right" colspan="5">Total Paid</td>
+                                                <td class="font-weight-bolder text-right">@totalPaid</td>
+                                                <td class="text-left">Tk</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+
+                                </div>
+                                <div class="card-footer">
+                                    <div class="text-center">
+                                        <span class="h6">Total Paid : @totalPaid tk</span>
+>>>>>>> b497f223cbd99b53d4333572dee3910d63d1c64b
                                     </div>
                                 </div>
                             </div>

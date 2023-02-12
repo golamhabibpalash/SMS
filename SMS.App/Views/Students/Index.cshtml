@@ -11,6 +11,7 @@
     ViewData["Title"] = "Students";
     GlobalUI.PageTitle = ViewBag.Title;
     string phoneCode = "+880";
+    string totalFound = ViewBag.totalFound == null ? "Nothing Found" : ViewBag.totalFound + " Found";
 }
 <div class="col-md-12">
     <form asp-action="Index" asp-controller="Students">
@@ -28,6 +29,12 @@
                         <option selected disabled>Select Class</option>
                     </select>
                 </div>
+                <label for="aAcademicSectionId" class="col-form-label text-md-right">Academic Section</label>
+                <div class="col-md-2">
+                    <select class="form-control" id="aAcademicSectionId" name="academicSectionId" asp-items="ViewBag.academicSectionId">
+                        <option selected disabled>Select Section</option>
+                    </select>
+                </div>
                 <label for="aStatus" class="col-form-label text-md-right">Status</label>
                 <div class="col-md-2">
                     <select class="form-control" id="aStatus" name="aStatus" asp-items="ViewBag.aStatus">
@@ -35,6 +42,7 @@
                     </select>
                 </div>
                 <button type="submit" class="btn btn-primary btn-sm">Search</button>
+                <label class="col-form-label text-primary">@totalFound</label>
             </div>
 
         </div>
@@ -46,32 +54,15 @@
         <table class="table table-hover table-bordered table-responsive-sm table-striped" id="myTable">
             <thead class="bg-blue text-light">
                 <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.ClassRoll)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Photo)
-                    </th>
-                    <th>
-                        Name
-                    </th>
-                    <th>
-                        নাম
-                    </th>
-                    <th>
-                        Class
-                    </th>
-
-                    <th>
-                        @Html.DisplayNameFor(model => model.PhoneNo)
-                    </th>
-
-                    <th>
-                        Academic Session
-                    </th>
-
+                    <th> @Html.DisplayNameFor(model => model.ClassRoll) </th>
+                    <th> @Html.DisplayNameFor(model => model.Photo)</th>
+                    <th> Name</th>
+                    <th>নাম </th>
+                    <th> Class</th>
+                    <th> Section </th>
+                    <th>  @Html.DisplayNameFor(model => model.PhoneNo)</th>
+                    <th>Academic Session </th>
                     <th>Active Status</th>
-
                     <th><a asp-action="Create" class="p-2 btn-sm btn-info rounded-pill"><i class="fa fa-plus"></i> Add <i class="fa fa-user-alt"></i> </a></th>
                 </tr>
             </thead>
@@ -111,18 +102,18 @@
                                 @item.Name.ToUpper()
                             </a>
                         </td>
-                        <td>
-                            @item.NameBangla
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.AcademicClass.Name)
-                        </td>
-                        <td>
-                            @phoneCode@item.PhoneNo
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.AcademicSession.Name)
-                        </td>
+                        <td> @item.NameBangla</td>
+                        <td> @Html.DisplayFor(modelItem => item.AcademicClass.Name)</td>
+                        @if (item.AcademicSection != null)
+                        {
+                            <td>@item.AcademicSection.Name</td>
+                        }
+                        else
+                        {
+                            <td>N/A</td>
+                        }
+                        <td> @phoneCode@item.PhoneNo</td>
+                        <td> @Html.DisplayFor(modelItem => item.AcademicSession.Name)</td>
                         @if (item.Status)
                         {
 
@@ -154,7 +145,17 @@
     <script src="~/js/DataTable/buttons.html5.min.js"></script>
 
     <script>
+        $("#myTable_info").detach().insertAfter('#myTable_length');
+
         $(document).ready(function () {
+
+            //$('#myTable').DataTable({
+            //    dom: 'Bfrtip',
+            //    buttons: [
+            //        'copy', 'csv', 'excel', 'pdf', 'print'
+            //    ]
+            //});
+
 
         $(function () {
             let saved = '@TempData["saved"]';
@@ -179,6 +180,14 @@
             let id = $('#aAcademicClassId option:selected').val();
             let sessionId = $('#aAcademicSessionId option:selected').val();
 
+<<<<<<< HEAD
+=======
+
+        $('#aAcademicClassId').change(function () {
+            let id = $('#aAcademicClassId option:selected').val();
+            let sessionId = $('#aAcademicSessionId option:selected').val();
+
+>>>>>>> b497f223cbd99b53d4333572dee3910d63d1c64b
             $.ajax({
                 url: "/api/academicsections/getbyclasswithsessionId?classId=" + id + "&sessionId=" + sessionId,
                 dataType: "JSON",
@@ -230,6 +239,10 @@
                 }
             });
         });
+<<<<<<< HEAD
+=======
+
+>>>>>>> b497f223cbd99b53d4333572dee3910d63d1c64b
     </script>
 
 }

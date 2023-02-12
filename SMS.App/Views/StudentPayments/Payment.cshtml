@@ -68,7 +68,7 @@
     <div class="col-md-12 text-center">
         <form asp-action="Payment" asp-controller="StudentPayments" method="get" class="">
             <div class="form-group row">
-                <label class="col-md-2 offset-2 col-form-label text-right">
+                <label class="col-md-3 offset-2 col-form-label text-right">
                     <span class="h5">Student Roll</span>
                 </label>
                 <div class="col-md-4">
@@ -78,12 +78,12 @@
                     }
                     else
                     {
-                        <input id="rollInput" placeholder="Input Student Roll Number" class="form-control" name="stRoll" />
+                        <input id="rollInput" placeholder="Input Student Roll Number" class="form-control h6" name="stRoll" />
                     }
 
                 </div>
                 <div class="col-md-1">
-                    <button type="submit" class="btn btn-info rounded" id="submitButton">Search</button>
+                    <button type="submit" class="btn btn-sm btn-info rounded" id="submitButton">Search</button>
                 </div>
             </div>
         </form>
@@ -137,17 +137,17 @@
             <form asp-action="payment" asp-controller="StudentPayments" method="post">
                 <input type="hidden" asp-for="StudentPayment.StudentId" value="@Model.StudentId" />
                 <div class="row">
-                    <div class="col-md-10">
+                    <div class="col-md-12">
                         <div class="form-group row pt-2">
-                            <label class="col-form-label col-md-2 text-right">Receipt No</label>
-                            <div class="col-md-4">
+                            <label class="col-form-label col-md-3 text-right">Receipt No</label>
+                            <div class="col-md-5 col-lg-4 col-sm-6 col-xs-10">
                                 <input disabled asp-for="StudentPayment.ReceiptNo" value="" placeholder="Auto Generated" readonly class="form-control form-control-sm" />
                             </div>
                             <span asp-validation-for="StudentPayment.ReceiptNo" class="text-danger col-form-label"></span>
                         </div>
                         <div class="form-group row pt-2">
-                            <label class="col-md-2 col-form-label text-right">Date </label>
-                            <div class="col-md-4">
+                            <label class="col-md-3 col-form-label text-right">Date </label>
+                            <div class="col-md-5 col-lg-4 col-sm-6 col-xs-10">
                                 <input type="date" asp-for="StudentPayment.PaidDate" class="form-control form-control-sm" value="@DateTime.Today.ToString("yyyy-MM-dd")" min="2020-01-01" max="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" />
                             </div>
                             <div class="col-md-6">
@@ -157,8 +157,8 @@
                         </div>
 
                         <div class="form-group row">
-                            <label class="col-md-2 col-form-label text-right">Payment For </label>
-                            <div class="col-md-4">
+                            <label class="col-md-3 col-form-label text-right">Payment For </label>
+                            <div class="col-md-5 col-lg-4 col-sm-6 col-xs-10">
                                 <select class="form-control" asp-items="@ViewBag.FeeList" asp-for="StudentPayment.StudentPaymentDetails[0].StudentFeeHeadId">
                                     <option selected disabled>Select Payment</option>
                                 </select>
@@ -176,8 +176,8 @@
                         </div>
 
                         <div class="form-group row">
-                            <label class="col-md-2 col-form-label text-right">Amount</label>
-                            <div class="col-md-4">
+                            <label class="col-md-3 col-form-label text-right">Amount</label>
+                            <div class="col-md-4 col-lg-4 col-sm-6 col-xs-10">
                                 <input type="text" id="amountId" class="form-control" placeholder="Amount" disabled />
                                 <input type="hidden" id="academicClassId" value="@Model.StudentPayment.Student.AcademicClassId" />
                             </div>
@@ -186,17 +186,17 @@
                         </div>
 
                         <div class="form-group row">
-                            <label class="col-md-2 col-form-label text-right">Total</label>
-                            <div class="col-md-4">
-                                <input asp-for="StudentPayment.TotalPayment" class="form-control form-control-sm text-right" />
+                            <label class="col-md-3 col-form-label text-right">Total</label>
+                            <div class="col-md-5 col-lg-4 col-sm-6 col-xs-10">
+                                <input asp-for="StudentPayment.TotalPayment" class="form-control form-control-sm text-right"  />
                             </div>
 
                             <span asp-validation-for="StudentPayment.Remarks" class="text-danger col-form-label"></span>
                         </div>
                         <div class="form-group row">
-                            <label class="col-md-2 col-form-label text-right">Remark</label>
-                            <div class="col-md-10">
-                                <input asp-for="StudentPayment.Remarks" class="form-control form-control-sm" />
+                            <label class="col-md-3 col-form-label text-right">Remark</label>
+                            <div class="col-md-9">
+                                <textarea asp-for="StudentPayment.Remarks" class="form-control form-control-sm" rows="2"></textarea>
                             </div>
 
                             <span asp-validation-for="StudentPayment.Remarks" class="text-danger col-form-label"></span>

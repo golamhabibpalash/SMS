@@ -19,6 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\Reports\rptStudent.rdlc" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="Hangfire" Version="1.7.31" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.6" />
@@ -32,6 +36,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.ReportingServices.ReportViewerControl.WebForms" Version="150.1537.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.6" />
     <PackageReference Include="MimeKit" Version="3.3.0" />
     <PackageReference Include="NodaTime" Version="3.1.0" />
@@ -51,6 +56,10 @@
     <Folder Include="wwwroot\Images\Question\" />
     <Folder Include="wwwroot\Images\Student\Photo\" />
     <Folder Include="wwwroot\js\Upazila\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\Reports\rptStudent.rdlc" />
   </ItemGroup>
 
   <ItemGroup>

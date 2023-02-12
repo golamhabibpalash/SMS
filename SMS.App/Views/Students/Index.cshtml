@@ -13,7 +13,7 @@
     string phoneCode = "+880";
 }
 <div class="col-md-12">
-    <form asp-action="Index" asp-controller="Students" >
+    <form asp-action="Index" asp-controller="Students">
         <div class="alert mb-0">
             <div class="form-group row mb-0">
                 <label for="aAcademicSessionId" class="col-form-label text-md-right">Academic Session</label>
@@ -30,7 +30,7 @@
                 </div>
                 <label for="aStatus" class="col-form-label text-md-right">Status</label>
                 <div class="col-md-2">
-                    <select class="form-control" id="aStatus" name="aStatus" asp-items="ViewBag.aStatus" >
+                    <select class="form-control" id="aStatus" name="aStatus" asp-items="ViewBag.aStatus">
                         <option selected disabled>Select Status</option>
                     </select>
                 </div>
@@ -99,7 +99,7 @@
                                             avatar = $"/Images/noProfileImage.png";
                                         }
                                     }
-                                }                               
+                                }
 
                                 <img src=@avatar alt="@item.Name" style="max-width:50px; max-height:80px" />
 
@@ -146,6 +146,13 @@
 
 @section Scripts{
     <script src="~/js/DataTable/dataTable.js"></script>
+
+    <script src="~/js/DataTable/dataTables.buttons.min.js"></script>
+    <script src="~/js/DataTable/jszip.min.js"></script>
+    <script src="~/js/DataTable/pdfmake.min.js"></script>
+    <script src="~/js/DataTable/vfs_fonts.js"></script>
+    <script src="~/js/DataTable/buttons.html5.min.js"></script>
+
     <script>
         $(document).ready(function () {
 
@@ -168,7 +175,61 @@
                 }
             });
         });
+        $('#aAcademicClassId').change(function () {
+            let id = $('#aAcademicClassId option:selected').val();
+            let sessionId = $('#aAcademicSessionId option:selected').val();
 
+            $.ajax({
+                url: "/api/academicsections/getbyclasswithsessionId?classId=" + id + "&sessionId=" + sessionId,
+                dataType: "JSON",
+                type: "POST",
+                cache: false,
+                success: function (data) {
+                    $('#aAcademicSectionId').empty();
+
+                    if (data != null || data != '') {
+                        var o = '<option disabled selected>Select Section Name</option>';
+                        var o2 = '<option value="0">No Section</option>';
+                        $('#aAcademicSectionId').append(o);
+                        $('#aAcademicSectionId').append(o2);
+                        $.each(data, function (i, obj) {
+                            console.log(obj.name);
+                            var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
+                            $('#aAcademicSectionId').append(op);
+                        });
+                    }
+                    else {
+                        var o = '<option disabled selected>Section Not Found</option>';
+                        $('#aAcademicSectionId').append(o);
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        });
+        $('#aAcademicSessionId').change(function () {
+            $('#aAcademicSectionId').empty();
+            $.ajax({
+                url: "/academicClasses/getAll",
+                dataType: "JSON",
+                type: "POST",
+                cache: false,
+                success: function (data) {
+                    $('#aAcademicClassId').empty();
+                    var o = '<option disabled selected>Select Class Name</option>';
+                    $('#aAcademicClassId').append(o);
+                    $.each(data, function (i, obj) {
+                        console.log(obj.name);
+                        var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
+                        $('#aAcademicClassId').append(op);
+                    });
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        });
     </script>
 
 }

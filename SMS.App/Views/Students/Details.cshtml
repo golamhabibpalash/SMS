@@ -23,6 +23,8 @@
     int dob = int.Parse(Model.Student.DOB.ToString("yyyyMMdd"));
     int age = (now - dob) / 10000;
     string phonePrefix = "+880";
+    int paySL = 0;
+    double totalPaid = 0;
 
 }
 @section Styles{ 
@@ -232,12 +234,14 @@
                         <h2>This is for academic information</h2>
                         <h1>System is under construction</h1>
                     </div>
+
+
                     <div id="financials" class="tab-pane" role="tabpanel">
-                        <h1 class="text-danger alert">This is a dummy page, Underconstructing.</h1>
                         <div class="row">
                             <div class="col-md-12 alert alert-warning">
                                 <div class="col-md-6 text-left">
-                                    <h5 class="">Due Amount: <span class="text-danger">2200tk</span></h5>
+                                    <h5 class="">Current Due Amount: <span class="text-danger">2200tk</span></h5>
+                                    <h5 class="">Total Due Amount: <span class="text-danger">2200tk</span></h5>
                                 </div>
                                 <div class="col-md-6 text-right">
                                     <a asp-action="Payment" asp-controller="StudentPayments" asp-route-stRoll="@Model.Student.ClassRoll" class="btn btn-info">Make Payment</a>
@@ -253,83 +257,37 @@
                                             <span class="h6">Payment Schedule</span>
                                         </div>
                                     </div>
-                                    <div class="card-body">
-                                        <table class="table">
+                                    <div class="">
+                                        <table class="table table-bordered">
                                             <thead>
                                                 <tr>
                                                     <td>#</td>
                                                     <td>Paid For</td>
-                                                    <td>Amount</td>
                                                     <td>Payment Date</td>
+                                                    <td class="text-right">Amount</td>
                                                     <td>Action</td>
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                @foreach (var payment in Model.StudentPayments)
+                                                {
+                                                    <tr>
+                                                        <td>@(++paySL)</td>
+                                                        <td>Paid For</td>
+                                                        <td>@payment.PaidDate.ToString("dd MMM yyyy")</td>
+                                                        <td class="text-right">@payment.TotalPayment</td>
+                                                        <td><button class="btn btn-sm btn-info">View</button></td>
+                                                    </tr>
+                                                    totalPaid += payment.TotalPayment;
+                                                }
                                             </tbody>
-                                            <tr>
-                                                <td></td>
-                                                <td></td>
-                                            </tr>
+                                           
                                         </table>
 
                                     </div>
                                     <div class="card-footer">
                                         <div class="text-center">
-                                            <span class="h6">Total Payment : 2690tk</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card">
-                                    <div class="card-header">
-                                        <div class="text-center">
-                                            <span class="h6">Payment Schedule</span>
-                                        </div>
-                                    </div>
-                                    <div class="card-body">
-                                        <label>Total Paid: </label>
-                                        <label>Total Paid: </label>
-                                        <label>Total Paid: </label>
-                                        <label>Total Paid: </label>
-                                        <label>Total Paid: </label>
-                                        <label>Total Paid: </label>
-                                        <label>Total Paid: </label>
-                                        <label>Total Paid: </label>
-                                        <label>Total Paid: </label>
-                                        <label>Total Paid: </label>
-                                    </div>
-                                    <div class="card-footer">
-                                        <div class="text-center">
-                                            <span class="h6">Total Payment : 2690tk</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card">
-                                    <div class="card-header">
-                                        <div class="text-center">
-                                            <span class="h6">Payment Schedule</span>
-                                        </div>
-                                    </div>
-                                    <div class="card-body">
-                                        <label>Total Paid: </label>
-                                    </div>
-                                    <div class="card-footer">
-                                        <div class="text-center">
-                                            <span class="h6">Total Payment : 2690tk</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card">
-                                    <div class="card-header">
-                                        <div class="text-center">
-                                            <span class="h6">Payment Schedule</span>
-                                        </div>
-                                    </div>
-                                    <div class="card-body">
-                                        <label>Total Paid: </label>
-                                    </div>
-                                    <div class="card-footer">
-                                        <div class="text-center">
-                                            <span class="h6">Total Payment : 2690tk</span>
+                                            <span class="h6 font-weight-bold text-black-50">Total Paid : @totalPaid tk</span>
                                         </div>
                                     </div>
                                 </div>

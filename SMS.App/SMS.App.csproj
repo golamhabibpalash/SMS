@@ -66,6 +66,7 @@
     <ProjectReference Include="..\SMS.BLL\SMS.BLL.csproj" />
     <ProjectReference Include="..\SMS.DB\SMS.DB.csproj" />
     <ProjectReference Include="..\SMS.Entities\SMS.Entities.csproj" />
+    <ProjectReference Include="..\SMS.Report\SMS.Report.csproj" />
   </ItemGroup>
 
 </Project>

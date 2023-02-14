@@ -72,11 +72,11 @@ namespace SMS.App.Controllers
                 }
                 if (setupMobileSMS.CheckInSMSService)
                 {
-                    RecurringJob.AddOrUpdate(() => SendCheckInSMS(), "*/20 * 8-11 * * sat-thu", TimeZoneInfo.Local);
+                    RecurringJob.AddOrUpdate(() => SendCheckInSMS(), "*/30 * 8-11 * * sat-thu", TimeZoneInfo.Local);
                 }
                 if (setupMobileSMS.CheckOutSMSService)
                 {
-                    RecurringJob.AddOrUpdate(() => SendCheckOutSMS(), "*/20 * 13-15 * * sat-thu", TimeZoneInfo.Local);
+                    RecurringJob.AddOrUpdate(() => SendCheckOutSMS(), "*/30 * 13-15 * * sat-thu", TimeZoneInfo.Local);
                 }
                 if (setupMobileSMS.AbsentNotification)
                 {
@@ -180,8 +180,9 @@ namespace SMS.App.Controllers
                                     {
                                         continue;
                                     }
-                                    bool isSMSSent = await MobileSMS.SendSMS(phoneNumber, smsText);
                                     
+                                    bool isSMSSent = await MobileSMS.SendSMS(phoneNumber, smsText);
+
                                     PhoneSMS phoneSMS = new PhoneSMS()
                                     {
                                         Text = smsText,
@@ -192,7 +193,7 @@ namespace SMS.App.Controllers
                                         MACAddress = MACService.GetMAC()
                                     };
                                     bool isSave = await _phoneSMSManager.AddAsync(phoneSMS);
-                                    
+
                                 }
                             }
                         }
@@ -203,12 +204,12 @@ namespace SMS.App.Controllers
             {
             }
 
-
             return Ok();
         }
-
+        
         private async Task<IActionResult> CheckInSMSSendDailyAttendanceStudentGirls()
         {
+            
             var attendanceSMSSetup = await _setupMobileSMSManager.GetByIdAsync(1);
             if (attendanceSMSSetup.CheckInSMSService == false)
             {
@@ -257,9 +258,9 @@ namespace SMS.App.Controllers
                                     if (PhoneNumberValidate(phoneNumber) == false)
                                     {
                                         continue;
-                                    }
+                                    }                                    
                                     bool isSMSSent = await MobileSMS.SendSMS(phoneNumber,smsText);
-                                    
+
                                     PhoneSMS phoneSMS = new PhoneSMS()
                                     {
                                         Text = smsText,
@@ -269,7 +270,7 @@ namespace SMS.App.Controllers
                                         CreatedAt = DateTime.Now,
                                         MACAddress = MACService.GetMAC()
                                     };
-                                    bool isSave = await _phoneSMSManager.AddAsync(phoneSMS);                                    
+                                    bool isSave = await _phoneSMSManager.AddAsync(phoneSMS);
                                 }
                             }
                         }
@@ -279,7 +280,6 @@ namespace SMS.App.Controllers
             catch (Exception)
             {
             }
-                        
             return Ok();
         }
 
@@ -336,8 +336,9 @@ namespace SMS.App.Controllers
                                     continue;
                                 }
                                 bool isSend = await MobileSMS.SendSMS(phoneNumber,smsText);
-                                
-                                PhoneSMS phoneSMS = new PhoneSMS() {
+
+                                PhoneSMS phoneSMS = new PhoneSMS()
+                                {
                                     Text = smsText,
                                     CreatedAt = DateTime.Now,
                                     CreatedBy = "Automation",
@@ -345,7 +346,7 @@ namespace SMS.App.Controllers
                                     MACAddress = MACService.GetMAC(),
                                     SMSType = smsType
                                 };
-                                await _phoneSMSManager.AddAsync(phoneSMS);                                
+                                await _phoneSMSManager.AddAsync(phoneSMS);
                             }
                         }
                     }
@@ -354,7 +355,6 @@ namespace SMS.App.Controllers
                 {
                     throw;
                 }
-                
                 return Ok();
             }
             else

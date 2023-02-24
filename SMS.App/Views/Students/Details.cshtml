@@ -106,20 +106,20 @@
         <div class="card text-center">
             <div class="card-header">
                 <ul class="nav nav-tabs card-header-tabs" id="bologna-list">
-                    <li class="nav-item bg-Teal text-light">
-                        <a class="nav-link text-success active" href="#personal" role="tab" aria-controls="personal" aria-selected="true">Personal Information</a>
+                    <li class="nav-item bg-Coffee text-light border">
+                        <a class="nav-link text-light active" href="#personal" role="tab" aria-controls="personal" aria-selected="true">Personal Information</a>
                     </li>
-                    <li class="nav-item bg-Coffee text-light">
+                    <li class="nav-item bg-Coffee border">
                         <a class="nav-link text-light" href="#academic" role="tab" aria-controls="academic" aria-selected="true">Academic Information</a>
                     </li>
-                    <li class="nav-item bg-info text-light">
-                        <a class="nav-link text-dark" role="tab" aria-controls="financials" aria-selected="true" href="#financials">Student Financials</a>
+                    <li class="nav-item bg-Coffee text-light border">
+                        <a class="nav-link text-light" role="tab" aria-controls="financials" aria-selected="true" href="#financials">Student Financials</a>
                     </li>
-                    <li class="nav-item bg-lime text-light">
-                        <a class="nav-link" role="tab" aria-controls="portfolio" aria-selected="true" href="#attendance">Attendance</a>
+                    <li class="nav-item bg-Coffee text-light border">
+                        <a class="nav-link text-light" role="tab" aria-controls="portfolio" aria-selected="true" href="#attendance">Attendance</a>
                     </li>
-                    <li class="nav-item bg-blue-sky text-light">
-                        <a class="nav-link" role="tab" aria-controls="documents" aria-selected="true" href="#documents">Documents</a>
+                    <li class="nav-item bg-Coffee border">
+                        <a class="nav-link text-light" role="tab" aria-controls="documents" aria-selected="true" href="#documents">Documents</a>
                     </li>
                 </ul>
             </div>
@@ -251,7 +251,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="card-columns p-2">
+                            <div class="col-md-10">
                                 <div class="card">
                                     <div class="card-header">
                                         <div class="text-center">
@@ -259,30 +259,48 @@
                                         </div>
                                     </div>
                                     <div class="">
-                                        <table class="table table-bordered">
-                                            <thead>
+                                        <table class="table table-hover table-bordered mb-0">
+                                            <thead class="bg-blue-sky">
                                                 <tr>
                                                     <td>#</td>
+                                                    <td>Receipt No</td>
                                                     <td>Paid For</td>
                                                     <td>Payment Date</td>
                                                     <td class="text-right">Amount</td>
+                                                    <td>Remarks</td>
                                                     <td>Action</td>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach (var payment in Model.StudentPayments)
+                                                @foreach (var payment in Model.StudentPayments.OrderBy(d=>d.PaidDate))
                                                 {
-                                                    <tr>
-                                                        <td>@(++paySL)</td>
-                                                        <td>Paid For</td>
-                                                        <td>@payment.PaidDate.ToString("dd MMM yyyy")</td>
-                                                        <td class="text-right">@payment.TotalPayment</td>
-                                                        <td><button class="btn btn-sm btn-info">View</button></td>
-                                                    </tr>
+                                                    foreach (var pDetails in payment.StudentPaymentDetails)
+                                                    {
+                                                       <tr>
+                                                           <td>@(++paySL)</td>
+                                                           <td>@payment.ReceiptNo</td>
+                                                           <td>@pDetails.StudentFeeHead.Name</td>
+                                                           <td>@payment.PaidDate.ToString("dd MMM yyyy")</td>
+                                                           <td class="text-right">@payment.TotalPayment</td>
+                                                           <td>@payment.Remarks</td>
+                                                           <td>
+                                                                <i class="fas fa-edit fa-lg"></i>
+                                                                <i class="fa-solid fa-receipt fa-lg"></i>
+                                                           </td>
+                                                       </tr> 
+                                                    }
+                                                    
                                                     totalPaid += payment.TotalPayment;
                                                 }
                                             </tbody>
-                                           
+                                           <tfoot class="bg-blue-sky">
+                                               <tr>
+                                                   <td colspan="4" class="text-right">Total Paid</td>
+                                                   
+                                                   <td class="text-right">@totalPaid</td>
+                                                   <td colspan="2" class="text-left">Tk</td>
+                                               </tr>
+                                           </tfoot>
                                         </table>
                                     </div>
                                     <div class="card-footer">
@@ -293,7 +311,7 @@
                                 </div>
                         </div>
                     </div>
-                        </div>
+                    </div>
                     <div id="attendance" class="tab-pane">
                         Attendances
                     </div>

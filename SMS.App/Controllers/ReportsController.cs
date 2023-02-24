@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Reporting.WebForms;
+using SMS.BLL.Contracts;
 using SMS.Entities;
 using System.Collections.Generic;
 using System.Data;
@@ -10,9 +10,11 @@ namespace SMS.App.Controllers
     public class ReportsController : Controller
     {
         private readonly IWebHostEnvironment _host;
-        public ReportsController(IWebHostEnvironment host)
+        private readonly IStudentManager _studentManager;
+        public ReportsController(IWebHostEnvironment host, IStudentManager studentManager)
         {
             _host = host;
+            _studentManager = studentManager;
         }
         public IActionResult Index()
         {
@@ -21,15 +23,15 @@ namespace SMS.App.Controllers
 
         public IActionResult StudentsReport()
         {
-            var dt = new DataTable();
-            dt = GetStudentList();
-            var reportName = "rptStudent.rdlc";
-            var path = _host.WebRootPath + "/Reports/"+ reportName;
-            LocalReport localReport = new LocalReport();
-            localReport.ReportPath= path;
-            ReportDataSource reportDataSource = new ReportDataSource();
-            reportDataSource.Value= dt;
-            localReport.DataSources.Add(reportDataSource);
+            //var dt = new DataTable();
+            //dt = GetStudentList();
+            //var reportName = "rptStudent.rdlc";
+            //var path = _host.WebRootPath + "/Reports/"+ reportName;
+            //LocalReport localReport = new LocalReport();
+            //localReport.ReportPath= path;
+            //ReportDataSource reportDataSource = new ReportDataSource();
+            //reportDataSource.Value= dt;
+            //localReport.DataSources.Add(reportDataSource);
             
 
             return View();
@@ -66,5 +68,12 @@ namespace SMS.App.Controllers
             }
             return dt;
         }
+
+        //public IActionResult ExportData()
+        //{
+        //    var byteRes = new byte[] { };
+        //    string path = _host.ContentRootPath + "\\Reports\\rptStudent.rdlc";
+        //    byteRes = IReport
+        //}
     }
 }

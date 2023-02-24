@@ -26,6 +26,7 @@ namespace SMS.DAL.Repositories
                 .Include(s => s.AcademicClass)
                 .Include(s => s.AcademicSession)
                 .Include(s => s.AcademicSection)
+                .Include(s => s.Gender)
                 .OrderBy(s => s.AcademicClassId)
                 .ThenBy(s => s.ClassRoll)
                 .ToListAsync();

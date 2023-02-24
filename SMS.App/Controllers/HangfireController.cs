@@ -72,11 +72,11 @@ namespace SMS.App.Controllers
                 }
                 if (setupMobileSMS.CheckInSMSService)
                 {
-                    RecurringJob.AddOrUpdate(() => SendCheckInSMS(), "*/30 * 8-11 * * sat-thu", TimeZoneInfo.Local);
+                    RecurringJob.AddOrUpdate(() => SendCheckInSMS(), "*/10 8-10 * * SAT-THU", TimeZoneInfo.Local);
                 }
                 if (setupMobileSMS.CheckOutSMSService)
                 {
-                    RecurringJob.AddOrUpdate(() => SendCheckOutSMS(), "*/30 * 13-15 * * sat-thu", TimeZoneInfo.Local);
+                    RecurringJob.AddOrUpdate(() => SendCheckOutSMS(), "*/10 13-15 * * sat-thu", TimeZoneInfo.Local);
                 }
                 if (setupMobileSMS.AbsentNotification)
                 {
@@ -182,18 +182,19 @@ namespace SMS.App.Controllers
                                     }
                                     
                                     bool isSMSSent = await MobileSMS.SendSMS(phoneNumber, smsText);
-
-                                    PhoneSMS phoneSMS = new PhoneSMS()
+                                    if (isSMSSent)
                                     {
-                                        Text = smsText,
-                                        MobileNumber = phoneNumber,
-                                        SMSType = smsType,
-                                        CreatedBy = "Automation",
-                                        CreatedAt = DateTime.Now,
-                                        MACAddress = MACService.GetMAC()
-                                    };
-                                    bool isSave = await _phoneSMSManager.AddAsync(phoneSMS);
-
+                                        PhoneSMS phoneSMS = new PhoneSMS()
+                                        {
+                                            Text = smsText,
+                                            MobileNumber = phoneNumber,
+                                            SMSType = smsType,
+                                            CreatedBy = "Automation",
+                                            CreatedAt = DateTime.Now,
+                                            MACAddress = MACService.GetMAC()
+                                        };
+                                        bool isSave = await _phoneSMSManager.AddAsync(phoneSMS);
+                                    }
                                 }
                             }
                         }
@@ -260,17 +261,19 @@ namespace SMS.App.Controllers
                                         continue;
                                     }                                    
                                     bool isSMSSent = await MobileSMS.SendSMS(phoneNumber,smsText);
-
-                                    PhoneSMS phoneSMS = new PhoneSMS()
+                                    if (isSMSSent)
                                     {
-                                        Text = smsText,
-                                        MobileNumber = phoneNumber,
-                                        SMSType = smsType,
-                                        CreatedBy = "Automation",
-                                        CreatedAt = DateTime.Now,
-                                        MACAddress = MACService.GetMAC()
-                                    };
-                                    bool isSave = await _phoneSMSManager.AddAsync(phoneSMS);
+                                        PhoneSMS phoneSMS = new PhoneSMS()
+                                        {
+                                            Text = smsText,
+                                            MobileNumber = phoneNumber,
+                                            SMSType = smsType,
+                                            CreatedBy = "Automation",
+                                            CreatedAt = DateTime.Now,
+                                            MACAddress = MACService.GetMAC()
+                                        };
+                                        bool isSave = await _phoneSMSManager.AddAsync(phoneSMS);
+                                    }
                                 }
                             }
                         }
@@ -336,17 +339,19 @@ namespace SMS.App.Controllers
                                     continue;
                                 }
                                 bool isSend = await MobileSMS.SendSMS(phoneNumber,smsText);
-
-                                PhoneSMS phoneSMS = new PhoneSMS()
+                                if (isSend)
                                 {
-                                    Text = smsText,
-                                    CreatedAt = DateTime.Now,
-                                    CreatedBy = "Automation",
-                                    MobileNumber = phoneNumber,
-                                    MACAddress = MACService.GetMAC(),
-                                    SMSType = smsType
-                                };
-                                await _phoneSMSManager.AddAsync(phoneSMS);
+                                    PhoneSMS phoneSMS = new PhoneSMS()
+                                    {
+                                        Text = smsText,
+                                        CreatedAt = DateTime.Now,
+                                        CreatedBy = "Automation",
+                                        MobileNumber = phoneNumber,
+                                        MACAddress = MACService.GetMAC(),
+                                        SMSType = smsType
+                                    };
+                                    await _phoneSMSManager.AddAsync(phoneSMS);
+                                }
                             }
                         }
                     }

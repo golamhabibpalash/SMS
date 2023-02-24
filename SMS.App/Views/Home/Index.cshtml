@@ -94,7 +94,7 @@
                                             </a>
                                         </td>
                                         <td class="text-center">
-                                            <a class="text-light" asp-action="Index" asp-controller="AttendanceMachines" asp-route-attendanceFor="students" asp-route-dateTime="@DateTime.Today.ToString("yyyy-MM-dd")" asp-route-attendanceType="attended" asp-route-aSessionId="1" asp-route-aClassId="@sClass.AcademicClass.Id">
+                                            <a class="text-light" asp-action="Index" asp-controller="AttendanceMachines" asp-route-attendanceFor="students" asp-route-dateTime="@DateTime.Today.ToString("yyyy-MM-dd")" asp-route-attendanceType="attended" asp-route-aSessionId="3" asp-route-aClassId="@sClass.AcademicClass.Id">
                                                 <div class="w-100 bg-info">
                                                     @sClass.AttendedStudents.Where(s => s.Status == true).Count()
                                                 </div>

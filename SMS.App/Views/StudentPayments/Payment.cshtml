@@ -1,6 +1,6 @@
 ﻿@model SMS.App.ViewModels.StudentPaymentVM
 @using System.Collections.Specialized
-@{ 
+@{
     ListDictionary months = new ListDictionary();
     months.Add(1, "January");
     months.Add(2, "February");
@@ -31,7 +31,8 @@
 
 @section Styles{
     <style>
-        @@media print{
+        @@media print
+        {
             body
             {
                 margin: 0 !important;
@@ -39,30 +40,52 @@
                 height: 100% !important;
                 visibility: hidden;
             }
-            body.modal-open .modal
-            {
-                position: absolute;
-                left: 0;
-                top: 0;
-                margin: 0;
-                padding: 0;
-                overflow: visible !important;
-            }
+
+                body.modal-open .modal
+                {
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    margin: 0;
+                    padding: 0;
+                    overflow: visible !important;
+                }
+
             .modal-dialog
             {
-                top:0;
+                top: 0;
                 max-width: 100%;
                 width: 100%;
             }
-            .modal-body{
-                visibility:visible;
-                font-size:20px;
+
+            .modal-body
+            {
+                visibility: visible;
+                font-size: 20px;
             }
-           
-            
         }
 
+        .multiselect-container > li > a > label
+        {
+            padding: 4px 20px 3px 20px;
+        }
     </style>
+    <style>
+        .mt-100
+        {
+            margin-top: 100px
+        }
+
+        body
+        {
+            background: #00B4DB;
+            background: -webkit-linear-gradient(to right, #0083B0, #00B4DB);
+            background: linear-gradient(to right, #0083B0, #00B4DB);
+            color: #514B64;
+            min-height: 100vh
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.css">
 }
 <div class="row pt-3 pb-2 bg-orange">
     <div class="col-md-12 text-center">
@@ -164,17 +187,37 @@
                                 </select>
                             </div>
                             <div class="col-md-2">
-                                <select class="form-control" id="howManyTimes" style="display:none">
-                                    <option value="1" selected>1</option>
-                                    @for (int i = 2; i <= 12; i++)
+                                <div class="row d-flex justify-content-center mt-100">
+                                    <div class="col-md-6">
+                                        <select id="choices-multiple-remove-button" placeholder="Select upto 5 tags" multiple>
+                                            <option value="HTML">HTML</option>
+                                            <option value="Jquery">Jquery</option>
+                                            <option value="CSS">CSS</option>
+                                            <option value="Bootstrap 3">Bootstrap 3</option>
+                                            <option value="Bootstrap 4">Bootstrap 4</option>
+                                            <option value="Java">Java</option>
+                                            <option value="Javascript">Javascript</option>
+                                            <option value="Angular">Angular</option>
+                                            <option value="Python">Python</option>
+                                            <option value="Hybris">Hybris</option>
+                                            <option value="SQL">SQL</option>
+                                            <option value="NOSQL">NOSQL</option>
+                                            <option value="NodeJS">NodeJS</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+
+
+                                <!--<select class="form-control" id="howManyTimes" style="display:none" multiple="multiple">-->
+                                @*@for (int i = 2; i <= 12; i++)
                                     {
                                         <option value="@i">@i</option>
-                                    }
-                                </select>
+                                    }*@
+                                <!--</select>-->
                             </div>
                             <span asp-validation-for="ClassFeeHeadId" class="text-danger col-form-label"></span>
                         </div>
-
                         <div class="form-group row">
                             <label class="col-md-3 col-form-label text-right">Amount</label>
                             <div class="col-md-4 col-lg-4 col-sm-6 col-xs-10">
@@ -188,7 +231,7 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-form-label text-right">Total</label>
                             <div class="col-md-5 col-lg-4 col-sm-6 col-xs-10">
-                                <input asp-for="StudentPayment.TotalPayment" class="form-control form-control-sm text-right"  />
+                                <input asp-for="StudentPayment.TotalPayment" class="form-control form-control-sm text-right" />
                             </div>
 
                             <span asp-validation-for="StudentPayment.Remarks" class="text-danger col-form-label"></span>
@@ -208,20 +251,20 @@
                         </div>
                     </div>
                     @*<div class="col-md-2">
-                        <ul class="list-group">
-                            @foreach (var item in months.Values)
-                            {
-                                <li class="list-group-item">
-                                    <div class="form-check ">
-                                        <input class="form-check-input col-form-label" type="checkbox" value="" id="checkbox_@item">
-                                        <label class="p-1 form-check-label text-black-50" for="checkbox_@item">
-                                            @item
-                                        </label>
-                                    </div>
-                                </li>
-                            }
-                        </ul>
-                    </div>*@
+                            <ul class="list-group">
+                                @foreach (var item in months.Values)
+                                {
+                                    <li class="list-group-item">
+                                        <div class="form-check ">
+                                            <input class="form-check-input col-form-label" type="checkbox" value="" id="checkbox_@item">
+                                            <label class="p-1 form-check-label text-black-50" for="checkbox_@item">
+                                                @item
+                                            </label>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        </div>*@
                 </div>
             </form>
 
@@ -284,70 +327,70 @@
 <div style="color:black;font-weight:100" class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg pb-0" role="document">
         <div class="modal-content p-3">
-                <div class="modal-body page" id="receiptPrintingArea">
-                    <table class="table table-sm table-borderless table-striped">
+            <div class="modal-body page" id="receiptPrintingArea">
+                <table class="table table-sm table-borderless table-striped">
+                    <tr>
+                        <td colspan="12" class="text-center">
+                            <h1 style="color:navy; font-weight:bolder">Noble Residential School</h1>
+                            <h5 class="">(Payment Receipt)</h5>
+                            <hr />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Recipt No</td>
+                        <td>:</td>
+                        <td colspan="4" id="rctReciptNo"></td>
+                        <td colspan="2">Payment Date</td>
+                        <td>:</td>
+                        <td colspan="3" id="rctPaymentDate"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Academic Class</td>
+                        <td>:</td>
+                        <td colspan="4" id="rctAcademicClass"></td>
+                        <td colspan="2">Class Roll</td>
+                        <td>:</td>
+                        <td colspan="3" id="rctClassRoll"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Studunt Name</td>
+                        <td>:</td>
+                        <td colspan="4" id="rctStudentName"></td>
+                        <td colspan="2">Academic Session</td>
+                        <td>:</td>
+                        <td colspan="3" id="rctAcademicSession"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Amount</td>
+                        <td>:</td>
+                        <td colspan="4" id="rctAmount"></td>
+                        <td colspan="2">Payment Type</td>
+                        <td>:</td>
+                        <td colspan="3" id="rctPaymentType"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Amount in words</td>
+                        <td>:</td>
+                        <td colspan="9" id="rctAmountInWords"></td>
+                    </tr>
+
+                </table>
+                <table class="table table-borderless">
+                    <tfoot class="pt-2 mt-2">
+
                         <tr>
-                            <td colspan="12" class="text-center">
-                                <h1 style="color:navy; font-weight:bolder">Noble Residential School</h1>
-                                <h5 class="">(Payment Receipt)</h5>
-                                <hr />
+                            <td colspan="7"></td>
+                            <td colspan="5" class="text-center">
+                                <span class="nowrap pt-3"> <hr /> Authority Signature</span>
                             </td>
                         </tr>
-                        <tr>
-                            <td colspan="2">Recipt No</td>
-                            <td>:</td>
-                            <td colspan="4" id="rctReciptNo"></td>
-                            <td colspan="2">Payment Date</td>
-                            <td>:</td>
-                            <td colspan="3" id="rctPaymentDate"></td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">Academic Class</td>
-                            <td>:</td>
-                            <td colspan="4" id="rctAcademicClass"></td>
-                            <td colspan="2">Class Roll</td>
-                            <td>:</td>
-                            <td colspan="3" id="rctClassRoll"></td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">Studunt Name</td>
-                            <td>:</td>
-                            <td colspan="4" id="rctStudentName"></td>
-                            <td colspan="2">Academic Session</td>
-                            <td>:</td>
-                            <td colspan="3" id="rctAcademicSession"></td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">Amount</td>
-                            <td>:</td>
-                            <td colspan="4" id="rctAmount"></td>
-                            <td colspan="2">Payment Type</td>
-                            <td>:</td>
-                            <td colspan="3" id="rctPaymentType"></td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">Amount in words</td>
-                            <td>:</td>
-                            <td colspan="9" id="rctAmountInWords"></td>
-                        </tr>
-                        
-                    </table>
-                    <table class="table table-borderless">
-                        <tfoot class="pt-2 mt-2">
+                    </tfoot>
+                </table>
+            </div>
 
-                            <tr>
-                                <td colspan="7"></td>
-                                <td colspan="5" class="text-center">
-                                    <span class="nowrap pt-3"> <hr /> Authority Signature</span>
-                                </td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-          
             <div class="modal-footer p-0">
                 <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-sm btn-primary" onclick="window.print()" ><i class="fa fa-print"></i></button>
+                <button type="button" class="btn btn-sm btn-primary" onclick="window.print()"><i class="fa fa-print"></i></button>
             </div>
         </div>
     </div>
@@ -357,8 +400,27 @@
 
 
 @section Scripts{
-    <script src="~/js/StudentPayments/Payment.js"></script>
+    <script>
+        $(document).ready(function () {
 
+            var multipleCancelButton = new Choices('#choices-multiple-remove-button', {
+                removeItemButton: true,
+                maxItemCount: 5,
+                searchResultLimit: 5,
+                renderChoiceLimit: 5
+            });
+
+
+        });
+
+    </script>
+
+
+
+    <script src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.js"></script>
+    <script src="~/js/StudentPayments/Payment.js"></script>
+    <script src="~/lib/MultiSelect/js/bootstrap-3.3.2.min.js"></script>
+    <script src="~/lib/MultiSelect/js/jquery-2.1.3.min.js"></script>
     @if (TempData["Saved"] != null)
     {
         <script src="~/js/AlertifyNotify/successNotify.js"></script>
@@ -379,5 +441,5 @@
     {
         <script src="~/js/AlertifyNotify/warningUpdateFailNotify.js"></script>
     }
-   
+
 }

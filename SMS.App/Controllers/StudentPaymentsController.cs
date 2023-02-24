@@ -68,8 +68,7 @@ namespace SMS.App.Controllers
         public async Task<IActionResult> Payment(int? stRoll)
         {
             if (stRoll < 0 || stRoll == 0 || stRoll ==null)
-            {
-                
+            { 
                 return RedirectToAction("Index");
             }
 

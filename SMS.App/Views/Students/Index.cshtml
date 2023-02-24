@@ -61,8 +61,9 @@
                     <th> Class</th>
                     <th> Section </th>
                     <th>  @Html.DisplayNameFor(model => model.PhoneNo)</th>
-                    <th>Academic Session </th>
-                    <th>Active Status</th>
+                    <th>Session </th>
+                    <th>Gender </th>
+                    <th>Status</th>
                     <th><a asp-action="Create" class="p-2 btn-sm btn-info rounded-pill"><i class="fa fa-plus"></i> Add <i class="fa fa-user-alt"></i> </a></th>
                 </tr>
             </thead>
@@ -114,11 +115,12 @@
                         }
                         <td> @phoneCode@item.PhoneNo</td>
                         <td> @Html.DisplayFor(modelItem => item.AcademicSession.Name)</td>
+                        <td>
+                            @item.Gender.Name
+                        </td>
                         @if (item.Status)
                         {
-
                             <td> <input type="checkbox" checked disabled /> Active</td>
-
                         }
                         else
                         {

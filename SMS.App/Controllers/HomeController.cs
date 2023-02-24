@@ -87,7 +87,7 @@ namespace SMS.App.Controllers
                                                           where a.Key == e.Phone.Substring(e.Phone.Length - 9) 
                                                           && e.Status == true
                                                           select e).ToList();
-                todaysAttendanceEmpVM.TotalEmployee = designation.Employees.Count();
+                todaysAttendanceEmpVM.TotalEmployee = designation.Employees.Where(e => e.Status==true).Count();
                 todaysAttendanceEmpVMs.Add(todaysAttendanceEmpVM);
             }
             DashboardVM.TodaysAttendanceEmpVMs = todaysAttendanceEmpVMs;

@@ -20,7 +20,6 @@ $('#StudentPayment_StudentPaymentDetails_0__StudentFeeHeadId').change(function (
         error: function (err) {
             console.log(err);
         }
-        
     });
 });
 
@@ -194,3 +193,13 @@ function inWords(num) {
     return str;
 }
 
+$(function () {
+
+    $('#howManyTimes').multiselect({
+        includeSelectAllOption: true
+    });
+
+    $('#btnget').click(function () {
+        alert($('#chkveg').val());
+    });
+});

@@ -7,12 +7,17 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Org.BouncyCastle.Crypto.Tls;
 using Repositories;
 using SMS.App.Utilities.Automation.Hangfire;
 using SMS.BLL.Contracts;
+using SMS.BLL.Contracts.Reports;
 using SMS.BLL.Managers;
+using SMS.BLL.Managers.Reports;
 using SMS.DAL.Contracts;
+using SMS.DAL.Contracts.Reports;
 using SMS.DAL.Repositories;
+using SMS.DAL.Repositories.Reports;
 using SMS.DB;
 using SMS.Entities;
 using System;
@@ -168,7 +173,10 @@ builder.Services.AddScoped<IEmployeeActivateHistManager, EmployeeActivateHistMan
 
 builder.Services.AddScoped<ISetupMobileSMSRepository, SetupMobileSMSRepository>();
 builder.Services.AddScoped<ISetupMobileSMSManager, SetupMobileSMSManager>();
-  
+
+//Reporting part start here===================================
+builder.Services.AddScoped<IReportManager, ReportManager>();
+builder.Services.AddScoped<IReportRepository, ReportRepository>();
 
 var app = builder.Build();
 

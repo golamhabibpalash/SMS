@@ -1,0 +1,16 @@
+﻿namespace SMS.Entities.RptModels
+{
+    public class RptStudentVM
+    {
+        public int ClassRoll { get; set; }
+        public string StudentName { get; set; }
+        public string ClassName { get; set; }
+        public string SessionName { get; set; }
+        public string FatherName { get; set; }
+        public string MotherName { get; set; }
+        public string GuardianPhone { get; set; }
+        public string PhoneNo { get; set; }
+        public string Gender { get; set; }
+        public string Religion { get; set; }
+    }
+}

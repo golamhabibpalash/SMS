@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AspNetCore.Reporting" Version="2.1.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="Hangfire" Version="1.7.31" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.6" />
@@ -64,7 +65,9 @@
     <None Include="wwwroot\lib\MultiSelect\js\jquery-2.1.3.min.js" />
     <None Include="wwwroot\lib\MultiSelect\js\prettify.min.js" />
     <None Include="wwwroot\lib\MultiSelect\js\require-2.3.5.min.js" />
-    <None Include="wwwroot\Reports\rptStudent.rdlc" />
+    <None Include="wwwroot\Reports\rptStudent.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

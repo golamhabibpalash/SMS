@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using AspNetCore.Reporting;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using SMS.BLL.Contracts;
+using SMS.BLL.Contracts.Reports;
 using SMS.Entities;
 using System.Collections.Generic;
 using System.Data;
+using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
 {
@@ -11,10 +14,12 @@ namespace SMS.App.Controllers
     {
         private readonly IWebHostEnvironment _host;
         private readonly IStudentManager _studentManager;
-        public ReportsController(IWebHostEnvironment host, IStudentManager studentManager)
+        private readonly IReportManager _reportManager;
+        public ReportsController(IWebHostEnvironment host, IStudentManager studentManager, IReportManager reportManager)
         {
             _host = host;
             _studentManager = studentManager;
+            _reportManager = reportManager;
         }
         public IActionResult Index()
         {
@@ -35,6 +40,24 @@ namespace SMS.App.Controllers
             
 
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> StudentsReportAsync(string fileType)
+        {
+            string mimtype = "";
+            int extension = 1;
+            var path = _host.WebRootPath + "\\Reports\\rptStudent.rdlc";
+            Dictionary<string, string> parameters = new Dictionary<string, string>();
+            //parameters.Add("rp1", "Welcome to RDLC Reporting");
+            LocalReport localReport = new LocalReport(path);
+            //List<RptStudentVM> studentVMs = new List<RptStudentVM>();
+
+            var studens = await _reportManager.getStudentsInfo();
+
+            localReport.AddDataSource("DataSet1", studens);
+            var result = localReport.Execute(RenderType.Pdf, extension, parameters, mimtype);
+            return File(result.MainStream, "application/pdf");
         }
 
         [HttpGet]

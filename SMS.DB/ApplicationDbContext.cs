@@ -4,6 +4,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using SMS.Entities;
 using SMS.Entities.AdditionalModels;
+using SMS.Entities.RptModels;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection.Emit;
@@ -60,6 +61,9 @@ namespace SMS.DB
         //public DbSet<ExamGrade> ExamGrades { get; set; }
 
         [NotMapped]
+        public DbSet<RptStudentVM> RptStudentVMs { get; set; }
+
+        [NotMapped]
         public DbSet<AttendanceVM> AttendanceVMs { get; set; }
 
         [NotMapped]
@@ -70,6 +74,7 @@ namespace SMS.DB
             base.OnModelCreating(builder);
             builder.Entity<AttendanceVM>(entity => entity.HasNoKey());
             builder.Entity<StudentPaymentSummeryVM>(entity => entity.HasNoKey());
+            builder.Entity<RptStudentVM>().ToView(nameof(RptStudentVMs)).HasNoKey();
         }
         
     }

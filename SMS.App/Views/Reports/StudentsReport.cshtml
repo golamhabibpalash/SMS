@@ -1,11 +1,10 @@
-﻿@using Microsoft.Reporting.WebForms
-
-@{ 
-    ReportViewer reportViewer = new ReportViewer();
-
-}
-
-
-<div>
-    <rdlc:ReportViewer
+﻿
+<div row>
+    <form asp-action="studentsReport" method="post">
+        <div class="btn-group btn-sm mr-2" role="group" aria-label="First group">
+            <button type="submit" class="btn-sm btn btn-danger" name="fileType" value="pdf"><i class="fas fa-file-pdf"></i></button>
+            <button type="submit" class="btn-sm btn btn-success" name="fileType" value="xls"><i class="fas fa-file-excel"></i></button>
+            <button type="submit" class="btn-sm btn btn-primary" name="fileType" value="doc"><i class="fas fa-file-word"></i></button>
+        </div>
+    </form>
 </div>

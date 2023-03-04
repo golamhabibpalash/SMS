@@ -1,0 +1,29 @@
+﻿@model IEnumerable<AcademicExam>
+
+@{ 
+    ViewBag.pageTitle = "Academic Exams";
+}
+    <div class="row">
+        <table class="table table-info table-striped table-bordered" id="myTable">
+            <thead>
+                <tr>
+                    <td>Exam Name</td>
+                    <td>Academic Class</td>
+                    <td>Academic Session</td>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.ExamName</td>
+                            <td>@item.AcademicSubject.AcademicClass.Name</td>
+                            <td>@item.AcademicSession.Name</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>

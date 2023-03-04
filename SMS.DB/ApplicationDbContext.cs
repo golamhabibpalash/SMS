@@ -55,6 +55,7 @@ namespace SMS.DB
         public DbSet<EmployeeActivateHist> EmployeeActivateHists { get; set; }
         public DbSet<SetupMobileSMS> SetupMobileSMSs { get; set; }
 
+        public DbSet<AcademicExamType> AcademicExamTypes { get; set; }
         //public DbSet<AcademicExam> Exams { get; set; }
         //public DbSet<ExamResult> ExamResults { get; set; }
         //public DbSet<ExamResultDetail> ExamResultDetails { get; set; }

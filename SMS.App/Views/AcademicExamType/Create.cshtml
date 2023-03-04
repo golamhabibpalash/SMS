@@ -1,0 +1,27 @@
+﻿@model AcademicExamType
+
+<div class="row">
+    <form asp-action="Create" method="post">
+        <table>
+            <tr>
+                <td>Exam Type Name</td>
+                <td>
+                    <input asp-for="ExamTypeName" />
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="submit" value="Create" />
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+
+
+
+@section Scripts{
+    <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
+}

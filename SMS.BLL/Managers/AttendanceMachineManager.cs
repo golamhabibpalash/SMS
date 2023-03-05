@@ -33,6 +33,12 @@ namespace SMS.BLL.Managers
             return result.OrderByDescending(m => m.CardNo);
         }
 
+        public async Task<List<Tran_MachineRawPunch>> GetAttendanceByDateRangeAsync(string StartDate, string EndDate)
+        {
+            var result = await _attendanceMachineRepository.GetAttendanceByDateRangeAsync(StartDate, EndDate);
+            return result;
+        }
+
         public async Task<List<Tran_MachineRawPunch>> GetCheckinDataByDateAsync(string date)
         {
             List<Tran_MachineRawPunch> allCheckInAttendnace = new List<Tran_MachineRawPunch>();

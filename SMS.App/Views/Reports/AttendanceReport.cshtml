@@ -1,0 +1,113 @@
+﻿@model SMS.App.ViewModels.AttendanceVM.MonthlyAttendanceFullClass
+
+@using System.Globalization
+@{ 
+    ViewBag.PageTitle = "Attendance Report";
+    
+    int sl = 0;
+
+}
+<div class="row">
+    <div class="col-md-2">
+        <form asp-action="attendanceReport" method="post">
+            <table>
+                <tr>
+                    <td>
+                        Select Month
+                    </td>
+                    <td>
+                        <select asp-items="ViewBag.Monthlist" name="monthId" class="form-control">
+                            <option selected disabled>Select a month</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Class
+                    </td>
+                    <td>
+                        <select asp-items="ViewBag.AcademicClasslist" name="classId" class="form-control">
+                            <option selected disabled>Select a Class</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="text-right">
+                        <input class="btn btn-info" type="submit"  value="Get Report" />
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <div class="col-md-10">
+        <div class="row">
+            <div class="col-md-8 offset-2 text-center">
+                @if (Model.MonthName != null)
+                {
+                    <h3 class="text-center">Monthly attendance for @Model.MonthName @DateTime.Now.Year</h3>
+                }
+                @if (Model.ClassName != null)
+                {
+                    <h4 class="text-center">@Model.ClassName</h4>
+                }
+            </div>
+        </div>
+        <div class="row">
+            <table class="table table-bordered">
+                <thead>
+                    <tr class="table-info">
+                        <td>#</td>
+                        <td>Student Name</td>
+                        @if (ViewBag.daysInMonth != null)
+                        {
+                            for (int i = 1; i <= ViewBag.daysInMonth; i++)
+                            {
+                                if (DateTime.Now.Date.ToString("yyyyMMdd") == DateTime.Now.Date.ToString("yyyyMM") + i.ToString().PadLeft(2,'0'))
+                                {
+                                    <td class="bg-orange">@i</td>
+                                }
+                                else
+                                {
+                                    <td class="">@i</td>
+                                }
+                            }
+                        }
+                        <td>Total</td>
+                        <td>%</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null)
+                    {
+                        if (Model.MothlyAttendanceFullClassDetailses != null)
+                        {
+                            @foreach (var item in Model.MothlyAttendanceFullClassDetailses)
+                            {
+                                <tr>
+                                    <td>@(++sl)</td>
+                                    <td>@item.StudentName</td>
+                                    @if (item.isPresents != null)
+                                    {
+                                        foreach (KeyValuePair<int, bool> item1 in item.isPresents)
+                                        {
+                                            @if (item1.Value == true)
+                                            {
+                                                <td class="text-center">P</td>
+                                            }
+                                            else
+                                            {
+                                                <td class="text-center">.</td>
+                                            }
+                                        }
+                                    }
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            }
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

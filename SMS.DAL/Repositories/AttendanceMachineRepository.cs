@@ -40,6 +40,13 @@ namespace SMS.DAL.Repositories
             return result;            
         }
 
+        public async Task<List<Tran_MachineRawPunch>> GetAttendanceByDateRangeAsync(string StartDate, string EndDate)
+        {
+            string sql = @"select t.* from Tran_MachineRawPunch t where Format(t.PunchDatetime,'yyyy-MM-dd') between convert(datetime,'"+StartDate+"') and convert(datetime,'"+EndDate+"')";
+            var attendanceList = await _context.Tran_MachineRawPunch.FromSqlRaw(sql).ToListAsync();
+            return attendanceList;
+        }
+
         public async Task<List<Tran_MachineRawPunch>> GetCheckinDataByDateAsync(string date)
         {
             var pDate = new SqlParameter("date", date);

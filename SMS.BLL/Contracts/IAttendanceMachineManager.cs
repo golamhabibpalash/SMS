@@ -18,6 +18,6 @@ namespace SMS.BLL.Contracts
         Task<List<Tran_MachineRawPunch>> GetCheckinDataByDateAsync(string date);
         Task<List<Tran_MachineRawPunch>> GetCheckOutDataByDateAsync(string date);
         Task<List<Student>> GetTodaysAbsentStudentAsync(string date);
-
+        Task<List<Tran_MachineRawPunch>> GetAttendanceByDateRangeAsync(string StartDate, string EndDate);
     }
 }

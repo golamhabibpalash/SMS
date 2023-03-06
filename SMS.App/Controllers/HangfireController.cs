@@ -394,7 +394,7 @@ namespace SMS.App.Controllers
         {
             DateTime date = DateTime.Today;
             List<Tran_MachineRawPunch> todaysCheckOutAttendances = new List<Tran_MachineRawPunch>();
-            todaysCheckOutAttendances = await _attendanceMachineManager.GetCheckinDataByDateAsync(date.ToString("dd-MM-yyyy"));
+            todaysCheckOutAttendances = await _attendanceMachineManager.GetCheckOutDataByDateAsync(date.ToString("dd-MM-yyyy"));
             try
             {
                 if (todaysCheckOutAttendances != null || todaysCheckOutAttendances.Count > 0)
@@ -465,7 +465,7 @@ namespace SMS.App.Controllers
         {
             DateTime date = DateTime.Today;
             List<Tran_MachineRawPunch> todaysCheckOutAttendances = new List<Tran_MachineRawPunch>();
-            todaysCheckOutAttendances = await _attendanceMachineManager.GetCheckinDataByDateAsync(date.ToString("dd-MM-yyyy"));
+            todaysCheckOutAttendances = await _attendanceMachineManager.GetCheckOutDataByDateAsync(date.ToString("dd-MM-yyyy"));
             try
             {
                 if (todaysCheckOutAttendances!=null)
@@ -537,7 +537,7 @@ namespace SMS.App.Controllers
         {
             DateTime date = DateTime.Today;
             List<Tran_MachineRawPunch> todaysCheckOutAttendances = new List<Tran_MachineRawPunch>();
-            todaysCheckOutAttendances = await _attendanceMachineManager.GetCheckinDataByDateAsync(date.ToString("dd-MM-yyyy"));
+            todaysCheckOutAttendances = await _attendanceMachineManager.GetCheckOutDataByDateAsync(date.ToString("dd-MM-yyyy"));
             try
             {
                 if (todaysCheckOutAttendances != null || todaysCheckOutAttendances.Count > 0)

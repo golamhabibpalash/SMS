@@ -1,45 +1,55 @@
 ﻿@model SMS.App.ViewModels.AttendanceVM.MonthlyAttendanceFullClass
 
 @using System.Globalization
-@{ 
+@{
     ViewBag.PageTitle = "Attendance Report";
-    
+    DateTime myDate =DateTime.Today;
+    if (ViewBag.startDate!=null)
+    {
+        myDate = Convert.ToDateTime(ViewBag.StartDate);
+    }
     int sl = 0;
 
 }
 <div class="row">
-    <div class="col-md-2">
-        <form asp-action="attendanceReport" method="post">
-            <table>
-                <tr>
-                    <td>
-                        Select Month
-                    </td>
-                    <td>
-                        <select asp-items="ViewBag.Monthlist" name="monthId" class="form-control">
-                            <option selected disabled>Select a month</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Class
-                    </td>
-                    <td>
-                        <select asp-items="ViewBag.AcademicClasslist" name="classId" class="form-control">
-                            <option selected disabled>Select a Class</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2" class="text-right">
-                        <input class="btn btn-info" type="submit"  value="Get Report" />
-                    </td>
-                </tr>
-            </table>
-        </form>
+    <div class="col-md-4 m-5">
+        <fieldset style="border: 1px solid">
+            <legend>Select month and class</legend>
+            <form asp-action="attendanceReport" method="post">
+
+                <table>
+                    <tr>
+                        <td>
+                            Select Month
+                        </td>
+                        <td>
+                            <select asp-items="ViewBag.Monthlist" name="monthId" class="form-control">
+                                <option selected disabled>Select a month</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Class
+                        </td>
+                        <td>
+                            <select asp-items="ViewBag.AcademicClasslist" name="classId" class="form-control">
+                                <option selected disabled>Select a Class</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="text-right">
+                            <input class="btn btn-info" type="submit" value="Get Report" />
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </fieldset>
     </div>
-    <div class="col-md-10">
+</div>
+<div class="row">
+    <div class="col-md-12 p-2">
         <div class="row">
             <div class="col-md-8 offset-2 text-center">
                 @if (Model.MonthName != null)
@@ -53,61 +63,65 @@
             </div>
         </div>
         <div class="row">
-            <table class="table table-bordered">
-                <thead>
-                    <tr class="table-info">
-                        <td>#</td>
-                        <td>Student Name</td>
-                        @if (ViewBag.daysInMonth != null)
-                        {
-                            for (int i = 1; i <= ViewBag.daysInMonth; i++)
+            <div class="col-md-12">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr class="table-info">
+                            <td>Roll</td>
+                            <td>Student Name</td>
+                            @if (ViewBag.daysInMonth != null)
                             {
-                                if (DateTime.Now.Date.ToString("yyyyMMdd") == DateTime.Now.Date.ToString("yyyyMM") + i.ToString().PadLeft(2,'0'))
+
+                                for (int i = 1; i <= ViewBag.daysInMonth; i++)
                                 {
-                                    <td class="bg-orange">@i</td>
-                                }
-                                else
-                                {
-                                    <td class="">@i</td>
+                                    DateTime mDate = myDate.AddDays(i - 1);
+
+                                    <td class="" data-toggle="tooltip" data-placement="top" title="@mDate.ToString("dd MMM yyyy")"> @i</td>
+
                                 }
                             }
-                        }
-                        <td>Total</td>
-                        <td>%</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model != null)
-                    {
-                        if (Model.MothlyAttendanceFullClassDetailses != null)
+                            <td>Total</td>
+                            <td>%</td>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-light">
+                        @if (Model != null)
                         {
-                            @foreach (var item in Model.MothlyAttendanceFullClassDetailses)
+                            if (Model.MothlyAttendanceFullClassDetailses != null)
                             {
-                                <tr>
-                                    <td>@(++sl)</td>
-                                    <td>@item.StudentName</td>
-                                    @if (item.isPresents != null)
-                                    {
-                                        foreach (KeyValuePair<int, bool> item1 in item.isPresents)
+                                @foreach (var item in Model.MothlyAttendanceFullClassDetailses)
+                                {
+                                    <tr>
+                                        <td class="table-primary">@item.Roll</td>
+                                        <td class="table-primary">@item.StudentName</td>
+                                        @if (item.isPresents != null)
                                         {
-                                            @if (item1.Value == true)
+                                            foreach (KeyValuePair<int, bool> item1 in item.isPresents)
                                             {
-                                                <td class="text-center">P</td>
-                                            }
-                                            else
-                                            {
-                                                <td class="text-center">.</td>
+                                                @if (item1.Value == true)
+                                                {
+                                                    <td class="text-center">P</td>
+                                                }
+                                                else
+                                                {
+                                                    <td class="text-center">.</td>
+                                                }
                                             }
                                         }
-                                    }
-                                    <td></td>
-                                    <td></td>
-                                </tr>
+                                        <td class="font-weight-bolder">@item.Total</td>
+                                        <td class="font-weight-bolder">@item.countPercentage%</td>
+                                    </tr>
+                                }
                             }
                         }
-                    }
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
+
+@section Scripts{
+
+    <script src="~/js/DataTable/dataTable.js"></script>
+}

@@ -151,7 +151,7 @@ namespace SMS.App.Controllers
             string className = string.Empty;    
             // Create a new DateTime object for the first day of the month
             DateTime firstDateOfMonth = new DateTime(DateTime.Now.Year, monthId, 1);
-
+            ViewBag.StartDate = firstDateOfMonth.ToString("dd-MMM-yyyy");
             // Get the last day of the month by adding one month to the first day and subtracting one day
             DateTime lastDateOfMonth = firstDateOfMonth.AddMonths(1).AddDays(-1);
             StartDate = firstDateOfMonth.ToString("yyyy-MM-dd");
@@ -182,6 +182,7 @@ namespace SMS.App.Controllers
 
                 MonthlyAttendanceFullClassDetails monthlyAttendanceFullClassDetails = new MonthlyAttendanceFullClassDetails();
                 monthlyAttendanceFullClassDetails.StudentName = student.Name;
+                monthlyAttendanceFullClassDetails.Roll = student.ClassRoll;
                 IDictionary<int, bool> daysPresents = new Dictionary<int, bool>();
                 monthlyAttendanceFullClassDetails.isPresents = daysPresents;
 
@@ -199,6 +200,9 @@ namespace SMS.App.Controllers
                     }
                     monthlyAttendanceFullClassDetails.isPresents = daysPresents;
                 }
+                int total = daysPresents.Where(m => m.Value == true).Count();
+                monthlyAttendanceFullClassDetails.Total = total;
+                monthlyAttendanceFullClassDetails.countPercentage = (total*100) / monthDays;
                 monthlyAttendanceFullClass.MothlyAttendanceFullClassDetailses.Add(monthlyAttendanceFullClassDetails);
             }
             

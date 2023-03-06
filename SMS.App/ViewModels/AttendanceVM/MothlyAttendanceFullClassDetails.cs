@@ -4,7 +4,10 @@ namespace SMS.App.ViewModels.AttendanceVM
 {
     public class MonthlyAttendanceFullClassDetails
     {
+        public int Roll { get; set; }
         public string StudentName { get; set; }
         public IDictionary<int,bool> isPresents { get; set; }
+        public int Total { get; set; }
+        public int countPercentage { get; set; }
     }
 }

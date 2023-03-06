@@ -174,6 +174,12 @@ builder.Services.AddScoped<IEmployeeActivateHistManager, EmployeeActivateHistMan
 builder.Services.AddScoped<ISetupMobileSMSRepository, SetupMobileSMSRepository>();
 builder.Services.AddScoped<ISetupMobileSMSManager, SetupMobileSMSManager>();
 
+builder.Services.AddScoped<IOffDayRepository, OffDayRepository>();
+builder.Services.AddScoped<IOffDayManager, OffDayManager>();
+
+builder.Services.AddScoped<IOffDayRepository, OffDayRepository>();
+builder.Services.AddScoped<IOffDayTypeManager, OffDayTypeManager>();
+
 //Reporting part start here===================================
 builder.Services.AddScoped<IReportManager, ReportManager>();
 builder.Services.AddScoped<IReportRepository, ReportRepository>();

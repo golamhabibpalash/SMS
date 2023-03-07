@@ -1,4 +1,5 @@
-﻿using SMS.DAL.Repositories.Base;
+﻿using SMS.DAL.Contracts;
+using SMS.DAL.Repositories.Base;
 using SMS.DB;
 using SMS.Entities;
 using System;

@@ -177,7 +177,7 @@ builder.Services.AddScoped<ISetupMobileSMSManager, SetupMobileSMSManager>();
 builder.Services.AddScoped<IOffDayRepository, OffDayRepository>();
 builder.Services.AddScoped<IOffDayManager, OffDayManager>();
 
-builder.Services.AddScoped<IOffDayRepository, OffDayRepository>();
+builder.Services.AddScoped<IOffDayTypeRepository, OffDayTypeRepository>();
 builder.Services.AddScoped<IOffDayTypeManager, OffDayTypeManager>();
 
 //Reporting part start here===================================

@@ -2,13 +2,13 @@
 
 @using System.Globalization
 @{
-    ViewBag.PageTitle = "Attendance Report";
+ViewData["PageTitle"] = "Attendance Report";
     DateTime myDate =DateTime.Today;
     if (ViewBag.startDate!=null)
     {
         myDate = Convert.ToDateTime(ViewBag.StartDate);
     }
-    int sl = 0;
+    //int sl = 0;
 
 }
 <div class="row">

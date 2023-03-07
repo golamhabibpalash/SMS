@@ -259,36 +259,38 @@
                                             </li>
                                             <li>
                                                 <a> Administrations <span class="fa fa-chevron-down"></span></a>
-                                                <ul class="nav child_menu">
-                                                    <li>
-                                                        <a> Employee Related <span class="fa fa-chevron-down"></span></a>
-                                                        <ul class="nav child_menu">
-                                                            <li>
-                                                                <a asp-action="Index" asp-controller="EmpTypes">Employee Type</a>
-                                                            </li>
-                                                            <li>
-                                                                <a asp-action="Index" asp-controller="Designations">Designation</a>
-                                                            </li>
-                                                            <li>
-                                                                <a asp-action="Index" asp-controller="DesignationTypes">Designation Type</a>
-                                                            </li>
-                                                        </ul>
-                                                    </li>
+                                                @if (User.IsInRole("SuperAdmin"))
+                                                {
+                                                    <ul class="nav child_menu">
+                                                        <li>
+                                                            <a> Employee Related <span class="fa fa-chevron-down"></span></a>
+                                                            <ul class="nav child_menu">
+                                                                <li>
+                                                                    <a asp-action="Index" asp-controller="EmpTypes">Employee Type</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a asp-action="Index" asp-controller="Designations">Designation</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a asp-action="Index" asp-controller="DesignationTypes">Designation Type</a>
+                                                                </li>
+                                                            </ul>
+                                                        </li>
 
-                                                    <li>
-                                                        <a asp-action="SchoolTimeTable" asp-controller="Institutes"><span class="glyphicon glyphicon-th-large"></span> School Time setting</a>
-                                                    </li>
-                                                    <li>
-                                                        <a asp-action="Index" asp-controller="Institutes">Institute</a>
-                                                    </li>
-
-                                                    <li><a asp-action="userList" asp-controller="Accounts">User List</a></li>
-                                                    @if (User.IsInRole("SuperAdmin"))
-                                                    {
+                                                        <li>
+                                                            <a asp-action="SchoolTimeTable" asp-controller="Institutes"><span class="glyphicon glyphicon-th-large"></span> School Time setting</a>
+                                                        </li>
+                                                        <li>
+                                                            <a asp-action="Index" asp-controller="Institutes">Institute</a>
+                                                        </li>
+                                                        <li>
+                                                            <a asp-action="Index" asp-controller="OffDayType">Off Day Type</a>
+                                                        </li>
+                                                        <li><a asp-action="userList" asp-controller="Accounts">User List</a></li>
                                                         <li><a asp-action="roleList" asp-controller="Accounts">Role List</a></li>
-                                                    }
-                                                </ul>
-                                            </li>
+                                                    </ul>
+                                                }
+                                                </li>
                                             <li>
                                                 <a> Others <span class="fa fa-chevron-down"></span></a>
                                                 <ul class="nav child_menu">

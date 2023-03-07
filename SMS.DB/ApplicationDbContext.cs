@@ -58,6 +58,8 @@ namespace SMS.DB
         public DbSet<AcademicExamType> AcademicExamTypes { get; set; }
         public DbSet<AcademicExam> AcademicExams { get; set; }
         public DbSet<AcademicExamDetail> AcademicExamDetails { get; set; }
+        public DbSet<OffDay> OffDays { get; set; }
+        public DbSet<OffDayType> OffDayTypes { get; set; }
         //public DbSet<ExamResult> ExamResults { get; set; }
         //public DbSet<ExamResultDetail> ExamResultDetails { get; set; }
         //public DbSet<ExamGrade> ExamGrades { get; set; }

@@ -1,0 +1,75 @@
+﻿@model IEnumerable<OffDay>
+
+@{
+    ViewData["Title"] = "Off Day List";
+    GlobalUI.PageTitle = ViewData["Title"].ToString();
+
+    int sl = 0;
+}
+
+<div class="row">
+    <table class="table table-bordered table-striped" id="myTable">
+        <thead>
+            <tr>
+                <td>#</td>
+                <td>Name</td>
+                <td>Start Date</td>
+                <td>End Date</td>
+                <td>Total Days</td>
+                <td>Description</td>
+                <td>
+                    <a asp-action="Create" asp-controller="OffDays" class="btn btn-info btn-sm">Add Holiday</a> 
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Count() > 0 || Model != null)
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@(++sl).</td>
+                        <td>@item.OffDayName</td>
+                        <td>@item.OffDayStartingDate.ToString("dd MMM yyyy")</td>
+                        <td>@item.OffDayEndDate.ToString("dd MMM yyyy")</td>
+                        <td>@item.TotalDays</td>
+                        <td>@item.Description</td>
+                        <td>
+                            <partial name="_Edit_Details_Delete" model="@item.Id" />
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts{
+
+    <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
+    <script>
+    $(function () {
+        let saved = '@TempData["created"]';
+        let deleted = '@TempData["deleted"]';
+        let edited = '@TempData["updated"]';
+        let failed = '@TempData["failed"]';
+
+        if (saved != "") {
+            alertify.success("Saved Successfully");
+        };
+
+        if (deleted != "") {
+            alertify.error("Deleted Successfully");
+        }
+
+        if (edited != "") {
+            alertify.message('Updated Successfully');
+        }
+
+        if (failed != "") {
+            alertify.error(failed);
+        }
+    });
+    </script>
+
+}

@@ -2,9 +2,10 @@
 
 @using System.Globalization
 @{
-ViewData["PageTitle"] = "Attendance Report";
-    DateTime myDate =DateTime.Today;
-    if (ViewBag.startDate!=null)
+    ViewData["Title"] = "Attendance Report";
+    GlobalUI.PageTitle = ViewData["Title"].ToString();
+    DateTime myDate = DateTime.Today;
+    if (ViewBag.startDate != null)
     {
         myDate = Convert.ToDateTime(ViewBag.StartDate);
     }
@@ -12,116 +13,200 @@ ViewData["PageTitle"] = "Attendance Report";
 
 }
 <div class="row">
-    <div class="col-md-4 m-5">
-        <fieldset style="border: 1px solid">
-            <legend>Select month and class</legend>
+    <div class="col-md-4 m-3">
+        <fieldset style="border: 1px solid" class="p-3">
+            <legend style="width:fit-content">Select month and class</legend>
             <form asp-action="attendanceReport" method="post">
-
-                <table>
-                    <tr>
-                        <td>
-                            Select Month
-                        </td>
-                        <td>
-                            <select asp-items="ViewBag.Monthlist" name="monthId" class="form-control">
-                                <option selected disabled>Select a month</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            Class
-                        </td>
-                        <td>
-                            <select asp-items="ViewBag.AcademicClasslist" name="classId" class="form-control">
-                                <option selected disabled>Select a Class</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" class="text-right">
-                            <input class="btn btn-info" type="submit" value="Get Report" />
-                        </td>
-                    </tr>
-                </table>
+                <div class="form-group row">
+                    <label class="col-md-3">Select Month</label>
+                    <div class="col-md-9">
+                        <select asp-items="ViewBag.Monthlist" name="monthId" class="form-control" required>
+                            <option selected disabled>Select a month</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-3">Academic Class</label>
+                    <div class="col-md-9">
+                        <select asp-items="ViewBag.AcademicClasslist" name="classId" class="form-control" required>
+                            <option selected disabled>Select a Class</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-2 offset-9">
+                        <input class="btn btn-info" type="submit" value="Get Report" />
+                    </div>
+                </div>
             </form>
         </fieldset>
     </div>
-</div>
-<div class="row">
-    <div class="col-md-12 p-2">
-        <div class="row">
-            <div class="col-md-8 offset-2 text-center">
-                @if (Model.MonthName != null)
-                {
-                    <h3 class="text-center">Monthly attendance for @Model.MonthName @DateTime.Now.Year</h3>
-                }
-                @if (Model.ClassName != null)
-                {
-                    <h4 class="text-center">@Model.ClassName</h4>
-                }
-            </div>
+    @if (Context.Request.Method == "POST")
+    {
+        <div class="col-md-6 m-3">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item text-danger"># All of the Red Column are holiday</li>
+                <li class="list-group-item text-danger"># Percentage are applied only when opened the school</li>
+                <li class="list-group-item text-danger"># You can export table as pdf/excel format by clicking the related icon</li>
+                <li class="list-group-item text-danger"># This report is only for current year</li>
+            </ul>
         </div>
-        <div class="row">
-            <div class="col-md-12">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr class="table-info">
-                            <td>Roll</td>
-                            <td>Student Name</td>
-                            @if (ViewBag.daysInMonth != null)
-                            {
-
-                                for (int i = 1; i <= ViewBag.daysInMonth; i++)
-                                {
-                                    DateTime mDate = myDate.AddDays(i - 1);
-
-                                    <td class="" data-toggle="tooltip" data-placement="top" title="@mDate.ToString("dd MMM yyyy")"> @i</td>
-
-                                }
-                            }
-                            <td>Total</td>
-                            <td>%</td>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-light">
-                        @if (Model != null)
-                        {
-                            if (Model.MothlyAttendanceFullClassDetailses != null)
-                            {
-                                @foreach (var item in Model.MothlyAttendanceFullClassDetailses)
-                                {
-                                    <tr>
-                                        <td class="table-primary">@item.Roll</td>
-                                        <td class="table-primary">@item.StudentName</td>
-                                        @if (item.isPresents != null)
+    }
+</div>
+@if (Context.Request.Method == "POST")
+{
+    <div class="row">
+        <div class="col-md-12 p-2">
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-bordered table-light" id="capture">
+                        <thead>
+                            <tr>
+                                <td class="border-0" colspan="@(ViewBag.daysInMonth+4)">
+                                    <div class="col-md-8 offset-2 text-center">
+                                        @if (Model.MonthName != null)
                                         {
-                                            foreach (KeyValuePair<int, bool> item1 in item.isPresents)
+                                            <h3 class="text-center"> Monthly attendance for @Model.MonthName @DateTime.Now.Year</h3>
+                                        }
+                                        @if (Model.ClassName != null)
+                                        {
+                                            <h4 class="text-center">@Model.ClassName</h4>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="table-info">
+                                <td>Roll</td>
+                                <td>Student Name</td>
+                                @if (ViewBag.daysInMonth != null)
+                                {
+                                    int j = 0;
+                                    for (int i = 1; i <= ViewBag.daysInMonth; i++)
+                                    {
+                                        DateTime mDate = myDate.AddDays(i - 1);
+                                        @if (ViewBag.monthlyHolidays != null)
+                                        {
+                                            List<DateTime> mHolidays = ViewBag.monthlyHolidays;
+                                            bool isHoliday = (from m in mHolidays
+                                                              where m.ToString("ddMMyyyy") == mDate.ToString("ddMMyyyy")
+                                                              select m).Any();
+                                            if (isHoliday)
                                             {
-                                                @if (item1.Value == true)
+                                                <td class="bg-warning border-0" data-toggle="tooltip" data-placement="top" data-html="true" title="@mDate.ToString("dd MMM yyyy") <br /> @mDate.ToString("dddd")"> @i</td>
+                                            }
+                                            else
+                                            {
+                                                <td class="" data-toggle="tooltip" data-placement="top" data-html="true" title="@mDate.ToString("dd MMM yyyy") <br /> @mDate.ToString("dddd")"> @i</td>
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            <td class="" data-toggle="tooltip" data-placement="top" data-html="true" title="@mDate.ToString("dd MMM yyyy") <br /> @mDate.ToString("dddd")"> @i</td>
+
+                                        }
+                                    }
+                                }
+                                <td>Total</td>
+                                <td>%</td>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-light">
+                            @if (Model != null)
+                            {
+                                if (Model.MothlyAttendanceFullClassDetailses != null)
+                                {
+                                    @foreach (var item in Model.MothlyAttendanceFullClassDetailses)
+                                    {
+                                        <tr>
+                                            <td class="table-primary">@item.Roll</td>
+                                            <td class="table-primary">@item.StudentName</td>
+                                            @if (item.isPresents != null)
+                                            {
+                                                foreach (KeyValuePair<int, bool> item1 in item.isPresents)
                                                 {
-                                                    <td class="text-center">P</td>
-                                                }
-                                                else
-                                                {
-                                                    <td class="text-center">.</td>
+                                                    @if (item1.Value == true)
+                                                    {
+                                                        <td class="text-center">P</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        bool isOffDay = (from s in item.Holidays
+                                                                         where item1.Key == s.Day
+                                                                         select s).Any();
+                                                        if (isOffDay)
+                                                        {
+                                                            <td class="bg-warning border-0"></td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td class="text-center">.</td>
+
+                                                        }
+
+
+                                                    }
                                                 }
                                             }
-                                        }
-                                        <td class="font-weight-bolder">@item.Total</td>
-                                        <td class="font-weight-bolder">@item.countPercentage%</td>
-                                    </tr>
+                                            <td class="font-weight-bolder">@item.Total</td>
+                                            <td class="font-weight-bolder">@item.CountPercentage%</td>
+                                        </tr>
+                                    }
                                 }
                             }
-                        }
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-10 p-2">
+                    <p class="lead">
+                        <button id="csv" class="btn btn-info">TO CSV</button>
+                        <button id="pdf" class="btn btn-danger">TO PDF</button>
+                        <button id="export-btn" class="btn" onclick="makePDF()"><i class="fa fa-file-pdf text-danger"></i></button>
+
+                    </p>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
+}
 @section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="~/lib/html2canvas/html2canvas.min.js"></script>
 
-    <script src="~/js/DataTable/dataTable.js"></script>
+    <script>
+        window.html2canvas = html2canvas;
+        window.jsPDF = window.jspdf.jsPDF;
+        function makePDF() {
+            html2canvas(document.querySelector("#capture"), {
+                allowTaint: true,
+                useCORS: true,
+                scale:1
+            }).then(canvas => {
+                document.body.appendChild(canvas)
+                var imgData = canvas.toDataURL("image/pdf");
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const imgProps = pdf.getImageProperties(imgData);
+
+                // doc and image dimensions
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = pdf.internal.pageSize.getHeight();
+                const imgWidth = imgProps.width;
+                const imgHeight = imgProps.height;
+
+                // claculating right scale to fit the page
+                const scale = Math.max(pdfHeight / imgHeight, pdfWidth / imgWidth);
+                const finalWidth = imgWidth * scale;
+                const finalHeight = imgHeight * scale;
+                const leftMargin = (pdfWidth - finalWidth) / 2;
+
+                // add image with alias and compression of your choice
+                pdf.addImage(imgData, 'PNG', leftMargin, 0, finalWidth, finalHeight, 'alias', 'FAST');
+                pdf.save('Attendace Report.pdf');
+
+            });
+        }
+    </script>
 }

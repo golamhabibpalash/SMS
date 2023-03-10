@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace SMS.App.ViewModels.AttendanceVM
 {
@@ -8,6 +9,7 @@ namespace SMS.App.ViewModels.AttendanceVM
         public string StudentName { get; set; }
         public IDictionary<int,bool> isPresents { get; set; }
         public int Total { get; set; }
-        public int countPercentage { get; set; }
+        public int CountPercentage { get; set; }
+        public List<DateTime> Holidays { get; set; }
     }
 }

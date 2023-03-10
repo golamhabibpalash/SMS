@@ -284,7 +284,13 @@
                                                             <a asp-action="Index" asp-controller="Institutes">Institute</a>
                                                         </li>
                                                         <li>
-                                                            <a asp-action="Index" asp-controller="OffDayType">Off Day Type</a>
+                                                            <a>Holiday <span class="fa fa-chevron-down"></span></a>
+                                                            <ul class="nav child_menu">
+                                                                <li>
+                                                                    <a asp-controller="OffDays" asp-action="Index">Holidays</a>
+                                                                    <a asp-controller="OffDayType" asp-action="Index">Holiday Type</a>
+                                                                </li>
+                                                            </ul>
                                                         </li>
                                                         <li><a asp-action="userList" asp-controller="Accounts">User List</a></li>
                                                         <li><a asp-action="roleList" asp-controller="Accounts">Role List</a></li>

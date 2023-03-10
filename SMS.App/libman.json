@@ -5,6 +5,18 @@
     {
       "library": "font-awesome@4.6.3",
       "destination": "wwwroot/lib/font-awesome/"
+    },
+    {
+      "library": "html2canvas@1.4.1",
+      "destination": "wwwroot/lib/html2canvas/"
+    },
+    {
+      "library": "jspdf-autotable@3.5.28",
+      "destination": "wwwroot/lib/jspdf-autotable/"
+    },
+    {
+      "library": "jspdf@2.5.1",
+      "destination": "wwwroot/lib/jspdf/"
     }
   ]
 }

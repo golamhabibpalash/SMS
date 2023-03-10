@@ -8,8 +8,8 @@
 
 <div class="row">
     <div class="offset-1 col-md-10">
-        <table class="table table-bordered table-striped">
-            <thead>
+        <table class="table table-sm table-bordered table-striped">
+            <thead class="bg-blue-sky">
                 <tr>
                     <td>#</td>
                     <td>Day off type</td>
@@ -43,4 +43,24 @@
 
 @section Scripts{ 
     <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
+    <script>
+    $(function () {
+            let saved = '@TempData["created"]';
+            let deleted = '@TempData["deleted"]';
+            let edited = '@TempData["updated"]';
+            let failed = '@TempData["failed"]'
+            if (saved != "") {
+                alertify.success("Saved Successfully");
+                }
+            if (deleted != "") {
+                alertify.error("Deleted Successfully");
+                }
+            if (edited != "") {
+                alertify.message('Updated Successfully');
+                }
+            if (failed != "") {
+                alertify.error(failed);
+                }
+            });
+    </script>
 }

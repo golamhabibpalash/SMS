@@ -10,5 +10,6 @@ namespace SMS.DAL.Contracts
 {
     public interface IOffDayRepository:IRepository<OffDay>
     {
+        Task<List<DateTime>> GetMonthlyHolidaysAsync(string monthYear);
     }
 }

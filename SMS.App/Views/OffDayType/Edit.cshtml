@@ -1,18 +1,19 @@
 ﻿@model OffDayType
 
-@{ 
-    ViewData["Title"] = "Off Day Type Create";
+@{
+    ViewData["Title"] = "Off Day Type Edit";
     GlobalUI.PageTitle = ViewData["Title"].ToString();
 }
+
 <div class="row">
     <div class="col-md-8 offset-2">
-        <form asp-action="Create" method="post">
+        <form asp-action="Edit" method="post">
             <fieldset class="border p-3">
                 <legend class="" style="width:inherit">Off Day Type Information</legend>
                 <div class="form-group row">
                     <label asp-for="OffDayTypeName" class="col-sm-3 col-form-label text-right text-sm-left"></label>
                     <div class="col-sm-9">
-                        <input asp-for="OffDayTypeName" class="form-control" placeholder="Off Day Type Name">
+                        <input asp-for="OffDayTypeName" class="form-control" placeholder="Off Day Name">
                         <span asp-validation-for="OffDayTypeName"></span>
                     </div>
                 </div>
@@ -25,10 +26,14 @@
 
                 <div class="form-group row">
                     <div class="col-sm-10 text-right">
-                        <button type="submit" class="btn btn-primary">Create</button>
+                        <button type="submit" class="btn btn-primary">Update</button>
                     </div>
                 </div>
             </fieldset>
         </form>
     </div>
 </div>
+
+@section Scripts{ 
+    <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
+} 

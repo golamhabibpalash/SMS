@@ -1,10 +1,53 @@
 ﻿
 <div row>
     <form asp-action="studentsReport" method="post">
+        
         <div class="btn-group btn-sm mr-2" role="group" aria-label="First group">
             <button type="submit" class="btn-sm btn btn-danger" name="fileType" value="pdf"><i class="fas fa-file-pdf"></i></button>
             <button type="submit" class="btn-sm btn btn-success" name="fileType" value="xls"><i class="fas fa-file-excel"></i></button>
             <button type="submit" class="btn-sm btn btn-primary" name="fileType" value="doc"><i class="fas fa-file-word"></i></button>
         </div>
     </form>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <fieldset class="border-primary p-2 border">
+            <legend class="w-auto text-primary">Students Information</legend>
+            <form>
+                <div class="form-group row">
+                    <label for="report-type" class="col-md-4 col-form-label">Report Type:</label>
+                    <div class="col-md-8">
+                        <select class="form-control" id="report-type">
+                            <option>Select Report Type</option>
+                            <option>Monthly Sales</option>
+                            <option>Quarterly Sales</option>
+                            <option>Yearly Sales</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="report-type" class="col-md-4 col-form-label">Report Type:</label>
+                    <div class="col-md-8">
+                        <select class="form-control" id="report-type">
+                            <option>Select Report Type</option>
+                            <option>Monthly Sales</option>
+                            <option>Quarterly Sales</option>
+                            <option>Yearly Sales</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="start-date">Start Date:</label>
+                    <input type="date" class="form-control" id="start-date">
+                </div>
+                <div class="form-group">
+                    <label for="end-date">End Date:</label>
+                    <input type="date" class="form-control" id="end-date">
+                </div>
+                <button type="submit" class="btn btn-primary">Generate Report</button>
+            </form>
+
+        </fieldset>
+    </div>
 </div>

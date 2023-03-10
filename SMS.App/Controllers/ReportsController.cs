@@ -22,13 +22,15 @@ namespace SMS.App.Controllers
         private readonly IReportManager _reportManager;
         private readonly IAcademicClassManager _academicClassManager;
         private readonly IAttendanceMachineManager _attendanceMachineManager;
-        public ReportsController(IWebHostEnvironment host, IStudentManager studentManager, IReportManager reportManager, IAcademicClassManager academicClassManager, IAttendanceMachineManager attendanceMachineManager)
+        private readonly IOffDayManager _OffDayManager;
+        public ReportsController(IWebHostEnvironment host, IStudentManager studentManager, IReportManager reportManager, IAcademicClassManager academicClassManager, IAttendanceMachineManager attendanceMachineManager, IOffDayManager dayManager)
         {
             _host = host;
             _studentManager = studentManager;
             _reportManager = reportManager;
             _academicClassManager = academicClassManager;
             _attendanceMachineManager = attendanceMachineManager;
+            _OffDayManager = dayManager;
         }
         public IActionResult Index()
         {
@@ -40,13 +42,13 @@ namespace SMS.App.Controllers
             //var dt = new DataTable();
             //dt = GetStudentList();
             //var reportName = "rptStudent.rdlc";
-            //var path = _host.WebRootPath + "/Reports/"+ reportName;
+            //var path = _host.WebRootPath + "/Reports/" + reportName;
             //LocalReport localReport = new LocalReport();
-            //localReport.ReportPath= path;
+            //localReport.ReportPath = path;
             //ReportDataSource reportDataSource = new ReportDataSource();
-            //reportDataSource.Value= dt;
+            //reportDataSource.Value = dt;
             //localReport.DataSources.Add(reportDataSource);
-            
+
 
             return View();
         }
@@ -101,12 +103,6 @@ namespace SMS.App.Controllers
             return dt;
         }
 
-        //public IActionResult ExportData()
-        //{
-        //    var byteRes = new byte[] { };
-        //    string path = _host.ContentRootPath + "\\Reports\\rptStudent.rdlc";
-        //    byteRes = IReport
-        //}
 
         public async Task<IActionResult> AttendanceReport()
         {
@@ -132,6 +128,7 @@ namespace SMS.App.Controllers
         public async Task<IActionResult> AttendanceReport(int monthId, int classId)
         {
             ViewBag.AcademicClasslist = new SelectList(await _academicClassManager.GetAllAsync(),"Id","Name",classId).ToList();
+
             string[] monthNames = DateTimeFormatInfo.CurrentInfo.MonthNames;
             List<SelectListItem> monthsList = new List<SelectListItem>();
             for (int i = 1; i <= 12; i++)
@@ -176,6 +173,9 @@ namespace SMS.App.Controllers
             var attendanceList = await _attendanceMachineManager.GetAttendanceByDateRangeAsync(StartDate, EndDate);
             
             var studentList = await _studentManager.GetStudentsByClassIdAndSessionIdAsync(3, classId);
+
+            List<DateTime> monthlyHolidays = await _OffDayManager.GetMonthlyHolidaysAsync(firstDateOfMonth.ToString("MMyyyy"));
+            ViewBag.monthlyHolidays = monthlyHolidays;
             foreach (Student student in studentList.Where(s => s.Status==true))
             {
                 var myAttendances = attendanceList.Where(t => t.CardNo==student.ClassRoll.ToString().PadLeft(8,'0')).ToList();
@@ -202,7 +202,8 @@ namespace SMS.App.Controllers
                 }
                 int total = daysPresents.Where(m => m.Value == true).Count();
                 monthlyAttendanceFullClassDetails.Total = total;
-                monthlyAttendanceFullClassDetails.countPercentage = (total*100) / monthDays;
+                monthlyAttendanceFullClassDetails.CountPercentage = (total*100) / (monthDays-monthlyHolidays.Count);
+                monthlyAttendanceFullClassDetails.Holidays = monthlyHolidays;
                 monthlyAttendanceFullClass.MothlyAttendanceFullClassDetailses.Add(monthlyAttendanceFullClassDetails);
             }
             
@@ -210,5 +211,6 @@ namespace SMS.App.Controllers
             ViewBag.studentList = studentList;
             return View(monthlyAttendanceFullClass);
         }
+
     }
 }

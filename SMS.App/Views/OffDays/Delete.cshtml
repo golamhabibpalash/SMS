@@ -1,0 +1,44 @@
+﻿@model OffDay
+
+@{ 
+    ViewData["Title"] = "Delete Holiday";
+    GlobalUI.PageTitle = ViewData["Title"].ToString();
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <fieldset class="border p-3">
+            <legend class="" style="width:inherit">Holiday Information</legend>
+            <section class="landing row">
+                <div class=" col-md-10">
+                    <dl class="row">
+                        <dt class="col-sm-3 text-right">Holiday Name</dt>
+                        <dd class="col-sm-9">@Model.OffDayName</dd>
+                    </dl>
+                    <dl class="row">
+                        <dt class="col-sm-3 text-right">Start Date</dt>
+                        <dd class="col-sm-9">@Model.OffDayStartingDate.ToString("dd MMM yyyy")</dd>
+                    </dl>
+                    <dl class="row">
+                        <dt class="col-sm-3 text-right">End Date</dt>
+                        <dd class="col-sm-9">@Model.OffDayEndDate.ToString("dd MMM yyyy")</dd>
+                    </dl>
+                    <dl class="row">
+                        <dt class="col-sm-3 text-right">Total days</dt>
+                        <dd class="col-sm-9">@Model.TotalDays</dd>
+                    </dl>
+                </div>
+            </section>
+
+            <div class="row pb-3">
+                <div class="col-md-12 text-center">
+                    <form asp-action="Delete">
+                        <input type="hidden" asp-for="Id" />
+                        <partial name="_Delete_Back" />
+                    </form>
+                </div>
+            </div>
+        </fieldset>
+
+    </div>
+</div>

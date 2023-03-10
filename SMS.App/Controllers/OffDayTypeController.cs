@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using Org.BouncyCastle.Utilities.IO.Pem;
 using SMS.App.Utilities.MACIPServices;
 using SMS.BLL.Contracts;
 using SMS.Entities;
@@ -19,6 +20,19 @@ namespace SMS.App.Controllers
         // GET: OffDayTypeController
         public async Task<ActionResult> Index()
         {
+            string msg = string.Empty;
+            //if (!string.IsNullOrEmpty(TempData["updated"].ToString()))
+            //{
+            //    ViewBag.msg = msg = TempData["updated"].ToString();
+            //}
+            //if (!string.IsNullOrEmpty(TempData["created"].ToString()))
+            //{
+            //    ViewBag.msg = msg = TempData["created"].ToString();
+            //}
+            //if (!string.IsNullOrEmpty(TempData["deleted"].ToString()))
+            //{
+            //    ViewBag.msg = msg = TempData["deleted"].ToString();
+            //}
             var result = await _offDayTypeManager.GetAllAsync();
             return View(result);
         }
@@ -73,19 +87,31 @@ namespace SMS.App.Controllers
         // POST: OffDayTypeController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(int id, OffDayType offDayType)
         {
-            if (collection["Id"] != id)
+            if (offDayType.Id != id)
             {
                 return RedirectToAction(nameof(Index));
             }
             try
             {
-                OffDayType offDayType = await _offDayTypeManager.GetByIdAsync(id);
-                if (offDayType.OffDayTypeName != collection["OffDayTypeName"]) 
+                OffDayType existingOffDayType = await _offDayTypeManager.GetByIdAsync(id);
+                if (offDayType.OffDayTypeName != existingOffDayType.OffDayTypeName || offDayType.Remarks != existingOffDayType.Remarks) 
                 {
-                    offDayType.OffDayTypeName = collection["OffDayTyupeName"];
-                    TempData["updated"] = "Off Day Type Name Updated Successfully";
+                    existingOffDayType.OffDayTypeName = offDayType.OffDayTypeName;
+                    existingOffDayType.Remarks = offDayType.Remarks;
+                    existingOffDayType.EditedAt = DateTime.Now;
+                    existingOffDayType.EditedBy = HttpContext.Session.GetString("UserId");
+                    bool isUpdated = await _offDayTypeManager.UpdateAsync(existingOffDayType);
+                    if (isUpdated)
+                    {
+                        TempData["updated"] = "Off Day Type Name Updated Successfully";
+                    }
+                    else
+                    {
+                        TempData["failed"] = "Failed to update";
+                        return View(existingOffDayType);
+                    }
                 }
                 else
                 {
@@ -95,7 +121,8 @@ namespace SMS.App.Controllers
             }
             catch
             {
-                return View();
+                TempData["failed"] = "Failed to update";
+                return View(offDayType);
             }
         }
 

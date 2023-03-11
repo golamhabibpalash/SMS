@@ -17,6 +17,10 @@
     {
       "library": "jspdf@2.5.1",
       "destination": "wwwroot/lib/jspdf/"
+    },
+    {
+      "library": "jquery@1.10.2",
+      "destination": "wwwroot/lib/jquery/j1.10.2/jquery/"
     }
   ]
 }

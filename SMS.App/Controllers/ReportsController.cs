@@ -3,14 +3,19 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SMS.App.ViewModels.AttendanceVM;
+using SMS.App.ViewModels.ReportVM;
 using SMS.BLL.Contracts;
 using SMS.BLL.Contracts.Reports;
 using SMS.Entities;
+using Syncfusion.Pdf.Lists;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.Linq;
+using System.Net.Mime;
+using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
@@ -23,7 +28,9 @@ namespace SMS.App.Controllers
         private readonly IAcademicClassManager _academicClassManager;
         private readonly IAttendanceMachineManager _attendanceMachineManager;
         private readonly IOffDayManager _OffDayManager;
-        public ReportsController(IWebHostEnvironment host, IStudentManager studentManager, IReportManager reportManager, IAcademicClassManager academicClassManager, IAttendanceMachineManager attendanceMachineManager, IOffDayManager dayManager)
+        private readonly IAcademicSessionManager _academicSessionManager;
+        private readonly IAcademicSectionManager _academicSectionManager;
+        public ReportsController(IWebHostEnvironment host, IStudentManager studentManager, IReportManager reportManager, IAcademicClassManager academicClassManager, IAttendanceMachineManager attendanceMachineManager, IOffDayManager dayManager, IAcademicSessionManager academicSessionManager, IAcademicSectionManager academicSectionManager)
         {
             _host = host;
             _studentManager = studentManager;
@@ -31,31 +38,48 @@ namespace SMS.App.Controllers
             _academicClassManager = academicClassManager;
             _attendanceMachineManager = attendanceMachineManager;
             _OffDayManager = dayManager;
+            _academicSessionManager = academicSessionManager;
+            _academicSectionManager = academicSectionManager;
         }
         public IActionResult Index()
         {
             return View();
         }
 
-        public IActionResult StudentsReport()
+        public async Task<IActionResult> StudentsReport()
         {
-            //var dt = new DataTable();
-            //dt = GetStudentList();
-            //var reportName = "rptStudent.rdlc";
-            //var path = _host.WebRootPath + "/Reports/" + reportName;
-            //LocalReport localReport = new LocalReport();
-            //localReport.ReportPath = path;
-            //ReportDataSource reportDataSource = new ReportDataSource();
-            //reportDataSource.Value = dt;
-            //localReport.DataSources.Add(reportDataSource);
-
-
-            return View();
+            Rpt_Student_VM rpt_Student_VM = new Rpt_Student_VM();
+            rpt_Student_VM.AcademicClassList = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name").ToList();
+            rpt_Student_VM.AcademicSessionList = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name").ToList();
+            return View(rpt_Student_VM);
         }
-
         [HttpPost]
-        public async Task<IActionResult> StudentsReportAsync(string fileType)
+        public async Task<IActionResult> StudentsReport(Rpt_Student_VM rpt_Student_VMObject)
         {
+            Rpt_Student_VM rpt_Student_VM = new Rpt_Student_VM();
+            rpt_Student_VM.AcademicClassList = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name",rpt_Student_VMObject.AcademicClassId).ToList();
+            rpt_Student_VM.AcademicSessionList = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name",rpt_Student_VM.AcademicSessionId).ToList();
+            rpt_Student_VM.AcademicSectionList = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name", rpt_Student_VM.AcademicSessionId).ToList();
+
+
+            //string mimtype = "";
+            //int extension = 1;
+            //var path = _host.WebRootPath + "\\Reports\\rptStudent.rdlc";
+            //Dictionary<string, string> parameters = new Dictionary<string, string>();
+            //LocalReport localReport = new LocalReport(path);
+            //var studens = await _reportManager.getStudentsInfo();
+
+            //localReport.AddDataSource("DataSet1", studens);
+            //var result = localReport.Execute(RenderType.Pdf, extension, parameters, mimtype);
+            // File(result.MainStream, "application/pdf");
+
+            return View(rpt_Student_VM);
+        }
+        
+        public async Task<IActionResult> StudentsReportExport(string reportType,string fileName)
+        {
+            RenderType renderType = RenderType.Pdf;
+            renderType = !string.IsNullOrEmpty(reportType)? GetRenderType(reportType):renderType;
             string mimtype = "";
             int extension = 1;
             var path = _host.WebRootPath + "\\Reports\\rptStudent.rdlc";
@@ -65,10 +89,13 @@ namespace SMS.App.Controllers
             //List<RptStudentVM> studentVMs = new List<RptStudentVM>();
 
             var studens = await _reportManager.getStudentsInfo();
-
             localReport.AddDataSource("DataSet1", studens);
-            var result = localReport.Execute(RenderType.Pdf, extension, parameters, mimtype);
-            return File(result.MainStream, "application/pdf");
+            var result = localReport.Execute(renderType, 1, parameters);
+            if (!string.IsNullOrEmpty(fileName))
+            {
+            return File(result.MainStream,MediaTypeNames.Application.Octet,getReportName(fileName, reportType));
+            }
+            return File(result.MainStream, "Application/pdf");
         }
 
         [HttpGet]
@@ -82,26 +109,29 @@ namespace SMS.App.Controllers
         {
             return View();
         }
-        public DataTable GetStudentList()
+
+        [HttpPost]
+        public async Task<IActionResult> ExportCSV()
         {
             var dt = new DataTable();
-            dt.Columns.Add("ClassRoll");
-            dt.Columns.Add("Name");
-            dt.Columns.Add("Class");
-            dt.Columns.Add("Father");
-
-            DataRow row;
-            for (int i = 0; i < 120; i++)
-            {
-                row = dt.NewRow();
-                row["ClassRoll"] = i;
-                row["Name"] = "Student "+i;
-                row["Class"] = "Class Name";
-                row["Father"] = "Father Name"+i;
-                dt.Rows.Add(row);
-            }
-            return dt;
+            string mimetype = "";
+            int extension = 1;
+            var path = _host.WebRootPath + "\\Reports\\rptStudent.rdlc";
+            Dictionary<string, string> parameters = new Dictionary<string, string>();
+            parameters.Add("prm", "RDLC report (Set as parameter)");
+            LocalReport lr = new LocalReport(path);
+            var studens = await _reportManager.getStudentsInfo();
+            lr.AddDataSource("DataSet1", studens);
+            var result = lr.Execute(RenderType.Excel, extension, parameters, mimetype);
+            return File(result.MainStream, "application/msexcel", "Export.xls");
         }
+
+
+
+
+
+
+
 
 
         public async Task<IActionResult> AttendanceReport()
@@ -210,6 +240,48 @@ namespace SMS.App.Controllers
             
             ViewBag.studentList = studentList;
             return View(monthlyAttendanceFullClass);
+        }
+
+        
+        private RenderType GetRenderType(string reportType)
+        {
+            var renderType = RenderType.Pdf;
+            switch (reportType.ToLower())
+            {
+                default:
+                case "pdf":
+                    renderType = RenderType.Pdf;
+                    break;
+                case "word":
+                    renderType = RenderType.Word;
+                    break;
+                case "xls":
+                    renderType = RenderType.Excel;
+                    break;
+            }
+
+            return renderType;
+        }
+
+        private string getReportName(string reportName, string reportType)
+        {
+            var outputFileName = reportName + ".pdf";
+
+            switch (reportType.ToUpper())
+            {
+                default:
+                case "PDF":
+                    outputFileName = reportName + ".pdf";
+                    break;
+                case "XLS":
+                    outputFileName = reportName + ".xls";
+                    break;
+                case "WORD":
+                    outputFileName = reportName + ".doc";
+                    break;
+            }
+
+            return outputFileName;
         }
 
     }

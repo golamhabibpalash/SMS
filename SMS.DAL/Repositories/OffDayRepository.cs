@@ -14,7 +14,7 @@ namespace SMS.DAL.Repositories
 {
     public class OffDayRepository:Repository<OffDay>,IOffDayRepository
     {
-        private readonly ApplicationDbContext _context;
+        private new readonly ApplicationDbContext _context;
         public OffDayRepository(ApplicationDbContext context):base(context)
         {
             _context = context;
@@ -23,10 +23,10 @@ namespace SMS.DAL.Repositories
         public async Task<List<DateTime>> GetMonthlyHolidaysAsync(string monthYear)
         {
             int a = Convert.ToInt32(monthYear.Substring(monthYear.Length - 4, 4));
-            int b = Convert.ToInt32(monthYear.Substring(0, 2));
-            DateTime dateTime = new DateTime(a, b,1);
-            List<DateTime> monthlyHolidays = new List<DateTime>();
-            List<OffDay> holidays = new List<OffDay>();
+            int b = Convert.ToInt32(monthYear[..2]);
+            DateTime dateTime = new(a, b,1);
+            List<DateTime> monthlyHolidays = new();
+            List<OffDay> holidays = new();
             holidays= await _context.OffDays.Where(m =>m.OffDayStartingDate.Month==dateTime.Month).ToListAsync();
             if (holidays!=null)
             {

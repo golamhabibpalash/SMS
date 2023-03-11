@@ -12,7 +12,6 @@ namespace SMS.DAL.Repositories
 {
     public class OffDayTypeRepository:Repository<OffDayType>,IOffDayTypeRepository
     {
-        private readonly ApplicationDbContext _context;
         public OffDayTypeRepository(ApplicationDbContext context):base(context)
         {
             

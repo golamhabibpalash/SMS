@@ -12,9 +12,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Views\Reports\RPT\**" />
     <Compile Remove="wwwroot\FA\**" />
+    <Content Remove="Views\Reports\RPT\**" />
     <Content Remove="wwwroot\FA\**" />
+    <EmbeddedResource Remove="Views\Reports\RPT\**" />
     <EmbeddedResource Remove="wwwroot\FA\**" />
+    <None Remove="Views\Reports\RPT\**" />
     <None Remove="wwwroot\FA\**" />
   </ItemGroup>
 
@@ -58,7 +62,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\Reports\RPT\" />
     <Folder Include="wwwroot\Images\Employee\photo\" />
     <Folder Include="wwwroot\Images\Employee\NID\" />
     <Folder Include="wwwroot\Images\Question\" />

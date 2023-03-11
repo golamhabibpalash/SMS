@@ -41,38 +41,25 @@ namespace SMS.App.Controllers
             _academicSessionManager = academicSessionManager;
             _academicSectionManager = academicSectionManager;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
-
+        #region Student List Report
         public async Task<IActionResult> StudentsReport()
         {
-            Rpt_Student_VM rpt_Student_VM = new Rpt_Student_VM();
-            rpt_Student_VM.AcademicClassList = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name").ToList();
-            rpt_Student_VM.AcademicSessionList = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name").ToList();
+            Rpt_Student_VM rpt_Student_VM = new()
+            {
+                AcademicClassList = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name").ToList(),
+                AcademicSessionList = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name").ToList()
+            };
             return View(rpt_Student_VM);
         }
         [HttpPost]
         public async Task<IActionResult> StudentsReport(Rpt_Student_VM rpt_Student_VMObject)
         {
-            Rpt_Student_VM rpt_Student_VM = new Rpt_Student_VM();
-            rpt_Student_VM.AcademicClassList = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name",rpt_Student_VMObject.AcademicClassId).ToList();
-            rpt_Student_VM.AcademicSessionList = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name",rpt_Student_VM.AcademicSessionId).ToList();
-            rpt_Student_VM.AcademicSectionList = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name", rpt_Student_VM.AcademicSessionId).ToList();
-
-
-            //string mimtype = "";
-            //int extension = 1;
-            //var path = _host.WebRootPath + "\\Reports\\rptStudent.rdlc";
-            //Dictionary<string, string> parameters = new Dictionary<string, string>();
-            //LocalReport localReport = new LocalReport(path);
-            //var studens = await _reportManager.getStudentsInfo();
-
-            //localReport.AddDataSource("DataSet1", studens);
-            //var result = localReport.Execute(RenderType.Pdf, extension, parameters, mimtype);
-            // File(result.MainStream, "application/pdf");
-
+            Rpt_Student_VM rpt_Student_VM = new()
+            {
+                AcademicClassList = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", rpt_Student_VMObject.AcademicClassId).ToList(),
+                AcademicSessionList = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name", rpt_Student_VMObject.AcademicSessionId).ToList(),
+                AcademicSectionList = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name", rpt_Student_VMObject.AcademicSessionId).ToList()
+            };
             return View(rpt_Student_VM);
         }
         
@@ -80,12 +67,10 @@ namespace SMS.App.Controllers
         {
             RenderType renderType = RenderType.Pdf;
             renderType = !string.IsNullOrEmpty(reportType)? GetRenderType(reportType):renderType;
-            string mimtype = "";
-            int extension = 1;
             var path = _host.WebRootPath + "\\Reports\\rptStudent.rdlc";
-            Dictionary<string, string> parameters = new Dictionary<string, string>();
+            Dictionary<string, string> parameters = new();
             //parameters.Add("rp1", "Welcome to RDLC Reporting");
-            LocalReport localReport = new LocalReport(path);
+            LocalReport localReport = new(path);
             //List<RptStudentVM> studentVMs = new List<RptStudentVM>();
 
             var studens = await _reportManager.getStudentsInfo();
@@ -93,55 +78,20 @@ namespace SMS.App.Controllers
             var result = localReport.Execute(renderType, 1, parameters);
             if (!string.IsNullOrEmpty(fileName))
             {
-            return File(result.MainStream,MediaTypeNames.Application.Octet,getReportName(fileName, reportType));
+            return File(result.MainStream,MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
             }
             return File(result.MainStream, "Application/pdf");
         }
-
-        [HttpGet]
-        public IActionResult GetCurrentStudent()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult GetCurrentStudent(List<int> academicClassIds)
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> ExportCSV()
-        {
-            var dt = new DataTable();
-            string mimetype = "";
-            int extension = 1;
-            var path = _host.WebRootPath + "\\Reports\\rptStudent.rdlc";
-            Dictionary<string, string> parameters = new Dictionary<string, string>();
-            parameters.Add("prm", "RDLC report (Set as parameter)");
-            LocalReport lr = new LocalReport(path);
-            var studens = await _reportManager.getStudentsInfo();
-            lr.AddDataSource("DataSet1", studens);
-            var result = lr.Execute(RenderType.Excel, extension, parameters, mimetype);
-            return File(result.MainStream, "application/msexcel", "Export.xls");
-        }
-
-
-
-
-
-
-
-
+        #endregion Student List Report
 
         public async Task<IActionResult> AttendanceReport()
         {
             ViewBag.AcademicClasslist = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name").ToList();
             string[] monthNames = DateTimeFormatInfo.CurrentInfo.MonthNames;
-            List<SelectListItem> monthsList = new List<SelectListItem>();
+            List<SelectListItem> monthsList = new();
             for (int i = 1; i <= 12; i++)
             {
-                SelectListItem item = new SelectListItem
+                SelectListItem item = new()
                 {
                     Text = monthNames[i - 1],
                     Value = i.ToString()
@@ -150,7 +100,7 @@ namespace SMS.App.Controllers
             }
             ViewBag.Monthlist = new SelectList(monthsList, "Value", "Text");
 
-            MonthlyAttendanceFullClass monthlyAttendanceFullClass = new MonthlyAttendanceFullClass();
+            MonthlyAttendanceFullClass monthlyAttendanceFullClass = new();
             return View(monthlyAttendanceFullClass);
         }
 
@@ -160,10 +110,10 @@ namespace SMS.App.Controllers
             ViewBag.AcademicClasslist = new SelectList(await _academicClassManager.GetAllAsync(),"Id","Name",classId).ToList();
 
             string[] monthNames = DateTimeFormatInfo.CurrentInfo.MonthNames;
-            List<SelectListItem> monthsList = new List<SelectListItem>();
+            List<SelectListItem> monthsList = new();
             for (int i = 1; i <= 12; i++)
             {
-                SelectListItem item = new SelectListItem
+                SelectListItem item = new()
                 {
                     Text = monthNames[i - 1],
                     Value = i.ToString()
@@ -177,7 +127,7 @@ namespace SMS.App.Controllers
             string monthName = string.Empty;
             string className = string.Empty;    
             // Create a new DateTime object for the first day of the month
-            DateTime firstDateOfMonth = new DateTime(DateTime.Now.Year, monthId, 1);
+            DateTime firstDateOfMonth = new(DateTime.Now.Year, monthId, 1);
             ViewBag.StartDate = firstDateOfMonth.ToString("dd-MMM-yyyy");
             // Get the last day of the month by adding one month to the first day and subtracting one day
             DateTime lastDateOfMonth = firstDateOfMonth.AddMonths(1).AddDays(-1);
@@ -193,10 +143,12 @@ namespace SMS.App.Controllers
             className = academicClass.Name;
 
 
-            MonthlyAttendanceFullClass monthlyAttendanceFullClass = new MonthlyAttendanceFullClass();
-            monthlyAttendanceFullClass.MonthName = monthName;
-            monthlyAttendanceFullClass.ClassName = className;
-            monthlyAttendanceFullClass.MothlyAttendanceFullClassDetailses = new List<MonthlyAttendanceFullClassDetails>();
+            MonthlyAttendanceFullClass monthlyAttendanceFullClass = new()
+            {
+                MonthName = monthName,
+                ClassName = className,
+                MothlyAttendanceFullClassDetailses = new List<MonthlyAttendanceFullClassDetails>()
+            };
 
             int monthDays = ViewBag.daysInMonth = DateTime.DaysInMonth(DateTime.Today.Year, monthId);
 
@@ -210,11 +162,14 @@ namespace SMS.App.Controllers
             {
                 var myAttendances = attendanceList.Where(t => t.CardNo==student.ClassRoll.ToString().PadLeft(8,'0')).ToList();
 
-                MonthlyAttendanceFullClassDetails monthlyAttendanceFullClassDetails = new MonthlyAttendanceFullClassDetails();
-                monthlyAttendanceFullClassDetails.StudentName = student.Name;
-                monthlyAttendanceFullClassDetails.Roll = student.ClassRoll;
                 IDictionary<int, bool> daysPresents = new Dictionary<int, bool>();
-                monthlyAttendanceFullClassDetails.isPresents = daysPresents;
+                MonthlyAttendanceFullClassDetails monthlyAttendanceFullClassDetails = new()
+                {
+                    StudentName = student.Name,
+                    Roll = student.ClassRoll,
+                    isPresents = daysPresents
+                };
+
 
                 for (int i = 1; i <= monthDays; i++)
                 {
@@ -243,44 +198,25 @@ namespace SMS.App.Controllers
         }
 
         
-        private RenderType GetRenderType(string reportType)
+        private static RenderType GetRenderType(string reportType)
         {
-            var renderType = RenderType.Pdf;
-            switch (reportType.ToLower())
+            var renderType = reportType.ToLower() switch
             {
-                default:
-                case "pdf":
-                    renderType = RenderType.Pdf;
-                    break;
-                case "word":
-                    renderType = RenderType.Word;
-                    break;
-                case "xls":
-                    renderType = RenderType.Excel;
-                    break;
-            }
-
+                "word" => RenderType.Word,
+                "xls" => RenderType.Excel,
+                _ => RenderType.Pdf,
+            };
             return renderType;
         }
 
-        private string getReportName(string reportName, string reportType)
+        private static string GetReportName(string reportName, string reportType)
         {
-            var outputFileName = reportName + ".pdf";
-
-            switch (reportType.ToUpper())
+            string outputFileName = reportType.ToUpper() switch
             {
-                default:
-                case "PDF":
-                    outputFileName = reportName + ".pdf";
-                    break;
-                case "XLS":
-                    outputFileName = reportName + ".xls";
-                    break;
-                case "WORD":
-                    outputFileName = reportName + ".doc";
-                    break;
-            }
-
+                "XLS" => reportName + ".xls",
+                "WORD" => reportName + ".doc",
+                _ => reportName + ".pdf",
+            };
             return outputFileName;
         }
 

@@ -12,7 +12,6 @@ namespace SMS.DAL.Repositories
 {
     public class AcademicExamTypeRepository:Repository<AcademicExamType>,IAcademicExamTypeRepository
     {
-        private readonly ApplicationDbContext _context;
         public AcademicExamTypeRepository(ApplicationDbContext context):base(context)
         {
             

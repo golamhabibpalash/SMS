@@ -12,7 +12,6 @@ namespace SMS.BLL.Managers
 {
     public class OffDayTypeManager:Manager<OffDayType>,IOffDayTypeManager
     {
-        private readonly IOffDayTypeRepository _offDayTypeRepository;
         public OffDayTypeManager(IOffDayTypeRepository offDayTypeRepository):base(offDayTypeRepository)
         {
             

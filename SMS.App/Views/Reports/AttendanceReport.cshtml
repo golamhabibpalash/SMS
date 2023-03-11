@@ -79,8 +79,7 @@
                                 <td>Roll</td>
                                 <td>Student Name</td>
                                 @if (ViewBag.daysInMonth != null)
-                                {
-                                    int j = 0;
+                                {                                    
                                     for (int i = 1; i <= ViewBag.daysInMonth; i++)
                                     {
                                         DateTime mDate = myDate.AddDays(i - 1);

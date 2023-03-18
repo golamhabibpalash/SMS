@@ -1,10 +1,16 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SMS.BLL.Contracts;
 
 namespace SMS.App.Controllers
 {
     public class ExamResultsController : Controller
     {
+        private readonly IExamResultManager _examResultManager;
+        public ExamResultsController(IExamResultManager examResultManager)
+        {
+            _examResultManager = examResultManager;
+        }
         // GET: ExamResultsController
         public ActionResult Index()
         {

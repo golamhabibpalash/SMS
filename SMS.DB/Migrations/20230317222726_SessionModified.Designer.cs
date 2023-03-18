@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SMS.DB;
 
@@ -11,9 +12,10 @@ using SMS.DB;
 namespace SMS.DB.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230317222726_SessionModified")]
+    partial class SessionModified
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -350,9 +352,6 @@ namespace SMS.DB.Migrations
                     b.Property<string>("EditedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ExamResultId")
-                        .HasColumnType("int");
-
                     b.Property<string>("MACAddress")
                         .HasColumnType("nvarchar(max)");
 
@@ -368,8 +367,6 @@ namespace SMS.DB.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AcademicExamId");
-
-                    b.HasIndex("ExamResultId");
 
                     b.HasIndex("StudentId");
 
@@ -1197,80 +1194,6 @@ namespace SMS.DB.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("EmpType");
-                });
-
-            modelBuilder.Entity("SMS.Entities.ExamResult", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("AcademicExamId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("EditedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("EditedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MACAddress")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AcademicExamId");
-
-                    b.ToTable("ExamResults");
-                });
-
-            modelBuilder.Entity("SMS.Entities.ExamResultDetail", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("EditedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("EditedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ExamResultId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("MACAddress")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("Marks")
-                        .HasColumnType("float");
-
-                    b.Property<int>("StudentId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ExamResultId");
-
-                    b.HasIndex("StudentId");
-
-                    b.ToTable("ExamResultDetails");
                 });
 
             modelBuilder.Entity("SMS.Entities.Gender", b =>
@@ -2302,10 +2225,6 @@ namespace SMS.DB.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SMS.Entities.ExamResult", null)
-                        .WithMany("AcademicExamDetails")
-                        .HasForeignKey("ExamResultId");
-
                     b.HasOne("SMS.Entities.Student", "Student")
                         .WithMany()
                         .HasForeignKey("StudentId")
@@ -2554,36 +2473,6 @@ namespace SMS.DB.Migrations
                     b.Navigation("Religion");
                 });
 
-            modelBuilder.Entity("SMS.Entities.ExamResult", b =>
-                {
-                    b.HasOne("SMS.Entities.AcademicExam", "AcademicExam")
-                        .WithMany()
-                        .HasForeignKey("AcademicExamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AcademicExam");
-                });
-
-            modelBuilder.Entity("SMS.Entities.ExamResultDetail", b =>
-                {
-                    b.HasOne("SMS.Entities.ExamResult", "ExamResult")
-                        .WithMany()
-                        .HasForeignKey("ExamResultId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SMS.Entities.Student", "Student")
-                        .WithMany()
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ExamResult");
-
-                    b.Navigation("Student");
-                });
-
             modelBuilder.Entity("SMS.Entities.OffDay", b =>
                 {
                     b.HasOne("SMS.Entities.OffDayType", "OffDayType")
@@ -2803,11 +2692,6 @@ namespace SMS.DB.Migrations
             modelBuilder.Entity("SMS.Entities.EmpType", b =>
                 {
                     b.Navigation("Designations");
-                });
-
-            modelBuilder.Entity("SMS.Entities.ExamResult", b =>
-                {
-                    b.Navigation("AcademicExamDetails");
                 });
 
             modelBuilder.Entity("SMS.Entities.Question", b =>

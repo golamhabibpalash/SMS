@@ -3,27 +3,27 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace SMS.App.Controllers
 {
-    public class AcademicExamController : Controller
+    public class ExamResultsController : Controller
     {
-        // GET: AcademicExamController
+        // GET: ExamResultsController
         public ActionResult Index()
         {
             return View();
         }
 
-        // GET: AcademicExamController/Details/5
+        // GET: ExamResultsController/Details/5
         public ActionResult Details(int id)
         {
             return View();
         }
 
-        // GET: AcademicExamController/Create
+        // GET: ExamResultsController/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: AcademicExamController/Create
+        // POST: ExamResultsController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(IFormCollection collection)
@@ -38,13 +38,13 @@ namespace SMS.App.Controllers
             }
         }
 
-        // GET: AcademicExamController/Edit/5
+        // GET: ExamResultsController/Edit/5
         public ActionResult Edit(int id)
         {
             return View();
         }
 
-        // POST: AcademicExamController/Edit/5
+        // POST: ExamResultsController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IFormCollection collection)
@@ -59,13 +59,13 @@ namespace SMS.App.Controllers
             }
         }
 
-        // GET: AcademicExamController/Delete/5
+        // GET: ExamResultsController/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: AcademicExamController/Delete/5
+        // POST: ExamResultsController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)

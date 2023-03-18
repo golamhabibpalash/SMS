@@ -73,14 +73,14 @@
     @*<link href="~/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" />*@
 
     <link href="~/lib/fontawesome/css/all.min.css" rel="stylesheet" />
-    <link href="~/lib/fontawesome/css/brands.min.css" rel="stylesheet" />
+    @*<link href="~/lib/fontawesome/css/brands.min.css" rel="stylesheet" />
     <link href="~/lib/fontawesome/css/duotone.min.css" rel="stylesheet" />
     <link href="~/lib/fontawesome/css/fontawesome.min.css" rel="stylesheet" />
     <link href="~/lib/fontawesome/css/light.min.css" rel="stylesheet" />
     <link href="~/lib/fontawesome/css/regular.min.css" rel="stylesheet" />
     <link href="~/lib/fontawesome/css/solid.min.css" rel="stylesheet" />
     <link href="~/lib/fontawesome/css/svg-with-js.min.css" rel="stylesheet" />
-    <link href="~/lib/fontawesome/css/v4-shims.min.css" rel="stylesheet" />
+    <link href="~/lib/fontawesome/css/v4-shims.min.css" rel="stylesheet" />*@
 
     <!-- NProgress -->
     <link href="~/lib/Theme/css/nprogress.css" rel="stylesheet" />
@@ -201,7 +201,15 @@
                                             <a asp-action="Index" asp-controller="PhoneSMS"> SMS Panel</a>
                                         </li>
                                         <li>
-                                            <a href="#">  Exam</a>
+                                            <a>  Exam <span class="fa fa-chevron-down"></span></a>
+                                            <ul class="nav child_menu">
+                                                <li>
+                                                    <a asp-action="Index" asp-controller="AcademicExamType">Exam Type</a>
+                                                </li>
+                                                <li>
+                                                    <a asp-action="Index" asp-controller="AcademicExams">Exam List</a>
+                                                </li>
+                                            </ul>
                                         </li>
                                         <li>
                                             <a href="#"> Academic Result</a>
@@ -229,7 +237,7 @@
                                 @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
                                 {
                                     <li>
-                                        <a><i class="fa fa-cog text-danger fa-2x"></i> Settings <span class="fa fa-chevron-down"></span></a>
+                                        <a><i class="fa fa-cog text-danger fa-2x"></i>  Settings<span class="fa fa-chevron-down"></span></a>
                                         <ul class="nav child_menu">
                                             <li>
                                                 <a> Academic <span class="fa fa-chevron-down"></span></a>
@@ -259,7 +267,7 @@
                                             </li>
                                             <li>
                                                 <a> Administrations <span class="fa fa-chevron-down"></span></a>
-                                                @if (User.IsInRole("SuperAdmin"))
+                                                @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
                                                 {
                                                     <ul class="nav child_menu">
                                                         <li>
@@ -326,7 +334,7 @@
                                         </ul>
                                     </li>
                                     <li>
-                                        <a><i class="fal fa-file-chart-line fa-2x text-warning"></i> Reports <span class="fa fa-chevron-down"></span></a>
+                                        <a><i class="fal fa-file-chart-line fa-2x text-warning"></i>  Reports <span class="fa fa-chevron-down"></span></a>
                                         <ul class="nav child_menu">
                                             <li>
                                                 <a> Students <span class="fa fa-chevron-down"></span></a>
@@ -464,14 +472,14 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" type="text/javascript"></script>
     <!--Font Awesome-->
     <script src="~/lib/fontawesome/js/all.min.js"></script>
-    <script src="~/lib/fontawesome/js/brands.min.js"></script>
+    @*<script src="~/lib/fontawesome/js/brands.min.js"></script>
     <script src="~/lib/fontawesome/js/conflict-detection.min.js"></script>
     <script src="~/lib/fontawesome/js/duotone.min.js"></script>
     <script src="~/lib/fontawesome/js/fontawesome.min.js"></script>
     <script src="~/lib/fontawesome/js/light.min.js"></script>
     <script src="~/lib/fontawesome/js/regular.min.js"></script>
     <script src="~/lib/fontawesome/js/solid.min.js"></script>
-    <script src="~/lib/fontawesome/js/v4-shims.min.js"></script>
+    <script src="~/lib/fontawesome/js/v4-shims.min.js"></script>*@
     <!-- FastClick -->
     <script src="~/lib/Theme/js/fastclick.js" type="text/javascript"></script>
     <!-- NProgress -->

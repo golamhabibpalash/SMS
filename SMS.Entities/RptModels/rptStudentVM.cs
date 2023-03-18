@@ -12,5 +12,8 @@
         public string PhoneNo { get; set; }
         public string Gender { get; set; }
         public string Religion { get; set; }
+        public string Status { get; set; }
+        public string BloodGroup { get; set; }
+        public string SectionName { get; set; }
     }
 }

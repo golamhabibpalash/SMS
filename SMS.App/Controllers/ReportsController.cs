@@ -72,7 +72,7 @@ namespace SMS.App.Controllers
             //parameters.Add("rp1", "Welcome to RDLC Reporting");
             LocalReport localReport = new(path);
             //List<RptStudentVM> studentVMs = new List<RptStudentVM>();
-
+            
             var studens = await _reportManager.getStudentsInfo();
             localReport.AddDataSource("DataSet1", studens);
             var result = localReport.Execute(renderType, 1, parameters);
@@ -192,12 +192,43 @@ namespace SMS.App.Controllers
                 monthlyAttendanceFullClass.MothlyAttendanceFullClassDetailses.Add(monthlyAttendanceFullClassDetails);
             }
             
-            
             ViewBag.studentList = studentList;
             return View(monthlyAttendanceFullClass);
         }
 
-        
+        public IActionResult MarkSheetReport()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult MarkSheettReport(string reportType, string fileName)
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> MarkSheettReportExport(string reportType, string fileName)
+        {
+            RenderType renderType = RenderType.Pdf;
+            renderType = !string.IsNullOrEmpty(reportType) ? GetRenderType(reportType) : renderType;
+            var path = _host.WebRootPath + "\\Reports\\rptMarkSheet.rdlc";
+            Dictionary<string, string> parameters = new();
+            //parameters.Add("rp1", "Welcome to RDLC Reporting");
+            LocalReport localReport = new(path);
+            //List<RptStudentVM> studentVMs = new List<RptStudentVM>();
+
+            var studens = await _reportManager.getStudentsInfo();
+            localReport.AddDataSource("DataSet1", studens);
+            var result = localReport.Execute(renderType, 1, parameters);
+            if (!string.IsNullOrEmpty(fileName))
+            {
+                return File(result.MainStream, MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
+            }
+            return File(result.MainStream, "Application/pdf");
+        }
+
+
+
         private static RenderType GetRenderType(string reportType)
         {
             var renderType = reportType.ToLower() switch

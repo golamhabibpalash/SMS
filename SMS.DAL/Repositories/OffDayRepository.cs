@@ -32,23 +32,25 @@ namespace SMS.DAL.Repositories
             {
                 foreach (var holiday in holidays)
                 {
-                    DateTime dt = holiday.OffDayStartingDate;
-                    DateTime nextDate = dt;
-                    for (int i = 0; i <= holiday.TotalDays; i++)
+                    DateTime sd = holiday.OffDayStartingDate;
+                    DateTime ed = holiday.OffDayEndDate;
+
+                    DateTime nextDate = sd;
+                    for (int i = 1; i <= holiday.TotalDays; i++)
                     {
-                        nextDate.AddDays(1);
-                        if (nextDate.ToString("MM")!=dt.ToString("MM"))
-                        {
-                            break;
-                        }
-                        nextDate.ToString("MM");
                         bool isExist = (from m in monthlyHolidays
-                                       where m.Date.ToString("ddMMyyyy") == nextDate.ToString("ddMMyyyy")
+                                       where m.Date.ToString("ddMMyyyy") == sd.ToString("ddMMyyyy")
                                        select m).Any();
-                        if (isExist==false)
+                        if (isExist)
                         {
-                            monthlyHolidays.Add(nextDate);
+                            sd = sd.AddDays(1);
+                            continue;
                         }
+                        else
+                        {
+                            monthlyHolidays.Add(sd);
+                        }
+                        sd = sd.AddDays(1);                        
                     }
                 }
             }

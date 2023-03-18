@@ -34,7 +34,7 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <div class="col-md-2 offset-9">
+                    <div class="col-md-2 offset-9 offset-sm-6">
                         <input class="btn btn-info" type="submit" value="Get Report" />
                     </div>
                 </div>
@@ -59,7 +59,7 @@
         <div class="col-md-12 p-2">
             <div class="row">
                 <div class="col-md-12">
-                    <table class="table table-bordered table-light" id="capture">
+                    <table class="table table-bordered table-sm" id="capture">
                         <thead>
                             <tr>
                                 <td class="border-0" colspan="@(ViewBag.daysInMonth+4)">
@@ -75,7 +75,7 @@
                                     </div>
                                 </td>
                             </tr>
-                            <tr class="table-info">
+                            <tr class="bg-blue-sky  table-borderless">
                                 <td>Roll</td>
                                 <td>Student Name</td>
                                 @if (ViewBag.daysInMonth != null)
@@ -91,7 +91,7 @@
                                                               select m).Any();
                                             if (isHoliday)
                                             {
-                                                <td class="bg-warning border-0" data-toggle="tooltip" data-placement="top" data-html="true" title="@mDate.ToString("dd MMM yyyy") <br /> @mDate.ToString("dddd")"> @i</td>
+                                                <td class="bg-warning table-borderless" data-toggle="tooltip" data-placement="top" data-html="true" title="@mDate.ToString("dd MMM yyyy") <br /> @mDate.ToString("dddd")"> @i</td>
                                             }
                                             else
                                             {
@@ -110,14 +110,14 @@
                                 <td>%</td>
                             </tr>
                         </thead>
-                        <tbody class="bg-light">
+                        <tbody class="">
                             @if (Model != null)
                             {
                                 if (Model.MothlyAttendanceFullClassDetailses != null)
                                 {
                                     @foreach (var item in Model.MothlyAttendanceFullClassDetailses)
                                     {
-                                        <tr>
+                                        <tr class="">
                                             <td class="table-primary">@item.Roll</td>
                                             <td class="table-primary">@item.StudentName</td>
                                             @if (item.isPresents != null)
@@ -162,8 +162,6 @@
                     <p class="lead">
                         <button id="csv" class="btn btn-info">TO CSV</button>
                         <button id="pdf" class="btn btn-danger">TO PDF</button>
-                        <button id="export-btn" class="btn" onclick="makePDF()"><i class="fa fa-file-pdf text-danger"></i></button>
-
                     </p>
                 </div>
             </div>
@@ -172,40 +170,5 @@
 
 }
 @section Scripts{
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="~/lib/html2canvas/html2canvas.min.js"></script>
-
-    <script>
-        window.html2canvas = html2canvas;
-        window.jsPDF = window.jspdf.jsPDF;
-        function makePDF() {
-            html2canvas(document.querySelector("#capture"), {
-                allowTaint: true,
-                useCORS: true,
-                scale:1
-            }).then(canvas => {
-                document.body.appendChild(canvas)
-                var imgData = canvas.toDataURL("image/pdf");
-                const pdf = new jsPDF('p', 'mm', 'a4');
-                const imgProps = pdf.getImageProperties(imgData);
-
-                // doc and image dimensions
-                const pdfWidth = pdf.internal.pageSize.getWidth();
-                const pdfHeight = pdf.internal.pageSize.getHeight();
-                const imgWidth = imgProps.width;
-                const imgHeight = imgProps.height;
-
-                // claculating right scale to fit the page
-                const scale = Math.max(pdfHeight / imgHeight, pdfWidth / imgWidth);
-                const finalWidth = imgWidth * scale;
-                const finalHeight = imgHeight * scale;
-                const leftMargin = (pdfWidth - finalWidth) / 2;
-
-                // add image with alias and compression of your choice
-                pdf.addImage(imgData, 'PNG', leftMargin, 0, finalWidth, finalHeight, 'alias', 'FAST');
-                pdf.save('Attendace Report.pdf');
-
-            });
-        }
-    </script>
+   
 }

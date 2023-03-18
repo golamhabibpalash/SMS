@@ -9,7 +9,11 @@ namespace SMS.Entities
 {
     public class AcademicExamType : CommonProps
     {
-        [Required]
+        [Required, Display(Name ="Exam Type Name")]
         public string ExamTypeName { get; set; }
+        
+        [Display(Name ="Times in a Year"),Range(1,12)]
+        public int CountInAYear { get; set; }
+        public string Remarks { get; set; }
     }
 }

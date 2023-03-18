@@ -14,6 +14,6 @@ namespace SMS.Entities
 
         public bool Status { get; set; }
 
-        public List<ClassFeeList> StudentFeeLists { get; set; }
+        public bool CurrentSession { get; set; }
     }
 }

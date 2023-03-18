@@ -1,7 +1,50 @@
 ﻿@model IEnumerable<AcademicExamType>
 
-    <div class="row">
+@{
+    ViewData["Title"] = "Academic Exam Type";
+    GlobalUI.PageTitle = ViewData["Title"].ToString();
+    int sl = 0;
+}
 
+    <div class="row">
+        @if (Model.Count()>0)
+        {
+            <div class="col-md-12">
+                <table class="table table-bordered">
+                    <thead class=" table-info">
+                        <tr>
+                            <td>#</td>
+                            <td>Type Name</td>
+                            <td>Time in a year</td>
+                            <td>Remarks</td>
+                            <td>
+                                <partial name="_Create" />
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (AcademicExamType examType in Model)
+                        {
+                            <tr>
+                                <td>@(++sl)</td>
+                                <td>@examType.ExamTypeName</td>
+                                <td>@examType.CountInAYear</td>
+                                <td>@examType.Remarks</td>
+                                <td>
+                                    <partial name="_Edit_Details_Delete" model="@examType.Id" />
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="jumbotron col-md-12 text-center">
+                <h2 class="text-warning">Exam Type is not available</h2><br /><partial name="_Create" />
+            </div>
+        }
     </div>
 
 @section Scripts{ 

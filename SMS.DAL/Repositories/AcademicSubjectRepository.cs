@@ -21,6 +21,7 @@ namespace SMS.DAL.Repositories
         public override async Task<IReadOnlyCollection<AcademicSubject>> GetAllAsync()
         {
             return await _context.AcademicSubject
+                .Include(s => s.AcademicClass)
                 .Include(s => s.AcademicSubjectType)
                 .OrderBy(s => s.SubjectCode)
                 .ToListAsync();
@@ -50,7 +51,10 @@ namespace SMS.DAL.Repositories
 
         public async Task<IEnumerable<AcademicSubject>> GetSubjectsByClassIdAsync(int classId)
         {
-            var subjects = await _context.AcademicSubject.Where(a => a.AcademicClassId == classId).ToListAsync();
+            var subjects = await _context.AcademicSubject
+                .Include(s => s.AcademicClass)
+                .Where(a => a.AcademicClassId == classId)
+                .ToListAsync();
             return subjects;
         }
 

@@ -19,7 +19,7 @@ namespace SMS.DAL.Repositories.Reports
         }
         public async Task<List<RptStudentVM>> getStudentsInfo()
         {
-            string query = "select ClassRoll, StudentName,ClassName,SessionName,FatherName,MotherName,GuardianPhone,PhoneNo,Gender,Religion,Status from vw_rpt_student_info";
+            string query = @"select r.ClassRoll, r.StudentName,r.ClassName,r.SectionName,r.SessionName,r.FatherName,r.MotherName,r.GuardianPhone,r.PhoneNo,r.BloodGroup,r.Gender,r.Religion,Case r.Status when 1 then 'Active' else 'Inactive' end Status from vw_rpt_student_info r";
             List<RptStudentVM> rptStudentVMs = new List<RptStudentVM>();
             var result =await _context.RptStudentVMs.FromSqlRaw(query).ToListAsync();
             rptStudentVMs = result;

@@ -10,7 +10,7 @@ namespace SMS.Entities
     public class AcademicExamDetail : CommonProps
     {
         public int AcademicExamId { get; set; }
-        public AcademicExam AcademicExam { get; set; }       
+        public AcademicExam AcademicExam { get; set; }
         public double ObtainMark { get; set; }
         public int StudentId { get; set; }
         public Student Student { get; set; }

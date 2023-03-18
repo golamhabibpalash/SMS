@@ -178,6 +178,12 @@ builder.Services.AddScoped<IOffDayManager, OffDayManager>();
 builder.Services.AddScoped<IOffDayTypeRepository, OffDayTypeRepository>();
 builder.Services.AddScoped<IOffDayTypeManager, OffDayTypeManager>();
 
+builder.Services.AddScoped<IAcademicExamTypeRepository, AcademicExamTypeRepository>();
+builder.Services.AddScoped<IAcademicExamTypeManager, AcademicExamTypeManager>();
+
+builder.Services.AddScoped<IAcademicExamRepository, AcademicExamRepository>();
+builder.Services.AddScoped<IAcademicExamManager, AcademicExamManager>();
+
 //Reporting part start here===================================
 builder.Services.AddScoped<IReportManager, ReportManager>();
 builder.Services.AddScoped<IReportRepository, ReportRepository>();

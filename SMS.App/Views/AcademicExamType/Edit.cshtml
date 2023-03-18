@@ -1,15 +1,14 @@
 ﻿@model AcademicExamType
-@{ 
-
-    ViewData["Title"] = "Create Exam Type";
+@{
+    ViewData["Title"] = "Edit Exam Type";
     GlobalUI.PageTitle = ViewData["Title"].ToString();
 }
-
 <div class="row">
     <div class="col-md-6">
         <fieldset class="border-primary p-2 border">
             <legend class="w-auto text-primary">Exam Type Info</legend>
-            <form asp-action="Create" method="post">
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="Id" />
                 <div class="form-group row">
                     <label asp-for="ExamTypeName" class="col-md-3 col-form-label"></label>
                     <div class="col-md-9">
@@ -20,7 +19,7 @@
                 <div class="form-group row">
                     <label asp-for="CountInAYear" class="col-md-3 col-form-label"></label>
                     <div class="col-md-9">
-                        <input class="form-control" asp-for="CountInAYear"  min="1" max="12"/>
+                        <input class="form-control" asp-for="CountInAYear" min="1" max="12" />
                         <span asp-validation-for="CountInAYear" class="text-danger"></span>
                     </div>
                 </div>
@@ -33,14 +32,13 @@
                 </div>
                 <div class="form-group row text-right">
                     <div class="col-md-12 text-right">
-                        <input class="btn btn-info" type="submit" value="Create" />
+                        <input class="btn btn-info" type="submit" value="Update" />
                     </div>
                 </div>
             </form>
         </fieldset>
     </div>
 </div>
-
 
 
 

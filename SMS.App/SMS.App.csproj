@@ -14,16 +14,21 @@
   <ItemGroup>
     <Compile Remove="Views\Reports\RPT\**" />
     <Compile Remove="wwwroot\FA\**" />
+    <Compile Remove="wwwroot\Reports\Versioning\**" />
     <Content Remove="Views\Reports\RPT\**" />
     <Content Remove="wwwroot\FA\**" />
+    <Content Remove="wwwroot\Reports\Versioning\**" />
     <EmbeddedResource Remove="Views\Reports\RPT\**" />
     <EmbeddedResource Remove="wwwroot\FA\**" />
+    <EmbeddedResource Remove="wwwroot\Reports\Versioning\**" />
     <None Remove="Views\Reports\RPT\**" />
     <None Remove="wwwroot\FA\**" />
+    <None Remove="wwwroot\Reports\Versioning\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\Reports\rptStudent.rdlc" />
+    <Content Remove="wwwroot\Reports\rptMarkSheet.rdlc" />
+    <Content Remove="wwwroot\Reports\rptStudent1.rdlc" />
   </ItemGroup>
 
   <ItemGroup>
@@ -75,9 +80,7 @@
     <None Include="wwwroot\lib\MultiSelect\js\jquery-2.1.3.min.js" />
     <None Include="wwwroot\lib\MultiSelect\js\prettify.min.js" />
     <None Include="wwwroot\lib\MultiSelect\js\require-2.3.5.min.js" />
-    <None Include="wwwroot\Reports\rptStudent.rdlc">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <None Include="wwwroot\Reports\rptMarkSheet.rdlc" />
   </ItemGroup>
 
   <ItemGroup>

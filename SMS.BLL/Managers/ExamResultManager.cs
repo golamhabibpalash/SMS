@@ -13,7 +13,6 @@ namespace SMS.BLL.Managers
 {
     public class ExamResultManager:Manager<ExamResult>,IExamResultManager
     {
-        private readonly IExamResultRepository _examResultRepository;
         public ExamResultManager(IExamResultRepository examResultRepository):base(examResultRepository)
         {
             

@@ -1,20 +1,41 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SMS.App.ViewModels.ExamVM;
 using SMS.BLL.Contracts;
+using SMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
 {
     public class ExamResultsController : Controller
     {
         private readonly IExamResultManager _examResultManager;
-        public ExamResultsController(IExamResultManager examResultManager)
+        private readonly IAcademicExamManager _academicExamManager;
+        public ExamResultsController(IExamResultManager examResultManager, IAcademicExamManager academicExamManager)
         {
             _examResultManager = examResultManager;
+            _academicExamManager = academicExamManager;
+
         }
         // GET: ExamResultsController
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            return View();
+            List<ExamResultVM> exams = new();
+            List<AcademicExam> existingExams = (List<AcademicExam>)await _academicExamManager.GetAllAsync();
+            if (existingExams!=null)
+            {
+                foreach (AcademicExam academicExam in existingExams)
+                {
+                    ExamResultVM exam = new();
+                    exam.ExamId = academicExam.Id;
+                    exam.ExamName = academicExam.ExamName;
+                    exam.AcademicClass = academicExam.AcademicSubject.AcademicClass.Name;
+                    exam.TotalExaminee = academicExam.AcademicExamDetails.Count;
+                    exams.Add(exam);
+                }
+            }
+            return View(exams);
         }
 
         // GET: ExamResultsController/Details/5

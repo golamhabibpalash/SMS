@@ -87,7 +87,7 @@ namespace SMS.App.Controllers
                 spvm.StudentId = student.Id;
                 List<ClassFeeList> feeList = new();
                 var classfeelist = await _classFeeListManager.GetAllByClassIdAsync(student.AcademicClassId);
-
+                
                 ViewBag.FeeList = new SelectList(await _studentFeeHeadManager.GetAllAsync(), "Id", "Name");
                 foreach (var item in classfeelist)
                 {

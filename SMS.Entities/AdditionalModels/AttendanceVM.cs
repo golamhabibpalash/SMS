@@ -13,5 +13,6 @@ namespace SMS.Entities.AdditionalModels
         public string Class_Designation { get; set; }
         public string Phone { get; set; }
         public string PunchTime { get; set; }
+        public string GuardianPhone { get; set; }
     }
 }

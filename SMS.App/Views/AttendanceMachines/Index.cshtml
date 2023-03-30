@@ -257,7 +257,11 @@
                     {
                         
                         <td>@item.Class_Designation</td>
-                        <td>@item.Phone</td>
+                        <td>
+                            @item.Phone.PadLeft(11,'0') (personal) 
+                            <br />
+                            @item.GuardianPhone.PadLeft(11, '0') (guardian)
+                        </td>
                     }
                     else
                     {

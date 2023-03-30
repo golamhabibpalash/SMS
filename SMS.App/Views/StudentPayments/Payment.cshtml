@@ -171,7 +171,7 @@
                         <div class="form-group row pt-2">
                             <label class="col-md-3 col-form-label text-right">Date </label>
                             <div class="col-md-5 col-lg-4 col-sm-6 col-xs-10">
-                                <input type="date" asp-for="StudentPayment.PaidDate" class="form-control form-control-sm" value="@DateTime.Today.ToString("yyyy-MM-dd")" min="2020-01-01" max="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" />
+                                <input type="date" asp-for="StudentPayment.PaidDate" class="form-control form-control-sm" value="@DateTime.Today.ToString("yyyy-MM-dd")" min="31-01-2020" max="@DateTime.Today.AddDays(1).ToString("dd-MM-yyyy")" />
                             </div>
                             <div class="col-md-6">
                                 <span asp-validation-for="StudentPayment.PaidDate" class="text-danger col-form-label"></span>
@@ -187,26 +187,6 @@
                                 </select>
                             </div>
                             <div class="col-md-2">
-                                <div class="row d-flex justify-content-center mt-100">
-                                    <div class="col-md-6">
-                                        <select id="choices-multiple-remove-button" placeholder="Select upto 5 tags" multiple>
-                                            <option value="HTML">HTML</option>
-                                            <option value="Jquery">Jquery</option>
-                                            <option value="CSS">CSS</option>
-                                            <option value="Bootstrap 3">Bootstrap 3</option>
-                                            <option value="Bootstrap 4">Bootstrap 4</option>
-                                            <option value="Java">Java</option>
-                                            <option value="Javascript">Javascript</option>
-                                            <option value="Angular">Angular</option>
-                                            <option value="Python">Python</option>
-                                            <option value="Hybris">Hybris</option>
-                                            <option value="SQL">SQL</option>
-                                            <option value="NOSQL">NOSQL</option>
-                                            <option value="NodeJS">NodeJS</option>
-                                        </select>
-                                    </div>
-                                </div>
-
 
 
                                 <!--<select class="form-control" id="howManyTimes" style="display:none" multiple="multiple">-->
@@ -315,7 +295,7 @@
             }
             else
             {
-                <h6 class="text-center p-5 text-light">Payment History Not Found</h6>
+                <h6 class="text-center p-5 text-light">No available payment history</h6>
 
             }
         </div>

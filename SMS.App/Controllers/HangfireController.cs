@@ -76,7 +76,7 @@ namespace SMS.App.Controllers
                 }
                 if (setupMobileSMS.CheckOutSMSService)
                 {
-                    RecurringJob.AddOrUpdate(() => SendCheckOutSMS(), "*/10 13-15 * * sat-thu", TimeZoneInfo.Local);
+                    RecurringJob.AddOrUpdate(() => SendCheckOutSMS(), "*/10 12-15 * * sat-thu", TimeZoneInfo.Local);
                 }
                 if (setupMobileSMS.AbsentNotification)
                 {

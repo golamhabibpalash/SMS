@@ -85,7 +85,6 @@
             min-height: 100vh
         }
     </style>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.css">
 }
 <div class="row pt-3 pb-2 bg-orange">
     <div class="col-md-12 text-center">
@@ -171,7 +170,7 @@
                         <div class="form-group row pt-2">
                             <label class="col-md-3 col-form-label text-right">Date </label>
                             <div class="col-md-5 col-lg-4 col-sm-6 col-xs-10">
-                                <input type="date" asp-for="StudentPayment.PaidDate" class="form-control form-control-sm" value="@DateTime.Today.ToString("yyyy-MM-dd")" min="31-01-2020" max="@DateTime.Today.AddDays(1).ToString("dd-MM-yyyy")" />
+                                <input type="date" asp-for="StudentPayment.PaidDate" class="form-control form-control-sm" value="@DateTime.Today.ToString("yyyy-MM-dd")" min="2020-01-31" max="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" />
                             </div>
                             <div class="col-md-6">
                                 <span asp-validation-for="StudentPayment.PaidDate" class="text-danger col-form-label"></span>
@@ -201,11 +200,11 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-form-label text-right">Amount</label>
                             <div class="col-md-4 col-lg-4 col-sm-6 col-xs-10">
-                                <input type="text" id="amountId" class="form-control" placeholder="Amount" disabled />
+                                <input type="text" id="amountId" class="form-control" placeholder="Amount" />
                                 <input type="hidden" id="academicClassId" value="@Model.StudentPayment.Student.AcademicClassId" />
                             </div>
 
-                            <span asp-validation-for="StudentPayment.PaidDate" class="text-danger col-form-label"></span>
+                            
                         </div>
 
                         <div class="form-group row">
@@ -214,7 +213,7 @@
                                 <input asp-for="StudentPayment.TotalPayment" class="form-control form-control-sm text-right" />
                             </div>
 
-                            <span asp-validation-for="StudentPayment.Remarks" class="text-danger col-form-label"></span>
+                            <span asp-validation-for="StudentPayment.TotalPayment" class="text-danger col-form-label"></span>
                         </div>
                         <div class="form-group row">
                             <label class="col-md-3 col-form-label text-right">Remark</label>
@@ -225,8 +224,8 @@
                             <span asp-validation-for="StudentPayment.Remarks" class="text-danger col-form-label"></span>
                         </div>
                         <div class="form-group row">
-                            <div class="col-md-12 text-md-right">
-                                <input type="submit" class="btn btn-success" value="Submit" />
+                            <div class="col-md-9 offset-md-3 text-md-left">
+                                <input type="submit" class="btn btn-light" value="Submit" />
                             </div>
                         </div>
                     </div>
@@ -282,9 +281,14 @@
                                     <td>@payDetail.StudentPayment.TotalPayment</td>
                                     <td>@payDetail.StudentPayment.Remarks</td>
                                     <td>
-                                        <button data-studentName="@item.Student.Name" data-academicClass="@item.Student.AcademicClass.Name" data-classRoll="@item.Student.ClassRoll" data-academicSession="@item.Student.AcademicSession.Name" data-paidDate="@item.PaidDate.ToString()" data-receipt="@payDetail.StudentPayment.ReceiptNo" data-amount="@payDetail.StudentPayment.TotalPayment" data-paymentType="@payDetail.StudentFeeHead.Name" type="button" class="btn btn-light btn-outline-info btn-sm modalViewId" data-toggle="modal" data-target="#exampleModalCenter" id="modalViewId_">
-                                            View
-                                        </button>
+                                        <div class="btn-group">
+                                            <button data-studentName="@item.Student.Name" data-academicClass="@item.Student.AcademicClass.Name" data-classRoll="@item.Student.ClassRoll" data-academicSession="@item.Student.AcademicSession.Name" data-paidDate="@item.PaidDate.ToString()" data-receipt="@payDetail.StudentPayment.ReceiptNo" data-amount="@payDetail.StudentPayment.TotalPayment" data-paymentType="@payDetail.StudentFeeHead.Name" type="button" class="btn btn-light btn-outline-info btn-sm modalViewId" data-toggle="modal" data-target="#exampleModalCenter" id="modalViewId_">
+                                                View
+                                            </button>
+                                            <button class="btn btn-info btn-sm" onclick="editBtnClick(@payDetail.Id)">
+                                                Edit
+                                            </button>
+                                        </div>
                                     </td>
                                 }
                             </tr>

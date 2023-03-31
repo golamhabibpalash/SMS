@@ -203,3 +203,7 @@ $(function () {
         alert($('#chkveg').val());
     });
 });
+
+function editBtnClick(paymentDetailId) {
+
+}

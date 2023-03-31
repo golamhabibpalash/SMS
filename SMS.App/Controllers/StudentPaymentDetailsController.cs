@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SMS.App.Utilities.MACIPServices;
+using SMS.BLL.Contracts;
 using SMS.DB;
 using SMS.Entities;
 
@@ -15,18 +17,22 @@ namespace SMS.App.Controllers
     [Authorize(Roles = "SuperAdmin, Admin")]
     public class StudentPaymentDetailsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IStudentPaymentDetailsManager _studentPaymentDetailManager;
+        private readonly IStudentFeeHeadManager _studentFeeHeadManager;
+        private readonly IStudentPaymentManager _studentPaymentManager;
 
-        public StudentPaymentDetailsController(ApplicationDbContext context)
+        public StudentPaymentDetailsController(IStudentPaymentDetailsManager studentPaymentDetailsManager, IStudentFeeHeadManager studentFeeHeadManager, IStudentPaymentManager studentPaymentManager)
         {
-            _context = context;
+            _studentPaymentDetailManager = studentPaymentDetailsManager;
+            _studentFeeHeadManager = studentFeeHeadManager;
+            _studentPaymentManager = studentPaymentManager;
         }
 
         // GET: StudentPaymentDetails
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.StudentPaymentDetails.Include(s => s.StudentFeeHead).Include(s => s.StudentPayment);
-            return View(await applicationDbContext.ToListAsync());
+            var paymentDetails = await _studentPaymentDetailManager.GetAllAsync(); 
+            return View(paymentDetails);
         }
 
         // GET: StudentPaymentDetails/Details/5
@@ -36,11 +42,8 @@ namespace SMS.App.Controllers
             {
                 return NotFound();
             }
+            var studentPaymentDetails = await _studentPaymentDetailManager.GetByIdAsync((int)id);
 
-            var studentPaymentDetails = await _context.StudentPaymentDetails
-                .Include(s => s.StudentFeeHead)
-                .Include(s => s.StudentPayment)
-                .FirstOrDefaultAsync(m => m.Id == id);
             if (studentPaymentDetails == null)
             {
                 return NotFound();
@@ -50,10 +53,10 @@ namespace SMS.App.Controllers
         }
 
         // GET: StudentPaymentDetails/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["StudentFeeHeadId"] = new SelectList(_context.StudentFeeHead, "Id", "Id");
-            ViewData["StudentPaymentId"] = new SelectList(_context.StudentPayment, "Id", "Id");
+            ViewData["StudentFeeHeadId"] = new SelectList(await _studentFeeHeadManager.GetAllAsync(), "Id", "Id");
+            ViewData["StudentPaymentId"] = new SelectList(await _studentPaymentManager.GetAllAsync(), "Id", "Id");
             return View();
         }
 
@@ -65,13 +68,24 @@ namespace SMS.App.Controllers
             {
                 studentPaymentDetails.CreatedAt = DateTime.Now;
                 studentPaymentDetails.CreatedBy = HttpContext.Session.GetString("UserId");
+                studentPaymentDetails.MACAddress = MACService.GetMAC();
+                try
+                {
+                    bool isSaved = await _studentPaymentDetailManager.AddAsync(studentPaymentDetails);
+                    if (isSaved)
+                    {
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+                catch (Exception)
+                {
 
-                _context.Add(studentPaymentDetails);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                    throw;
+                }
             }
-            ViewData["StudentFeeHeadId"] = new SelectList(_context.StudentFeeHead, "Id", "Id", studentPaymentDetails.StudentFeeHeadId);
-            ViewData["StudentPaymentId"] = new SelectList(_context.StudentPayment, "Id", "Id", studentPaymentDetails.StudentPaymentId);
+            ViewData["StudentFeeHeadId"] = new SelectList(await _studentFeeHeadManager.GetAllAsync(), "Id", "Id",studentPaymentDetails.StudentFeeHeadId);
+            ViewData["StudentPaymentId"] = new SelectList(await _studentPaymentManager.GetAllAsync(), "Id", "Id",studentPaymentDetails.StudentPaymentId);
+
             return View(studentPaymentDetails);
         }
 
@@ -83,13 +97,13 @@ namespace SMS.App.Controllers
                 return NotFound();
             }
 
-            var studentPaymentDetails = await _context.StudentPaymentDetails.FindAsync(id);
+            var studentPaymentDetails = await _studentPaymentDetailManager.GetByIdAsync((int)id);
             if (studentPaymentDetails == null)
             {
                 return NotFound();
             }
-            ViewData["StudentFeeHeadId"] = new SelectList(_context.StudentFeeHead, "Id", "Id", studentPaymentDetails.StudentFeeHeadId);
-            ViewData["StudentPaymentId"] = new SelectList(_context.StudentPayment, "Id", "Id", studentPaymentDetails.StudentPaymentId);
+            ViewData["StudentFeeHeadId"] = new SelectList(await _studentFeeHeadManager.GetAllAsync(), "Id", "Id", studentPaymentDetails.StudentFeeHeadId);
+            ViewData["StudentPaymentId"] = new SelectList(await _studentPaymentManager.GetAllAsync(), "Id", "Id", studentPaymentDetails.StudentPaymentId);
             return View(studentPaymentDetails);
         }
 
@@ -109,12 +123,20 @@ namespace SMS.App.Controllers
                     studentPaymentDetails.EditedAt = DateTime.Now;
                     studentPaymentDetails.EditedBy = HttpContext.Session.GetString("UserId");
 
-                    _context.Update(studentPaymentDetails);
-                    await _context.SaveChangesAsync();
+                    bool isUpdated = await _studentPaymentDetailManager.UpdateAsync(studentPaymentDetails);
+                    if (isUpdated)
+                    {
+                        TempData["updated"] = "Payment Details Updated";
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        TempData["failed"] = "Update fail";
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!StudentPaymentDetailsExists(studentPaymentDetails.Id))
+                    if (!await StudentPaymentDetailsExists(studentPaymentDetails.Id))
                     {
                         return NotFound();
                     }
@@ -123,10 +145,10 @@ namespace SMS.App.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["StudentFeeHeadId"] = new SelectList(_context.StudentFeeHead, "Id", "Id", studentPaymentDetails.StudentFeeHeadId);
-            ViewData["StudentPaymentId"] = new SelectList(_context.StudentPayment, "Id", "Id", studentPaymentDetails.StudentPaymentId);
+            ViewData["StudentFeeHeadId"] = new SelectList(await _studentFeeHeadManager.GetAllAsync(), "Id", "Id", studentPaymentDetails.StudentFeeHeadId);
+            ViewData["StudentPaymentId"] = new SelectList(await _studentPaymentManager.GetAllAsync(), "Id", "Id", studentPaymentDetails.StudentPaymentId);
+
             return View(studentPaymentDetails);
         }
 
@@ -138,10 +160,7 @@ namespace SMS.App.Controllers
                 return NotFound();
             }
 
-            var studentPaymentDetails = await _context.StudentPaymentDetails
-                .Include(s => s.StudentFeeHead)
-                .Include(s => s.StudentPayment)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var studentPaymentDetails = await _studentPaymentDetailManager.GetByIdAsync((int)id);
             if (studentPaymentDetails == null)
             {
                 return NotFound();
@@ -155,15 +174,40 @@ namespace SMS.App.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var studentPaymentDetails = await _context.StudentPaymentDetails.FindAsync(id);
-            _context.StudentPaymentDetails.Remove(studentPaymentDetails);
-            await _context.SaveChangesAsync();
+            var studentPaymentDetails = await _studentPaymentDetailManager.GetByIdAsync(id);
+            if (studentPaymentDetails!=null)
+            {
+                bool isDeleted = await _studentPaymentDetailManager.RemoveAsync(studentPaymentDetails);
+                if (isDeleted)
+                {
+                    TempData["deleted"] = "Delete Successfully";
+                }
+                else
+                {
+                    TempData["failed"] = "Fail to Delete";
+                    return View(id);
+                }
+            }
             return RedirectToAction(nameof(Index));
         }
 
-        private bool StudentPaymentDetailsExists(int id)
+        private async Task<bool> StudentPaymentDetailsExists(int id)
         {
-            return _context.StudentPaymentDetails.Any(e => e.Id == id);
+            StudentPaymentDetails studentPaymentDetails = await _studentPaymentDetailManager.GetByIdAsync(id);
+            if (studentPaymentDetails == null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public async Task<IActionResult> GetPaymentDetailById(int paymentDetailId)
+        {
+           StudentPaymentDetails studentPaymentDetails = await _studentPaymentDetailManager.GetByIdAsync(paymentDetailId);
+           return (IActionResult)studentPaymentDetails;
         }
     }
 }

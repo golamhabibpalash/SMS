@@ -10,5 +10,7 @@ namespace SMS.DAL.Contracts
 {
     public interface IStudentPaymentDetailsRepository : IRepository<StudentPaymentDetails>
     {
+        Task<List<StudentPaymentDetails>> GetAllByPaymentId(int studentPaymentId);
     }
+    
 }

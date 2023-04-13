@@ -12,9 +12,15 @@ namespace SMS.BLL.Managers
 {
     public class StudentPaymentDetailsManager : Manager<StudentPaymentDetails>, IStudentPaymentDetailsManager
     {
+        private readonly IStudentPaymentDetailsRepository _studentPaymentDetailRepository;
         public StudentPaymentDetailsManager(IStudentPaymentDetailsRepository studentPaymentDetailsRepository): base(studentPaymentDetailsRepository)
         {
+            _studentPaymentDetailRepository = studentPaymentDetailsRepository;
+        }
 
+        public async Task<List<StudentPaymentDetails>> GetAllByPaymentId(int studentPaymentId)
+        {
+            return await _studentPaymentDetailRepository.GetAllByPaymentId(studentPaymentId);
         }
     }
 }

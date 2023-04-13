@@ -23,14 +23,16 @@ namespace SMS.App.Controllers
         private readonly IClassFeeListManager _classFeeListManager;
         private readonly IAcademicClassManager _academicClassManager;
         private readonly IStudentFeeHeadManager _studentFeeHeadManager;
+        private readonly IStudentPaymentDetailsManager _studentPaymentDetailsManager;
 
-        public StudentPaymentsController(IStudentPaymentManager studentPaymentManager, IStudentManager studentManager, IClassFeeListManager classFeeListManager, IAcademicClassManager academicClassManager, IStudentFeeHeadManager studentFeeHeadManager)
+        public StudentPaymentsController(IStudentPaymentManager studentPaymentManager, IStudentManager studentManager, IClassFeeListManager classFeeListManager, IAcademicClassManager academicClassManager, IStudentFeeHeadManager studentFeeHeadManager, IStudentPaymentDetailsManager studentPaymentDetailsManager)
         {
             _studentPaymentManager = studentPaymentManager;
             _studentManager = studentManager;
             _classFeeListManager = classFeeListManager;
             _academicClassManager = academicClassManager;
             _studentFeeHeadManager = studentFeeHeadManager;
+            _studentPaymentDetailsManager = studentPaymentDetailsManager;
         }
 
         // GET: StudentPayments
@@ -79,16 +81,19 @@ namespace SMS.App.Controllers
             if (student!=null)
             {
                 StudentPayment sp = new();
+                StudentPaymentDetails details = new();
                 sp.Student = student;
-               
+                List<StudentPaymentDetails> studentPaymentDetails = new();
+                sp.StudentPaymentDetails = studentPaymentDetails;
+                sp.StudentPaymentDetails.Add(details);
                 spvm.StudentPayment = sp;
                 studentPayments = (List<StudentPayment>)await _studentPaymentManager.GetAllByStudentIdAsync(student.Id);
                 spvm.StudentPayments = studentPayments.OrderBy(p => p.PaidDate).ToList();
                 spvm.StudentId = student.Id;
                 List<ClassFeeList> feeList = new();
                 var classfeelist = await _classFeeListManager.GetAllByClassIdAsync(student.AcademicClassId);
-                
-                ViewBag.FeeList = new SelectList(await _studentFeeHeadManager.GetAllAsync(), "Id", "Name");
+
+                ViewData["FeeList"] = new SelectList(await _studentFeeHeadManager.GetAllAsync(), "Id", "Name");
                 foreach (var item in classfeelist)
                 {
                     feeList.Add(item);
@@ -117,6 +122,8 @@ namespace SMS.App.Controllers
                 studentPaymentObject.TotalPayment = paymentObject.StudentPayment.TotalPayment;
                 studentPaymentObject.PaidDate = paymentObject.StudentPayment.PaidDate;
                 studentPaymentObject.Remarks = paymentObject.StudentPayment.Remarks;
+
+                ViewData["FeeList"] = new SelectList(await _studentFeeHeadManager.GetAllAsync(), "Id", "Name");
                 if (paymentObject.StudentPayment.StudentPaymentDetails != null)
                 {
                     foreach (var paymentDetails in paymentObject.StudentPayment.StudentPaymentDetails)
@@ -140,18 +147,16 @@ namespace SMS.App.Controllers
                     else
                     {
                         TempData["fail"] = ViewBag.msg = "Failed to payment";
-                        return RedirectToAction("Payment", new { id = paymentObject.StudentId });
                     }
                 }
 
             }
             catch (Exception)
             {
-                return RedirectToAction("Payment", new { id = paymentObject.StudentId });
-                throw;
+              throw;
             }
-            
-            return RedirectToAction("Index");
+            Student student = await _studentManager.GetByIdAsync(paymentObject.StudentPayment.StudentId);
+            return RedirectToAction("Payment", new { stRoll = student.ClassRoll });
         }
         // GET: StudentPayments/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -230,6 +235,7 @@ namespace SMS.App.Controllers
             {
                 return NotFound();
             }
+            ViewData["FeeList"] = new SelectList(await _studentFeeHeadManager.GetAllAsync(), "Id", "Name", studentPayment.StudentPaymentDetails[0].StudentFeeHeadId);
             ViewData["StudentId"] = new SelectList(await _studentManager.GetAllAsync(), "Id", "Name", studentPayment.StudentId);
             return View(studentPayment);
         }
@@ -237,7 +243,7 @@ namespace SMS.App.Controllers
         // POST: StudentPayments/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,StudentId,TotalPayment,CreatedBy,CreatedAt,EditedBy,EditedAt")] StudentPayment studentPayment)
+        public async Task<IActionResult> Edit(int id, StudentPayment studentPayment)
         {
             if (id != studentPayment.Id)
             {
@@ -250,8 +256,19 @@ namespace SMS.App.Controllers
                 {
                     studentPayment.EditedAt = DateTime.Now;
                     studentPayment.EditedBy = HttpContext.Session.GetString("UserId");
+                    studentPayment.MACAddress = MACService.GetMAC();
 
-                    await _studentPaymentManager.UpdateAsync(studentPayment);
+                        studentPayment.StudentPaymentDetails[0].EditedAt = DateTime.Now;
+                        studentPayment.StudentPaymentDetails[0].EditedBy = HttpContext.Session.GetString("UserId");
+                        studentPayment.StudentPaymentDetails[0].MACAddress = MACService.GetMAC();
+
+                    studentPayment.Student = await _studentManager.GetByIdAsync(studentPayment.StudentId);
+
+                    bool isUpdated = await _studentPaymentManager.UpdateAsync(studentPayment);
+                    if (isUpdated)
+                    {
+                        TempData["updated"] = "Payment updated successfull";                        
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -264,10 +281,13 @@ namespace SMS.App.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["StudentId"] = new SelectList(await _studentManager.GetAllAsync(), "Id", "Name", studentPayment.StudentId);
-            return View(studentPayment);
+            else
+            {
+                ViewData["FeeList"] = new SelectList(await _studentFeeHeadManager.GetAllAsync(), "Id", "Name", studentPayment.StudentPaymentDetails[0].StudentFeeHeadId);
+                ViewData["StudentId"] = new SelectList(await _studentManager.GetAllAsync(), "Id", "Name", studentPayment.StudentId);
+            }
+                return RedirectToAction("Payment", new { stRoll = studentPayment.Student.ClassRoll});
         }
 
         // GET: StudentPayments/Delete/5

@@ -24,6 +24,12 @@ namespace SMS.DAL.Repositories
             return list;
         }
 
+        public async Task<List<StudentPaymentDetails>> GetAllByPaymentId(int studentPaymentId)
+        {
+            List<StudentPaymentDetails> studentPaymentDetails = await _context.StudentPaymentDetails.Where(s => s.StudentPaymentId == studentPaymentId).ToListAsync();
+            return studentPaymentDetails;
+        }
+
         public override async Task<StudentPaymentDetails> GetByIdAsync(int id)
         {
             try

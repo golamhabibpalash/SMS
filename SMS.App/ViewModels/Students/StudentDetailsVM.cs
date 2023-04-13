@@ -10,5 +10,7 @@ namespace SMS.App.ViewModels.Students
     {
         public Student Student { get; set; }
         public IReadOnlyCollection<StudentPayment> StudentPayments { get; set; }
+        public double TotalDue { get; set; }
+        public double CurrentDue { get; set; }
     }
 }

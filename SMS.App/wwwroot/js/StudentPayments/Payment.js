@@ -1,6 +1,8 @@
 ﻿/////////////////////// 2nd time(Current) created code
+
+jQuery.noConflict();
 //Payment for select list option chooose
-$('#StudentPayment_StudentPaymentDetails_0__StudentFeeHeadId').change(function () {
+jQuery('#StudentPayment_StudentPaymentDetails_0__StudentFeeHeadId').change(function () {
     let id = $('#StudentPayment_StudentPaymentDetails_0__StudentFeeHeadId option:selected').val();
     let classId = $('#academicClassId').val();
     $.ajax({
@@ -14,8 +16,10 @@ $('#StudentPayment_StudentPaymentDetails_0__StudentFeeHeadId').change(function (
             d.studentFeeHead.repeatedly == true ? $('#howManyTimes').show() : $('#howManyTimes').hide();
             $('#amountId').val(d.amount);
             let times = $('#howManyTimes option:selected').val();
-            let total = GetTotalPayment(pAmount, times);
-            $('#StudentPayment_TotalPayment').val(total);
+            //let total = GetTotalPayment(pAmount, times);
+            //$('#StudentPayment_TotalPayment').val(total);
+            $('#StudentPayment_TotalPayment').val(pAmount);
+
         },
         error: function (err) {
             console.log(err);
@@ -24,7 +28,7 @@ $('#StudentPayment_StudentPaymentDetails_0__StudentFeeHeadId').change(function (
 });
 
 //Payment for select list option chooose
-$('#howManyTimes').change(function () {
+jQuery('#howManyTimes').change(function () {
     let id = $('#StudentPayment_StudentPaymentDetails_0__StudentFeeHeadId option:selected').val();
     let howManyTimes = $('#howManyTimes option:selected').val();
     let classId = $('#academicClassId').val();
@@ -48,7 +52,7 @@ $('#howManyTimes').change(function () {
 });
 
 //Minus Button Click
-$('#minusButton').click(function () {
+jQuery('#minusButton').click(function () {
     let id = $('#feeSelectId').val();
     let classId = $('#academicClassId').val();
     var existAmount = $('#FeeAmountId').val();
@@ -69,7 +73,7 @@ $('#minusButton').click(function () {
     });
 });
 //Plus Button Click
-$('#plusButton').click(function () {
+jQuery('#plusButton').click(function () {
     let id = $('#feeSelectId').val();
     let classId = $('#academicClassId').val();
     var existAmount = $('#FeeAmountId').val();
@@ -93,7 +97,7 @@ $('#plusButton').click(function () {
 });
 /////////////////////// 1st time(Previous) created code
 //Code for waiverFor div show and hide
-$('#waiverCheckId').click(function () {
+jQuery('#waiverCheckId').click(function () {
     let isChecked = $('#waiverCheckId').is(':checked');
     if (isChecked == true) {
         $('#waiverDivId').show();
@@ -106,7 +110,7 @@ $('#waiverCheckId').click(function () {
 });
 
 //Code for Attachement Enable or Disable
-$('#attachmentCheckId').click(function () {
+jQuery('#attachmentCheckId').click(function () {
     let isChecked = $('#attachmentCheckId').is(':checked');
     if (isChecked == true) {
         $('#docAttachId').attr('disabled', false);
@@ -118,7 +122,7 @@ $('#attachmentCheckId').click(function () {
 });
 
 //Code for Fee Head Select Chekbox
-$('.feeHeadIdCheckbox').change(function () {
+jQuery('.feeHeadIdCheckbox').change(function () {
     let isChecked = $(this).is(':checked');
     if (isChecked) {
         $(this).next().attr('disabled', false);
@@ -146,7 +150,7 @@ let mkdate = function (dateObject) {
 };
 
 //Modal Code for Payment Slip
-$('.modalViewId').click(function () {
+jQuery('.modalViewId').click(function () {
     
     let receiptNo = $(this).data('receipt');
     let getData = $(this).data('paiddate');
@@ -171,12 +175,10 @@ $('.modalViewId').click(function () {
 
 });
 
-function GetTotalPayment(amount, howTimes) {
-    var total = amount * howTimes;
-    return total;
-}
-
-
+//function GetTotalPayment(amount, howTimes) {
+//    var total = amount * howTimes;
+//    return total;
+//}
 
 var a = ['', 'one ', 'two ', 'three ', 'four ', 'five ', 'six ', 'seven ', 'eight ', 'nine ', 'ten ', 'eleven ', 'twelve ', 'thirteen ', 'fourteen ', 'fifteen ', 'sixteen ', 'seventeen ', 'eighteen ', 'nineteen '];
 var b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
@@ -193,7 +195,7 @@ function inWords(num) {
     return str;
 }
 
-$(function () {
+jQuery(function () {
 
     $('#howManyTimes').multiselect({
         includeSelectAllOption: true
@@ -204,6 +206,26 @@ $(function () {
     });
 });
 
-function editBtnClick(paymentDetailId) {
+jQuery('.editBtn').click(function () {
+    alert($(this).data('id'));
+    let paymentDetailId = $(this).data('id');
+    $.ajax({
+        url: '/StudentPaymentDetails/GetPaymentDetailById',
+        type: 'GET',
+        dataType: 'json',
+        data: { paymentDetailId: paymentDetailId },
+        success: function (data) {
+            console.log(data);
+            $('#StudentPayment_ReceiptNo').val(data.studentPayment.receiptNo);
+            $('#StudentPayment_PaidDate').val(data.studentPayment.paidDate.substring(0, 10));
+            $('#StudentPayment_StudentPaymentDetails_0__StudentFeeHeadId').val(data.studentFeeHeadId);
+            $('#StudentPayment_TotalPayment').val(data.studentPayment.totalPayment);
+            $('#StudentPayment_Remarks').val(data.studentPayment.remarks);
+            $('#submitBtn').val('Update');
 
-}
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log(textStatus + ': ' + errorThrown);
+        }
+    });
+});

@@ -98,6 +98,14 @@
                     <dd class="col-sm-8 col-8">
                         @Html.DisplayFor(model => model.Student.ClassRoll)
                     </dd>
+                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
+                        Admission Date
+                    </dt>
+                    <dd class="col-sm-8 col-8">
+                        @Model.Student.AdmissionDate.ToString("dd MMM yyyy")
+                    </dd>
+
+
                 </dl>
             </div>
         </div>
@@ -237,16 +245,15 @@
                         <h2>This is for academic information</h2>
                     </div>
 
-
                     <div id="financials" class="tab-pane" role="tabpanel">
                         <div class="row">
-                            <div class="col-md-12 alert alert-warning">
+                            <div class="col-md-12 alert bg-info">
                                 <div class="col-md-6 text-left">
-                                    <h5 class="h5">Current Due Amount: <span class="text-danger">2200tk</span></h5>
-                                    <h5 class="h5">Total Due Amount: <span class="text-danger">2200tk</span></h5>
+                                    <h5 class="h5 text-light">Current Due Amount : <span class="text-warning font-weight-bolder">@Model.CurrentDue tk</span></h5>
+                                    <h5 class="h5 text-light">Total Due Amount : <span class="text-warning font-weight-bolder">@Model.TotalDue tk</span></h5>
                                 </div>
                                 <div class="col-md-6 text-right">
-                                    <a asp-action="Payment" asp-controller="StudentPayments" asp-route-stRoll="@Model.Student.ClassRoll" class="btn btn-info">Make Payment</a>
+                                    <a asp-action="Payment" asp-controller="StudentPayments" asp-route-stRoll="@Model.Student.ClassRoll" class="btn btn-warning">Make Payment</a>
                                 </div>
                             </div>
                         </div>
@@ -284,8 +291,8 @@
                                                            <td class="text-right">@payment.TotalPayment</td>
                                                            <td>@payment.Remarks</td>
                                                            <td>
-                                                                <i class="fas fa-edit fa-lg"></i>
-                                                                <i class="fa-solid fa-receipt fa-lg"></i>
+                                                                @*<i class="fas fa-edit fa-lg"></i>
+                                                                <i class="fa-solid fa-receipt fa-lg"></i>*@
                                                            </td>
                                                        </tr> 
                                                     }
@@ -309,7 +316,12 @@
                                         </div>
                                     </div>
                                 </div>
-                        </div>
+                            </div>
+                            <div class="col-md-2" style="display:flex;flex-direction:column;justify-content:center">
+                                <div >
+                                    <button class="btn btn-warning"><span class="fa fa-sticky-note"></span> Get Report</button>
+                                </div>
+                            </div>
                     </div>
                     </div>
                     <div id="attendance" class="tab-pane">

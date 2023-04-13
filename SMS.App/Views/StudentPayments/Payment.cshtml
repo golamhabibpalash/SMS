@@ -181,7 +181,7 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-form-label text-right">Payment For </label>
                             <div class="col-md-5 col-lg-4 col-sm-6 col-xs-10">
-                                <select class="form-control" asp-items="@ViewBag.FeeList" asp-for="StudentPayment.StudentPaymentDetails[0].StudentFeeHeadId">
+                                <select class="form-control" asp-items="ViewBag.FeeList" asp-for="StudentPayment.StudentPaymentDetails[0].StudentFeeHeadId">
                                     <option selected disabled>Select Payment</option>
                                 </select>
                             </div>
@@ -204,7 +204,7 @@
                                 <input type="hidden" id="academicClassId" value="@Model.StudentPayment.Student.AcademicClassId" />
                             </div>
 
-                            
+
                         </div>
 
                         <div class="form-group row">
@@ -225,7 +225,7 @@
                         </div>
                         <div class="form-group row">
                             <div class="col-md-9 offset-md-3 text-md-left">
-                                <input type="submit" class="btn btn-light" value="Submit" />
+                                <input type="submit" class="btn btn-light" value="Submit" id="submitBtn" />
                             </div>
                         </div>
                     </div>
@@ -285,9 +285,7 @@
                                             <button data-studentName="@item.Student.Name" data-academicClass="@item.Student.AcademicClass.Name" data-classRoll="@item.Student.ClassRoll" data-academicSession="@item.Student.AcademicSession.Name" data-paidDate="@item.PaidDate.ToString()" data-receipt="@payDetail.StudentPayment.ReceiptNo" data-amount="@payDetail.StudentPayment.TotalPayment" data-paymentType="@payDetail.StudentFeeHead.Name" type="button" class="btn btn-light btn-outline-info btn-sm modalViewId" data-toggle="modal" data-target="#exampleModalCenter" id="modalViewId_">
                                                 View
                                             </button>
-                                            <button class="btn btn-info btn-sm" onclick="editBtnClick(@payDetail.Id)">
-                                                Edit
-                                            </button>
+                                            <a class="btn btn-sm btn-info btn-outline-light" asp-action="Edit" asp-controller="StudentPayments" asp-route-id="@item.Id">Edit</a>
                                         </div>
                                     </td>
                                 }
@@ -393,13 +391,12 @@
                 searchResultLimit: 5,
                 renderChoiceLimit: 5
             });
-
-
         });
-
     </script>
-
-
+    <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
+    <script>
+        let created = '@TempData["created"]';
+    </script>
 
     <script src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.js"></script>
     <script src="~/js/StudentPayments/Payment.js"></script>

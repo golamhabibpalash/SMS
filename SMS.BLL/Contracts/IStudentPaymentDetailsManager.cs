@@ -10,6 +10,6 @@ namespace SMS.BLL.Contracts
 {
     public interface IStudentPaymentDetailsManager : IManager<StudentPaymentDetails>
     {
-        
+        Task<List<StudentPaymentDetails>> GetAllByPaymentId(int studentPaymentId);
     }
 }

@@ -81,6 +81,13 @@ namespace SMS.DB
             builder.Entity<AttendanceVM>(entity => entity.HasNoKey());
             builder.Entity<StudentPaymentSummeryVM>(entity => entity.HasNoKey());
             builder.Entity<RptStudentVM>().ToView(nameof(RptStudentVMs)).HasNoKey();
+
+            //builder.Entity<StudentPayment>()
+            //    .HasMany(p => p.StudentPaymentDetails)
+            //    .WithOne(p => p.StudentPayment)
+            //    .HasForeignKey(p => p.StudentPayment.Id)
+            //    .OnDelete(DeleteBehavior.Cascade);
+
         }
         
     }

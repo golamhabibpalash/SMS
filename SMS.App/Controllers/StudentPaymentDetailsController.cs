@@ -201,10 +201,10 @@ namespace SMS.App.Controllers
             }
         }
 
-        public async Task<IActionResult> GetPaymentDetailById(int paymentDetailId)
+        public async Task<JsonResult> GetPaymentDetailById(int paymentDetailId)
         {
            StudentPaymentDetails studentPaymentDetails = await _studentPaymentDetailManager.GetByIdAsync(paymentDetailId);
-           return (IActionResult)studentPaymentDetails;
+           return Json(studentPaymentDetails);
         }
     }
 }

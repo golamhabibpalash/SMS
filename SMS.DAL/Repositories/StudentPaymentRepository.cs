@@ -14,9 +14,10 @@ namespace SMS.DAL.Repositories
 {
     public class StudentPaymentRepository : Repository<StudentPayment>, IStudentPaymentRepository
     {
+        private readonly new ApplicationDbContext _context;
         public StudentPaymentRepository(ApplicationDbContext db) : base(db)
         {
-
+            _context=db;
         }
         public override async Task<IReadOnlyCollection<StudentPayment>> GetAllAsync()
         {
@@ -89,5 +90,21 @@ namespace SMS.DAL.Repositories
             
             return payments;
         }
+        public override async Task<StudentPayment> GetByIdAsync(int id)
+        {
+            StudentPayment existingStudentPayment = await _context.StudentPayment
+                .Include(s => s.Student)
+                .Include(s => s.StudentPaymentDetails)
+                    .ThenInclude(d => d.StudentFeeHead)
+                .Where(s => s.Id == id).FirstOrDefaultAsync();
+
+            return existingStudentPayment;
+        }
+
+        //public override async Task<bool> UpdateAsync(StudentPayment entity)
+        //{
+
+        //    return base.UpdateAsync(entity);
+        //}
     }
 }

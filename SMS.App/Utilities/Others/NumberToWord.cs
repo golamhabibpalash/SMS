@@ -2,40 +2,69 @@
 
 namespace SMS.App.Utilities.Others
 {
-    public class NumberToWord
+    public static class NumberToWords
     {
-        string[] single = { "", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty" };
-        string[] decades = { "", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety" };
-        string[] edges = { "hundred", "thousand", "lakh", "crore" };
-        public string GetWordFromNumber(int number)
-        {
-            if (number>0)
-            {
-                #region Single Number Formation
-                if (number.ToString().Length > 0 && number.ToString().Length < 2)
-                {
-                    return single[number];
-                }
-                #endregion
+        private static String[] units = { "Zero", "One", "Two", "Three",
+    "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven",
+    "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen",
+    "Seventeen", "Eighteen", "Nineteen" };
+        private static String[] tens = { "", "", "Twenty", "Thirty", "Forty",
+    "Fifty", "Sixty", "Seventy", "Eighty", "Ninety" };
 
-                #region Double Number Formation
-                if (number.ToString().Length > 1 && number.ToString().Length < 3)
+        public static String ConvertAmount(double amount)
+        {
+            try
+            {
+                Int64 amount_int = (Int64)amount;
+                Int64 amount_dec = (Int64)Math.Round((amount - (double)(amount_int)) * 100);
+                if (amount_dec == 0)
                 {
-                    if (number <= 20)
-                    {
-                        return single[number];
-                    }
-                    else
-                    {
-                        string myNum = number.ToString();
-                        string decade = decades[Convert.ToInt32(myNum.Substring(0, 1))];
-                        string sNumber = single[Convert.ToInt32(myNum.Substring(1, 1))];
-                        return decade + " " + sNumber;
-                    }
+                    return Convert(amount_int) + " Only.";
                 }
-                #endregion
+                else
+                {
+                    return Convert(amount_int) + " Point " + Convert(amount_dec) + " Only.";
+                }
             }
-            return number.ToString();
+            catch (Exception e)
+            {
+                // TODO: handle exception  
+            }
+            return "";
+        }
+
+        public static String Convert(Int64 i)
+        {
+            if (i < 20)
+            {
+                return units[i];
+            }
+            if (i < 100)
+            {
+                return tens[i / 10] + ((i % 10 > 0) ? " " + Convert(i % 10) : "");
+            }
+            if (i < 1000)
+            {
+                return units[i / 100] + " Hundred"
+                        + ((i % 100 > 0) ? " And " + Convert(i % 100) : "");
+            }
+            if (i < 100000)
+            {
+                return Convert(i / 1000) + " Thousand "
+                        + ((i % 1000 > 0) ? " " + Convert(i % 1000) : "");
+            }
+            if (i < 10000000)
+            {
+                return Convert(i / 100000) + " Lakh "
+                        + ((i % 100000 > 0) ? " " + Convert(i % 100000) : "");
+            }
+            if (i < 1000000000)
+            {
+                return Convert(i / 10000000) + " Crore "
+                        + ((i % 10000000 > 0) ? " " + Convert(i % 10000000) : "");
+            }
+            return Convert(i / 1000000000) + " Arab "
+                    + ((i % 1000000000 > 0) ? " " + Convert(i % 1000000000) : "");
         }
     }
 }

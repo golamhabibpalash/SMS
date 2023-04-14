@@ -17,6 +17,17 @@ namespace SMS.DAL.Repositories.Reports
         {
             _context = context;
         }
+
+        public async Task<List<rptStudentPaymentsVM>> GetStudentPaymentsByRoll(int classRoll)
+        {
+            string query = "exec sp_Get_Payments_by_Roll "+classRoll;
+            List<rptStudentPaymentsVM> rptStudentPaymentsVMs = null;
+
+            var result = await _context.RptStudentPaymetnsVMs.FromSqlRaw(query).ToListAsync();
+            rptStudentPaymentsVMs = result;
+            return rptStudentPaymentsVMs;
+        }
+
         public async Task<List<RptStudentVM>> getStudentsInfo()
         {
             string query = @"select r.ClassRoll, r.StudentName,r.ClassName,r.SectionName,r.SessionName,r.FatherName,r.MotherName,r.GuardianPhone,r.PhoneNo,r.BloodGroup,r.Gender,r.Religion,Case r.Status when 1 then 'Active' else 'Inactive' end Status from vw_rpt_student_info r";

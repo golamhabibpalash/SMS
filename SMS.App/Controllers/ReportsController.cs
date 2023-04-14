@@ -2,20 +2,20 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Reporting.NETCore;
+using SMS.App.Utilities.Others;
 using SMS.App.ViewModels.AttendanceVM;
 using SMS.App.ViewModels.ReportVM;
 using SMS.BLL.Contracts;
 using SMS.BLL.Contracts.Reports;
 using SMS.Entities;
-using Syncfusion.Pdf.Lists;
+using Syncfusion.XlsIO.Implementation.PivotAnalysis;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Net.Mime;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
@@ -30,7 +30,8 @@ namespace SMS.App.Controllers
         private readonly IOffDayManager _OffDayManager;
         private readonly IAcademicSessionManager _academicSessionManager;
         private readonly IAcademicSectionManager _academicSectionManager;
-        public ReportsController(IWebHostEnvironment host, IStudentManager studentManager, IReportManager reportManager, IAcademicClassManager academicClassManager, IAttendanceMachineManager attendanceMachineManager, IOffDayManager dayManager, IAcademicSessionManager academicSessionManager, IAcademicSectionManager academicSectionManager)
+        private readonly IInstituteManager _instituteManager;
+        public ReportsController(IWebHostEnvironment host, IStudentManager studentManager, IReportManager reportManager, IAcademicClassManager academicClassManager, IAttendanceMachineManager attendanceMachineManager, IOffDayManager dayManager, IAcademicSessionManager academicSessionManager, IAcademicSectionManager academicSectionManager, IInstituteManager instituteManager)
         {
             _host = host;
             _studentManager = studentManager;
@@ -40,6 +41,7 @@ namespace SMS.App.Controllers
             _OffDayManager = dayManager;
             _academicSessionManager = academicSessionManager;
             _academicSectionManager = academicSectionManager;
+            _instituteManager = instituteManager;
         }
         #region Student List Report
         public async Task<IActionResult> StudentsReport()
@@ -70,15 +72,15 @@ namespace SMS.App.Controllers
             var path = _host.WebRootPath + "\\Reports\\rptStudent.rdlc";
             Dictionary<string, string> parameters = new();
             //parameters.Add("rp1", "Welcome to RDLC Reporting");
-            LocalReport localReport = new(path);
+            AspNetCore.Reporting.LocalReport localReport = new(path);
             //List<RptStudentVM> studentVMs = new List<RptStudentVM>();
             
-            var studens = await _reportManager.getStudentsInfo();
+            var studens = await _reportManager.GetStudentsInfo();
             localReport.AddDataSource("DataSet1", studens);
             var result = localReport.Execute(renderType, 1, parameters);
             if (!string.IsNullOrEmpty(fileName))
             {
-            return File(result.MainStream,MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
+                return File(result.MainStream,MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
             }
             return File(result.MainStream, "Application/pdf");
         }
@@ -214,10 +216,10 @@ namespace SMS.App.Controllers
             var path = _host.WebRootPath + "\\Reports\\rptMarkSheet.rdlc";
             Dictionary<string, string> parameters = new();
             //parameters.Add("rp1", "Welcome to RDLC Reporting");
-            LocalReport localReport = new(path);
+            AspNetCore.Reporting.LocalReport localReport = new(path);
             //List<RptStudentVM> studentVMs = new List<RptStudentVM>();
 
-            var studens = await _reportManager.getStudentsInfo();
+            var studens = await _reportManager.GetStudentsInfo();
             localReport.AddDataSource("DataSet1", studens);
             var result = localReport.Execute(renderType, 1, parameters);
             if (!string.IsNullOrEmpty(fileName))
@@ -227,6 +229,43 @@ namespace SMS.App.Controllers
             return File(result.MainStream, "Application/pdf");
         }
 
+        public async Task<IActionResult> StudentPaymentInfoExport(string reportType,string fileName,int classRoll)
+        {
+            RenderType renderType = RenderType.Pdf;
+            renderType = !string.IsNullOrEmpty(reportType) ? GetRenderType(reportType) : renderType;
+            var path = _host.WebRootPath + "\\Reports\\rptStudentPaymentFullInfo.rdlc";
+            Dictionary<string, string> parameters = new();
+
+            AspNetCore.Reporting.LocalReport localReport = new(path);
+            //List<RptStudentVM> studentVMs = new List<RptStudentVM>();
+
+            Student student = await _studentManager.GetStudentByClassRollAsync(classRoll);
+            Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
+
+            parameters.Add("InstituteName", institute.Name);
+            parameters.Add("InstituteAddress", institute.Address);
+            parameters.Add("StudentName", student.Name);
+            parameters.Add("ClassName",student.AcademicClass.Name);
+            parameters.Add("Session", student.AcademicSession.Name);
+            parameters.Add("RptDate",DateTime.Today.ToString("dd MMM yyyy"));
+            parameters.Add("RptName", "Payments Summary Report");
+            parameters.Add("ClassRoll", classRoll.ToString());
+
+            var studentPayments = await _reportManager.GetStudentPaymentsByRoll(classRoll);
+            double totalPaid = studentPayments.Sum(s => s.TotalPayment);
+            string numberToWord = NumberToWords.ConvertAmount(totalPaid);
+            parameters.Add("AmountInWord", numberToWord);
+
+
+            localReport.AddDataSource("DataSet1", studentPayments);
+
+            var result = localReport.Execute(renderType, 1, parameters);
+            if (!string.IsNullOrEmpty(fileName))
+            {
+                return File(result.MainStream, MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
+            }
+            return File(result.MainStream, "Application/pdf");
+        }
 
 
         private static RenderType GetRenderType(string reportType)

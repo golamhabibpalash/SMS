@@ -11,12 +11,18 @@ namespace SMS.BLL.Managers.Reports
 {
     public class ReportManager : IReportManager
     {
-        private IReportRepository _reportRepository;
+        private readonly IReportRepository _reportRepository;
         public ReportManager(IReportRepository reportRepository)
         {
             _reportRepository = reportRepository;
         }
-        public async Task<List<RptStudentVM>> getStudentsInfo()
+
+        public async Task<List<rptStudentPaymentsVM>> GetStudentPaymentsByRoll(int classRoll)
+        {
+           return await _reportRepository.GetStudentPaymentsByRoll(classRoll);
+        }
+
+        public async Task<List<RptStudentVM>> GetStudentsInfo()
         {
             return await _reportRepository.getStudentsInfo();
         }

@@ -75,12 +75,16 @@ namespace SMS.DB
         [NotMapped]
         public DbSet<StudentPaymentSummeryVM> StudentPaymentSummeryVMs { get; set; }
 
+        [NotMapped]
+        public DbSet<rptStudentPaymentsVM> RptStudentPaymetnsVMs { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
             builder.Entity<AttendanceVM>(entity => entity.HasNoKey());
             builder.Entity<StudentPaymentSummeryVM>(entity => entity.HasNoKey());
             builder.Entity<RptStudentVM>().ToView(nameof(RptStudentVMs)).HasNoKey();
+            builder.Entity<rptStudentPaymentsVM>().ToView(nameof(RptStudentPaymetnsVMs)).HasNoKey();
 
             //builder.Entity<StudentPayment>()
             //    .HasMany(p => p.StudentPaymentDetails)

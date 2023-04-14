@@ -1,15 +1,12 @@
-﻿using SMS.BLL.Contracts.Base;
-using SMS.Entities.RptModels;
-using System;
+﻿using SMS.Entities.RptModels;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SMS.BLL.Contracts.Reports
 {
     public interface IReportManager
     {
-        Task<List<RptStudentVM>> getStudentsInfo();
+        Task<List<RptStudentVM>> GetStudentsInfo();
+        Task<List<rptStudentPaymentsVM>> GetStudentPaymentsByRoll(int classRoll);
     }
 }

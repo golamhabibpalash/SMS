@@ -10,5 +10,6 @@ namespace SMS.DAL.Contracts.Reports
     public interface IReportRepository
     {
         Task<List<RptStudentVM>> getStudentsInfo();
+        Task<List<rptStudentPaymentsVM>> GetStudentPaymentsByRoll(int classRoll);
     }
 }

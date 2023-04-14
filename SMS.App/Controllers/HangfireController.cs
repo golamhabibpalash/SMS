@@ -68,19 +68,23 @@ namespace SMS.App.Controllers
             {
                 if (setupMobileSMS.CheckInSMSSummary)
                 {
-                    RecurringJob.AddOrUpdate(() => SMSSendDailyAttendanceSummary(), "0 0 10 * * SAT-THU", TimeZoneInfo.Local);
+                    RecurringJob.AddOrUpdate(() => SMSSendDailyAttendanceSummary(), "1 10 * * 6-4", TimeZoneInfo.Local);
+                    //At 10:01 AM, Saturday through Thursday
                 }
                 if (setupMobileSMS.CheckInSMSService)
                 {
-                    RecurringJob.AddOrUpdate(() => SendCheckInSMS(), "*/10 8-10 * * SAT-THU", TimeZoneInfo.Local);
+                    RecurringJob.AddOrUpdate(() => SendCheckInSMS(), "*/10 8-9 * * 6-4", TimeZoneInfo.Local); 
+                    //Every 10 minutes, between 08:00 AM and 09:59 AM, Saturday through Thursday
                 }
                 if (setupMobileSMS.CheckOutSMSService)
                 {
-                    RecurringJob.AddOrUpdate(() => SendCheckOutSMS(), "*/10 12-15 * * sat-thu", TimeZoneInfo.Local);
+                    RecurringJob.AddOrUpdate(() => SendCheckOutSMS(), "*/10 12-15 * * 6-4", TimeZoneInfo.Local);
+                    //Every 10 minutes, between 12:00 PM and 03:59 PM, Saturday through Thursday
                 }
                 if (setupMobileSMS.AbsentNotification)
                 {
-                    RecurringJob.AddOrUpdate(() => SendAbsentNotificationSMS(), "0 15 10 * * SAT-THU", TimeZoneInfo.Local);
+                    RecurringJob.AddOrUpdate(() => SendAbsentNotificationSMS(), "1 0 10 * * 6-4", TimeZoneInfo.Local);
+                    //At 10:00:01 AM, Saturday through Thursday
                 }
             }
             return RedirectToAction("Index", "Home");

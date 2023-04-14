@@ -319,7 +319,9 @@
                             </div>
                             <div class="col-md-2" style="display:flex;flex-direction:column;justify-content:center">
                                 <div >
-                                    <button class="btn btn-warning"><span class="fa fa-sticky-note"></span> Get Report</button>
+                                    <a class="btn btn-warning p-4 font-weight-bolder text-info btn-outline-light" asp-action="StudentPaymentInfoExport" asp-controller="Reports" asp-route-reportType="pdf" asp-route-fileName="Student Payment Report" asp-route-classRoll="@Model.Student.ClassRoll" target="_blank">
+                                        <span class="fa fa-file"></span> Get Report
+                                    </a>
                                 </div>
                             </div>
                     </div>

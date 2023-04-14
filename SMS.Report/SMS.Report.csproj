@@ -23,6 +23,36 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>rptStudentDS.xsd</DependentUpon>
     </Compile>
+    <Compile Update="DS\rptStudentPaymentFullInfo.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>rptStudentPaymentFullInfo.xsd</DependentUpon>
+    </Compile>
+    <Compile Update="rpt_Payment_Info.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>rpt_Payment_Info.xsd</DependentUpon>
+    </Compile>
+    <Compile Update="SMSDBDataSet.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SMSDBDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Update="SMSDBDataSet1.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SMSDBDataSet1.xsd</DependentUpon>
+    </Compile>
+    <Compile Update="SMSDBDataSet2.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SMSDBDataSet2.xsd</DependentUpon>
+    </Compile>
+    <Compile Update="StudentPayments.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>StudentPayments.xsd</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -34,8 +64,32 @@
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>rptStudentDS.Designer.cs</LastGenOutput>
     </None>
+    <None Update="DS\rptStudentPaymentFullInfo.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>rptStudentPaymentFullInfo.Designer.cs</LastGenOutput>
+    </None>
     <None Update="Reports\rptStudent.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="rpt_Payment_Info.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>rpt_Payment_Info.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="SMSDBDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>SMSDBDataSet.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="SMSDBDataSet1.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>SMSDBDataSet1.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="SMSDBDataSet2.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>SMSDBDataSet2.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="StudentPayments.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>StudentPayments.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
 

@@ -29,6 +29,7 @@
   <ItemGroup>
     <Content Remove="wwwroot\Reports\rptMarkSheet.rdlc" />
     <Content Remove="wwwroot\Reports\rptStudent1.rdlc" />
+    <Content Remove="wwwroot\Reports\rptStudentPaymentFullInfo.rdlc" />
   </ItemGroup>
 
   <ItemGroup>
@@ -81,6 +82,7 @@
     <None Include="wwwroot\lib\MultiSelect\js\prettify.min.js" />
     <None Include="wwwroot\lib\MultiSelect\js\require-2.3.5.min.js" />
     <None Include="wwwroot\Reports\rptMarkSheet.rdlc" />
+    <None Include="wwwroot\Reports\rptStudentPaymentFullInfo.rdlc" />
   </ItemGroup>
 
   <ItemGroup>

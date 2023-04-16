@@ -3,7 +3,7 @@
     Layout = "~/Views/Shared/_StudentLayout.cshtml";
 }
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-12 m-2">
         @if (ViewBag.activeStatus != null)
         {
             <span class="alert alert-warning">@ViewBag.activeStatus</span>
@@ -23,7 +23,7 @@
     </div>
 </div>
 <hr />
-<div class="row">
+<div class="row text-light">
     <div class="col-md-3">
         <div class="card bg-info">
             <div class="card-header">Todays Exam</div>

@@ -125,12 +125,21 @@ namespace SchoolManagementSystem.Controllers
 
         #region Details
         // GET: Students/Details/5
-        [AllowAnonymous]
+        [Authorize,AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
-        {
+        {            
             if (id == null)
             {
                 return NotFound();
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user.UserType == 's')
+            {
+                if (user.ReferenceId != id)
+                {
+                    return RedirectToAction("AccessDenied", "Accounts");
+                }
             }
 
             var student =await _studentManager.GetByIdAsync((int)id);
@@ -462,6 +471,16 @@ namespace SchoolManagementSystem.Controllers
         [Authorize, AllowAnonymous]
         public async Task<IActionResult> Profile(int id)
         {
+
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user.UserType == 's')
+            {
+                if (user.ReferenceId != id)
+                {
+                    return RedirectToAction("AccessDenied", "Accounts");
+                }
+            }
             var student = await _studentManager.GetByIdAsync(id);
             if (student.Status == true)
             {
@@ -628,7 +647,6 @@ namespace SchoolManagementSystem.Controllers
             double totalAmount = ((DateTime.Now.Month - (admissionMonth - 1)) * monthlyFee) + admissionFee;
             double totalPaid = await GetTotalPaid(st.Id);
             double totalDue = totalAmount - totalPaid;
-            totalDue = totalDue >= 0 ? totalDue : 0;
             return totalDue;
         }
         private async Task<double> GetFeeAsync(int aClassId, int feeHeadId)

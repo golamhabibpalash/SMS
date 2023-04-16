@@ -35,18 +35,6 @@
                 userImage = "/Images/noProfileImage.png";
             }
         }
-        if (user.UserType == 'e')
-        {
-            var emp = await _employeeManager.GetByIdAsync(user.ReferenceId);
-            if (emp.Image != null)
-            {
-                userImage = "/Images/Employee/Photo/" + emp.Image;
-            }
-            else
-            {
-                userImage = "/Images/noProfileImage.png";
-            }
-        }
     }
 }
 
@@ -70,8 +58,10 @@
 
     <!-- Bootstrap -->
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <!-- Font Awesome -->
-    <link href="~/lib/Theme/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+
+    <!-- Font Awesome -->\
+    <link href="~/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+
     <!-- NProgress -->
     <link href="~/lib/Theme/css/nprogress.css" rel="stylesheet" />
 

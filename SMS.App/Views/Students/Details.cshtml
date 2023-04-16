@@ -5,7 +5,7 @@
 
 @inject UserManager<ApplicationUser> _userManager;
 
-@{ 
+@{
     var user = await _userManager.GetUserAsync(User);
     if (user.UserType == 's')
     {
@@ -30,12 +30,13 @@
     //int paymentSL = 1;
 
 }
-@section Styles{ 
-<style>
-    .table th, .table td {
-        padding: 0.25rem;
-    }
-</style>
+@section Styles{
+    <style>
+        .table th, .table td
+        {
+            padding: 0.25rem;
+        }
+    </style>
 }
 
 <div class="row p-2">
@@ -56,33 +57,33 @@
             <div class="col-md-12">
                 <dl class="row p-2">
                     <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
-                        Name
+                        Name :
                     </dt>
-                    <dd class="col-sm-8 col-8">
+                    <dd class="col-sm-8 col-8 border-bottom">
                         @Html.DisplayFor(model => model.Student.Name)
                     </dd>
                     <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
-                        নাম (বাংলা)
+                        নাম (বাংলা) :
                     </dt>
-                    <dd class="col-sm-8 col-8">
+                    <dd class="col-sm-8 col-8 border-bottom">
                         @Html.DisplayFor(model => model.Student.NameBangla)
                     </dd>
                     <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
-                        Session
+                        Session :
                     </dt>
-                    <dd class="col-sm-8 col-8">
+                    <dd class="col-sm-8 col-8 border-bottom">
                         @Html.DisplayFor(model => model.Student.AcademicSession.Name)
                     </dd>
                     <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
-                        Class
+                        Class :
                     </dt>
-                    <dd class="col-sm-8 col-8">
+                    <dd class="col-sm-8 col-8 border-bottom">
                         @Html.DisplayFor(model => model.Student.AcademicClass.Name)
                     </dd>
                     <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
-                        Section
+                        Section :
                     </dt>
-                    <dd class="col-sm-8 col-8">
+                    <dd class="col-sm-8 col-8 border-bottom">
                         @if (Model.Student.AcademicSectionId != null)
                         {
                             @Html.DisplayFor(model => model.Student.AcademicSection.Name)
@@ -93,19 +94,17 @@
                         }
                     </dd>
                     <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
-                        Roll
+                        Roll :
                     </dt>
-                    <dd class="col-sm-8 col-8">
+                    <dd class="col-sm-8 col-8 border-bottom">
                         @Html.DisplayFor(model => model.Student.ClassRoll)
                     </dd>
                     <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
-                        Admission Date
+                        Admission Date :
                     </dt>
-                    <dd class="col-sm-8 col-8">
+                    <dd class="col-sm-8 col-8 border-bottom">
                         @Model.Student.AdmissionDate.ToString("dd MMM yyyy")
                     </dd>
-
-
                 </dl>
             </div>
         </div>
@@ -227,7 +226,6 @@
                                     <td>Permanent Address</td>
                                     <td>:</td>
                                     <td>Vill/Area - @Model.Student.PermanentAddressArea, Post Office - @Model.Student.PermanentAddressPO, Polic Station - @Model.Student.PermanentUpazila.Name, @Model.Student.PermanentDistrict.Name</td>
-                                    @*<td>Vill/Area - @Model.Student.PermanentAddressArea, Post Office - @Model.Student.PermanentAddressPO, Polic Station - @Model.Student.PermanentUpazila.Name, @Model.Student.PresentDistrict.Name, @Model.Student.PresentDivision.Name</td>*@
                                 </tr>
                                 @if (!string.IsNullOrEmpty(Model.Student.AddressInfo))
                                 {
@@ -279,35 +277,36 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach (var payment in Model.StudentPayments.OrderBy(d=>d.PaidDate))
+                                                @foreach (var payment in Model.StudentPayments.OrderBy(d => d.PaidDate))
                                                 {
                                                     foreach (var pDetails in payment.StudentPaymentDetails)
                                                     {
-                                                       <tr>
-                                                           <td>@(++paySL)</td>
-                                                           <td>@payment.ReceiptNo</td>
-                                                           <td>@pDetails.StudentFeeHead.Name</td>
-                                                           <td>@payment.PaidDate.ToString("dd MMM yyyy")</td>
-                                                           <td class="text-right">@payment.TotalPayment</td>
-                                                           <td>@payment.Remarks</td>
-                                                           <td>
+                                                        <tr>
+                                                            <td>@(++paySL)</td>
+                                                            <td>@payment.ReceiptNo</td>
+                                                            <td>@pDetails.StudentFeeHead.Name</td>
+                                                            <td>@payment.PaidDate.ToString("dd MMM yyyy")</td>
+                                                            <td class="text-right">@payment.TotalPayment</td>
+                                                            <td>@payment.Remarks</td>
+                                                            <td>
                                                                 @*<i class="fas fa-edit fa-lg"></i>
-                                                                <i class="fa-solid fa-receipt fa-lg"></i>*@
-                                                           </td>
-                                                       </tr> 
+                                                                    <i class="fa-solid fa-receipt fa-lg"></i>*@
+                                                            </td>
+                                                        </tr>
+
                                                     }
-                                                    
+
                                                     totalPaid += payment.TotalPayment;
                                                 }
                                             </tbody>
-                                           <tfoot class="bg-blue-sky">
-                                               <tr>
-                                                   <td colspan="4" class="text-right">Total Paid</td>
-                                                   
-                                                   <td class="text-right font-weight-bolder">@totalPaid</td>
-                                                   <td colspan="2" class="text-left">Tk</td>
-                                               </tr>
-                                           </tfoot>
+                                            <tfoot class="bg-blue-sky">
+                                                <tr>
+                                                    <td colspan="4" class="text-right">Total Paid</td>
+
+                                                    <td class="text-right font-weight-bolder">@totalPaid</td>
+                                                    <td colspan="2" class="text-left">Tk</td>
+                                                </tr>
+                                            </tfoot>
                                         </table>
                                     </div>
                                     <div class="card-footer">
@@ -318,16 +317,25 @@
                                 </div>
                             </div>
                             <div class="col-md-2" style="display:flex;flex-direction:column;justify-content:center">
-                                <div >
+                                <div>
                                     <a class="btn btn-warning p-4 font-weight-bolder text-info btn-outline-light" asp-action="StudentPaymentInfoExport" asp-controller="Reports" asp-route-reportType="pdf" asp-route-fileName="Student Payment Report" asp-route-classRoll="@Model.Student.ClassRoll" target="_blank">
                                         <span class="fa fa-file"></span> Get Report
                                     </a>
                                 </div>
                             </div>
-                    </div>
+                        </div>
                     </div>
                     <div id="attendance" class="tab-pane">
-                        Attendances
+                        @for (int i = 0; i < DateTime.Now.Month; i++)
+                        {
+                            <div class="col-md-3 card bg-info text-light m-2">
+                                <div class="card-header">Month @i </div>
+                                <div class="card-body">This is body part</div>
+                                <div class="card-footer">
+                                    <button class="btn btn-sm btn-default btn-outline-light">Details</button>
+                                </div>
+                            </div>
+                        }
                     </div>
                     <div id="documents" class="tab-pane">
                         All Documents will go here
@@ -347,17 +355,17 @@
         </div>
     }
 </div>
-                    
 
 
-@section Scripts{ 
-<script>
-    $(document).ready(function () {
-        
-        $('#bologna-list a').on('click', function (e) {
-            e.preventDefault()
-            $(this).tab('show')
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+            $('#bologna-list a').on('click', function (e) {
+                e.preventDefault()
+                $(this).tab('show')
+            });
         });
-    });
-</script>
+    </script>
 }

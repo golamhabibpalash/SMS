@@ -36,6 +36,11 @@
         {
             padding: 0.25rem;
         }
+
+        #academic table td:first-child
+        {
+            text-align: right
+        }
     </style>
 }
 
@@ -240,7 +245,101 @@
                         </table>
                     </div>
                     <div id="academic" class="tab-pane" role="tabpanel">
-                        <h2>This is for academic information</h2>
+                        <div>
+                            <table class="table table-responsive">
+                                <tbody class="text-left">
+                                    <tr>
+                                        <td>Name</td>
+                                        <td>:</td>
+                                        <td>@Model.Student.Name</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Name (নাম)</td>
+                                        <td>:</td>
+                                        <td>@Model.Student.NameBangla</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Session</td>
+                                        <td>:</td>
+                                        <td>@Model.Student.AcademicSession.Name</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Class</td>
+                                        <td>:</td>
+                                        <td>@Model.Student.AcademicClass.Name</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Class Roll</td>
+                                        <td>:</td>
+                                        <td>@Model.Student.ClassRoll</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Section</td>
+                                        <td>:</td>
+                                        <td>@Model.Student.AcademicSection.Name</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Admission Date</td>
+                                        <td>:</td>
+                                        <td>@Model.Student.AdmissionDate.ToString("dd MMM yyyy")</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Blood Group</td>
+                                        <td>:</td>
+                                        <td>@Model.Student.BloodGroup.Name</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Gender</td>
+                                        <td>:</td>
+                                        <td>@Model.Student.Gender.Name</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Nationality</td>
+                                        <td>:</td>
+                                        <td>@Model.Student.Nationality.Name</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Religion</td>
+                                        <td>:</td>
+                                        <td>@Model.Student.Religion.Name</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Birth Certificate</td>
+                                        <td>:</td>
+                                        @if (string.IsNullOrEmpty(Model.Student.BirthCertificateNo))
+                                        {
+                                            <td>
+                                                N/A
+                                            </td>
+ }
+                                        else
+                                        {
+                                            <td>
+                                                @Model.Student.BirthCertificateNo
+                                            </td>
+
+                                        }
+                                    </tr>
+                                    <tr>
+                                        <td>Previous School</td>
+                                        <td>:</td>
+                                        @if (string.IsNullOrEmpty(Model.Student.PreviousSchool))
+                                        {
+                                            <td>
+                                                N/A
+                                            </td>
+ }
+                                        else
+                                        {
+                                            <td>
+                                                @Model.Student.PreviousSchool
+                                            </td>
+
+                                        }
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                     <div id="financials" class="tab-pane" role="tabpanel">
@@ -330,9 +429,22 @@
                         {
                             <div class="col-md-3 card bg-info text-light m-2">
                                 <div class="card-header">Month @i </div>
-                                <div class="card-body">This is body part</div>
+                                <div class="card-body">
+                                    <table>
+                                        <tr>
+                                            <td>Attended</td>
+                                            <td>:</td>
+                                            <td>18 (24) Days</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Att. Percentage</td>
+                                            <td>:</td>
+                                            <td>79%</td>
+                                        </tr>
+                                    </table>
+                                </div>
                                 <div class="card-footer">
-                                    <button class="btn btn-sm btn-default btn-outline-light">Details</button>
+                                    <button class="btn btn-sm btn-outline-light btn-outline-light">Details</button>
                                 </div>
                             </div>
                         }

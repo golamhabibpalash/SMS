@@ -6,6 +6,7 @@ namespace SMS.App.ViewModels.ExamVM
 {
     public class AcademicExamVM
     {
+        public int Id { get; set; }
         [Display(Name = "Exam Name")]
         public string ExamName { get; set; }
         [Display(Name = "Exam Type")]

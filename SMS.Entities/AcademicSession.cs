@@ -15,5 +15,6 @@ namespace SMS.Entities
         public bool Status { get; set; }
 
         public bool CurrentSession { get; set; }
+
     }
 }

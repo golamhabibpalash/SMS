@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using SMS.App.Utilities.MACIPServices;
 using SMS.App.ViewModels.ExamVM;
 using SMS.BLL.Contracts;
+using SMS.BLL.Managers;
 using SMS.Entities;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,8 @@ namespace SMS.App.Controllers
         private readonly IAcademicSubjectManager _academicSubjectManager;
         private readonly IEmployeeManager _employeeManager;
         private readonly IMapper _mapper;
-        public AcademicExamsController(IAcademicExamManager examManager, IAcademicSessionManager sessionManager, IAcademicClassManager classManager,IAcademicExamTypeManager examTypeManager,IAcademicSubjectManager academicSubjectManager, IEmployeeManager employeeManager,IMapper mapper)
+        private readonly IAcademicSectionManager _academicSectionManager;
+        public AcademicExamsController(IAcademicExamManager examManager, IAcademicSessionManager sessionManager, IAcademicClassManager classManager,IAcademicExamTypeManager examTypeManager,IAcademicSubjectManager academicSubjectManager, IEmployeeManager employeeManager,IMapper mapper,IAcademicSectionManager academicSectionManager )
         {
             _examManager = examManager;
             _sessionManager = sessionManager;
@@ -31,6 +33,7 @@ namespace SMS.App.Controllers
             _academicSubjectManager = academicSubjectManager;
             _employeeManager = employeeManager;
             _mapper  = mapper;
+            _academicSectionManager = academicSectionManager;
         }
 
         // GET: AcademicExamsController
@@ -71,9 +74,8 @@ namespace SMS.App.Controllers
             academicExamVM.AcademicClassList = new SelectList(await _classManager.GetAllAsync(), "Id", "Name").ToList();
             academicExamVM.AcademicExamTypeList = new SelectList(await _examTypeManager.GetAllAsync(), "Id", "ExamTypeName").ToList();
             academicExamVM.AcademicSubjectList = new SelectList(await _academicSubjectManager.GetAllAsync(), "Id", "SubjectName").ToList();
+            academicExamVM.AcademicSectionList = new SelectList(await _academicSectionManager.GetAllAsync(), "Id", "Name", academicExamVM.AcademicSectionId).ToList();
             academicExamVM.TeacherList = new SelectList(emps.Where(e => e.Status == true).OrderBy(e => e.JoiningDate).ThenBy(e => e.EmployeeName), "Id", "EmployeeName").ToList();
-
-            
 
             try
             {
@@ -84,10 +86,9 @@ namespace SMS.App.Controllers
                 bool isSaved = await _examManager.AddAsync(academicExam);
                 if (isSaved)
                 {
-                    TempData["created"] = "New Exma Created Successfully";
+                    TempData["created"] = "New Exam Created Successfully";
                     return RedirectToAction(nameof(Index));
                 }
-
             }
             catch
             {
@@ -97,19 +98,51 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicExamsController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
-            return View();
+            AcademicExam aExam = await _examManager.GetByIdAsync(id);
+            
+            List<Employee> emps = (List<Employee>)await _employeeManager.GetAllAsync();
+            AcademicExamVM academicExamVM = _mapper.Map<AcademicExamVM>(aExam);
+            academicExamVM.AcademicSessionList = new SelectList(await _sessionManager.GetAllAsync(), "Id", "Name", academicExamVM.AcademicSessionId).ToList();
+            academicExamVM.AcademicClassList = new SelectList(await _classManager.GetAllAsync(), "Id", "Name", academicExamVM.AcademicClassId).ToList();
+            academicExamVM.AcademicExamTypeList = new SelectList(await _examTypeManager.GetAllAsync(), "Id", "ExamTypeName", academicExamVM.AcademicExamTypeId).ToList();
+            academicExamVM.AcademicSubjectList = new SelectList(await _academicSubjectManager.GetAllAsync(), "Id", "SubjectName", academicExamVM.AcademicSubjectId).ToList();
+            academicExamVM.AcademicSectionList = new SelectList(await _academicSectionManager.GetAllAsync(), "Id", "Name", academicExamVM.AcademicSectionId).ToList();
+            academicExamVM.TeacherList = new SelectList(emps.Where(e => e.Status == true).OrderBy(e => e.JoiningDate).ThenBy(e => e.EmployeeName), "Id", "EmployeeName").ToList();
+            return View(academicExamVM);
         }
 
         // POST: AcademicExamsController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(int id, AcademicExamVM academicExamVM)
         {
+            List<Employee> emps = (List<Employee>)await _employeeManager.GetAllAsync();
+            academicExamVM.AcademicSessionList = new SelectList(await _sessionManager.GetAllAsync(), "Id", "Name", academicExamVM.AcademicSessionId).ToList();
+            academicExamVM.AcademicClassList = new SelectList(await _classManager.GetAllAsync(), "Id", "Name", academicExamVM.AcademicClassId).ToList();
+            academicExamVM.AcademicExamTypeList = new SelectList(await _examTypeManager.GetAllAsync(), "Id", "ExamTypeName", academicExamVM.AcademicExamTypeId).ToList();
+            academicExamVM.AcademicSubjectList = new SelectList(await _academicSubjectManager.GetAllAsync(), "Id", "SubjectName", academicExamVM.AcademicSubjectId).ToList();
+            academicExamVM.TeacherList = new SelectList(emps.Where(e => e.Status == true).OrderBy(e => e.JoiningDate).ThenBy(e => e.EmployeeName), "Id", "EmployeeName").ToList();
+            academicExamVM.AcademicSectionList = new SelectList(await _academicSectionManager.GetAllAsync(), "Id", "Name", academicExamVM.AcademicSectionId).ToList();
+            if (id!=academicExamVM.Id)
+            {
+                return View(academicExamVM);
+            }
             try
             {
-                return RedirectToAction(nameof(Index));
+                AcademicExam aExam = _mapper.Map<AcademicExam>(academicExamVM);
+                aExam.EditedAt = DateTime.Now;
+                aExam.EditedBy = HttpContext.Session.GetString("UserId");
+                aExam.MACAddress = MACService.GetMAC();
+                bool isUpdated = await _examManager.UpdateAsync(aExam);
+                if (isUpdated)
+                {
+                    TempData["updated"] = "Exam Updated Successfully";
+                    return RedirectToAction(nameof(Index));
+                }
+                TempData["failed"] = "Failed to Update";
+                return View(academicExamVM);
             }
             catch
             {

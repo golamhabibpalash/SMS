@@ -1,0 +1,18 @@
+﻿@model IEnumerable<AcademicExamDetail>
+
+@{
+    ViewData["Title"] = "Add new Exam";
+    GlobalUI.PageTitle = ViewData["Title"].ToString();
+}
+<div class="row">
+    @if (Model != null)
+    {
+        <table>
+            <thead>
+                <tr>
+                    <td></td>
+                </tr>
+            </thead>
+        </table>
+    }
+</div>

@@ -12,14 +12,14 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace SMS.DAL.Repositories
 {
-    public class StudentRepository : Repository<Student>,IStudentRepository
+    public class StudentRepository : Repository<Student>, IStudentRepository
     {
-        
-        public StudentRepository(ApplicationDbContext context ) : base(context)
+
+        public StudentRepository(ApplicationDbContext context) : base(context)
         {
-           
+
         }
-        
+
         public override async Task<IReadOnlyCollection<Student>> GetAllAsync()
         {
             return await _context.Student
@@ -61,14 +61,36 @@ namespace SMS.DAL.Repositories
 
         public async Task<Student> GetStudentByClassRollAsync(int id, int classRoll)
         {
-            return await _context.Student.FirstOrDefaultAsync(s => s.Id != id && s.ClassRoll == classRoll);
+            return await _context.Student
+                .FirstOrDefaultAsync(s => s.Id != id 
+                && s.ClassRoll == classRoll);
         }
 
         public async Task<List<Student>> GetStudentsByClassIdAndSessionIdAsync(int sessionId, int classId)
         {
-            List<Student> students = await _context.Student.Where(s => s.AcademicSessionId == sessionId && s.AcademicClassId == classId).ToListAsync();
+            List<Student> students = await _context.Student
+                .Where(s => s.AcademicSessionId == sessionId 
+                && s.AcademicClassId == classId)
+                .ToListAsync();
             return students;
         }
 
+        public async Task<List<Student>> GetStudentsByClassSessionSectionAsync(int sessionId, int classId, int sectionId)
+        {
+            List<Student> students = new List<Student>();
+            if (sectionId == 0)
+            {
+                students = await _context.Student.Where(s => s.AcademicSessionId == sessionId && s.AcademicClassId == classId).ToListAsync();
+            }
+            else
+            {
+                students = await _context.Student
+                    .Where(s => s.AcademicSessionId == sessionId 
+                    && s.AcademicClassId == classId 
+                    && s.AcademicSectionId == sectionId)
+                    .ToListAsync();
+            }
+            return students;
+        }
     }
 }

@@ -184,6 +184,9 @@ builder.Services.AddScoped<IAcademicExamTypeManager, AcademicExamTypeManager>();
 builder.Services.AddScoped<IAcademicExamRepository, AcademicExamRepository>();
 builder.Services.AddScoped<IAcademicExamManager, AcademicExamManager>();
 
+builder.Services.AddScoped<IAcademicExamDetailsRepository, AcademicExamDetailsRepository>();
+builder.Services.AddScoped<IAcademicExamDetailsManager, AcademicExamDetailsManager>();
+
 //Reporting part start here===================================
 builder.Services.AddScoped<IReportManager, ReportManager>();
 builder.Services.AddScoped<IReportRepository, ReportRepository>();

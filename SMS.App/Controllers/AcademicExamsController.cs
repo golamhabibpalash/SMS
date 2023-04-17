@@ -9,6 +9,7 @@ using SMS.BLL.Managers;
 using SMS.Entities;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -24,7 +25,9 @@ namespace SMS.App.Controllers
         private readonly IEmployeeManager _employeeManager;
         private readonly IMapper _mapper;
         private readonly IAcademicSectionManager _academicSectionManager;
-        public AcademicExamsController(IAcademicExamManager examManager, IAcademicSessionManager sessionManager, IAcademicClassManager classManager,IAcademicExamTypeManager examTypeManager,IAcademicSubjectManager academicSubjectManager, IEmployeeManager employeeManager,IMapper mapper,IAcademicSectionManager academicSectionManager )
+        private readonly IStudentManager _studentManager;
+        private readonly IAcademicExamDetailsManager _academicExamDetailsManager;
+        public AcademicExamsController(IAcademicExamManager examManager, IAcademicSessionManager sessionManager, IAcademicClassManager classManager,IAcademicExamTypeManager examTypeManager,IAcademicSubjectManager academicSubjectManager, IEmployeeManager employeeManager,IMapper mapper,IAcademicSectionManager academicSectionManager, IStudentManager studentManager, IAcademicExamDetailsManager academicExamDetailsManager)
         {
             _examManager = examManager;
             _sessionManager = sessionManager;
@@ -34,6 +37,8 @@ namespace SMS.App.Controllers
             _employeeManager = employeeManager;
             _mapper  = mapper;
             _academicSectionManager = academicSectionManager;
+            _studentManager = studentManager;
+            _academicExamDetailsManager = academicExamDetailsManager;
         }
 
         // GET: AcademicExamsController
@@ -48,7 +53,17 @@ namespace SMS.App.Controllers
         public async Task<ActionResult> Details(int id)
         {
             var exam = await _examManager.GetByIdAsync(id);
-            return View(exam);
+            ExamDetailsVM examDetailsVM = new ExamDetailsVM();
+            examDetailsVM.AcademicClassId = exam.AcademicSubject.AcademicClassId;
+            examDetailsVM.AcademicExamDetails = examDetailsVM.AcademicExamDetails;
+            examDetailsVM.TotalMarks = exam.TotalMarks;
+            examDetailsVM.ExamMonth = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(exam.MonthId);
+            examDetailsVM.ExamName = exam.ExamName;
+            examDetailsVM.Teacher = exam.Employee.EmployeeName;
+            examDetailsVM.AcademicSubjectName = exam.AcademicSubject.SubjectName;
+            //examDetailsVM.AcademicSectionId = exam.academics
+
+            return View(examDetailsVM);
         }
 
         // GET: AcademicExamsController/Create
@@ -83,10 +98,34 @@ namespace SMS.App.Controllers
                 academicExam.CreatedAt = DateTime.Now;
                 academicExam.CreatedBy = HttpContext.Session.GetString("UserId");
                 academicExam.MACAddress = MACService.GetMAC();
+                
                 bool isSaved = await _examManager.AddAsync(academicExam);
                 if (isSaved)
                 {
                     TempData["created"] = "New Exam Created Successfully";
+
+                    List<Student> students = await _studentManager
+                    .GetStudentsByClassSessionSectionAsync(academicExamVM.AcademicSessionId, academicExamVM.AcademicClassId, academicExamVM.AcademicSectionId);
+                    foreach (var st in students)
+                    {
+
+                        if (st.Status == false)
+                        {
+                            continue;
+                        }
+                        AcademicExamDetail academicExamDetail = new()
+                        {
+                            AcademicExamId = academicExam.Id,
+                            ObtainMark = 0,
+                            StudentId = st.Id,
+                            Status = true,
+                            CreatedAt = DateTime.Now,
+                            CreatedBy = HttpContext.Session.GetString("UserId"),
+                            MACAddress = MACService.GetMAC()
+                        };
+                        await _academicExamDetailsManager.AddAsync(academicExamDetail);
+                    }
+
                     return RedirectToAction(nameof(Index));
                 }
             }

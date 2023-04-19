@@ -111,7 +111,6 @@ namespace SMS.App.Controllers
                             msg = "Role has been assigned to this user";
                         }
                     }
-                    
                 }
                 else
                 {

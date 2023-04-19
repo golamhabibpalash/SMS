@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SMS.App.Utilities.MACIPServices;
 using SMS.BLL.Contracts;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
 {
+    [Authorize]
     public class QuestionFormationController : Controller
     {
         private readonly IQuestionFormationManager _questionFormationManager;

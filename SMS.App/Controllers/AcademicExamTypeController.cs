@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SMS.BLL.Contracts;
 using SMS.Entities;
+using System.Data;
 using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
 {
+    [Authorize(Roles = "SuperAdmin, Admin")]
     public class AcademicExamTypeController : Controller
     {
         private readonly IAcademicExamTypeManager _academicExamTypeManager;

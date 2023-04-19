@@ -13,6 +13,9 @@ namespace SMS.Entities
         public string ExamName { get; set; }
         [Display(Name = "Exam Type")]
         public int AcademicExamTypeId { get; set; }
+
+        public int AcademicSectionId { get; set; }
+
         [Display(Name = "Academic Session")]
         public int AcademicSessionId { get; set; }
         [Display(Name = "Academic Subject")]
@@ -24,7 +27,7 @@ namespace SMS.Entities
         public AcademicExamType AcademicExamType { get; set; }
         public AcademicSession AcademicSession { get; set; }
         public AcademicSubject AcademicSubject { get; set; }
-
+        public AcademicSection AcademicSection { get; set; }
         public List<AcademicExamDetail> AcademicExamDetails { get; set; }
         [Display(Name = "Total Marks")]
         public double TotalMarks { get; set; }

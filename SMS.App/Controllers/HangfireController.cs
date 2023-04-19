@@ -25,11 +25,13 @@ using System.Collections;
 using Microsoft.CodeAnalysis.FlowAnalysis;
 using Hangfire.Storage;
 using System.Drawing.Imaging;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SMS.App.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize]
     public class HangfireController : ControllerBase
     {
         #region Constructor Start =================================================

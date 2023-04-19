@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
 {
-    [Authorize(Roles = "SuperAdmin, Admin")]
+    [Authorize(Roles = "SuperAdmin")]
     public class AccountsController : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManager;

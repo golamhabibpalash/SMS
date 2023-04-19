@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SMS.App.Utilities.MACIPServices;
@@ -9,12 +11,14 @@ using SMS.BLL.Managers;
 using SMS.Entities;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
 {
+    [Authorize]
     public class AcademicExamsController : Controller
     {
         private readonly IAcademicExamManager _examManager;
@@ -27,7 +31,9 @@ namespace SMS.App.Controllers
         private readonly IAcademicSectionManager _academicSectionManager;
         private readonly IStudentManager _studentManager;
         private readonly IAcademicExamDetailsManager _academicExamDetailsManager;
-        public AcademicExamsController(IAcademicExamManager examManager, IAcademicSessionManager sessionManager, IAcademicClassManager classManager,IAcademicExamTypeManager examTypeManager,IAcademicSubjectManager academicSubjectManager, IEmployeeManager employeeManager,IMapper mapper,IAcademicSectionManager academicSectionManager, IStudentManager studentManager, IAcademicExamDetailsManager academicExamDetailsManager)
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        public AcademicExamsController(IAcademicExamManager examManager, IAcademicSessionManager sessionManager, IAcademicClassManager classManager,IAcademicExamTypeManager examTypeManager,IAcademicSubjectManager academicSubjectManager, IEmployeeManager employeeManager,IMapper mapper,IAcademicSectionManager academicSectionManager, IStudentManager studentManager, IAcademicExamDetailsManager academicExamDetailsManager, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _examManager = examManager;
             _sessionManager = sessionManager;
@@ -39,6 +45,8 @@ namespace SMS.App.Controllers
             _academicSectionManager = academicSectionManager;
             _studentManager = studentManager;
             _academicExamDetailsManager = academicExamDetailsManager;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         // GET: AcademicExamsController
@@ -46,14 +54,53 @@ namespace SMS.App.Controllers
         {
             var exams = await _examManager.GetAllAsync();
 
-            return View(exams);
+            bool isAdminUser = false;
+            var user = await _userManager.GetUserAsync(User);
+            var roles = await _userManager.GetRolesAsync(user);
+            foreach (var item in roles)
+            {
+                if (item.Contains("Admin") || item.Contains("SuperAdmin"))
+                {
+                    isAdminUser = true;
+                    break;
+                }
+            }
+            if (isAdminUser!=true)
+            {
+                exams = exams.Where(m => m.EmployeeId == user.ReferenceId).ToList();
+            }
+
+            return View(exams.OrderByDescending(m => m.MonthId));
         }
 
         // GET: AcademicExamsController/Details/5
         public async Task<ActionResult> Details(int id)
         {
             var exam = await _examManager.GetByIdAsync(id);
+            var user = await _userManager.GetUserAsync(User);
+            var roles = await _userManager.GetRolesAsync(user);
+            bool isAdminUser = false;
+            foreach (var item in roles)
+            {
+                if (item.Contains("Admin") || item.Contains("SuperAdmin"))
+                {
+                    isAdminUser = true;
+                    break;
+                }
+            }
+            if (user.UserType == 'e')
+            {
+                if (user.ReferenceId != exam.EmployeeId)
+                {
+                    if (isAdminUser == false)
+                    {
+                        return RedirectToAction("AccessDenied", "Accounts");
+                    }
+                }
+            }
+
             ExamDetailsVM examDetailsVM = new ExamDetailsVM();
+            examDetailsVM.ExamId = exam.Id;
             examDetailsVM.AcademicClassId = exam.AcademicSubject.AcademicClassId;
             examDetailsVM.AcademicExamDetails = examDetailsVM.AcademicExamDetails;
             examDetailsVM.TotalMarks = exam.TotalMarks;
@@ -61,12 +108,17 @@ namespace SMS.App.Controllers
             examDetailsVM.ExamName = exam.ExamName;
             examDetailsVM.Teacher = exam.Employee.EmployeeName;
             examDetailsVM.AcademicSubjectName = exam.AcademicSubject.SubjectName;
-            //examDetailsVM.AcademicSectionId = exam.academics
-
+            examDetailsVM.AcademicClassName = exam.AcademicSubject.AcademicClass.Name;
+            examDetailsVM.AcademicSessionName = exam.AcademicSession.Name;
+            examDetailsVM.AcademicExamDetails = exam.AcademicExamDetails;
+            examDetailsVM.AcademicSectionId = exam.AcademicSectionId;
+            examDetailsVM.AcademicSectionName = exam.AcademicSection.Name;
+            
             return View(examDetailsVM);
         }
 
         // GET: AcademicExamsController/Create
+        [Authorize(Roles = "SuperAdmin, Admin")]
         public async Task<ActionResult> Create()
         {
             List<Employee> emps = (List<Employee>)await _employeeManager.GetAllAsync();
@@ -82,6 +134,7 @@ namespace SMS.App.Controllers
         // POST: AcademicExamsController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SuperAdmin, Admin")]
         public async Task<ActionResult> Create(AcademicExamVM academicExamVM)
         {
             List<Employee> emps = (List<Employee>)await _employeeManager.GetAllAsync();
@@ -137,6 +190,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicExamsController/Edit/5
+        [Authorize(Roles = "SuperAdmin, Admin")]
         public async Task<ActionResult> Edit(int id)
         {
             AcademicExam aExam = await _examManager.GetByIdAsync(id);
@@ -155,6 +209,7 @@ namespace SMS.App.Controllers
         // POST: AcademicExamsController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SuperAdmin, Admin")]
         public async Task<ActionResult> Edit(int id, AcademicExamVM academicExamVM)
         {
             List<Employee> emps = (List<Employee>)await _employeeManager.GetAllAsync();
@@ -198,6 +253,7 @@ namespace SMS.App.Controllers
         // POST: AcademicExamsController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SuperAdmin, Admin")]
         public ActionResult Delete(int id, IFormCollection collection)
         {
             try
@@ -208,6 +264,24 @@ namespace SMS.App.Controllers
             {
                 return View();
             }
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ExmaMarkSubmit(ExamDetailsVM examDetailVM)
+        {
+            List<AcademicExamDetail> academicExamDetail = new ();
+            academicExamDetail= examDetailVM.AcademicExamDetails;
+            foreach (AcademicExamDetail item in academicExamDetail)
+            {
+                item.MACAddress = MACService.GetMAC();
+                item.EditedAt = DateTime.Now;
+                item.EditedBy = HttpContext.Session.GetString("UserId");
+
+                await _academicExamDetailsManager.UpdateAsync(item);
+            }
+            return RedirectToAction("Index");
         }
     }
 }

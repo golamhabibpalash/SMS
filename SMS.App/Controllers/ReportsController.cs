@@ -1,4 +1,5 @@
 ﻿using AspNetCore.Reporting;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -20,6 +21,7 @@ using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
 {
+    [Authorize]
     public class ReportsController : Controller
     {
         private readonly IWebHostEnvironment _host;

@@ -25,9 +25,26 @@ namespace SMS.DAL.Repositories
                 .Include(s => s.AcademicExamType)
                 .Include(s => s.AcademicSubject)
                     .ThenInclude(m => m.AcademicClass)
+                .Include(s => s.AcademicSection)
                 .Include(s => s.AcademicSession)
                 .Include(s => s.Employee)
                 .ToListAsync();
+            return result;
+        }
+
+        public override async Task<AcademicExam> GetByIdAsync(int id)
+        {
+            var result = await _context.AcademicExams
+                .Include(s => s.AcademicExamDetails)
+                    .ThenInclude(m => m.Student)
+                .Include(s => s.AcademicSubject)
+                    .ThenInclude(c => c.AcademicClass)
+                .Include(s => s.Employee)
+                .Include(s => s.AcademicSession)
+                .Include(s => s.AcademicSection)
+                .Where(s => s.Id == id)
+                .FirstOrDefaultAsync();
+
             return result;
         }
     }

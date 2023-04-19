@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<AcademicExam>
 
-@using System.Globalization 
+@using System.Globalization
 
 @{
     ViewData["Title"] = "Academic Exams";
@@ -16,58 +16,72 @@
         months[i - 1] = monthName;
     }
 }
-    <div class="row">
-        <table class="table table-striped table-bordered" id="myTable">
-            <thead class=" table-info ">
-                <tr>
-                    <td>#</td>
-                    <td>Exam Name</td>
-                    <td>Exam Type</td>
-                    <td>Exam Month</td>
-                    <td>Subject</td>
-                    <td>Academic Class</td>
-                    <td>Academic Session</td>
-                    <td>Teacher</td>
-                    <td>
+
+@section Styles{
+    <link href="~/css/switch.css" rel="stylesheet" />
+}
+<div class="row">
+    <table class="table table-striped table-bordered" id="myTable">
+        <thead class=" table-info ">
+            <tr>
+                <td>#</td>
+                <td>Exam Name</td>
+                <td>Exam Type</td>
+                <td>Exam Month</td>
+                <td>Subject</td>
+                <td>Academic Class</td>
+                <td>Academic Section</td>
+                <td>Academic Session</td>
+                <td>Teacher</td>
+                <td>Lock</td>
+                <td>
+                    <partial name="_Create" />
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@(++sl).</td>
+                        <td>@item.ExamName</td>
+                        <td>@item.AcademicExamType.ExamTypeName</td>
+                        <td>
+                            @months[item.MonthId - 1]
+                        </td>
+                        <td>@item.AcademicSubject.SubjectName</td>
+                        <td>@item.AcademicSubject.AcademicClass.Name</td>
+                        <td>@item.AcademicSection.Name</td>
+                        <td>@item.AcademicSession.Name</td>
+                        <td>@item.Employee.EmployeeName</td>
+                        <td>
+                            <label class="switch">
+                                <input type="checkbox" name="name" value="" />
+                                <span class="slider round"></span>
+                            </label>
+                        </td>
+                        <td>
+                            <partial name="_Edit_Details_Delete" model="@item.Id" />
+
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr class="text-center">
+                    <td colspan="11">
+                        <h1>Nothing Found</h1>
+                    </td>
+                </tr>
+                <tr class="text-center">
+                    <td colspan="11">
                         <partial name="_Create" />
                     </td>
                 </tr>
-            </thead>
-            <tbody>
-                @if (Model.Any())
-                {
-                    foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>@(++sl).</td>
-                            <td>@item.ExamName</td>
-                            <td>@item.AcademicExamType.ExamTypeName</td>
-                            <td>
-                            @months[item.MonthId-1]
-                            </td>
-                            <td>@item.AcademicSubject.SubjectName</td>
-                            <td>@item.AcademicSubject.AcademicClass.Name</td>
-                            <td>@item.AcademicSession.Name</td>
-                            <td>@item.Employee.EmployeeName</td>
-                            <td>
-                                <partial name="_Edit_Details_Delete" model="@item.Id" />
-                            </td>
-                        </tr>
-                    }
-                }
-                else
-                {
-                    <tr class="text-center">
-                        <td colspan="9">
-                            <h1>Nothing Found</h1>
-                        </td>
-                    </tr>
-                    <tr class="text-center">
-                        <td colspan="9">
-                            <partial name="_Create" />
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+            }
+        </tbody>
+    </table>
+</div>

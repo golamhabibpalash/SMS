@@ -3,4 +3,115 @@
 @{
     ViewData["Title"] = "Exam Details";
     GlobalUI.PageTitle = ViewData["Title"].ToString();
+
+    int i = 0;
+    int detailId = 0;
 }
+@section Styles{
+    <link href="~/css/switch.css" rel="stylesheet" />
+}
+
+<div class="row" style="color:#000">
+    <div class="col-md-4">
+        <fieldset class="border border-info p-2 m-2">
+            <legend style="width:fit-content;padding:5px">Exam Information</legend>
+            <table class="table ">
+                <thead>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Subject</td>
+                        <td>:</td>
+                        <td>@Model.AcademicSubjectName</td>
+                    </tr>
+                    <tr>
+                        <td>Class</td>
+                        <td>:</td>
+                        <td>@Model.AcademicClassName (@Model.AcademicSectionName)</td>
+                    </tr>
+                    <tr>
+                        <td>Session</td>
+                        <td>:</td>
+                        <td>@Model.AcademicSessionName</td>
+                    </tr>
+                    <tr>
+                        <td>Month</td>
+                        <td>:</td>
+                        <td>@Model.ExamMonth</td>
+                    </tr>
+                    <tr>
+                        <td>Students</td>
+                        <td>:</td>
+                        <td>@Model.AcademicExamDetails.Count()</td>
+                    </tr>
+                    <tr>
+                        <td>Teacher</td>
+                        <td>:</td>
+                        <td>@Model.Teacher</td>
+                    </tr>
+                    <tr>
+                        <td>Total Marks</td>
+                        <td>:</td>
+                        <td>@Model.TotalMarks</td>
+                    </tr>
+                </tbody>
+            </table>
+        </fieldset>
+
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <a class="btn btn-info btn-sm" asp-action="Index" asp-controller="AcademicExams">Back to Exam List</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8 p-2">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h3 class="well well-sm bg-info text-light">Mark Distribution</h3>
+            </div>
+        </div>
+        <form asp-action="ExmaMarkSubmit" asp-controller="AcademicExams" method="post">
+            <input asp-for="ExamId" type="hidden"  />
+            <table class="table table-sm table-striped table-bordered">
+                <thead class="table-info font-weight-bolder">
+                    <tr>
+                        <td>#</td>
+                        <td>Class Roll</td>
+                        <td>Student Name</td>
+                        <td>Marks</td>
+                        <td>Is Present</td>
+                        <td>Remarks</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.AcademicExamDetails.OrderBy(r => r.Student.ClassRoll))
+                    {
+                        <tr>
+                            <td>@(++i) <input type="hidden" asp-for="AcademicExamDetails[detailId].AcademicExamId"  value="@Model.ExamId" /> </td>
+                            <td>@item.Student.ClassRoll <input type="hidden" asp-for="AcademicExamDetails[detailId].StudentId" /></td>
+                            <td>@item.Student.Name <input type="hidden" asp-for="AcademicExamDetails[detailId].Id" /></td>
+                            <td style="width:50px;padding:0px;">
+                                <input asp-for="AcademicExamDetails[detailId].ObtainMark" max="@Model.TotalMarks" min="0" style="width:60px;height:35px;text-align:center;border:none" />
+                            </td>
+                            <td class="flex-wrap justify-content-center">
+                                <label class="switch m-0">
+                                    <input asp-for="AcademicExamDetails[detailId].Status" title="Is Present" />
+                                    <span class="slider round"></span>
+                                </label>
+                            </td>
+                            <td style="padding:0px">
+                                <input asp-for="AcademicExamDetails[detailId].Remarks" placeholder="write here if any comment" style="width:100%;height:30px;text-align:left;border:none" />
+                            </td>
+                        </tr>
+                        detailId++;
+                    }
+                </tbody>
+            </table>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <input class="btn btn-info" type="submit" value="Submit" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

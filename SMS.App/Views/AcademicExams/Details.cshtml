@@ -6,6 +6,7 @@
 
     int i = 0;
     int detailId = 0;
+    string examLocked = Model.IsActive==true?"(Exam is Locked)":string.Empty;
 }
 @section Styles{
     <link href="~/css/switch.css" rel="stylesheet" />
@@ -67,7 +68,7 @@
     <div class="col-md-8 p-2">
         <div class="row">
             <div class="col-md-12 text-center">
-                <h3 class="well well-sm bg-info text-light">Mark Distribution</h3>
+                <h3 class="well well-sm bg-info text-light">Mark Distribution <span class="text-danger">@examLocked</span></h3>
             </div>
         </div>
         <form asp-action="ExmaMarkSubmit" asp-controller="AcademicExams" method="post">
@@ -91,16 +92,37 @@
                             <td>@item.Student.ClassRoll <input type="hidden" asp-for="AcademicExamDetails[detailId].StudentId" /></td>
                             <td>@item.Student.Name <input type="hidden" asp-for="AcademicExamDetails[detailId].Id" /></td>
                             <td style="width:50px;padding:0px;">
-                                <input asp-for="AcademicExamDetails[detailId].ObtainMark" max="@Model.TotalMarks" min="0" style="width:60px;height:35px;text-align:center;border:none" />
+                                @if (Model.IsActive)
+                                {
+                                    <input disabled asp-for="AcademicExamDetails[detailId].ObtainMark" max="@Model.TotalMarks" min="0" style="width:60px;height:35px;text-align:center;border:none" />
+                                }
+                                else
+                                {
+                                    <input asp-for="AcademicExamDetails[detailId].ObtainMark" max="@Model.TotalMarks" min="0" style="width:60px;height:35px;text-align:center;border:none" />
+                                }
                             </td>
                             <td class="flex-wrap justify-content-center">
                                 <label class="switch m-0">
-                                    <input asp-for="AcademicExamDetails[detailId].Status" title="Is Present" />
+                                    @if (Model.IsActive)
+                                    {
+                                        <input disabled asp-for="AcademicExamDetails[detailId].Status" title="Is Present" />
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="AcademicExamDetails[detailId].Status" title="Is Present" />
+                                    }
                                     <span class="slider round"></span>
                                 </label>
                             </td>
                             <td style="padding:0px">
-                                <input asp-for="AcademicExamDetails[detailId].Remarks" placeholder="write here if any comment" style="width:100%;height:30px;text-align:left;border:none" />
+                                @if (Model.IsActive)
+                                {
+                                    <input disabled asp-for="AcademicExamDetails[detailId].Remarks" placeholder="write here if any comment" style="width:100%;height:30px;text-align:left;border:none" />
+                                }
+                                else
+                                {
+                            <input asp-for="AcademicExamDetails[detailId].Remarks" placeholder="write here if any comment" style="width:100%;height:30px;text-align:left;border:none" />
+                                }
                             </td>
                         </tr>
                         detailId++;
@@ -109,7 +131,14 @@
             </table>
             <div class="row">
                 <div class="col-md-12 text-center">
-                    <input class="btn btn-info" type="submit" value="Submit" />
+                    @if (Model.IsActive)
+                    {
+                        <input disabled class="btn btn-info" type="submit" value="Submit" />
+                    }
+                    else
+                    {
+                        <input class="btn btn-info" type="submit" value="Submit" />
+                    }
                 </div>
             </div>
         </form>

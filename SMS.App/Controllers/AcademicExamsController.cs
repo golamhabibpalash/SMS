@@ -50,6 +50,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicExamsController
+        [Authorize(Roles ="Admin, Teacher, SuperAdmin")]
         public async Task<ActionResult> Index()
         {
             var exams = await _examManager.GetAllAsync();
@@ -113,6 +114,7 @@ namespace SMS.App.Controllers
             examDetailsVM.AcademicExamDetails = exam.AcademicExamDetails;
             examDetailsVM.AcademicSectionId = exam.AcademicSectionId;
             examDetailsVM.AcademicSectionName = exam.AcademicSection.Name;
+            examDetailsVM.IsActive = exam.IsActive;
             
             return View(examDetailsVM);
         }
@@ -282,6 +284,49 @@ namespace SMS.App.Controllers
                 await _academicExamDetailsManager.UpdateAsync(item);
             }
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UnlockExam(int exId)
+        {
+            string msg = string.Empty;
+            var existingExam = await _examManager.GetByIdAsync(exId);
+            if (existingExam != null)
+            {
+                existingExam.IsActive = false;
+                bool isUpdated = await _examManager.UpdateAsync(existingExam);
+                if (isUpdated)
+                {
+                    msg = "Exam is Unlocked Successfully";
+                }
+                else
+                {
+                    msg = "Unloacked faild";
+                }
+                return Json(new { exId = exId,msg=msg });
+            }
+            return Json(new { msg = "Exam not found!" });
+        }
+        [HttpPost]
+        public async Task<ActionResult> LockExam(int exId)
+        {
+            string msg = string.Empty;
+            var existingExam = await _examManager.GetByIdAsync(exId);
+            if (existingExam != null)
+            {
+                existingExam.IsActive = true;
+                bool isUpdated = await _examManager.UpdateAsync(existingExam);
+                if (isUpdated)
+                {
+                    msg = "Exam is Locked Successfully";
+                }
+                else
+                {
+                    msg = "Loacked faild";
+                }
+                return Json(new { exId = exId, msg = msg });
+            }
+            return Json(new { msg = "Exam not found!" });
         }
     }
 }

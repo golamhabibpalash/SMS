@@ -6,6 +6,7 @@
     ViewData["Title"] = "Academic Exams";
     GlobalUI.PageTitle = ViewData["Title"].ToString();
     int sl = 0;
+    string styleForCurrentTransaction = string.Empty;
 
     string[] months = new string[12];
 
@@ -14,7 +15,9 @@
         DateTime month = new DateTime(1, i, 1);
         string monthName = month.ToString("MMMM");
         months[i - 1] = monthName;
+
     }
+
 }
 
 @section Styles{
@@ -33,9 +36,16 @@
                 <td>Academic Section</td>
                 <td>Academic Session</td>
                 <td>Teacher</td>
-                <td>Lock</td>
+                @if(User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+                {
+                    <td>Lock</td>
+                }
                 <td>
-                    <partial name="_Create" />
+                    @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+                    {
+                        <partial name="_Create" />
+
+                    }
                 </td>
             </tr>
         </thead>
@@ -44,7 +54,11 @@
             {
                 foreach (var item in Model)
                 {
-                    <tr>
+                    if (item.MonthId == Convert.ToInt32(DateTime.Now.ToString("MM")))
+                    {
+                        styleForCurrentTransaction = "background:antiquewhite";
+                    }
+                    <tr style="@styleForCurrentTransaction">
                         <td>@(++sl).</td>
                         <td>@item.ExamName</td>
                         <td>@item.AcademicExamType.ExamTypeName</td>
@@ -56,12 +70,23 @@
                         <td>@item.AcademicSection.Name</td>
                         <td>@item.AcademicSession.Name</td>
                         <td>@item.Employee.EmployeeName</td>
-                        <td>
-                            <label class="switch">
-                                <input type="checkbox" name="name" value="" />
-                                <span class="slider round"></span>
-                            </label>
-                        </td>
+                        @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+                        {
+                            <td> 
+                                    @if (item.IsActive)
+                                    {
+                                       <span id="id_@item.Id" class="p-1 lockBtn" type="button" data-id="@item.Id">
+                                           <i class="fa fa-lock fa-lg text-danger"></i>
+                                       </span>
+                                    }
+                                    else
+                                    {
+                                        <span id="id_@item.Id" class="p-1 unLockBtn" type="button" data-id="@item.Id">
+                                            <i class="fa fa-lock-open fa-lg text-info"></i>
+                                        </span>
+                                    }
+                            </td>
+                        }
                         <td>
                             <partial name="_Edit_Details_Delete" model="@item.Id" />
 
@@ -85,3 +110,58 @@
         </tbody>
     </table>
 </div>
+
+@section Scripts{ 
+    <script>
+        $(document).ready(function () {
+            $('.lockBtn').click(function () {
+                if (confirm("Are you sure you want to unlock this?")) {
+                    let btnId = $(this).prop('id');
+                    unlockExam($(this).data("id"), btnId);
+                }
+                else {
+                    console.log("No");
+                    return false;
+                }
+            });
+
+            $('.unLockBtn').click(function () {
+                if (confirm("Are you sure you want to unlock this?")) {
+                    let btnId = $(this).prop('id');
+                    lockExam($(this).data("id"), btnId);
+                }
+                else {
+                    console.log("No");
+                    return false;
+                }
+            });
+        });
+        function unlockExam(id, btnId) {
+            $.ajax({
+                type: "post",
+                url: '/AcademicExams/UnlockExam',
+                data: "exId=" + id,
+                success: function (response) {
+                    location.reload(true);
+                },
+                error: {
+
+                }
+            });
+        }
+
+        function lockExam(id, btnId) {
+            $.ajax({
+                type: "post",
+                url: '/AcademicExams/lockExam',
+                data: "exId=" + id,
+                success: function (response) {
+                    location.reload(true);
+                },
+                error: {
+
+                }
+            });
+        }
+    </script>
+}

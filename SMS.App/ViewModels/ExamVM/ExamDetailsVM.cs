@@ -23,6 +23,7 @@ namespace SMS.App.ViewModels.ExamVM
         public string AcademicSubjectName { get; set; }
         public double TotalMarks { get; set; }
         public double TotalTime { get; set; }
+        public bool IsActive { get; set; }
         public List<AcademicExamDetail> AcademicExamDetails { get; set; }
     }
 }

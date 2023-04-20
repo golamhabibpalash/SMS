@@ -22,6 +22,7 @@ namespace SMS.DAL.Repositories
         public override async Task<IReadOnlyCollection<AcademicExam>> GetAllAsync()
         {
             var result = await _context.AcademicExams
+                .Include(s => s.AcademicExamDetails)
                 .Include(s => s.AcademicExamType)
                 .Include(s => s.AcademicSubject)
                     .ThenInclude(m => m.AcademicClass)

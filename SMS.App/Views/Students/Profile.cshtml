@@ -2,6 +2,31 @@
 @{
     Layout = "~/Views/Shared/_StudentLayout.cshtml";
 }
+@{ 
+    ViewData["Title"] = "Profile ("+Model.Name+")";
+    GlobalUI.PageTitle = ViewBag.Title;
+}
+<div class="row">
+    <div class="col-md-12 jumbotron">
+        <h2> Hellow</h2>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        @if (string.IsNullOrEmpty(Model.Photo))
+        {
+            <img class="rounded-circle" src="~/Images/Student/noimage.jpg" alt="@Model.Name Photo" />
+        }
+        else
+        {
+            <img class="rounded-circlerounded-circlerounded-circlerounded-circle" src="~/Images/Student/@Model.Photo" alt="@Model.Name Photo" />
+        }
+    </div>
+    <div class="col-md-6 flex align-items-center">
+        <button class="btn btn-info">Add to Story</button>
+    </div>
+</div>
+
 <div class="row">
     <div class="col-md-12 m-2">
         @if (ViewBag.activeStatus != null)

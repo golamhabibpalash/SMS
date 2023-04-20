@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SMS.App.ViewModels.ExamVM;
 using SMS.BLL.Contracts;
 using SMS.Entities;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
@@ -14,21 +16,36 @@ namespace SMS.App.Controllers
     {
         private readonly IExamResultManager _examResultManager;
         private readonly IAcademicExamManager _academicExamManager;
-        public ExamResultsController(IExamResultManager examResultManager, IAcademicExamManager academicExamManager)
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IStudentManager _studentManager;
+        public ExamResultsController(IExamResultManager examResultManager, IAcademicExamManager academicExamManager, UserManager<ApplicationUser> userManager, IStudentManager studentManager)
         {
             _examResultManager = examResultManager;
             _academicExamManager = academicExamManager;
-
+            _userManager = userManager;
+            _studentManager = studentManager;
         }
         // GET: ExamResultsController
         public async Task<ActionResult> Index()
         {
             List<ExamResultVM> exams = new();
+
             List<AcademicExam> existingExams = (List<AcademicExam>)await _academicExamManager.GetAllAsync();
+            var user =await _userManager.GetUserAsync(User);
+            if (user.UserType == 's')
+            {
+                Student student = await _studentManager.GetByIdAsync(user.ReferenceId);
+                existingExams = existingExams.Where(e => e.AcademicSectionId == student.AcademicSectionId &&
+                    e.AcademicSessionId == student.AcademicSessionId &&
+                    e.AcademicSubject.AcademicClassId == student.AcademicClassId)
+                    .ToList();
+            }
+
             if (existingExams!=null)
             {
                 foreach (AcademicExam academicExam in existingExams)
                 {
+                    
                     ExamResultVM exam = new();
                     exam.ExamId = academicExam.Id;
                     exam.ExamName = academicExam.ExamName;

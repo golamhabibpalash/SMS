@@ -6,13 +6,29 @@
 }
 
 <div class="row">
-    @if (Model.Any())
-    {
-        foreach (var item in Model)
-        {
-            <div class="col-md-3 card m-2">
-                <div class="card-header bg-info text-light"><h5>@item.ExamName</h5></div>
+    <div class="col-md-4">
+        <form action="/" method="post">
+            <div class="form-group row">
+                <label class="col-md-3 col-form-label">Exam Type</label>
+                <div class="col-md-8">
+                    <select asp-items="ViewBag.ExamType" class="form-control">
+                        <option value="value">text</option>
+                    </select>
+                </div>
             </div>
-        }
-    }
+        </form>
+    </div>
+    <div class="col-md-8">
+        <div class="row">
+            @if (Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <div class="col-md-3 card m-2">
+                        <div class="card-header bg-info text-light"><h5>@item.ExamName</h5></div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
 </div>

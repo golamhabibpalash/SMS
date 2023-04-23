@@ -71,7 +71,7 @@ namespace SMS.App.Controllers
                 exams = exams.Where(m => m.EmployeeId == user.ReferenceId).ToList();
             }
 
-            return View(exams.OrderByDescending(m => m.MonthId));
+            return View(exams.OrderByDescending(m => m.MonthId).ThenBy(m => m.AcademicSubject.AcademicClassId));
         }
 
         // GET: AcademicExamsController/Details/5
@@ -284,6 +284,15 @@ namespace SMS.App.Controllers
                 await _academicExamDetailsManager.UpdateAsync(item);
             }
             return RedirectToAction("Index");
+        }
+        public ActionResult AdmitCard()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult AdmitCard(int x)
+        {
+            return View();
         }
 
         [HttpPost]

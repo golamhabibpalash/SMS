@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using SMS.App.ViewModels.ExamVM;
 using SMS.BLL.Contracts;
 using SMS.Entities;
@@ -18,12 +19,15 @@ namespace SMS.App.Controllers
         private readonly IAcademicExamManager _academicExamManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IStudentManager _studentManager;
-        public ExamResultsController(IExamResultManager examResultManager, IAcademicExamManager academicExamManager, UserManager<ApplicationUser> userManager, IStudentManager studentManager)
+        private readonly IAcademicExamTypeManager _academicExamTypeManager;
+        public ExamResultsController(IExamResultManager examResultManager, IAcademicExamManager academicExamManager, UserManager<ApplicationUser> userManager, IStudentManager studentManager, IAcademicExamTypeManager academicExamTypeManager)
         {
             _examResultManager = examResultManager;
             _academicExamManager = academicExamManager;
             _userManager = userManager;
             _studentManager = studentManager;
+            _academicExamTypeManager = academicExamTypeManager;
+
         }
         // GET: ExamResultsController
         public async Task<ActionResult> Index()
@@ -32,6 +36,10 @@ namespace SMS.App.Controllers
 
             List<AcademicExam> existingExams = (List<AcademicExam>)await _academicExamManager.GetAllAsync();
             var user =await _userManager.GetUserAsync(User);
+            ViewData["ExamType"] = new SelectList(await _academicExamTypeManager.GetAllAsync(),"Id", "ExamTypeName");
+                
+                
+                //await _academicExamTypeManager.GetAllAsync();
             if (user.UserType == 's')
             {
                 Student student = await _studentManager.GetByIdAsync(user.ReferenceId);

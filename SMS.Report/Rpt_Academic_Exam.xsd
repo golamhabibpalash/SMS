@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<xs:schema id="SMSDBDataSet" targetNamespace="http://tempuri.org/SMSDBDataSet.xsd" xmlns:mstns="http://tempuri.org/SMSDBDataSet.xsd" xmlns="http://tempuri.org/SMSDBDataSet.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+<xs:schema id="Rpt_Academic_Exam" targetNamespace="http://tempuri.org/Rpt_Academic_Exam.xsd" xmlns:mstns="http://tempuri.org/Rpt_Academic_Exam.xsd" xmlns="http://tempuri.org/Rpt_Academic_Exam.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
   <xs:annotation>
     <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
       <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
@@ -12,20 +12,21 @@
               <DbSource ConnectionRef="gh-palash\sqlexpress.SMSDB.dbo" DbObjectName="SMSDB.dbo.vw_rpt_academic_exams" DbObjectType="View" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetData" UserSourceName="Fill">
                 <SelectCommand>
                   <DbCommand CommandType="Text" ModifiedByUser="false">
-                    <CommandText>SELECT id, ClassRoll, StudentName, FatherName, MotherName, SectionName, ClassName, AcademicSubjectId, AcademicSectionId, MonthId, ExamName, SubjectCode, SubjectName, AcademicClassId FROM dbo.vw_rpt_academic_exams</CommandText>
+                    <CommandText>SELECT StudentId, ClassRoll, StudentName, FatherName, MotherName, SectionName, ClassName, AcademicExamId, AcademicSubjectId, AcademicSectionId, MonthId, ExamName, SubjectCode, SubjectName, AcademicClassId FROM dbo.vw_rpt_academic_exams</CommandText>
                     <Parameters />
                   </DbCommand>
                 </SelectCommand>
               </DbSource>
             </MainSource>
             <Mappings>
-              <Mapping SourceColumn="id" DataSetColumn="id" />
+              <Mapping SourceColumn="StudentId" DataSetColumn="StudentId" />
               <Mapping SourceColumn="ClassRoll" DataSetColumn="ClassRoll" />
               <Mapping SourceColumn="StudentName" DataSetColumn="StudentName" />
               <Mapping SourceColumn="FatherName" DataSetColumn="FatherName" />
               <Mapping SourceColumn="MotherName" DataSetColumn="MotherName" />
               <Mapping SourceColumn="SectionName" DataSetColumn="SectionName" />
               <Mapping SourceColumn="ClassName" DataSetColumn="ClassName" />
+              <Mapping SourceColumn="AcademicExamId" DataSetColumn="AcademicExamId" />
               <Mapping SourceColumn="AcademicSubjectId" DataSetColumn="AcademicSubjectId" />
               <Mapping SourceColumn="AcademicSectionId" DataSetColumn="AcademicSectionId" />
               <Mapping SourceColumn="MonthId" DataSetColumn="MonthId" />
@@ -41,13 +42,13 @@
       </DataSource>
     </xs:appinfo>
   </xs:annotation>
-  <xs:element name="SMSDBDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="True" msprop:Generator_UserDSName="SMSDBDataSet" msprop:Generator_DataSetName="SMSDBDataSet">
+  <xs:element name="Rpt_Academic_Exam" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="True" msprop:Generator_UserDSName="Rpt_Academic_Exam" msprop:Generator_DataSetName="Rpt_Academic_Exam">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element name="vw_rpt_academic_exams" msprop:Generator_RowEvHandlerName="vw_rpt_academic_examsRowChangeEventHandler" msprop:Generator_RowDeletedName="vw_rpt_academic_examsRowDeleted" msprop:Generator_RowDeletingName="vw_rpt_academic_examsRowDeleting" msprop:Generator_RowEvArgName="vw_rpt_academic_examsRowChangeEvent" msprop:Generator_TablePropName="vw_rpt_academic_exams" msprop:Generator_RowChangedName="vw_rpt_academic_examsRowChanged" msprop:Generator_RowChangingName="vw_rpt_academic_examsRowChanging" msprop:Generator_TableClassName="vw_rpt_academic_examsDataTable" msprop:Generator_RowClassName="vw_rpt_academic_examsRow" msprop:Generator_TableVarName="tablevw_rpt_academic_exams" msprop:Generator_UserTableName="vw_rpt_academic_exams">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="id" msprop:Generator_ColumnPropNameInRow="id" msprop:Generator_ColumnPropNameInTable="idColumn" msprop:Generator_ColumnVarNameInTable="columnid" msprop:Generator_UserColumnName="id" type="xs:int" />
+              <xs:element name="StudentId" msprop:Generator_ColumnPropNameInRow="StudentId" msprop:Generator_ColumnPropNameInTable="StudentIdColumn" msprop:Generator_ColumnVarNameInTable="columnStudentId" msprop:Generator_UserColumnName="StudentId" type="xs:int" />
               <xs:element name="ClassRoll" msprop:Generator_ColumnPropNameInRow="ClassRoll" msprop:Generator_ColumnPropNameInTable="ClassRollColumn" msprop:Generator_ColumnVarNameInTable="columnClassRoll" msprop:Generator_UserColumnName="ClassRoll" type="xs:int" />
               <xs:element name="StudentName" msprop:Generator_ColumnPropNameInRow="StudentName" msprop:Generator_ColumnPropNameInTable="StudentNameColumn" msprop:Generator_ColumnVarNameInTable="columnStudentName" msprop:Generator_UserColumnName="StudentName" minOccurs="0">
                 <xs:simpleType>
@@ -84,6 +85,7 @@
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
+              <xs:element name="AcademicExamId" msprop:Generator_ColumnPropNameInRow="AcademicExamId" msprop:Generator_ColumnPropNameInTable="AcademicExamIdColumn" msprop:Generator_ColumnVarNameInTable="columnAcademicExamId" msprop:Generator_UserColumnName="AcademicExamId" type="xs:int" minOccurs="0" />
               <xs:element name="AcademicSubjectId" msprop:Generator_ColumnPropNameInRow="AcademicSubjectId" msprop:Generator_ColumnPropNameInTable="AcademicSubjectIdColumn" msprop:Generator_ColumnVarNameInTable="columnAcademicSubjectId" msprop:Generator_UserColumnName="AcademicSubjectId" type="xs:int" minOccurs="0" />
               <xs:element name="AcademicSectionId" msprop:Generator_ColumnPropNameInRow="AcademicSectionId" msprop:Generator_ColumnPropNameInTable="AcademicSectionIdColumn" msprop:Generator_ColumnVarNameInTable="columnAcademicSectionId" msprop:Generator_UserColumnName="AcademicSectionId" type="xs:int" minOccurs="0" />
               <xs:element name="MonthId" msprop:Generator_ColumnPropNameInRow="MonthId" msprop:Generator_ColumnPropNameInTable="MonthIdColumn" msprop:Generator_ColumnVarNameInTable="columnMonthId" msprop:Generator_UserColumnName="MonthId" type="xs:int" minOccurs="0" />
@@ -108,9 +110,5 @@
         </xs:element>
       </xs:choice>
     </xs:complexType>
-    <xs:unique name="Constraint1" msdata:PrimaryKey="true">
-      <xs:selector xpath=".//mstns:vw_rpt_academic_exams" />
-      <xs:field xpath="mstns:id" />
-    </xs:unique>
   </xs:element>
 </xs:schema>

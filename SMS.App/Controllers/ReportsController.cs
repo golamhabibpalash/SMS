@@ -270,6 +270,34 @@ namespace SMS.App.Controllers
         }
 
 
+        
+        public async Task<IActionResult> AdmitCardExport(string reportType, string fileName, int monthId, int academicClassId, int academicSectionId)
+        {
+            RenderType renderType = RenderType.Pdf;
+            renderType = !string.IsNullOrEmpty(reportType) ? GetRenderType(reportType) : renderType;
+            var path = _host.WebRootPath + "\\Reports\\rptAdmitCard.rdlc";
+            Dictionary<string, string> parameters = new();
+            Institute institute = await _instituteManager.GetByIdAsync(1);
+            parameters.Add("InstituteName", institute.Name);
+            parameters.Add("EIINNo", institute.EIIN);
+            AspNetCore.Reporting.LocalReport localReport = new(path);
+
+            var admitCard = await _reportManager.GetAdmitCard(monthId,academicClassId,academicSectionId);
+
+            localReport.AddDataSource("dsAdmitCard", admitCard);
+            var result = localReport.Execute(renderType, 1, parameters);
+            if (!string.IsNullOrEmpty(fileName))
+            {
+                return File(result.MainStream, MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
+            }
+            return File(result.MainStream, "Application/pdf");
+        }
+
+
+
+
+
+
         private static RenderType GetRenderType(string reportType)
         {
             var renderType = reportType.ToLower() switch

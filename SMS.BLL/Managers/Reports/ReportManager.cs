@@ -17,6 +17,11 @@ namespace SMS.BLL.Managers.Reports
             _reportRepository = reportRepository;
         }
 
+        public async Task<List<RptAdmitCardVM>> GetAdmitCard(int monthId, int academicClassId, int academicSectionId)
+        {
+            return await _reportRepository.GetAdmitCard(monthId,academicClassId,academicSectionId);
+        }
+
         public async Task<List<rptStudentPaymentsVM>> GetStudentPaymentsByRoll(int classRoll)
         {
            return await _reportRepository.GetStudentPaymentsByRoll(classRoll);

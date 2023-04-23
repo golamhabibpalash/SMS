@@ -18,6 +18,14 @@ namespace SMS.DAL.Repositories.Reports
             _context = context;
         }
 
+        public async Task<List<RptAdmitCardVM>> GetAdmitCard(int monthId, int academicClassId, int academicSectionId)
+        {
+            string query = @"select t.* from vw_rpt_academic_exams t
+where t.monthId = "+monthId+" and t.academicClassId = "+academicClassId+" and t.AcademicSectionId ="+academicSectionId+"";
+            List<RptAdmitCardVM> result = await _context.RptAdmitCardVMs.FromSqlRaw(query).ToListAsync();
+            return result;
+        }
+
         public async Task<List<rptStudentPaymentsVM>> GetStudentPaymentsByRoll(int classRoll)
         {
             string query = "exec sp_Get_Payments_by_Roll "+classRoll;
@@ -36,5 +44,7 @@ namespace SMS.DAL.Repositories.Reports
             rptStudentVMs = result;
             return rptStudentVMs;
         }
+
+        
     }
 }

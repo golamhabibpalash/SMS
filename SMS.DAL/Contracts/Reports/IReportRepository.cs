@@ -11,5 +11,6 @@ namespace SMS.DAL.Contracts.Reports
     {
         Task<List<RptStudentVM>> getStudentsInfo();
         Task<List<rptStudentPaymentsVM>> GetStudentPaymentsByRoll(int classRoll);
+        Task<List<RptAdmitCardVM>> GetAdmitCard(int monthId, int academicClassId, int academicSectionId);
     }
 }

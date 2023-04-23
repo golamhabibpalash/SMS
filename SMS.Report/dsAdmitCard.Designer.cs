@@ -20,17 +20,17 @@ namespace SMS.Report {
     [global::System.ComponentModel.DesignerCategoryAttribute("code")]
     [global::System.ComponentModel.ToolboxItem(true)]
     [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedDataSetSchema")]
-    [global::System.Xml.Serialization.XmlRootAttribute("rpt_Payment_Info")]
+    [global::System.Xml.Serialization.XmlRootAttribute("dsAdmitCard")]
     [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.DataSet")]
-    public partial class rpt_Payment_Info : global::System.Data.DataSet {
+    public partial class dsAdmitCard : global::System.Data.DataSet {
         
-        private vw_rpt_paymentInfoDataTable tablevw_rpt_paymentInfo;
+        private sp_admit_card_sub_list_gaDataTable tablesp_admit_card_sub_list_ga;
         
         private global::System.Data.SchemaSerializationMode _schemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        public rpt_Payment_Info() {
+        public dsAdmitCard() {
             this.BeginInit();
             this.InitClass();
             global::System.ComponentModel.CollectionChangeEventHandler schemaChangedHandler = new global::System.ComponentModel.CollectionChangeEventHandler(this.SchemaChanged);
@@ -41,7 +41,7 @@ namespace SMS.Report {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        protected rpt_Payment_Info(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+        protected dsAdmitCard(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
                 base(info, context, false) {
             if ((this.IsBinarySerialized(info, context) == true)) {
                 this.InitVars(false);
@@ -54,8 +54,8 @@ namespace SMS.Report {
             if ((this.DetermineSchemaSerializationMode(info, context) == global::System.Data.SchemaSerializationMode.IncludeSchema)) {
                 global::System.Data.DataSet ds = new global::System.Data.DataSet();
                 ds.ReadXmlSchema(new global::System.Xml.XmlTextReader(new global::System.IO.StringReader(strSchema)));
-                if ((ds.Tables["vw_rpt_paymentInfo"] != null)) {
-                    base.Tables.Add(new vw_rpt_paymentInfoDataTable(ds.Tables["vw_rpt_paymentInfo"]));
+                if ((ds.Tables["sp_admit_card_sub_list_ga"] != null)) {
+                    base.Tables.Add(new sp_admit_card_sub_list_gaDataTable(ds.Tables["sp_admit_card_sub_list_ga"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -79,9 +79,9 @@ namespace SMS.Report {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         [global::System.ComponentModel.Browsable(false)]
         [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
-        public vw_rpt_paymentInfoDataTable vw_rpt_paymentInfo {
+        public sp_admit_card_sub_list_gaDataTable sp_admit_card_sub_list_ga {
             get {
-                return this.tablevw_rpt_paymentInfo;
+                return this.tablesp_admit_card_sub_list_ga;
             }
         }
         
@@ -127,7 +127,7 @@ namespace SMS.Report {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         public override global::System.Data.DataSet Clone() {
-            rpt_Payment_Info cln = ((rpt_Payment_Info)(base.Clone()));
+            dsAdmitCard cln = ((dsAdmitCard)(base.Clone()));
             cln.InitVars();
             cln.SchemaSerializationMode = this.SchemaSerializationMode;
             return cln;
@@ -152,8 +152,8 @@ namespace SMS.Report {
                 this.Reset();
                 global::System.Data.DataSet ds = new global::System.Data.DataSet();
                 ds.ReadXml(reader);
-                if ((ds.Tables["vw_rpt_paymentInfo"] != null)) {
-                    base.Tables.Add(new vw_rpt_paymentInfoDataTable(ds.Tables["vw_rpt_paymentInfo"]));
+                if ((ds.Tables["sp_admit_card_sub_list_ga"] != null)) {
+                    base.Tables.Add(new sp_admit_card_sub_list_gaDataTable(ds.Tables["sp_admit_card_sub_list_ga"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -188,10 +188,10 @@ namespace SMS.Report {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         internal void InitVars(bool initTable) {
-            this.tablevw_rpt_paymentInfo = ((vw_rpt_paymentInfoDataTable)(base.Tables["vw_rpt_paymentInfo"]));
+            this.tablesp_admit_card_sub_list_ga = ((sp_admit_card_sub_list_gaDataTable)(base.Tables["sp_admit_card_sub_list_ga"]));
             if ((initTable == true)) {
-                if ((this.tablevw_rpt_paymentInfo != null)) {
-                    this.tablevw_rpt_paymentInfo.InitVars();
+                if ((this.tablesp_admit_card_sub_list_ga != null)) {
+                    this.tablesp_admit_card_sub_list_ga.InitVars();
                 }
             }
         }
@@ -199,18 +199,18 @@ namespace SMS.Report {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         private void InitClass() {
-            this.DataSetName = "rpt_Payment_Info";
+            this.DataSetName = "dsAdmitCard";
             this.Prefix = "";
-            this.Namespace = "http://tempuri.org/rpt_Payment_Info.xsd";
+            this.Namespace = "http://tempuri.org/dsAdmitCard.xsd";
             this.EnforceConstraints = true;
             this.SchemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
-            this.tablevw_rpt_paymentInfo = new vw_rpt_paymentInfoDataTable();
-            base.Tables.Add(this.tablevw_rpt_paymentInfo);
+            this.tablesp_admit_card_sub_list_ga = new sp_admit_card_sub_list_gaDataTable();
+            base.Tables.Add(this.tablesp_admit_card_sub_list_ga);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        private bool ShouldSerializevw_rpt_paymentInfo() {
+        private bool ShouldSerializesp_admit_card_sub_list_ga() {
             return false;
         }
         
@@ -225,7 +225,7 @@ namespace SMS.Report {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedDataSetSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
-            rpt_Payment_Info ds = new rpt_Payment_Info();
+            dsAdmitCard ds = new dsAdmitCard();
             global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
             global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
             global::System.Xml.Schema.XmlSchemaAny any = new global::System.Xml.Schema.XmlSchemaAny();
@@ -270,33 +270,23 @@ namespace SMS.Report {
         }
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        public delegate void vw_rpt_paymentInfoRowChangeEventHandler(object sender, vw_rpt_paymentInfoRowChangeEvent e);
+        public delegate void sp_admit_card_sub_list_gaRowChangeEventHandler(object sender, sp_admit_card_sub_list_gaRowChangeEvent e);
         
         /// <summary>
         ///Represents the strongly named DataTable class.
         ///</summary>
         [global::System.Serializable()]
         [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
-        public partial class vw_rpt_paymentInfoDataTable : global::System.Data.TypedTableBase<vw_rpt_paymentInfoRow> {
+        public partial class sp_admit_card_sub_list_gaDataTable : global::System.Data.TypedTableBase<sp_admit_card_sub_list_gaRow> {
             
-            private global::System.Data.DataColumn columnStudentName;
+            private global::System.Data.DataColumn columnSubjectCode;
             
-            private global::System.Data.DataColumn columnClassRoll;
-            
-            private global::System.Data.DataColumn columnTotalPayment;
-            
-            private global::System.Data.DataColumn columnPaidDate;
-            
-            private global::System.Data.DataColumn columnPaymentTypeName;
-            
-            private global::System.Data.DataColumn columnReceiptNo;
-            
-            private global::System.Data.DataColumn columnRemarks;
+            private global::System.Data.DataColumn columnSubjectName;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public vw_rpt_paymentInfoDataTable() {
-                this.TableName = "vw_rpt_paymentInfo";
+            public sp_admit_card_sub_list_gaDataTable() {
+                this.TableName = "sp_admit_card_sub_list_ga";
                 this.BeginInit();
                 this.InitClass();
                 this.EndInit();
@@ -304,7 +294,7 @@ namespace SMS.Report {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            internal vw_rpt_paymentInfoDataTable(global::System.Data.DataTable table) {
+            internal sp_admit_card_sub_list_gaDataTable(global::System.Data.DataTable table) {
                 this.TableName = table.TableName;
                 if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
                     this.CaseSensitive = table.CaseSensitive;
@@ -321,64 +311,24 @@ namespace SMS.Report {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            protected vw_rpt_paymentInfoDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+            protected sp_admit_card_sub_list_gaDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
                     base(info, context) {
                 this.InitVars();
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn StudentNameColumn {
+            public global::System.Data.DataColumn SubjectCodeColumn {
                 get {
-                    return this.columnStudentName;
+                    return this.columnSubjectCode;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn ClassRollColumn {
+            public global::System.Data.DataColumn SubjectNameColumn {
                 get {
-                    return this.columnClassRoll;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn TotalPaymentColumn {
-                get {
-                    return this.columnTotalPayment;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn PaidDateColumn {
-                get {
-                    return this.columnPaidDate;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn PaymentTypeNameColumn {
-                get {
-                    return this.columnPaymentTypeName;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn ReceiptNoColumn {
-                get {
-                    return this.columnReceiptNo;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn RemarksColumn {
-                get {
-                    return this.columnRemarks;
+                    return this.columnSubjectName;
                 }
             }
             
@@ -393,51 +343,46 @@ namespace SMS.Report {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public vw_rpt_paymentInfoRow this[int index] {
+            public sp_admit_card_sub_list_gaRow this[int index] {
                 get {
-                    return ((vw_rpt_paymentInfoRow)(this.Rows[index]));
+                    return ((sp_admit_card_sub_list_gaRow)(this.Rows[index]));
                 }
             }
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public event vw_rpt_paymentInfoRowChangeEventHandler vw_rpt_paymentInfoRowChanging;
+            public event sp_admit_card_sub_list_gaRowChangeEventHandler sp_admit_card_sub_list_gaRowChanging;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public event vw_rpt_paymentInfoRowChangeEventHandler vw_rpt_paymentInfoRowChanged;
+            public event sp_admit_card_sub_list_gaRowChangeEventHandler sp_admit_card_sub_list_gaRowChanged;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public event vw_rpt_paymentInfoRowChangeEventHandler vw_rpt_paymentInfoRowDeleting;
+            public event sp_admit_card_sub_list_gaRowChangeEventHandler sp_admit_card_sub_list_gaRowDeleting;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public event vw_rpt_paymentInfoRowChangeEventHandler vw_rpt_paymentInfoRowDeleted;
+            public event sp_admit_card_sub_list_gaRowChangeEventHandler sp_admit_card_sub_list_gaRowDeleted;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void Addvw_rpt_paymentInfoRow(vw_rpt_paymentInfoRow row) {
+            public void Addsp_admit_card_sub_list_gaRow(sp_admit_card_sub_list_gaRow row) {
                 this.Rows.Add(row);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public vw_rpt_paymentInfoRow Addvw_rpt_paymentInfoRow(string StudentName, int ClassRoll, double TotalPayment, System.DateTime PaidDate, string PaymentTypeName, string ReceiptNo, string Remarks) {
-                vw_rpt_paymentInfoRow rowvw_rpt_paymentInfoRow = ((vw_rpt_paymentInfoRow)(this.NewRow()));
+            public sp_admit_card_sub_list_gaRow Addsp_admit_card_sub_list_gaRow(int SubjectCode, string SubjectName) {
+                sp_admit_card_sub_list_gaRow rowsp_admit_card_sub_list_gaRow = ((sp_admit_card_sub_list_gaRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
-                        StudentName,
-                        ClassRoll,
-                        TotalPayment,
-                        PaidDate,
-                        PaymentTypeName,
-                        ReceiptNo,
-                        Remarks};
-                rowvw_rpt_paymentInfoRow.ItemArray = columnValuesArray;
-                this.Rows.Add(rowvw_rpt_paymentInfoRow);
-                return rowvw_rpt_paymentInfoRow;
+                        SubjectCode,
+                        SubjectName};
+                rowsp_admit_card_sub_list_gaRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowsp_admit_card_sub_list_gaRow);
+                return rowsp_admit_card_sub_list_gaRow;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public override global::System.Data.DataTable Clone() {
-                vw_rpt_paymentInfoDataTable cln = ((vw_rpt_paymentInfoDataTable)(base.Clone()));
+                sp_admit_card_sub_list_gaDataTable cln = ((sp_admit_card_sub_list_gaDataTable)(base.Clone()));
                 cln.InitVars();
                 return cln;
             }
@@ -445,72 +390,50 @@ namespace SMS.Report {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             protected override global::System.Data.DataTable CreateInstance() {
-                return new vw_rpt_paymentInfoDataTable();
+                return new sp_admit_card_sub_list_gaDataTable();
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             internal void InitVars() {
-                this.columnStudentName = base.Columns["StudentName"];
-                this.columnClassRoll = base.Columns["ClassRoll"];
-                this.columnTotalPayment = base.Columns["TotalPayment"];
-                this.columnPaidDate = base.Columns["PaidDate"];
-                this.columnPaymentTypeName = base.Columns["PaymentTypeName"];
-                this.columnReceiptNo = base.Columns["ReceiptNo"];
-                this.columnRemarks = base.Columns["Remarks"];
+                this.columnSubjectCode = base.Columns["SubjectCode"];
+                this.columnSubjectName = base.Columns["SubjectName"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             private void InitClass() {
-                this.columnStudentName = new global::System.Data.DataColumn("StudentName", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnStudentName);
-                this.columnClassRoll = new global::System.Data.DataColumn("ClassRoll", typeof(int), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnClassRoll);
-                this.columnTotalPayment = new global::System.Data.DataColumn("TotalPayment", typeof(double), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnTotalPayment);
-                this.columnPaidDate = new global::System.Data.DataColumn("PaidDate", typeof(global::System.DateTime), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnPaidDate);
-                this.columnPaymentTypeName = new global::System.Data.DataColumn("PaymentTypeName", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnPaymentTypeName);
-                this.columnReceiptNo = new global::System.Data.DataColumn("ReceiptNo", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnReceiptNo);
-                this.columnRemarks = new global::System.Data.DataColumn("Remarks", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnRemarks);
-                this.columnStudentName.MaxLength = 2147483647;
-                this.columnClassRoll.AllowDBNull = false;
-                this.columnTotalPayment.AllowDBNull = false;
-                this.columnPaidDate.AllowDBNull = false;
-                this.columnPaymentTypeName.MaxLength = 2147483647;
-                this.columnReceiptNo.AllowDBNull = false;
-                this.columnReceiptNo.MaxLength = 2147483647;
-                this.columnRemarks.MaxLength = 2147483647;
+                this.columnSubjectCode = new global::System.Data.DataColumn("SubjectCode", typeof(int), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnSubjectCode);
+                this.columnSubjectName = new global::System.Data.DataColumn("SubjectName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnSubjectName);
+                this.columnSubjectName.MaxLength = 2147483647;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public vw_rpt_paymentInfoRow Newvw_rpt_paymentInfoRow() {
-                return ((vw_rpt_paymentInfoRow)(this.NewRow()));
+            public sp_admit_card_sub_list_gaRow Newsp_admit_card_sub_list_gaRow() {
+                return ((sp_admit_card_sub_list_gaRow)(this.NewRow()));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
-                return new vw_rpt_paymentInfoRow(builder);
+                return new sp_admit_card_sub_list_gaRow(builder);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             protected override global::System.Type GetRowType() {
-                return typeof(vw_rpt_paymentInfoRow);
+                return typeof(sp_admit_card_sub_list_gaRow);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowChanged(e);
-                if ((this.vw_rpt_paymentInfoRowChanged != null)) {
-                    this.vw_rpt_paymentInfoRowChanged(this, new vw_rpt_paymentInfoRowChangeEvent(((vw_rpt_paymentInfoRow)(e.Row)), e.Action));
+                if ((this.sp_admit_card_sub_list_gaRowChanged != null)) {
+                    this.sp_admit_card_sub_list_gaRowChanged(this, new sp_admit_card_sub_list_gaRowChangeEvent(((sp_admit_card_sub_list_gaRow)(e.Row)), e.Action));
                 }
             }
             
@@ -518,8 +441,8 @@ namespace SMS.Report {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowChanging(e);
-                if ((this.vw_rpt_paymentInfoRowChanging != null)) {
-                    this.vw_rpt_paymentInfoRowChanging(this, new vw_rpt_paymentInfoRowChangeEvent(((vw_rpt_paymentInfoRow)(e.Row)), e.Action));
+                if ((this.sp_admit_card_sub_list_gaRowChanging != null)) {
+                    this.sp_admit_card_sub_list_gaRowChanging(this, new sp_admit_card_sub_list_gaRowChangeEvent(((sp_admit_card_sub_list_gaRow)(e.Row)), e.Action));
                 }
             }
             
@@ -527,8 +450,8 @@ namespace SMS.Report {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowDeleted(e);
-                if ((this.vw_rpt_paymentInfoRowDeleted != null)) {
-                    this.vw_rpt_paymentInfoRowDeleted(this, new vw_rpt_paymentInfoRowChangeEvent(((vw_rpt_paymentInfoRow)(e.Row)), e.Action));
+                if ((this.sp_admit_card_sub_list_gaRowDeleted != null)) {
+                    this.sp_admit_card_sub_list_gaRowDeleted(this, new sp_admit_card_sub_list_gaRowChangeEvent(((sp_admit_card_sub_list_gaRow)(e.Row)), e.Action));
                 }
             }
             
@@ -536,14 +459,14 @@ namespace SMS.Report {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowDeleting(e);
-                if ((this.vw_rpt_paymentInfoRowDeleting != null)) {
-                    this.vw_rpt_paymentInfoRowDeleting(this, new vw_rpt_paymentInfoRowChangeEvent(((vw_rpt_paymentInfoRow)(e.Row)), e.Action));
+                if ((this.sp_admit_card_sub_list_gaRowDeleting != null)) {
+                    this.sp_admit_card_sub_list_gaRowDeleting(this, new sp_admit_card_sub_list_gaRowChangeEvent(((sp_admit_card_sub_list_gaRow)(e.Row)), e.Action));
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void Removevw_rpt_paymentInfoRow(vw_rpt_paymentInfoRow row) {
+            public void Removesp_admit_card_sub_list_gaRow(sp_admit_card_sub_list_gaRow row) {
                 this.Rows.Remove(row);
             }
             
@@ -552,7 +475,7 @@ namespace SMS.Report {
             public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
                 global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
                 global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
-                rpt_Payment_Info ds = new rpt_Payment_Info();
+                dsAdmitCard ds = new dsAdmitCard();
                 global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
                 any1.Namespace = "http://www.w3.org/2001/XMLSchema";
                 any1.MinOccurs = new decimal(0);
@@ -570,7 +493,7 @@ namespace SMS.Report {
                 type.Attributes.Add(attribute1);
                 global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
                 attribute2.Name = "tableTypeName";
-                attribute2.FixedValue = "vw_rpt_paymentInfoDataTable";
+                attribute2.FixedValue = "sp_admit_card_sub_list_gaDataTable";
                 type.Attributes.Add(attribute2);
                 type.Particle = sequence;
                 global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
@@ -614,143 +537,73 @@ namespace SMS.Report {
         /// <summary>
         ///Represents strongly named DataRow class.
         ///</summary>
-        public partial class vw_rpt_paymentInfoRow : global::System.Data.DataRow {
+        public partial class sp_admit_card_sub_list_gaRow : global::System.Data.DataRow {
             
-            private vw_rpt_paymentInfoDataTable tablevw_rpt_paymentInfo;
+            private sp_admit_card_sub_list_gaDataTable tablesp_admit_card_sub_list_ga;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            internal vw_rpt_paymentInfoRow(global::System.Data.DataRowBuilder rb) : 
+            internal sp_admit_card_sub_list_gaRow(global::System.Data.DataRowBuilder rb) : 
                     base(rb) {
-                this.tablevw_rpt_paymentInfo = ((vw_rpt_paymentInfoDataTable)(this.Table));
+                this.tablesp_admit_card_sub_list_ga = ((sp_admit_card_sub_list_gaDataTable)(this.Table));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public string StudentName {
+            public int SubjectCode {
                 get {
                     try {
-                        return ((string)(this[this.tablevw_rpt_paymentInfo.StudentNameColumn]));
+                        return ((int)(this[this.tablesp_admit_card_sub_list_ga.SubjectCodeColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'StudentName\' in table \'vw_rpt_paymentInfo\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'SubjectCode\' in table \'sp_admit_card_sub_list_ga\' is DBNull" +
+                                ".", e);
                     }
                 }
                 set {
-                    this[this.tablevw_rpt_paymentInfo.StudentNameColumn] = value;
+                    this[this.tablesp_admit_card_sub_list_ga.SubjectCodeColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public int ClassRoll {
-                get {
-                    return ((int)(this[this.tablevw_rpt_paymentInfo.ClassRollColumn]));
-                }
-                set {
-                    this[this.tablevw_rpt_paymentInfo.ClassRollColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public double TotalPayment {
-                get {
-                    return ((double)(this[this.tablevw_rpt_paymentInfo.TotalPaymentColumn]));
-                }
-                set {
-                    this[this.tablevw_rpt_paymentInfo.TotalPaymentColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public System.DateTime PaidDate {
-                get {
-                    return ((global::System.DateTime)(this[this.tablevw_rpt_paymentInfo.PaidDateColumn]));
-                }
-                set {
-                    this[this.tablevw_rpt_paymentInfo.PaidDateColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public string PaymentTypeName {
+            public string SubjectName {
                 get {
                     try {
-                        return ((string)(this[this.tablevw_rpt_paymentInfo.PaymentTypeNameColumn]));
+                        return ((string)(this[this.tablesp_admit_card_sub_list_ga.SubjectNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'PaymentTypeName\' in table \'vw_rpt_paymentInfo\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'SubjectName\' in table \'sp_admit_card_sub_list_ga\' is DBNull" +
+                                ".", e);
                     }
                 }
                 set {
-                    this[this.tablevw_rpt_paymentInfo.PaymentTypeNameColumn] = value;
+                    this[this.tablesp_admit_card_sub_list_ga.SubjectNameColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public string ReceiptNo {
-                get {
-                    return ((string)(this[this.tablevw_rpt_paymentInfo.ReceiptNoColumn]));
-                }
-                set {
-                    this[this.tablevw_rpt_paymentInfo.ReceiptNoColumn] = value;
-                }
+            public bool IsSubjectCodeNull() {
+                return this.IsNull(this.tablesp_admit_card_sub_list_ga.SubjectCodeColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public string Remarks {
-                get {
-                    try {
-                        return ((string)(this[this.tablevw_rpt_paymentInfo.RemarksColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'Remarks\' in table \'vw_rpt_paymentInfo\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tablevw_rpt_paymentInfo.RemarksColumn] = value;
-                }
+            public void SetSubjectCodeNull() {
+                this[this.tablesp_admit_card_sub_list_ga.SubjectCodeColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool IsStudentNameNull() {
-                return this.IsNull(this.tablevw_rpt_paymentInfo.StudentNameColumn);
+            public bool IsSubjectNameNull() {
+                return this.IsNull(this.tablesp_admit_card_sub_list_ga.SubjectNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void SetStudentNameNull() {
-                this[this.tablevw_rpt_paymentInfo.StudentNameColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool IsPaymentTypeNameNull() {
-                return this.IsNull(this.tablevw_rpt_paymentInfo.PaymentTypeNameColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void SetPaymentTypeNameNull() {
-                this[this.tablevw_rpt_paymentInfo.PaymentTypeNameColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool IsRemarksNull() {
-                return this.IsNull(this.tablevw_rpt_paymentInfo.RemarksColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void SetRemarksNull() {
-                this[this.tablevw_rpt_paymentInfo.RemarksColumn] = global::System.Convert.DBNull;
+            public void SetSubjectNameNull() {
+                this[this.tablesp_admit_card_sub_list_ga.SubjectNameColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -758,22 +611,22 @@ namespace SMS.Report {
         ///Row event argument class
         ///</summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        public class vw_rpt_paymentInfoRowChangeEvent : global::System.EventArgs {
+        public class sp_admit_card_sub_list_gaRowChangeEvent : global::System.EventArgs {
             
-            private vw_rpt_paymentInfoRow eventRow;
+            private sp_admit_card_sub_list_gaRow eventRow;
             
             private global::System.Data.DataRowAction eventAction;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public vw_rpt_paymentInfoRowChangeEvent(vw_rpt_paymentInfoRow row, global::System.Data.DataRowAction action) {
+            public sp_admit_card_sub_list_gaRowChangeEvent(sp_admit_card_sub_list_gaRow row, global::System.Data.DataRowAction action) {
                 this.eventRow = row;
                 this.eventAction = action;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public vw_rpt_paymentInfoRow Row {
+            public sp_admit_card_sub_list_gaRow Row {
                 get {
                     return this.eventRow;
                 }
@@ -789,7 +642,7 @@ namespace SMS.Report {
         }
     }
 }
-namespace SMS.Report.rpt_Payment_InfoTableAdapters {
+namespace SMS.Report.dsAdmitCardTableAdapters {
     
     
     /// <summary>
@@ -801,7 +654,7 @@ namespace SMS.Report.rpt_Payment_InfoTableAdapters {
     [global::System.ComponentModel.DesignerAttribute("Microsoft.VSDesigner.DataSource.Design.TableAdapterDesigner, Microsoft.VSDesigner" +
         ", Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
     [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
-    public partial class vw_rpt_paymentInfoTableAdapter : global::System.ComponentModel.Component {
+    public partial class sp_admit_card_sub_list_gaTableAdapter : global::System.ComponentModel.Component {
         
         private global::System.Data.SqlClient.SqlDataAdapter _adapter;
         
@@ -815,7 +668,7 @@ namespace SMS.Report.rpt_Payment_InfoTableAdapters {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        public vw_rpt_paymentInfoTableAdapter() {
+        public sp_admit_card_sub_list_gaTableAdapter() {
             this.ClearBeforeFill = true;
         }
         
@@ -912,14 +765,9 @@ namespace SMS.Report.rpt_Payment_InfoTableAdapters {
             this._adapter = new global::System.Data.SqlClient.SqlDataAdapter();
             global::System.Data.Common.DataTableMapping tableMapping = new global::System.Data.Common.DataTableMapping();
             tableMapping.SourceTable = "Table";
-            tableMapping.DataSetTable = "vw_rpt_paymentInfo";
-            tableMapping.ColumnMappings.Add("StudentName", "StudentName");
-            tableMapping.ColumnMappings.Add("ClassRoll", "ClassRoll");
-            tableMapping.ColumnMappings.Add("TotalPayment", "TotalPayment");
-            tableMapping.ColumnMappings.Add("PaidDate", "PaidDate");
-            tableMapping.ColumnMappings.Add("PaymentTypeName", "PaymentTypeName");
-            tableMapping.ColumnMappings.Add("ReceiptNo", "ReceiptNo");
-            tableMapping.ColumnMappings.Add("Remarks", "Remarks");
+            tableMapping.DataSetTable = "sp_admit_card_sub_list_ga";
+            tableMapping.ColumnMappings.Add("SubjectCode", "SubjectCode");
+            tableMapping.ColumnMappings.Add("SubjectName", "SubjectName");
             this._adapter.TableMappings.Add(tableMapping);
         }
         
@@ -936,17 +784,31 @@ namespace SMS.Report.rpt_Payment_InfoTableAdapters {
             this._commandCollection = new global::System.Data.SqlClient.SqlCommand[1];
             this._commandCollection[0] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[0].Connection = this.Connection;
-            this._commandCollection[0].CommandText = "SELECT StudentName, ClassRoll, TotalPayment, PaidDate, PaymentTypeName, ReceiptNo" +
-                ", Remarks FROM dbo.vw_rpt_paymentInfo";
-            this._commandCollection[0].CommandType = global::System.Data.CommandType.Text;
+            this._commandCollection[0].CommandText = "dbo.sp_admit_card_sub_list_ga";
+            this._commandCollection[0].CommandType = global::System.Data.CommandType.StoredProcedure;
+            this._commandCollection[0].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@RETURN_VALUE", global::System.Data.SqlDbType.Int, 4, global::System.Data.ParameterDirection.ReturnValue, 10, 0, null, global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._commandCollection[0].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@classId", global::System.Data.SqlDbType.Int, 4, global::System.Data.ParameterDirection.Input, 10, 0, null, global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._commandCollection[0].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@monthId", global::System.Data.SqlDbType.Int, 4, global::System.Data.ParameterDirection.Input, 10, 0, null, global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Fill, true)]
-        public virtual int Fill(rpt_Payment_Info.vw_rpt_paymentInfoDataTable dataTable) {
+        public virtual int Fill(dsAdmitCard.sp_admit_card_sub_list_gaDataTable dataTable, global::System.Nullable<int> classId, global::System.Nullable<int> monthId) {
             this.Adapter.SelectCommand = this.CommandCollection[0];
+            if ((classId.HasValue == true)) {
+                this.Adapter.SelectCommand.Parameters[1].Value = ((int)(classId.Value));
+            }
+            else {
+                this.Adapter.SelectCommand.Parameters[1].Value = global::System.DBNull.Value;
+            }
+            if ((monthId.HasValue == true)) {
+                this.Adapter.SelectCommand.Parameters[2].Value = ((int)(monthId.Value));
+            }
+            else {
+                this.Adapter.SelectCommand.Parameters[2].Value = global::System.DBNull.Value;
+            }
             if ((this.ClearBeforeFill == true)) {
                 dataTable.Clear();
             }
@@ -958,9 +820,21 @@ namespace SMS.Report.rpt_Payment_InfoTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Select, true)]
-        public virtual rpt_Payment_Info.vw_rpt_paymentInfoDataTable GetData() {
+        public virtual dsAdmitCard.sp_admit_card_sub_list_gaDataTable GetData(global::System.Nullable<int> classId, global::System.Nullable<int> monthId) {
             this.Adapter.SelectCommand = this.CommandCollection[0];
-            rpt_Payment_Info.vw_rpt_paymentInfoDataTable dataTable = new rpt_Payment_Info.vw_rpt_paymentInfoDataTable();
+            if ((classId.HasValue == true)) {
+                this.Adapter.SelectCommand.Parameters[1].Value = ((int)(classId.Value));
+            }
+            else {
+                this.Adapter.SelectCommand.Parameters[1].Value = global::System.DBNull.Value;
+            }
+            if ((monthId.HasValue == true)) {
+                this.Adapter.SelectCommand.Parameters[2].Value = ((int)(monthId.Value));
+            }
+            else {
+                this.Adapter.SelectCommand.Parameters[2].Value = global::System.DBNull.Value;
+            }
+            dsAdmitCard.sp_admit_card_sub_list_gaDataTable dataTable = new dsAdmitCard.sp_admit_card_sub_list_gaDataTable();
             this.Adapter.Fill(dataTable);
             return dataTable;
         }
@@ -1034,7 +908,7 @@ namespace SMS.Report.rpt_Payment_InfoTableAdapters {
         ///</summary>
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        private int UpdateUpdatedRows(rpt_Payment_Info dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allChangedRows, global::System.Collections.Generic.List<global::System.Data.DataRow> allAddedRows) {
+        private int UpdateUpdatedRows(dsAdmitCard dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allChangedRows, global::System.Collections.Generic.List<global::System.Data.DataRow> allAddedRows) {
             int result = 0;
             return result;
         }
@@ -1044,7 +918,7 @@ namespace SMS.Report.rpt_Payment_InfoTableAdapters {
         ///</summary>
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        private int UpdateInsertedRows(rpt_Payment_Info dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allAddedRows) {
+        private int UpdateInsertedRows(dsAdmitCard dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allAddedRows) {
             int result = 0;
             return result;
         }
@@ -1054,7 +928,7 @@ namespace SMS.Report.rpt_Payment_InfoTableAdapters {
         ///</summary>
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        private int UpdateDeletedRows(rpt_Payment_Info dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allChangedRows) {
+        private int UpdateDeletedRows(dsAdmitCard dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allChangedRows) {
             int result = 0;
             return result;
         }
@@ -1088,7 +962,7 @@ namespace SMS.Report.rpt_Payment_InfoTableAdapters {
         ///</summary>
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        public virtual int UpdateAll(rpt_Payment_Info dataSet) {
+        public virtual int UpdateAll(dsAdmitCard dataSet) {
             if ((dataSet == null)) {
                 throw new global::System.ArgumentNullException("dataSet");
             }

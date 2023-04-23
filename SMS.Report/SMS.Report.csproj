@@ -13,6 +13,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="App_Code\myDataSet.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>myDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Update="dsAdmitCard.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>dsAdmitCard.xsd</DependentUpon>
+    </Compile>
     <Compile Update="DS\rptAttendanceDS.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -28,34 +38,27 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>rptStudentPaymentFullInfo.xsd</DependentUpon>
     </Compile>
-    <Compile Update="rpt_Payment_Info.Designer.cs">
+    <Compile Update="Rpt_Academic_Exam.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>rpt_Payment_Info.xsd</DependentUpon>
+      <DependentUpon>Rpt_Academic_Exam.xsd</DependentUpon>
     </Compile>
     <Compile Update="SMSDBDataSet.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>SMSDBDataSet.xsd</DependentUpon>
     </Compile>
-    <Compile Update="SMSDBDataSet1.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>SMSDBDataSet1.xsd</DependentUpon>
-    </Compile>
-    <Compile Update="SMSDBDataSet2.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>SMSDBDataSet2.xsd</DependentUpon>
-    </Compile>
-    <Compile Update="StudentPayments.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>StudentPayments.xsd</DependentUpon>
-    </Compile>
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="App_Code\myDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>myDataSet.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="dsAdmitCard.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>dsAdmitCard.Designer.cs</LastGenOutput>
+    </None>
     <None Update="DS\rptAttendanceDS.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>rptAttendanceDS.Designer.cs</LastGenOutput>
@@ -71,26 +74,18 @@
     <None Update="Reports\rptStudent.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="rpt_Payment_Info.xsd">
+    <None Update="Rpt_Academic_Exam.xsd">
       <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>rpt_Payment_Info.Designer.cs</LastGenOutput>
+      <LastGenOutput>Rpt_Academic_Exam.Designer.cs</LastGenOutput>
     </None>
     <None Update="SMSDBDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>SMSDBDataSet.Designer.cs</LastGenOutput>
     </None>
-    <None Update="SMSDBDataSet1.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>SMSDBDataSet1.Designer.cs</LastGenOutput>
-    </None>
-    <None Update="SMSDBDataSet2.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>SMSDBDataSet2.Designer.cs</LastGenOutput>
-    </None>
-    <None Update="StudentPayments.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>StudentPayments.Designer.cs</LastGenOutput>
-    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
 
 </Project>

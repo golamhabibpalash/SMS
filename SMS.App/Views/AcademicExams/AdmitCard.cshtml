@@ -1,0 +1,46 @@
+﻿
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="AdmitCard" method="post">
+            <fieldset class="border border-info p-2">
+                <legend class="w-auto text-primary">Admit Card</legend>
+                <div class="form-group row">
+                    <label for="staticEmail" class="col-sm-3 col-form-label">Email</label>
+                    <div class="col-sm-9">
+                        <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="email@example.com">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="inputPassword" class="col-sm-3 col-form-label">Exam Type</label>
+                    <div class="col-sm-9">
+                        <select class="form-control">
+                            <option value="value">Type 01</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="classId" class="col-sm-3 col-form-label">Academic Class</label>
+                    <div class="col-sm-9">
+                        <select class="form-control">
+                            <option value="value">Class 01</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="classId" class="col-sm-3 col-form-label">Academic Section</label>
+                    <div class="col-sm-9">
+                        <select class="form-control">
+                            <option value="value">Section</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <button class="btn btn-info btn-sm" type="submit">Get Admit Card</button>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+    <div class="col-md-8">
+        <iframe id="myIframe" src="@Url.Action("AdmitCardExport", "Reports", new {reportType="pdf",fileName="AdmitCards",monthId=4,academicClassId=1,academicSectionId=15 })" style="width: 100%; height: 100%;"></iframe>
+    </div>
+</div>

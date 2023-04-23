@@ -70,6 +70,9 @@ namespace SMS.DB
         public DbSet<RptStudentVM> RptStudentVMs { get; set; }
 
         [NotMapped]
+        public DbSet<RptAdmitCardVM> RptAdmitCardVMs { get;set; }
+
+        [NotMapped]
         public DbSet<AttendanceVM> AttendanceVMs { get; set; }
 
         [NotMapped]

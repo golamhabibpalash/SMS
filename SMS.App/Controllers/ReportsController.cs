@@ -294,10 +294,10 @@ namespace SMS.App.Controllers
 
 
         
-        public async Task<IActionResult> AdmitCardExport(string reportType, string fileName, int monthId, int academicClassId, int academicSectionId)
+        public async Task<IActionResult> AdmitCardExport(string reportType, string fileName, int monthId, string academicClassId, string academicSectionId)
         {
             string imageParam = "";
-            var imagePath = _host.WebRootPath + "\\Images\\Institute\\nobleLogo.png";
+            var imagePath = _host.WebRootPath + "\\Images\\Institute\\noble.jpeg";
             using (var b = new Bitmap(imagePath))
             {
                 using(var ms = new MemoryStream())
@@ -315,8 +315,14 @@ namespace SMS.App.Controllers
             parameters.Add("EIINNo", institute.EIIN);
             parameters.Add("Image", imageParam);
             AspNetCore.Reporting.LocalReport localReport = new(path);
+            int aClassId = 0;
+            int aSection = 0;
+            
+            int.TryParse(academicClassId, out aClassId);
+            int.TryParse(academicSectionId, out aSection);
+            
 
-            var admitCard = await _reportManager.GetAdmitCard(monthId,academicClassId,academicSectionId);
+            var admitCard = await _reportManager.GetAdmitCard(monthId,aClassId,aSection);
 
             localReport.AddDataSource("DSAdmitCard", admitCard);
             var result = localReport.Execute(renderType, 1, parameters);

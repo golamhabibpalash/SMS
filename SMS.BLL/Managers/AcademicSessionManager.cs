@@ -1,6 +1,7 @@
 ﻿using BLL.Managers.Base;
 using SMS.BLL.Contracts;
 using SMS.DAL.Contracts;
+using SMS.DAL.Repositories;
 using SMS.Entities;
 using System;
 using System.Collections.Generic;
@@ -12,9 +13,16 @@ namespace SMS.BLL.Managers
 {
     public class AcademicSessionManager : Manager<AcademicSession>, IAcademicSessionManager
     {
+        private readonly IAcademicSessionRepository _academicSessionRepository;
         public AcademicSessionManager(IAcademicSessionRepository academicSessionRepository):base(academicSessionRepository)
         {
-
+            _academicSessionRepository = academicSessionRepository;
         }
+
+        public async Task<AcademicSession> GetCurrentAcademicSession()
+        {
+            return await _academicSessionRepository.GetCurrentAcademicSession();
+        }
+
     }
 }

@@ -20,17 +20,17 @@ namespace SMS.Report {
     [global::System.ComponentModel.DesignerCategoryAttribute("code")]
     [global::System.ComponentModel.ToolboxItem(true)]
     [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedDataSetSchema")]
-    [global::System.Xml.Serialization.XmlRootAttribute("SMSDBDataSet")]
+    [global::System.Xml.Serialization.XmlRootAttribute("AdmitCardDataSet")]
     [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.DataSet")]
-    public partial class SMSDBDataSet : global::System.Data.DataSet {
+    public partial class AdmitCardDataSet : global::System.Data.DataSet {
         
-        private vw_rpt_academic_examsDataTable tablevw_rpt_academic_exams;
+        private vw_rpt_Admit_Card_InfoDataTable tablevw_rpt_Admit_Card_Info;
         
         private global::System.Data.SchemaSerializationMode _schemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        public SMSDBDataSet() {
+        public AdmitCardDataSet() {
             this.BeginInit();
             this.InitClass();
             global::System.ComponentModel.CollectionChangeEventHandler schemaChangedHandler = new global::System.ComponentModel.CollectionChangeEventHandler(this.SchemaChanged);
@@ -41,7 +41,7 @@ namespace SMS.Report {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        protected SMSDBDataSet(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+        protected AdmitCardDataSet(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
                 base(info, context, false) {
             if ((this.IsBinarySerialized(info, context) == true)) {
                 this.InitVars(false);
@@ -54,8 +54,8 @@ namespace SMS.Report {
             if ((this.DetermineSchemaSerializationMode(info, context) == global::System.Data.SchemaSerializationMode.IncludeSchema)) {
                 global::System.Data.DataSet ds = new global::System.Data.DataSet();
                 ds.ReadXmlSchema(new global::System.Xml.XmlTextReader(new global::System.IO.StringReader(strSchema)));
-                if ((ds.Tables["vw_rpt_academic_exams"] != null)) {
-                    base.Tables.Add(new vw_rpt_academic_examsDataTable(ds.Tables["vw_rpt_academic_exams"]));
+                if ((ds.Tables["vw_rpt_Admit_Card_Info"] != null)) {
+                    base.Tables.Add(new vw_rpt_Admit_Card_InfoDataTable(ds.Tables["vw_rpt_Admit_Card_Info"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -79,9 +79,9 @@ namespace SMS.Report {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         [global::System.ComponentModel.Browsable(false)]
         [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
-        public vw_rpt_academic_examsDataTable vw_rpt_academic_exams {
+        public vw_rpt_Admit_Card_InfoDataTable vw_rpt_Admit_Card_Info {
             get {
-                return this.tablevw_rpt_academic_exams;
+                return this.tablevw_rpt_Admit_Card_Info;
             }
         }
         
@@ -127,7 +127,7 @@ namespace SMS.Report {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         public override global::System.Data.DataSet Clone() {
-            SMSDBDataSet cln = ((SMSDBDataSet)(base.Clone()));
+            AdmitCardDataSet cln = ((AdmitCardDataSet)(base.Clone()));
             cln.InitVars();
             cln.SchemaSerializationMode = this.SchemaSerializationMode;
             return cln;
@@ -152,8 +152,8 @@ namespace SMS.Report {
                 this.Reset();
                 global::System.Data.DataSet ds = new global::System.Data.DataSet();
                 ds.ReadXml(reader);
-                if ((ds.Tables["vw_rpt_academic_exams"] != null)) {
-                    base.Tables.Add(new vw_rpt_academic_examsDataTable(ds.Tables["vw_rpt_academic_exams"]));
+                if ((ds.Tables["vw_rpt_Admit_Card_Info"] != null)) {
+                    base.Tables.Add(new vw_rpt_Admit_Card_InfoDataTable(ds.Tables["vw_rpt_Admit_Card_Info"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -188,10 +188,10 @@ namespace SMS.Report {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         internal void InitVars(bool initTable) {
-            this.tablevw_rpt_academic_exams = ((vw_rpt_academic_examsDataTable)(base.Tables["vw_rpt_academic_exams"]));
+            this.tablevw_rpt_Admit_Card_Info = ((vw_rpt_Admit_Card_InfoDataTable)(base.Tables["vw_rpt_Admit_Card_Info"]));
             if ((initTable == true)) {
-                if ((this.tablevw_rpt_academic_exams != null)) {
-                    this.tablevw_rpt_academic_exams.InitVars();
+                if ((this.tablevw_rpt_Admit_Card_Info != null)) {
+                    this.tablevw_rpt_Admit_Card_Info.InitVars();
                 }
             }
         }
@@ -199,18 +199,18 @@ namespace SMS.Report {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         private void InitClass() {
-            this.DataSetName = "SMSDBDataSet";
+            this.DataSetName = "AdmitCardDataSet";
             this.Prefix = "";
-            this.Namespace = "http://tempuri.org/SMSDBDataSet.xsd";
+            this.Namespace = "http://tempuri.org/AdmitCardDataSet.xsd";
             this.EnforceConstraints = true;
             this.SchemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
-            this.tablevw_rpt_academic_exams = new vw_rpt_academic_examsDataTable();
-            base.Tables.Add(this.tablevw_rpt_academic_exams);
+            this.tablevw_rpt_Admit_Card_Info = new vw_rpt_Admit_Card_InfoDataTable();
+            base.Tables.Add(this.tablevw_rpt_Admit_Card_Info);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        private bool ShouldSerializevw_rpt_academic_exams() {
+        private bool ShouldSerializevw_rpt_Admit_Card_Info() {
             return false;
         }
         
@@ -225,7 +225,7 @@ namespace SMS.Report {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedDataSetSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
-            SMSDBDataSet ds = new SMSDBDataSet();
+            AdmitCardDataSet ds = new AdmitCardDataSet();
             global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
             global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
             global::System.Xml.Schema.XmlSchemaAny any = new global::System.Xml.Schema.XmlSchemaAny();
@@ -270,16 +270,16 @@ namespace SMS.Report {
         }
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        public delegate void vw_rpt_academic_examsRowChangeEventHandler(object sender, vw_rpt_academic_examsRowChangeEvent e);
+        public delegate void vw_rpt_Admit_Card_InfoRowChangeEventHandler(object sender, vw_rpt_Admit_Card_InfoRowChangeEvent e);
         
         /// <summary>
         ///Represents the strongly named DataTable class.
         ///</summary>
         [global::System.Serializable()]
         [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
-        public partial class vw_rpt_academic_examsDataTable : global::System.Data.TypedTableBase<vw_rpt_academic_examsRow> {
+        public partial class vw_rpt_Admit_Card_InfoDataTable : global::System.Data.TypedTableBase<vw_rpt_Admit_Card_InfoRow> {
             
-            private global::System.Data.DataColumn columnid;
+            private global::System.Data.DataColumn columnStudentId;
             
             private global::System.Data.DataColumn columnClassRoll;
             
@@ -289,28 +289,32 @@ namespace SMS.Report {
             
             private global::System.Data.DataColumn columnMotherName;
             
-            private global::System.Data.DataColumn columnSectionName;
+            private global::System.Data.DataColumn columnSessionName;
             
             private global::System.Data.DataColumn columnClassName;
             
-            private global::System.Data.DataColumn columnAcademicSubjectId;
-            
             private global::System.Data.DataColumn columnAcademicSectionId;
             
-            private global::System.Data.DataColumn columnMonthId;
-            
-            private global::System.Data.DataColumn columnExamName;
+            private global::System.Data.DataColumn columnSectionName;
             
             private global::System.Data.DataColumn columnSubjectCode;
             
             private global::System.Data.DataColumn columnSubjectName;
             
+            private global::System.Data.DataColumn columnMonthId;
+            
             private global::System.Data.DataColumn columnAcademicClassId;
+            
+            private global::System.Data.DataColumn columnExamTypeName;
+            
+            private global::System.Data.DataColumn columnInstituteName;
+            
+            private global::System.Data.DataColumn columnEIIN;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public vw_rpt_academic_examsDataTable() {
-                this.TableName = "vw_rpt_academic_exams";
+            public vw_rpt_Admit_Card_InfoDataTable() {
+                this.TableName = "vw_rpt_Admit_Card_Info";
                 this.BeginInit();
                 this.InitClass();
                 this.EndInit();
@@ -318,7 +322,7 @@ namespace SMS.Report {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            internal vw_rpt_academic_examsDataTable(global::System.Data.DataTable table) {
+            internal vw_rpt_Admit_Card_InfoDataTable(global::System.Data.DataTable table) {
                 this.TableName = table.TableName;
                 if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
                     this.CaseSensitive = table.CaseSensitive;
@@ -335,16 +339,16 @@ namespace SMS.Report {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            protected vw_rpt_academic_examsDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+            protected vw_rpt_Admit_Card_InfoDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
                     base(info, context) {
                 this.InitVars();
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn idColumn {
+            public global::System.Data.DataColumn StudentIdColumn {
                 get {
-                    return this.columnid;
+                    return this.columnStudentId;
                 }
             }
             
@@ -382,9 +386,9 @@ namespace SMS.Report {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn SectionNameColumn {
+            public global::System.Data.DataColumn SessionNameColumn {
                 get {
-                    return this.columnSectionName;
+                    return this.columnSessionName;
                 }
             }
             
@@ -398,14 +402,6 @@ namespace SMS.Report {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn AcademicSubjectIdColumn {
-                get {
-                    return this.columnAcademicSubjectId;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public global::System.Data.DataColumn AcademicSectionIdColumn {
                 get {
                     return this.columnAcademicSectionId;
@@ -414,17 +410,9 @@ namespace SMS.Report {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn MonthIdColumn {
+            public global::System.Data.DataColumn SectionNameColumn {
                 get {
-                    return this.columnMonthId;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn ExamNameColumn {
-                get {
-                    return this.columnExamName;
+                    return this.columnSectionName;
                 }
             }
             
@@ -446,9 +434,41 @@ namespace SMS.Report {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn MonthIdColumn {
+                get {
+                    return this.columnMonthId;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public global::System.Data.DataColumn AcademicClassIdColumn {
                 get {
                     return this.columnAcademicClassId;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn ExamTypeNameColumn {
+                get {
+                    return this.columnExamTypeName;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn InstituteNameColumn {
+                get {
+                    return this.columnInstituteName;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn EIINColumn {
+                get {
+                    return this.columnEIIN;
                 }
             }
             
@@ -463,65 +483,76 @@ namespace SMS.Report {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public vw_rpt_academic_examsRow this[int index] {
+            public vw_rpt_Admit_Card_InfoRow this[int index] {
                 get {
-                    return ((vw_rpt_academic_examsRow)(this.Rows[index]));
+                    return ((vw_rpt_Admit_Card_InfoRow)(this.Rows[index]));
                 }
             }
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public event vw_rpt_academic_examsRowChangeEventHandler vw_rpt_academic_examsRowChanging;
+            public event vw_rpt_Admit_Card_InfoRowChangeEventHandler vw_rpt_Admit_Card_InfoRowChanging;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public event vw_rpt_academic_examsRowChangeEventHandler vw_rpt_academic_examsRowChanged;
+            public event vw_rpt_Admit_Card_InfoRowChangeEventHandler vw_rpt_Admit_Card_InfoRowChanged;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public event vw_rpt_academic_examsRowChangeEventHandler vw_rpt_academic_examsRowDeleting;
+            public event vw_rpt_Admit_Card_InfoRowChangeEventHandler vw_rpt_Admit_Card_InfoRowDeleting;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public event vw_rpt_academic_examsRowChangeEventHandler vw_rpt_academic_examsRowDeleted;
+            public event vw_rpt_Admit_Card_InfoRowChangeEventHandler vw_rpt_Admit_Card_InfoRowDeleted;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void Addvw_rpt_academic_examsRow(vw_rpt_academic_examsRow row) {
+            public void Addvw_rpt_Admit_Card_InfoRow(vw_rpt_Admit_Card_InfoRow row) {
                 this.Rows.Add(row);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public vw_rpt_academic_examsRow Addvw_rpt_academic_examsRow(int id, int ClassRoll, string StudentName, string FatherName, string MotherName, string SectionName, string ClassName, int AcademicSubjectId, int AcademicSectionId, int MonthId, string ExamName, int SubjectCode, string SubjectName, int AcademicClassId) {
-                vw_rpt_academic_examsRow rowvw_rpt_academic_examsRow = ((vw_rpt_academic_examsRow)(this.NewRow()));
+            public vw_rpt_Admit_Card_InfoRow Addvw_rpt_Admit_Card_InfoRow(
+                        int StudentId, 
+                        int ClassRoll, 
+                        string StudentName, 
+                        string FatherName, 
+                        string MotherName, 
+                        string SessionName, 
+                        string ClassName, 
+                        int AcademicSectionId, 
+                        string SectionName, 
+                        int SubjectCode, 
+                        string SubjectName, 
+                        int MonthId, 
+                        int AcademicClassId, 
+                        string ExamTypeName, 
+                        string InstituteName, 
+                        string EIIN) {
+                vw_rpt_Admit_Card_InfoRow rowvw_rpt_Admit_Card_InfoRow = ((vw_rpt_Admit_Card_InfoRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
-                        id,
+                        StudentId,
                         ClassRoll,
                         StudentName,
                         FatherName,
                         MotherName,
-                        SectionName,
+                        SessionName,
                         ClassName,
-                        AcademicSubjectId,
                         AcademicSectionId,
-                        MonthId,
-                        ExamName,
+                        SectionName,
                         SubjectCode,
                         SubjectName,
-                        AcademicClassId};
-                rowvw_rpt_academic_examsRow.ItemArray = columnValuesArray;
-                this.Rows.Add(rowvw_rpt_academic_examsRow);
-                return rowvw_rpt_academic_examsRow;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public vw_rpt_academic_examsRow FindByid(int id) {
-                return ((vw_rpt_academic_examsRow)(this.Rows.Find(new object[] {
-                            id})));
+                        MonthId,
+                        AcademicClassId,
+                        ExamTypeName,
+                        InstituteName,
+                        EIIN};
+                rowvw_rpt_Admit_Card_InfoRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowvw_rpt_Admit_Card_InfoRow);
+                return rowvw_rpt_Admit_Card_InfoRow;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public override global::System.Data.DataTable Clone() {
-                vw_rpt_academic_examsDataTable cln = ((vw_rpt_academic_examsDataTable)(base.Clone()));
+                vw_rpt_Admit_Card_InfoDataTable cln = ((vw_rpt_Admit_Card_InfoDataTable)(base.Clone()));
                 cln.InitVars();
                 return cln;
             }
@@ -529,33 +560,35 @@ namespace SMS.Report {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             protected override global::System.Data.DataTable CreateInstance() {
-                return new vw_rpt_academic_examsDataTable();
+                return new vw_rpt_Admit_Card_InfoDataTable();
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             internal void InitVars() {
-                this.columnid = base.Columns["id"];
+                this.columnStudentId = base.Columns["StudentId"];
                 this.columnClassRoll = base.Columns["ClassRoll"];
                 this.columnStudentName = base.Columns["StudentName"];
                 this.columnFatherName = base.Columns["FatherName"];
                 this.columnMotherName = base.Columns["MotherName"];
-                this.columnSectionName = base.Columns["SectionName"];
+                this.columnSessionName = base.Columns["SessionName"];
                 this.columnClassName = base.Columns["ClassName"];
-                this.columnAcademicSubjectId = base.Columns["AcademicSubjectId"];
                 this.columnAcademicSectionId = base.Columns["AcademicSectionId"];
-                this.columnMonthId = base.Columns["MonthId"];
-                this.columnExamName = base.Columns["ExamName"];
+                this.columnSectionName = base.Columns["SectionName"];
                 this.columnSubjectCode = base.Columns["SubjectCode"];
                 this.columnSubjectName = base.Columns["SubjectName"];
+                this.columnMonthId = base.Columns["MonthId"];
                 this.columnAcademicClassId = base.Columns["AcademicClassId"];
+                this.columnExamTypeName = base.Columns["ExamTypeName"];
+                this.columnInstituteName = base.Columns["InstituteName"];
+                this.columnEIIN = base.Columns["EIIN"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             private void InitClass() {
-                this.columnid = new global::System.Data.DataColumn("id", typeof(int), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnid);
+                this.columnStudentId = new global::System.Data.DataColumn("StudentId", typeof(int), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnStudentId);
                 this.columnClassRoll = new global::System.Data.DataColumn("ClassRoll", typeof(int), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnClassRoll);
                 this.columnStudentName = new global::System.Data.DataColumn("StudentName", typeof(string), null, global::System.Data.MappingType.Element);
@@ -564,62 +597,72 @@ namespace SMS.Report {
                 base.Columns.Add(this.columnFatherName);
                 this.columnMotherName = new global::System.Data.DataColumn("MotherName", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnMotherName);
-                this.columnSectionName = new global::System.Data.DataColumn("SectionName", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnSectionName);
+                this.columnSessionName = new global::System.Data.DataColumn("SessionName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnSessionName);
                 this.columnClassName = new global::System.Data.DataColumn("ClassName", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnClassName);
-                this.columnAcademicSubjectId = new global::System.Data.DataColumn("AcademicSubjectId", typeof(int), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnAcademicSubjectId);
                 this.columnAcademicSectionId = new global::System.Data.DataColumn("AcademicSectionId", typeof(int), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnAcademicSectionId);
-                this.columnMonthId = new global::System.Data.DataColumn("MonthId", typeof(int), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnMonthId);
-                this.columnExamName = new global::System.Data.DataColumn("ExamName", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnExamName);
+                this.columnSectionName = new global::System.Data.DataColumn("SectionName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnSectionName);
                 this.columnSubjectCode = new global::System.Data.DataColumn("SubjectCode", typeof(int), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnSubjectCode);
                 this.columnSubjectName = new global::System.Data.DataColumn("SubjectName", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnSubjectName);
+                this.columnMonthId = new global::System.Data.DataColumn("MonthId", typeof(int), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnMonthId);
                 this.columnAcademicClassId = new global::System.Data.DataColumn("AcademicClassId", typeof(int), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnAcademicClassId);
-                this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
-                                this.columnid}, true));
-                this.columnid.AllowDBNull = false;
-                this.columnid.Unique = true;
+                this.columnExamTypeName = new global::System.Data.DataColumn("ExamTypeName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnExamTypeName);
+                this.columnInstituteName = new global::System.Data.DataColumn("InstituteName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnInstituteName);
+                this.columnEIIN = new global::System.Data.DataColumn("EIIN", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnEIIN);
+                this.columnStudentId.AllowDBNull = false;
                 this.columnClassRoll.AllowDBNull = false;
                 this.columnStudentName.MaxLength = 2147483647;
                 this.columnFatherName.MaxLength = 2147483647;
                 this.columnMotherName.MaxLength = 2147483647;
-                this.columnSectionName.MaxLength = 2147483647;
+                this.columnSessionName.AllowDBNull = false;
+                this.columnSessionName.MaxLength = 2147483647;
+                this.columnClassName.AllowDBNull = false;
                 this.columnClassName.MaxLength = 2147483647;
-                this.columnExamName.MaxLength = 2147483647;
+                this.columnAcademicSectionId.AllowDBNull = false;
+                this.columnSectionName.MaxLength = 2147483647;
                 this.columnSubjectName.MaxLength = 2147483647;
+                this.columnMonthId.AllowDBNull = false;
+                this.columnAcademicClassId.AllowDBNull = false;
+                this.columnExamTypeName.AllowDBNull = false;
+                this.columnExamTypeName.MaxLength = 2147483647;
+                this.columnInstituteName.MaxLength = 2147483647;
+                this.columnEIIN.MaxLength = 2147483647;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public vw_rpt_academic_examsRow Newvw_rpt_academic_examsRow() {
-                return ((vw_rpt_academic_examsRow)(this.NewRow()));
+            public vw_rpt_Admit_Card_InfoRow Newvw_rpt_Admit_Card_InfoRow() {
+                return ((vw_rpt_Admit_Card_InfoRow)(this.NewRow()));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
-                return new vw_rpt_academic_examsRow(builder);
+                return new vw_rpt_Admit_Card_InfoRow(builder);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             protected override global::System.Type GetRowType() {
-                return typeof(vw_rpt_academic_examsRow);
+                return typeof(vw_rpt_Admit_Card_InfoRow);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowChanged(e);
-                if ((this.vw_rpt_academic_examsRowChanged != null)) {
-                    this.vw_rpt_academic_examsRowChanged(this, new vw_rpt_academic_examsRowChangeEvent(((vw_rpt_academic_examsRow)(e.Row)), e.Action));
+                if ((this.vw_rpt_Admit_Card_InfoRowChanged != null)) {
+                    this.vw_rpt_Admit_Card_InfoRowChanged(this, new vw_rpt_Admit_Card_InfoRowChangeEvent(((vw_rpt_Admit_Card_InfoRow)(e.Row)), e.Action));
                 }
             }
             
@@ -627,8 +670,8 @@ namespace SMS.Report {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowChanging(e);
-                if ((this.vw_rpt_academic_examsRowChanging != null)) {
-                    this.vw_rpt_academic_examsRowChanging(this, new vw_rpt_academic_examsRowChangeEvent(((vw_rpt_academic_examsRow)(e.Row)), e.Action));
+                if ((this.vw_rpt_Admit_Card_InfoRowChanging != null)) {
+                    this.vw_rpt_Admit_Card_InfoRowChanging(this, new vw_rpt_Admit_Card_InfoRowChangeEvent(((vw_rpt_Admit_Card_InfoRow)(e.Row)), e.Action));
                 }
             }
             
@@ -636,8 +679,8 @@ namespace SMS.Report {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowDeleted(e);
-                if ((this.vw_rpt_academic_examsRowDeleted != null)) {
-                    this.vw_rpt_academic_examsRowDeleted(this, new vw_rpt_academic_examsRowChangeEvent(((vw_rpt_academic_examsRow)(e.Row)), e.Action));
+                if ((this.vw_rpt_Admit_Card_InfoRowDeleted != null)) {
+                    this.vw_rpt_Admit_Card_InfoRowDeleted(this, new vw_rpt_Admit_Card_InfoRowChangeEvent(((vw_rpt_Admit_Card_InfoRow)(e.Row)), e.Action));
                 }
             }
             
@@ -645,14 +688,14 @@ namespace SMS.Report {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowDeleting(e);
-                if ((this.vw_rpt_academic_examsRowDeleting != null)) {
-                    this.vw_rpt_academic_examsRowDeleting(this, new vw_rpt_academic_examsRowChangeEvent(((vw_rpt_academic_examsRow)(e.Row)), e.Action));
+                if ((this.vw_rpt_Admit_Card_InfoRowDeleting != null)) {
+                    this.vw_rpt_Admit_Card_InfoRowDeleting(this, new vw_rpt_Admit_Card_InfoRowChangeEvent(((vw_rpt_Admit_Card_InfoRow)(e.Row)), e.Action));
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void Removevw_rpt_academic_examsRow(vw_rpt_academic_examsRow row) {
+            public void Removevw_rpt_Admit_Card_InfoRow(vw_rpt_Admit_Card_InfoRow row) {
                 this.Rows.Remove(row);
             }
             
@@ -661,7 +704,7 @@ namespace SMS.Report {
             public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
                 global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
                 global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
-                SMSDBDataSet ds = new SMSDBDataSet();
+                AdmitCardDataSet ds = new AdmitCardDataSet();
                 global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
                 any1.Namespace = "http://www.w3.org/2001/XMLSchema";
                 any1.MinOccurs = new decimal(0);
@@ -679,7 +722,7 @@ namespace SMS.Report {
                 type.Attributes.Add(attribute1);
                 global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
                 attribute2.Name = "tableTypeName";
-                attribute2.FixedValue = "vw_rpt_academic_examsDataTable";
+                attribute2.FixedValue = "vw_rpt_Admit_Card_InfoDataTable";
                 type.Attributes.Add(attribute2);
                 type.Particle = sequence;
                 global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
@@ -723,25 +766,25 @@ namespace SMS.Report {
         /// <summary>
         ///Represents strongly named DataRow class.
         ///</summary>
-        public partial class vw_rpt_academic_examsRow : global::System.Data.DataRow {
+        public partial class vw_rpt_Admit_Card_InfoRow : global::System.Data.DataRow {
             
-            private vw_rpt_academic_examsDataTable tablevw_rpt_academic_exams;
+            private vw_rpt_Admit_Card_InfoDataTable tablevw_rpt_Admit_Card_Info;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            internal vw_rpt_academic_examsRow(global::System.Data.DataRowBuilder rb) : 
+            internal vw_rpt_Admit_Card_InfoRow(global::System.Data.DataRowBuilder rb) : 
                     base(rb) {
-                this.tablevw_rpt_academic_exams = ((vw_rpt_academic_examsDataTable)(this.Table));
+                this.tablevw_rpt_Admit_Card_Info = ((vw_rpt_Admit_Card_InfoDataTable)(this.Table));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public int id {
+            public int StudentId {
                 get {
-                    return ((int)(this[this.tablevw_rpt_academic_exams.idColumn]));
+                    return ((int)(this[this.tablevw_rpt_Admit_Card_Info.StudentIdColumn]));
                 }
                 set {
-                    this[this.tablevw_rpt_academic_exams.idColumn] = value;
+                    this[this.tablevw_rpt_Admit_Card_Info.StudentIdColumn] = value;
                 }
             }
             
@@ -749,10 +792,10 @@ namespace SMS.Report {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public int ClassRoll {
                 get {
-                    return ((int)(this[this.tablevw_rpt_academic_exams.ClassRollColumn]));
+                    return ((int)(this[this.tablevw_rpt_Admit_Card_Info.ClassRollColumn]));
                 }
                 set {
-                    this[this.tablevw_rpt_academic_exams.ClassRollColumn] = value;
+                    this[this.tablevw_rpt_Admit_Card_Info.ClassRollColumn] = value;
                 }
             }
             
@@ -761,14 +804,14 @@ namespace SMS.Report {
             public string StudentName {
                 get {
                     try {
-                        return ((string)(this[this.tablevw_rpt_academic_exams.StudentNameColumn]));
+                        return ((string)(this[this.tablevw_rpt_Admit_Card_Info.StudentNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'StudentName\' in table \'vw_rpt_academic_exams\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'StudentName\' in table \'vw_rpt_Admit_Card_Info\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tablevw_rpt_academic_exams.StudentNameColumn] = value;
+                    this[this.tablevw_rpt_Admit_Card_Info.StudentNameColumn] = value;
                 }
             }
             
@@ -777,14 +820,14 @@ namespace SMS.Report {
             public string FatherName {
                 get {
                     try {
-                        return ((string)(this[this.tablevw_rpt_academic_exams.FatherNameColumn]));
+                        return ((string)(this[this.tablevw_rpt_Admit_Card_Info.FatherNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'FatherName\' in table \'vw_rpt_academic_exams\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'FatherName\' in table \'vw_rpt_Admit_Card_Info\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tablevw_rpt_academic_exams.FatherNameColumn] = value;
+                    this[this.tablevw_rpt_Admit_Card_Info.FatherNameColumn] = value;
                 }
             }
             
@@ -793,14 +836,47 @@ namespace SMS.Report {
             public string MotherName {
                 get {
                     try {
-                        return ((string)(this[this.tablevw_rpt_academic_exams.MotherNameColumn]));
+                        return ((string)(this[this.tablevw_rpt_Admit_Card_Info.MotherNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'MotherName\' in table \'vw_rpt_academic_exams\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'MotherName\' in table \'vw_rpt_Admit_Card_Info\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tablevw_rpt_academic_exams.MotherNameColumn] = value;
+                    this[this.tablevw_rpt_Admit_Card_Info.MotherNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public string SessionName {
+                get {
+                    return ((string)(this[this.tablevw_rpt_Admit_Card_Info.SessionNameColumn]));
+                }
+                set {
+                    this[this.tablevw_rpt_Admit_Card_Info.SessionNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public string ClassName {
+                get {
+                    return ((string)(this[this.tablevw_rpt_Admit_Card_Info.ClassNameColumn]));
+                }
+                set {
+                    this[this.tablevw_rpt_Admit_Card_Info.ClassNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public int AcademicSectionId {
+                get {
+                    return ((int)(this[this.tablevw_rpt_Admit_Card_Info.AcademicSectionIdColumn]));
+                }
+                set {
+                    this[this.tablevw_rpt_Admit_Card_Info.AcademicSectionIdColumn] = value;
                 }
             }
             
@@ -809,96 +885,14 @@ namespace SMS.Report {
             public string SectionName {
                 get {
                     try {
-                        return ((string)(this[this.tablevw_rpt_academic_exams.SectionNameColumn]));
+                        return ((string)(this[this.tablevw_rpt_Admit_Card_Info.SectionNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'SectionName\' in table \'vw_rpt_academic_exams\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'SectionName\' in table \'vw_rpt_Admit_Card_Info\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tablevw_rpt_academic_exams.SectionNameColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public string ClassName {
-                get {
-                    try {
-                        return ((string)(this[this.tablevw_rpt_academic_exams.ClassNameColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'ClassName\' in table \'vw_rpt_academic_exams\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tablevw_rpt_academic_exams.ClassNameColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public int AcademicSubjectId {
-                get {
-                    try {
-                        return ((int)(this[this.tablevw_rpt_academic_exams.AcademicSubjectIdColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'AcademicSubjectId\' in table \'vw_rpt_academic_exams\' is DBNu" +
-                                "ll.", e);
-                    }
-                }
-                set {
-                    this[this.tablevw_rpt_academic_exams.AcademicSubjectIdColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public int AcademicSectionId {
-                get {
-                    try {
-                        return ((int)(this[this.tablevw_rpt_academic_exams.AcademicSectionIdColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'AcademicSectionId\' in table \'vw_rpt_academic_exams\' is DBNu" +
-                                "ll.", e);
-                    }
-                }
-                set {
-                    this[this.tablevw_rpt_academic_exams.AcademicSectionIdColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public int MonthId {
-                get {
-                    try {
-                        return ((int)(this[this.tablevw_rpt_academic_exams.MonthIdColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'MonthId\' in table \'vw_rpt_academic_exams\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tablevw_rpt_academic_exams.MonthIdColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public string ExamName {
-                get {
-                    try {
-                        return ((string)(this[this.tablevw_rpt_academic_exams.ExamNameColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'ExamName\' in table \'vw_rpt_academic_exams\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tablevw_rpt_academic_exams.ExamNameColumn] = value;
+                    this[this.tablevw_rpt_Admit_Card_Info.SectionNameColumn] = value;
                 }
             }
             
@@ -907,14 +901,14 @@ namespace SMS.Report {
             public int SubjectCode {
                 get {
                     try {
-                        return ((int)(this[this.tablevw_rpt_academic_exams.SubjectCodeColumn]));
+                        return ((int)(this[this.tablevw_rpt_Admit_Card_Info.SubjectCodeColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'SubjectCode\' in table \'vw_rpt_academic_exams\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'SubjectCode\' in table \'vw_rpt_Admit_Card_Info\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tablevw_rpt_academic_exams.SubjectCodeColumn] = value;
+                    this[this.tablevw_rpt_Admit_Card_Info.SubjectCodeColumn] = value;
                 }
             }
             
@@ -923,14 +917,25 @@ namespace SMS.Report {
             public string SubjectName {
                 get {
                     try {
-                        return ((string)(this[this.tablevw_rpt_academic_exams.SubjectNameColumn]));
+                        return ((string)(this[this.tablevw_rpt_Admit_Card_Info.SubjectNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'SubjectName\' in table \'vw_rpt_academic_exams\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'SubjectName\' in table \'vw_rpt_Admit_Card_Info\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tablevw_rpt_academic_exams.SubjectNameColumn] = value;
+                    this[this.tablevw_rpt_Admit_Card_Info.SubjectNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public int MonthId {
+                get {
+                    return ((int)(this[this.tablevw_rpt_Admit_Card_Info.MonthIdColumn]));
+                }
+                set {
+                    this[this.tablevw_rpt_Admit_Card_Info.MonthIdColumn] = value;
                 }
             }
             
@@ -938,161 +943,151 @@ namespace SMS.Report {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public int AcademicClassId {
                 get {
+                    return ((int)(this[this.tablevw_rpt_Admit_Card_Info.AcademicClassIdColumn]));
+                }
+                set {
+                    this[this.tablevw_rpt_Admit_Card_Info.AcademicClassIdColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public string ExamTypeName {
+                get {
+                    return ((string)(this[this.tablevw_rpt_Admit_Card_Info.ExamTypeNameColumn]));
+                }
+                set {
+                    this[this.tablevw_rpt_Admit_Card_Info.ExamTypeNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public string InstituteName {
+                get {
                     try {
-                        return ((int)(this[this.tablevw_rpt_academic_exams.AcademicClassIdColumn]));
+                        return ((string)(this[this.tablevw_rpt_Admit_Card_Info.InstituteNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'AcademicClassId\' in table \'vw_rpt_academic_exams\' is DBNull" +
-                                ".", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'InstituteName\' in table \'vw_rpt_Admit_Card_Info\' is DBNull." +
+                                "", e);
                     }
                 }
                 set {
-                    this[this.tablevw_rpt_academic_exams.AcademicClassIdColumn] = value;
+                    this[this.tablevw_rpt_Admit_Card_Info.InstituteNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public string EIIN {
+                get {
+                    try {
+                        return ((string)(this[this.tablevw_rpt_Admit_Card_Info.EIINColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'EIIN\' in table \'vw_rpt_Admit_Card_Info\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tablevw_rpt_Admit_Card_Info.EIINColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public bool IsStudentNameNull() {
-                return this.IsNull(this.tablevw_rpt_academic_exams.StudentNameColumn);
+                return this.IsNull(this.tablevw_rpt_Admit_Card_Info.StudentNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public void SetStudentNameNull() {
-                this[this.tablevw_rpt_academic_exams.StudentNameColumn] = global::System.Convert.DBNull;
+                this[this.tablevw_rpt_Admit_Card_Info.StudentNameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public bool IsFatherNameNull() {
-                return this.IsNull(this.tablevw_rpt_academic_exams.FatherNameColumn);
+                return this.IsNull(this.tablevw_rpt_Admit_Card_Info.FatherNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public void SetFatherNameNull() {
-                this[this.tablevw_rpt_academic_exams.FatherNameColumn] = global::System.Convert.DBNull;
+                this[this.tablevw_rpt_Admit_Card_Info.FatherNameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public bool IsMotherNameNull() {
-                return this.IsNull(this.tablevw_rpt_academic_exams.MotherNameColumn);
+                return this.IsNull(this.tablevw_rpt_Admit_Card_Info.MotherNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public void SetMotherNameNull() {
-                this[this.tablevw_rpt_academic_exams.MotherNameColumn] = global::System.Convert.DBNull;
+                this[this.tablevw_rpt_Admit_Card_Info.MotherNameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public bool IsSectionNameNull() {
-                return this.IsNull(this.tablevw_rpt_academic_exams.SectionNameColumn);
+                return this.IsNull(this.tablevw_rpt_Admit_Card_Info.SectionNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public void SetSectionNameNull() {
-                this[this.tablevw_rpt_academic_exams.SectionNameColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool IsClassNameNull() {
-                return this.IsNull(this.tablevw_rpt_academic_exams.ClassNameColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void SetClassNameNull() {
-                this[this.tablevw_rpt_academic_exams.ClassNameColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool IsAcademicSubjectIdNull() {
-                return this.IsNull(this.tablevw_rpt_academic_exams.AcademicSubjectIdColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void SetAcademicSubjectIdNull() {
-                this[this.tablevw_rpt_academic_exams.AcademicSubjectIdColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool IsAcademicSectionIdNull() {
-                return this.IsNull(this.tablevw_rpt_academic_exams.AcademicSectionIdColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void SetAcademicSectionIdNull() {
-                this[this.tablevw_rpt_academic_exams.AcademicSectionIdColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool IsMonthIdNull() {
-                return this.IsNull(this.tablevw_rpt_academic_exams.MonthIdColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void SetMonthIdNull() {
-                this[this.tablevw_rpt_academic_exams.MonthIdColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool IsExamNameNull() {
-                return this.IsNull(this.tablevw_rpt_academic_exams.ExamNameColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void SetExamNameNull() {
-                this[this.tablevw_rpt_academic_exams.ExamNameColumn] = global::System.Convert.DBNull;
+                this[this.tablevw_rpt_Admit_Card_Info.SectionNameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public bool IsSubjectCodeNull() {
-                return this.IsNull(this.tablevw_rpt_academic_exams.SubjectCodeColumn);
+                return this.IsNull(this.tablevw_rpt_Admit_Card_Info.SubjectCodeColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public void SetSubjectCodeNull() {
-                this[this.tablevw_rpt_academic_exams.SubjectCodeColumn] = global::System.Convert.DBNull;
+                this[this.tablevw_rpt_Admit_Card_Info.SubjectCodeColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public bool IsSubjectNameNull() {
-                return this.IsNull(this.tablevw_rpt_academic_exams.SubjectNameColumn);
+                return this.IsNull(this.tablevw_rpt_Admit_Card_Info.SubjectNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public void SetSubjectNameNull() {
-                this[this.tablevw_rpt_academic_exams.SubjectNameColumn] = global::System.Convert.DBNull;
+                this[this.tablevw_rpt_Admit_Card_Info.SubjectNameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool IsAcademicClassIdNull() {
-                return this.IsNull(this.tablevw_rpt_academic_exams.AcademicClassIdColumn);
+            public bool IsInstituteNameNull() {
+                return this.IsNull(this.tablevw_rpt_Admit_Card_Info.InstituteNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void SetAcademicClassIdNull() {
-                this[this.tablevw_rpt_academic_exams.AcademicClassIdColumn] = global::System.Convert.DBNull;
+            public void SetInstituteNameNull() {
+                this[this.tablevw_rpt_Admit_Card_Info.InstituteNameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsEIINNull() {
+                return this.IsNull(this.tablevw_rpt_Admit_Card_Info.EIINColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetEIINNull() {
+                this[this.tablevw_rpt_Admit_Card_Info.EIINColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -1100,22 +1095,22 @@ namespace SMS.Report {
         ///Row event argument class
         ///</summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        public class vw_rpt_academic_examsRowChangeEvent : global::System.EventArgs {
+        public class vw_rpt_Admit_Card_InfoRowChangeEvent : global::System.EventArgs {
             
-            private vw_rpt_academic_examsRow eventRow;
+            private vw_rpt_Admit_Card_InfoRow eventRow;
             
             private global::System.Data.DataRowAction eventAction;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public vw_rpt_academic_examsRowChangeEvent(vw_rpt_academic_examsRow row, global::System.Data.DataRowAction action) {
+            public vw_rpt_Admit_Card_InfoRowChangeEvent(vw_rpt_Admit_Card_InfoRow row, global::System.Data.DataRowAction action) {
                 this.eventRow = row;
                 this.eventAction = action;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public vw_rpt_academic_examsRow Row {
+            public vw_rpt_Admit_Card_InfoRow Row {
                 get {
                     return this.eventRow;
                 }
@@ -1131,7 +1126,7 @@ namespace SMS.Report {
         }
     }
 }
-namespace SMS.Report.SMSDBDataSetTableAdapters {
+namespace SMS.Report.AdmitCardDataSetTableAdapters {
     
     
     /// <summary>
@@ -1143,7 +1138,7 @@ namespace SMS.Report.SMSDBDataSetTableAdapters {
     [global::System.ComponentModel.DesignerAttribute("Microsoft.VSDesigner.DataSource.Design.TableAdapterDesigner, Microsoft.VSDesigner" +
         ", Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
     [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
-    public partial class vw_rpt_academic_examsTableAdapter : global::System.ComponentModel.Component {
+    public partial class vw_rpt_Admit_Card_InfoTableAdapter : global::System.ComponentModel.Component {
         
         private global::System.Data.SqlClient.SqlDataAdapter _adapter;
         
@@ -1157,7 +1152,7 @@ namespace SMS.Report.SMSDBDataSetTableAdapters {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        public vw_rpt_academic_examsTableAdapter() {
+        public vw_rpt_Admit_Card_InfoTableAdapter() {
             this.ClearBeforeFill = true;
         }
         
@@ -1254,21 +1249,23 @@ namespace SMS.Report.SMSDBDataSetTableAdapters {
             this._adapter = new global::System.Data.SqlClient.SqlDataAdapter();
             global::System.Data.Common.DataTableMapping tableMapping = new global::System.Data.Common.DataTableMapping();
             tableMapping.SourceTable = "Table";
-            tableMapping.DataSetTable = "vw_rpt_academic_exams";
-            tableMapping.ColumnMappings.Add("id", "id");
+            tableMapping.DataSetTable = "vw_rpt_Admit_Card_Info";
+            tableMapping.ColumnMappings.Add("StudentId", "StudentId");
             tableMapping.ColumnMappings.Add("ClassRoll", "ClassRoll");
             tableMapping.ColumnMappings.Add("StudentName", "StudentName");
             tableMapping.ColumnMappings.Add("FatherName", "FatherName");
             tableMapping.ColumnMappings.Add("MotherName", "MotherName");
-            tableMapping.ColumnMappings.Add("SectionName", "SectionName");
+            tableMapping.ColumnMappings.Add("SessionName", "SessionName");
             tableMapping.ColumnMappings.Add("ClassName", "ClassName");
-            tableMapping.ColumnMappings.Add("AcademicSubjectId", "AcademicSubjectId");
             tableMapping.ColumnMappings.Add("AcademicSectionId", "AcademicSectionId");
-            tableMapping.ColumnMappings.Add("MonthId", "MonthId");
-            tableMapping.ColumnMappings.Add("ExamName", "ExamName");
+            tableMapping.ColumnMappings.Add("SectionName", "SectionName");
             tableMapping.ColumnMappings.Add("SubjectCode", "SubjectCode");
             tableMapping.ColumnMappings.Add("SubjectName", "SubjectName");
+            tableMapping.ColumnMappings.Add("MonthId", "MonthId");
             tableMapping.ColumnMappings.Add("AcademicClassId", "AcademicClassId");
+            tableMapping.ColumnMappings.Add("ExamTypeName", "ExamTypeName");
+            tableMapping.ColumnMappings.Add("InstituteName", "InstituteName");
+            tableMapping.ColumnMappings.Add("EIIN", "EIIN");
             this._adapter.TableMappings.Add(tableMapping);
         }
         
@@ -1285,9 +1282,9 @@ namespace SMS.Report.SMSDBDataSetTableAdapters {
             this._commandCollection = new global::System.Data.SqlClient.SqlCommand[1];
             this._commandCollection[0] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[0].Connection = this.Connection;
-            this._commandCollection[0].CommandText = "SELECT id, ClassRoll, StudentName, FatherName, MotherName, SectionName, ClassName" +
-                ", AcademicSubjectId, AcademicSectionId, MonthId, ExamName, SubjectCode, SubjectN" +
-                "ame, AcademicClassId FROM dbo.vw_rpt_academic_exams";
+            this._commandCollection[0].CommandText = "SELECT StudentId, ClassRoll, StudentName, FatherName, MotherName, SessionName, Cl" +
+                "assName, AcademicSectionId, SectionName, SubjectCode, SubjectName, MonthId, Acad" +
+                "emicClassId, ExamTypeName, InstituteName, EIIN FROM dbo.vw_rpt_Admit_Card_Info";
             this._commandCollection[0].CommandType = global::System.Data.CommandType.Text;
         }
         
@@ -1295,7 +1292,7 @@ namespace SMS.Report.SMSDBDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Fill, true)]
-        public virtual int Fill(SMSDBDataSet.vw_rpt_academic_examsDataTable dataTable) {
+        public virtual int Fill(AdmitCardDataSet.vw_rpt_Admit_Card_InfoDataTable dataTable) {
             this.Adapter.SelectCommand = this.CommandCollection[0];
             if ((this.ClearBeforeFill == true)) {
                 dataTable.Clear();
@@ -1308,9 +1305,9 @@ namespace SMS.Report.SMSDBDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Select, true)]
-        public virtual SMSDBDataSet.vw_rpt_academic_examsDataTable GetData() {
+        public virtual AdmitCardDataSet.vw_rpt_Admit_Card_InfoDataTable GetData() {
             this.Adapter.SelectCommand = this.CommandCollection[0];
-            SMSDBDataSet.vw_rpt_academic_examsDataTable dataTable = new SMSDBDataSet.vw_rpt_academic_examsDataTable();
+            AdmitCardDataSet.vw_rpt_Admit_Card_InfoDataTable dataTable = new AdmitCardDataSet.vw_rpt_Admit_Card_InfoDataTable();
             this.Adapter.Fill(dataTable);
             return dataTable;
         }
@@ -1384,7 +1381,7 @@ namespace SMS.Report.SMSDBDataSetTableAdapters {
         ///</summary>
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        private int UpdateUpdatedRows(SMSDBDataSet dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allChangedRows, global::System.Collections.Generic.List<global::System.Data.DataRow> allAddedRows) {
+        private int UpdateUpdatedRows(AdmitCardDataSet dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allChangedRows, global::System.Collections.Generic.List<global::System.Data.DataRow> allAddedRows) {
             int result = 0;
             return result;
         }
@@ -1394,7 +1391,7 @@ namespace SMS.Report.SMSDBDataSetTableAdapters {
         ///</summary>
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        private int UpdateInsertedRows(SMSDBDataSet dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allAddedRows) {
+        private int UpdateInsertedRows(AdmitCardDataSet dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allAddedRows) {
             int result = 0;
             return result;
         }
@@ -1404,7 +1401,7 @@ namespace SMS.Report.SMSDBDataSetTableAdapters {
         ///</summary>
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        private int UpdateDeletedRows(SMSDBDataSet dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allChangedRows) {
+        private int UpdateDeletedRows(AdmitCardDataSet dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allChangedRows) {
             int result = 0;
             return result;
         }
@@ -1438,7 +1435,7 @@ namespace SMS.Report.SMSDBDataSetTableAdapters {
         ///</summary>
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        public virtual int UpdateAll(SMSDBDataSet dataSet) {
+        public virtual int UpdateAll(AdmitCardDataSet dataSet) {
             if ((dataSet == null)) {
                 throw new global::System.ArgumentNullException("dataSet");
             }

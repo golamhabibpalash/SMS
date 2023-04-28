@@ -33,6 +33,7 @@ namespace SMS.BLL.Managers
             return await _academicSectinRepository.GetAllByClassWithSessionId(classId, sessionId);
         }
 
+
         public async override Task<bool> UpdateAsync(AcademicSection entity)
         {
             var exitSection = await _academicSectinRepository.IsExistByNameWithClassNSessionAsync(entity);

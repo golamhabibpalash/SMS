@@ -22,6 +22,11 @@ namespace SMS.DAL.Repositories.Reports
         {
             string query = @"select t.* from vw_rpt_Admit_Card_Info t
 where t.monthId = " + monthId+" and t.academicClassId = "+academicClassId+" and t.AcademicSectionId ="+academicSectionId+"";
+            if (academicSectionId<=0)
+            {
+                query = @"select t.* from vw_rpt_Admit_Card_Info t
+where t.monthId = " + monthId + " and t.academicClassId = " + academicClassId + "";
+            }
             List<RptAdmitCardVM> result = await _context.RptAdmitCardVMs.FromSqlRaw(query).ToListAsync();
             return result;
         }

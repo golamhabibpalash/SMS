@@ -285,16 +285,14 @@ namespace SMS.App.Controllers
             }
             return RedirectToAction("Index");
         }
-        public ActionResult AdmitCard()
+        public async Task<ActionResult> AdmitCard()
         {
-            return View();
-        }
-        [HttpPost]
-        public ActionResult AdmitCard(int x)
-        {
-            return View();
-        }
+            ViewData["ExamType"] = new SelectList(await _examTypeManager.GetAllAsync(), "Id", "ExamTypeName");
+            ViewData["AcademicClass"] = new SelectList(await _classManager.GetAllAsync(), "Id", "Name");
 
+            return View();
+        }
+        
         [HttpPost]
         public async Task<JsonResult> UnlockExam(int exId)
         {

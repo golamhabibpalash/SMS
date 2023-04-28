@@ -27,10 +27,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\Reports\rptAdmitCard.rdlc" />
     <Content Remove="wwwroot\Reports\rptMarkSheet.rdlc" />
     <Content Remove="wwwroot\Reports\rptStudent1.rdlc" />
     <Content Remove="wwwroot\Reports\rptStudentPaymentFullInfo.rdlc" />
+    <Content Remove="wwwroot\Reports\Rpt_AdmitCard.rdlc" />
   </ItemGroup>
 
   <ItemGroup>
@@ -82,9 +82,9 @@
     <None Include="wwwroot\lib\MultiSelect\js\jquery-2.1.3.min.js" />
     <None Include="wwwroot\lib\MultiSelect\js\prettify.min.js" />
     <None Include="wwwroot\lib\MultiSelect\js\require-2.3.5.min.js" />
-    <None Include="wwwroot\Reports\rptAdmitCard.rdlc" />
     <None Include="wwwroot\Reports\rptMarkSheet.rdlc" />
     <None Include="wwwroot\Reports\rptStudentPaymentFullInfo.rdlc" />
+    <None Include="wwwroot\Reports\Rpt_AdmitCard.rdlc" />
   </ItemGroup>
 
   <ItemGroup>

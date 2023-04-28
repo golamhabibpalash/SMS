@@ -13,5 +13,6 @@ namespace SMS.DAL.Contracts
         Task<IReadOnlyCollection<AcademicSection>> GetAllByClassWithSessionId(int classId, int sessionId);
         Task<AcademicSection> GetByNameAsync(string name);
         Task<bool> IsExistByNameWithClassNSessionAsync(AcademicSection academicSection);
+        
     }
 }

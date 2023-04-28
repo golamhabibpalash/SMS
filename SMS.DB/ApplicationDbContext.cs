@@ -88,6 +88,7 @@ namespace SMS.DB
             builder.Entity<StudentPaymentSummeryVM>(entity => entity.HasNoKey());
             builder.Entity<RptStudentVM>().ToView(nameof(RptStudentVMs)).HasNoKey();
             builder.Entity<rptStudentPaymentsVM>().ToView(nameof(RptStudentPaymetnsVMs)).HasNoKey();
+            builder.Entity<RptAdmitCardVM>().ToView(nameof(RptAdmitCardVMs)).HasNoKey();
 
             //builder.Entity<StudentPayment>()
             //    .HasMany(p => p.StudentPaymentDetails)

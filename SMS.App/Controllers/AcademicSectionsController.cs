@@ -195,6 +195,14 @@ namespace SMS.App.Controllers
         [Route("api/academicsections/getbyclasswithsessionId")]
         public async Task<IReadOnlyCollection<AcademicSection>> GetAllByClassWithSessionId(int classId, int sessionId)
         {
+            if (sessionId<=0)
+            {
+                AcademicSession currentAcademicSession = await _academicSessionManager.GetCurrentAcademicSession();
+                if (currentAcademicSession!=null)
+                {
+                    sessionId = currentAcademicSession.Id;
+                }
+            }
             return await _academicSectionManager.GetAllByClassWithSessionId(classId, sessionId);
         }
     }

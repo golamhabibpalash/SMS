@@ -10,5 +10,6 @@ namespace SMS.DAL.Contracts
 {
     public interface IAcademicSessionRepository:IRepository<AcademicSession>
     {
+        Task<AcademicSession> GetCurrentAcademicSession();
     }
 }

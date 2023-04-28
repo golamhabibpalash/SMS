@@ -13,6 +13,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="AdmitCardDataSet.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>AdmitCardDataSet.xsd</DependentUpon>
+    </Compile>
     <Compile Update="App_Code\myDataSet.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -38,19 +43,13 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>rptStudentPaymentFullInfo.xsd</DependentUpon>
     </Compile>
-    <Compile Update="Rpt_Academic_Exam.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Rpt_Academic_Exam.xsd</DependentUpon>
-    </Compile>
-    <Compile Update="SMSDBDataSet.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>SMSDBDataSet.xsd</DependentUpon>
-    </Compile>
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="AdmitCardDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>AdmitCardDataSet.Designer.cs</LastGenOutput>
+    </None>
     <None Update="App_Code\myDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>myDataSet.Designer.cs</LastGenOutput>
@@ -70,17 +69,6 @@
     <None Update="DS\rptStudentPaymentFullInfo.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>rptStudentPaymentFullInfo.Designer.cs</LastGenOutput>
-    </None>
-    <None Update="Reports\rptStudent.rdlc">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Rpt_Academic_Exam.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>Rpt_Academic_Exam.Designer.cs</LastGenOutput>
-    </None>
-    <None Update="SMSDBDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>SMSDBDataSet.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
 

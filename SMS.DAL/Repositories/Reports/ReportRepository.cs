@@ -20,8 +20,8 @@ namespace SMS.DAL.Repositories.Reports
 
         public async Task<List<RptAdmitCardVM>> GetAdmitCard(int monthId, int academicClassId, int academicSectionId)
         {
-            string query = @"select t.* from vw_rpt_academic_exams t
-where t.monthId = "+monthId+" and t.academicClassId = "+academicClassId+" and t.AcademicSectionId ="+academicSectionId+"";
+            string query = @"select t.* from vw_rpt_Admit_Card_Info t
+where t.monthId = " + monthId+" and t.academicClassId = "+academicClassId+" and t.AcademicSectionId ="+academicSectionId+"";
             List<RptAdmitCardVM> result = await _context.RptAdmitCardVMs.FromSqlRaw(query).ToListAsync();
             return result;
         }
@@ -38,7 +38,8 @@ where t.monthId = "+monthId+" and t.academicClassId = "+academicClassId+" and t.
 
         public async Task<List<RptStudentVM>> getStudentsInfo()
         {
-            string query = @"select r.ClassRoll, r.StudentName,r.ClassName,r.SectionName,r.SessionName,r.FatherName,r.MotherName,r.GuardianPhone,r.PhoneNo,r.BloodGroup,r.Gender,r.Religion,Case r.Status when 1 then 'Active' else 'Inactive' end Status from vw_rpt_student_info r";
+            string query = @"select r.ClassRoll, r.StudentName,r.AcademicClassId,r.ClassName,r.AcademicSectionId,r.SectionName,r.SessionName,
+r.FatherName,r.MotherName,r.GuardianPhone,r.PhoneNo,r.BloodGroup,r.Gender,r.Religion,Case r.Status when 1 then 'Active' else 'Inactive' end Status from vw_rpt_student_info r";
             List<RptStudentVM> rptStudentVMs = new List<RptStudentVM>();
             var result =await _context.RptStudentVMs.FromSqlRaw(query).ToListAsync();
             rptStudentVMs = result;

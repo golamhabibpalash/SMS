@@ -15,5 +15,7 @@
         public string Status { get; set; }
         public string BloodGroup { get; set; }
         public string SectionName { get; set; }
+        public int AcademicClassId { get; set; }
+        public string AcademicSectionId { get; set; }
     }
 }

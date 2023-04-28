@@ -28,22 +28,24 @@
                             <label asp-for="AcademicClassId" class="col-md-4 col-form-label"></label>
                             <div class="col-md-8">
                                 <select class="form-control" asp-for="AcademicClassId" asp-items="Model.AcademicClassList">
-                                    <option selected disabled>Select Academic Class</option>
+                                    <option selected disabled value="0">Select Academic Class</option>
+                                    <option value="all">All Class</option>
                                 </select>
                                 <span asp-validation-for="AcademicClassId" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="report-type" class="col-md-4 col-form-label">Academic Section :</label>
+                            <label asp-for="AcademicSectionId" class="col-md-4 col-form-label">Academic Section :</label>
                             <div class="col-md-8">
-                                <select class="form-control" id="AcademicSectionId">
-                                    <option selected disabled>Select Academic Section</option>
+                                <select class="form-control" asp-for="AcademicSectionId">
+                                    <option selected disabled value="0">Select Academic Section</option>
                                 </select>
                             </div>
                         </div>
                         <div class="form-group row">
                             <div class="offset-7">
-                                <button id="viewReportSubmit" type="submit" class="btn btn-primary" name="@Model.ReportType" value="view">View Report</button>
+                                <span id="myButton" class="btn btn-warning">Load Report</span>
+                                @*<button id="viewReportSubmit" type="submit" class="btn btn-primary" name="@Model.ReportType" value="view">View Report</button>*@
                             </div>
                         </div>
                     </form>
@@ -51,33 +53,34 @@
             </div>
         </div>
         <div class="row">
+            <div class="col-md-12" id="InvalidForm" style="display:none">
+                <div><h2 class="text-danger"> Please Select all the field</h2></div>
+            </div>
             <div class="col-md-12" id="loading" style="display:none">
                 <div><h2 class="text-danger"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Please wait while the data is loading...</h2></div>
             </div>
         </div>
     </div>
-
-    @if (Context.Request.Method == "POST")
-    {
-        <div class="col-md-9" id="iframe-container">
-                <div class="row" >
-                    <div class="col-md-12 d-flex justify-content-end">
-                        <form asp-action="StudentsReportExport" method="get">
-                            <div class="btn-group btn-sm mr-2 " role="group" aria-label="First group">
-                                <input type="hidden" name="fileName" value="students List" />
-                                <button type="submit" name="reportType" value="pdf" class="btn-sm btn btn-danger" data-toggle="tooltip" title="Export PDF" data-placement="left"><i class="fas fa-file-pdf"></i></button>
-                                <button type="submit" name="reportType" value="xls" class="btn-sm btn btn-success" data-toggle="tooltip" title="Export xls" data-placement="top"><i class="fas fa-file-excel"></i></button>
-                                <button type="submit" name="reportType" value="word" class="btn-sm btn btn-primary" data-toggle="tooltip" title="Export doc" data-placement="top"><i class="fas fa-file-word"></i></button>
-                            </div>
-                        </form>
-                    </div>
+    <div class="col-md-9" id="iframe-container" style="display:none">
+            <div class="row" >
+                <div class="col-md-12 d-flex justify-content-end">
+                    <form asp-action="StudentsReportExport" method="get">
+                        <input type="hidden" id="exportAcademicClassId" name="academicClassId"  />
+                        <input type="hidden" id="exportAcademicSectionId" name="academicSectionId"  />
+                        <div class="btn-group btn-sm mr-2 " role="group" aria-label="First group">
+                            <input type="hidden" name="fileName" value="students List" />
+                            <button type="submit" name="reportType" value="pdf" class="btn-sm btn btn-danger" data-toggle="tooltip" title="Export PDF" data-placement="left"><i class="fas fa-file-pdf"></i></button>
+                            <button type="submit" name="reportType" value="xls" class="btn-sm btn btn-success" data-toggle="tooltip" title="Export xls" data-placement="top"><i class="fas fa-file-excel"></i></button>
+                            <button type="submit" name="reportType" value="word" class="btn-sm btn btn-primary" data-toggle="tooltip" title="Export doc" data-placement="top"><i class="fas fa-file-word"></i></button>
+                        </div>
+                    </form>
                 </div>
-
-            <div class="row" style="height:600px;">
-                 <iframe id="myIframe" src="@Url.Action("StudentsReportExport", "Reports", new {reportType="pdf" })" style="width: 100%; height: 100%;"></iframe>
             </div>
+
+        <div class="row" style="height:600px;">
+            <iframe id="myIframe" style="width: 100%; height: 100%;"></iframe>
         </div>
-    }
+    </div>
 </div>
 
 
@@ -85,12 +88,37 @@
 @section scripts {
     <script>
         $(document).ready(function () {
-            $('#loading').hide();
-            $('#studentInfoForm').submit(function () {
-                $('#loading').show();
-            });
-            $('#myIframe').on('load', function () {
-                $('#loading').hide();
+            $('#myButton').click(function () {
+                let reportType = 'pdf';
+                let aSection = '0';
+                let academicClassId = '0';
+
+                academicClassId = $('#AcademicClassId option:selected').val();
+                aSection = $('#AcademicSectionId option:selected').val();
+
+                if (academicClassId<='0') {
+                    $('#InvalidForm').show();
+                    $('#AcademicSessionId').focus();
+                    $('#iframe-container').hide();
+                    $('#loading').hide();
+                }
+                else {
+                    $('#exportAcademicClassId').attr('value', academicClassId);
+                    $('#exportAcademicSectionId').attr('value', aSection);
+
+                    $('#myIframe').attr('src', '/Reports/StudentsReportExport?reportType=' + reportType + '&&academicClassId=' + academicClassId + '&&academicSectionId=' + aSection);
+                    $('#iframe-container').show();
+
+                    var iframe = document.getElementById('myIframe');
+                    $('#loading').show();
+                    $('#InvalidForm').hide();
+                    // Attach a load event handler to the iframe
+                    iframe.onload = function () {
+                        console.log('Iframe loaded');
+                        $('#loading').hide();
+                    };
+
+                }
             });
         });
 
@@ -113,7 +141,6 @@
                         $('#AcademicSectionId').append(o);
                         $('#AcademicSectionId').append(o2);
                         $.each(data, function (i, obj) {
-                            console.log(obj.name);
                             var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
                             $('#AcademicSectionId').append(op);
                         });

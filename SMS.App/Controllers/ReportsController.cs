@@ -10,11 +10,15 @@ using SMS.App.ViewModels.ReportVM;
 using SMS.BLL.Contracts;
 using SMS.BLL.Contracts.Reports;
 using SMS.Entities;
+using Syncfusion.Drawing;
 using Syncfusion.XlsIO.Implementation.PivotAnalysis;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net.Mime;
 using System.Threading.Tasks;
@@ -67,17 +71,36 @@ namespace SMS.App.Controllers
             return View(rpt_Student_VM);
         }
         
-        public async Task<IActionResult> StudentsReportExport(string reportType,string fileName)
+        public async Task<IActionResult> StudentsReportExport(string reportType,string fileName, string academicClassId, string academicSectionId)
         {
             RenderType renderType = RenderType.Pdf;
             renderType = !string.IsNullOrEmpty(reportType)? GetRenderType(reportType):renderType;
             var path = _host.WebRootPath + "\\Reports\\rptStudent.rdlc";
             Dictionary<string, string> parameters = new();
-            //parameters.Add("rp1", "Welcome to RDLC Reporting");
+            Institute institute = await _instituteManager.GetByIdAsync(1);
+            parameters.Add("InstituteName", institute.Name);
+            parameters.Add("ReportName", "Student List");
+            parameters.Add("Address", institute.Address);
+            parameters.Add("EIIN", institute.EIIN);
+            
             AspNetCore.Reporting.LocalReport localReport = new(path);
-            //List<RptStudentVM> studentVMs = new List<RptStudentVM>();
             
             var studens = await _reportManager.GetStudentsInfo();
+            if (!string.IsNullOrEmpty(academicClassId))
+            {
+                if (academicClassId!="all")
+                {
+                    studens = studens.Where(s => s.AcademicClassId.ToString() == academicClassId).ToList();
+                }
+                if (!string.IsNullOrEmpty(academicSectionId) && academicSectionId!="0")
+                {
+                    int sectionId;
+                    if (int.TryParse(academicSectionId, out sectionId))
+                    {
+                        studens = studens.Where(s => s.AcademicSectionId ==  sectionId.ToString()).ToList();
+                    }
+                }
+            }
             localReport.AddDataSource("DataSet1", studens);
             var result = localReport.Execute(renderType, 1, parameters);
             if (!string.IsNullOrEmpty(fileName))
@@ -273,18 +296,29 @@ namespace SMS.App.Controllers
         
         public async Task<IActionResult> AdmitCardExport(string reportType, string fileName, int monthId, int academicClassId, int academicSectionId)
         {
+            string imageParam = "";
+            var imagePath = _host.WebRootPath + "\\Images\\Institute\\nobleLogo.png";
+            using (var b = new Bitmap(imagePath))
+            {
+                using(var ms = new MemoryStream())
+                {
+                    b.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+                    imageParam = Convert.ToBase64String(ms.ToArray());
+                }
+            }
             RenderType renderType = RenderType.Pdf;
             renderType = !string.IsNullOrEmpty(reportType) ? GetRenderType(reportType) : renderType;
-            var path = _host.WebRootPath + "\\Reports\\rptAdmitCard.rdlc";
+            var path = _host.WebRootPath + "\\Reports\\Rpt_AdmitCard.rdlc";
             Dictionary<string, string> parameters = new();
             Institute institute = await _instituteManager.GetByIdAsync(1);
             parameters.Add("InstituteName", institute.Name);
             parameters.Add("EIINNo", institute.EIIN);
+            parameters.Add("Image", imageParam);
             AspNetCore.Reporting.LocalReport localReport = new(path);
 
             var admitCard = await _reportManager.GetAdmitCard(monthId,academicClassId,academicSectionId);
 
-            localReport.AddDataSource("dsAdmitCard", admitCard);
+            localReport.AddDataSource("DSAdmitCard", admitCard);
             var result = localReport.Execute(renderType, 1, parameters);
             if (!string.IsNullOrEmpty(fileName))
             {

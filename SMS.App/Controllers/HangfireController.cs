@@ -77,9 +77,10 @@ namespace SMS.App.Controllers
                 }
                 if (setupMobileSMS.CheckInSMSService == true)
                 {
-                    RecurringJob.AddOrUpdate(() => SendCheckInSMS(), "*/10 8-9 * * 6-4", TimeZoneInfo.Local);
+                    RecurringJob.AddOrUpdate(() => SendCheckInSMS(), "*/10 9-10 * * 6-4", TimeZoneInfo.Local);
                     //Every 10 minutes, between 08:00 AM and 09:59 AM, Saturday through Thursday
-                }
+                } 
+
                 if (setupMobileSMS.CheckOutSMSService == true)
                 {
                     RecurringJob.AddOrUpdate(() => SendCheckOutSMS(), "*/10 12-15 * * 6-4", TimeZoneInfo.Local);

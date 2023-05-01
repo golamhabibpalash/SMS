@@ -208,15 +208,12 @@
                                                     <a asp-action="Index" asp-controller="AcademicExamType">Exam Type</a>
                                                 </li>
                                                 <li>
-                                                    <a asp-action="Index" asp-controller="AcademicExams">Exam Group</a>
-                                                </li>
-                                                <li>
-                                                    <a asp-action="Index" asp-controller="AcademicExamDetails">Exam List</a>
+                                                    <a asp-action="Index" asp-controller="AcademicExams">All Exam</a>
                                                 </li>
                                             </ul>
                                         </li>
                                         <li>
-                                            <a href="#"> Academic Result</a>
+                                            <a asp-action="Index" asp-controller="ExamResults"> Academic Result</a>
                                         </li>
                                         <li>
                                             <a> Question Bank <span class="fa fa-chevron-down"></span></a>
@@ -382,7 +379,10 @@
                                                         <a asp-action="AdmitCard" asp-controller="AcademicExams">Admit Cards</a>
                                                     </li>
                                                     <li>
-                                                        <a asp-action="AdmitCard" asp-controller="AcademicExams">Exam Result</a>
+                                                        <a asp-action="Index" asp-controller="ExamResults">Exam Result</a>
+                                                    </li>
+                                                    <li>
+                                                        <a asp-action="Marksheet" asp-controller="ExamResults">Mark Sheet</a>
                                                     </li>
 
                                                 </ul>

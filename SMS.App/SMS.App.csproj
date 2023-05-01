@@ -31,6 +31,7 @@
     <Content Remove="wwwroot\Reports\rptStudent1.rdlc" />
     <Content Remove="wwwroot\Reports\rptStudentPaymentFullInfo.rdlc" />
     <Content Remove="wwwroot\Reports\Rpt_AdmitCard.rdlc" />
+    <Content Remove="wwwroot\Reports\Rpt_Exam_Result.rdlc" />
   </ItemGroup>
 
   <ItemGroup>
@@ -85,6 +86,7 @@
     <None Include="wwwroot\Reports\rptMarkSheet.rdlc" />
     <None Include="wwwroot\Reports\rptStudentPaymentFullInfo.rdlc" />
     <None Include="wwwroot\Reports\Rpt_AdmitCard.rdlc" />
+    <None Include="wwwroot\Reports\Rpt_Exam_Result.rdlc" />
   </ItemGroup>
 
   <ItemGroup>

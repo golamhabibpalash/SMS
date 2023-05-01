@@ -20,14 +20,15 @@ namespace SMS.App.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IStudentManager _studentManager;
         private readonly IAcademicExamTypeManager _academicExamTypeManager;
-        public ExamResultsController(IExamResultManager examResultManager, IAcademicExamManager academicExamManager, UserManager<ApplicationUser> userManager, IStudentManager studentManager, IAcademicExamTypeManager academicExamTypeManager)
+        private readonly IAcademicClassManager _academicClassManager;
+        public ExamResultsController(IExamResultManager examResultManager, IAcademicExamManager academicExamManager, UserManager<ApplicationUser> userManager, IStudentManager studentManager, IAcademicExamTypeManager academicExamTypeManager, IAcademicClassManager academicClassManager)
         {
             _examResultManager = examResultManager;
             _academicExamManager = academicExamManager;
             _userManager = userManager;
             _studentManager = studentManager;
             _academicExamTypeManager = academicExamTypeManager;
-
+            _academicClassManager = academicClassManager;
         }
         // GET: ExamResultsController
         public async Task<ActionResult> Index()
@@ -36,7 +37,9 @@ namespace SMS.App.Controllers
 
             List<AcademicExam> existingExams = (List<AcademicExam>)await _academicExamManager.GetAllAsync();
             var user =await _userManager.GetUserAsync(User);
+
             ViewData["ExamType"] = new SelectList(await _academicExamTypeManager.GetAllAsync(),"Id", "ExamTypeName");
+            ViewData["ClassList"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name");
                 
                 
                 //await _academicExamTypeManager.GetAllAsync();

@@ -52,7 +52,7 @@
                                             </a>
                                         </td>
                                         <td class="text-right">@item.TotalEmployee</td>
-                                       
+
                                         @{totalAttendedEmployees += @item.AttendedEmployees.Where(e => e.Status == true).Count();}
                                     </tr>
                                 }
@@ -101,7 +101,7 @@
                                             </a>
                                         </td>
                                         <td class="text-right"><a asp-action="Index" asp-controller="Students" asp-route-academicClassId="@sClass.AcademicClass.Id"> @sClass.TotalStudent</a></td>
-                                        @{totalAttendedStudents += @sClass.AttendedStudents.Where(s => s.Status==true).Count();}
+                                        @{totalAttendedStudents += @sClass.AttendedStudents.Where(s => s.Status == true).Count();}
                                     </tr>
                                 }
                                 <tr class="font-weight-bold bg-info text-light">
@@ -120,28 +120,65 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-12 col-md-6 col-12">
-        <div class="card shadow ">
-            <div class="card-header h5 text-center">
-                Payments (Collection)
-            </div>
-            <div class="">
-                <div class="row">
-                    <div id='monthlyCollection' class="col-md-6">
-                        <table class="table table-primary">
-                            <thead class="bg-blue-sky">
-                                <tr class="bg-primary text-center font-weight-bold h6">
-                                    <td colspan="2" class="text-center">Todays (@DateTime.Today.ToString("dd/MM/yyyy")) Collection</td>
-                                </tr>
-                                <tr>
-                                    <td>Class Name</td>
-                                    <td class="text-right">Amount</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @if (Model.DailyCollections != null)
-                                {
-                                    foreach (var item in Model.DailyCollections)
+    @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
+    {
+        <div class="col-sm-12 col-md-6 col-12">
+            <div class="card shadow ">
+                <div class="card-header h5 text-center">
+                    Payments (Collection)
+                </div>
+                <div class="">
+                    <div class="row">
+                        <div id='monthlyCollection' class="col-md-6">
+                            <table class="table table-primary">
+                                <thead class="bg-blue-sky">
+                                    <tr class="bg-primary text-center font-weight-bold h6">
+                                        <td colspan="2" class="text-center">Todays (@DateTime.Today.ToString("dd/MM/yyyy")) Collection</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Class Name</td>
+                                        <td class="text-right">Amount</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.DailyCollections != null)
+                                    {
+                                        foreach (var item in Model.DailyCollections)
+                                        {
+                                            <tr>
+                                                <td>@item.AcademicClassName</td>
+                                                <td class="text-right">@item.Amount</td>
+
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr class="font-weight-bold">
+                                        <td>Total</td>
+                                        @{
+                                            monthlyTotal = (from m in Model.DailyCollections
+                                                            select m.Amount).Sum();
+                                        }
+                                        <td class="text-right">@monthlyTotal</td>
+                                    </tr>
+
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div id='dailyCollection' class="col-md-6">
+                            <table class="table table-primary">
+                                <thead class="bg-blue-sky">
+                                    <tr class="bg-primary text-center font-weight-bold h6">
+                                        <td colspan="2" class="text-center">Monthly (@DateTime.Now.ToString("MMMM")) Collection</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Class Name</td>
+                                        <td class="text-right">Amount</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.MonthlyCollections)
                                     {
                                         <tr>
                                             <td>@item.AcademicClassName</td>
@@ -149,60 +186,27 @@
 
                                         </tr>
                                     }
-                                }
-                            </tbody>
-                            <tfoot>
-                                <tr class="font-weight-bold">
-                                    <td>Total</td>
-                                    @{ 
-                                        monthlyTotal = (from m in Model.DailyCollections
-                                                     select m.Amount).Sum();
-                                    }
-                                    <td class="text-right">@monthlyTotal</td>
-                                </tr>
-
-                            </tfoot>
-                        </table>
-                    </div>
-                    <div id='dailyCollection' class="col-md-6">
-                        <table class="table table-primary">
-                            <thead class="bg-blue-sky">
-                                <tr class="bg-primary text-center font-weight-bold h6">
-                                    <td colspan="2" class="text-center">Monthly (@DateTime.Now.ToString("MMMM")) Collection</td>
-                                </tr>
-                                <tr>
-                                    <td>Class Name</td>
-                                    <td class="text-right">Amount</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model.MonthlyCollections)
-                                {
-                                    <tr>
-                                        <td>@item.AcademicClassName</td>
-                                        <td class="text-right">@item.Amount</td>
-
+                                </tbody>
+                                <tfoot>
+                                    <tr class="font-weight-bold">
+                                        <td>Total</td>
+                                        @{
+                                            monthlyTotal = (from m in Model.MonthlyCollections
+                                                            select m.Amount).Sum();
+                                        }
+                                        <td class="text-right">@monthlyTotal</td>
                                     </tr>
-                                }
-                            </tbody>
-                            <tfoot>
-                                <tr class="font-weight-bold">
-                                    <td>Total</td>
-                                    @{
-                                        monthlyTotal = (from m in Model.MonthlyCollections
-                                                        select m.Amount).Sum();
-                                    }
-                                    <td class="text-right">@monthlyTotal</td>
-                                </tr>
 
-                            </tfoot>
-                        </table>
+                                </tfoot>
+                            </table>
+                        </div>
+
                     </div>
-
                 </div>
             </div>
         </div>
-    </div>
+
+    }
 </div>
 
 

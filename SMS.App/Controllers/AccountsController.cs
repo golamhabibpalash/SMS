@@ -408,7 +408,7 @@ namespace SMS.App.Controllers
         public async Task<IActionResult> RoleList()
         {
             List<RoleListWIthUserVM> roleListWIthUserVMs = new List<RoleListWIthUserVM>();
-            var allUser = _userManager.Users;
+            var allUser = _userManager.Users.Where(s => s.UserType=='e');
             var roleList = _roleManager.Roles;
             foreach (var role in roleList)
             {
@@ -513,7 +513,7 @@ namespace SMS.App.Controllers
             ViewBag.RoleId = id;
             ViewBag.RoleName = existRole.Name;
             var model = new List<UserRoleVM>();
-            foreach (var user in _userManager.Users)
+            foreach (var user in _userManager.Users.Where(u => u.UserType=='e'))
             {
                 var userRoleVm = new UserRoleVM
                 { 

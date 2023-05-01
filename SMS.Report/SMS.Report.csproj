@@ -33,15 +33,10 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>rptAttendanceDS.xsd</DependentUpon>
     </Compile>
-    <Compile Update="DS\rptStudentDS.Designer.cs">
+    <Compile Update="Exam_Result_DataSet.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>rptStudentDS.xsd</DependentUpon>
-    </Compile>
-    <Compile Update="DS\rptStudentPaymentFullInfo.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>rptStudentPaymentFullInfo.xsd</DependentUpon>
+      <DependentUpon>Exam_Result_DataSet.xsd</DependentUpon>
     </Compile>
   </ItemGroup>
 
@@ -62,17 +57,14 @@
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>rptAttendanceDS.Designer.cs</LastGenOutput>
     </None>
-    <None Update="DS\rptStudentDS.xsd">
+    <None Update="Exam_Result_DataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>rptStudentDS.Designer.cs</LastGenOutput>
-    </None>
-    <None Update="DS\rptStudentPaymentFullInfo.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>rptStudentPaymentFullInfo.Designer.cs</LastGenOutput>
+      <LastGenOutput>Exam_Result_DataSet.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="DS\" />
     <Folder Include="Properties\" />
   </ItemGroup>
 

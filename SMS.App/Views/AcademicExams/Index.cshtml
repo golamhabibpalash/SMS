@@ -36,6 +36,7 @@
                 <td>Academic Section</td>
                 <td>Academic Session</td>
                 <td>Teacher</td>
+                <td>Total Marks</td>
                 @if(User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
                 {
                     <td>Lock</td>
@@ -70,6 +71,7 @@
                         <td>@item.AcademicSection.Name</td>
                         <td>@item.AcademicSession.Name</td>
                         <td>@item.Employee.EmployeeName</td>
+                        <td>@item.TotalMarks</td>
                         @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
                         {
                             <td> 

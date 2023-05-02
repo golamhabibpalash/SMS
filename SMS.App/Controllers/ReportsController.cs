@@ -180,8 +180,8 @@ namespace SMS.App.Controllers
             int monthDays = ViewBag.daysInMonth = DateTime.DaysInMonth(DateTime.Today.Year, monthId);
 
             var attendanceList = await _attendanceMachineManager.GetAttendanceByDateRangeAsync(StartDate, EndDate);
-            
-            var studentList = await _studentManager.GetStudentsByClassIdAndSessionIdAsync(3, classId);
+            AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSession();
+            var studentList = await _studentManager.GetStudentsByClassIdAndSessionIdAsync(academicSession.Id, classId);
 
             List<DateTime> monthlyHolidays = await _OffDayManager.GetMonthlyHolidaysAsync(firstDateOfMonth.ToString("MMyyyy"));
             ViewBag.monthlyHolidays = monthlyHolidays;

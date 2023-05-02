@@ -76,8 +76,9 @@ namespace SMS.App.Controllers
         }
 
 
-        public ActionResult Create()
+        public async Task<ActionResult> Create()
         {
+            ViewData["AcademicClassList"] = new SelectList(await _academicClassManager.GetAllAsync(),"Id","Name");
             return View();
         }
 
@@ -86,6 +87,7 @@ namespace SMS.App.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(Tran_MachineRawPunch model)
         {
+            ViewData["AcademicClassList"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name");
             if (ModelState.IsValid)
             {
                 await _attendanceMachineManager.AddAsync(model);

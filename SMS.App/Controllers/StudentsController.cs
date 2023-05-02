@@ -664,5 +664,17 @@ namespace SchoolManagementSystem.Controllers
             double paidAmount = studentPayments.Sum(s => s.TotalPayment);
             return paidAmount;
         }
+
+        [HttpPost]
+        public async Task<JsonResult> GetStudentsByClassSessionAsync(int academicClassId, int? academicSessionId)
+        {
+            if (academicSessionId==null)
+            {
+                AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSession();
+                academicSessionId = academicSession.Id;
+            }
+            var studentList = await _studentManager.GetStudentsByClassIdAndSessionIdAsync((int)academicSessionId, academicClassId);
+            return Json(studentList);
+        }
     }
 }

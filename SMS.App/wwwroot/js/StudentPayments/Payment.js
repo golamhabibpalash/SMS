@@ -1,31 +1,30 @@
 ﻿/////////////////////// 2nd time(Current) created code
 
-jQuery.noConflict();
 //Payment for select list option chooose
-//jQuery('#StudentPayment_StudentPaymentDetails_0__StudentFeeHeadId').change(function () {
-//    let id = $('#StudentPayment_StudentPaymentDetails_0__StudentFeeHeadId option:selected').val();
-//    let classId = $('#academicClassId').val();
-//    $.ajax({
-//        url: '/StudentFeeHeads/GetById',
-//        data: { id: id, classId: classId },
-//        cache: false,
-//        type: 'POST',
-//        dataType: 'json',
-//        success: function (d) {
-//            let pAmount = d.amount;
-//            d.studentFeeHead.repeatedly == true ? $('#howManyTimes').show() : $('#howManyTimes').hide();
-//            $('#amountId').val(d.amount);
-//            let times = $('#howManyTimes option:selected').val();
-//            //let total = GetTotalPayment(pAmount, times);
-//            //$('#StudentPayment_TotalPayment').val(total);
-//            $('#StudentPayment_TotalPayment').val(pAmount);
+$('#StudentPayment_StudentPaymentDetails_0__StudentFeeHeadId').change(function () {
+    let id = $('#StudentPayment_StudentPaymentDetails_0__StudentFeeHeadId option:selected').val();
+    let classId = $('#academicClassId').val();
+    $.ajax({
+        url: '/StudentFeeHeads/GetById',
+        data: { id: id, classId: classId },
+        cache: false,
+        type: 'POST',
+        dataType: 'json',
+        success: function (d) {
 
-//        },
-//        error: function (err) {
-//            console.log(err);
-//        }
-//    });
-//});
+            $('#amountId').val('');
+            $('#StudentPayment_TotalPayment').val('');
+            let pAmount = d.amount;
+            d.studentFeeHead.repeatedly == true ? $('#howManyTimes').show() : $('#howManyTimes').hide();
+            $('#amountId').val(pAmount);
+            $('#StudentPayment_TotalPayment').val(pAmount);
+
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    });
+});
 
 //Payment for select list option chooose
 jQuery('#howManyTimes').change(function () {

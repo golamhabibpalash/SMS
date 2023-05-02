@@ -90,8 +90,15 @@ namespace SMS.App.Controllers
             ViewData["AcademicClassList"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name");
             if (ModelState.IsValid)
             {
-                await _attendanceMachineManager.AddAsync(model);
-                return RedirectToAction("Index");
+                string cardNo = model.CardNo;
+                model.CardNo = cardNo.PadLeft(8, '0');
+                bool isSaved =await _attendanceMachineManager.AddAsync(model);
+                if (isSaved)
+                {
+                    TempData["success"] = "New attendance added manually for"+model.CardNo;
+                    return View();
+                }
+                
             }
             return View(model);
         }

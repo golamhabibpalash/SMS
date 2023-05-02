@@ -665,6 +665,7 @@ namespace SchoolManagementSystem.Controllers
             return paidAmount;
         }
 
+        [Route("api/Students/getbyclasswithsessionId")]
         [HttpPost]
         public async Task<JsonResult> GetStudentsByClassSessionAsync(int academicClassId, int? academicSessionId)
         {

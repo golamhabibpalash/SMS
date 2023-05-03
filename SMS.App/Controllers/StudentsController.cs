@@ -669,13 +669,22 @@ namespace SchoolManagementSystem.Controllers
         [HttpPost]
         public async Task<JsonResult> GetStudentsByClassSessionAsync(int academicClassId, int? academicSessionId)
         {
-            if (academicSessionId==null)
+            try
             {
-                AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSession();
-                academicSessionId = academicSession.Id;
+
+                if (academicSessionId==null)
+                {
+                    AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSession();
+                    academicSessionId = academicSession.Id;
+                }
+                var studentList = await _studentManager.GetStudentsByClassIdAndSessionIdAsync((int)academicSessionId, academicClassId);
+                return Json(studentList);
             }
-            var studentList = await _studentManager.GetStudentsByClassIdAndSessionIdAsync((int)academicSessionId, academicClassId);
-            return Json(studentList);
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }

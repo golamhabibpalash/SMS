@@ -196,9 +196,9 @@ function inWords(num) {
 
 jQuery(function () {
 
-    $('#howManyTimes').multiselect({
-        includeSelectAllOption: true
-    });
+    //$('#howManyTimes').multiselect({
+    //    includeSelectAllOption: true
+    //});
 
     $('#btnget').click(function () {
         alert($('#chkveg').val());

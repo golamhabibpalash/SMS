@@ -264,6 +264,10 @@ namespace SMS.App.Controllers
         #endregion MarkSheet
 
         #region Student Payment Reports
+        public async Task<IActionResult> StudentPaymentInfo()
+        {
+            return View();
+        }
         public async Task<IActionResult> StudentPaymentInfoExport(string reportType,string fileName,int classRoll)
         {
             RenderType renderType = RenderType.Pdf;
@@ -275,6 +279,10 @@ namespace SMS.App.Controllers
             //List<RptStudentVM> studentVMs = new List<RptStudentVM>();
 
             Student student = await _studentManager.GetStudentByClassRollAsync(classRoll);
+            if (student == null)
+            {
+                return new JsonResult("Sorry! Data Not Found");
+            }
             Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
 
             parameters.Add("InstituteName", institute.Name);
@@ -336,7 +344,7 @@ namespace SMS.App.Controllers
             var sPayment = await _reportManager.GetStudentPayment(fromDate,toDate, academicClassId,academicSectionId);
             if (sPayment.Count==0)
             {
-                return new JsonResult("No data found");
+                return new JsonResult("Sorry! Data Not Found");
             }
             double amount = sPayment.Sum(m => m.TotalPayment);
 

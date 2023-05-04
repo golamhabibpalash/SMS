@@ -10,7 +10,7 @@
             <div class="col-md-12">
                 <form asp-action="StudentPaymentReport" method="post">
                     <fieldset class="border border-info p-2">
-                        <legend class="w-auto text-primary">Admit Card</legend>
+                        <legend class="w-auto text-primary">Student Payments Details</legend>
 
                         <div class="form-group row">
                             <label class="col-sm-3 col-form-label">Date From</label>
@@ -68,7 +68,7 @@
                     <input type="hidden" id="exportAcademicClassId" name="academicClassId" />
                     <input type="hidden" id="exportAcademicSectionId" name="academicSectionId" />
                     <div class="btn-group btn-sm mr-2 " role="group" aria-label="First group">
-                        <input type="hidden" name="fileName" value="Admit Cards" />
+                        <input type="hidden" name="fileName" value="Student Payment Report" />
                         <button type="submit" name="reportType" value="pdf" class="btn-sm btn btn-danger" data-toggle="tooltip" title="Export PDF" data-placement="left"><i class="fas fa-file-pdf"></i></button>
                         <button type="submit" name="reportType" value="xls" class="btn-sm btn btn-success" data-toggle="tooltip" title="Export xls" data-placement="top"><i class="fas fa-file-excel"></i></button>
                         <button type="submit" name="reportType" value="word" class="btn-sm btn btn-primary" data-toggle="tooltip" title="Export doc" data-placement="top"><i class="fas fa-file-word"></i></button>
@@ -96,10 +96,8 @@
                 let fromDate = '';
                 let toDate = '';
 
-                fromDate = $('#sFromDate').val(); //new Date($('#sFromDate').val());
-                toDate = $('#sToDate').val();// new Date($('#sToDate').val());
-                console.log("FromDate : " +fromDate);
-                console.log("To Date : " +toDate)
+                fromDate = $('#sFromDate').val();
+                toDate = $('#sToDate').val();
                 academicClassId = $('#AcademicClassId option:selected').val();
                 aSection = $('#AcademicSectionId option:selected').val();
 

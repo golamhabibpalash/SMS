@@ -1,10 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using SMS.DAL.Contracts.Reports;
 using SMS.DB;
 using SMS.Entities.RptModels;
+using SMS.Entities.RptModels.StudentPayment;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -43,14 +47,30 @@ where t.monthId = " + monthId + " and t.academicClassId = " + academicClassId + 
 
         public async Task<List<RptStudentVM>> getStudentsInfo()
         {
-            string query = @"select r.ClassRoll, r.StudentName,r.AcademicClassId,r.ClassName,r.AcademicSectionId,r.SectionName,r.SessionName,
-r.FatherName,r.MotherName,r.GuardianPhone,r.PhoneNo,r.BloodGroup,r.Gender,r.Religion,Case r.Status when 1 then 'Active' else 'Inactive' end Status from vw_rpt_student_info r";
+            string query = @"select r.ClassRoll, r.StudentName,r.AcademicClassId,r.ClassName,r.AcademicSectionId,r.SectionName,
+r.SessionName, r.FatherName, r.MotherName,r.GuardianPhone,r.PhoneNo,r.BloodGroup,r.Gender,r.Religion,Case r.Status when 1 then 'Active' else 'Inactive' end Status from vw_rpt_student_info r";
             List<RptStudentVM> rptStudentVMs = new List<RptStudentVM>();
             var result =await _context.RptStudentVMs.FromSqlRaw(query).ToListAsync();
             rptStudentVMs = result;
             return rptStudentVMs;
         }
+        public async Task<List<RptStudentsPaymentVM>> GetStudentPayment(string fromDate, string ToDate, string AcademicClassId, string AcademicSectionId)
+        {
+            List<RptStudentsPaymentVM> rptStudentsPayments = new List<RptStudentsPaymentVM>();            
 
+            AcademicClassId = string.IsNullOrEmpty(AcademicClassId) ? "null" : "'"+AcademicClassId+"'";
+            AcademicSectionId = string.IsNullOrEmpty(AcademicSectionId) ? "null" : "'"+AcademicSectionId+"'";
+            string query = $"sp_Get_Student_Payments '{fromDate}','{ToDate}',{AcademicClassId},{AcademicSectionId}";
+            try
+            {
+                rptStudentsPayments = await _context.RptStudentsPaymetnsVMs.FromSqlRaw(query).ToListAsync();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            return rptStudentsPayments;
+        }
         
     }
 }

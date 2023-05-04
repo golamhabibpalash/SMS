@@ -28,6 +28,7 @@ namespace SMS.App.Controllers
     [Authorize]
     public class ReportsController : Controller
     {
+        #region properties
         private readonly IWebHostEnvironment _host;
         private readonly IStudentManager _studentManager;
         private readonly IReportManager _reportManager;
@@ -37,6 +38,9 @@ namespace SMS.App.Controllers
         private readonly IAcademicSessionManager _academicSessionManager;
         private readonly IAcademicSectionManager _academicSectionManager;
         private readonly IInstituteManager _instituteManager;
+        #endregion properties
+
+        #region Constructor
         public ReportsController(IWebHostEnvironment host, IStudentManager studentManager, IReportManager reportManager, IAcademicClassManager academicClassManager, IAttendanceMachineManager attendanceMachineManager, IOffDayManager dayManager, IAcademicSessionManager academicSessionManager, IAcademicSectionManager academicSectionManager, IInstituteManager instituteManager)
         {
             _host = host;
@@ -49,6 +53,8 @@ namespace SMS.App.Controllers
             _academicSectionManager = academicSectionManager;
             _instituteManager = instituteManager;
         }
+        #endregion Constructor
+
         #region Student List Report
         public async Task<IActionResult> StudentsReport()
         {
@@ -111,6 +117,7 @@ namespace SMS.App.Controllers
         }
         #endregion Student List Report
 
+        #region Attendance Reports
         public async Task<IActionResult> AttendanceReport()
         {
             ViewBag.AcademicClasslist = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name").ToList();
@@ -222,7 +229,9 @@ namespace SMS.App.Controllers
             ViewBag.studentList = studentList;
             return View(monthlyAttendanceFullClass);
         }
+        #endregion Attendance Reports
 
+        #region MarkSheet
         public IActionResult MarkSheetReport()
         {
             return View();
@@ -233,7 +242,6 @@ namespace SMS.App.Controllers
         {
             return View();
         }
-
         public async Task<IActionResult> MarkSheettReportExport(string reportType, string fileName)
         {
             RenderType renderType = RenderType.Pdf;
@@ -253,7 +261,9 @@ namespace SMS.App.Controllers
             }
             return File(result.MainStream, "Application/pdf");
         }
+        #endregion MarkSheet
 
+        #region Student Payment Reports
         public async Task<IActionResult> StudentPaymentInfoExport(string reportType,string fileName,int classRoll)
         {
             RenderType renderType = RenderType.Pdf;
@@ -291,9 +301,57 @@ namespace SMS.App.Controllers
             }
             return File(result.MainStream, "Application/pdf");
         }
+        public async Task<IActionResult> StudentPaymentReport()
+        {
+            ViewData["AcademicClass"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name").ToList();
+            return View();
+        }
+        public async Task<IActionResult> StudentPaymentReportExport(string reportType, string fileName, string fromDate, string toDate, string academicClassId, string academicSectionId)
+        {
 
+            string imageParam = "";
+            var imagePath = _host.WebRootPath + "\\Images\\Institute\\institute.jpeg";
+            using (var b = new Bitmap(imagePath))
+            {
+                using (var ms = new MemoryStream())
+                {
+                    b.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+                    imageParam = Convert.ToBase64String(ms.ToArray());
+                }
+            }
+            RenderType renderType = RenderType.Pdf;
+            renderType = !string.IsNullOrEmpty(reportType) ? GetRenderType(reportType) : renderType;
+            var path = _host.WebRootPath + "\\Reports\\Rpt_Student_Payment.rdlc";
+            Dictionary<string, string> parameters = new();
+            Institute institute = await _instituteManager.GetByIdAsync(1);
+            parameters.Add("InstituteName", institute.Name);
+            parameters.Add("EIINNo", institute.EIIN);
+            parameters.Add("Logo", imageParam);
+            parameters.Add("Location", institute.Address);
+            parameters.Add("FromDate", fromDate);
+            parameters.Add("ToDate", toDate);
+            parameters.Add("ReportName", "Student Payment Details");
+            AspNetCore.Reporting.LocalReport localReport = new(path);
+            
+            var sPayment = await _reportManager.GetStudentPayment(fromDate,toDate, academicClassId,academicSectionId);
+            if (sPayment.Count==0)
+            {
+                return new JsonResult("No data found");
+            }
+            double amount = sPayment.Sum(m => m.TotalPayment);
 
-        
+            parameters.Add("AmountInWord", NumberToWords.ConvertAmount(amount));
+            localReport.AddDataSource("dsStudentPayment", sPayment);
+            var result = localReport.Execute(renderType, 1, parameters);
+            if (!string.IsNullOrEmpty(fileName))
+            {
+                return File(result.MainStream, MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
+            }
+            return File(result.MainStream, "Application/pdf");
+        }
+        #endregion Student Payment Reports
+
+        #region Admit Card Reports
         public async Task<IActionResult> AdmitCardExport(string reportType, string fileName, int monthId, string academicClassId, string academicSectionId)
         {
             string imageParam = "";
@@ -332,12 +390,9 @@ namespace SMS.App.Controllers
             }
             return File(result.MainStream, "Application/pdf");
         }
+        #endregion Admit Card Reports
 
-
-
-
-
-
+        #region Common Methods
         private static RenderType GetRenderType(string reportType)
         {
             var renderType = reportType.ToLower() switch
@@ -359,6 +414,6 @@ namespace SMS.App.Controllers
             };
             return outputFileName;
         }
-
+        #endregion Common Methods
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using SMS.Entities;
 using SMS.Entities.AdditionalModels;
 using SMS.Entities.RptModels;
+using SMS.Entities.RptModels.StudentPayment;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection.Emit;
@@ -81,6 +82,11 @@ namespace SMS.DB
         [NotMapped]
         public DbSet<rptStudentPaymentsVM> RptStudentPaymetnsVMs { get; set; }
 
+        [NotMapped]
+        public DbSet<RptStudentsPaymentVM> RptStudentsPaymetnsVMs { get; set; }
+
+        public DbSet<rptStudentPaymentsVM> RptS { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -89,6 +95,7 @@ namespace SMS.DB
             builder.Entity<RptStudentVM>().ToView(nameof(RptStudentVMs)).HasNoKey();
             builder.Entity<rptStudentPaymentsVM>().ToView(nameof(RptStudentPaymetnsVMs)).HasNoKey();
             builder.Entity<RptAdmitCardVM>().ToView(nameof(RptAdmitCardVMs)).HasNoKey();
+            builder.Entity<RptStudentsPaymentVM>().ToView(nameof(RptStudentsPaymetnsVMs)).HasNoKey();
 
             //builder.Entity<StudentPayment>()
             //    .HasMany(p => p.StudentPaymentDetails)

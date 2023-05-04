@@ -11,7 +11,7 @@ namespace SMS.DAL.Contracts.Reports
     public interface IReportRepository
     {
         Task<List<RptStudentVM>> getStudentsInfo();
-        Task<List<rptStudentPaymentsVM>> GetStudentPaymentsByRoll(int classRoll);
+        Task<List<rptStudentPaymentsVM>> GetStudentPaymentsByRoll(int classRoll, string fromDate, string toDate);
         Task<List<RptAdmitCardVM>> GetAdmitCard(int monthId, int academicClassId, int academicSectionId);
         Task<List<RptStudentsPaymentVM>> GetStudentPayment(string fromDate, string ToDate, string AcademicClassId, string AcademicSectionId);
     }

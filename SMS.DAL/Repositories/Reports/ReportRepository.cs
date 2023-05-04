@@ -35,9 +35,9 @@ where t.monthId = " + monthId + " and t.academicClassId = " + academicClassId + 
             return result;
         }
 
-        public async Task<List<rptStudentPaymentsVM>> GetStudentPaymentsByRoll(int classRoll)
+        public async Task<List<rptStudentPaymentsVM>> GetStudentPaymentsByRoll(int classRoll,string fromDate, string toDate)
         {
-            string query = "exec sp_Get_Payments_by_Roll "+classRoll;
+            string query = $"sp_Payments_get_all_by_roll {classRoll},'"+fromDate+"','"+toDate+"'";
             List<rptStudentPaymentsVM> rptStudentPaymentsVMs = null;
 
             var result = await _context.RptStudentPaymetnsVMs.FromSqlRaw(query).ToListAsync();
@@ -60,14 +60,14 @@ r.SessionName, r.FatherName, r.MotherName,r.GuardianPhone,r.PhoneNo,r.BloodGroup
 
             AcademicClassId = string.IsNullOrEmpty(AcademicClassId) ? "null" : "'"+AcademicClassId+"'";
             AcademicSectionId = string.IsNullOrEmpty(AcademicSectionId) ? "null" : "'"+AcademicSectionId+"'";
-            string query = $"sp_Get_Student_Payments '{fromDate}','{ToDate}',{AcademicClassId},{AcademicSectionId}";
+            string query = $"sp_Payments_Get_All_by_Date '{fromDate}','{ToDate}',{AcademicClassId},{AcademicSectionId}";
             try
             {
                 rptStudentsPayments = await _context.RptStudentsPaymetnsVMs.FromSqlRaw(query).ToListAsync();
             }
             catch (Exception e)
             {
-                throw e;
+                throw;
             }
             return rptStudentsPayments;
         }

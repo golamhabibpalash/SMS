@@ -28,9 +28,9 @@ namespace SMS.BLL.Managers.Reports
             return await _reportRepository.GetStudentPayment(fromDate,ToDate,AcademicClassId, AcademicSectionId);
         }
 
-        public async Task<List<rptStudentPaymentsVM>> GetStudentPaymentsByRoll(int classRoll)
+        public async Task<List<rptStudentPaymentsVM>> GetStudentPaymentsByRoll(int classRoll, string fromDate, string toDate)
         {
-           return await _reportRepository.GetStudentPaymentsByRoll(classRoll);
+           return await _reportRepository.GetStudentPaymentsByRoll(classRoll,fromDate,toDate);
         }
 
         public async Task<List<RptStudentVM>> GetStudentsInfo()

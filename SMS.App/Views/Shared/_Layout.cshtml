@@ -207,7 +207,15 @@
                                             <a asp-action="Index" asp-controller="AttendanceMachines"> Attendance</a>
                                         </li>
                                         <li>
-                                            <a asp-action="Index" asp-controller="PhoneSMS"> SMS Panel</a>
+                                            <a><span class="fa fa-chevron-down"></span>SMS Panel</a>
+                                            <ul class="nav child_menu">
+                                                <li>
+                                                    <a asp-action="Create" asp-controller="PhoneSMS"> SMS Create</a>
+                                                </li>
+                                                <li>
+                                                    <a asp-action="Index" asp-controller="PhoneSMS"> SMS List</a>
+                                                </li>
+                                            </ul>
                                         </li>
                                         <li>
                                             <a>  Exam <span class="fa fa-chevron-down"></span></a>

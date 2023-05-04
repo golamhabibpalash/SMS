@@ -268,21 +268,40 @@ namespace SMS.App.Controllers
         {
             return View();
         }
-        public async Task<IActionResult> StudentPaymentInfoExport(string reportType,string fileName,int classRoll)
+        public async Task<IActionResult> StudentPaymentInfoExport(string reportType,string fileName,int classRoll,string fromDate, string toDate)
         {
+            Student student = await _studentManager.GetStudentByClassRollAsync(classRoll);
+            if (student == null)
+            {
+                return new JsonResult("Sorry! Student Data Not Found");
+            }
+            var studentPayments = await _reportManager.GetStudentPaymentsByRoll(classRoll, fromDate, toDate);
+            if (studentPayments.Count == 0)
+            {
+                return new JsonResult("Sorry! Any Payment Data Not Found");
+            }
+
             RenderType renderType = RenderType.Pdf;
             renderType = !string.IsNullOrEmpty(reportType) ? GetRenderType(reportType) : renderType;
             var path = _host.WebRootPath + "\\Reports\\rptStudentPaymentFullInfo.rdlc";
+
+            string imageParam = "";
+            var imagePath = _host.WebRootPath + "\\Images\\Institute\\institute.jpeg";
+            using (var b = new Bitmap(imagePath))
+            {
+                using (var ms = new MemoryStream())
+                {
+                    b.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+                    imageParam = Convert.ToBase64String(ms.ToArray());
+                }
+            }
+
             Dictionary<string, string> parameters = new();
 
             AspNetCore.Reporting.LocalReport localReport = new(path);
             //List<RptStudentVM> studentVMs = new List<RptStudentVM>();
 
-            Student student = await _studentManager.GetStudentByClassRollAsync(classRoll);
-            if (student == null)
-            {
-                return new JsonResult("Sorry! Data Not Found");
-            }
+            
             Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
 
             parameters.Add("InstituteName", institute.Name);
@@ -293,8 +312,9 @@ namespace SMS.App.Controllers
             parameters.Add("RptDate",DateTime.Today.ToString("dd MMM yyyy"));
             parameters.Add("RptName", "Payments Summary Report");
             parameters.Add("ClassRoll", classRoll.ToString());
+            parameters.Add("Logo", imageParam);
 
-            var studentPayments = await _reportManager.GetStudentPaymentsByRoll(classRoll);
+            
             double totalPaid = studentPayments.Sum(s => s.TotalPayment);
             string numberToWord = NumberToWords.ConvertAmount(totalPaid);
             parameters.Add("AmountInWord", numberToWord);

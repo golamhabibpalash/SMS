@@ -18,6 +18,19 @@
                                 <input class="form-control" type="number" id="aClassRollId" placeholder="Please input Class roll" />
                             </div>
                         </div>
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Date From</label>
+                            <div class="col-sm-9">
+                                <input class="form-control" type="date" id="sFromDate" name="fromDate" value="@DateTime.Today" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Date To</label>
+                            <div class="col-sm-9">
+                                <input class="form-control" type="date" id="sToDate" name="fromDate" value="@DateTime.Today" max="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                            </div>
+                        </div>
                         <div class="text-right">
                             <span id="loadReportBtn" class="btn btn-sm btn-info">Load Report</span>
                         </div>
@@ -42,6 +55,8 @@
                     <input type="hidden" id="exportClassRollId" name="classRoll" />
                     <div class="btn-group btn-sm mr-2 " role="group" aria-label="First group">
                         <input type="hidden" name="fileName" value="Student Individual Report" />
+                        <input type="hidden" id="exportFromDate" name="fromDate" />
+                        <input type="hidden" id="exportToDate" name="toDate" />
                         <button type="submit" name="reportType" value="pdf" class="btn-sm btn btn-danger" data-toggle="tooltip" title="Export PDF" data-placement="left"><i class="fas fa-file-pdf"></i></button>
                         <button type="submit" name="reportType" value="xls" class="btn-sm btn btn-success" data-toggle="tooltip" title="Export xls" data-placement="top"><i class="fas fa-file-excel"></i></button>
                         <button type="submit" name="reportType" value="word" class="btn-sm btn btn-primary" data-toggle="tooltip" title="Export doc" data-placement="top"><i class="fas fa-file-word"></i></button>
@@ -65,15 +80,23 @@
             $('#loadReportBtn').click(function () {
                 let reportType = 'pdf';
                 let aClassRoll = '';
+                let fromDate = '';
+                let toDate = '';
+
+                fromDate = $('#sFromDate').val();
+                toDate = $('#sToDate').val();
+
                 aClassRoll = $('#aClassRollId').val();
-                if (aClassRoll.length == 0) {
+                if (aClassRoll.length == 0 && fromDate == '' && toDate == '') {
                     $('#InvalidForm').show();
                     $('#iframe-container').hide();
                     $('#loading').hide();
                 }
                 else {
+                    $('#exportFromDate').attr('value', fromDate);
+                    $('#exportToDate').attr('value', toDate);
                     $('#exportClassRollId').attr('value', aClassRoll);
-                    $('#myIframe').attr('src', '/Reports/StudentPaymentInfoExport?reportType=' + reportType + '&classRoll=' + aClassRoll);
+                    $('#myIframe').attr('src', '/Reports/StudentPaymentInfoExport?reportType=' + reportType + '&classRoll=' + aClassRoll + '&fromDate=' + fromDate + '&toDate=' + toDate);
 
                     var iframe = document.getElementById('myIframe');
                     $('#loading').show();

@@ -667,10 +667,10 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>DataSet1</DataSetName>
-            <Top>2.38417in</Top>
+            <Top>2.52167in</Top>
             <Left>0.41542in</Left>
             <Height>1.32292in</Height>
-            <Width>7.52083in</Width>
+            <Width>7.52082in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -762,7 +762,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>RptName</rd:DefaultName>
-            <Top>0.92236in</Top>
+            <Top>1.05986in</Top>
             <Left>0.41542in</Left>
             <Height>0.20139in</Height>
             <Width>7.52083in</Width>
@@ -795,7 +795,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox75</rd:DefaultName>
-            <Top>4.455in</Top>
+            <Top>4.5925in</Top>
             <Left>6.07167in</Left>
             <Height>0.39583in</Height>
             <Width>1.86458in</Width>
@@ -829,7 +829,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>RptDate</rd:DefaultName>
-            <Top>1.24653in</Top>
+            <Top>1.38403in</Top>
             <Left>7.05083in</Left>
             <Height>0.25in</Height>
             <Width>0.88542in</Width>
@@ -860,7 +860,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox77</rd:DefaultName>
-            <Top>1.24653in</Top>
+            <Top>1.38403in</Top>
             <Left>6.07167in</Left>
             <Height>0.25in</Height>
             <Width>0.97916in</Width>
@@ -1335,7 +1335,7 @@
                 <TablixMember />
               </TablixMembers>
             </TablixRowHierarchy>
-            <Top>1.24653in</Top>
+            <Top>1.38403in</Top>
             <Left>0.41542in</Left>
             <Height>1in</Height>
             <Width>3.26042in</Width>
@@ -1346,8 +1346,24 @@
               </Border>
             </Style>
           </Tablix>
+          <Image Name="Logo">
+            <Source>Database</Source>
+            <Value>=Parameters!Logo.Value</Value>
+            <MIMEType>image/jpeg</MIMEType>
+            <Sizing>FitProportional</Sizing>
+            <Top>0.94394cm</Top>
+            <Left>3.06599cm</Left>
+            <Height>1.5cm</Height>
+            <Width>1.5cm</Width>
+            <ZIndex>8</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Image>
         </ReportItems>
-        <Height>12.61216cm</Height>
+        <Height>12.67036cm</Height>
         <Style />
       </Body>
       <Width>21.32223cm</Width>
@@ -1356,7 +1372,7 @@
         <PageWidth>22cm</PageWidth>
         <LeftMargin>0cm</LeftMargin>
         <RightMargin>0cm</RightMargin>
-        <TopMargin>0cm</TopMargin>
+        <TopMargin>0.5cm</TopMargin>
         <BottomMargin>0cm</BottomMargin>
         <ColumnSpacing>1.27cm</ColumnSpacing>
         <Style />
@@ -1398,6 +1414,12 @@
     </ReportParameter>
     <ReportParameter Name="AmountInWord">
       <DataType>String</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Logo">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
   </ReportParameters>
@@ -1450,6 +1472,11 @@
           <ColumnIndex>0</ColumnIndex>
           <RowIndex>2</RowIndex>
           <ParameterName>AmountInWord</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>2</RowIndex>
+          <ParameterName>Logo</ParameterName>
         </CellDefinition>
       </CellDefinitions>
     </GridLayoutDefinition>

@@ -10,8 +10,6 @@ using SMS.App.ViewModels.ReportVM;
 using SMS.BLL.Contracts;
 using SMS.BLL.Contracts.Reports;
 using SMS.Entities;
-using Syncfusion.Drawing;
-using Syncfusion.XlsIO.Implementation.PivotAnalysis;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -22,6 +20,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Mime;
 using System.Threading.Tasks;
+using LocalReport = Microsoft.Reporting.NETCore.LocalReport;
 
 namespace SMS.App.Controllers
 {
@@ -280,54 +279,51 @@ namespace SMS.App.Controllers
             {
                 return new JsonResult("Sorry! Any Payment Data Not Found");
             }
+            
+            double totalPaid = studentPayments.Sum(s => s.TotalPayment);
+            string numberToWord = NumberToWords.ConvertAmount(totalPaid);
+            Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
+            if (institute == null)
+            {
+                return new JsonResult("Institute Information not found!");
+            }
 
-            RenderType renderType = RenderType.Pdf;
-            renderType = !string.IsNullOrEmpty(reportType) ? GetRenderType(reportType) : renderType;
+            string mediaType = "application/pdf";
             var path = _host.WebRootPath + "\\Reports\\rptStudentPaymentFullInfo.rdlc";
 
             string imageParam = "";
             var imagePath = _host.WebRootPath + "\\Images\\Institute\\institute.jpeg";
-            using (var b = new Bitmap(imagePath))
+
+            Image image = Image.FromFile(imagePath);
+            using (MemoryStream ms = new MemoryStream())
             {
-                using (var ms = new MemoryStream())
-                {
-                    b.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
-                    imageParam = Convert.ToBase64String(ms.ToArray());
-                }
+                image.Save(ms, image.RawFormat);
+                byte[] imageBytes = ms.ToArray();
+                imageParam = Convert.ToBase64String(imageBytes);
             }
 
-            Dictionary<string, string> parameters = new();
-
-            AspNetCore.Reporting.LocalReport localReport = new(path);
-            //List<RptStudentVM> studentVMs = new List<RptStudentVM>();
-
-            
-            Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
-
-            parameters.Add("InstituteName", institute.Name);
-            parameters.Add("InstituteAddress", institute.Address);
-            parameters.Add("StudentName", student.Name);
-            parameters.Add("ClassName",student.AcademicClass.Name);
-            parameters.Add("Session", student.AcademicSession.Name);
-            parameters.Add("RptDate",DateTime.Today.ToString("dd MMM yyyy"));
-            parameters.Add("RptName", "Payments Summary Report");
-            parameters.Add("ClassRoll", classRoll.ToString());
-            parameters.Add("Logo", imageParam);
-
-            
-            double totalPaid = studentPayments.Sum(s => s.TotalPayment);
-            string numberToWord = NumberToWords.ConvertAmount(totalPaid);
-            parameters.Add("AmountInWord", numberToWord);
-
-
-            localReport.AddDataSource("DataSet1", studentPayments);
-
-            var result = localReport.Execute(renderType, 1, parameters);
+            using var report = new LocalReport();
+            report.DataSources.Add(new ReportDataSource("DataSet1", studentPayments));
+            var parameters = new[] { 
+                new ReportParameter("InstituteName", institute.Name), 
+                new ReportParameter("InstituteAddress", institute.Address),
+                new ReportParameter("StudentName", student.Name),
+                new ReportParameter("ClassName", student.AcademicClass.Name),
+                new ReportParameter("Session", student.AcademicSession.Name),
+                new ReportParameter("RptDate", DateTime.Today.ToString("dd MMM yyyy")),
+                new ReportParameter("RptName", "Payments Summary Report"),
+                new ReportParameter("ClassRoll", classRoll.ToString()),
+                new ReportParameter("AmountInWord", numberToWord),
+                new ReportParameter("Logo", imageParam)                
+            };
+            report.ReportPath =path;
+            report.SetParameters(parameters);
+            var pdf = report.Render("pdf");
             if (!string.IsNullOrEmpty(fileName))
             {
-                return File(result.MainStream, MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
+                return File(pdf, MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
             }
-            return File(result.MainStream, "Application/pdf");
+            return File(pdf, mediaType);
         }
         public async Task<IActionResult> StudentPaymentReport()
         {
@@ -337,45 +333,60 @@ namespace SMS.App.Controllers
         public async Task<IActionResult> StudentPaymentReportExport(string reportType, string fileName, string fromDate, string toDate, string academicClassId, string academicSectionId)
         {
 
-            string imageParam = "";
-            var imagePath = _host.WebRootPath + "\\Images\\Institute\\institute.jpeg";
-            using (var b = new Bitmap(imagePath))
-            {
-                using (var ms = new MemoryStream())
-                {
-                    b.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
-                    imageParam = Convert.ToBase64String(ms.ToArray());
-                }
-            }
-            RenderType renderType = RenderType.Pdf;
-            renderType = !string.IsNullOrEmpty(reportType) ? GetRenderType(reportType) : renderType;
-            var path = _host.WebRootPath + "\\Reports\\Rpt_Student_Payment.rdlc";
-            Dictionary<string, string> parameters = new();
-            Institute institute = await _instituteManager.GetByIdAsync(1);
-            parameters.Add("InstituteName", institute.Name);
-            parameters.Add("EIINNo", institute.EIIN);
-            parameters.Add("Logo", imageParam);
-            parameters.Add("Location", institute.Address);
-            parameters.Add("FromDate", fromDate);
-            parameters.Add("ToDate", toDate);
-            parameters.Add("ReportName", "Student Payment Details");
-            AspNetCore.Reporting.LocalReport localReport = new(path);
-            
             var sPayment = await _reportManager.GetStudentPayment(fromDate,toDate, academicClassId,academicSectionId);
             if (sPayment.Count==0)
             {
                 return new JsonResult("Sorry! Data Not Found");
             }
             double amount = sPayment.Sum(m => m.TotalPayment);
-
-            parameters.Add("AmountInWord", NumberToWords.ConvertAmount(amount));
-            localReport.AddDataSource("dsStudentPayment", sPayment);
-            var result = localReport.Execute(renderType, 1, parameters);
-            if (!string.IsNullOrEmpty(fileName))
+            Institute institute = await _instituteManager.GetByIdAsync(1);
+            if (institute == null)
             {
-                return File(result.MainStream, MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
+                return new JsonResult("Institute Information not found!");
             }
-            return File(result.MainStream, "Application/pdf");
+            string imageParam = "";
+            var imagePath = _host.WebRootPath + "\\Images\\Institute\\institute.jpeg"; 
+            var reportPath = _host.WebRootPath + "\\Reports\\Rpt_Student_Payment.rdlc";
+            byte[] pdf;
+            string mediaType = "application/pdf";
+            Image image = Image.FromFile(imagePath);
+            using (MemoryStream ms = new MemoryStream())
+            {
+                image.Save(ms, image.RawFormat);
+                byte[] imageBytes = ms.ToArray();
+                imageParam = Convert.ToBase64String(imageBytes);
+            }
+
+            using var report = new LocalReport();
+            report.Refresh();
+            try
+            {
+                report.DataSources.Add(new ReportDataSource("dsStudentPayment", sPayment));
+                var parameters = new[] {
+                    new ReportParameter("InstituteName", institute.Name),
+                    new ReportParameter("Location", institute.Address),
+                    new ReportParameter("ReportName", "Payments Summary Report"),
+                    new ReportParameter("FromDate", fromDate),
+                    new ReportParameter("ToDate", toDate),
+                    new ReportParameter("EIINNo", institute.EIIN),
+                    new ReportParameter("Logo", imageParam),
+                    new ReportParameter("AmountInWord", NumberToWords.ConvertAmount(amount)),
+                };
+
+                report.ReportPath = reportPath;
+                report.SetParameters(parameters);
+                pdf = report.Render("pdf");
+                if (!string.IsNullOrEmpty(fileName))
+                {
+                    return File(pdf, MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }            
+            return File(pdf, mediaType);
+
         }
         #endregion Student Payment Reports
 
@@ -396,11 +407,17 @@ namespace SMS.App.Controllers
             renderType = !string.IsNullOrEmpty(reportType) ? GetRenderType(reportType) : renderType;
             var path = _host.WebRootPath + "\\Reports\\Rpt_AdmitCard.rdlc";
             Dictionary<string, string> parameters = new();
+            AspNetCore.Reporting.LocalReport localReport = new(path);
+
             Institute institute = await _instituteManager.GetByIdAsync(1);
+            if (institute == null)
+            {
+                return new JsonResult("Institute Information not found!");
+            }
             parameters.Add("InstituteName", institute.Name);
             parameters.Add("EIINNo", institute.EIIN);
             parameters.Add("Image", imageParam);
-            AspNetCore.Reporting.LocalReport localReport = new(path);
+            
             int aClassId = 0;
             int aSection = 0;
             

@@ -14,7 +14,7 @@ namespace SMS.Entities
         [Display(Name = "Exam Type")]
         public int AcademicExamTypeId { get; set; }
 
-        public int AcademicSectionId { get; set; }
+        public int? AcademicSectionId { get; set; }
 
         [Display(Name = "Academic Session")]
         public int AcademicSessionId { get; set; }

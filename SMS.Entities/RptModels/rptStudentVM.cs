@@ -2,7 +2,7 @@
 {
     public class RptStudentVM
     {
-        public int ClassRoll { get; set; }
+        public string ClassRoll { get; set; }
         public string StudentName { get; set; }
         public string ClassName { get; set; }
         public string SessionName { get; set; }
@@ -15,7 +15,7 @@
         public string Status { get; set; }
         public string BloodGroup { get; set; }
         public string SectionName { get; set; }
-        public int AcademicClassId { get; set; }
+        public string AcademicClassId { get; set; }
         public string AcademicSectionId { get; set; }
     }
 }

@@ -113,7 +113,10 @@ namespace SMS.App.Controllers
             examDetailsVM.AcademicSessionName = exam.AcademicSession.Name;
             examDetailsVM.AcademicExamDetails = exam.AcademicExamDetails;
             examDetailsVM.AcademicSectionId = exam.AcademicSectionId;
-            examDetailsVM.AcademicSectionName = exam.AcademicSection.Name;
+            if (exam.AcademicSection!=null)
+            {
+                examDetailsVM.AcademicSectionName = exam.AcademicSection.Name;
+            }
             examDetailsVM.IsActive = exam.IsActive;
             
             return View(examDetailsVM);
@@ -158,9 +161,9 @@ namespace SMS.App.Controllers
                 if (isSaved)
                 {
                     TempData["created"] = "New Exam Created Successfully";
-
+                    academicExamVM.AcademicSectionId = academicExamVM.AcademicSectionId == null ? 0 : academicExamVM.AcademicSectionId;
                     List<Student> students = await _studentManager
-                    .GetStudentsByClassSessionSectionAsync(academicExamVM.AcademicSessionId, academicExamVM.AcademicClassId, academicExamVM.AcademicSectionId);
+                    .GetStudentsByClassSessionSectionAsync(academicExamVM.AcademicSessionId, academicExamVM.AcademicClassId, (int)academicExamVM.AcademicSectionId);
                     foreach (var st in students)
                     {
 

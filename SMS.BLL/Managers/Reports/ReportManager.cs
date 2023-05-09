@@ -1,6 +1,8 @@
 ﻿using SMS.BLL.Contracts.Reports;
 using SMS.DAL.Contracts.Reports;
+using SMS.Entities;
 using SMS.Entities.RptModels;
+using SMS.Entities.RptModels.AttendanceVM;
 using SMS.Entities.RptModels.StudentPayment;
 using System;
 using System.Collections.Generic;
@@ -23,6 +25,11 @@ namespace SMS.BLL.Managers.Reports
             return await _reportRepository.GetAdmitCard(monthId,academicClassId,academicSectionId);
         }
 
+        public async Task<List<RptDailyAttendaceVM>> GetDailyAttendanceReport(string fromDate, string academicClassId, string academicSectionId,string attendanceType)
+        {
+            return await _reportRepository.GetDailyAttendanceReport(fromDate, academicClassId, academicSectionId, attendanceType);
+        }
+
         public async Task<List<RptStudentsPaymentVM>> GetStudentPayment(string fromDate, string ToDate, string AcademicClassId, string AcademicSectionId)
         {
             return await _reportRepository.GetStudentPayment(fromDate,ToDate,AcademicClassId, AcademicSectionId);
@@ -33,9 +40,9 @@ namespace SMS.BLL.Managers.Reports
            return await _reportRepository.GetStudentPaymentsByRoll(classRoll,fromDate,toDate);
         }
 
-        public async Task<List<RptStudentVM>> GetStudentsInfo()
+        public async Task<List<RptStudentVM>> GetStudentsInfo(int AcademicSessionId, int? AcademicClassId, int? AcademicSectionId)
         {
-            return await _reportRepository.getStudentsInfo();
+            return await _reportRepository.getStudentsInfo(AcademicSessionId, AcademicClassId, AcademicSectionId);
         }
     }
 }

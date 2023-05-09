@@ -166,41 +166,43 @@
                                 </tfoot>
                             </table>
                         </div>
-                        <div id='dailyCollection' class="col-md-6">
-                            <table class="table table-primary">
-                                <thead class="bg-blue-sky">
-                                    <tr class="bg-primary text-center font-weight-bold h6">
-                                        <td colspan="2" class="text-center">Monthly (@DateTime.Now.ToString("MMMM")) Collection</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Class Name</td>
-                                        <td class="text-right">Amount</td>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in Model.MonthlyCollections)
-                                    {
-                                        <tr>
-                                            <td>@item.AcademicClassName</td>
-                                            <td class="text-right">@item.Amount</td>
-
+                        @if (User.IsInRole("SuperAdmin"))
+                        {
+                            <div id='dailyCollection' class="col-md-6">
+                                <table class="table table-primary">
+                                    <thead class="bg-blue-sky">
+                                        <tr class="bg-primary text-center font-weight-bold h6">
+                                            <td colspan="2" class="text-center">Monthly (@DateTime.Now.ToString("MMMM")) Collection</td>
                                         </tr>
-                                    }
-                                </tbody>
-                                <tfoot>
-                                    <tr class="font-weight-bold">
-                                        <td>Total</td>
-                                        @{
-                                            monthlyTotal = (from m in Model.MonthlyCollections
-                                                            select m.Amount).Sum();
+                                        <tr>
+                                            <td>Class Name</td>
+                                            <td class="text-right">Amount</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.MonthlyCollections)
+                                        {
+                                            <tr>
+                                                <td>@item.AcademicClassName</td>
+                                                <td class="text-right">@item.Amount</td>
+
+                                            </tr>
                                         }
-                                        <td class="text-right">@monthlyTotal</td>
-                                    </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr class="font-weight-bold">
+                                            <td>Total</td>
+                                            @{
+                                                monthlyTotal = (from m in Model.MonthlyCollections
+                                                                select m.Amount).Sum();
+                                            }
+                                            <td class="text-right">@monthlyTotal</td>
+                                        </tr>
 
-                                </tfoot>
-                            </table>
-                        </div>
-
+                                    </tfoot>
+                                </table>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>

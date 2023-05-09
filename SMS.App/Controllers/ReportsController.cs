@@ -64,59 +64,75 @@ namespace SMS.App.Controllers
             };
             return View(rpt_Student_VM);
         }
-        [HttpPost]
-        public async Task<IActionResult> StudentsReport(Rpt_Student_VM rpt_Student_VMObject)
+                
+        public async Task<IActionResult> StudentsReportExport(string reportType,string fileName, int? academicClassId, int? academicSectionId)
         {
-            Rpt_Student_VM rpt_Student_VM = new()
+            AcademicSession aSession = await _academicSessionManager.GetCurrentAcademicSession();
+            if (aSession==null)
             {
-                AcademicClassList = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", rpt_Student_VMObject.AcademicClassId).ToList(),
-                AcademicSessionList = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name", rpt_Student_VMObject.AcademicSessionId).ToList(),
-                AcademicSectionList = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name", rpt_Student_VMObject.AcademicSessionId).ToList()
-            };
-            return View(rpt_Student_VM);
-        }
-        
-        public async Task<IActionResult> StudentsReportExport(string reportType,string fileName, string academicClassId, string academicSectionId)
-        {
-            RenderType renderType = RenderType.Pdf;
-            renderType = !string.IsNullOrEmpty(reportType)? GetRenderType(reportType):renderType;
-            var path = _host.WebRootPath + "\\Reports\\rptStudent.rdlc";
-            Dictionary<string, string> parameters = new();
-            Institute institute = await _instituteManager.GetByIdAsync(1);
-            parameters.Add("InstituteName", institute.Name);
-            parameters.Add("ReportName", "Student List");
-            parameters.Add("Address", institute.Address);
-            parameters.Add("EIIN", institute.EIIN);
-            
-            AspNetCore.Reporting.LocalReport localReport = new(path);
-            
-            var studens = await _reportManager.GetStudentsInfo();
-            if (!string.IsNullOrEmpty(academicClassId))
-            {
-                if (academicClassId!="all")
-                {
-                    studens = studens.Where(s => s.AcademicClassId.ToString() == academicClassId).ToList();
-                }
-                if (!string.IsNullOrEmpty(academicSectionId) && academicSectionId!="0")
-                {
-                    int sectionId;
-                    if (int.TryParse(academicSectionId, out sectionId))
-                    {
-                        studens = studens.Where(s => s.AcademicSectionId ==  sectionId.ToString()).ToList();
-                    }
-                }
+                return new JsonResult("Current Session not set");
             }
-            localReport.AddDataSource("DataSet1", studens);
-            var result = localReport.Execute(renderType, 1, parameters);
+
+            var studens = await _reportManager.GetStudentsInfo(aSession.Id, academicClassId,academicSectionId);
+            if (studens==null || studens.Count<=0)
+            {
+                return new JsonResult("Sorry! Students Not Found.");
+            }
+            Institute institute = await _instituteManager.GetByIdAsync(1);
+            if (institute == null)
+            {
+                return new JsonResult("Sorry! Institute Information Not Found");
+            }
+
+            string mediaType = "application/pdf";
+            var path = _host.WebRootPath + "\\Reports\\rptStudent.rdlc";
+
+            string imageParam = "";
+            var imagePath = _host.WebRootPath + "\\Images\\Institute\\institute.jpeg";
+
+            Image image = Image.FromFile(imagePath);
+            using (MemoryStream ms = new MemoryStream())
+            {
+                image.Save(ms, image.RawFormat);
+                byte[] imageBytes = ms.ToArray();
+                imageParam = Convert.ToBase64String(imageBytes);
+            }
+
+            using var report = new LocalReport();
+            report.DataSources.Add(new ReportDataSource("DataSet1", studens));
+            var parameters = new[] {
+                new ReportParameter("InstituteName", institute.Name),
+                new ReportParameter("ReportName", "Student List"),
+                new ReportParameter("Address", institute.Address),
+                new ReportParameter("EIIN", institute.EIIN),
+                new ReportParameter("Logo", imageParam)
+            };
+            report.ReportPath = path;
+            report.SetParameters(parameters);
+            var pdf = report.Render("pdf");
             if (!string.IsNullOrEmpty(fileName))
             {
-                return File(result.MainStream,MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
+                return File(pdf, MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
             }
-            return File(result.MainStream, "Application/pdf");
+            return File(pdf, mediaType);
         }
         #endregion Student List Report
 
         #region Attendance Reports
+
+        public async Task<IActionResult> DailyAttendanceReport()
+        {
+            ViewData["AcademicClass"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name").ToList();
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DailyAttendnaceReportExport(string reportType, string fileName, string fromDate, string academicClassId, string academicSectionId)
+        {
+
+            return View();
+        }
+        //Monthly Attendance Report
         public async Task<IActionResult> AttendanceReport()
         {
             ViewBag.AcademicClasslist = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name").ToList();
@@ -137,6 +153,7 @@ namespace SMS.App.Controllers
             return View(monthlyAttendanceFullClass);
         }
 
+        //Monthly Attendance Report
         [HttpPost]
         public async Task<IActionResult> AttendanceReport(int monthId, int classId)
         {
@@ -250,8 +267,10 @@ namespace SMS.App.Controllers
             //parameters.Add("rp1", "Welcome to RDLC Reporting");
             AspNetCore.Reporting.LocalReport localReport = new(path);
             //List<RptStudentVM> studentVMs = new List<RptStudentVM>();
-
-            var studens = await _reportManager.GetStudentsInfo();
+            int AcdemicSessionId = 0;
+            int? AcademicClassId = 0;
+            int? AcademicSectionId = 0;
+            var studens = await _reportManager.GetStudentsInfo(AcdemicSessionId, AcademicClassId,AcademicSectionId);
             localReport.AddDataSource("DataSet1", studens);
             var result = localReport.Execute(renderType, 1, parameters);
             if (!string.IsNullOrEmpty(fileName))
@@ -314,7 +333,8 @@ namespace SMS.App.Controllers
                 new ReportParameter("RptName", "Payments Summary Report"),
                 new ReportParameter("ClassRoll", classRoll.ToString()),
                 new ReportParameter("AmountInWord", numberToWord),
-                new ReportParameter("Logo", imageParam)                
+                new ReportParameter("Logo", imageParam),              
+                new ReportParameter("EIINNo", institute.EIIN)              
             };
             report.ReportPath =path;
             report.SetParameters(parameters);

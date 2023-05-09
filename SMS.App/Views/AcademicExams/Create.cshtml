@@ -22,21 +22,27 @@
                 <div class="form-group row">
                     <label class="col-form-label col-md-3" asp-for="AcademicExamTypeId"></label>
                     <div class="col-md-9">
-                        <select asp-for="AcademicExamTypeId" asp-items="Model.AcademicExamTypeList" class="form-control" onchange="createExamName()"></select>
+                        <select asp-for="AcademicExamTypeId" asp-items="Model.AcademicExamTypeList" class="form-control" onchange="createExamName()">
+                            <option selected disabled>-Select Exam Type-</option>
+                        </select>
                         <span asp-validation-for="AcademicExamTypeId" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-form-label col-md-3" asp-for="AcademicSessionId"></label>
                     <div class="col-md-9">
-                        <select asp-for="AcademicSessionId" asp-items="Model.AcademicSessionList" class="form-control" onchange="createExamName()"></select>
+                        <select asp-for="AcademicSessionId" asp-items="Model.AcademicSessionList" class="form-control" onchange="createExamName()">
+                            <option selected disabled>-Select Academic Session-</option>
+                        </select>
                         <span asp-validation-for="AcademicSessionId" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-form-label col-md-3" asp-for="AcademicClassId"></label>
                     <div class="col-md-9">
-                        <select asp-for="AcademicClassId" asp-items="Model.AcademicClassList" class="form-control" onchange="createExamName()"></select>
+                        <select asp-for="AcademicClassId" asp-items="Model.AcademicClassList" class="form-control" onchange="createExamName()">
+                            <option selected disabled>-Select Class-</option>
+                        </select>
                         <span asp-validation-for="AcademicClassId" class="text-danger"></span>
                     </div>
                 </div>
@@ -142,7 +148,7 @@
 
                     if (data != null || data != '') {
                         var o = '<option disabled selected>Select Section Name</option>';
-                        var o2 = '<option value="0">No Section</option>';
+                        var o2 = '<option value="">All Section</option>';
                         $('#AcademicSectionId').append(o);
                         $('#AcademicSectionId').append(o2);
                         $.each(data, function (i, obj) {

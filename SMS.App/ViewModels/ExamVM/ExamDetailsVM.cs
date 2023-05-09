@@ -13,7 +13,7 @@ namespace SMS.App.ViewModels.ExamVM
         public int AcademicSessionId { get; set; }
         public string AcademicSessionName { get; set; }
 
-        public int AcademicSectionId { get; set; }
+        public int? AcademicSectionId { get; set; }
         public string AcademicSectionName { get; set; }
         public int TeacherId { get; set; }
         public string Teacher { get; set; }

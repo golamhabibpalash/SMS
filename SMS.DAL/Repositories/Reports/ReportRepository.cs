@@ -3,12 +3,14 @@ using Microsoft.EntityFrameworkCore;
 using SMS.DAL.Contracts.Reports;
 using SMS.DB;
 using SMS.Entities.RptModels;
+using SMS.Entities.RptModels.AttendanceVM;
 using SMS.Entities.RptModels.StudentPayment;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -45,13 +47,24 @@ where t.monthId = " + monthId + " and t.academicClassId = " + academicClassId + 
             return rptStudentPaymentsVMs;
         }
 
-        public async Task<List<RptStudentVM>> getStudentsInfo()
+        public async Task<List<RptStudentVM>> getStudentsInfo(int AcademicSessionId, int? AcademicClassId, int? AcademicSectionId)
         {
-            string query = @"select r.ClassRoll, r.StudentName,r.AcademicClassId,r.ClassName,r.AcademicSectionId,r.SectionName,
-r.SessionName, r.FatherName, r.MotherName,r.GuardianPhone,r.PhoneNo,r.BloodGroup,r.Gender,r.Religion,Case r.Status when 1 then 'Active' else 'Inactive' end Status from vw_rpt_student_info r";
-            List<RptStudentVM> rptStudentVMs = new List<RptStudentVM>();
-            var result =await _context.RptStudentVMs.FromSqlRaw(query).ToListAsync();
-            rptStudentVMs = result;
+
+            var pAcademicSessionId = new SqlParameter("AcademicSessionId", AcademicSessionId);
+            var pAcademicClassId = new SqlParameter("@AcademicClassId", (object)AcademicClassId ?? DBNull.Value);
+            var pAcademicSectionId = new SqlParameter("@AcademicSectionId", (object)AcademicSectionId ?? DBNull.Value);
+            List<RptStudentVM> rptStudentVMs = null;
+            try
+            {
+                rptStudentVMs = await _context.RptStudentVMs
+                    .FromSqlInterpolated($"EXECUTE sp_rpt_Get_Students_List {pAcademicSessionId}, {pAcademicClassId}, {pAcademicSectionId}")
+                    .ToListAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
             return rptStudentVMs;
         }
         public async Task<List<RptStudentsPaymentVM>> GetStudentPayment(string fromDate, string ToDate, string AcademicClassId, string AcademicSectionId)
@@ -71,6 +84,10 @@ r.SessionName, r.FatherName, r.MotherName,r.GuardianPhone,r.PhoneNo,r.BloodGroup
             }
             return rptStudentsPayments;
         }
-        
+
+        public Task<List<RptDailyAttendaceVM>> GetDailyAttendanceReport(string fromDate, string AcademicClassId, string AcademicSectionId, string attendanceType)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

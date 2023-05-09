@@ -68,7 +68,16 @@
                         </td>
                         <td>@item.AcademicSubject.SubjectName</td>
                         <td>@item.AcademicSubject.AcademicClass.Name</td>
-                        <td>@item.AcademicSection.Name</td>
+                        <td>
+                            @if (item.AcademicSection == null)
+                            {
+                                <span>All</span>
+                            }
+                            else
+                            {
+                                @item.AcademicSection.Name
+                            }
+                        </td>
                         <td>@item.AcademicSession.Name</td>
                         <td>@item.Employee.EmployeeName</td>
                         <td>@item.TotalMarks</td>

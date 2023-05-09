@@ -18,7 +18,7 @@ namespace SMS.App.ViewModels.ExamVM
         public int AcademicClassId { get; set; }
 
         [Display(Name = "Academic Section")]
-        public int AcademicSectionId { get; set; }
+        public int? AcademicSectionId { get; set; }
 
         [Display(Name = "Academic Subject")]
         public int AcademicSubjectId { get; set; }

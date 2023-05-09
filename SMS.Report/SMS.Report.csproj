@@ -23,6 +23,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>myDataSet.xsd</DependentUpon>
     </Compile>
+    <Compile Update="AttendanceReportDS.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>AttendanceReportDS.xsd</DependentUpon>
+    </Compile>
     <Compile Update="dsAdmitCard.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -53,6 +58,10 @@
     <None Update="App_Code\myDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>myDataSet.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="AttendanceReportDS.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>AttendanceReportDS.Designer.cs</LastGenOutput>
     </None>
     <None Update="dsAdmitCard.xsd">
       <Generator>MSDataSetGenerator</Generator>

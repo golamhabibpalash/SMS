@@ -34,12 +34,14 @@ namespace SMS.App.Controllers
     [Authorize]
     public class HangfireController : ControllerBase
     {
-        #region Constructor Start =================================================
+
         private readonly IStudentManager _studentManager;
         private readonly IAttendanceMachineManager _attendanceMachineManager;
         private readonly IEmployeeManager _employeeManager;
         private readonly IPhoneSMSManager _phoneSMSManager;
         private readonly ISetupMobileSMSManager _setupMobileSMSManager;
+
+        #region Constructor Start =================================================
         public HangfireController(IStudentManager studentManager, IAttendanceMachineManager attendanceMachineManager, IEmployeeManager employeeManager, IPhoneSMSManager phoneSMSManager, ISetupMobileSMSManager setupMobileSMSManager)
         {
             _studentManager = studentManager;
@@ -51,8 +53,6 @@ namespace SMS.App.Controllers
 
         }
         #endregion Constructor Finished xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxX
-
-
 
 
         [HttpGet]
@@ -275,6 +275,8 @@ namespace SMS.App.Controllers
                                         {
                                             continue;
                                         }
+                                        bool isAlreadySMSSent2nd = await _phoneSMSManager.IsSMSSendForAttendance(phoneNumber, smsType, DateTime.Now.ToString("dd-MM-yyyy"));
+                                        if (isAlreadySMSSent2nd) { continue; }  
                                         bool isSMSSent = await MobileSMS.SendSMS(phoneNumber, smsText);
                                         if (isSMSSent)
                                         {

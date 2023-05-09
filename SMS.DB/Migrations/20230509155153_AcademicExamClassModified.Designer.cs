@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SMS.DB;
 
@@ -11,9 +12,10 @@ using SMS.DB;
 namespace SMS.DB.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230509155153_AcademicExamClassModified")]
+    partial class AcademicExamClassModified
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -278,13 +280,13 @@ namespace SMS.DB.Migrations
                     b.Property<int>("AcademicExamTypeId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("AcademicSectionId")
+                    b.Property<int>("AcademicSectionId")
                         .HasColumnType("int");
 
                     b.Property<int>("AcademicSessionId")
                         .HasColumnType("int");
 
-                    b.Property<int>("AcademicSubjectId")
+                    b.Property<int?>("AcademicSubjectId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -2429,7 +2431,9 @@ namespace SMS.DB.Migrations
 
                     b.HasOne("SMS.Entities.AcademicSection", "AcademicSection")
                         .WithMany()
-                        .HasForeignKey("AcademicSectionId");
+                        .HasForeignKey("AcademicSectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("SMS.Entities.AcademicSession", "AcademicSession")
                         .WithMany()
@@ -2439,9 +2443,7 @@ namespace SMS.DB.Migrations
 
                     b.HasOne("SMS.Entities.AcademicSubject", "AcademicSubject")
                         .WithMany()
-                        .HasForeignKey("AcademicSubjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AcademicSubjectId");
 
                     b.HasOne("SMS.Entities.Employee", "Employee")
                         .WithMany()

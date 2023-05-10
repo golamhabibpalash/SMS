@@ -24,8 +24,9 @@ namespace SMS.App.Controllers
         private readonly IAcademicClassManager _academicClassManager;
         private readonly IStudentFeeHeadManager _studentFeeHeadManager;
         private readonly IStudentPaymentDetailsManager _studentPaymentDetailsManager;
+        private readonly ISetupMobileSMSManager _setupMobileSMSManager;
 
-        public StudentPaymentsController(IStudentPaymentManager studentPaymentManager, IStudentManager studentManager, IClassFeeListManager classFeeListManager, IAcademicClassManager academicClassManager, IStudentFeeHeadManager studentFeeHeadManager, IStudentPaymentDetailsManager studentPaymentDetailsManager)
+        public StudentPaymentsController(IStudentPaymentManager studentPaymentManager, IStudentManager studentManager, IClassFeeListManager classFeeListManager, IAcademicClassManager academicClassManager, IStudentFeeHeadManager studentFeeHeadManager, IStudentPaymentDetailsManager studentPaymentDetailsManager, ISetupMobileSMSManager setupMobileSMSManager)
         {
             _studentPaymentManager = studentPaymentManager;
             _studentManager = studentManager;
@@ -33,6 +34,7 @@ namespace SMS.App.Controllers
             _academicClassManager = academicClassManager;
             _studentFeeHeadManager = studentFeeHeadManager;
             _studentPaymentDetailsManager = studentPaymentDetailsManager;
+            _setupMobileSMSManager = setupMobileSMSManager;
         }
 
         // GET: StudentPayments
@@ -143,6 +145,7 @@ namespace SMS.App.Controllers
                     if (isSaved)
                     {
                         TempData["success"] = ViewBag.msg = "New payment added successfully!";
+                        var smsSetup = await _setupMobileSMSManager.GetByIdAsync(1);
                     }
                     else
                     {

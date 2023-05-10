@@ -24,20 +24,20 @@
     <link href="~/css/switch.css" rel="stylesheet" />
 }
 <div class="row">
-    <table class="table table-striped table-bordered" id="myTable">
+    <table class="table table-striped table-bordered table-responsive-sm" id="myTable">
         <thead class=" table-info ">
             <tr>
                 <td>#</td>
-                <td>Exam Name</td>
-                <td>Exam Type</td>
-                <td>Exam Month</td>
+                @*<td>Exam Name</td>*@
                 <td>Subject</td>
                 <td>Academic Class</td>
+                <td>Exam Type</td>
+                <td>Exam Month</td>
                 <td>Academic Section</td>
                 <td>Academic Session</td>
                 <td>Teacher</td>
                 <td>Total Marks</td>
-                @if(User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+                @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
                 {
                     <td>Lock</td>
                 }
@@ -59,15 +59,19 @@
                     {
                         styleForCurrentTransaction = "background:antiquewhite";
                     }
+                    else
+                    {
+                        styleForCurrentTransaction = "";
+                    }
                     <tr style="@styleForCurrentTransaction">
                         <td>@(++sl).</td>
-                        <td>@item.ExamName</td>
+                        @*<td>@item.ExamName</td>*@
+                        <td>@item.AcademicSubject.SubjectName</td>
+                        <td>@item.AcademicSubject.AcademicClass.Name</td>
                         <td>@item.AcademicExamType.ExamTypeName</td>
                         <td>
                             @months[item.MonthId - 1]
                         </td>
-                        <td>@item.AcademicSubject.SubjectName</td>
-                        <td>@item.AcademicSubject.AcademicClass.Name</td>
                         <td>
                             @if (item.AcademicSection == null)
                             {
@@ -83,24 +87,36 @@
                         <td>@item.TotalMarks</td>
                         @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
                         {
-                            <td> 
-                                    @if (item.IsActive)
-                                    {
-                                       <span id="id_@item.Id" class="p-1 lockBtn" type="button" data-id="@item.Id">
-                                           <i class="fa fa-lock fa-lg text-danger"></i>
-                                       </span>
-                                    }
-                                    else
-                                    {
-                                        <span id="id_@item.Id" class="p-1 unLockBtn" type="button" data-id="@item.Id">
-                                            <i class="fa fa-lock-open fa-lg text-info"></i>
-                                        </span>
-                                    }
+                            <td>
+                                @if (item.IsActive)
+                                {
+                                    <span id="id_@item.Id" class="p-1 lockBtn" type="button" data-id="@item.Id">
+                                        <i class="fa fa-lock fa-lg text-danger"></i>
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span id="id_@item.Id" class="p-1 unLockBtn" type="button" data-id="@item.Id">
+                                        <i class="fa fa-lock-open fa-lg text-info"></i>
+                                    </span>
+                                }
                             </td>
                         }
-                        <td>
-                            <partial name="_Edit_Details_Delete" model="@item.Id" />
 
+                        <td>
+                            @*@if (item.IsActive)
+                            {
+                                <span class="p-1" type="button">
+                                    <i class="fa fa-lock fa-lg text-danger"></i>
+                                </span>
+                            }
+                            else
+                            {*@
+                                <span>
+                                    <partial name="_Edit_Details_Delete" model="@item.Id" />
+
+                                </span>
+                            @*}*@
                         </td>
                     </tr>
                 }
@@ -112,18 +128,30 @@
                         <h1>Nothing Found</h1>
                     </td>
                 </tr>
-                <tr class="text-center">
-                    <td colspan="11">
-                        <partial name="_Create" />
-                    </td>
-                </tr>
+
+                @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+                {
+                    <tr class="text-center">
+                        <td colspan="11">
+                            <partial name="_Create" />
+                        </td>
+                    </tr>
+                }
             }
         </tbody>
     </table>
 </div>
 
-@section Scripts{ 
+@section Scripts{
+
+    <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
+
     <script>
+        let deleted = '@TempData["deleted"]';
+        let created = '@TempData["created"]';
+        let updated = '@TempData["updated"]';
+        let failed = '@TempData["error"]';
+
         $(document).ready(function () {
             $('.lockBtn').click(function () {
                 if (confirm("Are you sure you want to unlock this?")) {

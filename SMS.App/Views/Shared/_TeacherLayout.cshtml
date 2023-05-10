@@ -74,7 +74,8 @@
     <!-- Bootstrap -->
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <!-- Font Awesome -->
-    <link href="~/lib/Theme/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/lib/fontawesome/css/all.min.css" rel="stylesheet" />
+    @*<link href="~/lib/Theme/font-awesome/css/font-awesome.min.css" rel="stylesheet" />*@
     <!-- NProgress -->
     <link href="~/lib/Theme/css/nprogress.css" rel="stylesheet" />
 
@@ -113,10 +114,10 @@
                         <div class="menu_section">
                             <ul class="nav side-menu">
                                 <li>
-                                    <a asp-controller="Home" asp-action="Index"><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>
+                                    <a asp-controller="Home" asp-action="Index"><i class="fas fa-home"></i> Home </a>
                                 </li>
                                 <li>
-                                    <a><i class="fa fa-users"></i> Students <span class="fa fa-chevron-down"></span></a>
+                                    <a><i class="fas fa-users"></i> Students <span class="fas fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li>
                                             <a asp-action="Index" asp-controller="Students">All Students</a>
@@ -124,7 +125,7 @@
                                     </ul>
                                 </li>
                                 <li>
-                                    <a><i class="fa fa-user"></i> Employee <span class="fa fa-chevron-down"></span></a>
+                                    <a><i class="fas fa-user"></i> Employee <span class="fas fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li>
                                             <a asp-action="Index" asp-controller="Employees"><span class="glyphicon glyphicon-asterisk"></span> All Employee</a>
@@ -132,7 +133,7 @@
                                     </ul>
                                 </li>
                                 <li>
-                                    <a><i class="fa fa-user"></i> Modules <span class="fa fa-chevron-down"></span></a>
+                                    <a><i class="fas fa-layer-group text-light fa-2x"></i> Modules <span class="fas fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li>
                                             <a asp-action="Index" asp-controller="AcademicExams"><span class="glyphicon glyphicon-asterisk"></span> Exams</a>

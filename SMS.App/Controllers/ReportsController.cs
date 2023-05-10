@@ -414,13 +414,23 @@ namespace SMS.App.Controllers
         public async Task<IActionResult> AdmitCardExport(string reportType, string fileName, int monthId, string academicClassId, string academicSectionId)
         {
             string imageParam = "";
+            string signatureParam = "";
             var imagePath = _host.WebRootPath + "\\Images\\Institute\\noble.jpeg";
+            var signaturePath = _host.WebRootPath + "\\Images\\Institute\\signature.jpg";
             using (var b = new Bitmap(imagePath))
             {
                 using(var ms = new MemoryStream())
                 {
                     b.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
                     imageParam = Convert.ToBase64String(ms.ToArray());
+                }
+            }
+            using (var b = new Bitmap(signaturePath))
+            {
+                using(var ms = new MemoryStream())
+                {
+                    b.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+                    signatureParam = Convert.ToBase64String(ms.ToArray());
                 }
             }
             RenderType renderType = RenderType.Pdf;
@@ -437,6 +447,7 @@ namespace SMS.App.Controllers
             parameters.Add("InstituteName", institute.Name);
             parameters.Add("EIINNo", institute.EIIN);
             parameters.Add("Image", imageParam);
+            parameters.Add("signature", signatureParam);
             
             int aClassId = 0;
             int aSection = 0;

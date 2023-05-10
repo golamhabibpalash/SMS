@@ -1,0 +1,37 @@
+﻿@model AcademicExam
+@{
+    ViewData["Title"] = "Delete Academic Exams";
+    GlobalUI.PageTitle = ViewData["Title"].ToString();
+}
+
+<h1>Delete</h1>
+<div class="row">
+    <div class="col-md-12">
+        <ul class="list-group">
+            <li class="list-group-item">Exam Name: <span>@Model.ExamName</span></li>
+        </ul>
+    </div>
+    <div class="col-md-12">
+        <h2>Do you want to Delete this item!</h2>
+        <form asp-action="Delete" method="post">
+            <div class="form-group">
+                <input type="hidden" asp-for="Id" value="@Model.Id" />
+                <input type="hidden" asp-for="AcademicSessionId" value="@Model.AcademicSessionId" />
+                <input type="hidden" asp-for="AcademicSectionId" value="@Model.AcademicSectionId" />
+                <input type="hidden" asp-for="AcademicSubjectId" value="@Model.AcademicSubjectId" />
+                <button type="submit" class="btn btn-danger">Delete</button>
+                <a asp-action="Index" class="btn btn-info">Back to list</a>
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts{
+
+    <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
+    <script>
+        let deleted = '@TempData["deleted"]';
+        let created = '@TempData["created"]';
+        let updated = '@TempData["updated"]';
+        let failed = '@TempData["error"]';
+    </script>
+}

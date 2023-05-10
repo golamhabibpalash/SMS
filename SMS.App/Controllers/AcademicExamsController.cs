@@ -150,6 +150,9 @@ namespace SMS.App.Controllers
             academicExamVM.AcademicSectionList = new SelectList(await _academicSectionManager.GetAllAsync(), "Id", "Name", academicExamVM.AcademicSectionId).ToList();
             academicExamVM.TeacherList = new SelectList(emps.Where(e => e.Status == true).OrderBy(e => e.JoiningDate).ThenBy(e => e.EmployeeName), "Id", "EmployeeName").ToList();
 
+            bool examIsExist = false;
+            List<AcademicExam> existingExams = (List<AcademicExam>)await _examManager.GetAllAsync();
+
             try
             {
                 AcademicExam academicExam = _mapper.Map<AcademicExam>(academicExamVM);
@@ -250,24 +253,44 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicExamsController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            return View();
+            AcademicExam academicExam = await _examManager.GetByIdAsync(id);
+            return View(academicExam);
         }
 
         // POST: AcademicExamsController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "SuperAdmin, Admin")]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> Delete(int id, AcademicExam objAcademicExam)
         {
+            if (id != objAcademicExam.Id)
+            {
+                TempData["error"]= "Not Found";                
+                return View(objAcademicExam);
+            }
             try
             {
-                return RedirectToAction(nameof(Index));
+                AcademicExam existingAcademicExam = await _examManager.GetByIdAsync(id);
+                if (existingAcademicExam == null)
+                {
+                    TempData["error"] = "Not Found";
+                    return View(objAcademicExam);
+                }
+
+                bool isDeleted = await _examManager.RemoveAsync(existingAcademicExam);
+                if (isDeleted)
+                {
+                    TempData["deleted"] = "Exam has been successfully removed";
+                    return RedirectToAction(nameof(Index));
+                }
+                TempData["error"] = "Fail to delete.";
+                return View(objAcademicExam);
             }
             catch
             {
-                return View();
+                return View(objAcademicExam);
             }
         }
 

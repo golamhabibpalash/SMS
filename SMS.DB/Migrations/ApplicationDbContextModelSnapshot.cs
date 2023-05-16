@@ -536,6 +536,9 @@ namespace SMS.DB.Migrations
                     b.Property<int?>("QuestionFormatId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("ReligionId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
 

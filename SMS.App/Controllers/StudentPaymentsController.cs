@@ -12,6 +12,7 @@ using SMS.App.ViewModels;
 using SMS.BLL.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using SMS.App.Utilities.MACIPServices;
+using SMS.App.Utilities.ShortMessageService;
 
 namespace SMS.App.Controllers
 {
@@ -25,8 +26,9 @@ namespace SMS.App.Controllers
         private readonly IStudentFeeHeadManager _studentFeeHeadManager;
         private readonly IStudentPaymentDetailsManager _studentPaymentDetailsManager;
         private readonly ISetupMobileSMSManager _setupMobileSMSManager;
+        private readonly IPhoneSMSManager _phoneSMSManager;
 
-        public StudentPaymentsController(IStudentPaymentManager studentPaymentManager, IStudentManager studentManager, IClassFeeListManager classFeeListManager, IAcademicClassManager academicClassManager, IStudentFeeHeadManager studentFeeHeadManager, IStudentPaymentDetailsManager studentPaymentDetailsManager, ISetupMobileSMSManager setupMobileSMSManager)
+        public StudentPaymentsController(IStudentPaymentManager studentPaymentManager, IStudentManager studentManager, IClassFeeListManager classFeeListManager, IAcademicClassManager academicClassManager, IStudentFeeHeadManager studentFeeHeadManager, IStudentPaymentDetailsManager studentPaymentDetailsManager, ISetupMobileSMSManager setupMobileSMSManager, IPhoneSMSManager phoneSMSManager)
         {
             _studentPaymentManager = studentPaymentManager;
             _studentManager = studentManager;
@@ -35,6 +37,7 @@ namespace SMS.App.Controllers
             _studentFeeHeadManager = studentFeeHeadManager;
             _studentPaymentDetailsManager = studentPaymentDetailsManager;
             _setupMobileSMSManager = setupMobileSMSManager;
+            _phoneSMSManager = phoneSMSManager;
         }
 
         // GET: StudentPayments
@@ -145,7 +148,28 @@ namespace SMS.App.Controllers
                     if (isSaved)
                     {
                         TempData["success"] = ViewBag.msg = "New payment added successfully!";
-                        var smsSetup = await _setupMobileSMSManager.GetByIdAsync(1);
+                        //if (paymentObject.IsSMSSend==true)
+                        //{
+                        //    var smsSetup = await _setupMobileSMSManager.GetByIdAsync(1);
+                        //    if (smsSetup.SMSService==true)
+                        //    {
+                        //        string smsText = "Paid successfull";
+                        //        string phoneNo = "";
+                        //        bool isSend = await MobileSMS.SendSMS(smsText, phoneNo);
+                        //        if (isSend)
+                        //        {
+                        //            PhoneSMS sms = new PhoneSMS();
+                        //            sms.SMSType = "payment";
+                        //            sms.MACAddress = MACService.GetMAC();
+                        //            sms.Text = smsText;
+                        //            sms.MobileNumber = phoneNo;
+                        //            sms.CreatedAt = DateTime.Now;
+                        //            sms.CreatedBy = HttpContext.Session.GetString ("UserId");
+                                    
+                        //            await _phoneSMSManager.AddAsync(sms);
+                        //        }
+                        //    }
+                        //}
                     }
                     else
                     {

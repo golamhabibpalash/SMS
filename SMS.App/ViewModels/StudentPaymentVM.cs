@@ -13,5 +13,6 @@ namespace SMS.App.ViewModels
         public List<ClassFeeList> ClassFeeLists { get; set; }
         public int ClassFeeHeadId { get; set; }
         public int StudentId { get; set; }
+        public bool IsSMSSend { get; set; }
     }
 }

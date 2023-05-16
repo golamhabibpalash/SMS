@@ -26,7 +26,7 @@ namespace SMS.Entities
 
         [Display(Name = "Is Active")]
         public bool Status { get; set; }
-
+        public int? ReligionId { get; set; }
 
         public int AcademicClassId { get; set; }
         public AcademicClass AcademicClass { get; set; }

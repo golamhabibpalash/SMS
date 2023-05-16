@@ -43,6 +43,16 @@
                 </div>
             </div>
             <div class="form-group row">
+                <label asp-for="ReligionId" class="control-label  col-form-label col-md-2 text-md-right"></label>
+                <div class="col-md-10">
+                    <select asp-for="ReligionId" class="form-control rounded" asp-items="ViewBag.ReligionList">
+                        <option selected disabled>Select Religion</option>
+                        <option value="">All Religion</option>
+                    </select>
+                    <span asp-validation-for="ReligionId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
                 <label asp-for="TotalMarks" class="control-label col-form-label col-md-2 text-md-right"></label>
                 <div class="col-md-10">
                     <input asp-for="TotalMarks" class="form-control" />

@@ -33,6 +33,7 @@
                     <div class="col-md-9">
                         <select asp-for="AcademicSessionId" asp-items="Model.AcademicSessionList" class="form-control" onchange="createExamName()">
                             <option selected disabled>-Select Academic Session-</option>
+                            <option value="">All Section</option>
                         </select>
                         <span asp-validation-for="AcademicSessionId" class="text-danger"></span>
                     </div>
@@ -51,6 +52,7 @@
                     <div class="col-md-9">
                         <select asp-for="AcademicSectionId" asp-items="Model.AcademicSectionList" class="form-control" onchange="createExamName()">
                             <option disabled selected>Select Class First</option>
+                            <option value="">All Section</option>
                         </select>
                         <span asp-validation-for="AcademicSectionId" class="text-danger"></span>
                     </div>
@@ -104,7 +106,14 @@
 </div>
 
 @section Scripts{
+    <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
+
     <script>
+        let deleted = '@TempData["deleted"]';
+        let created = '@TempData["created"]';
+        let updated = '@TempData["updated"]';
+        let failed = '@TempData["error"]';
+
 
         $('#AcademicClassId').change(function () {
             let id = $('#AcademicClassId option:selected').val();
@@ -116,7 +125,7 @@
                 cache: false,
                 success: function (data) {
                     $('#AcademicSubjectId').empty();
-
+                    //let o = '<option value="">All Section</option>';
                     if (data != null || data != '') {
                         var o = '<option disabled selected>Select Subject</option>';
                         $('#AcademicSubjectId').append(o);
@@ -145,7 +154,6 @@
                 cache: false,
                 success: function (data) {
                     $('#AcademicSectionId').empty();
-
                     if (data != null || data != '') {
                         var o = '<option disabled selected>Select Section Name</option>';
                         var o2 = '<option value="">All Section</option>';

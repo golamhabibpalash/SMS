@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using SMS.App.Utilities.MACIPServices;
 using SMS.BLL.Contracts;
@@ -22,15 +23,15 @@ namespace SMS.App.Controllers
         private readonly IAcademicSubjectTypeManager _academicSubjectTypeManager;
         private readonly IAcademicClassManager _academicClassManager;
         private readonly IQuestionFormationManager _questionFormationManager;
-        //private readonly ILogger<AcademicSubjectsController> logger;
+        private readonly IReligionManager _religionManager;
 
-        public AcademicSubjectsController(IAcademicSubjectManager academicSubjectManger, IAcademicSubjectTypeManager academicSubjectTypeManager, IAcademicClassManager academicClassManager, ILogger<AcademicSubjectsController> _Logger, IQuestionFormationManager questionFormationManager)
+        public AcademicSubjectsController(IAcademicSubjectManager academicSubjectManger, IAcademicSubjectTypeManager academicSubjectTypeManager, IAcademicClassManager academicClassManager, ILogger<AcademicSubjectsController> _Logger, IQuestionFormationManager questionFormationManager,IReligionManager religionManager)
         {
             _academicSubjectManager = academicSubjectManger;
             _academicSubjectTypeManager = academicSubjectTypeManager;
             _academicClassManager = academicClassManager;
             _questionFormationManager = questionFormationManager;
-            //logger = _Logger;
+            _religionManager = religionManager;
         }
 
         // GET: AcademicSubjects
@@ -65,13 +66,14 @@ namespace SMS.App.Controllers
         {
             ViewData["AcademicSubjectTypeId"] = new SelectList(await _academicSubjectTypeManager.GetAllAsync(), "Id", "SubjectTypeName");
             ViewData["QuestionFormatId"] = new SelectList(await _questionFormationManager.GetAllAsync(), "Id", "Name");
+            ViewData["ReligionList"] = new SelectList(await _religionManager.GetAllAsync(), "Id", "Name");
             return View();
         }
 
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,SubjectName,AcademicSubjectTypeId,AcademicClassId,SubjectCode,SubjectFor,TotalMarks,Status,CreatedBy,CreatedAt,EditedBy,EditedAt,QuestionFormatId")] AcademicSubject academicSubject)
+        public async Task<IActionResult> Create([Bind("Id,SubjectName,AcademicSubjectTypeId,AcademicClassId,SubjectCode,SubjectFor,TotalMarks,Status,CreatedBy,CreatedAt,EditedBy,EditedAt,QuestionFormatId,ReligionId")] AcademicSubject academicSubject)
         {
             academicSubject.Status = true;
             if (ModelState.IsValid)
@@ -94,6 +96,7 @@ namespace SMS.App.Controllers
 
             ViewData["AcademicSubjectTypeId"] = new SelectList(await _academicSubjectTypeManager.GetAllAsync(), "Id", "SubjectTypeName", academicSubject.AcademicSubjectTypeId);
             ViewData["QuestionFormatId"] = new SelectList(await _questionFormationManager.GetAllAsync(), "Id", "Name", academicSubject.QuestionFormatId);
+            ViewData["ReligionList"] = new SelectList(await _religionManager.GetAllAsync(), "Id", "Name",academicSubject.ReligionId);
             return View(academicSubject);
         }
 
@@ -113,12 +116,13 @@ namespace SMS.App.Controllers
             ViewData["AcademicSubjectTypeId"] = new SelectList(await _academicSubjectTypeManager.GetAllAsync(), "Id", "SubjectTypeName", academicSubject.AcademicSubjectTypeId);
             ViewData["QuestionFormatId"] = new SelectList(await _questionFormationManager.GetAllAsync(), "Id", "Name", academicSubject.QuestionFormatId);
             ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", academicSubject.AcademicClassId);
+            ViewData["ReligionList"] = new SelectList(await _religionManager.GetAllAsync(), "Id", "Name", academicSubject.ReligionId);
             return View(academicSubject);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,SubjectName,AcademicSubjectTypeId,SubjectCode,SubjectFor,TotalMarks,Status,CreatedBy,CreatedAt,EditedBy,EditedAt,QuestionFormatId,AcademicClassId")] AcademicSubject academicSubject)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,SubjectName,AcademicSubjectTypeId,SubjectCode,SubjectFor,TotalMarks,Status,CreatedBy,CreatedAt,EditedBy,EditedAt,QuestionFormatId,AcademicClassId,ReligionId")] AcademicSubject academicSubject)
         {
             if (id != academicSubject.Id)
             {

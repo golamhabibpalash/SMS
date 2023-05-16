@@ -415,7 +415,7 @@ namespace SMS.App.Controllers
         {
             string imageParam = "";
             string signatureParam = "";
-            var imagePath = _host.WebRootPath + "\\Images\\Institute\\noble.jpeg";
+            var imagePath = _host.WebRootPath + "\\Images\\Institute\\admitLogo.jpg";
             var signaturePath = _host.WebRootPath + "\\Images\\Institute\\signature.jpg";
             using (var b = new Bitmap(imagePath))
             {

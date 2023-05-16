@@ -31,11 +31,12 @@
                 @*<td>Exam Name</td>*@
                 <td>Subject</td>
                 <td>Academic Class</td>
+                <td>Academic Section</td>
                 <td>Exam Type</td>
                 <td>Exam Month</td>
-                <td>Academic Section</td>
                 <td>Academic Session</td>
                 <td>Teacher</td>
+                <td>Total Students</td>
                 <td>Total Marks</td>
                 @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
                 {
@@ -68,10 +69,6 @@
                         @*<td>@item.ExamName</td>*@
                         <td>@item.AcademicSubject.SubjectName</td>
                         <td>@item.AcademicSubject.AcademicClass.Name</td>
-                        <td>@item.AcademicExamType.ExamTypeName</td>
-                        <td>
-                            @months[item.MonthId - 1]
-                        </td>
                         <td>
                             @if (item.AcademicSection == null)
                             {
@@ -82,8 +79,13 @@
                                 @item.AcademicSection.Name
                             }
                         </td>
+                        <td>@item.AcademicExamType.ExamTypeName</td>
+                        <td>
+                            @months[item.MonthId - 1]
+                        </td>
                         <td>@item.AcademicSession.Name</td>
                         <td>@item.Employee.EmployeeName</td>
+                        <td>@item.AcademicExamDetails.Count</td>
                         <td>@item.TotalMarks</td>
                         @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
                         {
@@ -104,19 +106,16 @@
                         }
 
                         <td>
-                            @*@if (item.IsActive)
-                            {
-                                <span class="p-1" type="button">
-                                    <i class="fa fa-lock fa-lg text-danger"></i>
-                                </span>
-                            }
-                            else
-                            {*@
-                                <span>
-                                    <partial name="_Edit_Details_Delete" model="@item.Id" />
+                            <span>
+                                <partial name="_Edit_Details_Delete" model="@item.Id" />
+                                @if (item.IsActive)
+                                {
+                                    <span class="p-1" type="button">
+                                        <i class="fa fa-lock fa-lg text-danger"></i>
+                                    </span>
+                                }
+                            </span>
 
-                                </span>
-                            @*}*@
                         </td>
                     </tr>
                 }

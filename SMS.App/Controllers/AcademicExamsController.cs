@@ -147,7 +147,7 @@ namespace SMS.App.Controllers
             academicExamVM.AcademicClassList = new SelectList(await _classManager.GetAllAsync(), "Id", "Name").ToList();
             academicExamVM.AcademicExamTypeList = new SelectList(await _examTypeManager.GetAllAsync(), "Id", "ExamTypeName").ToList();
             academicExamVM.AcademicSubjectList = new SelectList(await _academicSubjectManager.GetAllAsync(), "Id", "SubjectName").ToList();
-            academicExamVM.AcademicSectionList = new SelectList(await _academicSectionManager.GetAllAsync(), "Id", "Name", academicExamVM.AcademicSectionId).ToList();
+            academicExamVM.AcademicSectionList = new SelectList(await _academicSectionManager.GetAllByClassWithSessionId(academicExamVM.AcademicClassId,academicExamVM.AcademicSessionId), "Id", "Name", academicExamVM.AcademicSectionId).ToList();
             academicExamVM.TeacherList = new SelectList(emps.Where(e => e.Status == true).OrderBy(e => e.JoiningDate).ThenBy(e => e.EmployeeName), "Id", "EmployeeName").ToList();
 
             bool examIsExist = false;
@@ -159,7 +159,31 @@ namespace SMS.App.Controllers
                 academicExam.CreatedAt = DateTime.Now;
                 academicExam.CreatedBy = HttpContext.Session.GetString("UserId");
                 academicExam.MACAddress = MACService.GetMAC();
+                AcademicSubject academicSubject = await _academicSubjectManager.GetByIdAsync(academicExam.AcademicSubjectId);
                 
+                if (academicSubject.ReligionId!=null || academicSubject.ReligionId>0)
+                {
+                    List<AcademicExamDetail>  objListAcademicExamDetails = new List<AcademicExamDetail>();
+                    List<Student> students = await _studentManager.GetStudentsByClassIdAndSessionIdAsync(academicExam.AcademicSessionId, academicExamVM.AcademicClassId);
+                    students = students.Where(s => s.AcademicSectionId == academicExam.AcademicSectionId && s.ReligionId == academicSubject.ReligionId).ToList();
+                    if (students.Count<=0)
+                    {
+                        TempData["error"] = "There has no any student available for this subject";
+                        return View(academicExamVM);
+                    }
+                    foreach (var student in students)
+                    {
+                        AcademicExamDetail academicExamDetail = new AcademicExamDetail();
+                        academicExamDetail.AcademicExamId = academicExam.Id;
+                        academicExamDetail.StudentId = student.Id;
+                        academicExamDetail.MACAddress = MACService.GetMAC();
+                        academicExamDetail.CreatedAt = DateTime.Now;
+                        academicExamDetail.CreatedBy = HttpContext.Session.GetString("UserId");
+
+                        objListAcademicExamDetails.Add(academicExamDetail);
+                    }
+                    academicExam.AcademicExamDetails = objListAcademicExamDetails;
+                }
                 bool isSaved = await _examManager.AddAsync(academicExam);
                 if (isSaved)
                 {

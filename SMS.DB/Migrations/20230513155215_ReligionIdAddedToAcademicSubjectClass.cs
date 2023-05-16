@@ -4,22 +4,22 @@
 
 namespace SMS.DB.Migrations
 {
-    public partial class NameBangla_Added_Student_Table : Migration
+    public partial class ReligionIdAddedToAcademicSubjectClass : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "NameBangla",
-                table: "Student",
-                type: "nvarchar(max)",
+            migrationBuilder.AddColumn<int>(
+                name: "ReligionId",
+                table: "AcademicSubject",
+                type: "int",
                 nullable: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "NameBangla",
-                table: "Student");
+                name: "ReligionId",
+                table: "AcademicSubject");
         }
     }
 }

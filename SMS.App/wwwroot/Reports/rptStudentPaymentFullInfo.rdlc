@@ -59,7 +59,7 @@
                   <Width>0.36372in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.45746in</Width>
+                  <Width>1.30121in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1.26215in</Width>
@@ -89,7 +89,7 @@
                                 <TextRun>
                                   <Value>Payment History</Value>
                                   <Style>
-                                    <FontFamily>helvetica</FontFamily>
+                                    <FontFamily>Arial Narrow</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -137,7 +137,7 @@
                                 <TextRun>
                                   <Value>SL</Value>
                                   <Style>
-                                    <FontFamily>helvetica</FontFamily>
+                                    <FontFamily>Arial Narrow</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -172,7 +172,7 @@
                                 <TextRun>
                                   <Value>Receipt No</Value>
                                   <Style>
-                                    <FontFamily>helvetica</FontFamily>
+                                    <FontFamily>Arial Narrow</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -205,7 +205,7 @@
                                 <TextRun>
                                   <Value>Paid Date</Value>
                                   <Style>
-                                    <FontFamily>helvetica</FontFamily>
+                                    <FontFamily>Arial Narrow</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -238,7 +238,7 @@
                                 <TextRun>
                                   <Value>Payment Type </Value>
                                   <Style>
-                                    <FontFamily>helvetica</FontFamily>
+                                    <FontFamily>Arial Narrow</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -271,7 +271,7 @@
                                 <TextRun>
                                   <Value>Remarks</Value>
                                   <Style>
-                                    <FontFamily>helvetica</FontFamily>
+                                    <FontFamily>Arial Narrow</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -304,7 +304,7 @@
                                 <TextRun>
                                   <Value>Total Payment</Value>
                                   <Style>
-                                    <FontFamily>helvetica</FontFamily>
+                                    <FontFamily>Arial Narrow</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -345,7 +345,7 @@
                                   <Value>=RowNumber(Nothing)</Value>
                                   <Style>
                                     <FontStyle>Italic</FontStyle>
-                                    <FontFamily>helvetica</FontFamily>
+                                    <FontFamily>Arial Narrow</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -380,7 +380,7 @@
                                   <Value>=Fields!ReceiptNo.Value</Value>
                                   <Style>
                                     <FontStyle>Italic</FontStyle>
-                                    <FontFamily>helvetica</FontFamily>
+                                    <FontFamily>Arial Narrow</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -413,7 +413,7 @@
                                   <Value>=Fields!PaidDate.Value</Value>
                                   <Style>
                                     <FontStyle>Italic</FontStyle>
-                                    <FontFamily>helvetica</FontFamily>
+                                    <FontFamily>Arial Narrow</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -446,7 +446,7 @@
                                   <Value>=Fields!PaymentTypeName.Value</Value>
                                   <Style>
                                     <FontStyle>Italic</FontStyle>
-                                    <FontFamily>helvetica</FontFamily>
+                                    <FontFamily>Arial Narrow</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -479,7 +479,7 @@
                                   <Value>=Fields!Remarks.Value</Value>
                                   <Style>
                                     <FontStyle>Italic</FontStyle>
-                                    <FontFamily>helvetica</FontFamily>
+                                    <FontFamily>Arial Narrow</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -512,7 +512,7 @@
                                   <Value>=Fields!TotalPayment.Value</Value>
                                   <Style>
                                     <FontStyle>Italic</FontStyle>
-                                    <FontFamily>helvetica</FontFamily>
+                                    <FontFamily>Arial Narrow</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -550,7 +550,7 @@
                                   <Value>Total Paid</Value>
                                   <Style>
                                     <FontStyle>Italic</FontStyle>
-                                    <FontFamily>helvetica</FontFamily>
+                                    <FontFamily>Arial Narrow</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -591,7 +591,7 @@
                                   <Value>=Sum(Fields!TotalPayment.Value)</Value>
                                   <Style>
                                     <FontStyle>Italic</FontStyle>
-                                    <FontFamily>helvetica</FontFamily>
+                                    <FontFamily>Arial Narrow</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -630,7 +630,7 @@
                                   <Value>="Amount In words(Tk): "+Parameters!AmountInWord.Value</Value>
                                   <Style>
                                     <FontStyle>Italic</FontStyle>
-                                    <FontFamily>helvetica</FontFamily>
+                                    <FontFamily>Arial Narrow</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -700,7 +700,7 @@
             <Top>2.52167in</Top>
             <Left>0.42401in</Left>
             <Height>1.32292in</Height>
-            <Width>7.52082in</Width>
+            <Width>7.36457in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -731,7 +731,7 @@
             <Top>1.00424in</Top>
             <Left>0.42401in</Left>
             <Height>0.25701in</Height>
-            <Width>7.52083in</Width>
+            <Width>7.36457in</Width>
             <ZIndex>1</ZIndex>
             <Style>
               <Border>
@@ -753,7 +753,7 @@
                   <TextRun>
                     <Value>Signature &amp; Date</Value>
                     <Style>
-                      <FontFamily>helvetica</FontFamily>
+                      <FontFamily>Arial Narrow</FontFamily>
                     </Style>
                   </TextRun>
                 </TextRuns>
@@ -766,20 +766,20 @@
                   <TextRun>
                     <Value>(</Value>
                     <Style>
-                      <FontFamily>helvetica</FontFamily>
+                      <FontFamily>Arial Narrow</FontFamily>
                     </Style>
                   </TextRun>
                   <TextRun>
                     <Value>Admin</Value>
                     <Style>
                       <FontStyle>Italic</FontStyle>
-                      <FontFamily>helvetica</FontFamily>
+                      <FontFamily>Arial Narrow</FontFamily>
                     </Style>
                   </TextRun>
                   <TextRun>
                     <Value>)</Value>
                     <Style>
-                      <FontFamily>helvetica</FontFamily>
+                      <FontFamily>Arial Narrow</FontFamily>
                     </Style>
                   </TextRun>
                 </TextRuns>
@@ -790,7 +790,7 @@
             </Paragraphs>
             <rd:DefaultName>Textbox75</rd:DefaultName>
             <Top>4.5925in</Top>
-            <Left>6.08025in</Left>
+            <Left>5.924in</Left>
             <Height>0.39583in</Height>
             <Width>1.86458in</Width>
             <ZIndex>2</ZIndex>
@@ -815,55 +815,25 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=Parameters!RptDate.Value</Value>
+                    <Value>="Report Date:" &amp; Parameters!RptDate.Value</Value>
                     <Style>
                       <FontStyle>Italic</FontStyle>
                       <FontFamily>helvetica</FontFamily>
+                      <FontSize>9pt</FontSize>
                     </Style>
                   </TextRun>
                 </TextRuns>
-                <Style />
+                <Style>
+                  <TextAlign>Right</TextAlign>
+                </Style>
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>RptDate</rd:DefaultName>
-            <Top>1.38403in</Top>
-            <Left>7.05942in</Left>
-            <Height>0.25in</Height>
-            <Width>0.88542in</Width>
+            <Top>0.7473in</Top>
+            <Left>6.27903in</Left>
+            <Height>0.1875in</Height>
+            <Width>1.50955in</Width>
             <ZIndex>3</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox77">
-            <CanGrow>true</CanGrow>
-            <CanShrink>true</CanShrink>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>Report Date :</Value>
-                    <Style>
-                      <FontFamily>helvetica</FontFamily>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox77</rd:DefaultName>
-            <Top>1.38403in</Top>
-            <Left>6.08026in</Left>
-            <Height>0.25in</Height>
-            <Width>0.97916in</Width>
-            <ZIndex>4</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -902,7 +872,7 @@
                                 <TextRun>
                                   <Value>Student Name</Value>
                                   <Style>
-                                    <FontFamily>helvetica</FontFamily>
+                                    <FontFamily>Arial Narrow</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -938,7 +908,7 @@
                                 <TextRun>
                                   <Value>:</Value>
                                   <Style>
-                                    <FontFamily>helvetica</FontFamily>
+                                    <FontFamily>Arial Narrow</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -976,7 +946,7 @@
                                   <Value>=Parameters!StudentName.Value</Value>
                                   <Style>
                                     <FontStyle>Italic</FontStyle>
-                                    <FontFamily>helvetica</FontFamily>
+                                    <FontFamily>Arial Narrow</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1017,7 +987,7 @@
                                 <TextRun>
                                   <Value>Class</Value>
                                   <Style>
-                                    <FontFamily>helvetica</FontFamily>
+                                    <FontFamily>Arial Narrow</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1053,7 +1023,7 @@
                                 <TextRun>
                                   <Value>:</Value>
                                   <Style>
-                                    <FontFamily>helvetica</FontFamily>
+                                    <FontFamily>Arial Narrow</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1090,7 +1060,7 @@
                                   <Value>=Parameters!ClassName.Value</Value>
                                   <Style>
                                     <FontStyle>Italic</FontStyle>
-                                    <FontFamily>helvetica</FontFamily>
+                                    <FontFamily>Arial Narrow</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1131,7 +1101,7 @@
                                 <TextRun>
                                   <Value>Class Roll</Value>
                                   <Style>
-                                    <FontFamily>helvetica</FontFamily>
+                                    <FontFamily>Arial Narrow</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1167,7 +1137,7 @@
                                 <TextRun>
                                   <Value>:</Value>
                                   <Style>
-                                    <FontFamily>helvetica</FontFamily>
+                                    <FontFamily>Arial Narrow</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1204,7 +1174,7 @@
                                   <Value>=Parameters!ClassRoll.Value</Value>
                                   <Style>
                                     <FontStyle>Italic</FontStyle>
-                                    <FontFamily>helvetica</FontFamily>
+                                    <FontFamily>Arial Narrow</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1245,7 +1215,7 @@
                                 <TextRun>
                                   <Value>Session</Value>
                                   <Style>
-                                    <FontFamily>helvetica</FontFamily>
+                                    <FontFamily>Arial Narrow</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1281,7 +1251,7 @@
                                 <TextRun>
                                   <Value>:</Value>
                                   <Style>
-                                    <FontFamily>helvetica</FontFamily>
+                                    <FontFamily>Arial Narrow</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1318,7 +1288,7 @@
                                   <Value>=Parameters!Session.Value</Value>
                                   <Style>
                                     <FontStyle>Italic</FontStyle>
-                                    <FontFamily>helvetica</FontFamily>
+                                    <FontFamily>Arial Narrow</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1366,7 +1336,7 @@
             <Left>0.42401in</Left>
             <Height>1in</Height>
             <Width>3.26042in</Width>
-            <ZIndex>5</ZIndex>
+            <ZIndex>4</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1382,7 +1352,7 @@
             <Left>1.50031cm</Left>
             <Height>1.6cm</Height>
             <Width>1.6cm</Width>
-            <ZIndex>6</ZIndex>
+            <ZIndex>5</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1401,6 +1371,7 @@
                       <FontFamily>helvetica</FontFamily>
                       <FontSize>16pt</FontSize>
                       <FontWeight>Bold</FontWeight>
+                      <Color>DarkBlue</Color>
                     </Style>
                   </TextRun>
                 </TextRuns>
@@ -1414,7 +1385,7 @@
                     <Value>=Parameters!EIINNo.Value</Value>
                     <Style>
                       <FontStyle>Italic</FontStyle>
-                      <FontFamily>helvetica</FontFamily>
+                      <FontFamily>Arial Narrow</FontFamily>
                       <FontWeight>Normal</FontWeight>
                     </Style>
                   </TextRun>
@@ -1429,7 +1400,7 @@
                     <Value>=Parameters!InstituteAddress.Value</Value>
                     <Style>
                       <FontStyle>Italic</FontStyle>
-                      <FontFamily>helvetica</FontFamily>
+                      <FontFamily>Arial Narrow</FontFamily>
                       <FontSize>12pt</FontSize>
                       <FontWeight>Normal</FontWeight>
                     </Style>
@@ -1444,8 +1415,8 @@
             <Top>0.26466in</Top>
             <Left>1.26226in</Left>
             <Height>0.68403in</Height>
-            <Width>6.68258in</Width>
-            <ZIndex>7</ZIndex>
+            <Width>4.65132in</Width>
+            <ZIndex>6</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1459,16 +1430,20 @@
           </Textbox>
         </ReportItems>
         <Height>12.67036cm</Height>
-        <Style />
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+        </Style>
       </Body>
-      <Width>21.94793cm</Width>
+      <Width>21.41391cm</Width>
       <Page>
         <PageHeight>29.7cm</PageHeight>
         <PageWidth>21cm</PageWidth>
         <LeftMargin>0cm</LeftMargin>
         <RightMargin>0cm</RightMargin>
         <TopMargin>1cm</TopMargin>
-        <BottomMargin>0.5in</BottomMargin>
+        <BottomMargin>1cm</BottomMargin>
         <ColumnSpacing>1.27cm</ColumnSpacing>
         <Style />
       </Page>

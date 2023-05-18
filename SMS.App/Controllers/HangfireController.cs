@@ -40,17 +40,17 @@ namespace SMS.App.Controllers
         private readonly IEmployeeManager _employeeManager;
         private readonly IPhoneSMSManager _phoneSMSManager;
         private readonly ISetupMobileSMSManager _setupMobileSMSManager;
+        private readonly IOffDayManager _offDayManager;
 
         #region Constructor Start =================================================
-        public HangfireController(IStudentManager studentManager, IAttendanceMachineManager attendanceMachineManager, IEmployeeManager employeeManager, IPhoneSMSManager phoneSMSManager, ISetupMobileSMSManager setupMobileSMSManager)
+        public HangfireController(IStudentManager studentManager, IAttendanceMachineManager attendanceMachineManager, IEmployeeManager employeeManager, IPhoneSMSManager phoneSMSManager, ISetupMobileSMSManager setupMobileSMSManager, IOffDayManager offDayManager)
         {
             _studentManager = studentManager;
             _attendanceMachineManager = attendanceMachineManager;
             _employeeManager = employeeManager;
             _phoneSMSManager = phoneSMSManager;
             _setupMobileSMSManager = setupMobileSMSManager;
-
-
+            _offDayManager = offDayManager;
         }
         #endregion Constructor Finished xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxX
 
@@ -65,7 +65,6 @@ namespace SMS.App.Controllers
                 BackgroundJob.Delete(item.Id);
                 RecurringJob.RemoveIfExists(item.Id);
             }
-
 
             SetupMobileSMS setupMobileSMS = await _setupMobileSMSManager.GetByIdAsync(1);
             if (setupMobileSMS != null)
@@ -99,6 +98,20 @@ namespace SMS.App.Controllers
         public async Task<string> SendCheckInSMS()
         {
             string msg = string.Empty;
+            var currentMonthHolidays = await _offDayManager.GetMonthlyHolidaysAsync(DateTime.Now.ToString("MMyyyy"));
+            if (currentMonthHolidays != null && currentMonthHolidays.Count > 0)
+            {
+                foreach (var holiday in currentMonthHolidays)
+                {
+                    if (holiday.ToString("ddMMyyyy") == DateTime.Now.ToString("ddMMyyyy"))
+                    {
+                        msg = "Today is offday";
+                        return msg;
+                    }
+                }
+            }
+
+
             SetupMobileSMS setupMobileSMS = await _setupMobileSMSManager.GetByIdAsync(1);
             if (setupMobileSMS != null)
             {
@@ -392,6 +405,20 @@ namespace SMS.App.Controllers
         #region CheckOut SMS Section Start =========================================
         public async Task<IActionResult> SendCheckOutSMS()
         {
+            string msg = string.Empty;
+            var currentMonthHolidays = await _offDayManager.GetMonthlyHolidaysAsync(DateTime.Now.ToString("MMyyyy"));
+            if (currentMonthHolidays != null && currentMonthHolidays.Count > 0)
+            {
+                foreach (var holiday in currentMonthHolidays)
+                {
+                    if (holiday.ToString("ddMMyyyy") == DateTime.Now.ToString("ddMMyyyy"))
+                    {
+                        msg = "Today is offday";
+                        return BadRequest(msg);
+                    }
+                }
+            }
+
             SetupMobileSMS setupMobileSMS = await _setupMobileSMSManager.GetByIdAsync(1);
             if (setupMobileSMS.CheckOutSMSService == true)
             {
@@ -624,6 +651,18 @@ namespace SMS.App.Controllers
 
         public async Task<IActionResult> SMSSendDailyAttendanceSummary()
         {
+            var currentMonthHolidays = await _offDayManager.GetMonthlyHolidaysAsync(DateTime.Now.ToString("MMyyyy"));
+            if (currentMonthHolidays != null && currentMonthHolidays.Count>0)
+            {
+                foreach (var holiday in currentMonthHolidays)
+                {
+                    if (holiday.ToString("ddMMyyyy") == DateTime.Now.ToString("ddMMyyyy"))
+                    {
+                        return BadRequest("Today is offday");
+                    }
+                }
+            }
+
             SetupMobileSMS setupMobileSMS = await _setupMobileSMSManager.GetByIdAsync(1);
             if (setupMobileSMS.CheckInSMSSummary == false)
             {
@@ -737,11 +776,31 @@ namespace SMS.App.Controllers
         #region Absent Student Notification by SMS Start here ======================
         public async Task<IActionResult> SendAbsentNotificationSMS()
         {
+
             string msg = string.Empty;
-            SetupMobileSMS setupMobileSMS = await _setupMobileSMSManager.GetByIdAsync(1);
-            if (setupMobileSMS.AbsentNotification == true)
+            var currentMonthHolidays = await _offDayManager.GetMonthlyHolidaysAsync(DateTime.Now.ToString("MMyyyy"));
+            if (currentMonthHolidays != null && currentMonthHolidays.Count > 0)
             {
-                await AbsentStudentSendSMS();
+                foreach (var holiday in currentMonthHolidays)
+                {
+                    if (holiday.ToString("ddMMyyyy") == DateTime.Now.ToString("ddMMyyyy"))
+                    {
+                        msg = "Today is offday";
+                        return BadRequest(msg);
+                    }
+                }
+            }
+
+            DateTime tDate = DateTime.Today;
+            var allCheckInAttendance = await _attendanceMachineManager.GetCheckinDataByDateAsync(tDate.ToString("dd-MM-yyyy"));
+            
+            if (allCheckInAttendance != null && allCheckInAttendance.Count > 10)
+            {
+                SetupMobileSMS setupMobileSMS = await _setupMobileSMSManager.GetByIdAsync(1);
+                if (setupMobileSMS.AbsentNotification == true)
+                {
+                    await AbsentStudentSendSMS();
+                }
             }
             return Ok(msg);
         }

@@ -43,6 +43,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Exam_Result_DataSet.xsd</DependentUpon>
     </Compile>
+    <Compile Update="SMSDBDataSet.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SMSDBDataSet.xsd</DependentUpon>
+    </Compile>
     <Compile Update="StudentPaymentDS.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -74,6 +79,10 @@
     <None Update="Exam_Result_DataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>Exam_Result_DataSet.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="SMSDBDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>SMSDBDataSet.Designer.cs</LastGenOutput>
     </None>
     <None Update="StudentPaymentDS.xsd">
       <Generator>MSDataSetGenerator</Generator>

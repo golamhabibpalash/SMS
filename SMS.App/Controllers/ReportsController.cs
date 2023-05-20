@@ -128,9 +128,8 @@ namespace SMS.App.Controllers
             return View();
         }
 
-        public async Task<IActionResult> DailyAttendnaceReportExport(string reportType, string fromDate, string academicClassId, string academicSectionId,string attendanceType)
+        public async Task<IActionResult> DailyAttendnaceReportExport(string reportType, string fromDate, string academicClassId, string academicSectionId,string attendanceType,string fileName)
         {
-            string fileName = string.Empty;
 
             Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
             if (institute == null)
@@ -151,15 +150,18 @@ namespace SMS.App.Controllers
                 byte[] imageBytes = ms.ToArray();
                 imageParam = Convert.ToBase64String(imageBytes);
             }
-            List<RptDailyAttendaceVM> studentDailyAttendance = await _reportManager.GetDailyAttendanceReport(fromDate,academicClassId,academicSectionId,attendanceType);
+            string attendanceFor = "employee";
+            AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSession();
+
+            List<RptDailyAttendaceVM> studentDailyAttendance = await _reportManager.GetDailyAttendanceReport(fromDate,academicClassId,academicSectionId,attendanceType,academicSession.Id.ToString(),attendanceFor);
             using var report = new LocalReport();
-            report.DataSources.Add(new ReportDataSource("DSAttendanceReport", studentDailyAttendance));
+            report.DataSources.Add(new ReportDataSource("AttendanceReportDS", studentDailyAttendance));
             var parameters = new[] {
                 new ReportParameter("InstituteName", institute.Name),
                 new ReportParameter("Location", institute.Address),
                 new ReportParameter("EIINNo", institute.EIIN),
                 new ReportParameter("Logo", imageParam),
-                new ReportParameter("ReportName", "Payments Summary Report"),
+                new ReportParameter("ReportName", "Daily Attendance Report"),
                 new ReportParameter("AttendanceDate", fromDate),
                 new ReportParameter("ReportDate", DateTime.Today.ToString("dd MMM yyyy"))
             };

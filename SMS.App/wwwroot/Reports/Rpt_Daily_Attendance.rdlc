@@ -2,24 +2,24 @@
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
   <AutoRefresh>0</AutoRefresh>
   <DataSources>
-    <DataSource Name="AttendanceReportDS">
+    <DataSource Name="SMSDBDataSet">
       <ConnectionProperties>
         <DataProvider>System.Data.DataSet</DataProvider>
         <ConnectString>/* Local Connection */</ConnectString>
       </ConnectionProperties>
-      <rd:DataSourceID>55697ca4-aa03-432d-9611-46e842d6b3be</rd:DataSourceID>
+      <rd:DataSourceID>afea011d-e863-4399-b5bb-5525d8c80616</rd:DataSourceID>
     </DataSource>
   </DataSources>
   <DataSets>
-    <DataSet Name="DSAttendanceReport">
+    <DataSet Name="AttendanceReportDS">
       <Query>
-        <DataSourceName>AttendanceReportDS</DataSourceName>
+        <DataSourceName>SMSDBDataSet</DataSourceName>
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
         <Field Name="CardNo">
           <DataField>CardNo</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Name">
           <DataField>Name</DataField>
@@ -35,36 +35,20 @@
         </Field>
         <Field Name="PunchTime">
           <DataField>PunchTime</DataField>
-          <rd:TypeName>System.DateTime</rd:TypeName>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="GuardianPhone">
           <DataField>GuardianPhone</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="AcademicClassId">
-          <DataField>AcademicClassId</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="AcademicSectionId">
-          <DataField>AcademicSectionId</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="AcademicSessionId">
-          <DataField>AcademicSessionId</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="Tran_MachineRawPunchId">
-          <DataField>Tran_MachineRawPunchId</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
       </Fields>
       <rd:DataSetInfo>
-        <rd:DataSetName>AttendanceReportDS</rd:DataSetName>
-        <rd:SchemaPath>C:\inetpub\wwwroot\SMS\SMS.Report\AttendanceReportDS.xsd</rd:SchemaPath>
-        <rd:TableName>vw_rpt_student_attendance</rd:TableName>
+        <rd:DataSetName>SMSDBDataSet</rd:DataSetName>
+        <rd:SchemaPath>C:\inetpub\wwwroot\SMS\SMS.Report\SMSDBDataSet.xsd</rd:SchemaPath>
+        <rd:TableName>sp_get_attendance_by_date</rd:TableName>
         <rd:TableAdapterFillMethod>Fill</rd:TableAdapterFillMethod>
         <rd:TableAdapterGetDataMethod>GetData</rd:TableAdapterGetDataMethod>
-        <rd:TableAdapterName>vw_rpt_student_attendanceTableAdapter</rd:TableAdapterName>
+        <rd:TableAdapterName>sp_get_attendance_by_dateTableAdapter</rd:TableAdapterName>
       </rd:DataSetInfo>
     </DataSet>
   </DataSets>
@@ -72,39 +56,43 @@
     <ReportSection>
       <Body>
         <ReportItems>
-          <Tablix Name="MainList">
+          <Tablix Name="Tablix1">
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>7.25917in</Width>
+                  <Width>7.23209in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
                 <TablixRow>
-                  <Height>0.625in</Height>
+                  <Height>0.68485in</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
                         <Rectangle Name="Rectangle1">
                           <ReportItems>
-                            <Textbox Name="Class_Designation">
+                            <Textbox Name="Textbox4">
                               <CanGrow>true</CanGrow>
                               <KeepTogether>true</KeepTogether>
                               <Paragraphs>
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value>=First(Fields!Class_Designation.Value)</Value>
-                                      <Style />
+                                      <Value>="Academic Class : " &amp; Fields!Class_Designation.Value &amp;" [Total : "&amp; Count(Fields!CardNo.Value) &amp; " ]"</Value>
+                                      <Style>
+                                        <FontFamily>Arial Narrow</FontFamily>
+                                        <FontSize>11pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
+                                      </Style>
                                     </TextRun>
                                   </TextRuns>
                                   <Style />
                                 </Paragraph>
                               </Paragraphs>
-                              <rd:DefaultName>Class_Designation</rd:DefaultName>
-                              <Left>0.01471in</Left>
-                              <Height>0.25in</Height>
-                              <Width>1.65625in</Width>
+                              <rd:DefaultName>Textbox4</rd:DefaultName>
+                              <Top>0.03138in</Top>
+                              <Height>0.15in</Height>
+                              <Width>3.69259in</Width>
                               <Style>
                                 <Border>
                                   <Style>None</Style>
@@ -115,46 +103,48 @@
                                 <PaddingBottom>2pt</PaddingBottom>
                               </Style>
                             </Textbox>
-                            <Tablix Name="Tablix1">
+                            <Tablix Name="Tablix2">
                               <TablixBody>
                                 <TablixColumns>
                                   <TablixColumn>
-                                    <Width>1.45183in</Width>
+                                    <Width>0.62451in</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>1.45183in</Width>
+                                    <Width>2.85933in</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>1.45183in</Width>
+                                    <Width>1.44658in</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>1.45183in</Width>
+                                    <Width>1.30708in</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>1.45183in</Width>
+                                    <Width>0.99458in</Width>
                                   </TablixColumn>
                                 </TablixColumns>
                                 <TablixRows>
                                   <TablixRow>
-                                    <Height>0.17708in</Height>
+                                    <Height>0.22222in</Height>
                                     <TablixCells>
                                       <TablixCell>
                                         <CellContents>
-                                          <Textbox Name="Textbox2">
+                                          <Textbox Name="Textbox6">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>Card No</Value>
-                                                    <Style />
+                                                    <Value>Roll</Value>
+                                                    <Style>
+                                                      <FontWeight>Bold</FontWeight>
+                                                    </Style>
                                                   </TextRun>
                                                 </TextRuns>
                                                 <Style />
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>Textbox2</rd:DefaultName>
+                                            <rd:DefaultName>Textbox6</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Color>LightGrey</Color>
@@ -170,7 +160,7 @@
                                       </TablixCell>
                                       <TablixCell>
                                         <CellContents>
-                                          <Textbox Name="Textbox5">
+                                          <Textbox Name="Textbox8">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
@@ -178,13 +168,15 @@
                                                 <TextRuns>
                                                   <TextRun>
                                                     <Value>Name</Value>
-                                                    <Style />
+                                                    <Style>
+                                                      <FontWeight>Bold</FontWeight>
+                                                    </Style>
                                                   </TextRun>
                                                 </TextRuns>
                                                 <Style />
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>Textbox5</rd:DefaultName>
+                                            <rd:DefaultName>Textbox8</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Color>LightGrey</Color>
@@ -200,37 +192,7 @@
                                       </TablixCell>
                                       <TablixCell>
                                         <CellContents>
-                                          <Textbox Name="Textbox7">
-                                            <CanGrow>true</CanGrow>
-                                            <KeepTogether>true</KeepTogether>
-                                            <Paragraphs>
-                                              <Paragraph>
-                                                <TextRuns>
-                                                  <TextRun>
-                                                    <Value>Class Designation</Value>
-                                                    <Style />
-                                                  </TextRun>
-                                                </TextRuns>
-                                                <Style />
-                                              </Paragraph>
-                                            </Paragraphs>
-                                            <rd:DefaultName>Textbox7</rd:DefaultName>
-                                            <Style>
-                                              <Border>
-                                                <Color>LightGrey</Color>
-                                                <Style>Solid</Style>
-                                              </Border>
-                                              <PaddingLeft>2pt</PaddingLeft>
-                                              <PaddingRight>2pt</PaddingRight>
-                                              <PaddingTop>2pt</PaddingTop>
-                                              <PaddingBottom>2pt</PaddingBottom>
-                                            </Style>
-                                          </Textbox>
-                                        </CellContents>
-                                      </TablixCell>
-                                      <TablixCell>
-                                        <CellContents>
-                                          <Textbox Name="Textbox9">
+                                          <Textbox Name="Textbox17">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
@@ -238,13 +200,15 @@
                                                 <TextRuns>
                                                   <TextRun>
                                                     <Value>Phone</Value>
-                                                    <Style />
+                                                    <Style>
+                                                      <FontWeight>Bold</FontWeight>
+                                                    </Style>
                                                   </TextRun>
                                                 </TextRuns>
                                                 <Style />
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>Textbox9</rd:DefaultName>
+                                            <rd:DefaultName>Textbox17</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Color>LightGrey</Color>
@@ -260,7 +224,39 @@
                                       </TablixCell>
                                       <TablixCell>
                                         <CellContents>
-                                          <Textbox Name="Textbox12">
+                                          <Textbox Name="Textbox18">
+                                            <CanGrow>true</CanGrow>
+                                            <KeepTogether>true</KeepTogether>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value>Guardian Phone</Value>
+                                                    <Style>
+                                                      <FontWeight>Bold</FontWeight>
+                                                    </Style>
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style />
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>Textbox18</rd:DefaultName>
+                                            <Style>
+                                              <Border>
+                                                <Color>LightGrey</Color>
+                                                <Style>Solid</Style>
+                                              </Border>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
+                                            </Style>
+                                          </Textbox>
+                                        </CellContents>
+                                      </TablixCell>
+                                      <TablixCell>
+                                        <CellContents>
+                                          <Textbox Name="Textbox15">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
@@ -268,13 +264,17 @@
                                                 <TextRuns>
                                                   <TextRun>
                                                     <Value>Punch Time</Value>
-                                                    <Style />
+                                                    <Style>
+                                                      <FontWeight>Bold</FontWeight>
+                                                    </Style>
                                                   </TextRun>
                                                 </TextRuns>
-                                                <Style />
+                                                <Style>
+                                                  <TextAlign>Right</TextAlign>
+                                                </Style>
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>Textbox12</rd:DefaultName>
+                                            <rd:DefaultName>Textbox15</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Color>LightGrey</Color>
@@ -291,7 +291,7 @@
                                     </TablixCells>
                                   </TablixRow>
                                   <TablixRow>
-                                    <Height>0.17708in</Height>
+                                    <Height>0.22222in</Height>
                                     <TablixCells>
                                       <TablixCell>
                                         <CellContents>
@@ -355,21 +355,21 @@
                                       </TablixCell>
                                       <TablixCell>
                                         <CellContents>
-                                          <Textbox Name="Class_Designation1">
+                                          <Textbox Name="Phone">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>=Fields!Class_Designation.Value</Value>
+                                                    <Value>=Fields!Phone.Value</Value>
                                                     <Style />
                                                   </TextRun>
                                                 </TextRuns>
                                                 <Style />
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>Class_Designation1</rd:DefaultName>
+                                            <rd:DefaultName>Phone</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Color>LightGrey</Color>
@@ -385,21 +385,21 @@
                                       </TablixCell>
                                       <TablixCell>
                                         <CellContents>
-                                          <Textbox Name="Textbox11">
+                                          <Textbox Name="GuardianPhone">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>=Fields!Phone.Value +System.Environment.NewLine+Fields!GuardianPhone.Value</Value>
+                                                    <Value>=Fields!GuardianPhone.Value</Value>
                                                     <Style />
                                                   </TextRun>
                                                 </TextRuns>
                                                 <Style />
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>Textbox11</rd:DefaultName>
+                                            <rd:DefaultName>GuardianPhone</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Color>LightGrey</Color>
@@ -426,7 +426,9 @@
                                                     <Style />
                                                   </TextRun>
                                                 </TextRuns>
-                                                <Style />
+                                                <Style>
+                                                  <TextAlign>Right</TextAlign>
+                                                </Style>
                                               </Paragraph>
                                             </Paragraphs>
                                             <rd:DefaultName>PunchTime</rd:DefaultName>
@@ -466,10 +468,10 @@
                                   </TablixMember>
                                 </TablixMembers>
                               </TablixRowHierarchy>
-                              <DataSetName>DSAttendanceReport</DataSetName>
-                              <Top>0.25in</Top>
-                              <Height>0.35417in</Height>
-                              <Width>7.25917in</Width>
+                              <DataSetName>AttendanceReportDS</DataSetName>
+                              <Top>0.22235in</Top>
+                              <Height>0.44444in</Height>
+                              <Width>7.23209in</Width>
                               <ZIndex>1</ZIndex>
                               <Style>
                                 <Border>
@@ -477,6 +479,39 @@
                                 </Border>
                               </Style>
                             </Tablix>
+                            <Textbox Name="ToDate2">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>="Attendance Date : "&amp;Parameters!AttendanceDate.Value</Value>
+                                      <Style>
+                                        <FontStyle>Italic</FontStyle>
+                                        <FontFamily>helvetica</FontFamily>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <rd:DefaultName>ToDate</rd:DefaultName>
+                              <Top>0.03138in</Top>
+                              <Left>5.28834in</Left>
+                              <Height>0.13542in</Height>
+                              <Width>1.94375in</Width>
+                              <ZIndex>2</ZIndex>
+                              <Style>
+                                <Border>
+                                  <Style>None</Style>
+                                </Border>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
                           </ReportItems>
                           <KeepTogether>true</KeepTogether>
                           <Style>
@@ -501,124 +536,38 @@
                 <TablixMember>
                   <Group Name="Details">
                     <GroupExpressions>
-                      <GroupExpression>=Fields!AcademicClassId.Value</GroupExpression>
+                      <GroupExpression>=Fields!Class_Designation.Value</GroupExpression>
                     </GroupExpressions>
+                    <PageBreak>
+                      <BreakLocation>End</BreakLocation>
+                    </PageBreak>
                   </Group>
                 </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
-            <DataSetName>DSAttendanceReport</DataSetName>
-            <Top>0.16319in</Top>
-            <Height>0.625in</Height>
-            <Width>7.25917in</Width>
+            <DataSetName>AttendanceReportDS</DataSetName>
+            <SortExpressions>
+              <SortExpression>
+                <Value>=Fields!CardNo.Value</Value>
+              </SortExpression>
+            </SortExpressions>
+            <Top>0.0382in</Top>
+            <Height>0.68485in</Height>
+            <Width>7.23209in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
               </Border>
             </Style>
           </Tablix>
-          <Textbox Name="ToDate2">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>=Parameters!AttendanceDate.Value</Value>
-                    <Style>
-                      <FontStyle>Italic</FontStyle>
-                      <FontFamily>helvetica</FontFamily>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>ToDate</rd:DefaultName>
-            <Left>6.36334in</Left>
-            <Height>0.13542in</Height>
-            <Width>0.89583in</Width>
-            <ZIndex>1</ZIndex>
-            <Style>
-              <Border>
-                <Color>LightGrey</Color>
-                <Style>Solid</Style>
-                <Width>0.25pt</Width>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox191">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value EvaluationMode="Constant">Attendance Date:</Value>
-                    <Style>
-                      <FontFamily>helvetica</FontFamily>
-                      <FontWeight>Bold</FontWeight>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox189</rd:DefaultName>
-            <Left>5.13209in</Left>
-            <Height>0.13542in</Height>
-            <Width>1.23958in</Width>
-            <ZIndex>2</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox16">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>=CountRows(Fields!CardNo.Value)</Value>
-                    <Style />
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox16</rd:DefaultName>
-            <Top>0.14931in</Top>
-            <Left>5.75917in</Left>
-            <Height>0.15in</Height>
-            <Width>1.5in</Width>
-            <ZIndex>3</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-            </Style>
-          </Textbox>
         </ReportItems>
-        <Height>0.79388in</Height>
+        <Height>0.72305in</Height>
         <Style />
       </Body>
-      <Width>7.25917in</Width>
+      <Width>7.23209in</Width>
       <Page>
         <PageHeader>
-          <Height>0.96529in</Height>
+          <Height>1.0257in</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
@@ -643,8 +592,8 @@
               </Paragraphs>
               <rd:DefaultName>ReportName</rd:DefaultName>
               <Top>0.7257in</Top>
-              <Height>0.23959in</Height>
-              <Width>7.25917in</Width>
+              <Height>0.3in</Height>
+              <Width>7.23209in</Width>
               <Style>
                 <Border>
                   <Style>None</Style>
@@ -655,6 +604,7 @@
                 <BottomBorder>
                   <Style>Solid</Style>
                 </BottomBorder>
+                <BackgroundColor>LightGrey</BackgroundColor>
                 <PaddingLeft>2pt</PaddingLeft>
                 <PaddingRight>2pt</PaddingRight>
                 <PaddingTop>2pt</PaddingTop>
@@ -667,7 +617,6 @@
               <MIMEType>image/jpeg</MIMEType>
               <Sizing>FitProportional</Sizing>
               <Top>0.05411in</Top>
-              <Left>0.29981in</Left>
               <Height>1.6cm</Height>
               <Width>1.6cm</Width>
               <ZIndex>1</ZIndex>
@@ -730,9 +679,9 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox1</rd:DefaultName>
-              <Left>0.98529in</Left>
+              <Left>0.69937in</Left>
               <Height>0.68403in</Height>
-              <Width>4.12805in</Width>
+              <Width>4.41397in</Width>
               <ZIndex>2</ZIndex>
               <Style>
                 <Border>
@@ -758,12 +707,14 @@
                       </Style>
                     </TextRun>
                   </TextRuns>
-                  <Style />
+                  <Style>
+                    <TextAlign>Right</TextAlign>
+                  </Style>
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox1</rd:DefaultName>
-              <Top>0.53403in</Top>
-              <Left>5.25917in</Left>
+              <Top>0.54792in</Top>
+              <Left>5.73209in</Left>
               <Height>0.15in</Height>
               <Width>1.5in</Width>
               <ZIndex>3</ZIndex>
@@ -785,7 +736,7 @@
           </Style>
         </PageHeader>
         <PageFooter>
-          <Height>0.28473in</Height>
+          <Height>0.3in</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
@@ -810,9 +761,9 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>PageNumber</rd:DefaultName>
-              <Left>5.75709in</Left>
-              <Height>0.1875in</Height>
-              <Width>1.50208in</Width>
+              <Left>5.73209in</Left>
+              <Height>0.3in</Height>
+              <Width>1.475in</Width>
               <Style>
                 <Border>
                   <Style>None</Style>
@@ -860,9 +811,9 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox10</rd:DefaultName>
-              <Top>0.12322cm</Top>
+              <Top>0cm</Top>
               <Left>0cm</Left>
-              <Height>0.6cm</Height>
+              <Height>0.762cm</Height>
               <Width>8.87646cm</Width>
               <ZIndex>1</ZIndex>
               <Style>
@@ -885,9 +836,8 @@
         <PageHeight>11.69in</PageHeight>
         <PageWidth>8.27in</PageWidth>
         <LeftMargin>0.5in</LeftMargin>
-        <RightMargin>0.5in</RightMargin>
+        <RightMargin>0.25in</RightMargin>
         <TopMargin>0.5in</TopMargin>
-        <BottomMargin>0.25in</BottomMargin>
         <Style />
       </Page>
     </ReportSection>

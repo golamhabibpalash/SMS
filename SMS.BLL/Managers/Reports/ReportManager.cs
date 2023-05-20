@@ -26,9 +26,9 @@ namespace SMS.BLL.Managers.Reports
             return admitCards.OrderBy(s => s.ClassRoll).ToList();
         }
 
-        public async Task<List<RptDailyAttendaceVM>> GetDailyAttendanceReport(string fromDate, string academicClassId, string academicSectionId,string attendanceType)
+        public async Task<List<RptDailyAttendaceVM>> GetDailyAttendanceReport(string fromDate, string academicClassId, string academicSectionId,string attendanceType, string aSessionId, string attendanceFor)
         {
-            return await _reportRepository.GetDailyAttendanceReport(fromDate, academicClassId, academicSectionId, attendanceType);
+            return await _reportRepository.GetDailyAttendanceReport(fromDate, academicClassId, academicSectionId, attendanceType, aSessionId, attendanceFor);
         }
 
         public async Task<List<RptStudentsPaymentVM>> GetStudentPayment(string fromDate, string ToDate, string AcademicClassId, string AcademicSectionId)

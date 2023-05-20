@@ -67,12 +67,12 @@
         <title>@instituteName</title>
     }
     <link rel="icon" type="image/x-icon" href="~/Images/Institute/favicon.ico">
+
+    <link href="~/lib/fontawesome/css/all.min.css" rel="stylesheet" />
     <!-- Bootstrap -->
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <!-- Font Awesome -->
     @*<link href="~/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" />*@
-
-    <link href="~/lib/fontawesome/css/all.min.css" rel="stylesheet" />
 
     <!-- NProgress -->
     <link href="~/lib/Theme/css/nprogress.css" rel="stylesheet" />
@@ -147,7 +147,8 @@
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="overflow:hidden">
                         <a asp-action="Index" asp-controller="Home" class="" style="color:#fff;font-weight:bold;width:100%">
-                        <img class="img-circle img-fluid p-2" src="~/Images/Institute/@instituteLogo" alt="Logo" style="font-size: 20px; width: 60px;" /> @instituteName</a>
+                            <img class="img-circle img-fluid p-2" src="~/Images/Institute/@instituteLogo" alt="Logo" style="font-size: 20px; width: 60px;" /> @instituteName
+                        </a>
                     </div>
 
                     <div class="clearfix"></div>
@@ -169,7 +170,7 @@
                                                     <a asp-action="index" asp-controller="attendancemachines" asp-route-attendanceFor="students" asp-route-dateTime="@DateTime.Today.ToString("yyyy-MM-dd")">Attendances </a>
                                                 </li>
                                                 <li>
-                                                    <a asp-action="create" asp-controller="attendancemachines" >Add Attendances </a>
+                                                    <a asp-action="create" asp-controller="attendancemachines">Add Attendances </a>
                                                 </li>
                                             </ul>
                                         </li>
@@ -494,19 +495,13 @@
     <!-- Validation -->
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js" type="text/javascript"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js" type="text/javascript"></script>
+    <!--Font Awesome-->
+    <script src="~/lib/fontawesome/js/all.min.js"></script>
+
     <script src="~/js/popper.min.js" type="text/javascript"></script>
     <!-- Bootstrap -->
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" type="text/javascript"></script>
-    <!--Font Awesome-->
-    <script src="~/lib/fontawesome/js/all.min.js"></script>
-    @*<script src="~/lib/fontawesome/js/brands.min.js"></script>
-        <script src="~/lib/fontawesome/js/conflict-detection.min.js"></script>
-        <script src="~/lib/fontawesome/js/duotone.min.js"></script>
-        <script src="~/lib/fontawesome/js/fontawesome.min.js"></script>
-        <script src="~/lib/fontawesome/js/light.min.js"></script>
-        <script src="~/lib/fontawesome/js/regular.min.js"></script>
-        <script src="~/lib/fontawesome/js/solid.min.js"></script>
-        <script src="~/lib/fontawesome/js/v4-shims.min.js"></script>*@
+
     <!-- FastClick -->
     <script src="~/lib/Theme/js/fastclick.js" type="text/javascript"></script>
     <!-- NProgress -->
@@ -518,11 +513,10 @@
     <!-- Alertify -->
     <script src="~/lib/Alertify/alertify.min.js" type="text/javascript"></script>
     <!-- Datatable script -->
-    <script src="~/lib/DataTable/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    @*<script src="~/lib/DataTable/js/jquery.dataTables.min.js" type="text/javascript"></script>*@
 
     <!-- Custom Theme Scripts -->
     <script src="~/js/custom.js"></script>
-    @*<script src="~/js/custom.min.js" type="text/javascript"></script>*@
 
     @await RenderSectionAsync("Scripts", required: false)
     <script>
@@ -550,9 +544,7 @@
 
         }, 1000);
 
-        //$(function () {
-        //    $('[data-toggle="popover"]').popover()
-        //})
+
 
         $(document).click(function (e) {
             let sss1 = $(e.target).parents("#myNav").length === 0;

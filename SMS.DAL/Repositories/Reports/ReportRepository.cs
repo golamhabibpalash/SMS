@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SMS.DAL.Contracts.Reports;
 using SMS.DB;
+using SMS.Entities.AdditionalModels;
 using SMS.Entities.RptModels;
 using SMS.Entities.RptModels.AttendanceVM;
 using SMS.Entities.RptModels.StudentPayment;
@@ -26,8 +27,7 @@ namespace SMS.DAL.Repositories.Reports
 
         public async Task<List<RptAdmitCardVM>> GetAdmitCard(int monthId, int academicClassId, int academicSectionId)
         {
-            string query = @"select t.* from vw_rpt_Admit_Card_Info t
-where t.monthId = " + monthId+" and t.academicClassId = "+academicClassId+" and t.AcademicSectionId ="+academicSectionId+"";
+            string query = @"select t.* from vw_rpt_Admit_Card_Info t where t.monthId = " + monthId+" and t.academicClassId = "+academicClassId+" and t.AcademicSectionId ="+academicSectionId+"";
             if (academicSectionId<=0)
             {
                 query = @"select t.* from vw_rpt_Admit_Card_Info t
@@ -85,9 +85,16 @@ where t.monthId = " + monthId + " and t.academicClassId = " + academicClassId + 
             return rptStudentsPayments;
         }
 
-        public Task<List<RptDailyAttendaceVM>> GetDailyAttendanceReport(string fromDate, string AcademicClassId, string AcademicSectionId, string attendanceType)
+        public async Task<List<RptDailyAttendaceVM>> GetDailyAttendanceReport(string fromDate, string AcademicClassId, string AcademicSectionId, string attendanceType, string aSessionId, string attendanceFor)
         {
-            throw new NotImplementedException();
+            var pAttendanceFor = new SqlParameter("attendanceFor", attendanceFor);
+            var pDate = new SqlParameter("date", fromDate);
+            var pAttendanceType = new SqlParameter("attendanceType", attendanceType);
+            var pASessionId = aSessionId != null ? new SqlParameter("aSessionId", aSessionId) : null;
+            var pClassId = AcademicClassId != null ? new SqlParameter("aClassId", AcademicClassId) : null;
+            var result = await _context.RptDailyAttendaceVMs.FromSqlInterpolated($"sp_get_attendance_by_date {pAttendanceFor},{pDate},{pAttendanceType},{pASessionId},{pClassId}").ToListAsync();
+            return result;
         }
+
     }
 }

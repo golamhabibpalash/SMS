@@ -92,7 +92,7 @@
                               <rd:DefaultName>Textbox4</rd:DefaultName>
                               <Top>0.03138in</Top>
                               <Height>0.15in</Height>
-                              <Width>3.69259in</Width>
+                              <Width>3.83842in</Width>
                               <Style>
                                 <Border>
                                   <Style>None</Style>
@@ -471,7 +471,7 @@
                               <DataSetName>AttendanceReportDS</DataSetName>
                               <Top>0.22235in</Top>
                               <Height>0.44444in</Height>
-                              <Width>7.23209in</Width>
+                              <Width>7.23208in</Width>
                               <ZIndex>1</ZIndex>
                               <Style>
                                 <Border>
@@ -567,7 +567,7 @@
       <Width>7.23209in</Width>
       <Page>
         <PageHeader>
-          <Height>1.0257in</Height>
+          <Height>1.1507in</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
@@ -714,9 +714,9 @@
               </Paragraphs>
               <rd:DefaultName>Textbox1</rd:DefaultName>
               <Top>0.54792in</Top>
-              <Left>5.73209in</Left>
+              <Left>5.48903in</Left>
               <Height>0.15in</Height>
-              <Width>1.5in</Width>
+              <Width>1.74306in</Width>
               <ZIndex>3</ZIndex>
               <Style>
                 <Border>
@@ -761,6 +761,7 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>PageNumber</rd:DefaultName>
+              <Top>0in</Top>
               <Left>5.73209in</Left>
               <Height>0.3in</Height>
               <Width>1.475in</Width>

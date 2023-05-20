@@ -15,5 +15,6 @@ namespace SMS.Entities.AdditionalModels
         public string SessionName { get; set; }
         public string Gender { get; set; }
         public bool Status { get; set; }
+        public int ClassSerial { get; set; }
     }
 }

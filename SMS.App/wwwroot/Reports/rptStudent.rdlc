@@ -1008,6 +1008,7 @@
                             </Border>
                           </Style>
                         </Rectangle>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -1026,6 +1027,9 @@
                     <GroupExpressions>
                       <GroupExpression>=Fields!ClassName.Value</GroupExpression>
                     </GroupExpressions>
+                    <PageBreak>
+                      <BreakLocation>End</BreakLocation>
+                    </PageBreak>
                   </Group>
                 </TablixMember>
               </TablixMembers>

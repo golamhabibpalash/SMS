@@ -167,7 +167,7 @@
                                             <a>  Student Attendance <span class="fa fa-chevron-down"></span></a>
                                             <ul class="nav child_menu">
                                                 <li>
-                                                    <a asp-action="index" asp-controller="attendancemachines" asp-route-attendanceFor="students" asp-route-dateTime="@DateTime.Today.ToString("yyyy-MM-dd")">Attendances </a>
+                                                    <a asp-action="DailyAttendanceReport" asp-controller="Reports">Attendances </a>
                                                 </li>
                                                 <li>
                                                     <a asp-action="create" asp-controller="attendancemachines">Add Attendances </a>

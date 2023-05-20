@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NodaTime;
 using SMS.App.Utilities.MACIPServices;
+using SMS.App.Utilities.Pagination;
 using SMS.App.Utilities.ShortMessageService;
 using SMS.App.ViewModels;
 using SMS.App.ViewModels.Students;
@@ -77,29 +78,28 @@ namespace SchoolManagementSystem.Controllers
 
         #region Index
         [Authorize(Roles = "SuperAdmin, Admin,Teacher")]
-        public async Task<IActionResult> Index(int academicSessionid, int? academicClassId,int?academicSectionId, string aStatus)
+        public async Task<IActionResult> Index(int? academicSessionid, int? academicClassId,int?academicSectionId, string aStatus, string sortOrder, string searchString, int? pageNumber, int? pageSize)
         {
+            ViewData["rollSortParam"] = String.IsNullOrEmpty(sortOrder) ? "roll_desc" : "";
+            ViewData["academicClassSortParam"] = sortOrder == "academicClass" ? "class_desc" : "academicClass";
+            ViewData["CurrentFilter"] = searchString;
+            ViewData["academicClassId"] = academicClassId;
+
             var students = await _studentManager.GetCurrentStudentListAsync(academicClassId,academicSectionId);
-            //if (academicSessionid>0)
-            //{
-            //    student = student.Where(s => s.AcademicSessionId == academicSessionid).ToList();
-            //}
-            //if (academicClassId > 0)
-            //{
-            //    student = student.Where(s => s.AcademicClassId == academicClassId).ToList();
-            //}
-            //if (academicSectionId>=0)
-            //{
-            //    student = student.Where(s => s.AcademicSectionId == academicSectionId).ToList();
-            //}
+            
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                students = students.Where(s => s.StudentName.Contains(searchString) || s.PhoneNo.Contains(searchString)).ToList();
+            }
+
+
             if (aStatus == "0" || aStatus == "1")
             {
                 bool isActive = aStatus == "1" ? true : false;
                 students = students.Where(s => s.Status == isActive).ToList();
             }
-            int totalFound = ViewBag.totalFound = students.Count();
-            
-            //var studentList = _mapper.Map<IEnumerable<StudentListVM>>(students);
+            int totalFound = ViewBag.totalFound = students.Count();            
+
             List<IsActiveVM> isActiveVMs = new List<IsActiveVM>();
             IsActiveVM status1 = new IsActiveVM();
             status1.Id = 0;
@@ -115,14 +115,45 @@ namespace SchoolManagementSystem.Controllers
             status3.Id = 2;
             status3.sName = "All";
             isActiveVMs.Add(status3);
+
+            switch(sortOrder)
+            {
+                case "roll_desc":
+                    students = students.OrderByDescending(s => s.ClassRoll).ToList();
+                    break;
+                case "academicClass":
+                    students = students.OrderBy(s => s.ClassSerial).ToList();
+                    break;
+                case "class_desc":
+                    students = students.OrderByDescending(s => s.ClassSerial).ToList();
+                    break;
+                default:
+                    students = students.OrderBy(s => s.ClassRoll).ToList();
+                    break;
+            }
+
             var sectionList = await _academicSectionManager.GetAllAsync();
             ViewBag.academicSessionId = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name",academicSessionid);
             ViewBag.academicClassId = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name",academicClassId);
 
             ViewBag.academicSectionId = new SelectList(sectionList.Where(s => s.AcademicClassId==academicClassId), "Id", "Name", academicSectionId);
             ViewBag.aStatus = new SelectList(isActiveVMs.ToList(), "Id", "sName", aStatus);
-            //return View(studentList.OrderByDescending(s => s.Status).ThenBy(s => s.ClassRoll));
-            return View(students.OrderByDescending(s => s.Status).ThenBy(s => s.ClassRoll));
+            
+            int pSize = 30;
+            if (pageSize!=null)
+            {
+                if (pageSize>0)
+                {
+                    pSize = (int)pageSize;
+                }
+                else
+                {
+                    pSize = totalFound;
+                }
+            }
+
+            ViewData["pageSize"] = pageSize > 0?pageSize:pSize ;
+            return View(PaginatedList<SMS.Entities.AdditionalModels.StudentListVM>.Create(students, pageNumber ?? 1, pSize));
         }
         #endregion
 

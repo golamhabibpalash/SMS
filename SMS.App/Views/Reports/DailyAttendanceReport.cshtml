@@ -13,6 +13,16 @@
                         <legend class="w-auto text-primary">Daily Attendance Info</legend>
 
                         <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Attendance For</label>
+                            <div class="col-sm-9">
+                                <select id="attendancForId" class="form-control" >
+                                    <option disabled selected value="">Select For</option>
+                                    <option value="e">Employee</option>
+                                    <option value="s">Students</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
                             <label class="col-sm-3 col-form-label">Attendance Date</label>
                             <div class="col-sm-9">
                                 <input class="form-control" type="date" id="sFromDate" name="fromDate" value="@DateTime.Today" />
@@ -101,13 +111,15 @@
                 let academicClassId = '0';
                 let fromDate = '';
                 let attendanceType = 'all';
+                let attendanceFor = '';
 
                 fromDate = $('#sFromDate').val();
                 academicClassId = $('#AcademicClassId option:selected').val();
                 aSection = $('#AcademicSectionId option:selected').val();
                 attendanceType = $('#AttendanceType option:selected').val();
+                attendanceFor = $('#attendancForId option:selected').val();
 
-                if (fromDate == '') {
+                if (fromDate == '' || attendanceFor == '') {
                     $('#InvalidForm').show();
                     $('#AcademicClassId').focus();
                     $('#iframe-container').hide();
@@ -119,7 +131,7 @@
                     $('#exportFromDate').attr('value', fromDate);
                     $('#exportAttendanceType').attr('value', attendanceType);
 
-                    $('#myIframe').attr('src', '/Reports/ExailyAttendanceReportExport?reportType=' + reportType + '&&fromDate=' + fromDate + '&&academicClassId=' + academicClassId + '&&academicSectionId=' + aSection + "&&attendanceType=" + attendanceType);
+                    $('#myIframe').attr('src', '/Reports/DailyAttendnaceReportExport?reportType=' + reportType + '&&fromDate=' + fromDate + '&&academicClassId=' + academicClassId + '&&academicSectionId=' + aSection + "&&attendanceType=" + attendanceType);
 
                     var iframe = document.getElementById('myIframe');
                     $('#loading').show();

@@ -181,7 +181,7 @@ namespace SMS.App.Controllers
                     {
                         return RedirectToAction("profile", "students", new { id = appUser.ReferenceId });
                     }
-
+                    
                     return RedirectToAction("index", "home");
                 }
                 ModelState.AddModelError(string.Empty, "Invalid Login Attempt");

@@ -9,6 +9,8 @@ using System.Linq;
 using Microsoft.Data.SqlClient;
 using System;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using SMS.Entities.AdditionalModels;
+using SMS.Entities.RptModels;
 
 namespace SMS.DAL.Repositories
 {
@@ -47,6 +49,24 @@ namespace SMS.DAL.Repositories
                 .Include(s => s.PermanentDistrict)
                 .Include(s => s.PermanentDivision)
                 .FirstOrDefaultAsync(s => s.Id == id);
+        }
+
+        public async Task<List<StudentListVM>> GetCurrentStudentListAsync(int? AcademicClassId, int? AcademicSectionId)
+        {
+            var pAcademicClassId = new SqlParameter("@academicClassId", (object)AcademicClassId ?? DBNull.Value);
+            var pAcademicSectionId = new SqlParameter("@academicSectionId", (object)AcademicSectionId ?? DBNull.Value);
+            List<StudentListVM> studentListVMs = null;
+            try
+            {
+                studentListVMs = await _context.StudentListVMs
+                    .FromSqlInterpolated($"EXECUTE sp_Get_Current_Student_List {pAcademicClassId}, {pAcademicSectionId}")
+                    .ToListAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return studentListVMs;
         }
 
         public async Task<Student> GetStudentByClassRollAsync(int classRoll)

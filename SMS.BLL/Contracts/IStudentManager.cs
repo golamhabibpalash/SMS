@@ -1,5 +1,7 @@
-﻿using SMS.BLL.Contracts.Base;
+﻿using AutoMapper.Configuration.Conventions;
+using SMS.BLL.Contracts.Base;
 using SMS.Entities;
+using SMS.Entities.AdditionalModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +18,6 @@ namespace SMS.BLL.Contracts
 
         Task<List<Student>> GetStudentsByClassIdAndSessionIdAsync(int sessionId, int classId);
         Task<List<Student>> GetStudentsByClassSessionSectionAsync(int sessionId, int classId,int sectionId);
-
-        
+        Task<List<StudentListVM>> GetCurrentStudentListAsync(int? AcademicClassId, int? AcademicSectionId);
     }
 }

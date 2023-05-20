@@ -49,7 +49,11 @@ namespace SMS.App.Controllers
             _studentPaymentManager = studentPaymentManager;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
+        {
+            return View();
+        }
+        public async Task<IActionResult> Index_Old()
         {
             HttpContext.Session.SetString("macAddress", MACService.GetMAC());
 

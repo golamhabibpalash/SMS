@@ -1,7 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Identity;
 @using SMS.App.ViewModels.AttendanceVM
 
-@*@model SMS.App.ViewModels.Students.DashboardIndexVM*@
+@model SMS.App.ViewModels.Students.DashboardIndexVM
 
 @inject UserManager<ApplicationUser> _userManager;
 
@@ -19,36 +19,10 @@
 
 @section Styles{
     @*<link href="~/lib/fullCalendar/main.min.css" rel="stylesheet" />*@
-<style>
-    .logo
-    {
-        width: 200px; /* Adjust the width as needed */
-        height: 200px; /* Adjust the height as needed */
-        animation: logoAnimation 4s infinite linear;
-    }
-       
-</style>
 }
-<div class="row">
-    <div class="col-md-12">
-        <div class="jumbotron">
-            <div class="row">
-                <div class="col-md-12 text-center">
-                    <img class="logo" src="~/Images/Institute/nobleLogo.png" alt="Alternate Text" style="width: 200px; animation: logoAnimation 4s infinite linear;" />
-                 
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12 text-center">
-                    <h1 class="">Welcome to Noble Residential School</h1>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
 
-    @*<div class="col-sm-12 col-md-6 col-12">
+<div class="row">
+    <div class="col-sm-12 col-md-6 col-12">
         <div class="card shadow">
             <div class="card-header text-center h5">Todays Attendance</div>
             <div class="">
@@ -234,8 +208,7 @@
             </div>
         </div>
 
-    }*@
-
+    }
 </div>
 
 

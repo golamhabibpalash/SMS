@@ -5,7 +5,7 @@
 @inject UserManager<ApplicationUser> _userManager;
 @inject IWebHostEnvironment env;
 
-@model IEnumerable<SMS.App.ViewModels.Students.StudentListVM>
+@model IEnumerable<SMS.Entities.AdditionalModels.StudentListVM>
 
 @{
     ViewData["Title"] = "Students";
@@ -93,30 +93,30 @@
                                     }
                                 }
 
-                                <img src=@avatar alt="@item.Name" style="max-width:50px; max-height:80px" />
+                                <img src=@avatar alt="@item.StudentName" style="max-width:50px; max-height:80px" />
 
                             </a>
                         </td>
 
                         <td>
                             <a asp-action="Details" asp-route-id="@item.Id" asp-controller="Students">
-                                @item.Name.ToUpper()
+                                @item.StudentName.ToUpper()
                             </a>
                         </td>
                         <td> @item.NameBangla</td>
-                        <td> @Html.DisplayFor(modelItem => item.AcademicClass.Name)</td>
-                        @if (item.AcademicSection != null)
+                        <td> @Html.DisplayFor(modelItem => item.ClassName)</td>
+                        @if (item.SectionName != null)
                         {
-                            <td>@item.AcademicSection.Name</td>
+                            <td>@item.SectionName</td>
                         }
                         else
                         {
                             <td>N/A</td>
                         }
                         <td> @phoneCode@item.PhoneNo</td>
-                        <td> @Html.DisplayFor(modelItem => item.AcademicSession.Name)</td>
+                        <td> @Html.DisplayFor(modelItem => item.SessionName)</td>
                         <td>
-                            @item.Gender.Name
+                            @item.Gender
                         </td>
                         @if (item.Status)
                         {
@@ -178,17 +178,12 @@
                 }
             });
         });
+        
+        
         $('#aAcademicClassId').change(function () {
             let id = $('#aAcademicClassId option:selected').val();
             let sessionId = $('#aAcademicSessionId option:selected').val();
 
-//<<<<<<< HEAD=======
-
-        $('#aAcademicClassId').change(function () {
-            let id = $('#aAcademicClassId option:selected').val();
-            let sessionId = $('#aAcademicSessionId option:selected').val();
-
-//>>>>>>> b497f223cbd99b53d4333572dee3910d63d1c64b
             $.ajax({
                 url: "/api/academicsections/getbyclasswithsessionId?classId=" + id + "&sessionId=" + sessionId,
                 dataType: "JSON",

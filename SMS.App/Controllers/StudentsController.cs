@@ -79,26 +79,27 @@ namespace SchoolManagementSystem.Controllers
         [Authorize(Roles = "SuperAdmin, Admin,Teacher")]
         public async Task<IActionResult> Index(int academicSessionid, int? academicClassId,int?academicSectionId, string aStatus)
         {
-            var student = await _studentManager.GetAllAsync();
-            if (academicSessionid>0)
-            {
-                student = student.Where(s => s.AcademicSessionId == academicSessionid).ToList();
-            }
-            if (academicClassId > 0)
-            {
-                student = student.Where(s => s.AcademicClassId == academicClassId).ToList();
-            }
-            if (academicSectionId>=0)
-            {
-                student = student.Where(s => s.AcademicSectionId == academicSectionId).ToList();
-            }
+            var students = await _studentManager.GetCurrentStudentListAsync(academicClassId,academicSectionId);
+            //if (academicSessionid>0)
+            //{
+            //    student = student.Where(s => s.AcademicSessionId == academicSessionid).ToList();
+            //}
+            //if (academicClassId > 0)
+            //{
+            //    student = student.Where(s => s.AcademicClassId == academicClassId).ToList();
+            //}
+            //if (academicSectionId>=0)
+            //{
+            //    student = student.Where(s => s.AcademicSectionId == academicSectionId).ToList();
+            //}
             if (aStatus == "0" || aStatus == "1")
             {
                 bool isActive = aStatus == "1" ? true : false;
-                student = student.Where(s => s.Status == isActive).ToList();
+                students = students.Where(s => s.Status == isActive).ToList();
             }
-            int totalFound = ViewBag.totalFound = student.Count();
-            var studentList = _mapper.Map<IEnumerable<StudentListVM>>(student);
+            int totalFound = ViewBag.totalFound = students.Count();
+            
+            //var studentList = _mapper.Map<IEnumerable<StudentListVM>>(students);
             List<IsActiveVM> isActiveVMs = new List<IsActiveVM>();
             IsActiveVM status1 = new IsActiveVM();
             status1.Id = 0;
@@ -114,12 +115,14 @@ namespace SchoolManagementSystem.Controllers
             status3.Id = 2;
             status3.sName = "All";
             isActiveVMs.Add(status3);
-
+            var sectionList = await _academicSectionManager.GetAllAsync();
             ViewBag.academicSessionId = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name",academicSessionid);
             ViewBag.academicClassId = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name",academicClassId);
-            ViewBag.academicSectionId = new SelectList(await _academicSectionManager.GetAllAsync(), "Id", "Name", academicSectionId);
+
+            ViewBag.academicSectionId = new SelectList(sectionList.Where(s => s.AcademicClassId==academicClassId), "Id", "Name", academicSectionId);
             ViewBag.aStatus = new SelectList(isActiveVMs.ToList(), "Id", "sName", aStatus);
-            return View(studentList.OrderByDescending(s => s.Status).ThenBy(s => s.ClassRoll));
+            //return View(studentList.OrderByDescending(s => s.Status).ThenBy(s => s.ClassRoll));
+            return View(students.OrderByDescending(s => s.Status).ThenBy(s => s.ClassRoll));
         }
         #endregion
 

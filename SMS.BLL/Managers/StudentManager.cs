@@ -3,6 +3,7 @@ using SMS.BLL.Contracts;
 using SMS.BLL.Contracts.Base;
 using SMS.DAL.Contracts;
 using SMS.Entities;
+using SMS.Entities.AdditionalModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,11 @@ namespace SMS.BLL.Managers
         public StudentManager(IStudentRepository studentRepository):base(studentRepository)
         {
             this.studentRepository = studentRepository;
+        }
+
+        public async Task<List<StudentListVM>> GetCurrentStudentListAsync(int? AcademicClassId, int? AcademicSectionId)
+        {
+            return await studentRepository.GetCurrentStudentListAsync(AcademicClassId, AcademicSectionId);
         }
 
         public async Task<Student> GetStudentByClassRollAsync(int classRoll)

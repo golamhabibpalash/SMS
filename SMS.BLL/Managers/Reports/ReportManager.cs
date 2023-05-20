@@ -22,7 +22,8 @@ namespace SMS.BLL.Managers.Reports
 
         public async Task<List<RptAdmitCardVM>> GetAdmitCard(int monthId, int academicClassId, int academicSectionId)
         {
-            return await _reportRepository.GetAdmitCard(monthId,academicClassId,academicSectionId);
+            var admitCards = await _reportRepository.GetAdmitCard(monthId, academicClassId, academicSectionId);
+            return admitCards.OrderBy(s => s.ClassRoll).ToList();
         }
 
         public async Task<List<RptDailyAttendaceVM>> GetDailyAttendanceReport(string fromDate, string academicClassId, string academicSectionId,string attendanceType)

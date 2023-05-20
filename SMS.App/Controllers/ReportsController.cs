@@ -4,12 +4,14 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Reporting.NETCore;
+using Serilog;
 using SMS.App.Utilities.Others;
 using SMS.App.ViewModels.AttendanceVM;
 using SMS.App.ViewModels.ReportVM;
 using SMS.BLL.Contracts;
 using SMS.BLL.Contracts.Reports;
 using SMS.Entities;
+using SMS.Entities.RptModels.AttendanceVM;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -126,9 +128,49 @@ namespace SMS.App.Controllers
             return View();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> DailyAttendnaceReportExport(string reportType, string fileName, string fromDate, string academicClassId, string academicSectionId)
+        public async Task<IActionResult> DailyAttendnaceReportExport(string reportType, string fromDate, string academicClassId, string academicSectionId,string attendanceType)
         {
+            string fileName = string.Empty;
+
+            Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
+            if (institute == null)
+            {
+                return new JsonResult("Institute Information not found!");
+            }
+
+            string mediaType = "application/pdf";
+            var path = _host.WebRootPath + "\\Reports\\Rpt_Daily_Attendance.rdlc";
+
+            string imageParam = "";
+            var imagePath = _host.WebRootPath + "\\Images\\Institute\\institute.jpeg";
+
+            Image image = Image.FromFile(imagePath);
+            using (MemoryStream ms = new MemoryStream())
+            {
+                image.Save(ms, image.RawFormat);
+                byte[] imageBytes = ms.ToArray();
+                imageParam = Convert.ToBase64String(imageBytes);
+            }
+            List<RptDailyAttendaceVM> studentDailyAttendance = await _reportManager.GetDailyAttendanceReport(fromDate,academicClassId,academicSectionId,attendanceType);
+            using var report = new LocalReport();
+            report.DataSources.Add(new ReportDataSource("DSAttendanceReport", studentDailyAttendance));
+            var parameters = new[] {
+                new ReportParameter("InstituteName", institute.Name),
+                new ReportParameter("Location", institute.Address),
+                new ReportParameter("EIINNo", institute.EIIN),
+                new ReportParameter("Logo", imageParam),
+                new ReportParameter("ReportName", "Payments Summary Report"),
+                new ReportParameter("AttendanceDate", fromDate),
+                new ReportParameter("ReportDate", DateTime.Today.ToString("dd MMM yyyy"))
+            };
+            report.ReportPath = path;
+            report.SetParameters(parameters);
+            var pdf = report.Render("pdf");
+            if (!string.IsNullOrEmpty(fileName))
+            {
+                return File(pdf, MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
+            }
+            return File(pdf, mediaType);
 
             return View();
         }

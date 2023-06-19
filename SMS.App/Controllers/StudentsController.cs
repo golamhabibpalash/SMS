@@ -89,7 +89,9 @@ namespace SchoolManagementSystem.Controllers
             
             if (!String.IsNullOrEmpty(searchString))
             {
-                students = students.Where(s => s.StudentName.Contains(searchString) || s.PhoneNo.Contains(searchString)).ToList();
+                students = students.Where(s => s.StudentName.Contains(searchString) || 
+                s.ClassRoll.ToString().Contains(searchString) || 
+                s.PhoneNo.Contains(searchString)).ToList();
             }
 
 

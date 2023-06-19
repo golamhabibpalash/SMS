@@ -71,22 +71,24 @@ namespace SMS.App.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    //var existingSession = _context.AcademicSession.Where(s => s.Name.Trim() == academicSession.Name.Trim()).FirstOrDefault();
 
-                    //if (existingSession != null)
-                    //{
-                    //    msg = "This name is already exists.";
-                    //}
-                    //else
-                    //{
+                    var existingSessions = await _sessionManager.GetAllAsync();
+                    var existingSession = existingSessions.FirstOrDefault(s => s.Name.Trim() == academicSession.Name.Trim());
+
+                    if (existingSession != null)
+                    {
+                        msg = "This name is already exists.";
+                        TempData["error"] = msg ;
+                    }
+                    else
+                    {
                         academicSession.CreatedAt = DateTime.Now;
-                        academicSession.CreatedBy = HttpContext.Session.GetString("UserId");
+                    academicSession.CreatedBy = HttpContext.Session.GetString("UserId");
 
-                        //_context.Add(academicSession);
                     await _sessionManager.AddAsync(academicSession);
                         TempData["create"] = "Created Successfully";
                         return RedirectToAction(nameof(Index));
-                    //}
+                    }
 
                 }
             }

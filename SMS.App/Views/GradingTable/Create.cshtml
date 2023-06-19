@@ -1,0 +1,45 @@
+﻿@model GradingTable  
+<div class="row">
+    <div class="col-md-6">
+        <fieldset class="border border-info p-2">
+            <legend class="w-auto text-primary">Exam Information</legend>
+            <form asp-action="Create" method="post">
+                <div class="form-group row">
+                    <label class="col-form-label col-sm-4 col-md-3" asp-for="NumberRangeMin"></label>
+                    <div class="col-md-3 ">
+                        <input asp-for="NumberRangeMin" class="form-control" />
+                        <span asp-validation-for="NumberRangeMin" class="text-danger"></span>
+                    </div>
+                @*</div>
+                <div class="form-group row">*@
+                    <label class="col-form-label col-sm-4 col-md-3 text-md-right" asp-for="NumberRangeMax"></label>
+                    <div class="col-md-3">
+                        <input asp-for="NumberRangeMax" class="form-control" />
+                        <span asp-validation-for="NumberRangeMax" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-form-label col-sm-4 col-md-3" asp-for="LetterGrade"></label>
+                    <div class=" col-md-3">
+                        <input asp-for="LetterGrade" class="form-control" placeholder="A"/>
+                        <span asp-validation-for="LetterGrade" class="text-danger"></span>
+                    </div>
+                @*</div>
+                <div class="form-group row">*@
+                    <label class="col-form-label col-sm-4 col-md-3 text-md-right" asp-for="GradePoint"></label>
+                    <div class=" col-md-3">
+                        <input asp-for="GradePoint" class="form-control" placeholder="4.00"/>
+                        <span asp-validation-for="GradePoint" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-md-12 text-right">
+                        <input type="submit" value="Create" class="btn-info btn" />
+                    </div>
+                </div>
+            </form>
+        </fieldset>
+
+    </div>
+</div>

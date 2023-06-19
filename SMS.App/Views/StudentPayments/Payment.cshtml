@@ -401,6 +401,23 @@
     <script>
         let created = '@TempData["created"]';
     </script>
+    <script>
+         $(function () {
+                let saved = '@TempData["saved"]';
+                let deleted = '@TempData["deleted"]';
+                let edited = '@TempData["updated"]';
+
+                if (saved != "") {
+                    alertify.success("Saved Successfully");
+                }
+                if (deleted != "") {
+                    alertify.error("Deleted Successfully");
+                }
+                if (edited != "") {
+                    alertify.message('Updated Successfully');
+                }
+            });
+    </script>
 
     @*<script src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.js"></script>*@
     <script src="~/js/StudentPayments/Payment.js"></script>

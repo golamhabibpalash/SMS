@@ -520,6 +520,7 @@
                             </Border>
                           </Style>
                         </Rectangle>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -538,9 +539,6 @@
                     <GroupExpressions>
                       <GroupExpression>=Fields!Class_Designation.Value</GroupExpression>
                     </GroupExpressions>
-                    <PageBreak>
-                      <BreakLocation>End</BreakLocation>
-                    </PageBreak>
                   </Group>
                 </TablixMember>
               </TablixMembers>
@@ -761,7 +759,6 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>PageNumber</rd:DefaultName>
-              <Top>0in</Top>
               <Left>5.73209in</Left>
               <Height>0.3in</Height>
               <Width>1.475in</Width>

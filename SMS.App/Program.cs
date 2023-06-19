@@ -190,6 +190,9 @@ builder.Services.AddScoped<IAcademicExamDetailsManager, AcademicExamDetailsManag
 builder.Services.AddScoped<IExamResultManager, ExamResultManager>();
 builder.Services.AddScoped<IExamResultRepository, ExamResultRepository>();
 
+builder.Services.AddScoped<IGradingTableManager, GradingTableManager>();
+builder.Services.AddScoped<IGradingTableRepository, GradingTableRepository>();
+
 //Reporting part start here===================================
 builder.Services.AddScoped<IReportManager, ReportManager>();
 builder.Services.AddScoped<IReportRepository, ReportRepository>();

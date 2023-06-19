@@ -21,6 +21,7 @@ namespace SMS.App.ViewModels.ExamVM
         public int ExamMonthId { get; set; }
         public int AcademicSubjectId { get; set; }
         public string AcademicSubjectName { get; set; }
+        public string AcademicSubjectCode { get; set; }
         public double TotalMarks { get; set; }
         public double TotalTime { get; set; }
         public bool IsActive { get; set; }

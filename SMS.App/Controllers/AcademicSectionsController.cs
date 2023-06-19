@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Org.BouncyCastle.Security;
+using SMS.App.Utilities.MACIPServices;
 using SMS.BLL.Contracts;
 using SMS.DB;
 using SMS.Entities;
@@ -73,6 +75,7 @@ namespace SMS.App.Controllers
             {
                 academicSection.CreatedBy = HttpContext.Session.GetString("UserId");
                 academicSection.CreatedAt = DateTime.Now;
+                academicSection.MACAddress = MACService.GetMAC();
                 bool save = await _academicSectionManager.AddAsync(academicSection);
                 if (save == true)
                 {
@@ -118,6 +121,7 @@ namespace SMS.App.Controllers
                 {
                     academicSection.EditedBy = HttpContext.Session.GetString("UserId");
                     academicSection.EditedAt = DateTime.Now;
+                    academicSection.MACAddress = MACService.GetMAC();
 
                     bool updated = await _academicSectionManager.UpdateAsync(academicSection);
                     if (updated==true)

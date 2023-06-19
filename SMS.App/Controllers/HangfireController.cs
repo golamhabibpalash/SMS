@@ -71,23 +71,23 @@ namespace SMS.App.Controllers
             {
                 if (setupMobileSMS.CheckInSMSSummary == true)
                 {
-                    RecurringJob.AddOrUpdate(() => SMSSendDailyAttendanceSummary(), "1 10 * * 6-4", TimeZoneInfo.Local);
+                    RecurringJob.AddOrUpdate(() => SMSSendDailyAttendanceSummary(), "5 11 * * 6-4", TimeZoneInfo.Local);
                     //At 10:01 AM, Saturday through Thursday
                 }
                 if (setupMobileSMS.CheckInSMSService == true)
                 {
-                    RecurringJob.AddOrUpdate(() => SendCheckInSMS(), "*/10 9-10 * * 6-4", TimeZoneInfo.Local);
+                    RecurringJob.AddOrUpdate(() => SendCheckInSMS(), "*/10 8-10 * * 6-4", TimeZoneInfo.Local);
                     //Every 10 minutes, between 08:00 AM and 09:59 AM, Saturday through Thursday
                 } 
 
                 if (setupMobileSMS.CheckOutSMSService == true)
                 {
-                    RecurringJob.AddOrUpdate(() => SendCheckOutSMS(), "*/10 12-15 * * 6-4", TimeZoneInfo.Local);
+                    RecurringJob.AddOrUpdate(() => SendCheckOutSMS(), "*/10 12-14 * * 6-4", TimeZoneInfo.Local);
                     //Every 10 minutes, between 12:00 PM and 03:59 PM, Saturday through Thursday
                 }
                 if (setupMobileSMS.AbsentNotification == true)
                 {
-                    RecurringJob.AddOrUpdate(() => SendAbsentNotificationSMS(), "1 0 10 * * 6-4", TimeZoneInfo.Local);
+                    RecurringJob.AddOrUpdate(() => SendAbsentNotificationSMS(), "1 0 11 * * 6-4", TimeZoneInfo.Local);
                     //At 10:00:01 AM, Saturday through Thursday
                 }
             }

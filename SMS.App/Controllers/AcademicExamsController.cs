@@ -71,7 +71,7 @@ namespace SMS.App.Controllers
                 exams = exams.Where(m => m.EmployeeId == user.ReferenceId).ToList();
             }
 
-            return View(exams.OrderByDescending(m => m.MonthId).ThenBy(m => m.AcademicSubject.AcademicClassId));
+            return View(exams.OrderByDescending(m => m.MonthId).ThenBy(m => m.AcademicSubject.AcademicClassId).ThenBy(m=>m.AcademicSectionId));
         }
 
         // GET: AcademicExamsController/Details/5
@@ -113,6 +113,7 @@ namespace SMS.App.Controllers
             examDetailsVM.AcademicSessionName = exam.AcademicSession.Name;
             examDetailsVM.AcademicExamDetails = exam.AcademicExamDetails;
             examDetailsVM.AcademicSectionId = exam.AcademicSectionId;
+            examDetailsVM.AcademicSubjectCode = exam.AcademicSubject.SubjectCode.ToString();
             if (exam.AcademicSection!=null)
             {
                 examDetailsVM.AcademicSectionName = exam.AcademicSection.Name;
@@ -146,32 +147,55 @@ namespace SMS.App.Controllers
             academicExamVM.AcademicSessionList = new SelectList(await _sessionManager.GetAllAsync(), "Id", "Name").ToList();
             academicExamVM.AcademicClassList = new SelectList(await _classManager.GetAllAsync(), "Id", "Name").ToList();
             academicExamVM.AcademicExamTypeList = new SelectList(await _examTypeManager.GetAllAsync(), "Id", "ExamTypeName").ToList();
-            academicExamVM.AcademicSubjectList = new SelectList(await _academicSubjectManager.GetAllAsync(), "Id", "SubjectName").ToList();
+            academicExamVM.AcademicSubjectList = new SelectList(await _academicSubjectManager.GetSubjectsByClassIdAsync(academicExamVM.AcademicClassId), "Id", "SubjectName").ToList();
             academicExamVM.AcademicSectionList = new SelectList(await _academicSectionManager.GetAllByClassWithSessionId(academicExamVM.AcademicClassId,academicExamVM.AcademicSessionId), "Id", "Name", academicExamVM.AcademicSectionId).ToList();
             academicExamVM.TeacherList = new SelectList(emps.Where(e => e.Status == true).OrderBy(e => e.JoiningDate).ThenBy(e => e.EmployeeName), "Id", "EmployeeName").ToList();
 
             bool examIsExist = false;
-            List<AcademicExam> existingExams = (List<AcademicExam>)await _examManager.GetAllAsync();
+            
 
             try
             {
+                List<AcademicExam> existingExams = (List<AcademicExam>)await _examManager.GetAllAsync();
+
+                examIsExist = existingExams.Any(
+                    e => e.AcademicSubjectId == academicExamVM.AcademicSubjectId &&
+                    e.AcademicSectionId == academicExamVM.AcademicSectionId &&
+                    e.AcademicExamTypeId == academicExamVM.AcademicExamTypeId &&
+                    e.AcademicSessionId == academicExamVM.AcademicSessionId &&
+                    e.MonthId == academicExamVM.MonthId);
+                if (examIsExist)
+                {
+                    TempData["error"] = "Sorry! This Exam is already exist.";
+                    return View(academicExamVM);
+                }
                 AcademicExam academicExam = _mapper.Map<AcademicExam>(academicExamVM);
+
+
+
                 academicExam.CreatedAt = DateTime.Now;
                 academicExam.CreatedBy = HttpContext.Session.GetString("UserId");
                 academicExam.MACAddress = MACService.GetMAC();
-                AcademicSubject academicSubject = await _academicSubjectManager.GetByIdAsync(academicExam.AcademicSubjectId);
-                
-                if (academicSubject.ReligionId!=null || academicSubject.ReligionId>0)
+                AcademicSubject academicSubject = await _academicSubjectManager.GetByIdAsync(academicExam.AcademicSubjectId);    
+
+                List<AcademicExamDetail>  objListAcademicExamDetails = new List<AcademicExamDetail>();
+                List<Student> students = await _studentManager.GetStudentsByClassIdAndSessionIdAsync(academicExam.AcademicSessionId, academicExamVM.AcademicClassId);
+                if(academicSubject.ReligionId!=null || academicSubject.ReligionId>0)
                 {
-                    List<AcademicExamDetail>  objListAcademicExamDetails = new List<AcademicExamDetail>();
-                    List<Student> students = await _studentManager.GetStudentsByClassIdAndSessionIdAsync(academicExam.AcademicSessionId, academicExamVM.AcademicClassId);
                     students = students.Where(s => s.AcademicSectionId == academicExam.AcademicSectionId && s.ReligionId == academicSubject.ReligionId).ToList();
-                    if (students.Count<=0)
+                }
+                if (students.Count<=0)
+                {
+                    TempData["error"] = "There has no any student available for this subject";
+                    return View(academicExamVM);
+                }
+                foreach (var student in students)
+                {
+                    if (student.Status == false)
                     {
-                        TempData["error"] = "There has no any student available for this subject";
-                        return View(academicExamVM);
+                        continue;
                     }
-                    foreach (var student in students)
+                    else
                     {
                         AcademicExamDetail academicExamDetail = new AcademicExamDetail();
                         academicExamDetail.AcademicExamId = academicExam.Id;
@@ -179,37 +203,46 @@ namespace SMS.App.Controllers
                         academicExamDetail.MACAddress = MACService.GetMAC();
                         academicExamDetail.CreatedAt = DateTime.Now;
                         academicExamDetail.CreatedBy = HttpContext.Session.GetString("UserId");
+                        academicExamDetail.ObtainMark = 0;
+                        academicExamDetail.Status = true;
 
                         objListAcademicExamDetails.Add(academicExamDetail);
                     }
-                    academicExam.AcademicExamDetails = objListAcademicExamDetails;
                 }
+
+                academicExam.AcademicExamDetails = objListAcademicExamDetails;
+
+
                 bool isSaved = await _examManager.AddAsync(academicExam);
                 if (isSaved)
                 {
                     TempData["created"] = "New Exam Created Successfully";
                     academicExamVM.AcademicSectionId = academicExamVM.AcademicSectionId == null ? 0 : academicExamVM.AcademicSectionId;
-                    List<Student> students = await _studentManager
-                    .GetStudentsByClassSessionSectionAsync(academicExamVM.AcademicSessionId, academicExamVM.AcademicClassId, (int)academicExamVM.AcademicSectionId);
-                    foreach (var st in students)
-                    {
+                    //List<Student> students = await _studentManager
+                    //.GetStudentsByClassSessionSectionAsync(academicExamVM.AcademicSessionId, academicExamVM.AcademicClassId, (int)academicExamVM.AcademicSectionId);
+                    //if (academicSubject.ReligionId != null || academicSubject.ReligionId > 0)
+                    //{
+                        
+                    //}
+                    //    foreach (var st in students)
+                    //{
 
-                        if (st.Status == false)
-                        {
-                            continue;
-                        }
-                        AcademicExamDetail academicExamDetail = new()
-                        {
-                            AcademicExamId = academicExam.Id,
-                            ObtainMark = 0,
-                            StudentId = st.Id,
-                            Status = true,
-                            CreatedAt = DateTime.Now,
-                            CreatedBy = HttpContext.Session.GetString("UserId"),
-                            MACAddress = MACService.GetMAC()
-                        };
-                        await _academicExamDetailsManager.AddAsync(academicExamDetail);
-                    }
+                    //    if (st.Status == false)
+                    //    {
+                    //        continue;
+                    //    }
+                    //    AcademicExamDetail academicExamDetail = new()
+                    //    {
+                    //        AcademicExamId = academicExam.Id,
+                    //        ObtainMark = 0,
+                    //        StudentId = st.Id,
+                    //        Status = true,
+                    //        CreatedAt = DateTime.Now,
+                    //        CreatedBy = HttpContext.Session.GetString("UserId"),
+                    //        MACAddress = MACService.GetMAC()
+                    //    };
+                    //    await _academicExamDetailsManager.AddAsync(academicExamDetail);
+                    //}
 
                     return RedirectToAction(nameof(Index));
                 }

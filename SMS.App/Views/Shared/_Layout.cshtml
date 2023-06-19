@@ -158,13 +158,13 @@
                             <ul class="nav side-menu">
 
                                 <li>
-                                    <a><i class="fa fa-users fa-2x"></i> Students <span class="fa fa-chevron-down"></span></a>
+                                    <a><i class="fas fa-users fa-2x"></i> Students <span class="fas fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li>
                                             <a asp-action="Index" asp-controller="Students"> All Students </a>
                                         </li>
                                         <li>
-                                            <a>  Student Attendance <span class="fa fa-chevron-down"></span></a>
+                                            <a>  Student Attendance <span class="fas fa-chevron-down"></span></a>
                                             <ul class="nav child_menu">
                                                 <li>
                                                     <a asp-action="DailyAttendanceReport" asp-controller="Reports">Attendances </a>
@@ -177,7 +177,7 @@
                                     </ul>
                                 </li>
                                 <li>
-                                    <a><i class="fa fa-user fa-2x"></i> Employee <span class="fa fa-chevron-down"></span></a>
+                                    <a><i class="fas fa-user fa-2x"></i> Employee <span class="fas fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li>
                                             <a asp-action="Index" asp-controller="Employees"> All Employee </a>
@@ -188,7 +188,7 @@
                                     </ul>
                                 </li>
                                 <li>
-                                    <a><i class="fa fa-layer-group text-primary fa-2x"></i> Modules <span class="fa fa-chevron-down"></span></a>
+                                    <a><i class="fas fa-layer-group text-primary fa-2x"></i> Modules <span class="fas fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li>
                                             <a href="#"> Class Routine</a>
@@ -200,7 +200,7 @@
                                             <a asp-action="Index" asp-controller="AttendanceMachines"> Attendance</a>
                                         </li>
                                         <li>
-                                            <a> SMS Panel <span class="fa fa-chevron-down"></span></a>
+                                            <a> SMS Panel <span class="fas fa-chevron-down"></span></a>
                                             <ul class="nav child_menu">
                                                 <li>
                                                     <a asp-action="Create" asp-controller="PhoneSMS"> SMS Create</a>
@@ -211,13 +211,13 @@
                                             </ul>
                                         </li>
                                         <li>
-                                            <a>  Exam <span class="fa fa-chevron-down"></span></a>
+                                            <a>  Exam <span class="fas fa-chevron-down"></span></a>
                                             <ul class="nav child_menu">
                                                 <li>
-                                                    <a asp-action="Index" asp-controller="AcademicExamType">Exam Type</a>
+                                                    <a asp-action="Index" asp-controller="AcademicExams">All Exam</a>
                                                 </li>
                                                 <li>
-                                                    <a asp-action="Index" asp-controller="AcademicExams">All Exam</a>
+                                                    <a asp-action="Index" asp-controller="AcademicExamType">Exam Type</a>
                                                 </li>
                                             </ul>
                                         </li>
@@ -225,7 +225,7 @@
                                             <a asp-action="Index" asp-controller="ExamResults"> Academic Result</a>
                                         </li>
                                         <li>
-                                            <a> Question Bank <span class="fa fa-chevron-down"></span></a>
+                                            <a> Question Bank <span class="fas fa-chevron-down"></span></a>
                                             <ul class="nav child_menu">
                                                 <li>
                                                     <a asp-action="Index" asp-controller="QuestionBanks"> Questions </a>
@@ -247,10 +247,10 @@
                                 @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
                                 {
                                     <li>
-                                        <a><i class="fa fa-cog text-danger fa-2x"></i>  Settings<span class="fa fa-chevron-down"></span></a>
+                                        <a><i class="fas fa-tools text-danger fa-2x"></i>   Settings <span class="fas fa-chevron-down"></span></a>
                                         <ul class="nav child_menu">
                                             <li>
-                                                <a> Academic <span class="fa fa-chevron-down"></span></a>
+                                                <a> Academic <span class="fas fa-chevron-down"></span></a>
                                                 <ul class="nav child_menu">
                                                     <li>
                                                         <a asp-action="Index" asp-controller="AcademicSessions">Academic Session</a>
@@ -273,15 +273,18 @@
                                                     <li>
                                                         <a asp-action="Index" asp-controller="StudentFeeHeads">Fee Head</a>
                                                     </li>
+                                                    <li>
+                                                        <a asp-action="Index" asp-controller="GradingTable">Grading System</a>
+                                                    </li>
                                                 </ul>
                                             </li>
                                             <li>
-                                                <a> Administrations <span class="fa fa-chevron-down"></span></a>
+                                                <a> Administrations <span class="fas fa-chevron-down"></span></a>
                                                 @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
                                                 {
                                                     <ul class="nav child_menu">
                                                         <li>
-                                                            <a> Employee Related <span class="fa fa-chevron-down"></span></a>
+                                                            <a> Employee Related <span class="fas fa-chevron-down"></span></a>
                                                             <ul class="nav child_menu">
                                                                 <li>
                                                                     <a asp-action="Index" asp-controller="EmpTypes">Employee Type</a>
@@ -302,7 +305,7 @@
                                                             <a asp-action="Index" asp-controller="Institutes">Institute</a>
                                                         </li>
                                                         <li>
-                                                            <a>Holiday <span class="fa fa-chevron-down"></span></a>
+                                                            <a>Holiday <span class="fas fa-chevron-down"></span></a>
                                                             <ul class="nav child_menu">
                                                                 <li>
                                                                     <a asp-controller="OffDays" asp-action="Index">Holidays</a>
@@ -316,7 +319,7 @@
                                                 }
                                             </li>
                                             <li>
-                                                <a> Others <span class="fa fa-chevron-down"></span></a>
+                                                <a> Others <span class="fas fa-chevron-down"></span></a>
                                                 <ul class="nav child_menu">
                                                     <li>
                                                         <a asp-action="Index" asp-controller="Genders">Gender</a>
@@ -333,7 +336,7 @@
                                                 </ul>
                                             </li>
                                             <li>
-                                                <a> SMS Control <span class="fa fa-chevron-down"></span></a>
+                                                <a> SMS Control <span class="fas fa-chevron-down"></span></a>
                                                 <ul class="nav child_menu">
                                                     <li>
                                                         <a asp-action="SMSControl" asp-controller="Setup">SMS Setup</a>
@@ -344,10 +347,10 @@
                                         </ul>
                                     </li>
                                     <li>
-                                        <a><i class="fal fa-file-chart-line fa-2x text-warning"></i>  Reports <span class="fa fa-chevron-down"></span></a>
+                                        <a><i class="fal fa-file-chart-line fa-2x text-warning"></i>  Reports <span class="fas fa-chevron-down"></span></a>
                                         <ul class="nav child_menu">
                                             <li>
-                                                <a> Students <span class="fa fa-chevron-down"></span></a>
+                                                <a> Students <span class="fas fa-chevron-down"></span></a>
                                                 <ul class="nav child_menu">
                                                     <li>
                                                         <a asp-action="studentsreport" asp-controller="reports">Current Students</a>
@@ -358,7 +361,7 @@
                                                 </ul>
                                             </li>
                                             <li>
-                                                <a> Payments <span class="fa fa-chevron-down"></span></a>
+                                                <a> Payments <span class="fas fa-chevron-down"></span></a>
                                                 <ul class="nav child_menu">
 
                                                     <li>
@@ -371,7 +374,7 @@
                                                 </ul>
                                             </li>
                                             <li>
-                                                <a> Attendance <span class="fa fa-chevron-down"></span></a>
+                                                <a> Attendance <span class="fas fa-chevron-down"></span></a>
                                                 <ul class="nav child_menu">
                                                     <li>
                                                         <a asp-action="DailyAttendanceReport" asp-controller="Reports">Daily Attendance Report</a>
@@ -383,7 +386,7 @@
                                                 </ul>
                                             </li>
                                             <li>
-                                                <a> Academic Exams <span class="fa fa-chevron-down"></span></a>
+                                                <a> Academic Exams <span class="fas fa-chevron-down"></span></a>
                                                 <ul class="nav child_menu">
 
                                                     <li>
@@ -410,19 +413,19 @@
                     <!-- /menu footer buttons -->
                     <div class="sidebar-footer hidden-small">
                         <a data-toggle="tooltip" data-placement="top" title="Settings">
-                            <i class="fa fa-cog"></i>
+                            <i class="fas fa-cog"></i>
                         </a>
                         <a data-toggle="tooltip" data-placement="top" title="FullScreen">
-                            <i class="fa fa-expand"></i>
+                            <i class="fas fa-expand"></i>
                         </a>
                         <a data-toggle="tooltip" data-placement="top" title="Lock">
-                            <i class="fa fa-lock text-light"></i>
+                            <i class="fas fa-lock text-light"></i>
                         </a>
                         @if (_signInManager.IsSignedIn(User))
                         {
                             <form id="logoutFormId" asp-action="Logout" asp-controller="accounts" method="post">
                                 <a href="javascript:$('#logoutFormId').submit();" data-toggle="tooltip" data-placement="top" title="Logout" type="submit">
-                                    <i class="fa fa-sign-out text-danger"></i>
+                                    <i class="fas fa-sign-out text-danger"></i>
                                 </a>
                             </form>
                         }

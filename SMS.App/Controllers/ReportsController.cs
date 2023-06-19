@@ -114,6 +114,15 @@ namespace SMS.App.Controllers
             var pdf = report.Render("pdf");
             if (!string.IsNullOrEmpty(fileName))
             {
+                if (reportType=="xls")
+                {
+                    pdf = report.Render("excel");
+                }
+                if (reportType== "word")
+                {
+                    pdf = report.Render("word");
+                }
+                fileName = fileName + "_" + DateTime.Now.ToString("yyyyMMdd");
                 return File(pdf, MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
             }
             return File(pdf, mediaType);
@@ -385,6 +394,15 @@ namespace SMS.App.Controllers
             var pdf = report.Render("pdf");
             if (!string.IsNullOrEmpty(fileName))
             {
+                if (reportType == "xls")
+                {
+                    pdf = report.Render("excel");
+                }
+                if (reportType == "word")
+                {
+                    pdf = report.Render("word");
+                }
+                fileName = fileName + "_" + DateTime.Now.ToString("yyyyMMdd");
                 return File(pdf, MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
             }
             return File(pdf, mediaType);
@@ -442,6 +460,15 @@ namespace SMS.App.Controllers
                 pdf = report.Render("pdf");
                 if (!string.IsNullOrEmpty(fileName))
                 {
+                    if (reportType == "xls")
+                    {
+                        pdf = report.Render("excel");
+                    }
+                    if (reportType == "word")
+                    {
+                        pdf = report.Render("word");
+                    }
+                    fileName = fileName + "_" + DateTime.Now.ToString("yyyyMMdd");
                     return File(pdf, MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
                 }
             }
@@ -501,7 +528,10 @@ namespace SMS.App.Controllers
             
 
             var admitCard = await _reportManager.GetAdmitCard(monthId,aClassId,aSection);
-
+            if (admitCard.Count<=0)
+            {
+                return new JsonResult("No data found");
+            }
             localReport.AddDataSource("DSAdmitCard", admitCard);
             var result = localReport.Execute(renderType, 1, parameters);
             if (!string.IsNullOrEmpty(fileName))

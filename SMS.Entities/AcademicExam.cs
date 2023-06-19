@@ -28,7 +28,7 @@ namespace SMS.Entities
         public AcademicSession AcademicSession { get; set; }
         public AcademicSubject AcademicSubject { get; set; }
         public AcademicSection AcademicSection { get; set; }
-        public List<AcademicExamDetail> AcademicExamDetails { get; set; }
+        public virtual List<AcademicExamDetail> AcademicExamDetails { get; set; }
         [Display(Name = "Total Marks")]
         public double TotalMarks { get; set; }
 

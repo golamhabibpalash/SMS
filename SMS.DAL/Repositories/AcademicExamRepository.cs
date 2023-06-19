@@ -19,6 +19,11 @@ namespace SMS.DAL.Repositories
             _context = context;
         }
 
+        public override Task<bool> AddAsync(AcademicExam entity)
+        {
+            return base.AddAsync(entity);
+        }
+
         public override async Task<IReadOnlyCollection<AcademicExam>> GetAllAsync()
         {
             var result = await _context.AcademicExams

@@ -17,7 +17,7 @@ namespace SMS.Entities.RptModels
         public string SessionName { get; set; }
         public string ClassName { get; set; }
         public string SectionName { get; set; }
-        public int AcademicSectionId { get; set; }
+        public int? AcademicSectionId { get; set; }
         public int MonthId { get; set; }
         public int SubjectCode { get; set; }
         public string SubjectName { get; set; }

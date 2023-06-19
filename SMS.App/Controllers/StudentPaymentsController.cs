@@ -284,11 +284,15 @@ namespace SMS.App.Controllers
                     studentPayment.EditedAt = DateTime.Now;
                     studentPayment.EditedBy = HttpContext.Session.GetString("UserId");
                     studentPayment.MACAddress = MACService.GetMAC();
-
-                        studentPayment.StudentPaymentDetails[0].EditedAt = DateTime.Now;
-                        studentPayment.StudentPaymentDetails[0].EditedBy = HttpContext.Session.GetString("UserId");
-                        studentPayment.StudentPaymentDetails[0].MACAddress = MACService.GetMAC();
-
+                    foreach (var item in studentPayment.StudentPaymentDetails)
+                    {
+                        item.EditedAt = DateTime.Now;
+                        item.EditedBy = HttpContext.Session.GetString("UserId");
+                        item.MACAddress = MACService.GetMAC();
+                        item.StudentPaymentId = studentPayment.Id;
+                        item.StudentPayment = studentPayment;
+                        bool isPaymentDetailsUpdated = await _studentPaymentDetailsManager.UpdateAsync(item);
+                    }
                     studentPayment.Student = await _studentManager.GetByIdAsync(studentPayment.StudentId);
 
                     bool isUpdated = await _studentPaymentManager.UpdateAsync(studentPayment);

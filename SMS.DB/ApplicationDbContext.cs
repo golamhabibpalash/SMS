@@ -63,9 +63,7 @@ namespace SMS.DB
         public DbSet<OffDayType> OffDayTypes { get; set; }
         public DbSet<ExamResult> ExamResults { get; set; }
         public DbSet<ExamResultDetail> ExamResultDetails { get; set; }
-        //public DbSet<ExamResult> ExamResults { get; set; }
-        //public DbSet<ExamResultDetail> ExamResultDetails { get; set; }
-        //public DbSet<ExamGrade> ExamGrades { get; set; }
+        public DbSet<GradingTable> GradingTables { get; set; }
 
         [NotMapped]
         public DbSet<RptStudentVM> RptStudentVMs { get; set; }

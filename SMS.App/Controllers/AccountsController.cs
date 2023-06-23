@@ -639,33 +639,33 @@ namespace SMS.App.Controllers
             return Json("");
         }
 
-        [HttpGet]
-        public async Task<IActionResult> ManageUserClaims(string userId)
-        {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user==null)
-            {
-                ViewBag.errorMessage = $"User with Id = {user} cannot be found";
-                return View("NotFound");
-            }
-            var existingUserClaims = await _userManager.GetClaimsAsync(user);
-            var modelObject = new UserClaimsViewModel
-            {
-                UserId = userId
-            };
-            foreach (var claim in ClaimStores.AllClaims)
-            {
-                UserClaim userClaim = new UserClaim
-                {
-                    ClaimType = claim.Type
-                };
-                if (existingUserClaims.Any(c=> c.Type == claim.Type))
-                {
-                    userClaim.IsSelected = true;
-                }
-                modelObject.Claims.Add(userClaim);
-            }
-            return View(modelObject);
-        }
+        //[HttpGet]
+        //public async Task<IActionResult> ManageUserClaims(string userId)
+        //{
+        //    var user = await _userManager.FindByIdAsync(userId);
+        //    if (user==null)
+        //    {
+        //        ViewBag.errorMessage = $"User with Id = {user} cannot be found";
+        //        return View("NotFound");
+        //    }
+        //    var existingUserClaims = await _userManager.GetClaimsAsync(user);
+        //    var modelObject = new UserClaimsViewModel
+        //    {
+        //        UserId = userId
+        //    };
+        //    foreach (var claim in ClaimStores.AllClaims)
+        //    {
+        //        UserClaim userClaim = new UserClaim
+        //        {
+        //            ClaimType = claim.Type
+        //        };
+        //        if (existingUserClaims.Any(c=> c.Type == claim.Type))
+        //        {
+        //            userClaim.IsSelected = true;
+        //        }
+        //        modelObject.Claims.Add(userClaim);
+        //    }
+        //    return View(modelObject);
+        //}
     }
 }

@@ -27,8 +27,9 @@ namespace SMS.App.Controllers
         private readonly IStudentPaymentDetailsManager _studentPaymentDetailsManager;
         private readonly ISetupMobileSMSManager _setupMobileSMSManager;
         private readonly IPhoneSMSManager _phoneSMSManager;
+        private readonly IInstituteManager _instituteManager;
 
-        public StudentPaymentsController(IStudentPaymentManager studentPaymentManager, IStudentManager studentManager, IClassFeeListManager classFeeListManager, IAcademicClassManager academicClassManager, IStudentFeeHeadManager studentFeeHeadManager, IStudentPaymentDetailsManager studentPaymentDetailsManager, ISetupMobileSMSManager setupMobileSMSManager, IPhoneSMSManager phoneSMSManager)
+        public StudentPaymentsController(IStudentPaymentManager studentPaymentManager, IStudentManager studentManager, IClassFeeListManager classFeeListManager, IAcademicClassManager academicClassManager, IStudentFeeHeadManager studentFeeHeadManager, IStudentPaymentDetailsManager studentPaymentDetailsManager, ISetupMobileSMSManager setupMobileSMSManager, IPhoneSMSManager phoneSMSManager, IInstituteManager instituteManager)
         {
             _studentPaymentManager = studentPaymentManager;
             _studentManager = studentManager;
@@ -38,6 +39,7 @@ namespace SMS.App.Controllers
             _studentPaymentDetailsManager = studentPaymentDetailsManager;
             _setupMobileSMSManager = setupMobileSMSManager;
             _phoneSMSManager = phoneSMSManager;
+            _instituteManager = instituteManager;
         }
 
         // GET: StudentPayments
@@ -81,7 +83,8 @@ namespace SMS.App.Controllers
 
             List<StudentPayment> studentPayments = new ();
             StudentPaymentVM spvm = new ();
-
+            var inst = await _instituteManager.GetFirstOrDefaultAsync();
+            ViewBag.InstituteName = inst.Name;
             var student = await _studentManager.GetStudentByClassRollAsync((int)stRoll);
             if (student!=null)
             {
@@ -147,29 +150,38 @@ namespace SMS.App.Controllers
                     bool isSaved = await _studentPaymentManager.AddAsync(studentPaymentObject);
                     if (isSaved)
                     {
-                        TempData["success"] = ViewBag.msg = "New payment added successfully!";
-                        //if (paymentObject.IsSMSSend==true)
-                        //{
-                        //    var smsSetup = await _setupMobileSMSManager.GetByIdAsync(1);
-                        //    if (smsSetup.SMSService==true)
-                        //    {
-                        //        string smsText = "Paid successfull";
-                        //        string phoneNo = "";
-                        //        bool isSend = await MobileSMS.SendSMS(smsText, phoneNo);
-                        //        if (isSend)
-                        //        {
-                        //            PhoneSMS sms = new PhoneSMS();
-                        //            sms.SMSType = "payment";
-                        //            sms.MACAddress = MACService.GetMAC();
-                        //            sms.Text = smsText;
-                        //            sms.MobileNumber = phoneNo;
-                        //            sms.CreatedAt = DateTime.Now;
-                        //            sms.CreatedBy = HttpContext.Session.GetString ("UserId");
-                                    
-                        //            await _phoneSMSManager.AddAsync(sms);
-                        //        }
-                        //    }
-                        //}
+                        TempData["Saved"] = ViewBag.msg = "New payment added successfully!";
+                        if (paymentObject.IsSMSSend == true)
+                        {
+                            var smsSetup = await _setupMobileSMSManager.GetByIdAsync(1);
+                            if (smsSetup.SMSService == true)
+                            {
+                                Student studentObject = await _studentManager.GetByIdAsync(paymentObject.StudentPayment.StudentId);
+                                foreach (var item in studentPaymentDetailsObject)
+                                {
+                                    if (item.PaidAmount<=0)
+                                    {
+                                        item.PaidAmount = paymentObject.StudentPayment.TotalPayment;
+                                    }
+                                    StudentFeeHead feeHead = await _studentFeeHeadManager.GetByIdAsync(item.StudentFeeHeadId);
+                                    string smsText = studentObject.Name + " has Paid " + item.PaidAmount + "Tk as " + feeHead.Name + " -Noble";
+                                    string phoneNo = studentObject.GuardianPhone;
+                                    bool isSend = await MobileSMS.SendSMS(smsText, phoneNo);
+                                    if (isSend)
+                                    {
+                                        PhoneSMS sms = new PhoneSMS();
+                                        sms.SMSType = "payment";
+                                        sms.MACAddress = MACService.GetMAC();
+                                        sms.Text = smsText;
+                                        sms.MobileNumber = phoneNo;
+                                        sms.CreatedAt = DateTime.Now;
+                                        sms.CreatedBy = HttpContext.Session.GetString("UserId");
+
+                                        await _phoneSMSManager.AddAsync(sms);
+                                    }
+                                }
+                            }
+                        }
                     }
                     else
                     {

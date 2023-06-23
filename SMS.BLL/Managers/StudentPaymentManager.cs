@@ -43,6 +43,7 @@ namespace SMS.BLL.Managers
                       where p.PaidDate.ToString("yyMM") == DateTime.Today.ToString("yyMM")
                       select p).Count()+1).ToString().PadLeft(3,'0');
             receiptsNo = student.AcademicClassId.ToString()+feeHeadId.ToString()+DateTime.Now.ToString("yyMM")+sl;
+            
             return receiptsNo;
         }
 

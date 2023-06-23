@@ -1,5 +1,10 @@
 ﻿/////////////////////// 2nd time(Current) created code
 
+//Payment Details Option Changed
+$('#StudentPayment_StudentPaymentDetails_0__PaidAmount').on('input', function () {
+    var paidAmount = $(this).val();
+    $('#StudentPayment_TotalPayment').val(paidAmount);
+});
 //Payment for select list option chooose
 $('#StudentPayment_StudentPaymentDetails_0__StudentFeeHeadId').change(function () {
     let id = $('#StudentPayment_StudentPaymentDetails_0__StudentFeeHeadId option:selected').val();
@@ -12,11 +17,11 @@ $('#StudentPayment_StudentPaymentDetails_0__StudentFeeHeadId').change(function (
         dataType: 'json',
         success: function (d) {
 
-            $('#amountId').val('');
+            $('#StudentPayment_StudentPaymentDetails_0__PaidAmount').val('');
             $('#StudentPayment_TotalPayment').val('');
             let pAmount = d.amount;
             d.studentFeeHead.repeatedly == true ? $('#howManyTimes').show() : $('#howManyTimes').hide();
-            $('#amountId').val(pAmount);
+            $('#StudentPayment_StudentPaymentDetails_0__PaidAmount').val(pAmount);
             $('#StudentPayment_TotalPayment').val(pAmount);
 
         },
@@ -141,9 +146,9 @@ let mkdate = function (dateObject) {
     if (day < 10) {
         day = "0" + day;
     }
-    if (month < 10) {
-        month = "0" + month;
-    }
+    //if (month < 10) {
+    //    month = "0" + month;
+    //}
     var date = day + " " + monthName[month] + " " + year;
     return date;
 };
@@ -195,10 +200,6 @@ function inWords(num) {
 }
 
 jQuery(function () {
-
-    //$('#howManyTimes').multiselect({
-    //    includeSelectAllOption: true
-    //});
 
     $('#btnget').click(function () {
         alert($('#chkveg').val());

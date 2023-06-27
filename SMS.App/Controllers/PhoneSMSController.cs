@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using SMS.App.Utilities.MACIPServices;
 using SMS.App.Utilities.ShortMessageService;
 using SMS.App.ViewModels.SMSVM;
@@ -9,6 +10,7 @@ using SMS.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.Xml;
 using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
@@ -27,11 +29,57 @@ namespace SMS.App.Controllers
             _employeeManager = employeeManager;
             _studentManager = studentManager;
         }
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string smsType, string smsText,string phoneNo, int rowCount,string fromDate, string toDate)
         {
+            int dataCount = 0;
+            int totalCount = 0;
             
             var allSMS = await _phoneSMSManager.GetAllAsync();
-            return View(allSMS.OrderByDescending(a => a.CreatedAt));
+            totalCount = allSMS.Count;
+            string minDate = ViewBag.minDate = allSMS.OrderBy(s => s.CreatedAt).Select(s => s.CreatedAt.ToString("yyyy-MM-dd")).FirstOrDefault().ToString();
+            string maxDate = ViewBag.maxDate = allSMS.OrderByDescending(s => s.CreatedAt).Select(s => s.CreatedAt.ToString("yyyy-MM-dd")).FirstOrDefault().ToString();
+            if (!string.IsNullOrEmpty(fromDate))
+            {
+                allSMS = allSMS.Where(s => s.CreatedAt >= Convert.ToDateTime(fromDate)).ToList();
+                ViewBag.fromDate = fromDate;
+                totalCount = allSMS.Count;
+            }
+            if (!string.IsNullOrEmpty(toDate))
+            {
+                allSMS = allSMS.Where(s => s.CreatedAt <= Convert.ToDateTime(toDate)).ToList();
+                ViewBag.toDate = toDate;
+                totalCount = allSMS.Count;
+            }
+            if (!string.IsNullOrEmpty(smsType))
+            {
+                allSMS = allSMS.Where(s => s.SMSType==smsType).ToList();
+                totalCount = allSMS.Count;
+            }
+            if (!string.IsNullOrEmpty(smsText))
+            {
+                allSMS = allSMS.Where(s => s.Text.Contains(smsText)).ToList();
+                ViewBag.smsText = smsText;
+                totalCount = allSMS.Count;
+            }
+            if (!string.IsNullOrEmpty(phoneNo))
+            {
+                allSMS = allSMS.Where(s => s.MobileNumber.Contains(phoneNo)).ToList();
+                totalCount = allSMS.Count;
+            }
+            if (rowCount>0)
+            {
+                dataCount = rowCount;
+                ViewBag.rowCount = rowCount;
+            }
+            List<string> smsTypes = new List<string>();
+            if (allSMS!=null)
+            {
+                smsTypes = allSMS.Select(x => x.SMSType).Distinct().ToList();
+            }
+            ViewBag.totalCount = totalCount;
+            smsTypes = smsTypes.Where(x => x!=null).ToList();
+            ViewData["smsTypeList"] = new SelectList(smsTypes);
+            return View(allSMS.OrderByDescending(a => a.CreatedAt).Take(dataCount));
         }
 
         [HttpGet]

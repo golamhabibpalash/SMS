@@ -189,8 +189,8 @@ namespace SchoolManagementSystem.Controllers
             sd.StudentPayments = stuPayments;
             sd.Student = student;
              
-            sd.TotalDue = await GetTotalDue(student.ClassRoll);
-            sd.CurrentDue = await GetCurrntDue(student.ClassRoll);
+            sd.TotalDue = await GetTotalDue(student.Id);
+            sd.CurrentDue = await GetCurrntDue(student.Id);
             ViewBag.districts = await _districtManager.GetAllAsync();
             ViewBag.Upazila = await _upazilaManager.GetAllAsync();
 
@@ -654,10 +654,10 @@ namespace SchoolManagementSystem.Controllers
             return 5;
         }
 
-        private async Task<double> GetTotalDue(int stuRoll)
+        private async Task<double> GetTotalDue(int stuId)
         {
 
-            Student st = await _studentManager.GetStudentByClassRollAsync(stuRoll);
+            Student st = await _studentManager.GetByIdAsync(stuId);
             int admissionYear = st.AdmissionDate.Year;
             int currentYear = DateTime.Now.Year;
 
@@ -671,18 +671,27 @@ namespace SchoolManagementSystem.Controllers
             return totalDue;
         }
         
-        private async Task<double> GetCurrntDue(int stuRoll)
+        private async Task<double> GetCurrntDue(int studId)
         {
-            Student st = await _studentManager.GetStudentByClassRollAsync(stuRoll);
-            int admissionYear = st.AdmissionDate.Year;
-            int currentYear = DateTime.Now.Year;
+            double totalDue = 0.00;
+            Student st = await _studentManager.GetByIdAsync(studId);
+            try
+            {
+                int admissionYear = st.AdmissionDate.Year;
+                int currentYear = DateTime.Now.Year;
 
-            int admissionMonth = admissionYear < currentYear ? 1 : st.AdmissionDate.Month;
-            double monthlyFee = await GetFeeAsync(st.AcademicClassId, 1); //1=monthlyfee, 2=admissionFee, 3=ExamFee
-            double admissionFee = await GetFeeAsync(st.AcademicClassId, 2); //1=monthlyfee, 2=admissionFee, 3=ExamFee
-            double totalAmount = ((DateTime.Now.Month - (admissionMonth - 1)) * monthlyFee) + admissionFee;
-            double totalPaid = await GetTotalPaid(st.Id);
-            double totalDue = totalAmount - totalPaid;
+                int admissionMonth = admissionYear < currentYear ? 1 : st.AdmissionDate.Month;
+                double monthlyFee = await GetFeeAsync(st.AcademicClassId, 1); //1=monthlyfee, 2=admissionFee, 3=ExamFee
+                double admissionFee = await GetFeeAsync(st.AcademicClassId, 2); //1=monthlyfee, 2=admissionFee, 3=ExamFee
+                double totalAmount = ((DateTime.Now.Month - (admissionMonth - 1)) * monthlyFee) + admissionFee;
+                double totalPaid = await GetTotalPaid(st.Id);
+                totalDue = totalAmount - totalPaid;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
             return totalDue;
         }
         private async Task<double> GetFeeAsync(int aClassId, int feeHeadId)

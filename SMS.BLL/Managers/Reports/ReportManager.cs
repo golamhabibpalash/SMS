@@ -45,5 +45,9 @@ namespace SMS.BLL.Managers.Reports
         {
             return await _reportRepository.getStudentsInfo(AcademicSessionId, AcademicClassId, AcademicSectionId);
         }
+        public async Task<List<RptPaymentReceiptVM>> GetPaymentReceiptReport(int paymentId)
+        {
+            return await _reportRepository.GetPaymentReceiptReport(paymentId);
+        }
     }
 }

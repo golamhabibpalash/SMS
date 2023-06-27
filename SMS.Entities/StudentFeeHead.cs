@@ -10,5 +10,8 @@ namespace SMS.Entities
     {
         public string Name { get; set; }
         public bool Repeatedly { get; set; }
+
+        [Display(Name ="Yearly Frequency")]
+        public int? YearlyFrequency { get; set; }
     }
 }

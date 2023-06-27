@@ -33,6 +33,7 @@
     <Content Remove="wwwroot\Reports\Rpt_AdmitCard.rdlc" />
     <Content Remove="wwwroot\Reports\Rpt_Daily_Attendance.rdlc" />
     <Content Remove="wwwroot\Reports\Rpt_Exam_Result.rdlc" />
+    <Content Remove="wwwroot\Reports\Rpt_Payment_Receipt.rdlc" />
     <Content Remove="wwwroot\Reports\Rpt_Student_Payment.rdlc" />
   </ItemGroup>
 
@@ -86,6 +87,7 @@
     <None Include="wwwroot\Reports\Rpt_AdmitCard.rdlc" />
     <None Include="wwwroot\Reports\Rpt_Daily_Attendance.rdlc" />
     <None Include="wwwroot\Reports\Rpt_Exam_Result.rdlc" />
+    <None Include="wwwroot\Reports\Rpt_Payment_Receipt.rdlc" />
     <None Include="wwwroot\Reports\Rpt_Student_Payment.rdlc" />
   </ItemGroup>
 

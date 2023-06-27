@@ -175,8 +175,7 @@ jQuery('.modalViewId').click(function () {
     $('#rctAcademicSession').html(academicSession);
     $('#rctAmount').html(totalAmount+'Tk');
     $('#rctPaymentType').html(paymentType);
-    $('#rctAmountInWords').html('Taka '+amountInWord+'Only');
-
+    $('#rctAmountInWords').html('Taka ' + amountInWord + 'Only');
 });
 
 //function GetTotalPayment(amount, howTimes) {
@@ -228,4 +227,18 @@ jQuery('.editBtn').click(function () {
             console.log(textStatus + ': ' + errorThrown);
         }
     });
+});
+
+$('.modalViewId').click(function () {
+    let paymentId = $(this).data('paymentid');
+    let reportType = "pdf";
+    let myfileName = null;
+    $('#myIframe').attr('src', '/Reports/ReceiptPaymentExport?reportType=' + reportType + '&paymentId=' + paymentId + '&fileName=' + myfileName);
+    var iframe = document.getElementById('myIframe');
+    iframe.onload = function () {
+        $('#loading').hide();
+        $('#exportOptions').show();
+        $('#paymentIdExport').val(paymentId);
+    };
+
 });

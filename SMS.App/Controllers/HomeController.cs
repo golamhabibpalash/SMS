@@ -29,7 +29,7 @@ namespace SMS.App.Controllers
         //private readonly IEmployeeManager _employeeManager;
         //private readonly IAcademicClassManager _academicClassManager;
         //private readonly IDesignationManager _designationManager;
-        //private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         //private readonly IInstituteManager _instituteManager;
         //private readonly IAttendanceManager _attendanceManager;
         //private readonly IAttendanceMachineManager _attendanceMachineManager;
@@ -48,9 +48,16 @@ namespace SMS.App.Controllers
         //    _attendanceMachineManager = attendanceMachineManager;
         //    _studentPaymentManager = studentPaymentManager;
         //}
-        
-        public IActionResult Index()
+        public HomeController(UserManager<ApplicationUser> userManager)
         {
+            _userManager = userManager;
+        }
+        public async Task<IActionResult> Index()
+        {
+            HttpContext.Session.SetString("macAddress", MACService.GetMAC());
+            var user = await _userManager.GetUserAsync(User);
+            HttpContext.Session.SetString("UserId",user.Id);
+
             return View();
         }
         //public async Task<IActionResult> Index_Old()

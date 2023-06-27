@@ -12,6 +12,7 @@ using SMS.BLL.Contracts;
 using SMS.BLL.Contracts.Reports;
 using SMS.Entities;
 using SMS.Entities.RptModels.AttendanceVM;
+using SMS.Entities.RptModels.StudentPayment;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -183,7 +184,6 @@ namespace SMS.App.Controllers
             }
             return File(pdf, mediaType);
 
-            return View();
         }
         //Monthly Attendance Report
         public async Task<IActionResult> AttendanceReport()
@@ -541,6 +541,56 @@ namespace SMS.App.Controllers
             return File(result.MainStream, "Application/pdf");
         }
         #endregion Admit Card Reports
+
+        #region Payment Receipt
+        public async Task<IActionResult> ReceiptPaymentExport(string reportType, int paymentId, string myFileName)
+        {
+            Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
+            if (institute == null)
+            {
+                return new JsonResult("Institute Information not found!");
+            }
+            string mediaType = "application/pdf";
+            var path = _host.WebRootPath + "\\Reports\\Rpt_Payment_Receipt.rdlc";
+
+            string imageParam = "";
+            var imagePath = _host.WebRootPath + "\\Images\\Institute\\institute.jpeg";
+
+            Image image = Image.FromFile(imagePath);
+            using (MemoryStream ms = new MemoryStream())
+            {
+                image.Save(ms, image.RawFormat);
+                byte[] imageBytes = ms.ToArray();
+                imageParam = Convert.ToBase64String(imageBytes);
+            }
+            List<RptPaymentReceiptVM> rptPaymentReceiptVMs = await _reportManager.GetPaymentReceiptReport(paymentId);
+
+            string numberToWord = string.Empty;
+            if (rptPaymentReceiptVMs!=null && rptPaymentReceiptVMs.Count>0)
+            {
+                numberToWord= NumberToWords.ConvertAmount(rptPaymentReceiptVMs.Select(s => s.TotalPayment).FirstOrDefault());
+            }
+
+            using var report = new LocalReport();
+            report.DataSources.Add(new ReportDataSource("Payment_Receipt_DataSet", rptPaymentReceiptVMs));
+            var parameters = new[] {
+                new ReportParameter("InstituteName", institute.Name),
+                new ReportParameter("InstituteAddress", institute.Address),
+                //new ReportParameter("EIINNo", institute.EIIN),
+                new ReportParameter("Logo", imageParam),
+                new ReportParameter("ReportName", "Payment Receipt"),
+                new ReportParameter("AmountInWord", numberToWord)
+            };
+            report.ReportPath = path;
+            report.SetParameters(parameters);
+            var pdf = report.Render("pdf");
+            if (!string.IsNullOrEmpty(myFileName) && myFileName.Length>0)
+            {
+                return File(pdf, MediaTypeNames.Application.Octet, GetReportName(myFileName, reportType));
+            }
+            return File(pdf, mediaType);
+        }
+        #endregion
 
         #region Common Methods
         private static RenderType GetRenderType(string reportType)

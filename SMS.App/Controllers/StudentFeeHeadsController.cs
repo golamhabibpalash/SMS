@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SMS.App.Utilities.MACIPServices;
 using SMS.BLL.Contracts;
 using SMS.DB;
 using SMS.Entities;
@@ -56,7 +57,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Repeatedly,CreatedBy,CreatedAt,EditedBy,EditedAt")] StudentFeeHead studentFeeHead)
+        public async Task<IActionResult> Create([Bind("Id,Name,Repeatedly,YearlyFrequency,CreatedBy,CreatedAt,EditedBy,EditedAt")] StudentFeeHead studentFeeHead)
         {
             string msg = "";
             var sfhExist = await _studentFeeHeadManager.GetByNameAsync(studentFeeHead.Name);
@@ -72,7 +73,7 @@ namespace SMS.App.Controllers
                 {
                     studentFeeHead.CreatedBy = HttpContext.Session.GetString("UserId");
                     studentFeeHead.CreatedAt = DateTime.Now;
-
+                    studentFeeHead.MACAddress = MACService.GetMAC();
                     await _studentFeeHeadManager.AddAsync(studentFeeHead);
 
                     TempData["Create"] = "Successfully Created";
@@ -101,9 +102,11 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Repeatedly,CreatedBy,CreatedAt,EditedBy,EditedAt")] StudentFeeHead studentFeeHead)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Repeatedly,YearlyFrequency,CreatedBy,CreatedAt,EditedBy,EditedAt")] StudentFeeHead studentFeeHead)
         {
             string msg = "";
+            int isChanged = 0;
+            
             if (id != studentFeeHead.Id)
             {
                 return NotFound();
@@ -111,6 +114,15 @@ namespace SMS.App.Controllers
             var sfhExist =await _studentFeeHeadManager.GetByIdAsync(id);
 
             if (sfhExist!=null)
+            {
+                if (studentFeeHead.Name != sfhExist.Name || studentFeeHead.Repeatedly != sfhExist.Repeatedly || studentFeeHead.YearlyFrequency != sfhExist.YearlyFrequency)
+                {
+                    isChanged = 1;
+                }
+            }
+
+
+            if (isChanged == 0)
             {
                 msg = studentFeeHead.Name + " is already exists";
                 ViewBag.msg = msg;
@@ -124,12 +136,15 @@ namespace SMS.App.Controllers
                     {
                         studentFeeHead.EditedAt = DateTime.Now;
                         studentFeeHead.EditedBy = HttpContext.Session.GetString("UserId");
+                        studentFeeHead.MACAddress = MACService.GetMAC();
 
-
-                        await _studentFeeHeadManager.UpdateAsync(studentFeeHead);
-                        TempData["edit"] = "Edited Successfully.";
+                        bool isSaved = await _studentFeeHeadManager.UpdateAsync(studentFeeHead);
+                        if (isSaved)
+                        {
+                            TempData["edit"] = "Edited Successfully.";
+                        }
                     }
-                    catch (DbUpdateConcurrencyException)
+                    catch (Exception ex)
                     {
                         var StudentFeeHeadExists = await _studentFeeHeadManager.GetByIdAsync(id);
                         if (StudentFeeHeadExists==null)
@@ -138,7 +153,7 @@ namespace SMS.App.Controllers
                         }
                         else
                         {
-                            throw;
+                            throw ex;
                         }
                     }
                     return RedirectToAction(nameof(Index));

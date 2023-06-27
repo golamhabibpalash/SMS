@@ -95,6 +95,19 @@ where t.monthId = " + monthId + " and t.academicClassId = " + academicClassId + 
             var result = await _context.RptDailyAttendaceVMs.FromSqlInterpolated($"sp_get_attendance_by_date {pAttendanceFor},{pDate},{pAttendanceType},{pASessionId},{pClassId}").ToListAsync();
             return result;
         }
-
+        public async Task<List<RptPaymentReceiptVM>> GetPaymentReceiptReport(int paymentId)
+        {
+            var p_paymentId = new SqlParameter("paymentId", paymentId);
+            List<RptPaymentReceiptVM> rptPaymentReceiptVMs;
+            try
+            {
+                rptPaymentReceiptVMs = await _context.RptPaymentReceiptVMs.FromSqlInterpolated($"sp_rpt_payment_receipt {p_paymentId}").ToListAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            } 
+            return rptPaymentReceiptVMs;
+        }
     }
 }

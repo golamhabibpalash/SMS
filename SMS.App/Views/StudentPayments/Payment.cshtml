@@ -262,7 +262,7 @@
                                     <td>@payDetail.StudentPayment.Remarks</td>
                                     <td>
                                         <div class="btn-group">
-                                            <button data-studentName="@item.Student.Name" data-academicClass="@item.Student.AcademicClass.Name" data-classRoll="@item.Student.ClassRoll" data-academicSession="@item.Student.AcademicSession.Name" data-paidDate="@item.PaidDate.ToString()" data-receipt="@payDetail.StudentPayment.ReceiptNo" data-amount="@payDetail.StudentPayment.TotalPayment" data-paymentType="@payDetail.StudentFeeHead.Name" type="button" class="btn btn-light btn-outline-info btn-sm modalViewId" data-toggle="modal" data-target="#exampleModalCenter" id="modalViewId_">
+                                            <button data-paymentId="@item.Id" data-studentName="@item.Student.Name" data-academicClass="@item.Student.AcademicClass.Name" data-classRoll="@item.Student.ClassRoll" data-academicSession="@item.Student.AcademicSession.Name" data-paidDate="@item.PaidDate.ToString()" data-receipt="@payDetail.StudentPayment.ReceiptNo" data-amount="@payDetail.StudentPayment.TotalPayment" data-paymentType="@payDetail.StudentFeeHead.Name" type="button" class="btn btn-light btn-outline-info btn-sm modalViewId" data-toggle="modal" data-target="#exampleModalCenter" id="modalViewId_">
                                                 View
                                             </button>
                                             <a class="btn btn-sm btn-info btn-outline-light" asp-action="Edit" asp-controller="StudentPayments" asp-route-id="@item.Id">Edit</a>
@@ -288,77 +288,30 @@
 
 <div style="color:black;font-weight:100" class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg pb-0" role="document">
-        <div class="modal-content p-3">
-            <div class="modal-body page" id="receiptPrintingArea">
-                <table class="table table-sm table-borderless table-striped">
-                    <tr>
-                        <td colspan="12" class="text-center">
-                            <h1 style="color:navy; font-weight:bolder">@ViewBag.InstituteName</h1>
-                            <h5 class="">(Payment Receipt)</h5>
-                            <hr />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">Recipt No</td>
-                        <td>:</td>
-                        <td colspan="4" id="rctReciptNo"></td>
-                        <td colspan="2">Payment Date</td>
-                        <td>:</td>
-                        <td colspan="3" id="rctPaymentDate"></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">Academic Class</td>
-                        <td>:</td>
-                        <td colspan="4" id="rctAcademicClass"></td>
-                        <td colspan="2">Class Roll</td>
-                        <td>:</td>
-                        <td colspan="3" id="rctClassRoll"></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">Studunt Name</td>
-                        <td>:</td>
-                        <td colspan="4" id="rctStudentName"></td>
-                        <td colspan="2">Academic Session</td>
-                        <td>:</td>
-                        <td colspan="3" id="rctAcademicSession"></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">Amount</td>
-                        <td>:</td>
-                        <td colspan="4" id="rctAmount"></td>
-                        <td colspan="2">Payment Type</td>
-                        <td>:</td>
-                        <td colspan="3" id="rctPaymentType"></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">Amount in words</td>
-                        <td>:</td>
-                        <td colspan="9" id="rctAmountInWords"></td>
-                    </tr>
-
-                </table>
-                <table class="table table-borderless">
-                    <tfoot class="pt-2 mt-2">
-
-                        <tr>
-                            <td colspan="7"></td>
-                            <td colspan="5" class="text-center">
-                                <span class="nowrap pt-3"> <hr /> Authority Signature</span>
-                            </td>
-                        </tr>
-                    </tfoot>
-                </table>
+        <div class="modal-content p-3" style="width:24cm">
+           
+            <div class="row" style="height:11.5cm;width:23cm">
+                <iframe id="myIframe" style="width: 100%; height: 100%;"></iframe>
             </div>
+            <div class="row" id="exportOptions" style="display:none">
+                <div class="col-md-12 d-flex justify-content-between">
 
-            <div class="modal-footer p-0">
-                <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-sm btn-primary" onclick="window.print()"><i class="fa fa-print"></i></button>
+                    <form asp-action="ReceiptPaymentExport" asp-controller="Reports" method="get">
+                        <input type="hidden" id="exportClassRollId" name="classRoll" />
+                        <div class="btn-group btn-sm mr-2 " role="group" aria-label="First group">
+                            <input type="hidden" name="myFileName" value="Payment Receipt @Model.StudentPayment.Id" />
+                            <input type="hidden" id="paymentIdExport" name="paymentId" />
+                            <button type="submit" name="reportType" value="pdf" class="btn-sm btn btn-danger" data-toggle="tooltip" title="Export PDF" data-placement="left"><i class="fas fa-file-pdf"></i></button>
+                            <button type="submit" name="reportType" value="xls" class="btn-sm btn btn-success" data-toggle="tooltip" title="Export xls" data-placement="top"><i class="fas fa-file-excel"></i></button>
+                            <button type="submit" name="reportType" value="word" class="btn-sm btn btn-primary" data-toggle="tooltip" title="Export doc" data-placement="top"><i class="fas fa-file-word"></i></button>
+                        </div>
+                    </form>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
 </div>
-
-
 
 
 @section Scripts{

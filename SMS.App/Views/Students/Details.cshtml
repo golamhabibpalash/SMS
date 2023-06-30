@@ -27,7 +27,11 @@
     double totalPaid = 0;
     //double currentDue = 0;
     //double totalDue = 0;
-    //int paymentSL = 1;
+    int paymentScheduleSL = 1;
+    double paymentScheduleSubTotal = 0.0;
+    double paymentScheduleTotal = 0.0;
+    int paymentSchedulePaidSL = 1;
+    double paidScheduleTotal = 0.0;
 
 }
 @section Styles{
@@ -344,6 +348,91 @@
 
                     <div id="financials" class="tab-pane" role="tabpanel">
                         <div class="row">
+                            <div class="col-md-6">
+                                <div class="card p-0">
+                                    <div class="card-header">
+                                        <span class="card-title">Payment Schedule</span>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        @if (Model.StudentPaymentSchedules != null)
+                                        {
+                                            <table class="table pb-0 mb-0">
+                                                <thead class="table-info">
+                                                    <tr>
+                                                        <td>#</td>
+                                                        <td>Payment Type</td>
+                                                        <td>Amount</td>
+                                                        <td class="text-right">Total</td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model.StudentPaymentSchedules)
+                                                    {
+                                                        <tr>
+                                                            <td>@(paymentScheduleSL++)</td>
+                                                            <td>@item.PaymentType</td>
+                                                            <td>@item.Amount <span class="badge badge-pill badge-warning">@item.yearlyFrequency</span></td>
+                                                            <td class="text-right">@(item.Amount * item.yearlyFrequency)</td>
+                                                        </tr>
+                                                        paymentScheduleTotal += item.Amount * item.yearlyFrequency;
+                                                    }
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr class="font-weight-bolder">
+                                                        <td colspan="3">Total</td>
+                                                        <td class="text-right">@paymentScheduleTotal</td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card p-0">
+                                    <div class="card-header">
+                                        <span class="card-title">Schedule wise paid</span>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        @if (Model.StudentPaymentSchedulePaidVMs.Count > 0 && Model.StudentPaymentSchedulePaidVMs != null)
+                                        {
+                                            <table class="table pb-0 mb-0">
+                                                <thead class="table-info">
+                                                    <tr>
+                                                        <td>#</td>
+                                                        <td>Payment Type</td>
+                                                        <td class="text-right">Amount</td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model.StudentPaymentSchedulePaidVMs)
+                                                    {
+                                                    <tr>
+                                                        <td>@(paymentSchedulePaidSL++)</td>
+                                                        <td>@item.PaymentType</td>
+                                                        <td class="text-right">@item.PaidAmount</td>
+                                                    </tr>
+                                                        paidScheduleTotal += item.PaidAmount;
+                                                    }
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr class="font-weight-bolder">
+                                                        <td colspan="2">Total</td>
+                                                        <td class="text-right">@paidScheduleTotal</td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+
+                        <div class="row">
                             <div class="col-md-12 alert bg-info">
                                 <div class="col-md-6 text-left">
                                     <h5 class="h5 text-light">Current Due Amount : <span class="text-warning font-weight-bolder">@Model.CurrentDue tk</span></h5>
@@ -359,7 +448,7 @@
                                 <div class="card">
                                     <div class="card-header">
                                         <div class="text-center">
-                                            <span class="h6">Payment Schedule</span>
+                                            <span class="h6">Payment History</span>
                                         </div>
                                     </div>
                                     <div class="">
@@ -415,7 +504,7 @@
                             </div>
                             <div class="col-md-2" style="display:flex;flex-direction:column;justify-content:center">
                                 <div>
-                                    <a class="btn btn-warning p-4 font-weight-bolder text-info btn-outline-light" asp-action="StudentPaymentInfoExport" asp-controller="Reports" asp-route-reportType="pdf" asp-route-fileName="Student Payment Report" asp-route-classRoll="@Model.Student.ClassRoll" target="_blank">
+                                    <a class="btn btn-warning p-4 font-weight-bolder text-info btn-outline-light" asp-action="StudentPaymentInfoExport" asp-controller="Reports" asp-route-reportType="pdf" asp-route-fileName="@Model.Student.Name Payment Report" asp-route-classRoll="@Model.Student.ClassRoll" target="_blank">
                                         <span class="fa fa-file"></span> Get Report
                                     </a>
                                 </div>

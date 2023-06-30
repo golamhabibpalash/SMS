@@ -28,5 +28,11 @@ namespace SMS.BLL.Managers
             var result = await _classFeeListRepository.GetByClassIdAndFeeHeadIdAsync(classId, feeHeadId);
             return result;
         }
+
+        public async Task<List<ClassFeeList>> GetClassFeeListByClassIdFeeHeadIdSessionIdAsync(int classId, int feeHeadId, int sessionId)
+        {
+            List<ClassFeeList> result = await _classFeeListRepository.GetClassFeeListByClassIdFeeHeadIdSessionIdAsync(classId, feeHeadId, sessionId);
+            return result;
+        }
     }
 }

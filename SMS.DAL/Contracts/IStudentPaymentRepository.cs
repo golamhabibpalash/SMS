@@ -11,5 +11,7 @@ namespace SMS.DAL.Contracts
         Task<IReadOnlyCollection<StudentPayment>> GetAllByStudentIdAsync(int id);
         Task<List<StudentPaymentSummeryVM>> GetPaymentSummeryByMonthYear(string monthYear);
         Task<List<StudentPaymentSummeryVM>> GetPaymentSummeryByDate(string date);
+        Task<List<StudentPaymentScheduleVM>> GetStudentPaymentSchedule(int studId);
+        Task<List<StudentPaymentSchedulePaidVM>> GetStudentPaymentSchedulePaid(int studId);
     }
 }

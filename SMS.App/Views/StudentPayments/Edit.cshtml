@@ -17,7 +17,7 @@
                 {
                     <img src="~/Images/Student/noimage.jpg" alt="@Model.Student.Name Photo" class="rounded-circle" style="width:50%;" />
                 }
-                <img src="~/Images/Student/@Model.Student.Photo" alt="@Model.Student.Name Photo" class="rounded-circle" style="width:50%;" />
+                
             </div>
         </div>
         <div class="row">
@@ -91,9 +91,10 @@
                     <div class="form-group row">
                         <label class="col-md-3 col-form-label text-right">Amount</label>
                         <div class="col-md-4 col-lg-4 col-sm-6 col-xs-10">
-                            <input type="text" id="amountId" class="form-control" placeholder="Amount" />
+                            <input class="form-control" asp-for="StudentPaymentDetails[0].PaidAmount" placeholder="Amount"  />
                             <input type="hidden" id="academicClassId" value="@Model.Student.AcademicClassId" />
                         </div>
+                        <span asp-validation-for="StudentPaymentDetails[0].PaidAmount" class="text-danger col-form-label"></span>
 
 
                     </div>

@@ -45,7 +45,10 @@ namespace SMS.DAL.Repositories
             {
                 payments = await _context.StudentPayment
                 .Include(sp => sp.StudentPaymentDetails)
-                .ThenInclude(sp => sp.StudentFeeHead)
+                    .ThenInclude(sp => sp.StudentFeeHead)
+                .Include(s => s.Student)
+                    .ThenInclude(ss => ss.AcademicClass)
+                .Include(s => s.Student.AcademicSession)
                 .Where(sp => sp.StudentId == id).ToListAsync();
             }
             catch (Exception)
@@ -55,7 +58,6 @@ namespace SMS.DAL.Repositories
             }
             return payments;
         }
-
         public async Task<List<StudentPaymentSummeryVM>> GetPaymentSummeryByDate(string date)
         {
             List<StudentPaymentSummeryVM> payments = new List<StudentPaymentSummeryVM>();
@@ -72,9 +74,6 @@ namespace SMS.DAL.Repositories
            
             return payments;
         }
-
-
-
         public async Task<List<StudentPaymentSummeryVM>> GetPaymentSummeryByMonthYear(string monthYear)
         {
             List<StudentPaymentSummeryVM> payments = new List<StudentPaymentSummeryVM>();
@@ -94,17 +93,40 @@ namespace SMS.DAL.Repositories
         {
             StudentPayment existingStudentPayment = await _context.StudentPayment
                 .Include(s => s.Student)
+                    .ThenInclude(s => s.AcademicClass)
+                .Include(s =>s.Student.AcademicSession)
                 .Include(s => s.StudentPaymentDetails)
                     .ThenInclude(d => d.StudentFeeHead)
                 .Where(s => s.Id == id).FirstOrDefaultAsync();
 
             return existingStudentPayment;
         }
+        public async Task<List<StudentPaymentScheduleVM>> GetStudentPaymentSchedule(int studId)
+        {
+            List<StudentPaymentScheduleVM> studentPaymentSchedules = new List<StudentPaymentScheduleVM>();
+            try
+            {
+                studentPaymentSchedules = await _context.StudentPaymentScheduleVMs.FromSqlInterpolated($"sp_get_payment_schedule_by_stuId {studId}").ToListAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return studentPaymentSchedules;
+        }
+        public async Task<List<StudentPaymentSchedulePaidVM>> GetStudentPaymentSchedulePaid(int studId)
+        {
+            List<StudentPaymentSchedulePaidVM> studentPaymentSchedules = new List<StudentPaymentSchedulePaidVM>();
+            try
+            {
+                studentPaymentSchedules = await _context.StudentPaymentSchedulePaidVMs.FromSqlInterpolated($"sp_get_scheduled_paid_by_id {studId}").ToListAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return studentPaymentSchedules;
+        }
 
-        //public override async Task<bool> UpdateAsync(StudentPayment entity)
-        //{
-
-        //    return base.UpdateAsync(entity);
-        //}
     }
 }

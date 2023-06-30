@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SMS.App.Utilities.MACIPServices;
 using SMS.BLL.Contracts;
 using SMS.DB;
 using SMS.Entities;
@@ -38,6 +39,8 @@ namespace SMS.App.Controllers
                 msg = TempData["success"].ToString();
                 ViewBag.msg = msg;
             }
+            AcademicSession currentSession = await academicSessionManager.GetCurrentAcademicSession();
+            ViewBag.currentSessionId = currentSession.Id;
             var result = await _classFeeListManager.GetAllAsync();
             
             return View(result);
@@ -76,9 +79,9 @@ namespace SMS.App.Controllers
         {
             string msg = "";
 
-            var feeListExist = await _classFeeListManager.GetByClassIdAndFeeHeadIdAsync(classFeeList.AcademicClassId, classFeeList.StudentFeeHeadId);
+            var feeListExist = await _classFeeListManager.GetClassFeeListByClassIdFeeHeadIdSessionIdAsync(classFeeList.AcademicClassId, classFeeList.StudentFeeHeadId,classFeeList.AcademicSessionId);
 
-            if (feeListExist!=null)
+            if (feeListExist!=null && feeListExist.Count>0)
             {
                 msg = "Fee list for this class is already exists.";
                 TempData["crateFail"] = msg;
@@ -90,7 +93,7 @@ namespace SMS.App.Controllers
                 {
                     classFeeList.CreatedAt = DateTime.Now;
                     classFeeList.CreatedBy = HttpContext.Session.GetString("UserId");
-                    
+                    classFeeList.MACAddress = MACService.GetMAC();
                     bool isSaved = await _classFeeListManager.AddAsync(classFeeList);
                     if (isSaved)
                     {
@@ -145,7 +148,7 @@ namespace SMS.App.Controllers
                 {
                     classFeeList.EditedAt = DateTime.Now;
                     classFeeList.EditedBy = HttpContext.Session.GetString("UserId");
-
+                    classFeeList.MACAddress = MACService.GetMAC();
                     bool isUpdated = await _classFeeListManager.UpdateAsync(classFeeList);
                     if (isUpdated==true)
                     {

@@ -35,26 +35,53 @@
             <tbody>
                 @foreach (var item in Model)
                 {
-                    <tr>
-                        <td>
-                            @(++sl).
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.StudentFeeHead.Name)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.AcademicClass.Name)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.AcademicSession.Name)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Amount)
-                        </td>
-                        <td>
-                            <partial name="_Edit_Details_Delete" model="@item.Id" />
-                        </td>
-                    </tr>
+                    if (ViewBag.currentSessionId == item.AcademicSessionId)
+                    {
+                        <tr class="text-primary">
+                            <td>
+                                @(++sl).
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.StudentFeeHead.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.AcademicClass.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.AcademicSession.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Amount)
+                            </td>
+                            <td>
+                                <partial name="_Edit_Details_Delete" model="@item.Id" />
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td>
+                                @(++sl).
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.StudentFeeHead.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.AcademicClass.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.AcademicSession.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Amount)
+                            </td>
+                            <td>
+                                <partial name="_Edit_Details_Delete" model="@item.Id" />
+                            </td>
+                        </tr>
+                    }
+
                 }
             </tbody>
         </table>

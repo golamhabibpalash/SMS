@@ -22,18 +22,10 @@ namespace SMS.BLL.Managers
             _studentPaymentRepository = studentPaymentRepository;
             _studentRepository = studentRepository;
         }
-
         public async Task<IReadOnlyCollection<StudentPayment>> GetAllByStudentIdAsync(int id)
         {
             return await _studentPaymentRepository.GetAllByStudentIdAsync(id);
         }
-
-        //public async Task<IReadOnlyCollection<StudentPayment>> GetAllMonthPaymentsByThisDate(string date)
-        //{
-        //    var allPayments = await _studentPaymentRepository.GetAllAsync();
-            
-        //}
-
         public async Task<string> GetNewReceipt(int studentId, int feeHeadId)
         {
             string receiptsNo = string.Empty;
@@ -46,7 +38,6 @@ namespace SMS.BLL.Managers
             
             return receiptsNo;
         }
-
         public async Task<IReadOnlyCollection<StudentPaymentSummeryVM>> GetPaymentSummeryByDate(string date)
         {
             List<StudentPaymentSummeryVM> paymentSummery = new List<StudentPaymentSummeryVM>();
@@ -61,7 +52,6 @@ namespace SMS.BLL.Managers
             }
             return paymentSummery;
         }
-
         public async Task<IReadOnlyCollection<StudentPaymentSummeryVM>> GetPaymentSummeryByMonthYear(string monthYear)
         {
             List<StudentPaymentSummeryVM> paymentSummery = new List<StudentPaymentSummeryVM>();
@@ -75,6 +65,14 @@ namespace SMS.BLL.Managers
                 throw;
             }
             return paymentSummery;
+        }
+        public async Task<List<StudentPaymentScheduleVM>> GetStudentPaymentSchedule(int studId)
+        {
+            return await _studentPaymentRepository.GetStudentPaymentSchedule(studId);
+        }
+        public async Task<List<StudentPaymentSchedulePaidVM>> GetStudentPaymentSchedulePaid(int studId)
+        {
+            return await _studentPaymentRepository.GetStudentPaymentSchedulePaid(studId);
         }
     }
 }

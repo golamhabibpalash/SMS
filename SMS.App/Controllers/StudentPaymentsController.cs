@@ -28,8 +28,9 @@ namespace SMS.App.Controllers
         private readonly ISetupMobileSMSManager _setupMobileSMSManager;
         private readonly IPhoneSMSManager _phoneSMSManager;
         private readonly IInstituteManager _instituteManager;
+        private readonly IAcademicSessionManager _academicSessionManager;
 
-        public StudentPaymentsController(IStudentPaymentManager studentPaymentManager, IStudentManager studentManager, IClassFeeListManager classFeeListManager, IAcademicClassManager academicClassManager, IStudentFeeHeadManager studentFeeHeadManager, IStudentPaymentDetailsManager studentPaymentDetailsManager, ISetupMobileSMSManager setupMobileSMSManager, IPhoneSMSManager phoneSMSManager, IInstituteManager instituteManager)
+        public StudentPaymentsController(IStudentPaymentManager studentPaymentManager, IStudentManager studentManager, IClassFeeListManager classFeeListManager, IAcademicClassManager academicClassManager, IStudentFeeHeadManager studentFeeHeadManager, IStudentPaymentDetailsManager studentPaymentDetailsManager, ISetupMobileSMSManager setupMobileSMSManager, IPhoneSMSManager phoneSMSManager, IInstituteManager instituteManager, IAcademicSessionManager academicSessionManager)
         {
             _studentPaymentManager = studentPaymentManager;
             _studentManager = studentManager;
@@ -40,6 +41,7 @@ namespace SMS.App.Controllers
             _setupMobileSMSManager = setupMobileSMSManager;
             _phoneSMSManager = phoneSMSManager;
             _instituteManager = instituteManager;
+            _academicSessionManager = academicSessionManager;
         }
 
         // GET: StudentPayments
@@ -100,8 +102,16 @@ namespace SMS.App.Controllers
                 spvm.StudentId = student.Id;
                 List<ClassFeeList> feeList = new();
                 var classfeelist = await _classFeeListManager.GetAllByClassIdAsync(student.AcademicClassId);
+                List<StudentFeeHead> feeHeadList = (List<StudentFeeHead>)await _studentFeeHeadManager.GetAllAsync();
+                AcademicSession currentSession = await _academicSessionManager.GetCurrentAcademicSession();
 
-                ViewData["FeeList"] = new SelectList(await _studentFeeHeadManager.GetAllAsync(), "Id", "Name");
+                feeHeadList = (from f in feeHeadList
+                               join t in classfeelist on f.Id equals t.StudentFeeHeadId
+                               where t.AcademicSessionId == currentSession.Id
+                               select f).ToList();
+
+
+                ViewData["FeeList"] = new SelectList(feeHeadList, "Id", "Name");
                 foreach (var item in classfeelist)
                 {
                     feeList.Add(item);
@@ -274,7 +284,16 @@ namespace SMS.App.Controllers
             {
                 return NotFound();
             }
-            ViewData["FeeList"] = new SelectList(await _studentFeeHeadManager.GetAllAsync(), "Id", "Name", studentPayment.StudentPaymentDetails[0].StudentFeeHeadId);
+            var classfeelist = await _classFeeListManager.GetAllByClassIdAsync(studentPayment.Student.AcademicClassId);
+            List<StudentFeeHead> feeHeadList = (List<StudentFeeHead>)await _studentFeeHeadManager.GetAllAsync();
+            AcademicSession currentSession = await _academicSessionManager.GetCurrentAcademicSession();
+
+            feeHeadList = (from f in feeHeadList
+                           join t in classfeelist on f.Id equals t.StudentFeeHeadId
+                           where t.AcademicSessionId == currentSession.Id
+                           select f).ToList();
+
+            ViewData["FeeList"] = new SelectList(feeHeadList, "Id", "Name", studentPayment.StudentPaymentDetails[0].StudentFeeHeadId);
             ViewData["StudentId"] = new SelectList(await _studentManager.GetAllAsync(), "Id", "Name", studentPayment.StudentId);
             return View(studentPayment);
         }

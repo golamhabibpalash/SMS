@@ -14,6 +14,7 @@ using SMS.App.ViewModels;
 using SMS.App.ViewModels.Students;
 using SMS.BLL.Contracts;
 using SMS.Entities;
+using SMS.Entities.AdditionalModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -185,10 +186,15 @@ namespace SchoolManagementSystem.Controllers
             }
             var stuPayments = await _studentPaymentManager.GetAllByStudentIdAsync((int)id);
 
+            List<StudentPaymentScheduleVM> paymentSchedule = await _studentPaymentManager.GetStudentPaymentSchedule(student.Id);
+            List<StudentPaymentSchedulePaidVM> studentPaymentSchedulePaidVMs = await _studentPaymentManager.GetStudentPaymentSchedulePaid(student.Id);
             StudentDetailsVM sd = new();
             sd.StudentPayments = stuPayments;
             sd.Student = student;
-             
+            
+            sd.StudentPaymentSchedules = paymentSchedule;
+            sd.StudentPaymentSchedulePaidVMs = studentPaymentSchedulePaidVMs;
+
             sd.TotalDue = await GetTotalDue(student.Id);
             sd.CurrentDue = await GetCurrntDue(student.Id);
             ViewBag.districts = await _districtManager.GetAllAsync();

@@ -15,7 +15,7 @@ namespace SMS.DAL.Repositories
     {
         public ClassFeeListRepository(ApplicationDbContext context) : base(context)
         {
-            
+
         }
         public override async Task<IReadOnlyCollection<ClassFeeList>> GetAllAsync()
         {
@@ -27,19 +27,35 @@ namespace SMS.DAL.Repositories
                 .ToListAsync();
             return feeLists;
         }
-
         public async Task<List<ClassFeeList>> GetAllByClassIdAsync(int classId)
         {
             var result = await _context.ClassFeeList.Include(c => c.StudentFeeHead).Where(c => c.AcademicClassId == classId).ToListAsync();
             return result;
         }
-
         public async Task<ClassFeeList> GetByClassIdAndFeeHeadIdAsync(int classId, int feeHeadId)
         {
             var feeListExist = await _context.ClassFeeList
                 .FirstOrDefaultAsync(s => s.AcademicClassId == classId && s.StudentFeeHeadId == feeHeadId);
 
             return feeListExist;
+        }
+        public async Task<List<ClassFeeList>> GetClassFeeListByClassIdFeeHeadIdSessionIdAsync(int classId, int feeHeadId, int sessionId)
+        {
+            List<ClassFeeList> results = new List<ClassFeeList>();
+            try
+            {
+                results = await _context.ClassFeeList
+                .Where(s => s.AcademicClassId == classId &&
+                s.AcademicSessionId == sessionId &&
+                s.StudentFeeHeadId == feeHeadId)
+                .ToListAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return results;
         }
     }
 }

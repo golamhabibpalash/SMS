@@ -21,7 +21,6 @@ namespace SMS.DB
             : base(options)
         {
         }
-
         public DbSet<AcademicClass> AcademicClass { get; set; }
         public DbSet<AcademicSection> AcademicSection { get; set; }
         public DbSet<AcademicSession> AcademicSession { get; set; }
@@ -88,6 +87,10 @@ namespace SMS.DB
         public DbSet<RptDailyAttendaceVM> RptDailyAttendaceVMs { get; set; }
         [NotMapped]
         public DbSet<RptPaymentReceiptVM> RptPaymentReceiptVMs { get; set; }
+        [NotMapped]
+        public DbSet<StudentPaymentScheduleVM> StudentPaymentScheduleVMs { get; set; }
+        [NotMapped]
+        public DbSet<StudentPaymentSchedulePaidVM> StudentPaymentSchedulePaidVMs { get; set; }
         public DbSet<StudentListVM> StudentListVMs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -102,14 +105,8 @@ namespace SMS.DB
             builder.Entity<RptDailyAttendaceVM>().ToView(nameof(RptDailyAttendaceVMs)).HasNoKey();
             builder.Entity<StudentListVM>().ToView(nameof(StudentListVMs)).HasNoKey();
             builder.Entity<RptPaymentReceiptVM>().ToView(nameof(RptPaymentReceiptVMs)).HasNoKey();
-
-            //builder.Entity<StudentPayment>()
-            //    .HasMany(p => p.StudentPaymentDetails)
-            //    .WithOne(p => p.StudentPayment)
-            //    .HasForeignKey(p => p.StudentPayment.Id)
-            //    .OnDelete(DeleteBehavior.Cascade);
-
-        }
-        
+            builder.Entity<StudentPaymentScheduleVM>().ToView(nameof(StudentPaymentScheduleVMs)).HasNoKey();
+            builder.Entity<StudentPaymentSchedulePaidVM>().ToView(nameof(StudentPaymentSchedulePaidVMs)).HasNoKey();
+        }        
     }
 }

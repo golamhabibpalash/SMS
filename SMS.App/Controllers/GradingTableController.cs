@@ -7,7 +7,9 @@ using SMS.BLL.Contracts;
 using SMS.Entities;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
@@ -24,9 +26,9 @@ namespace SMS.App.Controllers
 
         public async Task<IActionResult> Index()
         {
-            List<GradingIndexVM> gradingIndexVMs = new List<GradingIndexVM>(); 
+            List<GradingIndexVM> gradingIndexVMs = new List<GradingIndexVM>();
             List<GradingTable> gradingTables = (List<GradingTable>)await _gradingTableManager.GetAllAsync();
-            if (gradingTables!=null)
+            if (gradingTables != null)
             {
                 foreach (var item in gradingTables)
                 {
@@ -39,7 +41,7 @@ namespace SMS.App.Controllers
                 }
             }
 
-            return View(gradingIndexVMs);
+            return View(gradingIndexVMs.OrderByDescending(s => s.GradePoint));
         }
         public IActionResult Details()
         {
@@ -57,8 +59,8 @@ namespace SMS.App.Controllers
                 obj.CreatedAt = DateTime.Now;
                 obj.CreatedBy = HttpContext.Session.GetString("UserId");
                 obj.MACAddress = MACService.GetMAC();
-                bool IsValidObj = ValidateGradingTableObject(obj);
-                if (IsValidObj)
+                var IsValidObj = await ValidateGradingTableObject(obj);
+                if (IsValidObj.isValid)
                 {
                     bool isSaved = await _gradingTableManager.AddAsync(obj);
                     if (isSaved)
@@ -69,19 +71,92 @@ namespace SMS.App.Controllers
                 }
                 else
                 {
-                    TempData["error"] = "Failed to add new grading system.";
+                    TempData["failed"] = IsValidObj.eMsg;
                 }
             }
             return View(obj);
         }
 
-        private bool ValidateGradingTableObject(GradingTable obj)
+        public async Task<IActionResult> Delete(int id)
         {
+            var s = await _gradingTableManager.GetByIdAsync(id);
+            if (s != null)
+            {
+                TempData["Id"] = id;
+            }
+            return View(s);
+        }
+        [HttpPost]
+        public async Task<IActionResult> DeleteConfirm(int id, string dVal)
+        {
+            bool isDelete = true;
+            if (id.ToString() != TempData["Id"].ToString())
+            {
+                isDelete = false;
+            }
+            if (dVal != "Delete")
+            {
+                isDelete = false;
+            }
+            if (isDelete)
+            {
+                GradingTable existingGradingTable = await _gradingTableManager.GetByIdAsync(id);
+                if (existingGradingTable != null)
+                {
+                    bool isSuccess = await _gradingTableManager.RemoveAsync(existingGradingTable);
+                    if (isSuccess)
+                    {
+                        TempData["deleted"] = "Item has been deleted";
+                    }
+                    else
+                    {
+                        TempData["failed"] = "Delete operation failed";
+                    }
+                }
+                else
+                {
+                    TempData["failed"] = "Item not found";
+                }
+            }
+            return RedirectToAction("Index");
+        }
+        private async Task<(bool isValid, string eMsg)> ValidateGradingTableObject(GradingTable obj)
+        {
+            bool isValid = true;
+            string msg = string.Empty;
             if (obj.NumberRangeMin > obj.NumberRangeMax)
             {
-                return false;
+                msg = "Max number should be greater than Min Number";
+                isValid = false;
+                return new(isValid, msg);
             }
-            return true;
+            var allGradings = await _gradingTableManager.GetAllAsync();
+            foreach (var grading in allGradings)
+            {
+                int min = grading.NumberRangeMin;
+                for (int i = grading.NumberRangeMin; i <= grading.NumberRangeMax; i++)
+                {
+                    if (i == obj.NumberRangeMin || i == obj.NumberRangeMax)
+                    {
+                        isValid = false;
+                        msg = "This number ("+i+") is already used.";
+                        break;
+                    }
+                }
+                if (grading.LetterGrade == obj.LetterGrade)
+                {
+                    isValid = false;
+                    msg = "Same Letter grade ("+grading.LetterGrade+") is already used";
+                    break;
+                }
+                if (grading.GradePoint == obj.GradePoint)
+                {
+                    isValid = false;
+                    msg = "Same Grade Point ("+grading.GradePoint+") is already used";
+                    break;
+                }
+            }
+            return new(isValid, msg);
         }
     }
 }

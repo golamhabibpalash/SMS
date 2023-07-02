@@ -1,0 +1,43 @@
+﻿@model GradingTable
+@{
+    ViewBag.Title = "Delete Grading Point";
+    GlobalUI.PageTitle = ViewBag.title;
+}
+<div class="row">
+    <div class="col-md-6">
+        <h2 class="text-danger">Do you want to Delete this Item?</h2>
+        <table class="table table-responsive table-danger">
+            <thead>
+                <tr>
+                    <td>Letter Grade</td>
+                    <td>Number Range</td>
+                    <td>Grade Point</td>
+                    <td>Created At</td>
+                    <td>Created By</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@Model.LetterGrade</td>
+                    <td>@Model.NumberRangeMin - @Model.NumberRangeMax</td>
+                    <td>@Model.GradePoint</td>
+                    <td>@Model.CreatedAt</td>
+                    <td>@Model.CreatedBy</td>
+                </tr>
+            </tbody>
+        </table>
+        <form asp-action="DeleteConfirm" method="post">
+            <input type="hidden" asp-for="Id" />
+            <input name="dVal" type="submit" class="btn btn-danger" value="Delete" />
+            <input name="dVal" type="submit" class="btn btn-primary" value="Cancel" />
+        </form>
+    </div>
+
+
+
+
+
+
+
+
+</div>

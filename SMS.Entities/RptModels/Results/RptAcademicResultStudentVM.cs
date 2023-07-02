@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SMS.Entities
+namespace SMS.Entities.RptModels.Results
 {
-    public class FingerPrint : CommonProps
+    public class RptAcademicResultStudentVM
     {
-        
+
     }
 }

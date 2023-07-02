@@ -16,9 +16,9 @@ namespace SMS.Entities
         [Display(Name = "Number Range(Max)")]
         public int NumberRangeMax { get; set; }
         [StringLength(2,ErrorMessage ="Write a suitable Grade by letter")]
-        [Display(Name = "Letter Grade")]
+        [Display(Name = "Letter Grade"),Required]
         public string LetterGrade { get; set; }
-        [Display(Name = "Grade Point")]
+        [Display(Name = "Grade Point"),Required]
         public decimal GradePoint { get; set; }
     }
 }

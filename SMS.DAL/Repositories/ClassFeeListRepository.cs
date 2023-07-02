@@ -27,6 +27,10 @@ namespace SMS.DAL.Repositories
                 .ToListAsync();
             return feeLists;
         }
+        public override async Task<ClassFeeList> GetByIdAsync(int id)
+        {
+            return await _context.ClassFeeList.Include(s => s.AcademicClass).Include(c => c.StudentFeeHead).FirstOrDefaultAsync(s => s.Id == id);
+        }
         public async Task<List<ClassFeeList>> GetAllByClassIdAsync(int classId)
         {
             var result = await _context.ClassFeeList.Include(c => c.StudentFeeHead).Where(c => c.AcademicClassId == classId).ToListAsync();

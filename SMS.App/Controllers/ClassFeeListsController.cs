@@ -43,7 +43,7 @@ namespace SMS.App.Controllers
             ViewBag.currentSessionId = currentSession.Id;
             var result = await _classFeeListManager.GetAllAsync();
             
-            return View(result);
+            return View(result.OrderByDescending(s => s.AcademicSessionId).ThenBy(m => m.AcademicClassId).ThenBy( s=> s.StudentFeeHeadId));
         }
 
         // GET: StudentFeeLists/Details/5

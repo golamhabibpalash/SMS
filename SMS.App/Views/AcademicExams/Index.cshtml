@@ -56,14 +56,6 @@
             {
                 foreach (var item in Model)
                 {
-                    if (item.MonthId == Convert.ToInt32(DateTime.Now.ToString("MM")))
-                    {
-                        styleForCurrentTransaction = "background:antiquewhite";
-                    }
-                    else
-                    {
-                        styleForCurrentTransaction = "";
-                    }
                     <tr style="@styleForCurrentTransaction">
                         <td>@(++sl).</td>
                         @*<td>@item.ExamName</td>*@
@@ -79,18 +71,18 @@
                                 @item.AcademicSection.Name
                             }
                         </td>
-                        <td>@item.AcademicExamType.ExamTypeName</td>
+                        @*<td>@item.AcademicExamType.ExamTypeName</td>*@
                         <td>
-                            @months[item.MonthId - 1]
+                            @*@months[item.MonthId - 1]*@
                         </td>
-                        <td>@item.AcademicSession.Name</td>
+                        @*<td>@item.AcademicSession.Name</td>
                         <td>@item.Employee.EmployeeName</td>
-                        <td>@item.AcademicExamDetails.Count</td>
+                        <td>@item.AcademicExamDetails.Count</td>*@
                         <td>@item.TotalMarks</td>
                         @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
                         {
                             <td>
-                                @if (item.IsActive)
+                                @*@if (item.IsActive)
                                 {
                                     <span id="id_@item.Id" class="p-1 lockBtn" type="button" data-id="@item.Id">
                                         <i class="fa fa-lock fa-lg text-danger"></i>
@@ -101,19 +93,19 @@
                                     <span id="id_@item.Id" class="p-1 unLockBtn" type="button" data-id="@item.Id">
                                         <i class="fa fa-lock-open fa-lg text-info"></i>
                                     </span>
-                                }
+                                }*@
                             </td>
                         }
 
                         <td>
                             <span>
                                 <partial name="_Edit_Details_Delete" model="@item.Id" />
-                                @if (item.IsActive)
+                                @*@if (item.IsActive)
                                 {
                                     <span class="p-1" type="button">
                                         <i class="fa fa-lock fa-lg text-danger"></i>
                                     </span>
-                                }
+                                }*@
                             </span>
 
                         </td>

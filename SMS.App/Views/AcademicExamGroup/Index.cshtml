@@ -1,0 +1,64 @@
+﻿@{
+    GlobalUI.PageTitle = "Exam Groups";
+    int sl = 0;
+}
+@model IEnumerable<AcademicExamGroup>
+
+@if (Model.Any())
+{
+
+    <table class="table table-striped table-bordered">
+        <thead class="table-primary">
+            <tr>
+                <td>#</td>
+                <td>Exam Group Name</td>
+                <td>Exam Type</td>
+                <td>Academic Session</td>
+                <td>Group Status</td>
+                <td>
+                    <partial name="_Create" />
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@(++sl)</td>
+                    <td>@item.ExamGroupName</td>
+                    <td>@item.academicExamType.ExamTypeName</td>
+                    <td>@item.AcademicSession.Name</td>
+                    <td>@item.Status</td>
+                    <td>
+                        <partial name="_Edit_Details_Delete" model="@item.Id" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}
+else
+{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="well text-center">
+                <h3>No Data Found <i class="text-primary fa fa-sad-tear"></i></h3><br />
+                <form asp-action="Creat" method="get">
+                    <partial name="_Create" />
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
+
+@section scripts{
+    <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
+    <script>
+        let deleted = '@TempData["deleted"]';
+        let created = '@TempData["created"]';
+        let updated = '@TempData["updated"]';
+        let failed = '@TempData["error"]';
+    </script>
+}

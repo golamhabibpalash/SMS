@@ -10,19 +10,30 @@ namespace SMS.Entities
 {
     public class Institute :CommonProps
     {
+        [Display(Name ="Institute Name")]
         public string Name { get; set; }
-        public string EIIN { get; set; }
-        public string Slogan { get; set; }
-        public string Banner { get; set; }
-        public string Logo { get; set; }
-        public string FavIcon { get; set; }
-        public string Address { get; set; }
-        public string BranchName { get; set; }
 
-        [Display(Name ="School Opening Time")]
+        public string EIIN { get; set; }
+        [Display(Name ="Branch Name")]
+        public string BranchName { get; set; }
+        [Phone,Display(Name ="Phone(1)")]
+        public string Phone1 { get; set; }
+        [Phone, Display(Name = "Phone(2)")]
+        public string Phone2 { get; set; }
+        [EmailAddress]
+        public string Email { get; set; }
+        public string Slogan { get; set; }
+        public string Logo { get; set; }
+        [Display(Name ="Title Icon")]
+        public string FavIcon { get; set; }
+
+        public string Address { get; set; }
+        public string Banner { get; set; }
+
+        [Display(Name ="Institute Opening Time")]
         public DateTime StartingTime { get; set; }
 
-        [Display(Name = "School Closing Time")]
+        [Display(Name = "Institute Closing Time")]
         public DateTime ClosingTime { get; set; }
 
         [Display(Name = "Late Time")]

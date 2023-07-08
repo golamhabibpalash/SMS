@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SchoolManagementSystem;
+using SMS.App.Utilities.MACIPServices;
 using SMS.App.ViewModels.InstituteVM;
 using SMS.BLL.Contracts;
 using SMS.Entities;
@@ -117,56 +118,73 @@ namespace SMS.App.Controllers
 
 
         [HttpPost,ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int id,Institute existingInstitute, IFormFile logo, IFormFile banner)
+        public async Task<ActionResult> Edit(int id,Institute existingInstitute, IFormFile logo, IFormFile banner, IFormFile fav_Icon)
         {
-            string InstituteLogo = "";
-            string InstituteBanner = "";
             if (ModelState.IsValid)
             {
                 try
                 {
+                    string img = "";
+                    string root = _host.WebRootPath;
+                    string folder = "Images/Institute/";
                     if (logo != null)
                     {
                         string fileExt = Path.GetExtension(logo.FileName);
-                        string root = _host.WebRootPath;
-                        string folder = "Images/Institute/";
-                        InstituteLogo = "instituteLogo_" + Guid.NewGuid() + fileExt;
-                        string pathCombine = Path.Combine(root, folder, InstituteLogo);
+                        img = "instituteLogo_" + Guid.NewGuid() + fileExt;
+                        string pathCombine = Path.Combine(root, folder, img);
                         using (var stream = new FileStream(pathCombine, FileMode.Create))
                         {
                             await logo.CopyToAsync(stream);
                         }
-                        existingInstitute.Logo = InstituteLogo;
+                        existingInstitute.Logo = img;
                     }
 
                     if (banner != null)
                     {
                         string fileExt = Path.GetExtension(banner.FileName);
-                        string root = _host.WebRootPath;
-                        string folder = "Images/Institute/";
-                        InstituteBanner = "instituteBanner_" + Guid.NewGuid() + fileExt;
-                        string pathCombine = Path.Combine(root, folder, InstituteBanner);
+                        img = "instituteBanner_" + Guid.NewGuid() + fileExt;
+                        string pathCombine = Path.Combine(root, folder, img);
                         using (var stream = new FileStream(pathCombine, FileMode.Create))
                         {
                             await banner.CopyToAsync(stream);
                         }
-                        existingInstitute.Banner = InstituteBanner;
+                        existingInstitute.Banner = img;
                     }
 
+                    if (fav_Icon !=null)
+                    {
+                        string fileExt = Path.GetExtension(fav_Icon.FileName);
+                        img = "instituteFavIcon_" + Guid.NewGuid() + fileExt;
+                        string pathCombine = Path.Combine(root, folder, img);
+                        using (var stream = new FileStream(pathCombine, FileMode.Create))
+                        {
+                            await fav_Icon.CopyToAsync(stream);
+                        }
+                        existingInstitute.FavIcon = img;
+                    }
                     existingInstitute.EditedAt = DateTime.Now;
                     existingInstitute.EditedBy = HttpContext.Session.GetString("UserId");
-                    await _instituteManager.UpdateAsync(existingInstitute);
-
-                    return RedirectToAction("Index");
-
+                    existingInstitute.MACAddress = MACService.GetMAC();
+                    bool isUpdate = await _instituteManager.UpdateAsync(existingInstitute);
+                    if (isUpdate)
+                    {
+                        TempData["updated"] = "Information updated successfully";
+                    }
+                    else
+                    {
+                        TempData["error"] = "Failed to update.";
+                    }
                 }
                 catch
                 {
                     return View(existingInstitute);
                 }
             }
-            var institute = await _instituteManager.GetByIdAsync(id);
-            return View(institute);
+            else
+            {
+                TempData["error"] = "Input value something wrong.";
+            }
+            return RedirectToAction("Index");
         }
 
         public ActionResult Delete(int id)

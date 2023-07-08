@@ -4,7 +4,7 @@
     ViewData["Title"] = "Student Payment";
     GlobalUI.PageTitle = "Student Payment";
 }
-<div class="row pt-3 pb-2 bg-orange">
+<div class="row pt-3 pb-2 bg-Teal">
     <div class="col-md-12 text-center">
         <form asp-action="Payment" asp-controller="StudentPayments" class="" method="get">
             <div class="form-group row">
@@ -25,8 +25,48 @@
                 <div class="col-md-1">
                     <button type="submit" class="btn btn-info rounded" id="submitButton">Search</button>
                 </div>
+                <div class="col-md-1">
+                    <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal">
+                        Select
+                    </button>
+                </div>
             </div>
         </form>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content text-center">
+            <div class="modal-header text-center">
+                <h4 class="text-center">Select Student</h4>
+            </div>
+            <div class="modal-body">
+                <form action="/" method="post">
+                    <div class="form-group row">
+                        <label class="col-md-4 text-md-right">Academic Class</label>
+                        <div class="col-md-8">
+                            <select class="form-control" asp-items="ViewBag.AcademicClassList" id="academicClassId">
+                                <option selected disabled>-Select Class-</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-4 text-md-right">Student</label>
+                        <div class="col-md-8">
+                            <select class="form-control" id="studentListId">
+                                <option selected disabled>-Select Student-</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -46,12 +86,48 @@
 
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
-<script>
+    <script>
         let created = '@TempData["created"]';
 
 
         $(document).ready(function () {
             $('#msgId').fadeOut(6000);
+
+
+
+            $('#academicClassId').change(function () {
+                let id = $('#AcademicClassId option:selected').val();
+
+                $.ajax({
+                    url: "/api/Students/GetStudentsByClassSessionAsync?classId=" + id + "&sessionId=" + null,
+                    dataType: "JSON",
+                    type: "POST",
+                    cache: false,
+                    success: function (data) {
+                        $('#studentListId').empty();
+
+                        if (data != null || data != '') {
+                            var o = '<option disabled selected>Select Student</option>';
+                           
+                            $('#AcademicSectionId').append(o);
+                           
+                            $.each(data, function (i, obj) {
+                                console.log(obj.name);
+                                var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
+                                $('#AcademicSectionId').append(op);
+                            });
+                        }
+                        else {
+                            var o = '<option disabled selected>Section Not Found</option>';
+                            $('#AcademicSectionId').append(o);
+                        }
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                });
+            });
+
         });
-</script>
+    </script>
 }

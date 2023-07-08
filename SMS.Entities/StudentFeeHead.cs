@@ -13,5 +13,6 @@ namespace SMS.Entities
 
         [Display(Name ="Yearly Frequency")]
         public int? YearlyFrequency { get; set; }
+        public int? ContraFeeheadId { get; set; } = 0;
     }
 }

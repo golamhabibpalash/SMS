@@ -57,7 +57,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Repeatedly,YearlyFrequency,CreatedBy,CreatedAt,EditedBy,EditedAt")] StudentFeeHead studentFeeHead)
+        public async Task<IActionResult> Create([Bind("Id,Name,Repeatedly,YearlyFrequency,CreatedBy,CreatedAt,EditedBy,EditedAt,ContraFeeheadId")] StudentFeeHead studentFeeHead)
         {
             string msg = "";
             var sfhExist = await _studentFeeHeadManager.GetByNameAsync(studentFeeHead.Name);
@@ -91,7 +91,7 @@ namespace SMS.App.Controllers
             {
                 return NotFound();
             }
-
+            ViewData["StudentFeeHeadList"] = new SelectList(await _studentFeeHeadManager.GetAllAsync(), "Id", "Name");
             var studentFeeHead = await _studentFeeHeadManager.GetByIdAsync((int)id);
             if (studentFeeHead == null)
             {
@@ -102,7 +102,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Repeatedly,YearlyFrequency,CreatedBy,CreatedAt,EditedBy,EditedAt")] StudentFeeHead studentFeeHead)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Repeatedly,YearlyFrequency,CreatedBy,CreatedAt,EditedBy,EditedAt,ContraFeeheadId")] StudentFeeHead studentFeeHead)
         {
             string msg = "";
             int isChanged = 0;
@@ -111,11 +111,19 @@ namespace SMS.App.Controllers
             {
                 return NotFound();
             }
+            if (studentFeeHead.Id == studentFeeHead.ContraFeeheadId)
+            {
+                ViewData["StudentFeeHeadList"] = new SelectList(await _studentFeeHeadManager.GetAllAsync(), "Id", "Name", studentFeeHead.ContraFeeheadId);
+                msg = "Same Type and Contra Type will not be same.";
+                ViewBag.msg = msg;
+                TempData["editFail"] = msg;
+                return View(studentFeeHead);
+            }
             var sfhExist =await _studentFeeHeadManager.GetByIdAsync(id);
 
             if (sfhExist!=null)
             {
-                if (studentFeeHead.Name != sfhExist.Name || studentFeeHead.Repeatedly != sfhExist.Repeatedly || studentFeeHead.YearlyFrequency != sfhExist.YearlyFrequency)
+                if (studentFeeHead.Name != sfhExist.Name || studentFeeHead.Repeatedly != sfhExist.Repeatedly || studentFeeHead.YearlyFrequency != sfhExist.YearlyFrequency || studentFeeHead.ContraFeeheadId != sfhExist.ContraFeeheadId)
                 {
                     isChanged = 1;
                 }
@@ -141,6 +149,24 @@ namespace SMS.App.Controllers
                         bool isSaved = await _studentFeeHeadManager.UpdateAsync(studentFeeHead);
                         if (isSaved)
                         {
+
+
+                            if (studentFeeHead.ContraFeeheadId > 0)
+                            {
+                                StudentFeeHead existingFeeHead = await _studentFeeHeadManager.GetByIdAsync((int)studentFeeHead.ContraFeeheadId);
+                                existingFeeHead.ContraFeeheadId = studentFeeHead.Id;
+                                await _studentFeeHeadManager.UpdateAsync(existingFeeHead);
+                            }
+                            else
+                            {
+                                var feeHeads = await _studentFeeHeadManager.GetAllAsync();
+                                StudentFeeHead existingFeeHead = feeHeads.FirstOrDefault(h => h.ContraFeeheadId == (int)studentFeeHead.Id);
+                                if (existingFeeHead!=null)
+                                {
+                                    existingFeeHead.ContraFeeheadId = null;
+                                    await _studentFeeHeadManager.UpdateAsync(existingFeeHead);
+                                }
+                            }
                             TempData["edit"] = "Edited Successfully.";
                         }
                     }
@@ -159,6 +185,7 @@ namespace SMS.App.Controllers
                     return RedirectToAction(nameof(Index));
                 }
             }
+            ViewData["StudentFeeHeadList"] = new SelectList(await _studentFeeHeadManager.GetAllAsync(), "Id", "Name",studentFeeHead.ContraFeeheadId);
             return View(studentFeeHead);
         }
 

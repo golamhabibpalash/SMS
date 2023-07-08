@@ -46,7 +46,7 @@ namespace SMS.App.Controllers
 
         // GET: StudentPayments
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             try
             {
@@ -61,6 +61,7 @@ namespace SMS.App.Controllers
                     msg = TempData["msg"].ToString();
                 }
                 ViewBag.msg = msg;
+                ViewData["AcademicClassList"] = new SelectList(await _academicClassManager.GetAllAsync(),"Id","Name");
             }
             catch (Exception)
             {

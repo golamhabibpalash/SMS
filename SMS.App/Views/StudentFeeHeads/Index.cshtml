@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Fee Head";
-    GlobalUI.PageTitle = "Student Payment Fee Head List";
+    GlobalUI.PageTitle = "Student Payment Type List";
     int sl = 0;
 }
 
@@ -19,6 +19,9 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.YearlyFrequency)
+            </th>
+            <th>
+                Contra Type
             </th>
             <th>
                 <a class="rounded btn btn-info btn-sm" asp-action="Create"> <i class="fa fa-plus"></i> Add New</a>
@@ -38,6 +41,16 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.YearlyFrequency)
+                </td>
+                <td title="Vise versa payment type">
+                    @if (item.ContraFeeheadId>0)
+                    {
+                        <span>@item.ContraFeeheadId</span>
+                    }
+                    else
+                    {
+                        <span>N/A</span>
+                    }
                 </td>
                 <td>
                     <partial name="_Edit_Details_Delete" model="@item.Id" />

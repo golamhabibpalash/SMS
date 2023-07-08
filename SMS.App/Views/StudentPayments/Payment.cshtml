@@ -78,20 +78,20 @@
 
         body
         {
-            background: #00B4DB;
+/*            background: #00B4DB;
             background: -webkit-linear-gradient(to right, #0083B0, #00B4DB);
-            background: linear-gradient(to right, #0083B0, #00B4DB);
+            background: linear-gradient(to right, #0083B0, #00B4DB);*/
             color: #514B64;
             min-height: 100vh
         }
     </style>
 }
-<div class="row pt-3 pb-2 bg-orange">
+<div class="row pt-3 pb-2" style="background-color: #2A3F54;">
     <div class="col-md-12 text-center">
         <form asp-action="Payment" asp-controller="StudentPayments" method="get" class="">
             <div class="form-group row">
                 <label class="col-md-3 offset-2 col-form-label text-right">
-                    <span class="h5">Student Roll</span>
+                    <span class="h5 text-light">Student Roll</span>
                 </label>
                 <div class="col-md-4">
                     @if (ViewBag.roll != null)
@@ -155,7 +155,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-7 bg-info mh-100 border-left border-light">
+        <div class="col-md-7 mh-100 border-left border-light" style="background-color: #2A3F54;">
             <form asp-action="payment" asp-controller="StudentPayments" method="post">
                 <input type="hidden" asp-for="StudentPayment.StudentId" value="@Model.StudentId" />
                 <div class="row">

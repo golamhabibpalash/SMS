@@ -679,7 +679,8 @@ namespace SchoolManagementSystem.Controllers
         
         private async Task<double> GetCurrntDue(int studId)
         {
-            double totalDue = 0.00;
+            double currentDue = 0.00;
+            double totalAmount = 0.00;
             Student st = await _studentManager.GetByIdAsync(studId);
             try
             {
@@ -687,18 +688,50 @@ namespace SchoolManagementSystem.Controllers
                 int currentYear = DateTime.Now.Year;
 
                 int admissionMonth = admissionYear < currentYear ? 1 : st.AdmissionDate.Month;
-                double monthlyFee = await GetFeeAsync(st.AcademicClassId, 1); //1=monthlyfee, 2=admissionFee, 3=ExamFee
-                double admissionFee = await GetFeeAsync(st.AcademicClassId, 2); //1=monthlyfee, 2=admissionFee, 3=ExamFee
-                double totalAmount = ((DateTime.Now.Month - (admissionMonth - 1)) * monthlyFee) + admissionFee;
+                List<ClassFeeList> feeLists = await _classFeeListManager.GetAllByClassIdAsync(st.AcademicClassId);
+                feeLists = feeLists
+                    .Where(s => s.AcademicSessionId == st.AcademicSessionId).ToList();
+                var res = from cFee in feeLists
+                            select (cFee.Amount*cFee.StudentFeeHead.YearlyFrequency);
+                 var sdfsdf = feeLists.Select(s => s.Amount*s.StudentFeeHead.YearlyFrequency).Sum();
+
+                double monthlyFee = await GetFeeAsync(st.AcademicClassId, 1); //1=monthlyfee, 2=admissionFee, 3=ExamFee, 4=SessionFee
+                double admissionFee = await GetFeeAsync(st.AcademicClassId, 2); //1=monthlyfee, 2=admissionFee, 3=ExamFee, 4=SessionFee
+                double examFee = await GetFeeAsync(st.AcademicClassId, 3); //1=monthlyfee, 2=admissionFee, 3=ExamFee, 4=SessionFee
+                double sessionFee = await GetFeeAsync(st.AcademicClassId, 4); //1=monthlyfee, 2=admissionFee, 3=ExamFee, 4=SessionFee
+                if (st.AdmissionDate.ToString("dd-MM-yyyy")== "01-01-"+admissionYear)
+                {
+                    totalAmount = ((DateTime.Now.Month - (admissionMonth - 1)) * monthlyFee) + sessionFee;
+                    if (Convert.ToInt32(DateTime.Today.ToString("MM")) >= 6 && Convert.ToInt32(DateTime.Today.ToString("MM")) < 11)
+                    {
+                        totalAmount = totalAmount + examFee;
+                    }
+                    if (Convert.ToInt32(DateTime.Today.ToString("MM")) > 11)
+                    {
+                        totalAmount = totalAmount + (2 * examFee);
+                    }
+                }
+                else
+                {
+                    totalAmount = ((DateTime.Now.Month - (admissionMonth - 1)) * monthlyFee) + admissionFee;
+                    if (Convert.ToInt32(DateTime.Today.ToString("MM")) >= 6 && Convert.ToInt32(DateTime.Today.ToString("MM")) < 11)
+                    {
+                        totalAmount = totalAmount + examFee;
+                    }
+                    if (Convert.ToInt32(DateTime.Today.ToString("MM")) > 11)
+                    {
+                        totalAmount = totalAmount + (2 * examFee);
+                    }
+                }
                 double totalPaid = await GetTotalPaid(st.Id);
-                totalDue = totalAmount - totalPaid;
+                currentDue = totalAmount - totalPaid;
             }
             catch (Exception)
             {
 
                 throw;
             }
-            return totalDue;
+            return currentDue;
         }
         private async Task<double> GetFeeAsync(int aClassId, int feeHeadId)
         {
@@ -722,7 +755,6 @@ namespace SchoolManagementSystem.Controllers
         {
             try
             {
-
                 if (academicSessionId==null)
                 {
                     AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSession();
@@ -737,5 +769,6 @@ namespace SchoolManagementSystem.Controllers
                 throw;
             }
         }
+
     }
 }

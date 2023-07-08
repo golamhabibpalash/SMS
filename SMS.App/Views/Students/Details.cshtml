@@ -32,7 +32,8 @@
     double paymentScheduleTotal = 0.0;
     int paymentSchedulePaidSL = 1;
     double paidScheduleTotal = 0.0;
-
+    DateTime todate = new DateTime(DateTime.Now.Year, 1, 1);
+    string fileName = Model.Student.ClassRoll + "_Payment_Report_" + DateTime.Now.ToString("dd-MM-yyyy");
 }
 @section Styles{
     <style>
@@ -45,11 +46,16 @@
         {
             text-align: right
         }
+
+        .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active{
+            color:black !important;
+        }
+
     </style>
 }
 
 <div class="row p-2">
-    <div class="col-md-3 bg-info mh-100">
+    <div class="col-md-3 bg-info mh-100 rounded">
         <div class="row pt-2">
             <div class="col-md-12 text-center">
                 @if (Model.Student.Photo != null)
@@ -132,7 +138,10 @@
                         <a class="nav-link text-warning" role="tab" aria-controls="financials" aria-selected="true" href="#financials">Student Financials</a>
                     </li>
                     <li class="nav-item bg-Coffee border">
-                        <a class="nav-link text-warning" role="tab" aria-controls="portfolio" aria-selected="true" href="#attendance">Attendance</a>
+                        <a class="nav-link text-warning" role="tab" aria-controls="attendance" aria-selected="true" href="#attendance">Attendance</a>
+                    </li>
+                    <li class="nav-item bg-Coffee border">
+                        <a class="nav-link text-warning" role="tab" aria-controls="results" aria-selected="true" href="#results">Results</a>
                     </li>
                     <li class="nav-item bg-Coffee border">
                         <a class="nav-link text-warning" role="tab" aria-controls="documents" aria-selected="true" href="#documents">Documents</a>
@@ -347,11 +356,11 @@
                     </div>
 
                     <div id="financials" class="tab-pane" role="tabpanel">
-                        <div class="row">
+                        <div class="row mb-2">
                             <div class="col-md-6">
-                                <div class="card p-0">
+                                <div class="card p-0 shadow">
                                     <div class="card-header">
-                                        <span class="card-title">Payment Schedule</span>
+                                        <spn class="card-title h4 font-weight-bold">Payment Schedule</spn>
                                     </div>
                                     <div class="card-body p-0">
                                         @if (Model.StudentPaymentSchedules != null)
@@ -377,7 +386,7 @@
                                                         paymentScheduleTotal += item.Amount * item.yearlyFrequency;
                                                     }
                                                 </tbody>
-                                                <tfoot>
+                                                <tfoot class="table-info">
                                                     <tr class="font-weight-bolder">
                                                         <td colspan="3">Total</td>
                                                         <td class="text-right">@paymentScheduleTotal</td>
@@ -388,10 +397,10 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="card p-0">
+                            <div class="col-md-6 ">
+                                <div class="card p-0 shadow">
                                     <div class="card-header">
-                                        <span class="card-title">Schedule wise paid</span>
+                                        <span class="card-title h4 font-weight-bold">Schedule wise paid</span>
                                     </div>
                                     <div class="card-body p-0">
                                         @if (Model.StudentPaymentSchedulePaidVMs.Count > 0 && Model.StudentPaymentSchedulePaidVMs != null)
@@ -415,7 +424,7 @@
                                                         paidScheduleTotal += item.PaidAmount;
                                                     }
                                                 </tbody>
-                                                <tfoot>
+                                                <tfoot class="table-info">
                                                     <tr class="font-weight-bolder">
                                                         <td colspan="2">Total</td>
                                                         <td class="text-right">@paidScheduleTotal</td>
@@ -429,17 +438,16 @@
                         </div>
 
 
-
-
-
-                        <div class="row">
-                            <div class="col-md-12 alert bg-info">
-                                <div class="col-md-6 text-left">
-                                    <h5 class="h5 text-light">Current Due Amount : <span class="text-warning font-weight-bolder">@Model.CurrentDue tk</span></h5>
-                                    <h5 class="h5 text-light">Total Due Amount : <span class="text-warning font-weight-bolder">@Model.TotalDue tk</span></h5>
-                                </div>
-                                <div class="col-md-6 text-right">
-                                    <a asp-action="Payment" asp-controller="StudentPayments" asp-route-stRoll="@Model.Student.ClassRoll" class="btn btn-warning">Make Payment</a>
+                        <div class="row pl-2 pr-2">
+                            <div class="col-md-12 bg-info well">
+                                <div class="">
+                                    <div class="col-md-6 text-left">
+                                        <h5 class="h5 text-light">Current Due Amount : <span class="text-warning font-weight-bolder">@Model.CurrentDue tk</span></h5>
+                                        <h5 class="h5 text-light">Total Due Amount : <span class="text-warning font-weight-bolder">@Model.TotalDue tk</span></h5>
+                                    </div>
+                                    <div class="col-md-6 text-right">
+                                        <a asp-action="Payment" asp-controller="StudentPayments" asp-route-stRoll="@Model.Student.ClassRoll" class="btn btn-warning">Make Payment</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -448,7 +456,7 @@
                                 <div class="card">
                                     <div class="card-header">
                                         <div class="text-center">
-                                            <span class="h6">Payment History</span>
+                                            <span class="h4 font-weight-bold">Payment History</span>
                                         </div>
                                     </div>
                                     <div class="">
@@ -504,7 +512,7 @@
                             </div>
                             <div class="col-md-2" style="display:flex;flex-direction:column;justify-content:center">
                                 <div>
-                                    <a class="btn btn-warning p-4 font-weight-bolder text-info btn-outline-light" asp-action="StudentPaymentInfoExport" asp-controller="Reports" asp-route-reportType="pdf" asp-route-fileName="@Model.Student.Name Payment Report" asp-route-classRoll="@Model.Student.ClassRoll" target="_blank">
+                                    <a class="btn btn-warning p-4 font-weight-bolder text-info btn-outline-light" asp-action="StudentPaymentInfoExport" asp-controller="Reports" asp-route-reportType="pdf" asp-route-fileName="@fileName" asp-route-classRoll="@Model.Student.ClassRoll" asp-route-fromDate="@todate.ToString("dd-MM-yyyy")" asp-route-toDate="@DateTime.Today.ToString("dd-MM-yyyy")" target="_blank">
                                         <span class="fa fa-file"></span> Get Report
                                     </a>
                                 </div>
@@ -512,10 +520,13 @@
                         </div>
                     </div>
                     <div id="attendance" class="tab-pane">
-                        @for (int i = 0; i < DateTime.Now.Month; i++)
+                        <div class="text-center">
+                            <h4 class="text-danger">This page is under construction</h4>
+                        </div>
+                        @for (int i = 1; i <= DateTime.Now.Month; i++)
                         {
                             <div class="col-md-3 card bg-info text-light m-2">
-                                <div class="card-header">Month @i </div>
+                                <div class="card-header">Month @System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i) </div>
                                 <div class="card-body">
                                     <table>
                                         <tr>
@@ -536,7 +547,16 @@
                             </div>
                         }
                     </div>
+                    <div id="results" class="tab-pane">
+                        <div class="text-center">
+                            <h4 class="text-danger">This page is under construction</h4>
+                        </div>
+                        
+                    </div>
                     <div id="documents" class="tab-pane">
+                        <div class="text-center">
+                            <h4 class="text-danger">This page is under construction</h4>
+                        </div>
                         All Documents will go here
                     </div>
                 </div>

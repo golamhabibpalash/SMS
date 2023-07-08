@@ -124,7 +124,6 @@ builder.Services.AddScoped<INationalityManager, NationalityManager>();
 builder.Services.AddScoped<IStudentPaymentRepository, StudentPaymentRepository>();
 builder.Services.AddScoped<IStudentPaymentManager, StudentPaymentManager>();
 
-
 builder.Services.AddScoped<IStudentPaymentDetailsRepository, StudentPaymentDetailsRepository>();
 builder.Services.AddScoped<IStudentPaymentDetailsManager, StudentPaymentDetailsManager>();
 
@@ -185,6 +184,9 @@ builder.Services.AddScoped<IOffDayTypeManager, OffDayTypeManager>();
 builder.Services.AddScoped<IAcademicExamTypeRepository, AcademicExamTypeRepository>();
 builder.Services.AddScoped<IAcademicExamTypeManager, AcademicExamTypeManager>();
 
+builder.Services.AddScoped<IAcademicExamGroupRepository, AcademicExamGroupRepository>();
+builder.Services.AddScoped<IAcademicExamGroupManager, AcademicExamGroupManager>();
+
 builder.Services.AddScoped<IAcademicExamRepository, AcademicExamRepository>();
 builder.Services.AddScoped<IAcademicExamManager, AcademicExamManager>();
 
@@ -196,6 +198,9 @@ builder.Services.AddScoped<IExamResultRepository, ExamResultRepository>();
 
 builder.Services.AddScoped<IGradingTableManager, GradingTableManager>();
 builder.Services.AddScoped<IGradingTableRepository, GradingTableRepository>();
+
+builder.Services.AddScoped<IStudentFeeAllocationManager, StudentFeeAllocationManager>();
+builder.Services.AddScoped<IStudentFeeAllocationRepository, StudentFeeAllocationRepository>();
 
 //Reporting part start here===================================
 builder.Services.AddScoped<IReportManager, ReportManager>();
@@ -217,8 +222,6 @@ var options = new DashboardOptions
 {
     Authorization = new[] { new HangfireAuthorizationFilter() }
 };
-
-
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using SMS.BLL.Contracts;
+using SMS.App.Utilities.MACIPServices;
 
 namespace SMS.App.Controllers
 {
@@ -58,7 +59,7 @@ namespace SMS.App.Controllers
             {
                 religion.CreatedAt = DateTime.Now;
                 religion.CreatedBy = HttpContext.Session.GetString("UserId");
-
+                religion.MACAddress = MACService.GetMAC();
                 await _religionManager.AddAsync(religion);
                 return RedirectToAction(nameof(Index));
             }

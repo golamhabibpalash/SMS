@@ -12,5 +12,6 @@ namespace SchoolManagementSystem
         public static string SiteTitle { get; set; }
         public static string Favicon { get; set; }
         public static string Logo { get; set; }
+        public static string Language { get; set; }
     }
 }

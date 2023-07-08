@@ -71,6 +71,11 @@ namespace SMS.App.Controllers
                 dataCount = rowCount;
                 ViewBag.rowCount = rowCount;
             }
+            else
+            {
+                dataCount = 20;
+                ViewBag.rowCount = dataCount;
+            }
             List<string> smsTypes = new List<string>();
             if (allSMS!=null)
             {

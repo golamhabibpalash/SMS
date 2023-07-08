@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SMS.DB;
 
@@ -11,9 +12,10 @@ using SMS.DB;
 namespace SMS.DB.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230704154436_AcademicExamGroupAdded_RelatedTableModified")]
+    partial class AcademicExamGroupAdded_RelatedTableModified
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1508,9 +1510,6 @@ namespace SMS.DB.Migrations
                     b.Property<string>("EditedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("FavIcon")
                         .HasColumnType("nvarchar(max)");
 
@@ -1524,12 +1523,6 @@ namespace SMS.DB.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone1")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone2")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Slogan")
@@ -2347,9 +2340,6 @@ namespace SMS.DB.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<double>("AllocatedAmount")
-                        .HasColumnType("float");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -2393,9 +2383,6 @@ namespace SMS.DB.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int?>("ContraFeeheadId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");

@@ -57,12 +57,14 @@ namespace SMS.DB
         public DbSet<SetupMobileSMS> SetupMobileSMSs { get; set; }
         public DbSet<AcademicExamType> AcademicExamTypes { get; set; }
         public DbSet<AcademicExam> AcademicExams { get; set; }
+        public DbSet<AcademicExamGroup> AcademicExamGroups { get; set; }
         public DbSet<AcademicExamDetail> AcademicExamDetails { get; set; }
         public DbSet<OffDay> OffDays { get; set; }
         public DbSet<OffDayType> OffDayTypes { get; set; }
         public DbSet<ExamResult> ExamResults { get; set; }
         public DbSet<ExamResultDetail> ExamResultDetails { get; set; }
         public DbSet<GradingTable> GradingTables { get; set; }
+        public DbSet<StudentFeeAllocation> StudentFeeAllocations { get; set; }
 
         [NotMapped]
         public DbSet<RptStudentVM> RptStudentVMs { get; set; }

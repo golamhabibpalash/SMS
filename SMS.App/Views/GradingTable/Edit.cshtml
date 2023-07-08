@@ -1,13 +1,14 @@
 ﻿@model GradingTable
 @{
-    ViewBag.Title = "Create Grading List";
+    ViewBag.Title = "Update Grading List";
     GlobalUI.PageTitle = ViewBag.title;
 }
 <div class="row">
     <div class="col-md-6">
         <fieldset class="border border-info p-2">
             <legend class="w-auto text-primary">Grading Information</legend>
-            <form asp-action="Create" method="post">
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="Id" />
                 <div class="form-group row">
                     <label class="col-form-label col-sm-4 col-md-3" asp-for="NumberRangeMin"></label>
                     <div class="col-md-3 ">
@@ -39,7 +40,7 @@
 
                 <div class="form-group row">
                     <div class="col-md-12 text-right">
-                        <partial name="_Create_Back" />
+                        <partial name="_Edit_Back" model="@Model.Id" />
                     </div>
                 </div>
             </form>

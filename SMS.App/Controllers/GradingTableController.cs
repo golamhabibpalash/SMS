@@ -76,7 +76,42 @@ namespace SMS.App.Controllers
             }
             return View(obj);
         }
+        public async Task<IActionResult> Edit(int id)
+        {
+            GradingTable gradingTable = await _gradingTableManager.GetByIdAsync(id);
+            if (gradingTable == null)
+            {
+                TempData["error"] = "Item not found";
+                return RedirectToAction("Index");
+            }
 
+            return View(gradingTable);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Edit(GradingTable obj)
+        {
+            if (ModelState.IsValid)
+            {
+                obj.EditedAt = DateTime.Now;
+                obj.EditedBy = HttpContext.Session.GetString("UserId");
+                obj.MACAddress = MACService.GetMAC();
+                var IsValidObj = await ValidateGradingTableObject(obj);
+                if (IsValidObj.isValid)
+                {
+                    bool isUpdated = await _gradingTableManager.UpdateAsync(obj);
+                    if (isUpdated)
+                    {
+                        TempData["created"] = "Grading Row Updated Successfully.";
+                        return RedirectToAction("Index");
+                    }
+                }
+                else
+                {
+                    TempData["failed"] = IsValidObj.eMsg;
+                }
+            }
+            return View(obj);
+        }
         public async Task<IActionResult> Delete(int id)
         {
             var s = await _gradingTableManager.GetByIdAsync(id);
@@ -146,13 +181,13 @@ namespace SMS.App.Controllers
                 if (grading.LetterGrade == obj.LetterGrade)
                 {
                     isValid = false;
-                    msg = "Same Letter grade ("+grading.LetterGrade+") is already used";
+                    msg = "Same Letter grade ("+grading.LetterGrade+") is already Exist";
                     break;
                 }
                 if (grading.GradePoint == obj.GradePoint)
                 {
                     isValid = false;
-                    msg = "Same Grade Point ("+grading.GradePoint+") is already used";
+                    msg = "Same Grade Point ("+grading.GradePoint+") is already Exist";
                     break;
                 }
             }

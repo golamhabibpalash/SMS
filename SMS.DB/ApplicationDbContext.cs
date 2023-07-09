@@ -65,6 +65,8 @@ namespace SMS.DB
         public DbSet<ExamResultDetail> ExamResultDetails { get; set; }
         public DbSet<GradingTable> GradingTables { get; set; }
         public DbSet<StudentFeeAllocation> StudentFeeAllocations { get; set; }
+        public DbSet<NotificationEvent> NotificationEvents { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
         [NotMapped]
         public DbSet<RptStudentVM> RptStudentVMs { get; set; }

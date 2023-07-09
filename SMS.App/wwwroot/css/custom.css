@@ -1137,9 +1137,11 @@ body .container.body .right_col {
   background: #50C1CF !important;
   border: 1px solid #50C1CF !important;
   color: #fff; }
-.bg-navy-blue{
-    background: #172d44 !important;
-    color:#fff;}
+.bg-navy-blue
+{
+    background: #2A3F54 !important;
+    color: #fff;
+}
 
 .container {
   width: 100%;
@@ -2987,14 +2989,15 @@ a.btn-success, a.btn-primary, a.btn-warning, a.btn-danger {
   right: -10px;
   font-size: 10px;
   font-weight: 400; }
-.btn-navy-blue{
-    background: #172d44;
-    color:#fff;
+.btn-navy-blue
+{
+    background: #2A3F54;
+    color: #fff;
 }
 .btn-navy-blue:hover
 {
-    border: 1px solid #172d44;
-    background: #2a3f54;
+    border: 1px solid #2A3F54;
+    background: #172d44;
     color: #fff;
 }
 

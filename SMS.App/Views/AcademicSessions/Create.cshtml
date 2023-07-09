@@ -5,7 +5,7 @@
     GlobalUI.PageTitle = ViewBag.Title;
 }
 
-<div class="row">
+<div class="row" id="academicSessionCreatePartId">
     <div class="col-md-10 offset-1 shadow">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -20,10 +20,12 @@
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
             </div>
-            <div class="form-group form-check row">                
-                <label class="form-check-label offset-2">                    
-                    <input class="form-check-input" asp-for="Status" /> @Html.DisplayNameFor(model => model.Status)
+            <div class="form-group row">
+                <label asp-for="Status" class="form-check-label col-form-label col-md-2 text-md-right">
                 </label>
+                <div class="col-md-1 text-md-left">
+                    <input class="form-check-input form-control" asp-for="Status" />
+                </div>
             </div>
             
             <div class="form-group row offset-2">

@@ -4,33 +4,33 @@
     ViewData["Title"] = "Student Payment";
     GlobalUI.PageTitle = "Student Payment";
 }
-<div class="row pt-3 pb-2 bg-Teal">
+<div class="row pt-3 pb-2 bg-navy-blue">
     <div class="col-md-12 text-center">
-        <form asp-action="Payment" asp-controller="StudentPayments" class="" method="get">
-            <div class="form-group row">
-                <label class="col-md-2 offset-2 col-form-label text-right">
-                    <span class="h5">Student Roll</span>
-                </label>
-                <div class="col-md-4">
-                    @if (ViewBag.roll != null)
-                    {
-                        <input id="rollInput" class="form-control" name="stRoll" value="@ViewBag.roll" />
-                    }
-                    else
-                    {
-                        <input id="rollInput" placeholder="Input Student Roll Number" class="form-control" name="stRoll" />
-                    }
-
+        <form id="frmSearchByRollId" asp-action="Payment" asp-controller="StudentPayments" class="" method="get">
+            <div class="row">
+                <div class="col-md-4 offset-md-3">
+                    <div class="input-group mb-3">
+                        @if (ViewBag.roll != null)
+                        {
+                            <input id="rollInput" class="form-control" name="stRoll" value="@ViewBag.roll" />
+                        }
+                        else
+                        {
+                            <input id="rollInput" placeholder="Input Student Roll Number" class="form-control" name="stRoll" />
+                        }
+                        @*<input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2">*@
+                        <div class="input-group-append">
+                            <button class="btn btn-sm btn-info rounded" type="submit"><i class="fas fa-search"></i> Go</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-1">
-                    <button type="submit" class="btn btn-info rounded" id="submitButton">Search</button>
-                </div>
-                <div class="col-md-1">
-                    <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal">
+                <div class="col-md-4 text-md-left">
+                    <button type="button" class="btn btn-light btn-sm" data-toggle="modal" data-target="#exampleModal">
                         Select
                     </button>
                 </div>
             </div>
+
         </form>
     </div>
 </div>
@@ -45,15 +45,15 @@
             <div class="modal-body">
                 <form action="/" method="post">
                     <div class="form-group row">
-                        <label class="col-md-4 text-md-right">Academic Class</label>
+                        <label class="col-md-4 text-md-right col-form-label">Academic Class</label>
                         <div class="col-md-8">
-                            <select class="form-control" asp-items="ViewBag.AcademicClassList" id="academicClassId">
+                            <select class="form-control" asp-items="ViewBag.AcademicClassList" id="modalAcademicClassId">
                                 <option selected disabled>-Select Class-</option>
                             </select>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-md-4 text-md-right">Student</label>
+                        <label class="col-md-4 text-md-right col-form-label">Student</label>
                         <div class="col-md-8">
                             <select class="form-control" id="studentListId">
                                 <option selected disabled>-Select Student-</option>
@@ -86,48 +86,15 @@
 
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
-    <script>
+<script>
         let created = '@TempData["created"]';
-
 
         $(document).ready(function () {
             $('#msgId').fadeOut(6000);
 
+         
 
-
-            $('#academicClassId').change(function () {
-                let id = $('#AcademicClassId option:selected').val();
-
-                $.ajax({
-                    url: "/api/Students/GetStudentsByClassSessionAsync?classId=" + id + "&sessionId=" + null,
-                    dataType: "JSON",
-                    type: "POST",
-                    cache: false,
-                    success: function (data) {
-                        $('#studentListId').empty();
-
-                        if (data != null || data != '') {
-                            var o = '<option disabled selected>Select Student</option>';
-                           
-                            $('#AcademicSectionId').append(o);
-                           
-                            $.each(data, function (i, obj) {
-                                console.log(obj.name);
-                                var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
-                                $('#AcademicSectionId').append(op);
-                            });
-                        }
-                        else {
-                            var o = '<option disabled selected>Section Not Found</option>';
-                            $('#AcademicSectionId').append(o);
-                        }
-                    },
-                    error: function (err) {
-                        console.log(err);
-                    }
-                });
-            });
-
-        });
-    </script>
+        });</script>
+    <script src="~/js/StudentPayments/Payment.js"></script>
+    
 }

@@ -6,127 +6,131 @@
 }
 
 <div class="row">
-    <div class="col-md-5 mh-100 p-3" style="background-color: #2A3F54;">
-        <div class="row">
-            <div class="col-md-6 offset-3 text-center pb-3">
-                @if (Model.Student.Photo != null)
-                {
-                    <img src="~/Images/Student/@Model.Student.Photo" alt="@Model.Student.Name Photo" class="rounded-circle" style="width:50%;" />
-                }
-                else
-                {
-                    <img src="~/Images/Student/noimage.jpg" alt="@Model.Student.Name Photo" class="rounded-circle" style="width:50%;" />
-                }
-                
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-10 offset-1">
-                <table class="table text-light">
-                    <tr>
-                        <td width="140px">Student Name</td>
-                        <td>:</td>
-                        <td>@Model.Student.Name</td>
-                    </tr>
-                    <tr>
-                        <td>Academic Class</td>
-                        <td>:</td>
-                        <td>@Model.Student.AcademicClass.Name</td>
-                    </tr>
-                    @if (Model.Student.AcademicSection != null)
+    <div class="col-md-4 mh-100">
+        <div class="card bg-navy-blue" style="min-height:430px">
+            <div class="row">
+                <div class="col-md-6 offset-3 text-center pb-3">
+                    @if (Model.Student.Photo != null)
                     {
-                        <tr>
-                            <td>Academic Section</td>
-                            <td>:</td>
-                            <td>@Model.Student.AcademicSection.Name</td>
-                        </tr>
+                        <img src="~/Images/Student/@Model.Student.Photo" alt="@Model.Student.Name Photo" class="rounded-circle" style="width:50%;" />
                     }
-                    <tr>
-                        <td>Class Roll</td>
-                        <td>:</td>
-                        <td>@Model.Student.ClassRoll</td>
-                    </tr>
-                    <tr>
-                        <td>Academic Session</td>
-                        <td>:</td>
-                        <td>@Model.Student.AcademicSession.Name</td>
-                    </tr>
-                </table>
+                    else
+                    {
+                        <img src="~/Images/Student/noimage.jpg" alt="@Model.Student.Name Photo" class="rounded-circle" style="width:50%;" />
+                    }
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-10 offset-1">
+                    <table class="table text-light">
+                        <tr>
+                            <td width="140px">Student Name</td>
+                            <td>:</td>
+                            <td>@Model.Student.Name</td>
+                        </tr>
+                        <tr>
+                            <td>Academic Class</td>
+                            <td>:</td>
+                            <td>@Model.Student.AcademicClass.Name</td>
+                        </tr>
+                        @if (Model.Student.AcademicSection != null)
+                        {
+                            <tr>
+                                <td>Academic Section</td>
+                                <td>:</td>
+                                <td>@Model.Student.AcademicSection.Name</td>
+                            </tr>
+                        }
+                        <tr>
+                            <td>Class Roll</td>
+                            <td>:</td>
+                            <td>@Model.Student.ClassRoll</td>
+                        </tr>
+                        <tr>
+                            <td>Academic Session</td>
+                            <td>:</td>
+                            <td>@Model.Student.AcademicSession.Name</td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-7 bg-info mh-100 border-left border-light">
-        <form asp-action="Edit" asp-controller="StudentPayments" method="post">
-            <input type="hidden" asp-for="Id" />
-            <input type="hidden" asp-for="StudentId"  />
-            <div class="row">
-                <div class="col-md-12 text-light">
-                    <div class="form-group row pt-2">
-                        <label class="col-form-label col-md-3 text-right">Receipt No</label>
-                        <div class="col-md-5 col-lg-4 col-sm-6 col-xs-10">
-                            <input asp-for="ReceiptNo" readonly class="form-control form-control-sm" />
+    <div class="col-md-8 mh-100">
+        <div class="card bg-navy-blue" style="min-height:430px">
+            <form asp-action="Edit" asp-controller="StudentPayments" method="post">
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="StudentId" />
+                <div class="row">
+                    <div class="col-md-12 text-light">
+                        <div class="form-group row pt-2">
+                            <label class="col-form-label col-md-3 text-right">Receipt No</label>
+                            <div class="col-md-8">
+                                <input asp-for="ReceiptNo" readonly class="form-control form-control-sm" />
+                            </div>
+                            <span asp-validation-for="ReceiptNo" class="text-danger col-form-label"></span>
                         </div>
-                        <span asp-validation-for="ReceiptNo" class="text-danger col-form-label"></span>
-                    </div>
-                    <div class="form-group row pt-2">
-                        <label class="col-md-3 col-form-label text-right">Date </label>
-                        <div class="col-md-5 col-lg-4 col-sm-6 col-xs-10">
-                            <input type="date" asp-for="PaidDate" class="form-control form-control-sm" min="2020-01-31" max="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" />
-                        </div>
-                        <div class="col-md-6">
-                            <span asp-validation-for="PaidDate" class="text-danger col-form-label"></span>
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <input type="hidden" asp-for="StudentPaymentDetails[0].Id"  />
-                        <label class="col-md-3 col-form-label text-right">Payment For </label>
-                        <div class="col-md-5 col-lg-4 col-sm-6 col-xs-10">
-                            <select class="form-control" asp-items="ViewBag.FeeList" asp-for="StudentPaymentDetails[0].StudentFeeHeadId">
-                                <option selected disabled>Select Payment</option>
-                            </select>
-                        </div>
-                        <span asp-validation-for="StudentPaymentDetails[0].StudentFeeHeadId" class="text-danger col-form-label"></span>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-md-3 col-form-label text-right">Amount</label>
-                        <div class="col-md-4 col-lg-4 col-sm-6 col-xs-10">
-                            <input class="form-control" asp-for="StudentPaymentDetails[0].PaidAmount" placeholder="Amount"  />
-                            <input type="hidden" id="academicClassId" value="@Model.Student.AcademicClassId" />
-                        </div>
-                        <span asp-validation-for="StudentPaymentDetails[0].PaidAmount" class="text-danger col-form-label"></span>
-
-
-                    </div>
-
-                    <div class="form-group row">
-                        <label class="col-md-3 col-form-label text-right">Total</label>
-                        <div class="col-md-5 col-lg-4 col-sm-6 col-xs-10">
-                            <input asp-for="TotalPayment" class="form-control form-control-sm text-right" />
+                        <div class="form-group row pt-2">
+                            <label class="col-md-3 col-form-label text-right">Date </label>
+                            <div class="col-md-8">
+                                <input type="date" asp-for="PaidDate" class="form-control form-control-sm" min="2020-01-31" max="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" />
+                            </div>
+                            <div class="col-md-6">
+                                <span asp-validation-for="PaidDate" class="text-danger col-form-label"></span>
+                            </div>
                         </div>
 
-                        <span asp-validation-for="TotalPayment" class="text-danger col-form-label"></span>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-md-3 col-form-label text-right">Remark</label>
-                        <div class="col-md-9">
-                            <textarea asp-for="Remarks" class="form-control form-control-sm" rows="2"></textarea>
+                        <div class="form-group row">
+                            <input type="hidden" asp-for="StudentPaymentDetails[0].Id" />
+                            <label class="col-md-3 col-form-label text-right">Payment For </label>
+                            <div class="col-md-8">
+                                <select class="form-control" asp-items="ViewBag.FeeList" asp-for="StudentPaymentDetails[0].StudentFeeHeadId">
+                                    <option selected disabled>Select Payment</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="StudentPaymentDetails[0].StudentFeeHeadId" class="text-danger col-form-label"></span>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 col-form-label text-right">Amount</label>
+                            <div class="col-md-8">
+                                <input class="form-control text-right" asp-for="StudentPaymentDetails[0].PaidAmount" placeholder="Amount" />
+                                <input type="hidden" id="academicClassId" value="@Model.Student.AcademicClassId" />
+                            </div>
+                            <span asp-validation-for="StudentPaymentDetails[0].PaidAmount" class="text-danger col-form-label"></span>
                         </div>
 
-                        <span asp-validation-for="Remarks" class="text-danger col-form-label"></span>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-md-9 offset-md-3 text-md-left">
-                            <div class="btn-group">
-                                <input type="submit" class="btn btn-light btn-sm btn-outline-secondary" value="Update" id="submitBtn" />
-                                <a class="btn btn-sm btn-secondary btn-outline-light" asp-action="payment" asp-controller="StudentPayments" asp-route-stRoll="@Model.Student.ClassRoll">Back to List</a>
+                        <div class="form-group row">
+                            <label class="col-md-3 col-form-label text-right">Total</label>
+                            <div class="col-md-8">
+                                <input asp-for="TotalPayment" class="form-control form-control-sm text-right" />
+                            </div>
+
+                            <span asp-validation-for="TotalPayment" class="text-danger col-form-label"></span>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 col-form-label text-right">Remark</label>
+                            <div class="col-md-8">
+                                <textarea asp-for="Remarks" class="form-control form-control-sm" rows="2"></textarea>
+                            </div>
+
+                            <span asp-validation-for="Remarks" class="text-danger col-form-label"></span>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-8 offset-md-3 text-md-center">
+                                <div class="btn-group">
+                                    <input type="submit" class="btn btn-info btn-sm " value="Update" id="submitBtn" />
+                                    <a class="btn btn-sm btn-secondary btn-outline-light" asp-action="payment" asp-controller="StudentPayments" asp-route-stRoll="@Model.Student.ClassRoll">Back to List</a>
+                                </div>
+                            </div>
+                            <div class="col-md-8 offset-md-3 text-md-center">
+                                <span class="h5 text-warning font-italic">[ Try to add some remarks for better practice ]</span>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </form>
-
+            </form>
+        </div>
     </div>
 </div>
 

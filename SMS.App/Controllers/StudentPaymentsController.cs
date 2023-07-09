@@ -79,6 +79,7 @@ namespace SMS.App.Controllers
         [HttpGet]
         public async Task<IActionResult> Payment(int? stRoll)
         {
+            ViewData["AcademicClassList"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name");
             if (stRoll < 0 || stRoll == 0 || stRoll ==null)
             { 
                 return RedirectToAction("Index");

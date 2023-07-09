@@ -78,7 +78,7 @@
 
         body
         {
-/*            background: #00B4DB;
+            /*            background: #00B4DB;
             background: -webkit-linear-gradient(to right, #0083B0, #00B4DB);
             background: linear-gradient(to right, #0083B0, #00B4DB);*/
             color: #514B64;
@@ -88,33 +88,57 @@
 }
 <div class="row pt-3 pb-2" style="background-color: #2A3F54;">
     <div class="col-md-12 text-center">
-        <form asp-action="Payment" asp-controller="StudentPayments" method="get" class="">
-            <div class="form-group row">
-                <label class="col-md-3 offset-2 col-form-label text-right">
-                    <span class="h5 text-light">Student Roll</span>
-                </label>
-                <div class="col-md-4">
-                    @if (ViewBag.roll != null)
-                    {
-                        <input id="rollInput" class="form-control" name="stRoll" value="@ViewBag.roll" />
-                    }
-                    else
-                    {
-                        <input id="rollInput" placeholder="Input Student Roll Number" class="form-control h6" name="stRoll" />
-                    }
-
+        <form id="frmSearchByRollId" asp-action="Payment" asp-controller="StudentPayments" method="get" class="">
+            <div class="row">
+                <div class="col-md-4 offset-md-3">
+                    <div class="input-group mb-3">
+                        @if (ViewBag.roll != null)
+                        {
+                            <input id="rollInput" class="form-control" name="stRoll" value="@ViewBag.roll" />
+                        }
+                        else
+                        {
+                            <input id="rollInput" placeholder="Input Student Roll Number" class="form-control" name="stRoll" />
+                        }
+                        <div class="input-group-append">
+                            <button class="btn btn-sm btn-info rounded" type="submit"><i class="fas fa-search"></i> Go</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-1">
-                    <button type="submit" class="btn btn-sm btn-info rounded" id="submitButton">Search</button>
+                <div class="col-md-4 text-md-left">
+                    <button type="button" class="btn btn-light btn-sm" data-toggle="modal" data-target="#exampleModal">
+                        Select
+                    </button>
                 </div>
             </div>
+            @*<div class="form-group row">
+                    <label class="col-md-3 offset-2 col-form-label text-right">
+                        <span class="h5 text-light">Student Roll</span>
+                    </label>
+                    <div class="col-md-4">
+                        @if (ViewBag.roll != null)
+                        {
+                            <input id="rollInput" class="form-control" name="stRoll" value="@ViewBag.roll" />
+                        }
+                        else
+                        {
+                            <input id="rollInput" placeholder="Input Student Roll Number" class="form-control h6" name="stRoll" />
+                        }
+
+                    </div>
+                    <div class="col-md-1">
+                        <button type="submit" class="btn btn-sm btn-info rounded" id="submitButton">Search</button>
+                    </div>
+                </div>*@
         </form>
     </div>
 </div>
 @if (Model != null)
 {
-    <div class="row text-white mt-1" id="paymentDiv">
-        <div class="col-md-5 mh-100 p-3" style="background-color: #2A3F54;">
+    <div class="row text-white" id="paymentDiv">
+        <div class="col-md-4 mh-100 p-1 ">
+            <div class="card bg-navy-blue" style="min-height:430px;">
+
             <div class="row">
                 <div class="col-md-6 offset-3 text-center pb-3">
                     <img src="~/Images/Student/@studentPhoto" alt="Alternate Text" class="rounded-circle" style="width:50%;" />
@@ -155,44 +179,40 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-7 mh-100 border-left border-light" style="background-color: #2A3F54;">
+        </div>
+        <div class="col-md-8 mh-100 p-1" >
+            <div class="card bg-navy-blue" style="min-height:430px;">
             <form asp-action="payment" asp-controller="StudentPayments" method="post">
                 <input type="hidden" asp-for="StudentPayment.StudentId" value="@Model.StudentId" />
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group row pt-2">
                             <label class="col-form-label col-md-3 text-md-right text-left">Receipt No</label>
-                            <div class="col-md-5 col-lg-4 col-sm-6 col-xs-10">
+                            <div class="col-md-8">
                                 <input disabled asp-for="StudentPayment.ReceiptNo" value="" placeholder="Auto Generated" readonly class="form-control form-control-sm" />
                             </div>
                             <span asp-validation-for="StudentPayment.ReceiptNo" class="text-danger col-form-label"></span>
                         </div>
                         <div class="form-group row pt-2">
                             <label class="col-md-3 col-form-label text-md-right text-left">Date </label>
-                            <div class="col-md-5 col-lg-4 col-sm-6 col-xs-10">
+                            <div class="col-md-8">
                                 <input type="date" asp-for="StudentPayment.PaidDate" class="form-control form-control-sm" value="@DateTime.Today.ToString("yyyy-MM-dd")" min="2020-01-31" max="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" />
-                            </div>
-                            <div class="col-md-6">
                                 <span asp-validation-for="StudentPayment.PaidDate" class="text-danger col-form-label"></span>
-
                             </div>
                         </div>
 
                         <div class="form-group row">
                             <label class="col-md-3 col-form-label text-md-right text-left">Payment For </label>
-                            <div class="col-md-5 col-lg-4 col-sm-6 col-xs-10">
+                            <div class="col-md-8">
                                 <select class="form-control" asp-items="ViewBag.FeeList" asp-for="StudentPayment.StudentPaymentDetails[0].StudentFeeHeadId">
                                     <option selected disabled>Select Payment</option>
                                 </select>
-                            </div>
-                            <div class="col-md-2">
-
-                            </div>
-                            <span asp-validation-for="ClassFeeHeadId" class="text-danger col-form-label"></span>
+                                <span asp-validation-for="ClassFeeHeadId" class="text-danger col-form-label"></span>
+                            </div>                          
                         </div>
                         <div class="form-group row">
                             <label class="col-md-3 col-form-label text-md-right text-left">Amount</label>
-                            <div class="col-md-4 col-lg-4 col-sm-6 col-xs-10">
+                            <div class="col-md-8">
                                 <input class="form-control" placeholder="Amount" asp-for="StudentPayment.StudentPaymentDetails[0].PaidAmount" />
                                 <input type="hidden" id="academicClassId" value="@Model.StudentPayment.Student.AcademicClassId" />
                             </div>
@@ -200,7 +220,7 @@
 
                         <div class="form-group row">
                             <label class="col-md-3 col-form-label text-md-right text-left">Total</label>
-                            <div class="col-md-5 col-lg-4 col-sm-6 col-xs-10">
+                            <div class="col-md-8">
                                 <input asp-for="StudentPayment.TotalPayment" class="form-control form-control-sm text-right" />
                             </div>
 
@@ -208,7 +228,7 @@
                         </div>
                         <div class="form-group row">
                             <label class="col-md-3 col-form-label text-md-right text-left">Remark</label>
-                            <div class="col-md-9">
+                            <div class="col-md-8">
                                 <textarea asp-for="StudentPayment.Remarks" class="form-control form-control-sm" rows="2"></textarea>
                             </div>
 
@@ -219,67 +239,73 @@
                             <span asp-validation-for="IsSMSSend" class="text-danger col-form-label"></span>
                         </div>
                         <div class="form-group row">
-                            <div class="col-md-9 offset-md-3 text-md-left">
-                                <input type="submit" class="btn btn-light" value="Submit" id="submitBtn" />
+                            <div class="col-md-8 offset-md-3">
+                                <input type="submit" class="btn-block btn btn-info" value="Submit" id="submitBtn" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-8 offset-md-3">
+                                <span class="text-warning h5">[Please try to input separate payment according to payment type]</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </form>
-
+            </div>
         </div>
     </div>
     <div class="row mt-1" id="historyDiv">
-        <div class="col-md-12 bg-dark">
-            <h6 class="text-center p-2 text-light">Payment History</h6>
+        <div class="col-md-12 bg-dark mb-1">
+            <h5 class="text-center p-2 text-light h5">Payment History</h5>
         </div>
-        <div class="col-md-12 bg-secondary mh-100">
-            @if (Model.StudentPayments != null && Model.StudentPayments.Count > 0)
-            {
-                <table class="table table-striped table-sm text-light">
-                    <thead class="bg-info">
-                        <tr>
-                            <td>#</td>
-                            <td>Receipt No</td>
-                            <td>Paid Date</td>
-                            <td>Payment Type</td>
-                            <td>Paid Amount</td>
-                            <td>Remark</td>
-                            <td>Action</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.StudentPayments)
-                        {
+        <div class="col-md-12 mh-100">
+            <div class="card">
+                @if (Model.StudentPayments != null && Model.StudentPayments.Count > 0)
+                {
+                    <table class="table table-striped table-sm">
+                        <thead class="bg-navy-blue p-2">
                             <tr>
-                                @foreach (var payDetail in item.StudentPaymentDetails)
-                                {
-                                    <td>@(++sl)</td>
-                                    <td>@payDetail.StudentPayment.ReceiptNo</td>
-                                    <td>@payDetail.StudentPayment.PaidDate.ToString("dd MMM yyyy")</td>
-                                    <td>@payDetail.StudentFeeHead.Name</td>
-                                    <td>@payDetail.StudentPayment.TotalPayment</td>
-                                    <td>@payDetail.StudentPayment.Remarks</td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <button data-paymentId="@item.Id" data-studentName="@item.Student.Name" data-academicClass="@item.Student.AcademicClass.Name" data-classRoll="@item.Student.ClassRoll" data-academicSession="@item.Student.AcademicSession.Name" data-paidDate="@item.PaidDate.ToString()" data-receipt="@payDetail.StudentPayment.ReceiptNo" data-amount="@payDetail.StudentPayment.TotalPayment" data-paymentType="@payDetail.StudentFeeHead.Name" type="button" class="btn btn-light btn-outline-info btn-sm modalViewId" data-toggle="modal" data-target="#exampleModalCenter" id="modalViewId_">
-                                                View
-                                            </button>
-                                            <a class="btn btn-sm btn-info btn-outline-light" asp-action="Edit" asp-controller="StudentPayments" asp-route-id="@item.Id">Edit</a>
-                                        </div>
-                                    </td>
-                                }
+                                <td>#</td>
+                                <td>Receipt No</td>
+                                <td>Paid Date</td>
+                                <td>Payment Type</td>
+                                <td>Paid Amount</td>
+                                <td>Remark</td>
+                                <td>Action</td>
                             </tr>
-                        }
-                    </tbody>
-                    <tfoot></tfoot>
-                </table>
-            }
-            else
-            {
-                <h6 class="text-center p-5 text-light">No available payment history</h6>
-
-            }
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.StudentPayments)
+                            {
+                                <tr>
+                                    @foreach (var payDetail in item.StudentPaymentDetails)
+                                    {
+                                        <td>@(++sl)</td>
+                                        <td>@payDetail.StudentPayment.ReceiptNo</td>
+                                        <td>@payDetail.StudentPayment.PaidDate.ToString("dd MMM yyyy")</td>
+                                        <td>@payDetail.StudentFeeHead.Name</td>
+                                        <td>@payDetail.StudentPayment.TotalPayment</td>
+                                        <td>@payDetail.StudentPayment.Remarks</td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <button data-paymentId="@item.Id" data-studentName="@item.Student.Name" data-academicClass="@item.Student.AcademicClass.Name" data-classRoll="@item.Student.ClassRoll" data-academicSession="@item.Student.AcademicSession.Name" data-paidDate="@item.PaidDate.ToString()" data-receipt="@payDetail.StudentPayment.ReceiptNo" data-amount="@payDetail.StudentPayment.TotalPayment" data-paymentType="@payDetail.StudentFeeHead.Name" type="button" class="btn btn-light btn-outline-info btn-sm modalViewId" data-toggle="modal" data-target="#exampleModalCenter" id="modalViewId_">
+                                                    View
+                                                </button>
+                                                <a class="btn btn-sm btn-info btn-outline-light" asp-action="Edit" asp-controller="StudentPayments" asp-route-id="@item.Id">Edit</a>
+                                            </div>
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot></tfoot>
+                    </table>
+                }
+                else
+                {
+                    <h6 class="text-center p-5 text-light">No available payment history</h6>
+                }
+            </div>
         </div>
     </div>
 }
@@ -289,7 +315,7 @@
 <div style="color:black;font-weight:100" class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg pb-0" role="document">
         <div class="modal-content p-3" style="width:24cm">
-           
+
             <div class="row" style="height:11.5cm;width:23cm">
                 <iframe id="myIframe" style="width: 100%; height: 100%;"></iframe>
             </div>
@@ -314,8 +340,46 @@
 </div>
 
 
+
+<!-- Student Select Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content text-center">
+            <div class="modal-header text-center">
+                <h4 class="text-center">Select Student</h4>
+            </div>
+            <div class="modal-body">
+                <form action="/" method="post">
+                    <div class="form-group row">
+                        <label class="col-md-4 text-md-right col-form-label">Academic Class</label>
+                        <div class="col-md-8">
+                            <select class="form-control" asp-items="ViewBag.AcademicClassList" id="modalAcademicClassId">
+                                <option selected disabled>-Select Class-</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-4 text-md-right col-form-label">Student</label>
+                        <div class="col-md-8">
+                            <select class="form-control" id="studentListId">
+                                <option selected disabled>-Select Student-</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 @section Scripts{
-    
+
     <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
     <script>
         let created = '@TempData["created"]';
@@ -337,9 +401,7 @@
                 }
             });
     </script>
-
-    @*<script src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.js"></script>*@
     <script src="~/js/StudentPayments/Payment.js"></script>
-    <script src="~/lib/MultiSelect/js/bootstrap-3.3.2.min.js"></script>
-    <script src="~/lib/MultiSelect/js/jquery-2.1.3.min.js"></script>
+    
+
 }

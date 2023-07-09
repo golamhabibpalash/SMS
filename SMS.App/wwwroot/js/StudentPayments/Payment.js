@@ -1,5 +1,41 @@
 ﻿/////////////////////// 2nd time(Current) created code
+$('#modalAcademicClassId').change(function () {
+    let id = $('#modalAcademicClassId option:selected').val();
 
+    $.ajax({
+        url: "/api/Students/getbyclasswithsessionId?academicClassId=" + id + "&academicSessionId=" + null,
+        dataType: "JSON",
+        type: "POST",
+        cache: false,
+        success: function (data) {
+            $('#studentListId').empty();
+
+            if (data != null || data != '') {
+                var o = '<option disabled selected>Select Student</option>';
+
+                $('#studentListId').append(o);
+
+                $.each(data, function (i, obj) {
+                    console.log(obj.name);
+                    var op = '<option value="' + obj.classRoll + '">' + obj.classRoll + " - " + obj.name + '</option>';
+                    $('#studentListId').append(op);
+                });
+            }
+            else {
+                var o = '<option disabled selected>Section Not Found</option>';
+                $('#studentListId').append(o);
+            }
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    });
+});
+$('#studentListId').change(function () {
+    let cRoll = $('#studentListId option:selected').val();
+    $('#rollInput').val(cRoll);
+    $('#frmSearchByRollId').submit();
+});
 //Payment Details Option Changed
 $('#StudentPayment_StudentPaymentDetails_0__PaidAmount').on('input', function () {
     var paidAmount = $(this).val();

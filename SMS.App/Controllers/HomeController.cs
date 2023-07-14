@@ -30,7 +30,7 @@ namespace SMS.App.Controllers
         //private readonly IAcademicClassManager _academicClassManager;
         //private readonly IDesignationManager _designationManager;
         private readonly UserManager<ApplicationUser> _userManager;
-        //private readonly IInstituteManager _instituteManager;
+        private readonly IInstituteManager _instituteManager;
         //private readonly IAttendanceManager _attendanceManager;
         //private readonly IAttendanceMachineManager _attendanceMachineManager;
         //private readonly IStudentPaymentManager _studentPaymentManager;
@@ -48,16 +48,18 @@ namespace SMS.App.Controllers
         //    _attendanceMachineManager = attendanceMachineManager;
         //    _studentPaymentManager = studentPaymentManager;
         //}
-        public HomeController(UserManager<ApplicationUser> userManager)
+        public HomeController(UserManager<ApplicationUser> userManager, IInstituteManager instituteManager)
         {
             _userManager = userManager;
+            _instituteManager = instituteManager;
         }
         public async Task<IActionResult> Index()
         {
             HttpContext.Session.SetString("macAddress", MACService.GetMAC());
             var user = await _userManager.GetUserAsync(User);
             HttpContext.Session.SetString("UserId",user.Id);
-
+            Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
+            ViewBag.InstituteName = institute.Name;
             return View();
         }
         //public async Task<IActionResult> Index_Old()

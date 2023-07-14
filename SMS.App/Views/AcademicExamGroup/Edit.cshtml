@@ -1,16 +1,17 @@
-﻿@{
-    GlobalUI.PageTitle = "Create Exam Groups";
+﻿@model SMS.Entities.AcademicExamGroup
 
+@{
+    GlobalUI.PageTitle = "Edit Exam Group";
 }
-@model AcademicExamGroup
 @using System.Globalization
+
 <div class="row">
     <div class="col-md-6">
-        <div id="AcademicExamGroupCreatePartId">
+        <div id="AcademicExamGroupEditPartId">
             <fieldset class="border-primary p-2 border">
-                <legend class="w-auto text-primary">Create New Groups</legend>
-                <form asp-action="Create" method="post">
-
+                <legend class="w-auto text-primary">Edit Group</legend>
+                <form asp-action="Edit" method="post">
+                    <input type="hidden" asp-for="Id" />
                     <div class="form-group row">
                         <label asp-for="ExamGroupName" class="col-md-3 col-form-label"></label>
                         <div class="col-md-9">
@@ -51,12 +52,11 @@
                     </div>
                     <div class="form-group row text-right">
                         <div class="col-md-12 text-right">
-                            <partial name="_create_back" />
+                            <partial name="_Update_back" model="@Model.Id" />
                         </div>
                     </div>
                 </form>
             </fieldset>
-
         </div>
     </div>
 </div>

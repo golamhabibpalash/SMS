@@ -65,7 +65,7 @@ namespace SMS.App.Controllers
                     bool isSaved = await _studentFeeAllocationManager.AddAsync(studentFeeAllocation);
                     if (isSaved)
                     {
-                        TempData["success"] = "New Fee allocation added successfully";
+                        TempData["created"] = "New Fee allocation added successfully";
                     }
                 }
                 catch (Exception)
@@ -86,16 +86,44 @@ namespace SMS.App.Controllers
         // POST: StudentFeeAllocationsController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(int id, StudentFeeAllocationVM studentFeeAllocationVM)
         {
-            try
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    var existingAllocation = await _studentFeeAllocationManager.GetByIdAsync(studentFeeAllocationVM.SFAllocation.Id);
+                    if (existingAllocation.Id != studentFeeAllocationVM.SFAllocation.Id)
+                    {
+                        TempData["error"] = "Data is miss matched";
+                        return RedirectToAction("Index");
+                    }
+                    if (existingAllocation.StudentId == studentFeeAllocationVM.SFAllocation.StudentId && existingAllocation.IsActive == studentFeeAllocationVM.SFAllocation.IsActive && existingAllocation.AllocatedAmount == studentFeeAllocationVM.SFAllocation.AllocatedAmount && existingAllocation.StudentFeeHeadId == studentFeeAllocationVM.SFAllocation.StudentFeeHeadId )
+                    {
+                        TempData["error"] = "Nothing Change";
+                    }
+                    else
+                    {
+                        existingAllocation.EditedAt = DateTime.Now;
+                        existingAllocation.EditedBy =  HttpContext.Session.GetString("UserId");
+                        existingAllocation.MACAddress = MACService.GetMAC();
+                        existingAllocation.StudentId = studentFeeAllocationVM.SFAllocation.StudentId;
+                        existingAllocation.IsActive = studentFeeAllocationVM.SFAllocation.IsActive;
+                        existingAllocation.AllocatedAmount = studentFeeAllocationVM.SFAllocation.AllocatedAmount;
+                        existingAllocation.StudentFeeHeadId = studentFeeAllocationVM.SFAllocation.StudentFeeHeadId;
+                        bool isUpdated = await _studentFeeAllocationManager.UpdateAsync(existingAllocation);
+                        if (isUpdated)
+                        {
+                            TempData["updated"] = "Successfully updated";
+                        }
+                    }
+                }
+                catch
+                {
+                    return View();
+                }
             }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction("index");
         }
 
         // GET: StudentFeeAllocationsController/Delete/5
@@ -107,15 +135,28 @@ namespace SMS.App.Controllers
         // POST: StudentFeeAllocationsController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> Delete(int id, IFormCollection formCollection)
         {
+            //StudentFeeAllocationId
             try
             {
+                var existingAllocation = await _studentFeeAllocationManager.GetByIdAsync(Convert.ToInt32(formCollection["StudentFeeAllocationId"]));
+                if (existingAllocation.Id != Convert.ToInt32(formCollection["StudentFeeAllocationId"]))
+                {
+                    TempData["error"] = "Data is miss matched";
+                    return RedirectToAction("Index");
+                }
+                var isDeleted = await _studentFeeAllocationManager.RemoveAsync(existingAllocation);
+                if (isDeleted)
+                {
+                    TempData["deleted"] = "Data Deleted successfully";
+                }
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
-                return View();
+                TempData["error"] = "Exception Occured";
+                return RedirectToAction("Index");
             }
         }
     }

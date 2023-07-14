@@ -47,7 +47,7 @@ namespace SMS.App.Controllers
             {
                 Student student = await _studentManager.GetByIdAsync(user.ReferenceId);
                 existingExams = existingExams.Where(e => e.AcademicSectionId == student.AcademicSectionId &&
-                    e.AcademicSessionId == student.AcademicSessionId &&
+                    //e.AcademicSessionId == student.AcademicSessionId &&
                     e.AcademicSubject.AcademicClassId == student.AcademicClassId)
                     .ToList();
             }
@@ -59,9 +59,9 @@ namespace SMS.App.Controllers
                     
                     ExamResultVM exam = new();
                     exam.ExamId = academicExam.Id;
-                    exam.ExamName = academicExam.ExamName;
+                    //exam.ExamName = academicExam.ExamName;
                     exam.AcademicClass = academicExam.AcademicSubject.AcademicClass.Name;
-                    exam.TotalExaminee = academicExam.AcademicExamDetails.Count;
+                    //exam.TotalExaminee = academicExam.AcademicExamDetails.Count;
                     exams.Add(exam);
                 }
             }

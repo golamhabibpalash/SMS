@@ -1029,7 +1029,7 @@ body .container.body .right_col {
   float: left;
   background: #2A3F54;
   border-radius: 0;
-  height: 57px;
+  height: 50px;
   padding: 0px; }
 
 @media (max-width: 991px) {
@@ -1322,7 +1322,7 @@ a:hover, a:focus {
   cursor: pointer; }
 
 .nav.side-menu > li > a {
-  margin-bottom: 6px; }
+  margin-bottom: 2px; }
 
 .nav.side-menu > li > a:hover {
   color: #F2F5F7 !important; }
@@ -1380,7 +1380,7 @@ a:hover, a:focus {
 .nav > li > a {
   position: relative;
   display: block;
-  padding: 13px 15px 12px; }
+  padding: 10px 15px 10px; }
 
 .nav.side-menu > li.current-page, .nav.side-menu > li.active {
   border-right: 5px solid #1ABB9C; }

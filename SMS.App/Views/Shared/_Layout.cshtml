@@ -71,7 +71,6 @@
 
 
     <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/js/all.min.js" crossorigin="anonymous">-->
-
     <!-- Load font awesome icons -->
     <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">-->
 
@@ -142,6 +141,11 @@
                 top: 0px;
             }
         }
+
+        #sidebar-menu
+        {
+            font-size: 13px;
+        }
     </style>
 </head>
 
@@ -150,7 +154,7 @@
     @*<body class="nav-sm">*@
     <div class="container body">
         <div class="main_container">
-            <div class="col-md-3 left_col menu_fixed">
+            <div class="col-md-3 left_col" >
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="overflow:hidden">
                         <a asp-action="Index" asp-controller="Home" class="" style="color:#fff;font-weight:bold;width:100%">
@@ -164,7 +168,7 @@
                         <div class="menu_section" style="color:white">
                             <ul class="nav side-menu">
                                 <li>
-                                    <a><i class="fas fa-users fa-2x"></i> Students <span class="fas fa-chevron-down"></span></a>
+                                    <a><i class="fas fa-users fa-lg"  ></i> Students <span class="fas fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li>
                                             <a asp-action="Create" asp-controller="Students"> Add Student</a>
@@ -186,7 +190,7 @@
                                     </ul>
                                 </li>
                                 <li>
-                                    <a><i class="fas fa-user fa-2x"></i> Employee <span class="fas fa-chevron-down"></span></a>
+                                    <a><i class="fas fa-user fa-lg"  ></i> Employee <span class="fas fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li>
                                             <a asp-action="Create" asp-controller="Employees"> Add Employee </a>
@@ -200,11 +204,9 @@
                                     </ul>
                                 </li>
                                 <li>
-                                    <a><i class="fas fa-layer-group text-primary fa-2x"></i> Modules <span class="fas fa-chevron-down"></span></a>
+                                    <a><i class="fas fa-layer-group text-primary fa-lg"  ></i> Modules <span class="fas fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
-                                        <li>
-                                            <a href="#"> Class Routine</a>
-                                        </li>
+
                                         <li>
                                             <a href="#"> Duty Roster</a>
                                         </li>
@@ -219,20 +221,6 @@
                                                 </li>
                                                 <li>
                                                     <a asp-action="Index" asp-controller="PhoneSMS"> SMS List</a>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <a>  Exam <span class="fas fa-chevron-down"></span></a>
-                                            <ul class="nav child_menu">
-                                                <li>
-                                                    <a asp-action="Index" asp-controller="AcademicExamGroup">Exam Groups</a>
-                                                </li>
-                                                <li>
-                                                    <a asp-action="Index" asp-controller="AcademicExams">All Exam</a>
-                                                </li>
-                                                <li>
-                                                    <a asp-action="Index" asp-controller="AcademicExamType">Exam Type</a>
                                                 </li>
                                             </ul>
                                         </li>
@@ -254,101 +242,123 @@
                                             </ul>
                                         </li>
 
-                                        <li>
-                                            <a asp-action="Index" asp-controller="StudentPayments"> Fees Collection <i class="fas fa-credit-card-alt"></i></a>
-                                        </li>
+
                                     </ul>
                                 </li>
                                 @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
                                 {
                                     <li>
-                                        <a><i class="fas fa-calculator text-light fa-2x"></i> Accounts <span class="fas fa-chevron-down"></span></a>
+                                        <a><i class="fas fa-calculator text-light fa-lg"  ></i> Accounts <span class="fas fa-chevron-down"></span></a>
                                         <ul class="nav child_menu">
                                             <li>
-                                                <a @*asp-action="Index" asp-controller="AcademicSessions"*@ href="#">Income <i class="fas fa-dollar-sign"></i></a>
+                                                <a  href="#">Income <i class="fas fa-dollar-sign"></i></a>
                                             </li>
                                             <li>
-                                                <a @*asp-action="Index" asp-controller="AcademicSessions"*@ href="#">Expense <i class="fas fa-credit-card"></i></a>
+                                                <a  href="#">Expense <i class="fas fa-credit-card"></i></a>
+                                            </li>
+                                            <li>
+                                                <a  href="#">Payroll <i class="fas fa-money-bill"></i></a>
+                                            </li>
+                                            <li>
+                                                <a asp-action="Index" asp-controller="StudentFeeAllocations">Student Fee Allocation <i class="fas fa-money-check"></i></a>
+                                            </li>
+                                            <li>
+                                                <a asp-action="Index" asp-controller="StudentPayments"> Fees Collection <i class="fas fa-cash-register"></i></a>
                                             </li>
                                         </ul>
                                     </li>
                                     <li>
-                                        <a><i class="fas fa-tools text-danger fa-2x"></i>   Settings <span class="fas fa-chevron-down"></span></a>
+                                        <a><i class="fas fa-book-open text-success fa-lg"  ></i> Academic <span class="fas fa-chevron-down"></span></a>
                                         <ul class="nav child_menu">
                                             <li>
-                                                <a> Academic <span class="fas fa-chevron-down"></span></a>
+                                                <a asp-action="Index" asp-controller="AcademicSessions">Academic Session</a>
+                                            </li>
+                                            <li>
+                                                <a asp-action="Index" asp-controller="AcademicClasses">Academic Class</a>
+                                            </li>
+                                            <li>
+                                                <a asp-action="Index" asp-controller="AcademicSections">Academic Section</a>
+                                            </li>
+                                            <li>
+                                                <a asp-action="Index" asp-controller="ClassFeeLists">Class Fee</a>
+                                            </li>
+                                            <li>
+                                                <a asp-action="Index" asp-controller="AcademicSubjects">Academic Subject</a>
+                                            </li>
+                                            <li>
+                                                <a asp-action="Index" asp-controller="AcademicSubjectTypes">Academic Subject Type</a>
+                                            </li>
+                                            <li>
+                                                <a asp-action="Index" asp-controller="StudentFeeHeads">Fee Head</a>
+                                            </li>
+                                            <li>
+                                                <a asp-action="Index" asp-controller="GradingTable">Grading System</a>
+                                            </li>
+
+                                            <li>
+                                                <a>  Exam <span class="fas fa-chevron-down"></span></a>
                                                 <ul class="nav child_menu">
                                                     <li>
-                                                        <a asp-action="Index" asp-controller="AcademicSessions">Academic Session</a>
+                                                        <a asp-action="Index" asp-controller="AcademicExamGroup">Exam Groups</a>
                                                     </li>
                                                     <li>
-                                                        <a asp-action="Index" asp-controller="AcademicClasses">Academic Class</a>
+                                                        <a asp-action="Index" asp-controller="AcademicExams">All Exam</a>
                                                     </li>
                                                     <li>
-                                                        <a asp-action="Index" asp-controller="AcademicSections">Academic Section</a>
+                                                        <a asp-action="Index" asp-controller="AcademicExamType">Exam Type</a>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a><i class="fas fa-user-cog text-primary fa-lg"  ></i> Administration <span class="fas fa-chevron-down"></span></a>
+                                        <ul class="nav child_menu">
+                                            <li>
+                                                <a> Employee Related <span class="fas fa-chevron-down"></span></a>
+                                                <ul class="nav child_menu">
+                                                    <li>
+                                                        <a asp-action="Index" asp-controller="EmpTypes">Employee Type</a>
                                                     </li>
                                                     <li>
-                                                        <a asp-action="Index" asp-controller="ClassFeeLists">Class Fee</a>
+                                                        <a asp-action="Index" asp-controller="Designations">Designation</a>
                                                     </li>
                                                     <li>
-                                                        <a asp-action="Index" asp-controller="AcademicSubjects">Academic Subject</a>
+                                                        <a asp-action="Index" asp-controller="DesignationTypes">Designation Type</a>
                                                     </li>
+                                                </ul>
+                                            </li>
+
+                                            <li>
+                                                <a asp-action="SchoolTimeTable" asp-controller="Institutes"><span class="text-warning fas fa-watch-calculator"></span> School Time setting</a>
+                                            </li>
+                                            <li>
+                                                <a asp-action="Index" asp-controller="Institutes"><span class="fas fa-university text-light"></span> Institute info</a>
+                                            </li>
+                                            <li>
+                                                <a><span class="fas fa-lights-holiday"></span> Holiday <span class="fas fa-chevron-down"></span></a>
+                                                <ul class="nav child_menu">
                                                     <li>
-                                                        <a asp-action="Index" asp-controller="AcademicSubjectTypes">Academic Subject Type</a>
-                                                    </li>
-                                                    <li>
-                                                        <a asp-action="Index" asp-controller="StudentFeeHeads">Fee Head</a>
-                                                    </li>
-                                                    <li>
-                                                        <a asp-action="Index" asp-controller="GradingTable">Grading System</a>
+                                                        <a asp-controller="OffDays" asp-action="Index">Holidays</a>
+                                                        <a asp-controller="OffDayType" asp-action="Index">Holiday Type</a>
                                                     </li>
                                                 </ul>
                                             </li>
                                             <li>
-                                                <a> Administrations <span class="fas fa-chevron-down"></span></a>
-                                                @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
-                                                {
-                                                    <ul class="nav child_menu">
-                                                        <li>
-                                                            <a> Employee Related <span class="fas fa-chevron-down"></span></a>
-                                                            <ul class="nav child_menu">
-                                                                <li>
-                                                                    <a asp-action="Index" asp-controller="EmpTypes">Employee Type</a>
-                                                                </li>
-                                                                <li>
-                                                                    <a asp-action="Index" asp-controller="Designations">Designation</a>
-                                                                </li>
-                                                                <li>
-                                                                    <a asp-action="Index" asp-controller="DesignationTypes">Designation Type</a>
-                                                                </li>
-                                                            </ul>
-                                                        </li>
-
-                                                        <li>
-                                                            <a asp-action="SchoolTimeTable" asp-controller="Institutes"><span class="text-warning fas fa-watch-calculator"></span> School Time setting</a>
-                                                        </li>
-                                                        <li>
-                                                            <a asp-action="Index" asp-controller="Institutes"><span class="fas fa-university text-light"></span> Institute info</a>
-                                                        </li>
-                                                        <li>
-                                                            <a><span class="fas fa-lights-holiday"></span> Holiday <span class="fas fa-chevron-down"></span></a>
-                                                            <ul class="nav child_menu">
-                                                                <li>
-                                                                    <a asp-controller="OffDays" asp-action="Index">Holidays</a>
-                                                                    <a asp-controller="OffDayType" asp-action="Index">Holiday Type</a>
-                                                                </li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <a><span class="text-danger fas fa-key"></span> User Setting  <span class="fas fa-chevron-down"></span></a>
-                                                            <ul class="nav child_menu">
-                                                                <li><a asp-action="userList" asp-controller="Accounts">User List</a></li>
-                                                                <li><a asp-action="roleList" asp-controller="Accounts">Role List</a></li>
-                                                            </ul>
-                                                        </li>
-                                                    </ul>
-                                                }
+                                                <a><span class="text-danger fas fa-key"></span> User Setting  <span class="fas fa-chevron-down"></span></a>
+                                                <ul class="nav child_menu">
+                                                    <li><a asp-action="userList" asp-controller="Accounts">User List</a></li>
+                                                    <li><a asp-action="roleList" asp-controller="Accounts">Role List</a></li>
+                                                </ul>
                                             </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a><i class="fas fa-calendar-alt text-info fa-lg"  ></i> Class Routine</a>
+                                    </li>
+                                    <li>
+                                        <a><i class="fas fa-cog text-danger fa-lg"  ></i>   Settings <span class="fas fa-chevron-down"></span></a>
+                                        <ul class="nav child_menu">
                                             <li>
                                                 <a> Others <span class="fas fa-chevron-down"></span></a>
                                                 <ul class="nav child_menu">
@@ -378,7 +388,7 @@
                                         </ul>
                                     </li>
                                     <li>
-                                        <a><i class="fal fa-file-chart-line fa-2x text-warning"></i>  Reports <span class="fas fa-chevron-down"></span></a>
+                                        <a><i class="fal fa-file-chart-line fa-lg text-warning"  ></i>  Reports <span class="fas fa-chevron-down"></span></a>
                                         <ul class="nav child_menu">
                                             <li>
                                                 <a> Students <span class="fas fa-chevron-down"></span></a>
@@ -507,7 +517,7 @@
             </div>
             <!-- /top navigation -->
             <!-- page content -->
-            <div id="body_content_part" class="right_col" role="main" style="background:#c7c7c7">
+            <div id="body_content_part" class="right_col vh-100" role="main" style="background:#c7c7c7">
                 <div id="printable_area" class="shadow rounded mt-2 bg-light p-2">
                     @RenderBody()
                 </div>

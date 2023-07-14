@@ -40,13 +40,24 @@
             </div>
             <div class="row">
                 <div class="col-md-12 text-center">
-                    <h1 class="">Welcome to Noble Residential School</h1>
+                    @if (ViewBag.InstituteName != null)
+                    {
+                        <h1 class="text-dark font-weight-bolder">Welcome to @ViewBag.InstituteName</h1>
+                    }
+                    else
+                    {
+                        <h1 class="">Welcome </h1>
+                    }
+
                 </div>
+    
+                </div>
+    
             </div>
+    
         </div>
     </div>
-</div>
-<div class="row">
+    <div class="row">
 
     @*<div class="col-sm-12 col-md-6 col-12">
         <div class="card shadow">

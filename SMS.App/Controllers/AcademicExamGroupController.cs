@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SMS.App.Utilities.MACIPServices;
+using SMS.App.ViewModels.AcademicVM;
 using SMS.BLL.Contracts;
 using SMS.Entities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
@@ -17,40 +19,36 @@ namespace SMS.App.Controllers
         private readonly IAcademicExamGroupManager _examGroupManager;
         private readonly IAcademicSessionManager _academicSessionManager;
         private readonly IAcademicExamTypeManager _academicExamTypeManager;
-        public AcademicExamGroupController(IAcademicExamGroupManager examGroupManager, IAcademicSessionManager academicSessionManager, IAcademicExamTypeManager academicExamTypeManager)
+        private readonly IAcademicExamManager _academicExamManager;
+        public AcademicExamGroupController(IAcademicExamGroupManager examGroupManager, IAcademicSessionManager academicSessionManager, IAcademicExamTypeManager academicExamTypeManager, IAcademicExamManager academicExamManager)
         {
             _examGroupManager = examGroupManager;
             _academicSessionManager = academicSessionManager;
             _academicExamTypeManager = academicExamTypeManager;
-
+            _academicExamManager = academicExamManager;
         }
         // GET: AcademicExamGroupController
         public async Task<ActionResult> Index()
         {
             List<AcademicExamGroup> result = new List<AcademicExamGroup>();
+            AcademicExamGroupVM academicExamGroupVM = new AcademicExamGroupVM();
             try
             {
                 result = (List<AcademicExamGroup>)await _examGroupManager.GetAllAsync();
+                academicExamGroupVM.AcademicExamGroups = result;
+                academicExamGroupVM.AcademicSessionList = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name").ToList();
+                academicExamGroupVM.ExamTypeList = new SelectList(await _academicExamTypeManager.GetAllAsync(), "Id", "ExamTypeName").ToList();
             }
             catch (System.Exception)
             {
-
                 throw;
             }
-            return View(result);
+            return View(academicExamGroupVM);
         }
 
         // GET: AcademicExamGroupController/Details/5
         public ActionResult Details(int id)
         {
-            return View();
-        }
-
-        // GET: AcademicExamGroupController/Create
-        public async Task<ActionResult> Create()
-        {
-            ViewData["AcademicSessionList"] = new SelectList(await _academicSessionManager.GetAllAsync(),"Id","Name");
-            ViewData["AcademicExamTypeList"] = new SelectList(await _academicExamTypeManager.GetAllAsync(),"Id", "ExamTypeName");
             return View();
         }
 
@@ -62,14 +60,34 @@ namespace SMS.App.Controllers
             if (!ModelState.IsValid)
             {
                 TempData["error"] = "Something wrong";
-                return View(academicExamGroup);
+                AcademicExamGroupVM academicExamGroupVM = new AcademicExamGroupVM();
+                academicExamGroupVM.AcademicExamGroups = (List<AcademicExamGroup>)await _examGroupManager.GetAllAsync();
+                academicExamGroupVM.ExamGroupName = academicExamGroup.ExamGroupName;
+                academicExamGroupVM.academicExamTypeId = academicExamGroup.academicExamTypeId;
+                academicExamGroupVM.ExamMonthId = academicExamGroup.ExamMonthId;
+                return RedirectToAction("index");
             }
+
+            ViewData["AcademicSessionList"] = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name", academicExamGroup.AcademicSessionId);
+            ViewData["AcademicExamTypeList"] = new SelectList(await _academicExamTypeManager.GetAllAsync(), "Id", "ExamTypeName", academicExamGroup.academicExamTypeId);
+
+            var allExamGroup = await _examGroupManager.GetAllAsync();
+            AcademicExamGroup existingExamGroup = allExamGroup.FirstOrDefault(s => s.ExamGroupName == academicExamGroup.ExamGroupName && s.AcademicSessionId == academicExamGroup.AcademicSessionId && s.academicExamTypeId == academicExamGroup.academicExamTypeId);
             try
             {
+                if (existingExamGroup != null)
+                {
+                    TempData["error"] = "This Exam Group is already exist.";
+                    return RedirectToAction("index", academicExamGroup);
+                }
+                if (string.IsNullOrEmpty(academicExamGroup.ExamGroupName))
+                {
+                    TempData["error"] = "Group Name should not empty.";
+                    return RedirectToAction("index",academicExamGroup);
+                }
                 academicExamGroup.CreatedAt = DateTime.Now;
                 academicExamGroup.CreatedBy = HttpContext.Session.GetString("UserId");
                 academicExamGroup.MACAddress = MACService.GetMAC();
-                academicExamGroup.Status = true;
                 bool isSaved = await _examGroupManager.AddAsync(academicExamGroup);
                 if (!isSaved)
                 {
@@ -78,7 +96,6 @@ namespace SMS.App.Controllers
                 else
                 {
                     TempData["created"] = "Alhamdulillah! Exam Group Successfully Created";
-                    return RedirectToAction("Index");
                 }
             }
             catch
@@ -86,51 +103,107 @@ namespace SMS.App.Controllers
                 throw;
             }
 
-            ViewData["AcademicSessionList"] = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name",academicExamGroup.AcademicSessionId);
-            ViewData["AcademicExamTypeList"] = new SelectList(await _academicExamTypeManager.GetAllAsync(), "Id", "ExamTypeName",academicExamGroup.academicExamTypeId);
-            return View(academicExamGroup);
+            return RedirectToAction("Index");
         }
 
         // GET: AcademicExamGroupController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
-            return View();
+            AcademicExamGroup academicExamGroup = await _examGroupManager.GetByIdAsync(id);
+            if (academicExamGroup != null)
+            {
+                ViewData["AcademicSessionList"] = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name", academicExamGroup.AcademicSessionId);
+                ViewData["AcademicExamTypeList"] = new SelectList(await _academicExamTypeManager.GetAllAsync(), "Id", "ExamTypeName", academicExamGroup.academicExamTypeId);
+                return View(academicExamGroup);
+            }
+            else
+            {
+                TempData["error"] = "Data not found";
+                return RedirectToAction("Index");
+            }
         }
 
         // POST: AcademicExamGroupController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(int id, AcademicExamGroup academicExamGroup)
         {
+            if (id!=academicExamGroup.Id)
+            {
+                TempData["error"]="Data Not matched";
+                return View(academicExamGroup);
+            }
+
+            var allExamGroup = await _examGroupManager.GetAllAsync();
+            AcademicExamGroup existingExamGroup = allExamGroup.FirstOrDefault(s => s.ExamGroupName == academicExamGroup.ExamGroupName && s.AcademicSessionId == academicExamGroup.AcademicSessionId && s.academicExamTypeId == academicExamGroup.academicExamTypeId);
+
+            ViewData["AcademicSessionList"] = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name", academicExamGroup.AcademicSessionId);
+            ViewData["AcademicExamTypeList"] = new SelectList(await _academicExamTypeManager.GetAllAsync(), "Id", "ExamTypeName", academicExamGroup.academicExamTypeId);
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (existingExamGroup != null && id!=existingExamGroup.Id)
+                {
+                    TempData["error"] = "This Exam Group is already exist.";
+                    return RedirectToAction("index");
+                }
+                academicExamGroup.EditedAt = DateTime.Now;
+                academicExamGroup.EditedBy = HttpContext.Session.GetString("UserId");
+                academicExamGroup.MACAddress = MACService.GetMAC();
+                bool isUpdated = await _examGroupManager.UpdateAsync(academicExamGroup);
+                if (isUpdated)
+                {
+                    TempData["updated"] = "Exam Group Updated Successfully";
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    TempData["error"] = "Update failed. Something wrong";
+                }
             }
-            catch
+            catch(Exception ex)
             {
-                return View();
+                TempData["error"] = "Exception: "+ex.Message;
+                return RedirectToAction("Index");
             }
+            return RedirectToAction("index");
         }
 
         // GET: AcademicExamGroupController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: AcademicExamGroupController/Delete/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> Delete(int id)
         {
+            AcademicExamGroup academicExamGroup = await _examGroupManager.GetByIdAsync(id);
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (academicExamGroup!=null)
+                {
+                    var examList = await _academicExamManager.GetAllAsync();
+                    if (examList!=null)
+                    {
+                        AcademicExam existingExam = examList.FirstOrDefault(s => s.AcademicExamGroupId == id);
+                        if (existingExam!=null)
+                        {
+                            TempData["error"] = "Existing Exam available in this group.";
+                            return RedirectToAction("index");
+                        }
+                    }
+                    bool isDeleted = await _examGroupManager.RemoveAsync(academicExamGroup);
+                    if (isDeleted)
+                    {
+                        TempData["created"]= "Deleted Successfully.";
+                    }
+                    else
+                    {
+                        TempData["error"] = "Failed! Something wrong.";
+                    }
+                }
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                TempData["error"] = "Exception: " + ex.Message;
             }
+
+            return RedirectToAction("index");
         }
     }
 }

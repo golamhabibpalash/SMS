@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SMS.DB;
 
@@ -11,9 +12,10 @@ using SMS.DB;
 namespace SMS.DB.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230714165020_AcademicExamGroupModified")]
+    partial class AcademicExamGroupModified
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -281,7 +283,7 @@ namespace SMS.DB.Migrations
                     b.Property<int>("AcademicExamGroupId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("AcademicSectionId")
+                    b.Property<int>("AcademicSectionId")
                         .HasColumnType("int");
 
                     b.Property<int>("AcademicSubjectId")
@@ -2754,7 +2756,9 @@ namespace SMS.DB.Migrations
 
                     b.HasOne("SMS.Entities.AcademicSection", "AcademicSection")
                         .WithMany()
-                        .HasForeignKey("AcademicSectionId");
+                        .HasForeignKey("AcademicSectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("SMS.Entities.AcademicSubject", "AcademicSubject")
                         .WithMany()
@@ -2782,7 +2786,7 @@ namespace SMS.DB.Migrations
             modelBuilder.Entity("SMS.Entities.AcademicExamDetail", b =>
                 {
                     b.HasOne("SMS.Entities.AcademicExam", "AcademicExam")
-                        .WithMany("AcademicExamDetails")
+                        .WithMany()
                         .HasForeignKey("AcademicExamId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -3300,11 +3304,6 @@ namespace SMS.DB.Migrations
                     b.Navigation("StudentFeeLists");
 
                     b.Navigation("Students");
-                });
-
-            modelBuilder.Entity("SMS.Entities.AcademicExam", b =>
-                {
-                    b.Navigation("AcademicExamDetails");
                 });
 
             modelBuilder.Entity("SMS.Entities.AcademicExamGroup", b =>

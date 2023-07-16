@@ -20,5 +20,6 @@ namespace SMS.Entities
         [Display(Name = "Exam Month")]
         public int ExamMonthId { get; set; }
         public bool Status { get; set; }
+        public List<AcademicExam> AcademicExams { get; set; }
     }
 }

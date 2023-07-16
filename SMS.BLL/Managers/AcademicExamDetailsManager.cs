@@ -12,9 +12,15 @@ namespace SMS.BLL.Managers
 {
     public class AcademicExamDetailsManager : Manager<AcademicExamDetail>, IAcademicExamDetailsManager
     {
+        IAcademicExamDetailsRepository _academicExamDetailsRepository;
         public AcademicExamDetailsManager(IAcademicExamDetailsRepository academicExamDetailsRepository) :base(academicExamDetailsRepository)
         {
-            
+            _academicExamDetailsRepository = academicExamDetailsRepository;
+        }
+
+        public async Task<List<AcademicExamDetail>> GetByExamIdAsync(int examId)
+        {
+            return await _academicExamDetailsRepository.GetByExamIdAsync(examId);
         }
     }
 }

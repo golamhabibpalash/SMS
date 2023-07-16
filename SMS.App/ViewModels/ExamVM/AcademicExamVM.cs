@@ -35,10 +35,10 @@ namespace SMS.App.ViewModels.ExamVM
         public List<SelectListItem> AcademicSessionList { get; set; } = new List<SelectListItem>();
         public List<SelectListItem> AcademicClassList { get; set; } = new List<SelectListItem>();
         public List<SelectListItem> AcademicSectionList { get; set; } = new List<SelectListItem>();
-        public List<SelectListItem> AcademicExamTypeList { get; set; } = new List<SelectListItem>();
         public List<SelectListItem> AcademicSubjectList { get; set; } = new List<SelectListItem>();
-        public List<SelectListItem> MonthList { get; set; } = new List<SelectListItem>();
         public List<SelectListItem> TeacherList { get; set; } = new List<SelectListItem>();
+        public List<SelectListItem> MonthList { get; set; } = new List<SelectListItem>();
+        public List<SelectListItem> AcademicExamTypeList { get; set; } = new List<SelectListItem>();
 
     }
 }

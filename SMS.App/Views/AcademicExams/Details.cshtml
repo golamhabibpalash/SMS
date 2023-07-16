@@ -1,4 +1,4 @@
-﻿@model SMS.App.ViewModels.ExamVM.ExamDetailsVM
+﻿@model AcademicExam
 
 @{
     ViewData["Title"] = "Exam Details";
@@ -6,7 +6,7 @@
 
     int i = 0;
     int detailId = 0;
-    string examLocked = Model.IsActive==true?"(Exam is Locked)":string.Empty;
+    string examLocked = Model.Status==true?"(Exam is Locked)":string.Empty;
 }
 @section Styles{
     <link href="~/css/switch.css" rel="stylesheet" />
@@ -15,30 +15,42 @@
 <div class="row" style="color:#000">
     <div class="col-md-4">
         <fieldset class="border border-info p-2 m-2">
-            <legend style="width:fit-content;padding:5px">Exam Information</legend>
-            <table class="table ">
+            <legend style="width:fit-content;padding:5px">@Model.AcademicExamGroup.ExamGroupName</legend>
+            <table class="table table-sm table-responsive-sm">
                 <thead>
                 </thead>
-                <tbody>
+                <tbody>                  
                     <tr>
                         <td>Subject</td>
                         <td>:</td>
-                        <td>@Model.AcademicSubjectName (@Model.AcademicSubjectCode)</td>
+                        <td>@Model.AcademicSubject.SubjectName (@Model.AcademicSubject.SubjectCode)</td>
                     </tr>
                     <tr>
                         <td>Class</td>
                         <td>:</td>
-                        <td>@Model.AcademicClassName (@Model.AcademicSectionName)</td>
+                        <td>
+                            @Model.AcademicSubject.AcademicClass.Name 
+                            (
+                                @if (Model.AcademicSection == null)
+                                {
+                                    <span>All Section</span>
+                                }
+                                else
+                                {
+                                    @Model.AcademicSection.Name
+                                }
+                            )
+                        </td>
                     </tr>
                     <tr>
                         <td>Session</td>
                         <td>:</td>
-                        <td>@Model.AcademicSessionName</td>
+                        <td>@Model.AcademicExamGroup.AcademicSession.Name</td>
                     </tr>
                     <tr>
                         <td>Month</td>
                         <td>:</td>
-                        <td>@Model.ExamMonth</td>
+                        <td>@System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(@Model.AcademicExamGroup.ExamMonthId)</td>
                     </tr>
                     <tr>
                         <td>Students</td>
@@ -48,7 +60,7 @@
                     <tr>
                         <td>Teacher</td>
                         <td>:</td>
-                        <td>@Model.Teacher</td>
+                        <td>@Model.Employee.EmployeeName</td>
                     </tr>
                     <tr>
                         <td>Total Marks</td>
@@ -72,7 +84,7 @@
             </div>
         </div>
         <form asp-action="ExmaMarkSubmit" asp-controller="AcademicExams" method="post">
-            <input asp-for="ExamId" type="hidden"  />
+            <input asp-for="Id" type="hidden"  />
             <table class="table table-sm table-striped table-bordered">
                 <thead class="table-info font-weight-bolder">
                     <tr>
@@ -88,11 +100,11 @@
                     @foreach (var item in Model.AcademicExamDetails)
                     {
                         <tr>
-                            <td>@(++i) <input type="hidden" asp-for="AcademicExamDetails[detailId].AcademicExamId"  value="@Model.ExamId" /> </td>
+                            <td>@(++i) <input type="hidden" asp-for="AcademicExamDetails[detailId].AcademicExamId"  value="@Model.Id" /> </td>
                             <td>@item.Student.ClassRoll <input type="hidden" asp-for="AcademicExamDetails[detailId].StudentId" /></td>
                             <td>@item.Student.Name <input type="hidden" asp-for="AcademicExamDetails[detailId].Id" /></td>
                             <td style="width:50px;padding:0px;">
-                                @if (Model.IsActive)
+                                @if (Model.Status)
                                 {
                                     <input disabled asp-for="AcademicExamDetails[detailId].ObtainMark" max="@Model.TotalMarks" min="0" style="width:60px;height:35px;text-align:center;border:none" />
                                 }
@@ -103,7 +115,7 @@
                             </td>
                             <td class="flex-wrap justify-content-center">
                                 <label class="switch m-0">
-                                    @if (Model.IsActive)
+                                    @if (Model.Status)
                                     {
                                         <input disabled asp-for="AcademicExamDetails[detailId].Status" title="Is Present" />
                                     }
@@ -115,13 +127,13 @@
                                 </label>
                             </td>
                             <td style="padding:0px">
-                                @if (Model.IsActive)
+                                @if (Model.Status)
                                 {
                                     <input disabled asp-for="AcademicExamDetails[detailId].Remarks" placeholder="write here if any comment" style="width:100%;height:30px;text-align:left;border:none" />
                                 }
                                 else
                                 {
-                            <input asp-for="AcademicExamDetails[detailId].Remarks" placeholder="write here if any comment" style="width:100%;height:30px;text-align:left;border:none" />
+                                    <input asp-for="AcademicExamDetails[detailId].Remarks" placeholder="write here if any comment" style="width:100%;height:30px;text-align:left;border:none" />
                                 }
                             </td>
                         </tr>
@@ -131,7 +143,7 @@
             </table>
             <div class="row">
                 <div class="col-md-12 text-center">
-                    @if (Model.IsActive)
+                    @if (Model.Status)
                     {
                         <input disabled class="btn btn-info" type="submit" value="Submit" />
                     }

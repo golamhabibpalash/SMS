@@ -10,5 +10,6 @@ namespace SMS.DAL.Contracts
 {
     public interface IAcademicExamDetailsRepository : IRepository<AcademicExamDetail>
     {
-    }
+        Task<List<AcademicExamDetail>> GetByExamIdAsync(int examId);
+    }    
 }

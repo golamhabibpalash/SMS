@@ -20,7 +20,7 @@ namespace SMS.DAL.Repositories
         }
         public override async Task<IReadOnlyCollection<AcademicExamGroup>> GetAllAsync()
         {
-            var result = await _context.AcademicExamGroups.Include(s => s.AcademicSession).Include(s => s.academicExamType).ToListAsync();
+            var result = await _context.AcademicExamGroups.Include(s => s.AcademicSession).Include(s => s.academicExamType).Include(s => s.AcademicExams).ToListAsync();
             return result;
         }
     }

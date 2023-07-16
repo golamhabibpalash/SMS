@@ -56,7 +56,7 @@ $('#StudentPayment_StudentPaymentDetails_0__StudentFeeHeadId').change(function (
             $('#StudentPayment_StudentPaymentDetails_0__PaidAmount').val('');
             $('#StudentPayment_TotalPayment').val('');
             let pAmount = d.amount;
-            d.studentFeeHead.repeatedly == true ? $('#howManyTimes').show() : $('#howManyTimes').hide();
+            //d.studentFeeHead.repeatedly == true ? $('#howManyTimes').show() : $('#howManyTimes').hide();
             $('#StudentPayment_StudentPaymentDetails_0__PaidAmount').val(pAmount);
             $('#StudentPayment_TotalPayment').val(pAmount);
 

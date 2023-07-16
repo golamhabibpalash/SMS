@@ -27,10 +27,13 @@ namespace SMS.DAL.Repositories
         public override async Task<IReadOnlyCollection<AcademicExam>> GetAllAsync()
         {
             var result = await _context.AcademicExams
+                .Include(s => s.AcademicClass)
+                .Include(s => s.AcademicExamGroup)
                 .Include(s => s.AcademicSubject)
                     .ThenInclude(m => m.AcademicClass)
                 .Include(s => s.AcademicSection)
                 .Include(s => s.Employee)
+                .Include(s => s.AcademicExamDetails)
                 .ToListAsync();
             return result;
         }
@@ -38,10 +41,14 @@ namespace SMS.DAL.Repositories
         public override async Task<AcademicExam> GetByIdAsync(int id)
         {
             var result = await _context.AcademicExams
+                .Include(s => s.AcademicExamGroup)
+                    .ThenInclude(s => s.AcademicSession)
                 .Include(s => s.AcademicSubject)
                     .ThenInclude(c => c.AcademicClass)
                 .Include(s => s.Employee)
                 .Include(s => s.AcademicSection)
+                .Include(s => s.AcademicExamDetails)
+                    .ThenInclude(s => s.Student)
                 .Where(s => s.Id == id)
                 .FirstOrDefaultAsync();
 

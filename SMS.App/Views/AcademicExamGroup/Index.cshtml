@@ -15,6 +15,7 @@
                             <td>Exam Group Name</td>
                             <td>Exam Type</td>
                             <td>Academic Session</td>
+                            <td>Total Exams</td>
                             <td>Group Status</td>
                             <td class="text-center">Action</td>
                         </tr>
@@ -27,6 +28,7 @@
                                 <td>@item.ExamGroupName</td>
                                 <td>@item.academicExamType.ExamTypeName</td>
                                 <td>@item.AcademicSession.Name</td>
+                                <td>@item.AcademicExams.Count</td>
                                 <td>
                                 @if (item.Status)
                                 {

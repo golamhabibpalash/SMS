@@ -1,4 +1,5 @@
-﻿using SMS.DAL.Contracts;
+﻿using Microsoft.EntityFrameworkCore;
+using SMS.DAL.Contracts;
 using SMS.DAL.Repositories.Base;
 using SMS.DB;
 using SMS.Entities;
@@ -12,9 +13,15 @@ namespace SMS.DAL.Repositories
 {
     public class AcademicExamDetailsRepository : Repository<AcademicExamDetail>, IAcademicExamDetailsRepository
     {
+        private readonly ApplicationDbContext _context;
         public AcademicExamDetailsRepository(ApplicationDbContext context):base(context)
         {
-            
+            _context = context;
+        }
+        public async Task<List<AcademicExamDetail>> GetByExamIdAsync(int examId)
+        {
+            var examDetails =await _context.AcademicExamDetails.Where(s => s.AcademicExamId == examId).ToListAsync();
+            return examDetails;
         }
     }
 }

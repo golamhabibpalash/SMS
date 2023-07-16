@@ -178,7 +178,7 @@ namespace SMS.App.Controllers
                                     StudentFeeHead feeHead = await _studentFeeHeadManager.GetByIdAsync(item.StudentFeeHeadId);
                                     string smsText = studentObject.Name + " has Paid " + item.PaidAmount + "Tk as " + feeHead.Name + " -Noble";
                                     string phoneNo = studentObject.GuardianPhone;
-                                    bool isSend = await MobileSMS.SendSMS(smsText, phoneNo);
+                                    bool isSend = await MobileSMS.SendSMS(phoneNo, smsText);
                                     if (isSend)
                                     {
                                         PhoneSMS sms = new PhoneSMS();

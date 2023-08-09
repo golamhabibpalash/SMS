@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -17,6 +18,8 @@ namespace SMS.App.ViewModels.AdministrationVM
 
         [Display(Name ="Remember me")]
         public bool RememberMe { get; set; }
+        [HiddenInput(DisplayValue =false)]
+        public string ReturnUrl { get; set; }
 
     }
 }

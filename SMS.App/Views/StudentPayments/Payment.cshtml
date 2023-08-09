@@ -1,5 +1,6 @@
 ﻿@model SMS.App.ViewModels.StudentPaymentVM
 @using System.Collections.Specialized
+@inject UserManager<ApplicationUser> _userManager;
 @{
     ListDictionary months = new ListDictionary();
     months.Add(1, "January");
@@ -27,6 +28,7 @@
     }
     int sl = 0;
     string studentPhoto = !string.IsNullOrEmpty(Model.StudentPayment.Student.Photo) ? Model.StudentPayment.Student.Photo : "noimage.jpg";
+    string createdBy = string.Empty;
 }
 
 @section Styles{
@@ -253,12 +255,23 @@
                                 <td>Payment Type</td>
                                 <td>Paid Amount</td>
                                 <td>Remark</td>
+                                <td>Received By</td>
+                                <td>Received Date</td>
                                 <td>Action</td>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var item in Model.StudentPayments)
                             {
+                                if (item.CreatedBy!=null)
+                                {
+                                    ApplicationUser aUser = await _userManager.FindByIdAsync(item.CreatedBy);
+                                    createdBy = aUser.UserName;
+                                }
+                                else
+                                {
+                                    createdBy = "N/F";
+                                }
                                 <tr>
                                     @foreach (var payDetail in item.StudentPaymentDetails)
                                     {
@@ -268,6 +281,8 @@
                                         <td>@payDetail.StudentFeeHead.Name</td>
                                         <td>@payDetail.StudentPayment.TotalPayment</td>
                                         <td>@payDetail.StudentPayment.Remarks</td>
+                                        <td>@createdBy</td>
+                                        <td>@payDetail.StudentPayment.CreatedAt</td>
                                         <td>
                                             <div class="btn-group">
                                                 <button data-paymentId="@item.Id" data-studentName="@item.Student.Name" data-academicClass="@item.Student.AcademicClass.Name" data-classRoll="@item.Student.ClassRoll" data-academicSession="@item.Student.AcademicSession.Name" data-paidDate="@item.PaidDate.ToString()" data-receipt="@payDetail.StudentPayment.ReceiptNo" data-amount="@payDetail.StudentPayment.TotalPayment" data-paymentType="@payDetail.StudentFeeHead.Name" type="button" class="btn btn-light btn-outline-info btn-sm modalViewId" data-toggle="modal" data-target="#exampleModalCenter" id="modalViewId_">

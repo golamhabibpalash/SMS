@@ -160,8 +160,9 @@ namespace SMS.App.Controllers
         }
 
         [HttpGet, AllowAnonymous]
-        public IActionResult Login()
+        public IActionResult Login(string ReturnUrl = null)
         {
+            TempData["ReturnUrl"] = ReturnUrl;
             return View();
         }
 
@@ -181,8 +182,14 @@ namespace SMS.App.Controllers
                     {
                         return RedirectToAction("profile", "students", new { id = appUser.ReferenceId });
                     }
-                    
-                    return RedirectToAction("index", "home");
+                    if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+                    {
+                        return Redirect(model.ReturnUrl);
+                    }
+                    else
+                    {
+                        return RedirectToAction("index", "home");
+                    }
                 }
                 ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
             }

@@ -28,7 +28,7 @@ namespace SMS.Entities
         public bool Status { get; set; }
         public int? ReligionId { get; set; }
 
-        public int AcademicClassId { get; set; }
+        public int? AcademicClassId { get; set; }
         public AcademicClass AcademicClass { get; set; }
 
         public int? QuestionFormatId { get; set; }

@@ -49,14 +49,15 @@ namespace SMS.DAL.Repositories
             }
         }
 
-        public async Task<IEnumerable<AcademicSubject>> GetSubjectsByClassIdAsync(int classId)
-        {
-            var subjects = await _context.AcademicSubject
-                .Include(s => s.AcademicClass)
-                .Where(a => a.AcademicClassId == classId)
-                .ToListAsync();
-            return subjects;
-        }
+        //public async Task<IEnumerable<AcademicSubject>> GetSubjectsByClassIdAsync(int classId)
+        //{
+        //    var subjects = await _context.AcademicClassSubjects
+        //        .Where(s => s.AcademicClassId==classId)
+        //        .Select(s => s.AcademicSubject)
+        //        .Include(s => s.AcademicClass)
+        //        .ToListAsync();
+        //    return subjects;
+        //}
 
         public override async Task<AcademicSubject> GetByIdAsync(int id)
         {

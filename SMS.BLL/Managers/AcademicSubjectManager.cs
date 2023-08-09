@@ -30,19 +30,6 @@ namespace SMS.BLL.Managers
               return await _repository.AddAsync(entity);
             }
         }
-
-        public async Task<IEnumerable<AcademicSubject>> GetSubjectsByClassIdAsync(int classId)
-        {
-            try
-            {
-                var subjects = await _academicSubjectRepository.GetSubjectsByClassIdAsync(classId);
-                return subjects;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
+        
     }
 }

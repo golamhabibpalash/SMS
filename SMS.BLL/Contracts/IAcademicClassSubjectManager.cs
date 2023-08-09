@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace SMS.BLL.Contracts
 {
-    public interface IAcademicSubjectManager :IManager<AcademicSubject>
+    public interface IAcademicClassSubjectManager : IManager<AcademicClassSubject>
     {
+        Task<List<AcademicSubject>> GetSubjectsByClassIdAsync(int classId);
     }
 }

@@ -80,7 +80,6 @@ function lockExam(id, btnId) {
 }
 $('#AcademicClassId').change(function () {
     let id = $('#AcademicClassId option:selected').val();
-    let sessionId = $('#AcademicSessionId option:selected').val();
 
     $.ajax({
         url: '/AcademicSubjects/GetSubjectsByClassId?classId=' + id,
@@ -88,8 +87,6 @@ $('#AcademicClassId').change(function () {
         type: 'JSON',
         success: function (data) {
             $('#AcademicSubjectId').empty();
-            //var op = '<option disabled selected value=""> Select Subject </option>';
-            //$('#AcademicSubjectId').append(op);
             $.each(data, function (i, obj) {
                 var op = "<option value='" + obj.id + "'>" + obj.subjectName + "</option>";
                 $('#AcademicSubjectId').append(op);
@@ -270,7 +267,6 @@ function EditExamClick(id) {
     let modalUpdateBtn = document.getElementById('updateFormSubmitBtn');
     modalUpdateBtn.style.visibility = 'visible';
 
-    
 }
 $('#updateFormSubmitBtn').click(function () {
     /*modalFooter*/

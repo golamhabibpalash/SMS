@@ -74,7 +74,7 @@
             <MIMEType>image/png</MIMEType>
             <Sizing>FitProportional</Sizing>
             <Top>0.98425cm</Top>
-            <Left>2.54741cm</Left>
+            <Left>2.10291cm</Left>
             <Height>1.31112cm</Height>
             <Width>1.47354cm</Width>
             <Style>
@@ -1341,7 +1341,7 @@
             <Top>3.08581cm</Top>
             <Left>0.5cm</Left>
             <Height>4.08492cm</Height>
-            <Width>20.00001cm</Width>
+            <Width>20cm</Width>
             <ZIndex>4</ZIndex>
             <Style>
               <Border>

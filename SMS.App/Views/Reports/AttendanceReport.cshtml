@@ -113,7 +113,7 @@
                             {
                                 if (Model.MothlyAttendanceFullClassDetailses != null)
                                 {
-                                    @foreach (var item in Model.MothlyAttendanceFullClassDetailses)
+                                    @foreach (var item in Model.MothlyAttendanceFullClassDetailses.OrderBy(s => s.Roll))
                                     {
                                         <tr class="">
                                             <td class="table-primary">@item.Roll</td>
@@ -138,10 +138,7 @@
                                                         else
                                                         {
                                                             <td class="text-center">.</td>
-
                                                         }
-
-
                                                     }
                                                 }
                                             }

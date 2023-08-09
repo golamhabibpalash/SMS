@@ -40,10 +40,14 @@ namespace SMS.App.Controllers
         private readonly IAcademicSessionManager _academicSessionManager;
         private readonly IAcademicSectionManager _academicSectionManager;
         private readonly IInstituteManager _instituteManager;
+        private readonly IAcademicExamDetailsManager _academicExamDetailsManager;
+        private readonly IAcademicExamManager _academicExamManager;
+        private readonly IGradingTableManager _gradingTableManager;
+        private readonly IAcademicExamGroupManager _academicExamGroupManager;
         #endregion properties
 
         #region Constructor
-        public ReportsController(IWebHostEnvironment host, IStudentManager studentManager, IReportManager reportManager, IAcademicClassManager academicClassManager, IAttendanceMachineManager attendanceMachineManager, IOffDayManager dayManager, IAcademicSessionManager academicSessionManager, IAcademicSectionManager academicSectionManager, IInstituteManager instituteManager)
+        public ReportsController(IWebHostEnvironment host, IStudentManager studentManager, IReportManager reportManager, IAcademicClassManager academicClassManager, IAttendanceMachineManager attendanceMachineManager, IOffDayManager dayManager, IAcademicSessionManager academicSessionManager, IAcademicSectionManager academicSectionManager, IInstituteManager instituteManager, IAcademicExamDetailsManager academicExamDetailsManager, IAcademicExamManager academicExamManager, IGradingTableManager gradingTableManager, IAcademicExamGroupManager academicExamGroupManager)
         {
             _host = host;
             _studentManager = studentManager;
@@ -54,6 +58,10 @@ namespace SMS.App.Controllers
             _academicSessionManager = academicSessionManager;
             _academicSectionManager = academicSectionManager;
             _instituteManager = instituteManager;
+            _academicExamDetailsManager = academicExamDetailsManager;
+            _academicExamManager = academicExamManager;
+            _gradingTableManager = gradingTableManager;
+            _academicExamGroupManager = academicExamGroupManager;
         }
         #endregion Constructor
 
@@ -91,7 +99,7 @@ namespace SMS.App.Controllers
             var path = _host.WebRootPath + "\\Reports\\rptStudent.rdlc";
 
             string imageParam = "";
-            var imagePath = _host.WebRootPath + "\\Images\\Institute\\institute.jpeg";
+            var imagePath = _host.WebRootPath + "\\Images\\Institute\\"+institute.Logo;
 
             Image image = Image.FromFile(imagePath);
             using (MemoryStream ms = new MemoryStream())
@@ -151,7 +159,7 @@ namespace SMS.App.Controllers
             var path = _host.WebRootPath + "\\Reports\\Rpt_Daily_Attendance.rdlc";
 
             string imageParam = "";
-            var imagePath = _host.WebRootPath + "\\Images\\Institute\\institute.jpeg";
+            var imagePath = _host.WebRootPath + "\\Images\\Institute\\" + institute.Logo; 
 
             Image image = Image.FromFile(imagePath);
             using (MemoryStream ms = new MemoryStream())
@@ -300,17 +308,146 @@ namespace SMS.App.Controllers
         }
         #endregion Attendance Reports
 
-        #region MarkSheet
+        #region Result or MarkSheet
+        
+        public async Task<IActionResult> SubjectWiseMarkSheet(string reportType, int examId, string fileName)
+        {
+            Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
+
+            string mediaType = "application/pdf";
+            var reportPath = _host.WebRootPath + "\\Reports\\Rpt_Subject_Wise_MarkSheet.rdlc";
+
+            string imageParam = "";
+            var instituteLogoPath = _host.WebRootPath + "\\Images\\Institute\\" + institute.Logo;
+
+            Image image = Image.FromFile(instituteLogoPath);
+            using (MemoryStream ms = new MemoryStream())
+            {
+                image.Save(ms, image.RawFormat);
+                byte[] imageBytes = ms.ToArray();
+                imageParam = Convert.ToBase64String(imageBytes);
+            }
+            var examDetails = await _reportManager.GetSubjectWiseMarkSheet(examId);
+            if (examDetails==null)
+            {
+                return new JsonResult("Nothing Found");
+            }
+            using var report = new LocalReport();
+            report.DataSources.Add(new ReportDataSource("DataSet1", examDetails.OrderBy(s => s.ClassRoll)));
+
+            var examInfo = await _academicExamManager.GetByIdAsync(examId);
+            if (examInfo==null)
+            {
+                return new JsonResult("Please provide proper information");
+            }
+
+            var parameters = new[] {
+                new ReportParameter("InstituteName", institute.Name),
+                new ReportParameter("Location", institute.Address),
+                new ReportParameter("EIINNo", institute.EIIN),
+                new ReportParameter("Logo", imageParam),
+                new ReportParameter("ReportName", "Subject-wise Mark Sheet"),
+                new ReportParameter("ReportDate", DateTime.Today.ToString("dd MMM yyyy")),
+                new ReportParameter("AcademicClass", examInfo.AcademicClass.Name),
+                new ReportParameter("ExamTeacher", examInfo.Employee.EmployeeName),
+                new ReportParameter("SubjectName", examInfo.AcademicSubject.SubjectName),
+                new ReportParameter("AcademicSession", examInfo.AcademicExamGroup.AcademicSession.Name),
+                new ReportParameter("ExamGroupName", examInfo.AcademicExamGroup.ExamGroupName),
+                new ReportParameter("TotalMarks", examInfo.TotalMarks.ToString()),
+            };
+            report.ReportPath = reportPath;
+            report.SetParameters(parameters);
+            var pdf = report.Render("pdf");
+            if (!string.IsNullOrEmpty(fileName))
+            {
+                if (reportType == "xls")
+                {
+                    pdf = report.Render("excel");
+                }
+                if (reportType == "word")
+                {
+                    pdf = report.Render("word");
+                }
+                fileName = fileName + "_" + DateTime.Now.ToString("dd MMM yyyy");
+                return File(pdf, MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
+            }
+            return File(pdf, mediaType);
+
+        }
+        
+        public async Task<IActionResult> StudentWiseMarkSheet(string reportType, int examGroupId,int classId, string fileName)
+        {
+            
+            Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
+
+            string mediaType = "application/pdf";
+            var reportPath = _host.WebRootPath + "\\Reports\\Rpt_Student_Wise_MarkSheet.rdlc";
+
+            string imageParam = "";
+            var instituteLogoPath = _host.WebRootPath + "\\Images\\Institute\\" + institute.Logo;
+
+            Image image = Image.FromFile(instituteLogoPath);
+            using (MemoryStream ms = new MemoryStream())
+            {
+                image.Save(ms, image.RawFormat);
+                byte[] imageBytes = ms.ToArray();
+                imageParam = Convert.ToBase64String(imageBytes);
+            }
+            var examDetails = await _reportManager.GetStudentWiseMarkSheet(examGroupId,classId);
+            if (examDetails == null)
+            {
+                return new JsonResult("Nothing Found");
+            }
+            using var report = new LocalReport();
+            var gradingTable = await _gradingTableManager.GetAllAsync();
+            AcademicExamGroup academicExamGroup = await _academicExamGroupManager.GetByIdAsync(examGroupId);
+
+            var parameters = new[] {
+                new ReportParameter("InstituteName", institute.Name),
+                new ReportParameter("Location", institute.Address),
+                new ReportParameter("Logo", imageParam),
+                new ReportParameter("EIINNo", institute.EIIN),
+                new ReportParameter("ExamGroupName", academicExamGroup.ExamGroupName),
+                new ReportParameter("ReportName", "Mark Sheet"),
+                new ReportParameter("Signature", "signature"),
+                new ReportParameter("ReportDate", DateTime.Today.ToString("dd MMM yyyy")),
+            };
+            try
+            {
+                report.ReportPath = reportPath;
+                report.SetParameters(parameters);
+                report.DataSources.Add(new ReportDataSource("DS_Results", examDetails));
+                report.DataSources.Add(new ReportDataSource("GradingTable_DataSet", gradingTable));
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            var pdf = report.Render("pdf");
+
+            if (!string.IsNullOrEmpty(fileName))
+            {
+                if (reportType == "xls")
+                {
+                    pdf = report.Render("excel");
+                }
+                if (reportType == "word")
+                {
+                    pdf = report.Render("word");
+                }
+                fileName = fileName + "_" + DateTime.Now.ToString("dd MMM yyyy");
+                return File(pdf, MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
+            }
+            return File(pdf, mediaType);
+        }
+        
         public IActionResult MarkSheetReport()
         {
             return View();
         }
 
-        [HttpPost]
-        public IActionResult MarkSheettReport(string reportType, string fileName)
-        {
-            return View();
-        }
+
         public async Task<IActionResult> MarkSheettReportExport(string reportType, string fileName)
         {
             RenderType renderType = RenderType.Pdf;
@@ -332,10 +469,69 @@ namespace SMS.App.Controllers
             }
             return File(result.MainStream, "Application/pdf");
         }
-        #endregion MarkSheet
+
+        //public async Task<IActionResult> ClassWiseMarkSheetExport(string reportType,int examGroupId,int? classId,int? examId, string fileName)
+        //{
+        //    string imageParam = "";
+        //    string signatureParam = "";
+        //    var imagePath = _host.WebRootPath + "\\Images\\Institute\\admitLogo.jpg";
+        //    var signaturePath = _host.WebRootPath + "\\Images\\Institute\\signature.jpg";
+        //    using (var b = new Bitmap(imagePath))
+        //    {
+        //        using (var ms = new MemoryStream())
+        //        {
+        //            b.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+        //            imageParam = Convert.ToBase64String(ms.ToArray());
+        //        }
+        //    }
+        //    using (var b = new Bitmap(signaturePath))
+        //    {
+        //        using (var ms = new MemoryStream())
+        //        {
+        //            b.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+        //            signatureParam = Convert.ToBase64String(ms.ToArray());
+        //        }
+        //    }
+        //    RenderType renderType = RenderType.Pdf;
+        //    renderType = !string.IsNullOrEmpty(reportType) ? GetRenderType(reportType) : renderType;
+        //    var path = _host.WebRootPath + "\\Reports\\Rpt_AdmitCard.rdlc";
+        //    Dictionary<string, string> parameters = new();
+        //    AspNetCore.Reporting.LocalReport localReport = new(path);
+
+        //    Institute institute = await _instituteManager.GetByIdAsync(1);
+        //    if (institute == null)
+        //    {
+        //        return new JsonResult("Institute Information not found!");
+        //    }
+        //    parameters.Add("InstituteName", institute.Name);
+        //    parameters.Add("EIINNo", institute.EIIN);
+        //    parameters.Add("Image", imageParam);
+        //    parameters.Add("signature", signatureParam);
+
+        //    int aClassId = 0;
+        //    int aSection = 0;
+
+        //    int.TryParse(academicClassId, out aClassId);
+        //    int.TryParse(academicSectionId, out aSection);
+
+
+        //    var admitCard = await _reportManager.GetAdmitCard(monthId, aClassId, aSection);
+        //    if (admitCard.Count <= 0)
+        //    {
+        //        return new JsonResult("No data found");
+        //    }
+        //    localReport.AddDataSource("DSAdmitCard", admitCard);
+        //    var result = localReport.Execute(renderType, 1, parameters);
+        //    if (!string.IsNullOrEmpty(fileName))
+        //    {
+        //        return File(result.MainStream, MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
+        //    }
+        //    return File(result.MainStream, "Application/pdf");
+        //}
+        #endregion Result or MarkSheet
 
         #region Student Payment Reports
-        public async Task<IActionResult> StudentPaymentInfo()
+        public IActionResult StudentPaymentInfo()
         {
             return View();
         }
@@ -364,7 +560,7 @@ namespace SMS.App.Controllers
             var path = _host.WebRootPath + "\\Reports\\rptStudentPaymentFullInfo.rdlc";
 
             string imageParam = "";
-            var imagePath = _host.WebRootPath + "\\Images\\Institute\\institute.jpeg";
+            var imagePath = _host.WebRootPath + "\\Images\\Institute\\"+institute.Logo;
 
             Image image = Image.FromFile(imagePath);
             using (MemoryStream ms = new MemoryStream())
@@ -427,7 +623,7 @@ namespace SMS.App.Controllers
                 return new JsonResult("Institute Information not found!");
             }
             string imageParam = "";
-            var imagePath = _host.WebRootPath + "\\Images\\Institute\\institute.jpeg"; 
+            var imagePath = _host.WebRootPath + "\\Images\\Institute\\"+institute.Logo; 
             var reportPath = _host.WebRootPath + "\\Reports\\Rpt_Student_Payment.rdlc";
             byte[] pdf;
             string mediaType = "application/pdf";
@@ -486,7 +682,12 @@ namespace SMS.App.Controllers
         {
             string imageParam = "";
             string signatureParam = "";
-            var imagePath = _host.WebRootPath + "\\Images\\Institute\\admitLogo.jpg";
+            Institute institute = await _instituteManager.GetByIdAsync(1);
+            if (institute == null)
+            {
+                return new JsonResult("Institute Information not found!");
+            }
+            var imagePath = _host.WebRootPath + "\\Images\\Institute\\"+institute.Logo;
             var signaturePath = _host.WebRootPath + "\\Images\\Institute\\signature.jpg";
             using (var b = new Bitmap(imagePath))
             {
@@ -510,11 +711,6 @@ namespace SMS.App.Controllers
             Dictionary<string, string> parameters = new();
             AspNetCore.Reporting.LocalReport localReport = new(path);
 
-            Institute institute = await _instituteManager.GetByIdAsync(1);
-            if (institute == null)
-            {
-                return new JsonResult("Institute Information not found!");
-            }
             parameters.Add("InstituteName", institute.Name);
             parameters.Add("EIINNo", institute.EIIN);
             parameters.Add("Image", imageParam);

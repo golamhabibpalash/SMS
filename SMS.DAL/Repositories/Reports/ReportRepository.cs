@@ -5,10 +5,12 @@ using SMS.DB;
 using SMS.Entities.AdditionalModels;
 using SMS.Entities.RptModels;
 using SMS.Entities.RptModels.AttendanceVM;
+using SMS.Entities.RptModels.Results;
 using SMS.Entities.RptModels.StudentPayment;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.Tracing;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Metadata;
@@ -27,12 +29,30 @@ namespace SMS.DAL.Repositories.Reports
 
         public async Task<List<RptAdmitCardVM>> GetAdmitCard(int monthId, int academicClassId, int academicSectionId)
         {
-            string query = @"select t.* from vw_rpt_Admit_Card_Info t where t.monthId = " + monthId+" and t.academicClassId = "+academicClassId+" and t.AcademicSectionId ="+academicSectionId+"";
-            if (academicSectionId<=0)
+            string query = string.Empty;
+            if (academicClassId<=0)
             {
-                query = @"select t.* from vw_rpt_Admit_Card_Info t
-where t.monthId = " + monthId + " and t.academicClassId = " + academicClassId + "";
+                if (academicSectionId<=0)
+                {
+                    query = @"select t.* from vw_rpt_Admit_Card_Info t where t.monthId = " + monthId +"";
+                }
+                else
+                {
+                    query = @"select t.* from vw_rpt_Admit_Card_Info t where t.monthId = " + monthId + " and t.AcademicSectionId =" + academicSectionId + "";
+                }
             }
+            else
+            {
+                if (academicSectionId<=0)
+                {
+                    query = @"select t.* from vw_rpt_Admit_Card_Info t where t.monthId = " + monthId + " and t.academicClassId = " + academicClassId + "";
+                }
+                else
+                {
+                    query = @"select t.* from vw_rpt_Admit_Card_Info t where t.monthId = " + monthId + " and t.academicClassId = " + academicClassId + " and t.AcademicSectionId =" + academicSectionId + "";
+                }
+            }
+
             List<RptAdmitCardVM> result = await _context.RptAdmitCardVMs.FromSqlRaw(query).ToListAsync();
             return result;
         }
@@ -78,7 +98,7 @@ where t.monthId = " + monthId + " and t.academicClassId = " + academicClassId + 
             {
                 rptStudentsPayments = await _context.RptStudentsPaymetnsVMs.FromSqlRaw(query).ToListAsync();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw;
             }
@@ -108,6 +128,18 @@ where t.monthId = " + monthId + " and t.academicClassId = " + academicClassId + 
                 throw;
             } 
             return rptPaymentReceiptVMs;
+        }
+        public async Task<List<SubjectWiseMarkSheetVM>> GetSubjectWiseMarkSheet(int examId)
+        {
+            string query = $"select * from vw_rpt_academic_exam_details where AcademicExamId = '"+examId+"'";
+            var result  = await _context.SubjectWiseMarkSheetVMs.FromSqlRaw(query).ToListAsync();
+            return result;
+        }
+        public async Task<List<StudentWiseMarkSheetVM>> GetStudentWiseMarkSheet(int examGroupId, int classId)
+        {            
+            string query = $"select t.* from vw_rpt_student_wise_marksheet t where t.examGroupId='"+examGroupId+"' and t.classId='"+classId+"' order by t.ClassRoll";
+            List<StudentWiseMarkSheetVM> result = await _context.StudentWiseMarkSheetVMs.FromSqlRaw(query).ToListAsync();
+            return result;
         }
     }
 }

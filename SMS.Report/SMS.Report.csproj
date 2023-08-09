@@ -13,6 +13,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Academic_Exam_Details_DBSet.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Academic_Exam_Details_DBSet.xsd</DependentUpon>
+    </Compile>
     <Compile Update="AdmitCardDataSet.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -43,6 +48,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Exam_Result_DataSet.xsd</DependentUpon>
     </Compile>
+    <Compile Update="GradingTableDataSet.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>GradingTableDataSet.xsd</DependentUpon>
+    </Compile>
     <Compile Update="Payment_Receipt_DS.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -53,10 +63,25 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>SMSDBDataSet.xsd</DependentUpon>
     </Compile>
+    <Compile Update="SMSDBDataSet1.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SMSDBDataSet1.xsd</DependentUpon>
+    </Compile>
+    <Compile Update="SMSDBDataSet2.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SMSDBDataSet2.xsd</DependentUpon>
+    </Compile>
     <Compile Update="StudentPaymentDS.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>StudentPaymentDS.xsd</DependentUpon>
+    </Compile>
+    <Compile Update="StudentWiseMarksheetDS.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>StudentWiseMarksheetDS.xsd</DependentUpon>
     </Compile>
     <Compile Update="Student_Payment_DS.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -66,6 +91,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Academic_Exam_Details_DBSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>Academic_Exam_Details_DBSet.Designer.cs</LastGenOutput>
+    </None>
     <None Update="AdmitCardDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>AdmitCardDataSet.Designer.cs</LastGenOutput>
@@ -90,6 +119,10 @@
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>Exam_Result_DataSet.Designer.cs</LastGenOutput>
     </None>
+    <None Update="GradingTableDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>GradingTableDataSet.Designer.cs</LastGenOutput>
+    </None>
     <None Update="Payment_Receipt_DS.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>Payment_Receipt_DS.Designer.cs</LastGenOutput>
@@ -98,9 +131,21 @@
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>SMSDBDataSet.Designer.cs</LastGenOutput>
     </None>
+    <None Update="SMSDBDataSet1.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>SMSDBDataSet1.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="SMSDBDataSet2.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>SMSDBDataSet2.Designer.cs</LastGenOutput>
+    </None>
     <None Update="StudentPaymentDS.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>StudentPaymentDS.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="StudentWiseMarksheetDS.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>StudentWiseMarksheetDS.Designer.cs</LastGenOutput>
     </None>
     <None Update="Student_Payment_DS.xsd">
       <Generator>MSDataSetGenerator</Generator>

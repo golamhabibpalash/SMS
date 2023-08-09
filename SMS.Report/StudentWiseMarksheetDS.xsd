@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="StudentWiseMarksheetDS" targetNamespace="http://tempuri.org/StudentWiseMarksheetDS.xsd" xmlns:mstns="http://tempuri.org/StudentWiseMarksheetDS.xsd" xmlns="http://tempuri.org/StudentWiseMarksheetDS.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections>
+          <Connection ConnectionStringObject="Data Source=GH-Palash\SQLEXPRESS;Initial Catalog=SMSDB;Persist Security Info=True;User ID=ghp" IsAppSettingsProperty="false" Modifier="Assembly" Name="gh-palash\sqlexpress.SMSDB.dbo" ParameterPrefix="@" Provider="System.Data.SqlClient" />
+        </Connections>
+        <Tables>
+          <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="vw_rpt_student_wise_marksheetTableAdapter" GeneratorDataComponentClassName="vw_rpt_student_wise_marksheetTableAdapter" Name="vw_rpt_student_wise_marksheet" UserDataComponentName="vw_rpt_student_wise_marksheetTableAdapter">
+            <MainSource>
+              <DbSource ConnectionRef="gh-palash\sqlexpress.SMSDB.dbo" DbObjectName="SMSDB.dbo.vw_rpt_student_wise_marksheet" DbObjectType="View" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetData" UserSourceName="Fill">
+                <SelectCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="false">
+                    <CommandText>SELECT Student_Name, ClassRoll, ClassName, SectionName, ReligionName, Type, SubjectName, TotalMarks, ObtainMark, MaxNumber, Grade, Point FROM dbo.vw_rpt_student_wise_marksheet</CommandText>
+                    <Parameters />
+                  </DbCommand>
+                </SelectCommand>
+              </DbSource>
+            </MainSource>
+            <Mappings>
+              <Mapping SourceColumn="Student_Name" DataSetColumn="Student_Name" />
+              <Mapping SourceColumn="ClassRoll" DataSetColumn="ClassRoll" />
+              <Mapping SourceColumn="ClassName" DataSetColumn="ClassName" />
+              <Mapping SourceColumn="SectionName" DataSetColumn="SectionName" />
+              <Mapping SourceColumn="ReligionName" DataSetColumn="ReligionName" />
+              <Mapping SourceColumn="Type" DataSetColumn="Type" />
+              <Mapping SourceColumn="SubjectName" DataSetColumn="SubjectName" />
+              <Mapping SourceColumn="TotalMarks" DataSetColumn="TotalMarks" />
+              <Mapping SourceColumn="ObtainMark" DataSetColumn="ObtainMark" />
+              <Mapping SourceColumn="MaxNumber" DataSetColumn="MaxNumber" />
+              <Mapping SourceColumn="Grade" DataSetColumn="Grade" />
+              <Mapping SourceColumn="Point" DataSetColumn="Point" />
+            </Mappings>
+            <Sources />
+          </TableAdapter>
+        </Tables>
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="StudentWiseMarksheetDS" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="True" msprop:Generator_UserDSName="StudentWiseMarksheetDS" msprop:Generator_DataSetName="StudentWiseMarksheetDS">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="vw_rpt_student_wise_marksheet" msprop:Generator_RowEvHandlerName="vw_rpt_student_wise_marksheetRowChangeEventHandler" msprop:Generator_RowDeletedName="vw_rpt_student_wise_marksheetRowDeleted" msprop:Generator_RowDeletingName="vw_rpt_student_wise_marksheetRowDeleting" msprop:Generator_RowEvArgName="vw_rpt_student_wise_marksheetRowChangeEvent" msprop:Generator_TablePropName="vw_rpt_student_wise_marksheet" msprop:Generator_RowChangedName="vw_rpt_student_wise_marksheetRowChanged" msprop:Generator_RowChangingName="vw_rpt_student_wise_marksheetRowChanging" msprop:Generator_TableClassName="vw_rpt_student_wise_marksheetDataTable" msprop:Generator_RowClassName="vw_rpt_student_wise_marksheetRow" msprop:Generator_TableVarName="tablevw_rpt_student_wise_marksheet" msprop:Generator_UserTableName="vw_rpt_student_wise_marksheet">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Student_Name" msprop:Generator_ColumnPropNameInRow="Student_Name" msprop:Generator_ColumnPropNameInTable="Student_NameColumn" msprop:Generator_ColumnVarNameInTable="columnStudent_Name" msprop:Generator_UserColumnName="Student_Name" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="2147483647" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="ClassRoll" msprop:Generator_ColumnPropNameInRow="ClassRoll" msprop:Generator_ColumnPropNameInTable="ClassRollColumn" msprop:Generator_ColumnVarNameInTable="columnClassRoll" msprop:Generator_UserColumnName="ClassRoll" type="xs:int" minOccurs="0" />
+              <xs:element name="ClassName" msprop:Generator_ColumnPropNameInRow="ClassName" msprop:Generator_ColumnPropNameInTable="ClassNameColumn" msprop:Generator_ColumnVarNameInTable="columnClassName" msprop:Generator_UserColumnName="ClassName" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="2147483647" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="SectionName" msprop:Generator_ColumnPropNameInRow="SectionName" msprop:Generator_ColumnPropNameInTable="SectionNameColumn" msprop:Generator_ColumnVarNameInTable="columnSectionName" msprop:Generator_UserColumnName="SectionName" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="2147483647" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="ReligionName" msprop:Generator_ColumnPropNameInRow="ReligionName" msprop:Generator_ColumnPropNameInTable="ReligionNameColumn" msprop:Generator_ColumnVarNameInTable="columnReligionName" msprop:Generator_UserColumnName="ReligionName" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="2147483647" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="Type" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInRow="Type" msprop:Generator_ColumnPropNameInTable="TypeColumn" msprop:Generator_ColumnVarNameInTable="columnType" msprop:Generator_UserColumnName="Type" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="7" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="SubjectName" msprop:Generator_ColumnPropNameInRow="SubjectName" msprop:Generator_ColumnPropNameInTable="SubjectNameColumn" msprop:Generator_ColumnVarNameInTable="columnSubjectName" msprop:Generator_UserColumnName="SubjectName" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="2147483647" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="TotalMarks" msprop:Generator_ColumnPropNameInRow="TotalMarks" msprop:Generator_ColumnPropNameInTable="TotalMarksColumn" msprop:Generator_ColumnVarNameInTable="columnTotalMarks" msprop:Generator_UserColumnName="TotalMarks" type="xs:int" />
+              <xs:element name="ObtainMark" msprop:Generator_ColumnPropNameInRow="ObtainMark" msprop:Generator_ColumnPropNameInTable="ObtainMarkColumn" msprop:Generator_ColumnVarNameInTable="columnObtainMark" msprop:Generator_UserColumnName="ObtainMark" type="xs:double" minOccurs="0" />
+              <xs:element name="MaxNumber" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInRow="MaxNumber" msprop:Generator_ColumnPropNameInTable="MaxNumberColumn" msprop:Generator_ColumnVarNameInTable="columnMaxNumber" msprop:Generator_UserColumnName="MaxNumber" type="xs:double" minOccurs="0" />
+              <xs:element name="Grade" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInRow="Grade" msprop:Generator_ColumnPropNameInTable="GradeColumn" msprop:Generator_ColumnVarNameInTable="columnGrade" msprop:Generator_UserColumnName="Grade" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="2" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="Point" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInRow="Point" msprop:Generator_ColumnPropNameInTable="PointColumn" msprop:Generator_ColumnVarNameInTable="columnPoint" msprop:Generator_UserColumnName="Point" type="xs:decimal" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

@@ -3,6 +3,7 @@ using SMS.DAL.Contracts.Reports;
 using SMS.Entities;
 using SMS.Entities.RptModels;
 using SMS.Entities.RptModels.AttendanceVM;
+using SMS.Entities.RptModels.Results;
 using SMS.Entities.RptModels.StudentPayment;
 using System;
 using System.Collections.Generic;
@@ -56,6 +57,17 @@ namespace SMS.BLL.Managers.Reports
         public async Task<List<RptPaymentReceiptVM>> GetPaymentReceiptReport(int paymentId)
         {
             return await _reportRepository.GetPaymentReceiptReport(paymentId);
+        }
+
+        public async Task<List<SubjectWiseMarkSheetVM>> GetSubjectWiseMarkSheet(int examId)
+        {
+            return await _reportRepository.GetSubjectWiseMarkSheet(examId);
+        }
+
+        public async Task<List<StudentWiseMarkSheetVM>> GetStudentWiseMarkSheet(int examGroupId, int classId)
+        {
+            var result = await _reportRepository.GetStudentWiseMarkSheet(examGroupId, classId);
+            return result;
         }
     }
 }

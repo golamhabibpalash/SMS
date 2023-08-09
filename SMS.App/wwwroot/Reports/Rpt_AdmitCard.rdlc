@@ -85,6 +85,10 @@
           <DataField>Gender</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="Religion">
+          <DataField>Religion</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>AdmitCardDataSet</rd:DataSetName>
@@ -104,12 +108,12 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>8.16322in</Width>
+                  <Width>8.0278in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
                 <TablixRow>
-                  <Height>2.48054in</Height>
+                  <Height>2.5361in</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -287,14 +291,14 @@
                                       </TablixCell>
                                       <TablixCell>
                                         <CellContents>
-                                          <Textbox Name="Textbox36">
+                                          <Textbox Name="Textbox31">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value />
+                                                    <Value>Session</Value>
                                                     <Style>
                                                       <FontFamily>Arial Narrow</FontFamily>
                                                       <FontSize>12pt</FontSize>
@@ -304,12 +308,11 @@
                                                 <Style />
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>Textbox36</rd:DefaultName>
+                                            <rd:DefaultName>Textbox30</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Color>LightGrey</Color>
                                                 <Style>None</Style>
-                                                <Width>0.25pt</Width>
                                               </Border>
                                               <PaddingLeft>2pt</PaddingLeft>
                                               <PaddingRight>2pt</PaddingRight>
@@ -328,7 +331,7 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value />
+                                                    <Value>:</Value>
                                                     <Style>
                                                       <FontFamily>Arial Narrow</FontFamily>
                                                       <FontSize>12pt</FontSize>
@@ -340,12 +343,11 @@
                                                 </Style>
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>Textbox37</rd:DefaultName>
+                                            <rd:DefaultName>Textbox34</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Color>LightGrey</Color>
                                                 <Style>None</Style>
-                                                <Width>0.25pt</Width>
                                               </Border>
                                               <PaddingLeft>2pt</PaddingLeft>
                                               <PaddingRight>2pt</PaddingRight>
@@ -357,15 +359,16 @@
                                       </TablixCell>
                                       <TablixCell>
                                         <CellContents>
-                                          <Textbox Name="Textbox38">
+                                          <Textbox Name="SessionName">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value />
+                                                    <Value>=Fields!SessionName.Value</Value>
                                                     <Style>
+                                                      <FontStyle>Italic</FontStyle>
                                                       <FontFamily>Arial Narrow</FontFamily>
                                                       <FontSize>12pt</FontSize>
                                                     </Style>
@@ -376,12 +379,11 @@
                                                 </Style>
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>Textbox38</rd:DefaultName>
+                                            <rd:DefaultName>SessionName</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Color>LightGrey</Color>
                                                 <Style>None</Style>
-                                                <Width>0.25pt</Width>
                                               </Border>
                                               <PaddingLeft>2pt</PaddingLeft>
                                               <PaddingRight>2pt</PaddingRight>
@@ -750,14 +752,14 @@
                                       <TablixCell />
                                       <TablixCell>
                                         <CellContents>
-                                          <Textbox Name="Textbox30">
+                                          <Textbox Name="Textbox41">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>Session</Value>
+                                                    <Value>Section</Value>
                                                     <Style>
                                                       <FontFamily>Arial Narrow</FontFamily>
                                                       <FontSize>12pt</FontSize>
@@ -767,7 +769,7 @@
                                                 <Style />
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>Textbox30</rd:DefaultName>
+                                            <rd:DefaultName>Textbox41</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Color>LightGrey</Color>
@@ -783,7 +785,7 @@
                                       </TablixCell>
                                       <TablixCell>
                                         <CellContents>
-                                          <Textbox Name="Textbox34">
+                                          <Textbox Name="Textbox42">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
@@ -802,7 +804,7 @@
                                                 </Style>
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>Textbox34</rd:DefaultName>
+                                            <rd:DefaultName>Textbox42</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Color>LightGrey</Color>
@@ -818,14 +820,14 @@
                                       </TablixCell>
                                       <TablixCell>
                                         <CellContents>
-                                          <Textbox Name="SessionName">
+                                          <Textbox Name="SectionName">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>=Fields!SessionName.Value</Value>
+                                                    <Value>=Fields!SectionName.Value</Value>
                                                     <Style>
                                                       <FontStyle>Italic</FontStyle>
                                                       <FontFamily>Arial Narrow</FontFamily>
@@ -838,7 +840,7 @@
                                                 </Style>
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>SessionName</rd:DefaultName>
+                                            <rd:DefaultName>SectionName</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Color>LightGrey</Color>
@@ -965,14 +967,14 @@
                                       <TablixCell />
                                       <TablixCell>
                                         <CellContents>
-                                          <Textbox Name="Textbox41">
+                                          <Textbox Name="Textbox99">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>Section</Value>
+                                                    <Value>Religion</Value>
                                                     <Style>
                                                       <FontFamily>Arial Narrow</FontFamily>
                                                       <FontSize>12pt</FontSize>
@@ -982,7 +984,7 @@
                                                 <Style />
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>Textbox41</rd:DefaultName>
+                                            <rd:DefaultName>Textbox99</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Color>LightGrey</Color>
@@ -998,7 +1000,7 @@
                                       </TablixCell>
                                       <TablixCell>
                                         <CellContents>
-                                          <Textbox Name="Textbox42">
+                                          <Textbox Name="Textbox100">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
@@ -1017,7 +1019,7 @@
                                                 </Style>
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>Textbox42</rd:DefaultName>
+                                            <rd:DefaultName>Textbox100</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Color>LightGrey</Color>
@@ -1033,14 +1035,14 @@
                                       </TablixCell>
                                       <TablixCell>
                                         <CellContents>
-                                          <Textbox Name="SectionName">
+                                          <Textbox Name="Religion">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>=Fields!SectionName.Value</Value>
+                                                    <Value>=Fields!Religion.Value</Value>
                                                     <Style>
                                                       <FontStyle>Italic</FontStyle>
                                                       <FontFamily>Arial Narrow</FontFamily>
@@ -1053,7 +1055,7 @@
                                                 </Style>
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>SectionName</rd:DefaultName>
+                                            <rd:DefaultName>Religion</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Color>LightGrey</Color>
@@ -1357,12 +1359,12 @@
                               <TablixBody>
                                 <TablixColumns>
                                   <TablixColumn>
-                                    <Width>1.87708in</Width>
+                                    <Width>1.88612in</Width>
                                   </TablixColumn>
                                 </TablixColumns>
                                 <TablixRows>
                                   <TablixRow>
-                                    <Height>0.3in</Height>
+                                    <Height>0.37917in</Height>
                                     <TablixCells>
                                       <TablixCell>
                                         <CellContents>
@@ -1375,12 +1377,12 @@
                                                       <Width>0.4in</Width>
                                                     </TablixColumn>
                                                     <TablixColumn>
-                                                      <Width>1.4in</Width>
+                                                      <Width>1.46in</Width>
                                                     </TablixColumn>
                                                   </TablixColumns>
                                                   <TablixRows>
                                                     <TablixRow>
-                                                      <Height>0.25in</Height>
+                                                      <Height>0.34167in</Height>
                                                       <TablixCells>
                                                         <TablixCell>
                                                           <CellContents>
@@ -1392,7 +1394,7 @@
                                                                     <TextRun>
                                                                       <Value>=Fields!SubjectCode.Value &amp;" : " &amp; Fields!SubjectName.Value</Value>
                                                                       <Style>
-                                                                        <FontSize>11pt</FontSize>
+                                                                        <FontSize>=IIf(Len(Fields!SubjectName.Value) &gt; 20, 9, 11)</FontSize>
                                                                       </Style>
                                                                     </TextRun>
                                                                   </TextRuns>
@@ -1432,10 +1434,10 @@
                                                   </TablixMembers>
                                                 </TablixRowHierarchy>
                                                 <DataSetName>DSAdmitCard</DataSetName>
-                                                <Top>0.0375in</Top>
-                                                <Left>0.05in</Left>
-                                                <Height>0.25in</Height>
-                                                <Width>1.8in</Width>
+                                                <Top>0.0125in</Top>
+                                                <Left>0.0125in</Left>
+                                                <Height>0.34167in</Height>
+                                                <Width>1.86in</Width>
                                                 <Style>
                                                   <Border>
                                                     <Style>None</Style>
@@ -1476,10 +1478,10 @@
                                 </TablixMembers>
                               </TablixRowHierarchy>
                               <DataSetName>DSAdmitCard</DataSetName>
-                              <Top>1.45415in</Top>
-                              <Left>0.28623in</Left>
-                              <Height>0.3in</Height>
-                              <Width>1.87708in</Width>
+                              <Top>1.42915in</Top>
+                              <Left>0.28126in</Left>
+                              <Height>0.37917in</Height>
+                              <Width>1.88612in</Width>
                               <ZIndex>2</ZIndex>
                               <Style>
                                 <Border>
@@ -1491,12 +1493,12 @@
                               <TablixBody>
                                 <TablixColumns>
                                   <TablixColumn>
-                                    <Width>1.88403in</Width>
+                                    <Width>1.88612in</Width>
                                   </TablixColumn>
                                 </TablixColumns>
                                 <TablixRows>
                                   <TablixRow>
-                                    <Height>0.3in</Height>
+                                    <Height>0.36945in</Height>
                                     <TablixCells>
                                       <TablixCell>
                                         <CellContents>
@@ -1506,27 +1508,26 @@
                                                 <TablixBody>
                                                   <TablixColumns>
                                                     <TablixColumn>
-                                                      <Width>0.4in</Width>
+                                                      <Width>0.425in</Width>
                                                     </TablixColumn>
                                                     <TablixColumn>
-                                                      <Width>1.4in</Width>
+                                                      <Width>1.435in</Width>
                                                     </TablixColumn>
                                                   </TablixColumns>
                                                   <TablixRows>
                                                     <TablixRow>
-                                                      <Height>0.25in</Height>
+                                                      <Height>0.34167in</Height>
                                                       <TablixCells>
                                                         <TablixCell>
                                                           <CellContents>
                                                             <Textbox Name="SubjectCode2">
-                                                              <KeepTogether>true</KeepTogether>
                                                               <Paragraphs>
                                                                 <Paragraph>
                                                                   <TextRuns>
                                                                     <TextRun>
                                                                       <Value>=Fields!SubjectCode.Value &amp;" : " &amp; Fields!SubjectName.Value</Value>
                                                                       <Style>
-                                                                        <FontSize>11pt</FontSize>
+                                                                        <FontSize>=IIf(Len(Fields!SubjectName.Value) &gt; 20, 9, 11)</FontSize>
                                                                       </Style>
                                                                     </TextRun>
                                                                   </TextRuns>
@@ -1566,10 +1567,10 @@
                                                   </TablixMembers>
                                                 </TablixRowHierarchy>
                                                 <DataSetName>DSAdmitCard</DataSetName>
-                                                <Top>0.025in</Top>
-                                                <Left>0.025in</Left>
-                                                <Height>0.25in</Height>
-                                                <Width>1.8in</Width>
+                                                <Top>0.0125in</Top>
+                                                <Left>0.0125in</Left>
+                                                <Height>0.34167in</Height>
+                                                <Width>1.86in</Width>
                                                 <Style>
                                                   <Border>
                                                     <Style>None</Style>
@@ -1610,10 +1611,10 @@
                                 </TablixMembers>
                               </TablixRowHierarchy>
                               <DataSetName>DSAdmitCard</DataSetName>
-                              <Top>1.45415in</Top>
-                              <Left>2.16401in</Left>
-                              <Height>0.3in</Height>
-                              <Width>1.88403in</Width>
+                              <Top>1.42915in</Top>
+                              <Left>2.20487in</Left>
+                              <Height>0.36945in</Height>
+                              <Width>1.88612in</Width>
                               <ZIndex>3</ZIndex>
                               <Style>
                                 <Border>
@@ -1625,12 +1626,12 @@
                               <TablixBody>
                                 <TablixColumns>
                                   <TablixColumn>
-                                    <Width>1.85in</Width>
+                                    <Width>1.885in</Width>
                                   </TablixColumn>
                                 </TablixColumns>
                                 <TablixRows>
                                   <TablixRow>
-                                    <Height>0.3in</Height>
+                                    <Height>0.36945in</Height>
                                     <TablixCells>
                                       <TablixCell>
                                         <CellContents>
@@ -1643,12 +1644,12 @@
                                                       <Width>0.4in</Width>
                                                     </TablixColumn>
                                                     <TablixColumn>
-                                                      <Width>1.4in</Width>
+                                                      <Width>1.46in</Width>
                                                     </TablixColumn>
                                                   </TablixColumns>
                                                   <TablixRows>
                                                     <TablixRow>
-                                                      <Height>0.25in</Height>
+                                                      <Height>0.34167in</Height>
                                                       <TablixCells>
                                                         <TablixCell>
                                                           <CellContents>
@@ -1660,7 +1661,7 @@
                                                                     <TextRun>
                                                                       <Value>=Fields!SubjectCode.Value &amp;" : " &amp; Fields!SubjectName.Value</Value>
                                                                       <Style>
-                                                                        <FontSize>11pt</FontSize>
+                                                                        <FontSize>=IIf(Len(Fields!SubjectName.Value) &gt; 20, 9, 11)</FontSize>
                                                                       </Style>
                                                                     </TextRun>
                                                                   </TextRuns>
@@ -1700,10 +1701,10 @@
                                                   </TablixMembers>
                                                 </TablixRowHierarchy>
                                                 <DataSetName>DSAdmitCard</DataSetName>
-                                                <Top>0.025in</Top>
-                                                <Left>0.025in</Left>
-                                                <Height>0.25in</Height>
-                                                <Width>1.8in</Width>
+                                                <Top>0.0125in</Top>
+                                                <Left>0.0125in</Left>
+                                                <Height>0.34167in</Height>
+                                                <Width>1.86in</Width>
                                                 <Style>
                                                   <Border>
                                                     <Style>None</Style>
@@ -1744,10 +1745,10 @@
                                 </TablixMembers>
                               </TablixRowHierarchy>
                               <DataSetName>DSAdmitCard</DataSetName>
-                              <Top>1.45415in</Top>
-                              <Left>4.11749in</Left>
-                              <Height>0.3in</Height>
-                              <Width>1.85in</Width>
+                              <Top>1.42915in</Top>
+                              <Left>4.13543in</Left>
+                              <Height>0.36945in</Height>
+                              <Width>1.885in</Width>
                               <ZIndex>4</ZIndex>
                               <Style>
                                 <Border>
@@ -1759,12 +1760,12 @@
                               <TablixBody>
                                 <TablixColumns>
                                   <TablixColumn>
-                                    <Width>1.87708in</Width>
+                                    <Width>1.88403in</Width>
                                   </TablixColumn>
                                 </TablixColumns>
                                 <TablixRows>
                                   <TablixRow>
-                                    <Height>0.3in</Height>
+                                    <Height>0.37917in</Height>
                                     <TablixCells>
                                       <TablixCell>
                                         <CellContents>
@@ -1777,12 +1778,12 @@
                                                       <Width>0.4in</Width>
                                                     </TablixColumn>
                                                     <TablixColumn>
-                                                      <Width>1.4in</Width>
+                                                      <Width>1.46in</Width>
                                                     </TablixColumn>
                                                   </TablixColumns>
                                                   <TablixRows>
                                                     <TablixRow>
-                                                      <Height>0.25in</Height>
+                                                      <Height>0.34167in</Height>
                                                       <TablixCells>
                                                         <TablixCell>
                                                           <CellContents>
@@ -1794,7 +1795,7 @@
                                                                     <TextRun>
                                                                       <Value>=Fields!SubjectCode.Value &amp;" : " &amp; Fields!SubjectName.Value</Value>
                                                                       <Style>
-                                                                        <FontSize>11pt</FontSize>
+                                                                        <FontSize>=IIf(Len(Fields!SubjectName.Value) &gt; 20, 9, 11)</FontSize>
                                                                       </Style>
                                                                     </TextRun>
                                                                   </TextRuns>
@@ -1834,10 +1835,10 @@
                                                   </TablixMembers>
                                                 </TablixRowHierarchy>
                                                 <DataSetName>DSAdmitCard</DataSetName>
-                                                <Top>0.0375in</Top>
-                                                <Left>0.05in</Left>
-                                                <Height>0.25in</Height>
-                                                <Width>1.8in</Width>
+                                                <Top>0.0125in</Top>
+                                                <Left>0.0125in</Left>
+                                                <Height>0.34167in</Height>
+                                                <Width>1.86in</Width>
                                                 <Style>
                                                   <Border>
                                                     <Style>None</Style>
@@ -1878,10 +1879,10 @@
                                 </TablixMembers>
                               </TablixRowHierarchy>
                               <DataSetName>DSAdmitCard</DataSetName>
-                              <Top>1.45415in</Top>
-                              <Left>6.03693in</Left>
-                              <Height>0.3in</Height>
-                              <Width>1.87708in</Width>
+                              <Top>1.42915in</Top>
+                              <Left>6.03196in</Left>
+                              <Height>0.37917in</Height>
+                              <Width>1.88403in</Width>
                               <ZIndex>5</ZIndex>
                               <Style>
                                 <Border>
@@ -1893,12 +1894,12 @@
                               <TablixBody>
                                 <TablixColumns>
                                   <TablixColumn>
-                                    <Width>1.85208in</Width>
+                                    <Width>1.87708in</Width>
                                   </TablixColumn>
                                 </TablixColumns>
                                 <TablixRows>
                                   <TablixRow>
-                                    <Height>0.3in</Height>
+                                    <Height>0.36945in</Height>
                                     <TablixCells>
                                       <TablixCell>
                                         <CellContents>
@@ -1908,15 +1909,15 @@
                                                 <TablixBody>
                                                   <TablixColumns>
                                                     <TablixColumn>
-                                                      <Width>0.4in</Width>
+                                                      <Width>0.3875in</Width>
                                                     </TablixColumn>
                                                     <TablixColumn>
-                                                      <Width>1.4in</Width>
+                                                      <Width>1.4725in</Width>
                                                     </TablixColumn>
                                                   </TablixColumns>
                                                   <TablixRows>
                                                     <TablixRow>
-                                                      <Height>0.25in</Height>
+                                                      <Height>0.34167in</Height>
                                                       <TablixCells>
                                                         <TablixCell>
                                                           <CellContents>
@@ -1926,9 +1927,9 @@
                                                                 <Paragraph>
                                                                   <TextRuns>
                                                                     <TextRun>
-                                                                      <Value>=Fields!SubjectCode.Value &amp;" :"</Value>
+                                                                      <Value>=Fields!SubjectCode.Value &amp;" : " &amp; Fields!SubjectName.Value</Value>
                                                                       <Style>
-                                                                        <FontSize>11pt</FontSize>
+                                                                        <FontSize>=IIf(Len(Fields!SubjectName.Value) &gt; 20, 9, 11)</FontSize>
                                                                       </Style>
                                                                     </TextRun>
                                                                   </TextRuns>
@@ -1946,7 +1947,6 @@
                                                               </Style>
                                                             </Textbox>
                                                             <ColSpan>2</ColSpan>
-                                                            <rd:Selected>true</rd:Selected>
                                                           </CellContents>
                                                         </TablixCell>
                                                         <TablixCell />
@@ -1968,10 +1968,10 @@
                                                   </TablixMembers>
                                                 </TablixRowHierarchy>
                                                 <DataSetName>DSAdmitCard</DataSetName>
-                                                <Top>0.025in</Top>
-                                                <Left>0.025in</Left>
-                                                <Height>0.25in</Height>
-                                                <Width>1.8in</Width>
+                                                <Top>0.0125in</Top>
+                                                <Left>0.0125in</Left>
+                                                <Height>0.34167in</Height>
+                                                <Width>1.86in</Width>
                                                 <Style>
                                                   <Border>
                                                     <Style>None</Style>
@@ -2012,10 +2012,10 @@
                                 </TablixMembers>
                               </TablixRowHierarchy>
                               <DataSetName>DSAdmitCard</DataSetName>
-                              <Top>1.8236in</Top>
+                              <Top>1.79234in</Top>
                               <Left>0.28126in</Left>
-                              <Height>0.3in</Height>
-                              <Width>1.85208in</Width>
+                              <Height>0.36945in</Height>
+                              <Width>1.87708in</Width>
                               <ZIndex>6</ZIndex>
                               <Style>
                                 <Border>
@@ -2032,7 +2032,7 @@
                                 </TablixColumns>
                                 <TablixRows>
                                   <TablixRow>
-                                    <Height>0.3in</Height>
+                                    <Height>0.36945in</Height>
                                     <TablixCells>
                                       <TablixCell>
                                         <CellContents>
@@ -2045,12 +2045,12 @@
                                                       <Width>0.4in</Width>
                                                     </TablixColumn>
                                                     <TablixColumn>
-                                                      <Width>1.4in</Width>
+                                                      <Width>1.46in</Width>
                                                     </TablixColumn>
                                                   </TablixColumns>
                                                   <TablixRows>
                                                     <TablixRow>
-                                                      <Height>0.25in</Height>
+                                                      <Height>0.34167in</Height>
                                                       <TablixCells>
                                                         <TablixCell>
                                                           <CellContents>
@@ -2062,7 +2062,7 @@
                                                                     <TextRun>
                                                                       <Value>=Fields!SubjectCode.Value &amp;" : " &amp; Fields!SubjectName.Value</Value>
                                                                       <Style>
-                                                                        <FontSize>11pt</FontSize>
+                                                                        <FontSize>=IIf(Len(Fields!SubjectName.Value) &gt; 20, 9, 11)</FontSize>
                                                                       </Style>
                                                                     </TextRun>
                                                                   </TextRuns>
@@ -2102,10 +2102,10 @@
                                                   </TablixMembers>
                                                 </TablixRowHierarchy>
                                                 <DataSetName>DSAdmitCard</DataSetName>
-                                                <Top>0.025in</Top>
-                                                <Left>0.025in</Left>
-                                                <Height>0.25in</Height>
-                                                <Width>1.8in</Width>
+                                                <Top>0.0125in</Top>
+                                                <Left>0.0125in</Left>
+                                                <Height>0.34167in</Height>
+                                                <Width>1.86in</Width>
                                                 <Style>
                                                   <Border>
                                                     <Style>None</Style>
@@ -2146,9 +2146,9 @@
                                 </TablixMembers>
                               </TablixRowHierarchy>
                               <DataSetName>DSAdmitCard</DataSetName>
-                              <Top>1.8236in</Top>
-                              <Left>2.15904in</Left>
-                              <Height>0.3in</Height>
+                              <Top>1.7986in</Top>
+                              <Left>2.20487in</Left>
+                              <Height>0.36945in</Height>
                               <Width>1.88403in</Width>
                               <ZIndex>7</ZIndex>
                               <Style>
@@ -2161,12 +2161,12 @@
                               <TablixBody>
                                 <TablixColumns>
                                   <TablixColumn>
-                                    <Width>1.85208in</Width>
+                                    <Width>1.88403in</Width>
                                   </TablixColumn>
                                 </TablixColumns>
                                 <TablixRows>
                                   <TablixRow>
-                                    <Height>0.3in</Height>
+                                    <Height>0.36945in</Height>
                                     <TablixCells>
                                       <TablixCell>
                                         <CellContents>
@@ -2179,12 +2179,12 @@
                                                       <Width>0.4in</Width>
                                                     </TablixColumn>
                                                     <TablixColumn>
-                                                      <Width>1.4in</Width>
+                                                      <Width>1.46in</Width>
                                                     </TablixColumn>
                                                   </TablixColumns>
                                                   <TablixRows>
                                                     <TablixRow>
-                                                      <Height>0.25in</Height>
+                                                      <Height>0.34167in</Height>
                                                       <TablixCells>
                                                         <TablixCell>
                                                           <CellContents>
@@ -2196,7 +2196,7 @@
                                                                     <TextRun>
                                                                       <Value>=Fields!SubjectCode.Value &amp;" : " &amp; Fields!SubjectName.Value</Value>
                                                                       <Style>
-                                                                        <FontSize>11pt</FontSize>
+                                                                        <FontSize>=IIf(Len(Fields!SubjectName.Value) &gt; 20, 9, 11)</FontSize>
                                                                       </Style>
                                                                     </TextRun>
                                                                   </TextRuns>
@@ -2236,10 +2236,10 @@
                                                   </TablixMembers>
                                                 </TablixRowHierarchy>
                                                 <DataSetName>DSAdmitCard</DataSetName>
-                                                <Top>0.025in</Top>
-                                                <Left>0.025in</Left>
-                                                <Height>0.25in</Height>
-                                                <Width>1.8in</Width>
+                                                <Top>0.0125in</Top>
+                                                <Left>0.0125in</Left>
+                                                <Height>0.34167in</Height>
+                                                <Width>1.86in</Width>
                                                 <Style>
                                                   <Border>
                                                     <Style>None</Style>
@@ -2280,10 +2280,10 @@
                                 </TablixMembers>
                               </TablixRowHierarchy>
                               <DataSetName>DSAdmitCard</DataSetName>
-                              <Top>1.8236in</Top>
-                              <Left>4.11252in</Left>
-                              <Height>0.3in</Height>
-                              <Width>1.85208in</Width>
+                              <Top>1.7986in</Top>
+                              <Left>4.13543in</Left>
+                              <Height>0.36945in</Height>
+                              <Width>1.88403in</Width>
                               <ZIndex>8</ZIndex>
                               <Style>
                                 <Border>
@@ -2295,12 +2295,12 @@
                               <TablixBody>
                                 <TablixColumns>
                                   <TablixColumn>
-                                    <Width>1.85in</Width>
+                                    <Width>1.88403in</Width>
                                   </TablixColumn>
                                 </TablixColumns>
                                 <TablixRows>
                                   <TablixRow>
-                                    <Height>0.3in</Height>
+                                    <Height>0.36945in</Height>
                                     <TablixCells>
                                       <TablixCell>
                                         <CellContents>
@@ -2310,15 +2310,15 @@
                                                 <TablixBody>
                                                   <TablixColumns>
                                                     <TablixColumn>
-                                                      <Width>0.4in</Width>
+                                                      <Width>0.38502in</Width>
                                                     </TablixColumn>
                                                     <TablixColumn>
-                                                      <Width>1.4in</Width>
+                                                      <Width>1.47498in</Width>
                                                     </TablixColumn>
                                                   </TablixColumns>
                                                   <TablixRows>
                                                     <TablixRow>
-                                                      <Height>0.25in</Height>
+                                                      <Height>0.34167in</Height>
                                                       <TablixCells>
                                                         <TablixCell>
                                                           <CellContents>
@@ -2330,7 +2330,7 @@
                                                                     <TextRun>
                                                                       <Value>=Fields!SubjectCode.Value &amp;" : " &amp; Fields!SubjectName.Value</Value>
                                                                       <Style>
-                                                                        <FontSize>11pt</FontSize>
+                                                                        <FontSize>=IIf(Len(Fields!SubjectName.Value) &gt; 20, 9, 11)</FontSize>
                                                                       </Style>
                                                                     </TextRun>
                                                                   </TextRuns>
@@ -2370,10 +2370,10 @@
                                                   </TablixMembers>
                                                 </TablixRowHierarchy>
                                                 <DataSetName>DSAdmitCard</DataSetName>
-                                                <Top>0.025in</Top>
-                                                <Left>0.025in</Left>
-                                                <Height>0.25in</Height>
-                                                <Width>1.8in</Width>
+                                                <Top>0.0125in</Top>
+                                                <Left>0.0125in</Left>
+                                                <Height>0.34167in</Height>
+                                                <Width>1.86in</Width>
                                                 <Style>
                                                   <Border>
                                                     <Style>None</Style>
@@ -2423,10 +2423,10 @@
                                 </TablixMembers>
                               </TablixRowHierarchy>
                               <DataSetName>DSAdmitCard</DataSetName>
-                              <Top>1.8236in</Top>
+                              <Top>1.7986in</Top>
                               <Left>6.03196in</Left>
-                              <Height>0.3in</Height>
-                              <Width>1.85in</Width>
+                              <Height>0.36945in</Height>
+                              <Width>1.88403in</Width>
                               <ZIndex>9</ZIndex>
                               <Style>
                                 <Border>
@@ -2438,12 +2438,12 @@
                               <TablixBody>
                                 <TablixColumns>
                                   <TablixColumn>
-                                    <Width>1.85in</Width>
+                                    <Width>1.87708in</Width>
                                   </TablixColumn>
                                 </TablixColumns>
                                 <TablixRows>
                                   <TablixRow>
-                                    <Height>0.3in</Height>
+                                    <Height>0.36945in</Height>
                                     <TablixCells>
                                       <TablixCell>
                                         <CellContents>
@@ -2453,15 +2453,15 @@
                                                 <TablixBody>
                                                   <TablixColumns>
                                                     <TablixColumn>
-                                                      <Width>0.4in</Width>
+                                                      <Width>0.38502in</Width>
                                                     </TablixColumn>
                                                     <TablixColumn>
-                                                      <Width>1.4in</Width>
+                                                      <Width>1.47498in</Width>
                                                     </TablixColumn>
                                                   </TablixColumns>
                                                   <TablixRows>
                                                     <TablixRow>
-                                                      <Height>0.25in</Height>
+                                                      <Height>0.34167in</Height>
                                                       <TablixCells>
                                                         <TablixCell>
                                                           <CellContents>
@@ -2473,7 +2473,7 @@
                                                                     <TextRun>
                                                                       <Value>=Fields!SubjectCode.Value &amp;" : " &amp; Fields!SubjectName.Value</Value>
                                                                       <Style>
-                                                                        <FontSize>11pt</FontSize>
+                                                                        <FontSize>=IIf(Len(Fields!SubjectName.Value) &gt; 20, 9, 11)</FontSize>
                                                                       </Style>
                                                                     </TextRun>
                                                                   </TextRuns>
@@ -2513,10 +2513,10 @@
                                                   </TablixMembers>
                                                 </TablixRowHierarchy>
                                                 <DataSetName>DSAdmitCard</DataSetName>
-                                                <Top>0.025in</Top>
-                                                <Left>0.025in</Left>
-                                                <Height>0.25in</Height>
-                                                <Width>1.8in</Width>
+                                                <Top>0.0125in</Top>
+                                                <Left>0.0125in</Left>
+                                                <Height>0.34167in</Height>
+                                                <Width>1.86in</Width>
                                                 <Style>
                                                   <Border>
                                                     <Style>None</Style>
@@ -2557,10 +2557,10 @@
                                 </TablixMembers>
                               </TablixRowHierarchy>
                               <DataSetName>DSAdmitCard</DataSetName>
-                              <Top>2.18054in</Top>
+                              <Top>2.15554in</Top>
                               <Left>0.28126in</Left>
-                              <Height>0.3in</Height>
-                              <Width>1.85in</Width>
+                              <Height>0.36945in</Height>
+                              <Width>1.87708in</Width>
                               <ZIndex>10</ZIndex>
                               <Style>
                                 <Border>
@@ -2577,7 +2577,7 @@
                                 </TablixColumns>
                                 <TablixRows>
                                   <TablixRow>
-                                    <Height>0.3in</Height>
+                                    <Height>0.36945in</Height>
                                     <TablixCells>
                                       <TablixCell>
                                         <CellContents>
@@ -2590,12 +2590,12 @@
                                                       <Width>0.4in</Width>
                                                     </TablixColumn>
                                                     <TablixColumn>
-                                                      <Width>1.4in</Width>
+                                                      <Width>1.46in</Width>
                                                     </TablixColumn>
                                                   </TablixColumns>
                                                   <TablixRows>
                                                     <TablixRow>
-                                                      <Height>0.25in</Height>
+                                                      <Height>0.34167in</Height>
                                                       <TablixCells>
                                                         <TablixCell>
                                                           <CellContents>
@@ -2607,7 +2607,7 @@
                                                                     <TextRun>
                                                                       <Value>=Fields!SubjectCode.Value &amp;" : " &amp; Fields!SubjectName.Value</Value>
                                                                       <Style>
-                                                                        <FontSize>11pt</FontSize>
+                                                                        <FontSize>=IIf(Len(Fields!SubjectName.Value) &gt; 20, 9, 11)</FontSize>
                                                                       </Style>
                                                                     </TextRun>
                                                                   </TextRuns>
@@ -2647,10 +2647,10 @@
                                                   </TablixMembers>
                                                 </TablixRowHierarchy>
                                                 <DataSetName>DSAdmitCard</DataSetName>
-                                                <Top>0.025in</Top>
-                                                <Left>0.025in</Left>
-                                                <Height>0.25in</Height>
-                                                <Width>1.8in</Width>
+                                                <Top>0.0125in</Top>
+                                                <Left>0.0125in</Left>
+                                                <Height>0.34167in</Height>
+                                                <Width>1.86in</Width>
                                                 <Style>
                                                   <Border>
                                                     <Style>None</Style>
@@ -2691,9 +2691,9 @@
                                 </TablixMembers>
                               </TablixRowHierarchy>
                               <DataSetName>DSAdmitCard</DataSetName>
-                              <Top>2.18054in</Top>
-                              <Left>2.15904in</Left>
-                              <Height>0.3in</Height>
+                              <Top>2.15554in</Top>
+                              <Left>2.20487in</Left>
+                              <Height>0.36945in</Height>
                               <Width>1.88403in</Width>
                               <ZIndex>11</ZIndex>
                               <Style>
@@ -2706,12 +2706,12 @@
                               <TablixBody>
                                 <TablixColumns>
                                   <TablixColumn>
-                                    <Width>1.85in</Width>
+                                    <Width>1.88403in</Width>
                                   </TablixColumn>
                                 </TablixColumns>
                                 <TablixRows>
                                   <TablixRow>
-                                    <Height>0.3in</Height>
+                                    <Height>0.36945in</Height>
                                     <TablixCells>
                                       <TablixCell>
                                         <CellContents>
@@ -2724,12 +2724,12 @@
                                                       <Width>0.4in</Width>
                                                     </TablixColumn>
                                                     <TablixColumn>
-                                                      <Width>1.4in</Width>
+                                                      <Width>1.46in</Width>
                                                     </TablixColumn>
                                                   </TablixColumns>
                                                   <TablixRows>
                                                     <TablixRow>
-                                                      <Height>0.25in</Height>
+                                                      <Height>0.34167in</Height>
                                                       <TablixCells>
                                                         <TablixCell>
                                                           <CellContents>
@@ -2741,7 +2741,7 @@
                                                                     <TextRun>
                                                                       <Value>=Fields!SubjectCode.Value &amp;" : " &amp; Fields!SubjectName.Value</Value>
                                                                       <Style>
-                                                                        <FontSize>11pt</FontSize>
+                                                                        <FontSize>=IIf(Len(Fields!SubjectName.Value) &gt; 20, 9, 11)</FontSize>
                                                                       </Style>
                                                                     </TextRun>
                                                                   </TextRuns>
@@ -2781,10 +2781,10 @@
                                                   </TablixMembers>
                                                 </TablixRowHierarchy>
                                                 <DataSetName>DSAdmitCard</DataSetName>
-                                                <Top>0.025in</Top>
-                                                <Left>0.025in</Left>
-                                                <Height>0.25in</Height>
-                                                <Width>1.8in</Width>
+                                                <Top>0.0125in</Top>
+                                                <Left>0.0125in</Left>
+                                                <Height>0.34167in</Height>
+                                                <Width>1.86in</Width>
                                                 <Style>
                                                   <Border>
                                                     <Style>None</Style>
@@ -2825,10 +2825,10 @@
                                 </TablixMembers>
                               </TablixRowHierarchy>
                               <DataSetName>DSAdmitCard</DataSetName>
-                              <Top>2.18054in</Top>
-                              <Left>4.11252in</Left>
-                              <Height>0.3in</Height>
-                              <Width>1.85in</Width>
+                              <Top>2.15554in</Top>
+                              <Left>4.13543in</Left>
+                              <Height>0.36945in</Height>
+                              <Width>1.88403in</Width>
                               <ZIndex>12</ZIndex>
                               <Style>
                                 <Border>
@@ -2840,12 +2840,12 @@
                               <TablixBody>
                                 <TablixColumns>
                                   <TablixColumn>
-                                    <Width>1.85in</Width>
+                                    <Width>1.88403in</Width>
                                   </TablixColumn>
                                 </TablixColumns>
                                 <TablixRows>
                                   <TablixRow>
-                                    <Height>0.3in</Height>
+                                    <Height>0.36945in</Height>
                                     <TablixCells>
                                       <TablixCell>
                                         <CellContents>
@@ -2855,15 +2855,15 @@
                                                 <TablixBody>
                                                   <TablixColumns>
                                                     <TablixColumn>
-                                                      <Width>0.4in</Width>
+                                                      <Width>0.38502in</Width>
                                                     </TablixColumn>
                                                     <TablixColumn>
-                                                      <Width>1.4in</Width>
+                                                      <Width>1.47498in</Width>
                                                     </TablixColumn>
                                                   </TablixColumns>
                                                   <TablixRows>
                                                     <TablixRow>
-                                                      <Height>0.25in</Height>
+                                                      <Height>0.34167in</Height>
                                                       <TablixCells>
                                                         <TablixCell>
                                                           <CellContents>
@@ -2876,7 +2876,7 @@
                                                                     <TextRun>
                                                                       <Value>=Fields!SubjectCode.Value &amp;" : " &amp; Fields!SubjectName.Value</Value>
                                                                       <Style>
-                                                                        <FontSize>11pt</FontSize>
+                                                                        <FontSize>=IIf(Len(Fields!SubjectName.Value) &gt; 20, 9, 11)</FontSize>
                                                                       </Style>
                                                                     </TextRun>
                                                                   </TextRuns>
@@ -2916,10 +2916,10 @@
                                                   </TablixMembers>
                                                 </TablixRowHierarchy>
                                                 <DataSetName>DSAdmitCard</DataSetName>
-                                                <Top>0.025in</Top>
-                                                <Left>0.025in</Left>
-                                                <Height>0.25in</Height>
-                                                <Width>1.8in</Width>
+                                                <Top>0.0125in</Top>
+                                                <Left>0.0125in</Left>
+                                                <Height>0.34167in</Height>
+                                                <Width>1.86in</Width>
                                                 <Style>
                                                   <Border>
                                                     <Style>None</Style>
@@ -2960,10 +2960,10 @@
                                 </TablixMembers>
                               </TablixRowHierarchy>
                               <DataSetName>DSAdmitCard</DataSetName>
-                              <Top>2.18054in</Top>
+                              <Top>2.15554in</Top>
                               <Left>6.03196in</Left>
-                              <Height>0.3in</Height>
-                              <Width>1.85in</Width>
+                              <Height>0.36945in</Height>
+                              <Width>1.88403in</Width>
                               <ZIndex>13</ZIndex>
                               <Style>
                                 <Border>
@@ -3014,8 +3014,9 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>DSAdmitCard</DataSetName>
-            <Height>2.48054in</Height>
-            <Width>8.16322in</Width>
+            <Left>0.13542in</Left>
+            <Height>2.5361in</Height>
+            <Width>8.0278in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -3023,10 +3024,10 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>2.48054in</Height>
+        <Height>2.5361in</Height>
         <Style />
       </Body>
-      <Width>8.3307in</Width>
+      <Width>8.32439in</Width>
       <Page>
         <PageHeader>
           <Height>1.05904in</Height>
@@ -3148,7 +3149,7 @@
               <Top>0.72723in</Top>
               <Left>6.98635in</Left>
               <Height>0.25in</Height>
-              <Width>1.34435in</Width>
+              <Width>1.2991in</Width>
               <ZIndex>2</ZIndex>
               <Style>
                 <Border>
@@ -3216,7 +3217,7 @@
           </ReportItems>
           <Style>
             <Border>
-              <Style>Solid</Style>
+              <Style>None</Style>
               <Width>0.25pt</Width>
             </Border>
             <TopBorder>
@@ -3372,7 +3373,7 @@
           </ReportItems>
           <Style>
             <Border>
-              <Style>Solid</Style>
+              <Style>None</Style>
             </Border>
             <TopBorder>
               <Style>None</Style>
@@ -3390,11 +3391,14 @@
             <Style>None</Style>
             <Width>0.25pt</Width>
           </Border>
-          <LeftBorder>
+          <BottomBorder>
             <Style>Solid</Style>
+          </BottomBorder>
+          <LeftBorder>
+            <Style>None</Style>
           </LeftBorder>
           <RightBorder>
-            <Style>Solid</Style>
+            <Style>None</Style>
           </RightBorder>
         </Style>
       </Page>

@@ -1,12 +1,8 @@
-﻿@model IEnumerable<SMS.App.ViewModels.ExamVM.ExamResultVM>
-
+﻿
 @using System.Globalization
-
 @{
-    ViewData["Title"] = "Exams Result";
-    GlobalUI.PageTitle = ViewData["Title"].ToString();
+    GlobalUI.SiteTitle = GlobalUI.PageTitle;
 }
-
 <div class="row">
     <div class="col-md-3">
         <fieldset class="border border-info p-2">
@@ -23,6 +19,7 @@
                             </select>
                         </div>
                     </div>*@
+
                 <div class="form-group row">
                     <label class="col-md-4 col-form-label">Exam Type</label>
                     <div class="col-md-8">
@@ -113,20 +110,21 @@
         </div>
     </div>
 </div>
-@section scripts{ 
+
+@section scripts{
     <script>
         $(document).ready(function () {
             $('#LoadButton').click(function () {
                 let reportType = 'pdf';
-                let examId = '0';
+                let examGroupId = '0';
+                let classId = '0';
 
-                //string reportType, int examId, string fileName
+                examGroupId = $('#examGroupId option:selected').val();
+                classId = $('#academicClassId option:selected').val();
 
-                examId = $('#academicSubjectId option:selected').val();
+                $('#exportExamId').attr('value', examGroupId);
 
-                $('#exportExamId').attr('value', examId);
-
-                $('#myIframe').attr('src', '/Reports/SubjectWiseMarkSheet?reportType=' + reportType + '&&examId=' + examId );
+                $('#myIframe').attr('src', '/Reports/StudentWiseMarkSheet?reportType=' + reportType + '&&examGroupId=' + examGroupId + '&&classId=' + classId);
                 $('#iframe-container').show();
 
                 var iframe = document.getElementById('myIframe');

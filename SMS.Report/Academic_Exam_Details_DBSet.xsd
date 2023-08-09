@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="Academic_Exam_Details_DBSet" targetNamespace="http://tempuri.org/Academic_Exam_Details_DBSet.xsd" xmlns:mstns="http://tempuri.org/Academic_Exam_Details_DBSet.xsd" xmlns="http://tempuri.org/Academic_Exam_Details_DBSet.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections>
+          <Connection ConnectionStringObject="Data Source=GH-Palash\SQLEXPRESS;Initial Catalog=SMSDB;Persist Security Info=True;User ID=ghp" IsAppSettingsProperty="false" Modifier="Assembly" Name="gh-palash\sqlexpress.SMSDB.dbo" ParameterPrefix="@" Provider="System.Data.SqlClient" />
+        </Connections>
+        <Tables>
+          <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="vw_rpt_academic_exam_detailsTableAdapter" GeneratorDataComponentClassName="vw_rpt_academic_exam_detailsTableAdapter" Name="vw_rpt_academic_exam_details" UserDataComponentName="vw_rpt_academic_exam_detailsTableAdapter">
+            <MainSource>
+              <DbSource ConnectionRef="gh-palash\sqlexpress.SMSDB.dbo" DbObjectName="SMSDB.dbo.vw_rpt_academic_exam_details" DbObjectType="View" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetData" UserSourceName="Fill">
+                <SelectCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="false">
+                    <CommandText>SELECT ObtainMark, Name, StudentId, ClassRoll, Status, Remarks, AcademicExamId FROM dbo.vw_rpt_academic_exam_details</CommandText>
+                    <Parameters />
+                  </DbCommand>
+                </SelectCommand>
+              </DbSource>
+            </MainSource>
+            <Mappings>
+              <Mapping SourceColumn="ObtainMark" DataSetColumn="ObtainMark" />
+              <Mapping SourceColumn="Name" DataSetColumn="Name" />
+              <Mapping SourceColumn="StudentId" DataSetColumn="StudentId" />
+              <Mapping SourceColumn="ClassRoll" DataSetColumn="ClassRoll" />
+              <Mapping SourceColumn="Status" DataSetColumn="Status" />
+              <Mapping SourceColumn="Remarks" DataSetColumn="Remarks" />
+              <Mapping SourceColumn="AcademicExamId" DataSetColumn="AcademicExamId" />
+            </Mappings>
+            <Sources />
+          </TableAdapter>
+        </Tables>
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="Academic_Exam_Details_DBSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="True" msprop:Generator_UserDSName="Academic_Exam_Details_DBSet" msprop:Generator_DataSetName="Academic_Exam_Details_DBSet">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="vw_rpt_academic_exam_details" msprop:Generator_RowEvHandlerName="vw_rpt_academic_exam_detailsRowChangeEventHandler" msprop:Generator_RowDeletedName="vw_rpt_academic_exam_detailsRowDeleted" msprop:Generator_RowDeletingName="vw_rpt_academic_exam_detailsRowDeleting" msprop:Generator_RowEvArgName="vw_rpt_academic_exam_detailsRowChangeEvent" msprop:Generator_TablePropName="vw_rpt_academic_exam_details" msprop:Generator_RowChangedName="vw_rpt_academic_exam_detailsRowChanged" msprop:Generator_RowChangingName="vw_rpt_academic_exam_detailsRowChanging" msprop:Generator_TableClassName="vw_rpt_academic_exam_detailsDataTable" msprop:Generator_RowClassName="vw_rpt_academic_exam_detailsRow" msprop:Generator_TableVarName="tablevw_rpt_academic_exam_details" msprop:Generator_UserTableName="vw_rpt_academic_exam_details">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ObtainMark" msprop:Generator_ColumnPropNameInRow="ObtainMark" msprop:Generator_ColumnPropNameInTable="ObtainMarkColumn" msprop:Generator_ColumnVarNameInTable="columnObtainMark" msprop:Generator_UserColumnName="ObtainMark" type="xs:double" />
+              <xs:element name="Name" msprop:Generator_ColumnPropNameInRow="Name" msprop:Generator_ColumnPropNameInTable="NameColumn" msprop:Generator_ColumnVarNameInTable="columnName" msprop:Generator_UserColumnName="Name" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="2147483647" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="StudentId" msprop:Generator_ColumnPropNameInRow="StudentId" msprop:Generator_ColumnPropNameInTable="StudentIdColumn" msprop:Generator_ColumnVarNameInTable="columnStudentId" msprop:Generator_UserColumnName="StudentId" type="xs:int" />
+              <xs:element name="ClassRoll" msprop:Generator_ColumnPropNameInRow="ClassRoll" msprop:Generator_ColumnPropNameInTable="ClassRollColumn" msprop:Generator_ColumnVarNameInTable="columnClassRoll" msprop:Generator_UserColumnName="ClassRoll" type="xs:int" />
+              <xs:element name="Status" msprop:Generator_ColumnPropNameInRow="Status" msprop:Generator_ColumnPropNameInTable="StatusColumn" msprop:Generator_ColumnVarNameInTable="columnStatus" msprop:Generator_UserColumnName="Status" type="xs:boolean" />
+              <xs:element name="Remarks" msprop:Generator_ColumnPropNameInRow="Remarks" msprop:Generator_ColumnPropNameInTable="RemarksColumn" msprop:Generator_ColumnVarNameInTable="columnRemarks" msprop:Generator_UserColumnName="Remarks" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="2147483647" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="AcademicExamId" msprop:Generator_ColumnPropNameInRow="AcademicExamId" msprop:Generator_ColumnPropNameInTable="AcademicExamIdColumn" msprop:Generator_ColumnVarNameInTable="columnAcademicExamId" msprop:Generator_UserColumnName="AcademicExamId" type="xs:int" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+    <xs:unique name="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:vw_rpt_academic_exam_details" />
+      <xs:field xpath="mstns:StudentId" />
+    </xs:unique>
+  </xs:element>
+</xs:schema>

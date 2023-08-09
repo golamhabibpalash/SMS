@@ -1,7 +1,7 @@
 USE [SMSDB]
 GO
 
-/****** Object:  View [dbo].[vw_rpt_Admit_Card_Info]    Script Date: 21-May-23 11:10:16 PM ******/
+/****** Object:  View [dbo].[vw_rpt_Admit_Card_Info]    Script Date: 17-Jul-23 9:20:50 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -9,9 +9,9 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
 ALTER   view [dbo].[vw_rpt_Admit_Card_Info] as
-select 
-	s.Id[StudentId],
+select s.Id[StudentId],
 	s.ClassRoll,
 	s.Name[StudentName],
 	s.FatherName,
@@ -22,21 +22,24 @@ select
 	sec.Name[SectionName],
 	sub.SubjectCode,
 	sub.SubjectName,
-	e.MonthId,
+	eg.ExamMonthId[MonthId],
 	s.AcademicClassId,
 	t.ExamTypeName,
+	r.Name[Religion],
 	i.Name[InstituteName],
 	i.EIIN,
-	g.Name[Gender]
-from Institute i,AcademicExamDetails d
-inner join Student as s on d.StudentId = s.Id
-inner join AcademicExams e on d.AcademicExamId=e.Id
-inner join AcademicExamTypes as t on e.AcademicExamTypeId = t.Id
-inner join AcademicSession as ses on s.AcademicSessionId = ses.Id
-inner join AcademicClass c on s.AcademicClassId=c.Id
-inner join AcademicSubject as sub on e.AcademicSubjectId=sub.Id
-inner join AcademicSection as sec on e.AcademicSectionId = sec.Id
-inner join Gender g on s.GenderId = g.Id
+	g.Name[Gender] from Institute i, AcademicExams e
+left join AcademicExamGroups eg on e.AcademicExamGroupId = eg.Id
+left join AcademicExamDetails d on e.Id = d.AcademicExamId
+left join AcademicExamTypes t on eg.academicExamTypeId = t.Id
+left join AcademicSubject sub on e.AcademicSubjectId = sub.Id
+left join Student s on d.StudentId = s.Id
+left join AcademicSession ses on s.AcademicSessionId = ses.Id
+left join AcademicClass c on s.AcademicClassId = c.Id
+left join AcademicSection sec on s.AcademicSectionId = sec.Id
+left join Gender g on s.GenderId = g.Id
+left join Religion r on s.ReligionId = r.Id
 GO
+
 
 

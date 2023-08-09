@@ -128,7 +128,7 @@ namespace SMS.App.Controllers
             }
             questionEditVM.ImagePosition = existingQuestion.ImagePosition;
             
-            var aClass = await _academicClassManager.GetByIdAsync(existingQuestion.Chapter.AcademicSubject.AcademicClassId);
+            var aClass = await _academicClassManager.GetByIdAsync((int)existingQuestion.Chapter.AcademicSubject.AcademicClassId);
             questionEditVM.AcademicClassId = aClass.Id;
             var aSubject = await _academicSubjectManager.GetByIdAsync(existingQuestion.Chapter.AcademicSubjectId);
             questionEditVM.AcademicSubjectId = aSubject.Id;

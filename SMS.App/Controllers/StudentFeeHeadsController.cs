@@ -19,11 +19,13 @@ namespace SMS.App.Controllers
     {
         private readonly IStudentFeeHeadManager _studentFeeHeadManager;
         private readonly IClassFeeListManager _classFeeListManager;
+        private readonly IAcademicSessionManager _academicSessionManager;
 
-        public StudentFeeHeadsController(IStudentFeeHeadManager studentFeeHeadManager, IClassFeeListManager classFeeListManager)
+        public StudentFeeHeadsController(IStudentFeeHeadManager studentFeeHeadManager, IClassFeeListManager classFeeListManager, IAcademicSessionManager academicSessionManager)
         {
             _studentFeeHeadManager = studentFeeHeadManager;
             _classFeeListManager = classFeeListManager;
+            _academicSessionManager = academicSessionManager;
         }
 
         // GET: StudentFeeHeads
@@ -215,10 +217,15 @@ namespace SMS.App.Controllers
             await _studentFeeHeadManager.RemoveAsync(studentFeeHead);
             return RedirectToAction(nameof(Index));
         }
-        public async Task<JsonResult> GetById(int id, int classId)
+        public async Task<JsonResult> GetById(int id, int classId, int?sessionId)
         {
+            if (sessionId==null)
+            {
+                AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSession();
+                sessionId = academicSession.Id;
+            }
             var feeHead = await _studentFeeHeadManager.GetByIdAsync(id);
-            var classFeeList = await _classFeeListManager.GetByClassIdAndFeeHeadIdAsync(classId, id);
+            var classFeeList = await _classFeeListManager.GetByClassIdAndFeeHeadIdAsync(classId, id,(int)sessionId);
             return Json(classFeeList);
         }
     }

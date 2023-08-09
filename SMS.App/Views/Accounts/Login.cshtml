@@ -7,6 +7,7 @@
 
 <form asp-action="login" asp-controller="accounts" method="post">
     <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+    <input type="hidden" asp-for="ReturnUrl" value="@TempData["ReturnUrl"]" />
     <div class="col-md-12 pb-2">
         <h4 class="text-center text-light">Login</h4>
     </div>

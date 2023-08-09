@@ -59,6 +59,7 @@ namespace SMS.App.Controllers
             var user = await _userManager.GetUserAsync(User);
             HttpContext.Session.SetString("UserId",user.Id);
             Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
+            ViewBag.InstituteLogo = institute.Logo;
             ViewBag.InstituteName = institute.Name;
             return View();
         }

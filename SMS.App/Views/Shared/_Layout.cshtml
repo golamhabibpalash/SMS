@@ -146,6 +146,34 @@
         {
             font-size: 13px;
         }
+
+            #sidebar-menu li
+            {
+                border-bottom: 1px solid #445666;
+            }
+            #sidebar-menu li:first-child
+            {
+                border-top: 1px solid #445666;
+            }
+            #sidebar-menu li ul li
+            {
+                border:none;
+            }
+
+            #sidebar-menu li:hover
+            {
+                background-color: #304456;
+            }
+            #sidebar-menu li ul li:hover
+            {
+                background-color: #445666;
+            }
+       /* .menu_section{
+            height:300px;
+            overflow-y:auto;
+            overflow-x:visible;
+
+        }*/
     </style>
 </head>
 
@@ -154,7 +182,7 @@
     @*<body class="nav-sm">*@
     <div class="container body">
         <div class="main_container">
-            <div class="col-md-3 left_col"  style="position:fixed;">
+            <div class="col-md-3 left_col left_menu" id="left_menu_main">
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="overflow:hidden">
                         <a asp-action="Index" asp-controller="Home" class="" style="color:#fff;font-weight:bold;width:100%">
@@ -225,9 +253,6 @@
                                             </ul>
                                         </li>
                                         <li>
-                                            <a asp-action="Index" asp-controller="ExamResults"> Academic Result</a>
-                                        </li>
-                                        <li>
                                             <a> Question Bank <span class="fas fa-chevron-down"></span></a>
                                             <ul class="nav child_menu">
                                                 <li>
@@ -283,7 +308,15 @@
                                                 <a asp-action="Index" asp-controller="ClassFeeLists">Class Fee</a>
                                             </li>
                                             <li>
-                                                <a asp-action="Index" asp-controller="AcademicSubjects">Academic Subject</a>
+                                                <a>  Academic Subject <span class="fas fa-chevron-down"></span></a>
+                                                <ul class="nav child_menu">                                                  
+                                                    <li>
+                                                        <a asp-action="Index" asp-controller="AcademicSubjects">All Subject</a>
+                                                    </li>
+                                                    <li>
+                                                        <a asp-action="ClassWiseSubjectAllocation" asp-controller="AcademicSubjects">Class-Wise Allocation</a>
+                                                    </li>
+                                                </ul>
                                             </li>
                                             <li>
                                                 <a asp-action="Index" asp-controller="AcademicSubjectTypes">Academic Subject Type</a>
@@ -434,15 +467,27 @@
                                                         <a asp-action="AdmitCard" asp-controller="AcademicExams">Admit Cards</a>
                                                     </li>
                                                     <li>
-                                                        <a asp-action="Index" asp-controller="ExamResults">Exam Result</a>
-                                                    </li>
-                                                    <li>
-                                                        <a asp-action="Marksheet" asp-controller="ExamResults">Mark Sheet</a>
+                                                        @*<a asp-action="Marksheet" asp-controller="ExamResults">Mark Sheet</a>*@
+                                                        <a >Mark Sheet</a>
+         
                                                     </li>
 
                                                 </ul>
                                             </li>
-                                            
+                                            <li>
+                                                <a>  Academic Result <span class="fas fa-chevron-down"></span></a>
+                                                <ul class="nav child_menu">
+                                                    <li>
+                                                        <a asp-action="Index" asp-controller="ExamResults" >Subject-Wise Result</a>
+                                                    </li>
+                                                    <li>
+                                                        <a asp-action="ClassWiseResult" asp-controller="ExamResults">Class-Wise Result</a>
+                                                    </li>
+                                                    <li>
+                                                        <a asp-action="StudentWiseResult" asp-controller="ExamResults">Student-Wise Result</a>
+                                                    </li>
+                                                </ul>
+                                            </li>
                                         </ul>
                                     </li>
                                 }
@@ -519,7 +564,7 @@
             <!-- /top navigation -->
             <!-- page content -->
             <div id="body_content_part" class="right_col" role="main" style="background:#c7c7c7">
-                <div id="printable_area" class="shadow rounded mt-2 bg-light p-2">
+                <div id="printable_area" class="shadow rounded mt-2 bg-light p-1">
                     @RenderBody()
                 </div>
             </div>

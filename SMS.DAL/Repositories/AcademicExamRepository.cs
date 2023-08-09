@@ -30,7 +30,6 @@ namespace SMS.DAL.Repositories
                 .Include(s => s.AcademicClass)
                 .Include(s => s.AcademicExamGroup)
                 .Include(s => s.AcademicSubject)
-                    .ThenInclude(m => m.AcademicClass)
                 .Include(s => s.AcademicSection)
                 .Include(s => s.Employee)
                 .Include(s => s.AcademicExamDetails)
@@ -40,14 +39,14 @@ namespace SMS.DAL.Repositories
 
         public override async Task<AcademicExam> GetByIdAsync(int id)
         {
-            var result = await _context.AcademicExams
+            var result = await _context.AcademicExams                
+                .Include(s=> s.AcademicClass)
                 .Include(s => s.AcademicExamGroup)
                     .ThenInclude(s => s.AcademicSession)
                 .Include(s => s.AcademicSubject)
-                    .ThenInclude(c => c.AcademicClass)
                 .Include(s => s.Employee)
                 .Include(s => s.AcademicSection)
-                .Include(s => s.AcademicExamDetails)
+                .Include(s => s.AcademicExamDetails.OrderBy(s => s.Student.ClassRoll))
                     .ThenInclude(s => s.Student)
                 .Where(s => s.Id == id)
                 .FirstOrDefaultAsync();

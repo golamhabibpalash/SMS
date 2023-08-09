@@ -8,5 +8,6 @@ namespace SMS.BLL.Contracts
     public interface IAcademicExamGroupManager:IManager<AcademicExamGroup>
     {
         Task<IReadOnlyCollection<AcademicExamGroup>> GetAllAsync(int SessionId);
+        Task<IReadOnlyCollection<AcademicExamGroup>> GetByMonthExamType(int monthId, int examTypeId);
     }
 }

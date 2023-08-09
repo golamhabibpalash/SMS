@@ -11,5 +11,6 @@ namespace SMS.DAL.Contracts
 {
     public interface IAcademicExamGroupRepository:IRepository<AcademicExamGroup>
     {
+        Task<IReadOnlyCollection<AcademicExamGroup>> GetByMonthExamType(int monthId, int examTypeId);
     }
 }

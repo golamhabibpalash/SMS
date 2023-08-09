@@ -23,5 +23,10 @@ namespace SMS.DAL.Repositories
             var result = await _context.AcademicExamGroups.Include(s => s.AcademicSession).Include(s => s.academicExamType).Include(s => s.AcademicExams).ToListAsync();
             return result;
         }
+        public async Task<IReadOnlyCollection<AcademicExamGroup>> GetByMonthExamType(int monthId, int examTypeId)
+        {
+            var result = await _context.AcademicExamGroups.Where(s => s.ExamMonthId == monthId && s.academicExamTypeId == examTypeId).ToListAsync();
+            return result;
+        }
     }
 }

@@ -39,71 +39,72 @@
 </style>
 }
 <div class="row">
-    <table class="table table-sm table-striped table-bordered table-responsive-sm" id="myTable">
-        <thead class=" table-info ">
-            <tr>
-                <th class="text-center">#</th>
-                @*<td>Exam Name</td>*@
-                @*<th>Exam</th>*@
-                <th>Subject</th>
-                <th>Academic Class</th>
-                <th>Academic Section</th>
-                <th>Teacher</th>
-                <th>Total Students</th>
-                <th>Total Marks</th>
-                @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
-                {
-                    <th>Lock</th>
-                }
-                <th class="p-0">
+    <div class="col-md-12">
+        <table class="table table-sm table-striped table-bordered table-responsive-sm" id="myTable">
+            <thead class=" table-info ">
+                <tr>
+                    <th class="text-center">#</th>
+                    @*<td>Exam Name</td>*@
+                    @*<th>Exam</th>*@
+                    <th>Subject</th>
+                    <th>Academic Class</th>
+                    <th>Academic Section</th>
+                    <th>Teacher</th>
+                    <th>Total Students</th>
+                    <th>Total Marks</th>
                     @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
                     {
-                        <button class="btn-sm btn-info rounded-pill m-0" id="CreateId" data-toggle="modal" data-target="#createUpdateModal" ><i class="fa fa-plus"></i> Add</button>
+                        <th>Lock</th>
                     }
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model.AcademicExams.Any())
-            {
-                foreach (var item1 in Model.AcademicExams.OrderByDescending(g => g.AcademicExamGroup.AcademicSessionId).ThenByDescending(m => m.AcademicExamGroup.ExamMonthId).GroupBy(s => s.AcademicExamGroup.ExamGroupName))
-                {
-                    <tr class="bg-navy-blue">
-                        <td colspan="9"><h5 class="font-weight-bolder">@item1.Key - (Total @item1.Count() Exam/s)</h5> </td>
-                    </tr>
-                    foreach (var item2 in item1.GroupBy(s => s.AcademicClass.Name).OrderBy(s => s.Min(m => m.AcademicClassId)))
-                    {
-                    <tr class="table-primary">
-                        <td class="border-0"></td>
-                        <td class="border-0" colspan="8"><h6 class="font-weight-bolder">@item2.Key - @item2.Count() Exam/s</h6></td>
-                    </tr>
-                        foreach (var item in item2)
+                    <th class="p-0">
+                        @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
                         {
-                            <tr style="@styleForCurrentTransaction">
-                                <td class="text-center">@(++sl).</td>
-                                <td><a asp-action="Details" asp-route-id="@item.Id">  @item.AcademicSubject.SubjectName </a></td>
-                                <td>@item.AcademicSubject.AcademicClass.Name</td>
-                                <td>
-                                    @if (item.AcademicSection == null)
-                                    {
-                                        <span>All</span>
-                                    }
-                                    else
-                                    {
-                                        @item.AcademicSection.Name
-                                    }
-                                </td>
-                                <td>@item.Employee.EmployeeName</td>
-                                <td>@item.AcademicExamDetails.Count</td>
-                                <td>@item.TotalMarks</td>
-                                @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
-                                {
+                            <button class="btn-sm btn-info rounded-pill m-0" id="CreateId" data-toggle="modal" data-target="#createUpdateModal"><i class="fa fa-plus"></i> Add</button>
+                        }
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.AcademicExams.Any())
+                {
+                    foreach (var item1 in Model.AcademicExams.OrderByDescending(g => g.AcademicExamGroup.AcademicSessionId).ThenByDescending(m => m.AcademicExamGroup.ExamMonthId).GroupBy(s => s.AcademicExamGroup.ExamGroupName))
+                    {
+                        <tr class="bg-navy-blue">
+                            <td colspan="9"><span class="font-weight-bolder h6">@item1.Key - (Total @item1.Count() Exam/s)</span> </td>
+                        </tr>
+                        foreach (var item2 in item1.GroupBy(s => s.AcademicClass.Name).OrderBy(s => s.Min(m => m.AcademicClassId)))
+                        {
+                            <tr class="table-primary">
+                                <td class="border-0"></td>
+                                <td class="border-0" colspan="8"><span class="font-weight-bolder">@item2.Key - @item2.Count() Exam/s</span></td>
+                            </tr>
+                            foreach (var item in item2)
+                            {
+                                <tr style="@styleForCurrentTransaction">
+                                    <td class="text-center">@(++sl).</td>
+                                    <td><a asp-action="Details" asp-route-id="@item.Id">  @item.AcademicSubject.SubjectName </a></td>
+                                    <td>@item.AcademicClass.Name</td>
                                     <td>
-                                        @item.Status
+                                        @if (item.AcademicSection == null)
+                                        {
+                                            <span>All</span>
+                                        }
+                                        else
+                                        {
+                                            @item.AcademicSection.Name
+                                        }
                                     </td>
-                                }
+                                    <td>@item.Employee.EmployeeName</td>
+                                    <td>@item.AcademicExamDetails.Count</td>
+                                    <td>@item.TotalMarks</td>
+                                    @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+                                    {
+                                        <td>
+                                            @item.Status
+                                        </td>
+                                    }
 
-                                <td>
+                                    <td>
                                         <div class="btn-group btn-group-sm" role="group">
                                             @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
                                             {
@@ -118,23 +119,25 @@
                                             }
                                         </div>
 
-                                </td>
-                            </tr>
+                                    </td>
+                                </tr>
 
+                            }
                         }
                     }
                 }
-            }
-            else
-            {
-                <tr class="text-center">
-                    <td colspan="12">
-                        <h1>Nothing Found</h1>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                else
+                {
+                    <tr class="text-center">
+                        <td colspan="12">
+                            <h1>Nothing Found</h1>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
 </div>
 
 <!-- Modal -->
@@ -231,7 +234,7 @@
                             <tfoot>
                                 <tr>
                                     <td colspan="7" class="text-right">
-                                        <button class="btn-sm btn-danger" onclick="ClearBtnClicked()">Clear</button>
+                                        <span class="btn btn-sm btn-danger" onclick="ClearBtnClicked()">Clear</span>
                                         <button class="btn-sm btn-light" id="submitBtn">Submit</button>
                                     </td>
                                 </tr>
@@ -244,7 +247,7 @@
     </div>
 </div>
 <div id="loading" style="display:none;top:0;left:0;z-index:9999; position:fixed;width:100%;height:100%; ">
-    <img src="~/Images/loading1.gif"  width="50%;"/>
+    <img src="~/Images/loading1.gif"  width="50%;" alt="Loading_Images"/>
 </div>
 @section Scripts{
 

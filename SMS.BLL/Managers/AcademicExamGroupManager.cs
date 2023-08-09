@@ -23,5 +23,11 @@ namespace SMS.BLL.Managers
 
             return result;
         }
+
+        public async Task<IReadOnlyCollection<AcademicExamGroup>> GetByMonthExamType(int monthId, int examTypeId)
+        {
+            var result =await _academicExamGroupRepository.GetByMonthExamType(monthId, examTypeId);
+            return result;
+        }
     }
 }

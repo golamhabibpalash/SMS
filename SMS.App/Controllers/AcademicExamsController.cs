@@ -386,11 +386,17 @@ namespace SMS.App.Controllers
             academicExamDetail= examDetailVM.AcademicExamDetails;
             foreach (AcademicExamDetail item in academicExamDetail)
             {
-                item.MACAddress = MACService.GetMAC();
-                item.EditedAt = DateTime.Now;
-                item.EditedBy = HttpContext.Session.GetString("UserId");
-
-                await _academicExamDetailsManager.UpdateAsync(item);
+                var existingDetails = await _academicExamDetailsManager.GetByIdAsync(item.Id);
+                if (existingDetails != null)
+                {
+                    if (existingDetails.ObtainMark != item.ObtainMark || existingDetails.Remarks != item.Remarks || existingDetails.Status !=item.Status)
+                    {
+                        item.MACAddress = MACService.GetMAC();
+                        item.EditedAt = DateTime.Now;
+                        item.EditedBy = HttpContext.Session.GetString("UserId");
+                        await _academicExamDetailsManager.UpdateAsync(item);
+                    }
+                }
             }
             return RedirectToAction("Index");
         }
@@ -443,6 +449,13 @@ namespace SMS.App.Controllers
                 return Json(new { exId = exId, msg = msg });
             }
             return Json(new { msg = "Exam not found!" });
+        }
+
+        public async Task<JsonResult> GetExamsByGrIdAndClassId(int examGroupId, int academicClassId)
+        {
+            List<AcademicExam> academicExams = (List<AcademicExam>)await _examManager.GetAllAsync();
+            var results = academicExams.Where(s => s.AcademicExamGroupId == examGroupId && s.AcademicClassId == academicClassId).ToList();
+            return Json(results);
         }
     }
 }

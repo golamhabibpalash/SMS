@@ -1,4 +1,5 @@
 ﻿@model AcademicExam
+@inject UserManager<ApplicationUser> _userManager;
 
 @{
     ViewData["Title"] = "Exam Details";
@@ -6,10 +7,19 @@
 
     int i = 0;
     int detailId = 0;
-    string examLocked = Model.Status==true?"(Exam is Locked)":string.Empty;
+    string examLocked = Model.Status == true ? "(Exam is Locked)" : string.Empty;
+    int tabIndex = 1; 
+    string updatedBy = string.Empty;
 }
 @section Styles{
     <link href="~/css/switch.css" rel="stylesheet" />
+    <style>
+        .error
+        {
+            border: 1px solid red !important;
+            color:red;
+        }
+    </style>
 }
 
 <div class="row" style="color:#000">
@@ -19,7 +29,7 @@
             <table class="table table-sm table-responsive-sm">
                 <thead>
                 </thead>
-                <tbody>                  
+                <tbody>
                     <tr>
                         <td>Subject</td>
                         <td>:</td>
@@ -29,16 +39,16 @@
                         <td>Class</td>
                         <td>:</td>
                         <td>
-                            @Model.AcademicSubject.AcademicClass.Name 
+                            @Model.AcademicClass.Name
                             (
-                                @if (Model.AcademicSection == null)
-                                {
-                                    <span>All Section</span>
-                                }
-                                else
-                                {
-                                    @Model.AcademicSection.Name
-                                }
+                            @if (Model.AcademicSection == null)
+                            {
+                                <span>All Section</span>
+                            }
+                            else
+                            {
+                                @Model.AcademicSection.Name
+                            }
                             )
                         </td>
                     </tr>
@@ -70,9 +80,20 @@
                 </tbody>
             </table>
         </fieldset>
-
         <div class="row">
             <div class="col-md-12 text-center">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title h4">Question Image</span>
+                    </div>
+                    <div class="card-body">
+                        @*<img src="~/Images/Question/q_1_21__37_0.jpg" class="img-fluid" alt="Alternate Text" />*@
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-center mh-100">
                 <a class="btn btn-info btn-sm" asp-action="Index" asp-controller="AcademicExams">Back to Exam List</a>
             </div>
         </div>
@@ -83,8 +104,8 @@
                 <h3 class="well well-sm bg-info text-light">Mark Distribution <span class="text-danger">@examLocked</span></h3>
             </div>
         </div>
-        <form asp-action="ExmaMarkSubmit" asp-controller="AcademicExams" method="post">
-            <input asp-for="Id" type="hidden"  />
+        <form asp-action="ExmaMarkSubmit" asp-controller="AcademicExams" method="post" id="myForm">
+            <input asp-for="Id" type="hidden" />
             <table class="table table-sm table-striped table-bordered">
                 <thead class="table-info font-weight-bolder">
                     <tr>
@@ -94,13 +115,19 @@
                         <td>Marks</td>
                         <td>Is Present</td>
                         <td>Remarks</td>
+                        <td>Updated by</td>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model.AcademicExamDetails)
                     {
+                        if (item.EditedBy != null)
+                        {
+                            ApplicationUser aUser = await _userManager.FindByIdAsync(item.EditedBy);
+                            updatedBy = aUser.UserName;
+                        }
                         <tr>
-                            <td>@(++i) <input type="hidden" asp-for="AcademicExamDetails[detailId].AcademicExamId"  value="@Model.Id" /> </td>
+                            <td>@(++i) <input type="hidden" asp-for="AcademicExamDetails[detailId].AcademicExamId" value="@Model.Id" /> </td>
                             <td>@item.Student.ClassRoll <input type="hidden" asp-for="AcademicExamDetails[detailId].StudentId" /></td>
                             <td>@item.Student.Name <input type="hidden" asp-for="AcademicExamDetails[detailId].Id" /></td>
                             <td style="width:50px;padding:0px;">
@@ -110,7 +137,7 @@
                                 }
                                 else
                                 {
-                                    <input asp-for="AcademicExamDetails[detailId].ObtainMark" max="@Model.TotalMarks" min="0" style="width:60px;height:35px;text-align:center;border:none" />
+                                    <input class="markInput" tabindex="@tabIndex" asp-for="AcademicExamDetails[detailId].ObtainMark" max="@Model.TotalMarks" inputmode="numeric" pattern="[0-9]*" placeholder="0" style="width:60px;height:35px;text-align:center;border:none" onkeyup="handleInputKeyUp(this)"/>
                                 }
                             </td>
                             <td class="flex-wrap justify-content-center">
@@ -136,8 +163,12 @@
                                     <input asp-for="AcademicExamDetails[detailId].Remarks" placeholder="write here if any comment" style="width:100%;height:30px;text-align:left;border:none" />
                                 }
                             </td>
+                            <td>
+                                @updatedBy
+                            </td>
                         </tr>
                         detailId++;
+                        tabIndex++;
                     }
                 </tbody>
             </table>
@@ -149,10 +180,62 @@
                     }
                     else
                     {
-                        <input class="btn btn-info" type="submit" value="Submit" />
+                        <input class="btn btn-info" type="submit" value="Submit" onclick="submitForm()" />
                     }
                 </div>
             </div>
         </form>
     </div>
 </div>
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            var inputFields = document.getElementsByClassName("markInput");
+
+            // Loop through all input fields with class "markInput"
+            for (var i = 0; i < inputFields.length; i++) {
+                var inputValue = inputFields[i].value.trim();
+                if (inputValue === "0") {
+                    inputFields[i].value = "";
+                }
+            }
+        });
+
+
+        function submitForm() {
+            var inputFields = document.getElementsByClassName("markInput");
+
+            // Loop through all input fields with class "markInput"
+            for (var i = 0; i < inputFields.length; i++) {
+                var inputValue = inputFields[i].value.trim();
+                if (inputValue === "" || inputValue === null) {
+                    inputFields[i].value = "0";
+                }
+                const maxValue = inputFields[i].max;
+                if (inputValue > maxValue) {
+                    inputFields[i].classList.add("error");
+                    alert("Mark should not exceed from Total Mark.");
+                    return; // Stop form submission
+                }
+                else {
+                    inputFields[i].classList.remove("error");
+                }
+            }
+
+            // Now, you can submit the form
+            document.getElementById("myForm").submit();
+        }
+
+        function handleInputKeyUp(inputElement) {
+            const maxValue = parseFloat(inputElement.max);
+            const inputValue = parseFloat(inputElement.value) || 0;
+
+            // Check if the input value exceeds the max value
+            if (inputValue > maxValue) {
+                inputElement.classList.add("error"); // Add 'error' class to change the color to red
+            } else {
+                inputElement.classList.remove("error"); // Remove 'error' class if the value is valid
+            }
+        }
+    </script>
+}

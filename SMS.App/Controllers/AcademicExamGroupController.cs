@@ -205,5 +205,20 @@ namespace SMS.App.Controllers
 
             return RedirectToAction("index");
         }
+
+        public async Task<JsonResult> getExamGroups(int monthId, int examTypeId)
+        {
+            List<AcademicExamGroup> examGroup = new List<AcademicExamGroup>();
+            try
+            {
+                examGroup = (List<AcademicExamGroup>)await _examGroupManager.GetByMonthExamType(monthId, examTypeId);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return Json(examGroup);
+        }
     }
 }

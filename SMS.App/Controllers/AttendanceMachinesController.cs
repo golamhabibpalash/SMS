@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using SMS.App.Utilities.MACIPServices;
+using SMS.App.Utilities.ShortMessageService;
 using SMS.App.ViewModels.AttendanceVM;
 using SMS.BLL.Contracts;
 using SMS.Entities;
@@ -24,8 +26,9 @@ namespace SMS.App.Controllers
         private readonly IDesignationManager _designationManager;
         private readonly IAcademicClassManager _academicClassManager;
         private readonly IAcademicSessionManager _academicSessionManager;
+        private readonly IPhoneSMSManager _phoneSMSManager;
 
-        public AttendanceMachinesController(IHttpContextAccessor contextAccessor, IAttendanceMachineManager attendanceMachineManager, IEmployeeManager employeeManager, IStudentManager studentManager, IDesignationManager designationManager, IAcademicClassManager academicClassManager, IAcademicSessionManager academicSessionManager)
+        public AttendanceMachinesController(IHttpContextAccessor contextAccessor, IAttendanceMachineManager attendanceMachineManager, IEmployeeManager employeeManager, IStudentManager studentManager, IDesignationManager designationManager, IAcademicClassManager academicClassManager, IAcademicSessionManager academicSessionManager, IPhoneSMSManager phoneSMSManager)
         {
             _contextAccessor = contextAccessor;
             _attendanceMachineManager = attendanceMachineManager;
@@ -34,6 +37,7 @@ namespace SMS.App.Controllers
             _designationManager = designationManager;
             _academicClassManager = academicClassManager;
             _academicSessionManager = academicSessionManager;
+            _phoneSMSManager = phoneSMSManager;
         }
         // GET: AttendanceMachinesController
         public async Task<ActionResult> Index(string attendanceFor, DateTime dateTime, string attendanceType,  int? aSessionId, int? aClassId)
@@ -85,18 +89,48 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(Tran_MachineRawPunch model)
+        public async Task<ActionResult> Create(Tran_MachineRawPunch model, bool isSMSSend)
         {
+            string msg = string.Empty;
             ViewData["AcademicClassList"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name");
             if (ModelState.IsValid)
             {
-                string cardNo = model.CardNo;
-                model.CardNo = cardNo.PadLeft(8, '0');
-                bool isSaved =await _attendanceMachineManager.AddAsync(model);
-                if (isSaved)
+                try
                 {
-                    TempData["success"] = "New attendance added manually for"+model.CardNo;
-                    return View();
+                    string cardNo = model.CardNo;
+                    model.CardNo = cardNo.PadLeft(8, '0');
+                    bool isSaved =await _attendanceMachineManager.AddAsync(model);
+                    if (isSaved)
+                    {
+                        msg = "New attendance added manually for" + model.CardNo;
+                        if (isSMSSend)
+                        {
+                            Student st = await _studentManager.GetStudentByClassRollAsync(Convert.ToInt32(model.CardNo));
+                            if (st != null)
+                            {
+                                PhoneSMS phoneSMS = new PhoneSMS();
+                                phoneSMS.MACAddress = MACService.GetMAC();
+                                phoneSMS.CreatedAt = DateTime.Now;
+                                phoneSMS.CreatedBy = HttpContext.Session.GetString("UserId");
+                                phoneSMS.MobileNumber = st.GuardianPhone == null ? st.PhoneNo : st.GuardianPhone;
+                                phoneSMS.Text = st.NameBangla + " আজ " + model.PunchDatetime.ToString("hh:mm tt") + " মিনিটে স্কুলে উপস্থিত হয়েছে। -নোবেল ।";
+                                phoneSMS.SMSType = "CheckIn";
+                                bool isSend = await MobileSMS.SendSMS(phoneSMS.MobileNumber, phoneSMS.Text);                                
+                                if (isSaved)
+                                {
+                                   await _phoneSMSManager.AddAsync(phoneSMS);
+                                    msg ="New attendance added manually with sms for" + model.CardNo;
+                                }
+
+                            }
+                        }
+                        TempData["success"] = msg;
+                        return View();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    TempData["success"] = "Execption: " + ex.Message; 
                 }
                 
             }

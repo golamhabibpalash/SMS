@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using SchoolManagementSystem;
 using SMS.App.ViewModels.ExamVM;
 using SMS.BLL.Contracts;
 using SMS.Entities;
@@ -60,12 +61,33 @@ namespace SMS.App.Controllers
                     ExamResultVM exam = new();
                     exam.ExamId = academicExam.Id;
                     //exam.ExamName = academicExam.ExamName;
-                    exam.AcademicClass = academicExam.AcademicSubject.AcademicClass.Name;
+                    //exam.AcademicClass = academicExam.AcademicSubject.AcademicClass.Name;
                     //exam.TotalExaminee = academicExam.AcademicExamDetails.Count;
                     exams.Add(exam);
                 }
             }
             return View(exams);
+        }
+
+        public async Task<ActionResult> SubjecttWiseResult()
+        {
+            GlobalUI.PageTitle = GlobalUI.SiteTitle = "Student-Wise Result";
+            return View();
+        }
+        public async Task<ActionResult> ClassWiseResult()
+        {
+            GlobalUI.PageTitle = GlobalUI.SiteTitle = "Class-Wise Result";
+            return View();
+        }
+        public async Task<ActionResult> StudentWiseResult()
+        {
+            GlobalUI.PageTitle = GlobalUI.SiteTitle = "Student-Wise Result";
+
+            ViewData["ExamType"] = new SelectList(await _academicExamTypeManager.GetAllAsync(), "Id", "ExamTypeName");
+            ViewData["ClassList"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name");
+
+
+            return View();
         }
 
         // GET: ExamResultsController/Details/5

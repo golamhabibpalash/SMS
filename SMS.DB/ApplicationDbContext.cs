@@ -6,6 +6,7 @@ using SMS.Entities;
 using SMS.Entities.AdditionalModels;
 using SMS.Entities.RptModels;
 using SMS.Entities.RptModels.AttendanceVM;
+using SMS.Entities.RptModels.Results;
 using SMS.Entities.RptModels.StudentPayment;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -25,6 +26,7 @@ namespace SMS.DB
         public DbSet<AcademicSection> AcademicSection { get; set; }
         public DbSet<AcademicSession> AcademicSession { get; set; }
         public DbSet<AcademicSubject> AcademicSubject { get; set; }
+        public DbSet<AcademicClassSubject> AcademicClassSubjects { get; set; }
         public DbSet<AcademicSubjectType> AcademicSubjectType { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<AttachDoc> AttachDocs { get; set; }
@@ -96,6 +98,10 @@ namespace SMS.DB
         [NotMapped]
         public DbSet<StudentPaymentSchedulePaidVM> StudentPaymentSchedulePaidVMs { get; set; }
         public DbSet<StudentListVM> StudentListVMs { get; set; }
+        [NotMapped]
+        public DbSet<SubjectWiseMarkSheetVM> SubjectWiseMarkSheetVMs { get; set; }
+        [NotMapped]
+        public DbSet<StudentWiseMarkSheetVM> StudentWiseMarkSheetVMs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -111,6 +117,8 @@ namespace SMS.DB
             builder.Entity<RptPaymentReceiptVM>().ToView(nameof(RptPaymentReceiptVMs)).HasNoKey();
             builder.Entity<StudentPaymentScheduleVM>().ToView(nameof(StudentPaymentScheduleVMs)).HasNoKey();
             builder.Entity<StudentPaymentSchedulePaidVM>().ToView(nameof(StudentPaymentSchedulePaidVMs)).HasNoKey();
+            builder.Entity<SubjectWiseMarkSheetVM>().ToView(nameof(SubjectWiseMarkSheetVMs)).HasNoKey();
+            builder.Entity<StudentWiseMarkSheetVM>().ToView(nameof(StudentWiseMarkSheetVMs)).HasNoKey();
         }        
     }
 }

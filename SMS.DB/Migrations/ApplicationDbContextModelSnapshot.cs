@@ -267,6 +267,47 @@ namespace SMS.DB.Migrations
                     b.ToTable("AcademicClass");
                 });
 
+            modelBuilder.Entity("SMS.Entities.AcademicClassSubject", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("AcademicClassId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AcademicSubjectId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EditedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EditedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MACAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AcademicClassId");
+
+                    b.HasIndex("AcademicSubjectId");
+
+                    b.ToTable("AcademicClassSubjects");
+                });
+
             modelBuilder.Entity("SMS.Entities.AcademicExam", b =>
                 {
                     b.Property<int>("Id")
@@ -553,7 +594,7 @@ namespace SMS.DB.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("AcademicClassId")
+                    b.Property<int?>("AcademicClassId")
                         .HasColumnType("int");
 
                     b.Property<int>("AcademicSubjectTypeId")
@@ -1984,6 +2025,9 @@ namespace SMS.DB.Migrations
                     b.Property<string>("MotherName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Religion")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("SectionName")
                         .HasColumnType("nvarchar(max)");
 
@@ -1996,7 +2040,7 @@ namespace SMS.DB.Migrations
                     b.Property<string>("StudentName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("SubjectCode")
+                    b.Property<int?>("SubjectCode")
                         .HasColumnType("int");
 
                     b.Property<string>("SubjectName")
@@ -2738,6 +2782,25 @@ namespace SMS.DB.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("SMS.Entities.AcademicClassSubject", b =>
+                {
+                    b.HasOne("SMS.Entities.AcademicClass", "AcademicClass")
+                        .WithMany()
+                        .HasForeignKey("AcademicClassId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SMS.Entities.AcademicSubject", "AcademicSubject")
+                        .WithMany()
+                        .HasForeignKey("AcademicSubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AcademicClass");
+
+                    b.Navigation("AcademicSubject");
+                });
+
             modelBuilder.Entity("SMS.Entities.AcademicExam", b =>
                 {
                     b.HasOne("SMS.Entities.AcademicClass", "AcademicClass")
@@ -2844,9 +2907,7 @@ namespace SMS.DB.Migrations
                 {
                     b.HasOne("SMS.Entities.AcademicClass", "AcademicClass")
                         .WithMany("AcademicSubjects")
-                        .HasForeignKey("AcademicClassId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AcademicClassId");
 
                     b.HasOne("SMS.Entities.AcademicSubjectType", "AcademicSubjectType")
                         .WithMany()

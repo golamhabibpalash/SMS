@@ -14,7 +14,7 @@ namespace SMS.DAL.Repositories
     public class AcademicExamRepository : Repository<AcademicExam>, IAcademicExamRepository
     {
         private new readonly ApplicationDbContext _context;
-        public AcademicExamRepository(ApplicationDbContext context):base(context)
+        public AcademicExamRepository(ApplicationDbContext context) : base(context)
         {
             _context = context;
         }
@@ -39,8 +39,8 @@ namespace SMS.DAL.Repositories
 
         public override async Task<AcademicExam> GetByIdAsync(int id)
         {
-            var result = await _context.AcademicExams                
-                .Include(s=> s.AcademicClass)
+            var result = await _context.AcademicExams
+                .Include(s => s.AcademicClass)
                 .Include(s => s.AcademicExamGroup)
                     .ThenInclude(s => s.AcademicSession)
                 .Include(s => s.AcademicSubject)
@@ -52,6 +52,19 @@ namespace SMS.DAL.Repositories
                 .FirstOrDefaultAsync();
 
             return result;
+        }
+        public async Task<List<AcademicExam>> GetByClassIdExamGroupId(int examGroupId, int academicClassId)
+        {
+            var exams = await _context.AcademicExams
+                .Where(s => s.AcademicClassId == academicClassId && s.AcademicExamGroupId == examGroupId)
+                .Include(s => s.AcademicClass)
+                .Include(s => s.AcademicExamGroup)
+                .Include(s => s.AcademicSubject)
+                .Include(s => s.AcademicExamDetails)
+                    .ThenInclude(m => m.Student)
+                .ToListAsync();
+
+            return exams;
         }
     }
 }

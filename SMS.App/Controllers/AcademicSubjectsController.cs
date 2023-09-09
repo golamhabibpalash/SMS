@@ -46,7 +46,7 @@ namespace SMS.App.Controllers
             ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name");
             ViewData["QuestionFormatId"] = new SelectList(await _questionFormationManager.GetAllAsync(), "Id", "Name");
             var academicSubject = await _academicSubjectManager.GetAllAsync();
-            return View(academicSubject);
+            return View(academicSubject.OrderBy(s => s.SubjectName));
         }
 
         // GET: AcademicSubjects/Details/5
@@ -83,19 +83,27 @@ namespace SMS.App.Controllers
             academicSubject.Status = true;
             if (ModelState.IsValid)
             {
-                academicSubject.MACAddress = MACService.GetMAC();
-                academicSubject.CreatedAt = DateTime.Now;
-                academicSubject.CreatedBy = HttpContext.Session.GetString("UserId");
-                academicSubject.SubjectFor = 's';
-                var isSaved = await _academicSubjectManager.AddAsync(academicSubject);
-                if (isSaved)
+                bool isExist = await _academicSubjectManager.IsExistAsync(academicSubject);
+                if (!isExist)
                 {
-                    TempData["created"] = "Created Successfully";
-                    return RedirectToAction(nameof(Index));
+                    academicSubject.MACAddress = MACService.GetMAC();
+                    academicSubject.CreatedAt = DateTime.Now;
+                    academicSubject.CreatedBy = HttpContext.Session.GetString("UserId");
+                    academicSubject.SubjectFor = 's';
+                    var isSaved = await _academicSubjectManager.AddAsync(academicSubject);
+                    if (isSaved)
+                    {
+                        TempData["created"] = "Created Successfully";
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        TempData["error"] = "Something wrong";
+                    }
                 }
                 else
                 {
-                    TempData["error"] = "Already Exist";
+                    TempData["error"] = "This Subject is already exist!";
                 }
             }
 
@@ -254,7 +262,7 @@ namespace SMS.App.Controllers
         }
         public async Task<IActionResult> ClassWiseSubjectAllocationDelete(int id)
         {
-            if (id<=0)
+            if (id <= 0)
             {
                 TempData["deleted"] = "Sorry! Not Found";
                 return RedirectToAction("ClassWiseSubjectAllocation");
@@ -281,7 +289,7 @@ namespace SMS.App.Controllers
                 throw;
             }
 
-            TempData["created"] ="delete successfully";
+            TempData["created"] = "delete successfully";
 
             return RedirectToAction("ClassWiseSubjectAllocation");
         }

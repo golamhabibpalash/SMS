@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using SMS.App.Utilities.MACIPServices;
 using SMS.App.ViewModels.GradingTable;
 using SMS.BLL.Contracts;
@@ -37,6 +38,7 @@ namespace SMS.App.Controllers
                     gradingIndexVM.LetterGrade = item.LetterGrade;
                     gradingIndexVM.GradePoint = item.GradePoint;
                     gradingIndexVM.Id = item.Id;
+                    gradingIndexVM.GradeComment = item.gradeComments;
                     gradingIndexVMs.Add(gradingIndexVM);
                 }
             }
@@ -59,7 +61,7 @@ namespace SMS.App.Controllers
                 obj.CreatedAt = DateTime.Now;
                 obj.CreatedBy = HttpContext.Session.GetString("UserId");
                 obj.MACAddress = MACService.GetMAC();
-                var IsValidObj = await ValidateGradingTableObject(obj);
+                var IsValidObj = await ValidateGradingTableObject(obj,"create");
                 if (IsValidObj.isValid)
                 {
                     bool isSaved = await _gradingTableManager.AddAsync(obj);
@@ -76,6 +78,7 @@ namespace SMS.App.Controllers
             }
             return View(obj);
         }
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             GradingTable gradingTable = await _gradingTableManager.GetByIdAsync(id);
@@ -95,7 +98,7 @@ namespace SMS.App.Controllers
                 obj.EditedAt = DateTime.Now;
                 obj.EditedBy = HttpContext.Session.GetString("UserId");
                 obj.MACAddress = MACService.GetMAC();
-                var IsValidObj = await ValidateGradingTableObject(obj);
+                var IsValidObj = await ValidateGradingTableObject(obj,"edit");
                 if (IsValidObj.isValid)
                 {
                     bool isUpdated = await _gradingTableManager.UpdateAsync(obj);
@@ -155,7 +158,7 @@ namespace SMS.App.Controllers
             }
             return RedirectToAction("Index");
         }
-        private async Task<(bool isValid, string eMsg)> ValidateGradingTableObject(GradingTable obj)
+        private async Task<(bool isValid, string eMsg)> ValidateGradingTableObject(GradingTable obj, string action)
         {
             bool isValid = true;
             string msg = string.Empty;
@@ -166,31 +169,36 @@ namespace SMS.App.Controllers
                 return new(isValid, msg);
             }
             var allGradings = await _gradingTableManager.GetAllAsync();
+
+            
             foreach (var grading in allGradings)
             {
-                int min = grading.NumberRangeMin;
-                for (int i = grading.NumberRangeMin; i <= grading.NumberRangeMax; i++)
+                if (obj.Id != grading.Id)
                 {
-                    if (i == obj.NumberRangeMin || i == obj.NumberRangeMax)
+                    for (int i = grading.NumberRangeMin; i <= grading.NumberRangeMax; i++)
+                    {
+                        if (i == obj.NumberRangeMin || i == obj.NumberRangeMax)
+                        {
+                            isValid = false;
+                            msg = "This number (" + i + ") is already used.";
+                            break;
+                        }
+                    }
+                    if (grading.LetterGrade == obj.LetterGrade)
                     {
                         isValid = false;
-                        msg = "This number ("+i+") is already used.";
+                        msg = "Same Letter grade (" + grading.LetterGrade + ") is already Exist";
+                        break;
+                    }
+                    if (grading.GradePoint == obj.GradePoint)
+                    {
+                        isValid = false;
+                        msg = "Same Grade Point (" + grading.GradePoint + ") is already Exist";
                         break;
                     }
                 }
-                if (grading.LetterGrade == obj.LetterGrade)
-                {
-                    isValid = false;
-                    msg = "Same Letter grade ("+grading.LetterGrade+") is already Exist";
-                    break;
-                }
-                if (grading.GradePoint == obj.GradePoint)
-                {
-                    isValid = false;
-                    msg = "Same Grade Point ("+grading.GradePoint+") is already Exist";
-                    break;
-                }
             }
+            
             return new(isValid, msg);
         }
     }

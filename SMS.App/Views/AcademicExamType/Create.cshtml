@@ -1,5 +1,5 @@
 ﻿@model AcademicExamType
-@{ 
+@{
 
     ViewData["Title"] = "Create Exam Type";
     GlobalUI.PageTitle = ViewData["Title"].ToString();
@@ -20,7 +20,7 @@
                 <div class="form-group row">
                     <label asp-for="CountInAYear" class="col-md-3 col-form-label"></label>
                     <div class="col-md-9">
-                        <input class="form-control" asp-for="CountInAYear"  min="1" max="12"/>
+                        <input class="form-control" asp-for="CountInAYear" min="1" max="12" />
                         <span asp-validation-for="CountInAYear" class="text-danger"></span>
                     </div>
                 </div>
@@ -46,4 +46,10 @@
 
 @section Scripts{
     <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
+    <script>
+        let deleted = '@TempData["deleted"]';
+        let created = '@TempData["created"]';
+        let updated = '@TempData["updated"]';
+        let failed = '@TempData["error"]';
+    </script>
 }

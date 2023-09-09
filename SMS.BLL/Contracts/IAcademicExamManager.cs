@@ -10,5 +10,6 @@ namespace SMS.BLL.Contracts
 {
     public interface IAcademicExamManager:IManager<AcademicExam>
     {
+        Task<List<AcademicExam>> GetByClassIdExamGroupId(int examGroupId, int academicClassId);
     }
 }

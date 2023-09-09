@@ -1,4 +1,6 @@
-﻿namespace SMS.App.ViewModels.GradingTable
+﻿using System.Reflection.Metadata.Ecma335;
+
+namespace SMS.App.ViewModels.GradingTable
 {
     public class GradingIndexVM
     {
@@ -6,5 +8,6 @@
         public string NumberRange { get; set; }
         public string LetterGrade { get; set; }
         public decimal GradePoint { get; set; }
+        public string GradeComment { get; set; }
     }
 }

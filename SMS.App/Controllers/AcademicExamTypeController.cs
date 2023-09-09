@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SchoolManagementSystem;
 using SMS.BLL.Contracts;
 using SMS.Entities;
 using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
@@ -46,16 +48,23 @@ namespace SMS.App.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    var types = await _academicExamTypeManager.GetAllAsync();
+                    AcademicExamType existingAcademicExamType = types.FirstOrDefault(s => s.ExamTypeName == academicExamType.ExamTypeName);
+                    if (existingAcademicExamType != null)
+                    {
+                        TempData["error"] = "Exam types is already exist!";
+                        return View(academicExamType);
+                    }
                     var isSaved = await _academicExamTypeManager.AddAsync(academicExamType);
                     if (isSaved)
                     {
-                        TempData["create"] = "Created Successfully";
+                        TempData["created"] = "Created Successfully";
                         return RedirectToAction(nameof(Index));
                     }
                 }
                 else
                 {
-                    TempData["failed"] = "Failed! ";
+                    TempData["error"] = "Failed! ";
                     return View(academicExamType);
                 }
 
@@ -104,19 +113,27 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicExamTypeController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            return View();
+            GlobalUI.PageTitle = "Delete Academic Exam Type";
+            AcademicExamType academicExamType = await _academicExamTypeManager.GetByIdAsync(id);
+            return View(academicExamType);
         }
 
         // POST: AcademicExamTypeController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> Delete(int id, AcademicExamType aExamType)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                bool isRemoved =await _academicExamTypeManager.RemoveAsync(aExamType);
+                if (isRemoved)
+                {
+                    TempData["deleted"] = "deleted Successfully";
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(aExamType);
             }
             catch
             {

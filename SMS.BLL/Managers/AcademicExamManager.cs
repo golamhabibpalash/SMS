@@ -17,5 +17,11 @@ namespace SMS.BLL.Managers
         {
             _academicExamRepository = academicExamRepository;
         }
+
+        public async Task<List<AcademicExam>> GetByClassIdExamGroupId(int examGroupId, int academicClassId)
+        {
+            var result = await _academicExamRepository.GetByClassIdExamGroupId(examGroupId, academicClassId);
+            return result;
+        }
     }
 }

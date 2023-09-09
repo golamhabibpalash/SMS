@@ -457,5 +457,21 @@ namespace SMS.App.Controllers
             var results = academicExams.Where(s => s.AcademicExamGroupId == examGroupId && s.AcademicClassId == academicClassId).ToList();
             return Json(results);
         }
+        public async Task<JsonResult> GetExamsByGrId(int examGroupId)
+        {
+            List<AcademicExam> academicExams = (List<AcademicExam>)await _examManager.GetAllAsync();
+            var results = academicExams.Where(s => s.AcademicExamGroupId == examGroupId).ToList();
+            return Json(results);
+        }
+        public async Task<JsonResult> GetAcademicClassByExamGrId(int examGroupId)
+        {
+            List<AcademicExam> academicExams = (List<AcademicExam>)await _examManager.GetAllAsync();
+            List<AcademicClass> academicClasses =(List<AcademicClass>) await _classManager.GetAllAsync();
+            var result = (from t in academicExams
+                          join c in academicClasses on t.AcademicClassId equals c.Id
+                          where t.AcademicExamGroupId == examGroupId
+                          select c).Distinct();
+            return Json(result);
+        }
     }
 }

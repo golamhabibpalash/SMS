@@ -8,11 +8,13 @@ namespace SMS.Entities
 {
     public class ExamResultDetail : CommonProps
     {
-        public int StudentId { get; set; }
-        public Student Student { get; set; }
         public int ExamResultId { get; set; }
         public ExamResult ExamResult { get; set; }
-        public double Marks { get; set; }
-
+        public int AcademicSubjectId { get; set; }
+        public AcademicSubject AcademicSubject { get; set; }
+        public double ObtainMark { get; set; }
+        public double TotalMark { get; set; }
+        public double GPA { get; set; }
+        public string Grade { get; set; }
     }
 }

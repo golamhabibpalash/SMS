@@ -10,5 +10,6 @@ namespace SMS.DAL.Contracts
 {
     public interface IAcademicExamRepository:IRepository<AcademicExam>
     {
+        Task<List<AcademicExam>> GetByClassIdExamGroupId(int examGroupId, int academicClassId);
     }
 }

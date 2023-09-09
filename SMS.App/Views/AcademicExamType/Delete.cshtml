@@ -1,0 +1,12 @@
+﻿@model AcademicExamType
+
+    <div class="row">
+        <div class="col-md-12">
+            <form asp-action="Delete" asp-controller="AcademicExamType" method="post">
+                <span class="h5 text-danger">Do you want to delete?</span><br />
+                <input type="hidden" asp-for="Id" />
+                <label>Exam Type Name: @Model.ExamTypeName</label><br />
+                <button type="submit" class="btn-sm btn btn-danger">Delete</button>
+            </form>
+        </div>
+    </div>

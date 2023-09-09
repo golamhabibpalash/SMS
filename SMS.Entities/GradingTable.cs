@@ -20,5 +20,6 @@ namespace SMS.Entities
         public string LetterGrade { get; set; }
         [Display(Name = "Grade Point"),Required]
         public decimal GradePoint { get; set; }
+        public string gradeComments { get; set; }
     }
 }

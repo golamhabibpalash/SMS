@@ -36,6 +36,13 @@
                         <span asp-validation-for="GradePoint" class="text-danger"></span>
                     </div>
                 </div>
+                <div class="form-group row">
+                    <label class="col-form-label col-sm-4 col-md-3" asp-for="gradeComments">Grade Comments</label>
+                    <div class=" col-md-9">
+                        <input asp-for="gradeComments" class="form-control" placeholder="Write something about this grade" />
+                        <span asp-validation-for="gradeComments" class="text-danger"></span>
+                    </div>
+                </div>
 
                 <div class="form-group row">
                     <div class="col-md-12 text-right">

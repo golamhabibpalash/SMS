@@ -13,21 +13,18 @@ namespace SMS.BLL.Managers
 {
     public class AcademicClassSubjectManager:Manager<AcademicClassSubject>, IAcademicClassSubjectManager
     {
-        public AcademicClassSubjectManager(IAcademicClassSubjectRepository _repository):base(_repository)
+        private readonly IAcademicClassSubjectRepository _repository;
+        public AcademicClassSubjectManager(IAcademicClassSubjectRepository repository):base(repository)
         {
-            
+            _repository = repository;
         }
 
         public async Task<List<AcademicSubject>> GetSubjectsByClassIdAsync(int classId)
         {
             try
             {
-                var allSubjects = await _repository.GetAllAsync();
-                List<AcademicSubject> subjects =(from s in allSubjects
-                                                where s.AcademicClassId == classId
-                                                select s.AcademicSubject).ToList();
-
-                return subjects;
+                var allSubjects = await _repository.GetSubjectsByClassIdAsync(classId);
+                return allSubjects;
             }
             catch (Exception)
             {

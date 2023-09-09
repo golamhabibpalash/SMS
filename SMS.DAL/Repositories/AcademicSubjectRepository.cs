@@ -38,7 +38,7 @@ namespace SMS.DAL.Repositories
             //    .Where(s => (s.SubjectName.Trim() == entity.SubjectName.Trim() || s.SubjectCode == entity.SubjectCode) && s.SubjectFor.ToString().Trim() == entity.SubjectFor.ToString().Trim())
             //    .FirstOrDefaultAsync();
 
-           var existSubject =  await _context.AcademicSubject.Where(s => s.SubjectName.Trim() == entity.SubjectName.Trim() && s.AcademicClassId == entity.AcademicClassId).FirstOrDefaultAsync();
+           var existSubject =  await _context.AcademicSubject.Where(s => s.SubjectName.Trim() == entity.SubjectName.Trim()).FirstOrDefaultAsync();
             if (existSubject != null)
             {
                 return true;
@@ -67,6 +67,24 @@ namespace SMS.DAL.Repositories
                 .FirstOrDefaultAsync();
 
             return existingSubject;
+        }
+
+        public async Task<List<AcademicSubject>> GetSubjectsByClassIdAsync(int classId)
+        {
+            List<AcademicSubject> subObjects = new List<AcademicSubject>();
+            List<AcademicSubject> subjects = await _context.AcademicSubject.Include(s => s.AcademicSubjectType).ToListAsync();
+            List<AcademicClassSubject> classSubjects = await _context.AcademicClassSubjects.Where(s => s.AcademicClassId == classId).ToListAsync();
+            foreach (var item in classSubjects)
+            {
+                foreach (var sub in subjects)
+                {
+                    if (item.AcademicSubjectId == sub.Id)
+                    {
+                        subObjects.Add(sub);
+                    }
+                }
+            }
+            return subObjects;
         }
     }
 }

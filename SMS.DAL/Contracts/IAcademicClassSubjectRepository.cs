@@ -10,6 +10,6 @@ namespace SMS.DAL.Contracts
 {
     public interface IAcademicClassSubjectRepository:IRepository<AcademicClassSubject>
     {
-        Task<IEnumerable<AcademicSubject>> GetSubjectsByClassIdAsync(int classId);
+        Task<List<AcademicSubject>> GetSubjectsByClassIdAsync(int classId);
     }
 }

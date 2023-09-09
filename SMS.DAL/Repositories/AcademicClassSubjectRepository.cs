@@ -20,14 +20,29 @@ namespace SMS.DAL.Repositories
         }
         public override async Task<IReadOnlyCollection<AcademicClassSubject>> GetAllAsync()
         {
-            var result = await _context.AcademicClassSubjects.Include(s => s.AcademicClass).Include(s => s.AcademicSubject).ToListAsync();
+            var result = await _context
+                .AcademicClassSubjects
+                .Include(s => s.AcademicClass)
+                .Include(s => s.AcademicSubject)
+                    .ThenInclude(s => s.AcademicSubjectType)
+                .ToListAsync();
             return result;
         }
 
-        public async Task<IEnumerable<AcademicSubject>> GetSubjectsByClassIdAsync(int classId)
+        public async Task<List<AcademicSubject>> GetSubjectsByClassIdAsync(int classId)
         {
-            var subjects = await _context.AcademicClassSubjects.Select(s=> s.AcademicSubject).Where(s => s.AcademicClassId == classId).ToListAsync();
-            return subjects; 
+            if (classId<=0)
+            {
+                return new List<AcademicSubject>();
+            }
+            var academicSubjects = await _context.AcademicClassSubjects
+                .Include(s => s.AcademicSubject)
+                .ThenInclude(s => s.AcademicSubjectType)
+                .Where(s => s.AcademicClassId==classId)
+                .Select(s => s.AcademicSubject)
+                .ToListAsync();
+
+            return academicSubjects; 
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using SMS.DAL.Contracts.Base;
-using SMS.DB;
 using SMS.Entities;
 using System;
 using System.Collections.Generic;
@@ -9,8 +8,7 @@ using System.Threading.Tasks;
 
 namespace SMS.DAL.Contracts
 {
-    public interface IAcademicSubjectRepository:IRepository<AcademicSubject>
+    public interface ISubjectEnrollmentDetailRepository:IRepository<SubjectEnrollmentDetail>
     {
-        Task<List<AcademicSubject>> GetSubjectsByClassIdAsync(int classId);
     }
 }

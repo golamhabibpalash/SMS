@@ -20,7 +20,14 @@ namespace SMS.Entities.RptModels.Results
         public double MaxNumber { get; set; }
         public string Grade { get; set; }
         public decimal Point { get; set; }
+        public decimal FinalGPA { get; set; }
         public int ExamGroupId { get; set; }
         public int ClassId { get; set; }
+        public string FatherName { get; set; }
+        public string MotherName { get; set; }
+        public DateTime DOB { get; set; }
+        public string FinalGrade { get; set; }
+        public int TotalFail { get; set; }
+        public int Ranking { get; set; }
     }
 }

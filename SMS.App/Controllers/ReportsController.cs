@@ -408,7 +408,7 @@ namespace SMS.App.Controllers
                 new ReportParameter("Logo", imageParam),
                 new ReportParameter("EIINNo", institute.EIIN),
                 new ReportParameter("ExamGroupName", academicExamGroup.ExamGroupName),
-                new ReportParameter("ReportName", "Mark Sheet"),
+                new ReportParameter("ReportName", "ACADEMIC TRANSCRIPT"),
                 new ReportParameter("Signature", "signature"),
                 new ReportParameter("ReportDate", DateTime.Today.ToString("dd MMM yyyy")),
             };

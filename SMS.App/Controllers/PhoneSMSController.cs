@@ -46,7 +46,7 @@ namespace SMS.App.Controllers
             }
             if (!string.IsNullOrEmpty(toDate))
             {
-                allSMS = allSMS.Where(s => s.CreatedAt <= Convert.ToDateTime(toDate)).ToList();
+                allSMS = allSMS.Where(s => s.CreatedAt == Convert.ToDateTime(toDate) || s.CreatedAt > Convert.ToDateTime(toDate)).ToList();
                 ViewBag.toDate = toDate;
                 totalCount = allSMS.Count;
             }
@@ -58,14 +58,15 @@ namespace SMS.App.Controllers
             if (!string.IsNullOrEmpty(smsText))
             {
                 allSMS = allSMS.Where(s => s.Text.Contains(smsText)).ToList();
-                ViewBag.smsText = smsText;
                 totalCount = allSMS.Count;
             }
+                ViewBag.smsText = smsText;
             if (!string.IsNullOrEmpty(phoneNo))
             {
                 allSMS = allSMS.Where(s => s.MobileNumber.Contains(phoneNo)).ToList();
                 totalCount = allSMS.Count;
             }
+                ViewBag.phoneNo = smsText;
             if (rowCount>0)
             {
                 dataCount = rowCount;

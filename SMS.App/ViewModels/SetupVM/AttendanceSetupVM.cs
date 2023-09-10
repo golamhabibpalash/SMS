@@ -14,5 +14,7 @@
         public bool CheckOutSMSStudentGirls { get; set; }
         public bool CheckInSMSSummary { get; set; }
         public bool AbsentNotification { get; set; }
+        public bool AbsentNotificationStudent { get; set; }
+        public bool AbsentNotificationEmployee { get; set; }
     }
 }

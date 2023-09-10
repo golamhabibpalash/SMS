@@ -34,6 +34,8 @@ namespace SMS.Entities
 
         #region Absent Notification SMS
         public bool AbsentNotification { get; set; }
+        public bool AbsentNotificationStudent { get; set; }
+        public bool AbsentNotificationEmployee { get; set; }
         #endregion
     }
 }

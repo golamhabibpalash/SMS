@@ -41,9 +41,10 @@ namespace SMS.App.Controllers
         private readonly IPhoneSMSManager _phoneSMSManager;
         private readonly ISetupMobileSMSManager _setupMobileSMSManager;
         private readonly IOffDayManager _offDayManager;
+        private readonly IInstituteManager _instituteManager;
 
         #region Constructor Start =================================================
-        public HangfireController(IStudentManager studentManager, IAttendanceMachineManager attendanceMachineManager, IEmployeeManager employeeManager, IPhoneSMSManager phoneSMSManager, ISetupMobileSMSManager setupMobileSMSManager, IOffDayManager offDayManager)
+        public HangfireController(IStudentManager studentManager, IAttendanceMachineManager attendanceMachineManager, IEmployeeManager employeeManager, IPhoneSMSManager phoneSMSManager, ISetupMobileSMSManager setupMobileSMSManager, IOffDayManager offDayManager, IInstituteManager instituteManager)
         {
             _studentManager = studentManager;
             _attendanceMachineManager = attendanceMachineManager;
@@ -51,6 +52,7 @@ namespace SMS.App.Controllers
             _phoneSMSManager = phoneSMSManager;
             _setupMobileSMSManager = setupMobileSMSManager;
             _offDayManager = offDayManager;
+            _instituteManager = instituteManager;
         }
         #endregion Constructor Finished xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxX
 
@@ -59,6 +61,20 @@ namespace SMS.App.Controllers
         public async Task<IActionResult> AttendanceBackgroundJob()
         {
             var jobs = JobStorage.Current.GetConnection().GetRecurringJobs();
+            Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
+            DateTime instituteStartTime = institute.StartingTime;
+            DateTime instituteCloseTime = institute.ClosingTime;
+            DateTime instituteLateTime = institute.LateTime;
+
+            var startTimeHr = instituteStartTime.Hour;
+            var startTimeMn = instituteStartTime.Minute;
+             
+            var instituteEndHr = instituteCloseTime.Hour;
+            var instituteEndMn = instituteCloseTime.Minute;
+
+
+            var lateTimeHr = instituteLateTime.Hour;
+            var lateTimeMn = instituteLateTime.Minute;
 
             foreach (var item in jobs)
             {
@@ -71,23 +87,29 @@ namespace SMS.App.Controllers
             {
                 if (setupMobileSMS.CheckInSMSSummary == true)
                 {
-                    RecurringJob.AddOrUpdate(() => SMSSendDailyAttendanceSummary(), "5 11 * * 6-4", TimeZoneInfo.Local);
-                    //At 10:01 AM, Saturday through Thursday
+                    int smsTimeHr = startTimeHr + 1;
+                    RecurringJob.AddOrUpdate(() => SMSSendDailyAttendanceSummary(), "5 "+smsTimeHr+" * * 6-4", TimeZoneInfo.Local);
+                    //At 11:05 AM, Saturday through Thursday
                 }
                 if (setupMobileSMS.CheckInSMSService == true)
                 {
-                    RecurringJob.AddOrUpdate(() => SendCheckInSMS(), "*/10 8-10 * * 6-4", TimeZoneInfo.Local);
+                    int smsStartTime = startTimeHr - 1;
+                    int smsEndTime = startTimeHr + 1;
+                    RecurringJob.AddOrUpdate(() => SendCheckInSMS(), "*/10 "+smsStartTime+"-"+smsEndTime+" * * 6-4", TimeZoneInfo.Local);
                     //Every 10 minutes, between 08:00 AM and 09:59 AM, Saturday through Thursday
                 } 
 
                 if (setupMobileSMS.CheckOutSMSService == true)
                 {
-                    RecurringJob.AddOrUpdate(() => SendCheckOutSMS(), "*/10 12-14 * * 6-4", TimeZoneInfo.Local);
+                    int smsStartTime = (startTimeHr + instituteEndHr)/2;
+                    int smsEndTime = instituteEndHr + 1;
+                    RecurringJob.AddOrUpdate(() => SendCheckOutSMS(), "*/10 "+smsStartTime+"-"+smsEndTime+" * * 6-4", TimeZoneInfo.Local);
                     //Every 10 minutes, between 12:00 PM and 03:59 PM, Saturday through Thursday
                 }
                 if (setupMobileSMS.AbsentNotification == true)
                 {
-                    RecurringJob.AddOrUpdate(() => SendAbsentNotificationSMS(), "1 0 11 * * 6-4", TimeZoneInfo.Local);
+                    int smsTimeHr = startTimeHr + 2;
+                    RecurringJob.AddOrUpdate(() => SendAbsentNotificationSMS(), "1 0 "+smsTimeHr+" * * 6-4", TimeZoneInfo.Local);
                     //At 10:00:01 AM, Saturday through Thursday
                 }
             }
@@ -799,7 +821,14 @@ namespace SMS.App.Controllers
                 SetupMobileSMS setupMobileSMS = await _setupMobileSMSManager.GetByIdAsync(1);
                 if (setupMobileSMS.AbsentNotification == true)
                 {
-                    await AbsentStudentSendSMS();
+                    if (setupMobileSMS.AbsentNotificationStudent==true)
+                    {
+                        await AbsentStudentSendSMS();
+                    }
+                    if (setupMobileSMS.AbsentNotificationEmployee == true)
+                    {
+                        await AbsentEmployeeSendSMS();
+                    }
                 }
             }
             return Ok(msg);
@@ -841,7 +870,7 @@ namespace SMS.App.Controllers
                         {
                             continue;
                         }
-                        string smsText = GenerateAbsentNotificationText(studentName, 1);
+                        string smsText = GenerateAbsentNotificationText(studentName,"student", 1);
                         bool isSMSSent = await MobileSMS.SendSMS(phoneNumber, smsText);
                         if (isSMSSent)
                         {
@@ -867,6 +896,69 @@ namespace SMS.App.Controllers
             return Ok();
         }
         #endregion Absent Student Notification by SMS Finished here xxxxxxxxxxxxxxxxxxx
+        
+        #region Absent Employee Notification
+        private async Task<IActionResult> AbsentEmployeeSendSMS()
+        {
+            string date = DateTime.Now.ToString("dd-MM-yyyy");
+            List<Employee> absentEmployees = await _attendanceMachineManager.GetTodaysAbsentEmployeeAsync(date);
+            if (absentEmployees==null || absentEmployees.Count<=0)
+            {
+                return null;
+            }
+            else
+            {
+                try
+                {
+                    foreach (var employee in absentEmployees)
+                    {
+                        if (employee.Status!=true)
+                        {
+                            continue;
+                        }
+
+                        string phoneNumber = employee.Phone;
+                        if (string.IsNullOrEmpty(phoneNumber))
+                        {
+                            continue;
+                        }
+                        string employeeName = employee.EmployeeName;
+                        if (string.IsNullOrEmpty(employeeName))
+                        {
+                            continue;
+                        }
+                        string smsType = "absent";
+                        bool isAlreadySMSSent = await _phoneSMSManager.IsSMSSendForAttendance(phoneNumber, smsType, date);
+                        if (isAlreadySMSSent)
+                        {
+                            continue;
+                        }
+                        string smsText = GenerateAbsentNotificationText(employeeName,"employee", 1);
+                        bool isSMSSent = await MobileSMS.SendSMS(phoneNumber, smsText);
+                        if (isSMSSent)
+                        {
+                            PhoneSMS phoneSMS = new PhoneSMS()
+                            {
+                                Text = smsText,
+                                CreatedAt = DateTime.Now,
+                                CreatedBy = "Automation",
+                                MobileNumber = phoneNumber,
+                                MACAddress = MACService.GetMAC(),
+                                SMSType = smsType
+                            };
+                            await _phoneSMSManager.AddAsync(phoneSMS);
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+            return Ok();
+        }
+        #endregion Absent Employee Notification
 
         #region SMS Generate Section Start Here ====================================
         private string GenerateCheckInSMSText(string name, string attendanceTime)
@@ -905,13 +997,20 @@ namespace SMS.App.Controllers
             return msg;
         }
 
-        private string GenerateAbsentNotificationText(string name, int absentDayCount)
+        private string GenerateAbsentNotificationText(string name, string smsFor, int absentDayCount)
         {
             string msg = string.Empty;
             if (absentDayCount == 1)
             {
                 string dateTime = DateTime.Now.ToString("dd MMM yyyy");
-                msg = name + " আজ (" + dateTime + ") স্কুলে আসেনি । -নোবেল।";
+                if (smsFor=="employee")
+                {
+                    msg = name+" is not in school today.";
+                }
+                else
+                {
+                    msg = name + " আজ (" + dateTime + ") স্কুলে আসেনি । -নোবেল।";
+                }
             }
             if (absentDayCount > 1)
             {
@@ -929,6 +1028,10 @@ namespace SMS.App.Controllers
             {
                 return true;
             }
+            return false;
+        }
+        private bool TimeValidate(string smsType,string time)
+        {
             return false;
         }
     }

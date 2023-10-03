@@ -1,4 +1,6 @@
 ﻿/////////////////////// 2nd time(Current) created code
+
+
 $('#modalAcademicClassId').change(function () {
     let id = $('#modalAcademicClassId option:selected').val();
 
@@ -40,6 +42,41 @@ $('#studentListId').change(function () {
 $('#StudentPayment_StudentPaymentDetails_0__PaidAmount').on('input', function () {
     var paidAmount = $(this).val();
     $('#StudentPayment_TotalPayment').val(paidAmount);
+
+    $.ajax({
+        url: '/StudentPayments/GetTextByAmount',
+        data: { amount: paidAmount },
+        cache: false,
+        type: 'POST',
+        dataType: 'json',
+        success: function (d) {
+            $('#amountText').html(d);
+            $('#totalAmountText').html(d);
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    });
+
+}); $('#StudentPayment_TotalPayment').change('input', function () {
+    var paidAmount = $(this).val();
+    $('#StudentPayment_TotalPayment').val(paidAmount);
+
+    $.ajax({
+        url: '/StudentPayments/GetTextByAmount',
+        data: { amount: paidAmount },
+        cache: false,
+        type: 'POST',
+        dataType: 'json',
+        success: function (d) {
+            $('#amountText').html(d);
+            $('#totalAmountText').html(d);
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    });
+
 });
 //Payment for select list option chooose
 $('#StudentPayment_StudentPaymentDetails_0__StudentFeeHeadId').change(function () {
@@ -60,11 +97,26 @@ $('#StudentPayment_StudentPaymentDetails_0__StudentFeeHeadId').change(function (
             $('#StudentPayment_StudentPaymentDetails_0__PaidAmount').val(pAmount);
             $('#StudentPayment_TotalPayment').val(pAmount);
 
+            $.ajax({
+                url: '/StudentPayments/GetTextByAmount',
+                data: { amount: pAmount },
+                cache: false,
+                type: 'POST',
+                dataType: 'json',
+                success: function (d) {
+                    $('#amountText').html(d);
+                    $('#totalAmountText').html(d);
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
         },
         error: function (err) {
             console.log(err);
         }
     });
+
 });
 
 //Payment for select list option chooose

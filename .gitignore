@@ -3,6 +3,13 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Ignore changes in the 'SMS.Report' project
+/SMS.Report/
+
+
+# Ignore changes in the 'SMS.Report' project
+/SMS.Reports/
+
 # User-specific files
 *.rsuser
 *.suo

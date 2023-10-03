@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SMS.DB;
 
@@ -11,16 +12,17 @@ using SMS.DB;
 namespace SMS.DB.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230916175252_AcademicResultModified")]
+    partial class AcademicResultModified
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.11")
+                .HasAnnotation("ProductVersion", "6.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -55,7 +57,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("nvarchar(max)");
@@ -143,8 +145,6 @@ namespace SMS.DB.Migrations
                     b.ToTable("AspNetUsers", (string)null);
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUser");
-
-                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -153,7 +153,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("nvarchar(max)");
@@ -234,7 +234,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("ClassSerial")
                         .HasColumnType("int");
@@ -275,7 +275,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("AcademicClassId")
                         .HasColumnType("int");
@@ -316,7 +316,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("AcademicClassId")
                         .HasColumnType("int");
@@ -375,7 +375,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("AcademicExamId")
                         .HasColumnType("int");
@@ -422,7 +422,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("AcademicSessionId")
                         .HasColumnType("int");
@@ -469,7 +469,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("CountInAYear")
                         .HasColumnType("int");
@@ -507,7 +507,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("AcademicClassId")
                         .HasColumnType("int");
@@ -551,7 +551,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -589,7 +589,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int?>("AcademicClassId")
                         .HasColumnType("int");
@@ -651,7 +651,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -719,9 +719,6 @@ namespace SMS.DB.Migrations
                     b.Property<int>("Id")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsResidential")
-                        .HasColumnType("bit");
-
                     b.Property<string>("NameBangla")
                         .HasColumnType("nvarchar(max)");
 
@@ -743,9 +740,7 @@ namespace SMS.DB.Migrations
                     b.Property<string>("StudentName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToTable((string)null);
-
-                    b.ToView("StudentListVMs", (string)null);
+                    b.ToView("StudentListVMs");
                 });
 
             modelBuilder.Entity("SMS.Entities.AdditionalModels.StudentPaymentSchedulePaidVM", b =>
@@ -759,9 +754,7 @@ namespace SMS.DB.Migrations
                     b.Property<string>("PaymentType")
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToTable((string)null);
-
-                    b.ToView("StudentPaymentSchedulePaidVMs", (string)null);
+                    b.ToView("StudentPaymentSchedulePaidVMs");
                 });
 
             modelBuilder.Entity("SMS.Entities.AdditionalModels.StudentPaymentScheduleVM", b =>
@@ -769,18 +762,13 @@ namespace SMS.DB.Migrations
                     b.Property<double>("Amount")
                         .HasColumnType("float");
 
-                    b.Property<bool>("IsResidential")
-                        .HasColumnType("bit");
-
                     b.Property<string>("PaymentType")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("yearlyFrequency")
                         .HasColumnType("int");
 
-                    b.ToTable((string)null);
-
-                    b.ToView("StudentPaymentScheduleVMs", (string)null);
+                    b.ToView("StudentPaymentScheduleVMs");
                 });
 
             modelBuilder.Entity("SMS.Entities.AdditionalModels.StudentPaymentSummeryVM", b =>
@@ -800,7 +788,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -844,7 +832,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("ApplicationUserId")
                         .HasColumnType("nvarchar(450)");
@@ -907,7 +895,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -941,7 +929,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("AcademicSubjectId")
                         .HasColumnType("int");
@@ -980,7 +968,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("AcademicClassId")
                         .HasColumnType("int");
@@ -1003,17 +991,8 @@ namespace SMS.DB.Migrations
                     b.Property<string>("EditedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsCurrent")
-                        .HasColumnType("bit");
-
                     b.Property<string>("MACAddress")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("StudentFeeHeadId")
                         .HasColumnType("int");
@@ -1035,7 +1014,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -1076,7 +1055,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -1107,7 +1086,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -1146,7 +1125,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -1174,46 +1153,13 @@ namespace SMS.DB.Migrations
                     b.ToTable("Division");
                 });
 
-            modelBuilder.Entity("SMS.Entities.EmpType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("EditedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("EditedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MACAddress")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("EmpType");
-                });
-
             modelBuilder.Entity("SMS.Entities.Employee", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("BloodGroupId")
                         .HasColumnType("int");
@@ -1347,7 +1293,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("ActionDateTime")
                         .HasColumnType("datetime2");
@@ -1382,18 +1328,48 @@ namespace SMS.DB.Migrations
                     b.ToTable("EmployeeActivateHists");
                 });
 
+            modelBuilder.Entity("SMS.Entities.EmpType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EditedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EditedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MACAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EmpType");
+                });
+
             modelBuilder.Entity("SMS.Entities.ExamResult", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("AcademicClassId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("AcademicExamGroupId")
+                    b.Property<int>("AcademicExamId")
                         .HasColumnType("int");
 
                     b.Property<double>("AttendancePercentage")
@@ -1424,9 +1400,6 @@ namespace SMS.DB.Migrations
                     b.Property<string>("MACAddress")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Rank")
-                        .HasColumnType("int");
-
                     b.Property<int>("StudentId")
                         .HasColumnType("int");
 
@@ -1438,9 +1411,7 @@ namespace SMS.DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AcademicClassId");
-
-                    b.HasIndex("AcademicExamGroupId");
+                    b.HasIndex("AcademicExamId");
 
                     b.HasIndex("StudentId");
 
@@ -1453,7 +1424,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("AcademicSubjectId")
                         .HasColumnType("int");
@@ -1503,7 +1474,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -1537,7 +1508,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -1582,7 +1553,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
@@ -1652,7 +1623,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -1686,7 +1657,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -1725,7 +1696,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -1759,7 +1730,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -1807,7 +1778,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -1843,7 +1814,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -1881,7 +1852,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("ChapterId")
                         .HasColumnType("int");
@@ -1923,7 +1894,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -1962,7 +1933,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -2001,7 +1972,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -2049,9 +2020,7 @@ namespace SMS.DB.Migrations
                     b.Property<string>("PunchTime")
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToTable((string)null);
-
-                    b.ToView("RptDailyAttendaceVMs", (string)null);
+                    b.ToView("RptDailyAttendaceVMs");
                 });
 
             modelBuilder.Entity("SMS.Entities.RptModels.Results.StudentWiseMarkSheetVM", b =>
@@ -2119,9 +2088,7 @@ namespace SMS.DB.Migrations
                     b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToTable((string)null);
-
-                    b.ToView("StudentWiseMarkSheetVMs", (string)null);
+                    b.ToView("StudentWiseMarkSheetVMs");
                 });
 
             modelBuilder.Entity("SMS.Entities.RptModels.Results.SubjectWiseMarkSheetVM", b =>
@@ -2153,9 +2120,7 @@ namespace SMS.DB.Migrations
                     b.Property<int>("StudentId")
                         .HasColumnType("int");
 
-                    b.ToTable((string)null);
-
-                    b.ToView("SubjectWiseMarkSheetVMs", (string)null);
+                    b.ToView("SubjectWiseMarkSheetVMs");
                 });
 
             modelBuilder.Entity("SMS.Entities.RptModels.RptAdmitCardVM", b =>
@@ -2214,9 +2179,27 @@ namespace SMS.DB.Migrations
                     b.Property<string>("SubjectName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToTable((string)null);
+                    b.ToView("RptAdmitCardVMs");
+                });
 
-                    b.ToView("RptAdmitCardVMs", (string)null);
+            modelBuilder.Entity("SMS.Entities.RptModels.rptStudentPaymentsVM", b =>
+                {
+                    b.Property<string>("PaidDate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentTypeName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReceiptNo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("TotalPayment")
+                        .HasColumnType("float");
+
+                    b.ToView("RptStudentPaymetnsVMs");
                 });
 
             modelBuilder.Entity("SMS.Entities.RptModels.RptStudentVM", b =>
@@ -2266,9 +2249,7 @@ namespace SMS.DB.Migrations
                     b.Property<string>("StudentName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToTable((string)null);
-
-                    b.ToView("RptStudentVMs", (string)null);
+                    b.ToView("RptStudentVMs");
                 });
 
             modelBuilder.Entity("SMS.Entities.RptModels.StudentPayment.RptPaymentReceiptVM", b =>
@@ -2300,9 +2281,7 @@ namespace SMS.DB.Migrations
                     b.Property<double>("TotalPayment")
                         .HasColumnType("float");
 
-                    b.ToTable((string)null);
-
-                    b.ToView("RptPaymentReceiptVMs", (string)null);
+                    b.ToView("RptPaymentReceiptVMs");
                 });
 
             modelBuilder.Entity("SMS.Entities.RptModels.StudentPayment.RptStudentsPaymentVM", b =>
@@ -2322,9 +2301,6 @@ namespace SMS.DB.Migrations
                     b.Property<string>("ClassRoll")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsResidential")
-                        .HasColumnType("bit");
-
                     b.Property<string>("PaidDate")
                         .HasColumnType("nvarchar(max)");
 
@@ -2343,31 +2319,7 @@ namespace SMS.DB.Migrations
                     b.Property<double>("TotalPayment")
                         .HasColumnType("float");
 
-                    b.ToTable((string)null);
-
-                    b.ToView("RptStudentsPaymetnsVMs", (string)null);
-                });
-
-            modelBuilder.Entity("SMS.Entities.RptModels.rptStudentPaymentsVM", b =>
-                {
-                    b.Property<string>("PaidDate")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PaymentTypeName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ReceiptNo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Remarks")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("TotalPayment")
-                        .HasColumnType("float");
-
-                    b.ToTable((string)null);
-
-                    b.ToView("RptStudentPaymetnsVMs", (string)null);
+                    b.ToView("RptStudentsPaymetnsVMs");
                 });
 
             modelBuilder.Entity("SMS.Entities.SetupMobileSMS", b =>
@@ -2376,7 +2328,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<bool>("AbsentNotification")
                         .HasColumnType("bit");
@@ -2452,7 +2404,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("AcademicClassId")
                         .HasColumnType("int");
@@ -2509,9 +2461,6 @@ namespace SMS.DB.Migrations
                     b.Property<string>("GuardianPhone")
                         .HasMaxLength(11)
                         .HasColumnType("nvarchar(11)");
-
-                    b.Property<bool>("IsResidential")
-                        .HasColumnType("bit");
 
                     b.Property<string>("MACAddress")
                         .HasColumnType("nvarchar(max)");
@@ -2611,7 +2560,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("ActionDateTime")
                         .HasColumnType("datetime2");
@@ -2652,7 +2601,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<double>("AllocatedAmount")
                         .HasColumnType("float");
@@ -2699,7 +2648,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int?>("ContraFeeheadId")
                         .HasColumnType("int");
@@ -2715,9 +2664,6 @@ namespace SMS.DB.Migrations
 
                     b.Property<string>("EditedBy")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsResidential")
-                        .HasColumnType("bit");
 
                     b.Property<string>("MACAddress")
                         .HasColumnType("nvarchar(max)");
@@ -2742,7 +2688,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Attachment")
                         .HasColumnType("nvarchar(max)");
@@ -2797,7 +2743,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -2838,7 +2784,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -2871,7 +2817,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("AcademicSubjectId")
                         .HasColumnType("int");
@@ -2917,7 +2863,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Tran_MachineRawPunchId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Tran_MachineRawPunchId"), 1L, 1);
 
                     b.Property<string>("CardNo")
                         .HasMaxLength(10)
@@ -2953,7 +2899,7 @@ namespace SMS.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -3389,15 +3335,9 @@ namespace SMS.DB.Migrations
 
             modelBuilder.Entity("SMS.Entities.ExamResult", b =>
                 {
-                    b.HasOne("SMS.Entities.AcademicClass", "AcademicClass")
+                    b.HasOne("SMS.Entities.AcademicExam", "AcademicExam")
                         .WithMany()
-                        .HasForeignKey("AcademicClassId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SMS.Entities.AcademicExamGroup", "AcademicExamGroup")
-                        .WithMany()
-                        .HasForeignKey("AcademicExamGroupId")
+                        .HasForeignKey("AcademicExamId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -3407,9 +3347,7 @@ namespace SMS.DB.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("AcademicClass");
-
-                    b.Navigation("AcademicExamGroup");
+                    b.Navigation("AcademicExam");
 
                     b.Navigation("Student");
                 });
@@ -3715,16 +3653,16 @@ namespace SMS.DB.Migrations
                     b.Navigation("Designations");
                 });
 
-            modelBuilder.Entity("SMS.Entities.EmpType", b =>
-                {
-                    b.Navigation("Designations");
-                });
-
             modelBuilder.Entity("SMS.Entities.Employee", b =>
                 {
                     b.Navigation("Attendances");
 
                     b.Navigation("Documents");
+                });
+
+            modelBuilder.Entity("SMS.Entities.EmpType", b =>
+                {
+                    b.Navigation("Designations");
                 });
 
             modelBuilder.Entity("SMS.Entities.ExamResult", b =>

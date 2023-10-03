@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SMS.DB;
 
@@ -11,9 +12,11 @@ using SMS.DB;
 namespace SMS.DB.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230918161424_ExamResultModelModified")]
+    partial class ExamResultModelModified
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1003,17 +1006,8 @@ namespace SMS.DB.Migrations
                     b.Property<string>("EditedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsCurrent")
-                        .HasColumnType("bit");
-
                     b.Property<string>("MACAddress")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("StudentFeeHeadId")
                         .HasColumnType("int");
@@ -1390,9 +1384,6 @@ namespace SMS.DB.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AcademicClassId")
-                        .HasColumnType("int");
-
                     b.Property<int>("AcademicExamGroupId")
                         .HasColumnType("int");
 
@@ -1424,9 +1415,6 @@ namespace SMS.DB.Migrations
                     b.Property<string>("MACAddress")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Rank")
-                        .HasColumnType("int");
-
                     b.Property<int>("StudentId")
                         .HasColumnType("int");
 
@@ -1437,8 +1425,6 @@ namespace SMS.DB.Migrations
                         .HasColumnType("float");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AcademicClassId");
 
                     b.HasIndex("AcademicExamGroupId");
 
@@ -3389,12 +3375,6 @@ namespace SMS.DB.Migrations
 
             modelBuilder.Entity("SMS.Entities.ExamResult", b =>
                 {
-                    b.HasOne("SMS.Entities.AcademicClass", "AcademicClass")
-                        .WithMany()
-                        .HasForeignKey("AcademicClassId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("SMS.Entities.AcademicExamGroup", "AcademicExamGroup")
                         .WithMany()
                         .HasForeignKey("AcademicExamGroupId")
@@ -3406,8 +3386,6 @@ namespace SMS.DB.Migrations
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("AcademicClass");
 
                     b.Navigation("AcademicExamGroup");
 

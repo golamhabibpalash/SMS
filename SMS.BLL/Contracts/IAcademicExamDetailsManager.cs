@@ -11,5 +11,6 @@ namespace SMS.BLL.Contracts
     public interface IAcademicExamDetailsManager : IManager<AcademicExamDetail>
     {
         Task<List<AcademicExamDetail>> GetByExamIdAsync(int examId);
+        Task<List<AcademicExamDetail>> GetAllByExamGroupAndStudentId(int examGroupId, int studentId);
     }
 }

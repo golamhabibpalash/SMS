@@ -10,5 +10,7 @@ namespace SMS.DAL.Contracts
 {
     public interface IExamResultRepository:IRepository<ExamResult>
     {
+        Task<List<ExamResult>> GetExamResultsByExamGroupNClassId(int examGroupId, int classId);
+        bool IsResultProcessedAsync(int examGroupId, int classId);
     }
 }

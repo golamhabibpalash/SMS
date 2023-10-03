@@ -13,9 +13,20 @@ namespace SMS.BLL.Managers
 {
     public class ExamResultManager:Manager<ExamResult>,IExamResultManager
     {
+        private readonly IExamResultRepository _examResultRepository;
         public ExamResultManager(IExamResultRepository examResultRepository):base(examResultRepository)
         {
-            
+            _examResultRepository = examResultRepository;
+        }
+
+        public async Task<List<ExamResult>> GetExamResultsByExamGroupNClassId(int examGroupId, int classId)
+        {
+            return await _examResultRepository.GetExamResultsByExamGroupNClassId(examGroupId, classId);
+        }
+
+        public bool IsResultProcessedAsync(int examGroupId, int classId)
+        {
+            return _examResultRepository.IsResultProcessedAsync(examGroupId, classId);
         }
     }
 }

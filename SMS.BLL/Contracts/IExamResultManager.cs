@@ -10,5 +10,7 @@ namespace SMS.BLL.Contracts
 {
     public interface IExamResultManager:IManager<ExamResult>
     {
+        Task<List<ExamResult>> GetExamResultsByExamGroupNClassId(int examGroupId, int classId);
+        bool IsResultProcessedAsync(int examGroupId, int classId);
     }
 }

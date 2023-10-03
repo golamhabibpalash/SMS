@@ -80,9 +80,6 @@
 
         body
         {
-            /*            background: #00B4DB;
-            background: -webkit-linear-gradient(to right, #0083B0, #00B4DB);
-            background: linear-gradient(to right, #0083B0, #00B4DB);*/
             color: #514B64;
             min-height: 100vh
         }
@@ -103,12 +100,12 @@
                             <input id="rollInput" placeholder="Input Student Roll Number" class="form-control" name="stRoll" />
                         }
                         <div class="input-group-append">
-                            <button class="btn btn-sm btn-info rounded" type="submit"><i class="fas fa-search"></i> Go</button>
+                            <button class="btn btn-info rounded" type="submit"><i class="fas fa-search"></i> Go</button>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4 text-md-left">
-                    <button type="button" class="btn btn-light btn-sm" data-toggle="modal" data-target="#exampleModal">
+                    <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal">
                         Select
                     </button>
                 </div>
@@ -196,18 +193,19 @@
                             </div>
                             <div class="form-group row">
                                 <label class="col-md-3 col-form-label text-md-right text-left">Amount</label>
-                                <div class="col-md-8">
+                                <div class="col-md-2">
                                     <input class="form-control form-control-sm text-dark font-weight-bolder text-right" placeholder="Amount" asp-for="StudentPayment.StudentPaymentDetails[0].PaidAmount" />
                                     <input type="hidden" id="academicClassId" value="@Model.StudentPayment.Student.AcademicClassId" />
                                 </div>
+                                <label class="col-md-7 col-form-label text-left" id="amountText"></label>
                             </div>
 
                             <div class="form-group row">
                                 <label class="col-md-3 col-form-label text-md-right text-left">Total</label>
-                                <div class="col-md-8">
+                                <div class="col-md-2">
                                     <input asp-for="StudentPayment.TotalPayment" class="form-control form-control-sm text-right text-dark font-weight-bolder" />
                                 </div>
-
+                                <label class="col-md-7 col-form-label text-left" id="totalAmountText"></label>
                                 <span asp-validation-for="StudentPayment.TotalPayment" class="text-danger col-form-label"></span>
                             </div>
                             <div class="form-group row">
@@ -219,7 +217,7 @@
                                 <span asp-validation-for="StudentPayment.Remarks" class="text-danger col-form-label"></span>
                             </div>
                             <div class="form-group row">
-                                <label asp-for="IsSMSSend" class="offset-md-3 col-md-6 col-form-label"><input asp-for="IsSMSSend" /> Send SMS Notification</label>
+                                <label asp-for="IsSMSSend" class="offset-md-3 col-md-6 col-form-label"><input asp-for="IsSMSSend" checked /> Send SMS Notification</label>
                                 <span asp-validation-for="IsSMSSend" class="text-danger col-form-label"></span>
                             </div>
                             <div class="form-group row">
@@ -246,7 +244,7 @@
             <div class="card">
                 @if (Model.StudentPayments != null && Model.StudentPayments.Count > 0)
                 {
-                    <table class="table table-striped table-sm">
+                    <table class="table table-striped table-sm table-responsive-sm">
                         <thead class="bg-navy-blue p-2">
                             <tr>
                                 <td>#</td>

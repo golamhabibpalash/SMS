@@ -19,9 +19,13 @@
                 </div>
 
             </div>
-            <div class="form-group form-check offset-md-2">
+            <div class="form-group form-check offset-md-2 form-inline">
                 <label class="form-check-label">
                     <input class="form-check-input" asp-for="Repeatedly" /> @Html.DisplayNameFor(model => model.Repeatedly)
+                </label>
+
+                <label class="col-form-label offset-md-2">
+                    <input class="form-check-input" asp-for="IsResidential" /> @Html.DisplayNameFor(model => model.IsResidential)
                 </label>
             </div>
             <div class="form-group row">

@@ -25,6 +25,9 @@
                         Academic Session
                     </th>
                     <th>
+                        Period
+                    </th>
+                    <th>
                         @Html.DisplayNameFor(model => model.Amount)
                     </th>
                     <th class="no-sort">
@@ -49,6 +52,9 @@
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.AcademicSession.Name)
+                            </td>
+                            <td>
+                                @item.StartDate.ToString("dd MMM yyyy") - @item.EndDate.ToString("dd MMM yyyy")
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.Amount)

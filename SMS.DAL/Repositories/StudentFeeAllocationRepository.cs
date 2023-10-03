@@ -13,10 +13,10 @@ namespace SMS.DAL.Repositories
 {
     public class StudentFeeAllocationRepository:Repository<StudentFeeAllocation>, IStudentFeeAllocationRepository
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _dbContext;
         public StudentFeeAllocationRepository(ApplicationDbContext context):base(context)
         {
-            _context = context;
+            _dbContext = context;
         }
 
         public override async Task<IReadOnlyCollection<StudentFeeAllocation>> GetAllAsync()

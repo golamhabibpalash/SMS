@@ -13,6 +13,9 @@ namespace SMS.Entities
 
         [Display(Name ="Yearly Frequency")]
         public int? YearlyFrequency { get; set; }
-        public int? ContraFeeheadId { get; set; } = 0;
+        [Display(Name ="Contra Fee Head")]
+        public int? ContraFeeheadId { get; set; } = 0; //To create relation with other fee head
+        [Display(Name = "Is Residential")]
+        public bool IsResidential { get; set; } = false; //Is it use for Residential Student
     }
 }

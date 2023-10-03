@@ -19,6 +19,7 @@ namespace SMS.Entities.RptModels.StudentPayment
         public  string AcademicClassId  { get; set; } = string.Empty;
         public string AcademicSectionId { get; set; } = string.Empty;
         public string AcademicClassName { get; set; }
+        public bool IsResidential { get; set; }
 
     }
 }

@@ -13,6 +13,10 @@ namespace SMS.Entities
 
         public double Amount { get; set; }
 
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public bool IsCurrent { get; set; } = false;
+
         [Display (Name ="Class Name"), Required]
         public int AcademicClassId { get; set; }
 

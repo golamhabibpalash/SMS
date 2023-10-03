@@ -24,6 +24,9 @@
                 Contra Type
             </th>
             <th>
+                Residential
+            </th>
+            <th>
                 <a class="rounded btn btn-info btn-sm" asp-action="Create"> <i class="fa fa-plus"></i> Add New</a>
             </th>
         </tr>
@@ -50,6 +53,16 @@
                     else
                     {
                         <span>N/A</span>
+                    }
+                </td>
+                <td>
+                    @if (item.IsResidential)
+                    {
+                        <span>Residential</span>
+                    }
+                    else
+                    {
+                        <span>Non Residential</span>
                     }
                 </td>
                 <td>

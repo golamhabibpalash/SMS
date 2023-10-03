@@ -1,5 +1,4 @@
-﻿using NuGet.Protocol.Core.Types;
-using System;
+﻿using SMS.Entities;
 using System.Collections.Generic;
 
 namespace SMS.App.ViewModels.ExamResult
@@ -17,6 +16,9 @@ namespace SMS.App.ViewModels.ExamResult
         public int FailSubCount { get; set; }
         public int PreviousMonthRank { get; set; }
         public double AttendancePercent { get; set; }
+        public string Phone1 { get; set; }
+        public string Phone2 { get; set; }
+        public Gender Gender { get; set; }
 
     }
     public class ExaminationResultDetailsVMs

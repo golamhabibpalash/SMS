@@ -3,17 +3,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Reporting.Map.WebForms.BingMaps;
 using SchoolManagementSystem;
-using SMS.App.ViewModels.AttendanceVM;
+using SMS.App.Utilities.MACIPServices;
 using SMS.App.ViewModels.ExamResult;
 using SMS.App.ViewModels.ExamVM;
 using SMS.BLL.Contracts;
-using SMS.BLL.Managers;
 using SMS.Entities;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -34,7 +31,8 @@ namespace SMS.App.Controllers
         private readonly IInstituteManager _instituteManager;
         private readonly IAttendanceMachineManager _attendanceMachineManager;
         private readonly IOffDayManager _OffDayManager;
-        public ExamResultsController(IExamResultManager examResultManager, IAcademicExamManager academicExamManager, UserManager<ApplicationUser> userManager, IStudentManager studentManager, IAcademicExamTypeManager academicExamTypeManager, IAcademicClassManager academicClassManager, IAcademicExamGroupManager academicExamGroupManager, IAcademicSessionManager sessionManager, IGradingTableManager gradingTableManager, IInstituteManager instituteManager, IAttendanceMachineManager attendanceMachineManager, IOffDayManager offDayManager)
+        private readonly IAcademicExamDetailsManager _academicExamDetailsManager;
+        public ExamResultsController(IExamResultManager examResultManager, IAcademicExamManager academicExamManager, UserManager<ApplicationUser> userManager, IStudentManager studentManager, IAcademicExamTypeManager academicExamTypeManager, IAcademicClassManager academicClassManager, IAcademicExamGroupManager academicExamGroupManager, IAcademicSessionManager sessionManager, IGradingTableManager gradingTableManager, IInstituteManager instituteManager, IAttendanceMachineManager attendanceMachineManager, IOffDayManager offDayManager, IAcademicExamDetailsManager academicExamDetailsManager)
         {
             _examResultManager = examResultManager;
             _academicExamManager = academicExamManager;
@@ -48,6 +46,7 @@ namespace SMS.App.Controllers
             _instituteManager = instituteManager;
             _attendanceMachineManager = attendanceMachineManager;
             _OffDayManager = offDayManager;
+            _academicExamDetailsManager = academicExamDetailsManager;
         }
         // GET: ExamResultsController
         public async Task<ActionResult> Index()
@@ -98,11 +97,11 @@ namespace SMS.App.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Result(string resultType,int examGroupId, int classId)
+        public IActionResult Result(string resultType,int examGroupId, int classId)
         {
             return View();
         }
-        public async Task<ActionResult> SubjecttWiseResult()
+        public ActionResult SubjecttWiseResult()
         {
             GlobalUI.PageTitle = GlobalUI.SiteTitle = "Student-Wise Result";
             return View();
@@ -118,9 +117,13 @@ namespace SMS.App.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> ClassWiseResult(string resultType, int examGroupId, int classId)
+        public async Task<ActionResult> ClassWiseResult(int examGroupId, int classId)
         {
             GlobalUI.PageTitle = "Class-Wise Result";
+            
+            ViewBag.examGroupId = examGroupId;
+            ViewBag.classId = classId;
+
             ViewData["ExamGroupList"] = new SelectList(await _academicExamGroupManager.GetAllAsync(), "Id", "ExamGroupName",examGroupId);
             ViewData["AcademicClassList"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name",classId);
 
@@ -165,6 +168,9 @@ namespace SMS.App.Controllers
                 ExaminationResultVM examinationResultVM = new ExaminationResultVM();
                 examinationResultVM.ClassRoll = student.ClassRoll;
                 examinationResultVM.StudentName = student.Name;
+                examinationResultVM.Phone1 = student.GuardianPhone;
+                examinationResultVM.Phone2 = student.PhoneNo;
+                examinationResultVM.Gender = student.Gender;
                 double obtainPoint = 0.00;
                 int subCount = 0;
                 int totalFail = 0;
@@ -239,6 +245,44 @@ namespace SMS.App.Controllers
             ViewBag.IsLoading = true;
             return View(examinationResultVMs);
         }
+
+        public async Task<ActionResult> ClassWiseResultAfterProcess()
+        {
+            GlobalUI.PageTitle = GlobalUI.SiteTitle = "Class-Wise Result";
+            ViewData["ExamGroupList"] = new SelectList(await _academicExamGroupManager.GetAllAsync(), "Id", "ExamGroupName");
+            ViewData["AcademicClassList"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name");
+
+            ViewBag.IsLoading = false;
+            return View();
+        }
+        [HttpPost]
+        public async Task<ActionResult> ClassWiseResultAfterProcess(string resultType, int examGroupId, int classId)
+        {
+            GlobalUI.PageTitle = "Class-Wise Result 1";
+            ViewData["ExamGroupList"] = new SelectList(await _academicExamGroupManager.GetAllAsync(), "Id", "ExamGroupName", examGroupId);
+            ViewData["AcademicClassList"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", classId);
+            var resultList = await _examResultManager.GetExamResultsByExamGroupNClassId(examGroupId, classId);
+            if (resultList == null || resultList.Count <= 0)
+            {
+                TempData["failed"] = "Result Not Found";
+                ViewBag.IsLoading = true;
+                return View();
+            }
+
+            ViewBag.IsLoading = true;
+            return View(resultList);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> SubjectWiseResultAfterProcess()
+        {
+            return View();
+        }
+        public async Task<ActionResult> SubjectWiseResultAfterProcess(int subjectId)
+        {
+            return View();
+        }
+
         public async Task<ActionResult> StudentWiseResult()
         {
             GlobalUI.PageTitle = GlobalUI.SiteTitle = "Student-Wise Result";
@@ -298,12 +342,158 @@ namespace SMS.App.Controllers
             }
         }
 
+        public async Task<ActionResult> ProcessResult(int classId, int groupId, int scrollPosition)
+        {
+            //// Storing scroll position in session
+            HttpContext.Session.SetInt32("ScrollPosition", scrollPosition);
+
+            //// Retrieving scroll position from session
+            //var scrollPosition = HttpContext.Session.GetInt32("ScrollPosition");
+            if (classId>0 && groupId>0)
+            {
+                bool isExamExist = _examResultManager.IsResultProcessedAsync(groupId, classId);
+                if (isExamExist)
+                {
+                    TempData[""] = TempData["failed"] = "This Result is already processed";
+                    return RedirectToAction("Details", "AcademicExamGroup", new { id = groupId });
+                }
+                var exams = await _academicExamManager.GetByClassIdExamGroupId(groupId, classId);
+                var session = await _sessionManager.GetCurrentAcademicSession();
+                var examGroup = await _academicExamGroupManager.GetByIdAsync(groupId);
+                List<Student> students = await _studentManager.GetStudentsByClassIdAndSessionIdAsync(session.Id,classId);
+                foreach (var student in students)
+                {
+                    if (student.Status==false)
+                    {
+                        continue;
+                    }
+                    ExamResult examResult = new ExamResult();
+                    examResult.CreatedAt = DateTime.Now;
+                    examResult.CreatedBy = HttpContext.Session.GetString("UserId");
+                    examResult.MACAddress = MACService.GetMAC();
+
+                    examResult.AcademicExamGroupId = groupId;
+                    examResult.StudentId = student.Id;
+                    examResult.AcademicClassId = classId;
+                    examResult.TotalObtainMarks = await GetTotalObtainMarkFromExam(groupId, student.Id);
+                    string gpa = (await GetCgpaPointFromExam(groupId, student.Id)).ToString("F2");
+                    examResult.CGPA = Convert.ToDouble(gpa);
+                    examResult.FinalGrade = await GetGradeByPoint(examResult.CGPA);
+                    examResult.GradeComments = await GetGradeComments(examResult.CGPA);
+                    examResult.TotalFails = 0;
+                    if (examResult.CGPA<=0)
+                    {
+                        examResult.TotalFails = await GetTotalFailFromExam(groupId, student.Id);
+                    }
+                    List<ExamResultDetail> examResultDetails = new List<ExamResultDetail>();
+                    foreach (var exam in exams)
+                    {
+                        double gotMarks = exam.AcademicExamDetails.Where(s => s.StudentId == student.Id).Select(s => s.ObtainMark).FirstOrDefault();
+                        double gotPoint = await GetGradePointByNumber((gotMarks*100)/exam.TotalMarks);
+                        ExamResultDetail examResultDetail = new ExamResultDetail() { 
+                            CreatedAt = DateTime.Now,
+                            CreatedBy = HttpContext.Session.GetString("UserId"),
+                            MACAddress = MACService.GetMAC(),
+                            ExamResultId = examResult.Id,
+                            AcademicSubjectId = exam.AcademicSubjectId,
+                            ObtainMark = gotMarks,
+                            TotalMark = exam.TotalMarks,
+                            GPA = gotPoint,
+                            Grade = await GetGradeByPoint(gotPoint)
+                        };
+                        examResultDetails.Add(examResultDetail);
+                    }
+
+                    var monthlyAttendance = await _attendanceMachineManager.GetAttendanceByMonthSingleStudent(student.Id, examGroup.ExamMonthId);
+                    if (monthlyAttendance.Count > 0)
+                    {
+                        var holidays = await _OffDayManager.GetMonthlyHolidaysAsync(examGroup.ExamMonthId.ToString().PadLeft(2, '0') + DateTime.Now.Year.ToString());
+                        int totalActiveDay = DateTime.DaysInMonth(DateTime.Now.Year, examGroup.ExamMonthId) - holidays.Count;
+                        examResult.AttendancePercentage = (monthlyAttendance.Count * 100) / totalActiveDay;
+                    }
+                    else
+                    {
+                        examResult.AttendancePercentage=0;
+                    }
+                    examResult.ExamResultDetails = examResultDetails;
+                    await _examResultManager.AddAsync(examResult);
+                }
+
+                //int totalUpdated = await UpdateRanking(groupId, classId);
+                //TempData["created"] = "Total "+totalUpdated+" result updated";
+            }
+            else
+            {
+                TempData["failed"] = "Not Found!";
+            }
+            return RedirectToAction("UpdateRanking", new { groupId = groupId,classId=classId }) ;
+        }
+
+        public async Task<IActionResult> UpdateRanking(int groupId, int classId)
+        {
+            int rankingUpdate = 0;
+            try
+            {
+                var examResults = await _examResultManager.GetExamResultsByExamGroupNClassId(groupId, classId);
+                examResults = examResults.Where(s => s.AcademicExamGroupId == groupId && s.AcademicClassId == classId).ToList();
+
+                var rankedResults = examResults
+                .OrderByDescending(result => result.CGPA)
+                .ThenBy(result => result.TotalFails)
+                .ThenByDescending(result => result.TotalObtainMarks)
+                .ThenByDescending(result => result.AttendancePercentage)
+                .Select((result, index) => new ExaminationResultVM
+                {
+                    TotalMarks = result.TotalObtainMarks,
+                    CGPA = result.CGPA,
+                    FailSubCount = result.TotalFails,
+                    Rank = index + 1,
+                    ClassRoll = result.Student.ClassRoll
+                })
+                .ToList();
+
+                foreach (var result in examResults)
+                {
+                    result.Rank = rankedResults.Where(s => s.ClassRoll == result.Student.ClassRoll).Select(s => s.Rank).FirstOrDefault();
+                    await _examResultManager.UpdateAsync(result);
+                    rankingUpdate++;
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            return RedirectToAction("Details", "AcademicExamGroup", new { id = groupId });
+        }
+
         // GET: ExamResultsController/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
+        public async Task<ActionResult> DeleteResult(int classId, int groupId, int scrollPosition)
+        {
+            //// Storing scroll position in session
+            HttpContext.Session.SetInt32("ScrollPosition", scrollPosition);
 
+            var examResult = await _examResultManager.GetAllAsync();
+            examResult = examResult.Where(s => s.AcademicExamGroupId == groupId && s.AcademicClassId == classId).ToList();
+            if (examResult != null && examResult.Count>0)
+            {
+                foreach (var result in examResult)
+                {                    
+                    await _examResultManager.RemoveAsync(result);
+                }
+                TempData["success"] = "Exam Results are deleted successfully";
+            }
+            else
+            {
+                TempData["failed"] = "Exam Results Not found";
+            }
+            return RedirectToAction("details", "AcademicExamGroup", new {id=groupId });
+        }
         // POST: ExamResultsController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -350,8 +540,11 @@ namespace SMS.App.Controllers
                              where number >= Convert.ToDouble(g.GradePoint)
                              select g.LetterGrade).ToList().Take(1);
 
+                if (result.Any())
+                {
+                    grade = result.FirstOrDefault().ToString();
 
-                grade = result.FirstOrDefault().ToString();
+                }
             }
             catch (Exception)
             {
@@ -371,7 +564,7 @@ namespace SMS.App.Controllers
                               where number >= Convert.ToDouble(g.GradePoint)
                               select g.gradeComments).ToList().Take(1);
 
-                if (result!=null)
+                if (result!=null && result.Any())
                 {
                     gradeComments = result.FirstOrDefault().ToString();
                 }
@@ -381,6 +574,111 @@ namespace SMS.App.Controllers
                 throw;
             }
             return gradeComments;
+        }
+        
+        private async Task<double> GetTotalObtainMarkFromExam(int examGroupId, int studentId)
+        {
+            double totalObtainMark = 0;
+
+            if (examGroupId>0 && studentId>0)
+            {
+                var eDetails = await _academicExamDetailsManager.GetAllByExamGroupAndStudentId(examGroupId, studentId);
+                if (eDetails!=null)
+                {
+                    totalObtainMark = eDetails.Sum(s => s.ObtainMark);
+                }
+            }
+            return totalObtainMark;
+        }
+        private async Task<double> GetCgpaPointFromExam(int examGroupId, int studentId)
+        {
+            double cgpaPoint = 0;
+            int totalSubject = 0;
+            double totalGPA = 0;
+            var eDetails = await _academicExamDetailsManager.GetAllByExamGroupAndStudentId(examGroupId, studentId);
+            if (eDetails.Count()>0)
+            {
+                foreach (var e in eDetails)
+                {
+                    totalSubject++;
+                    double gpa = await GetGradePointByNumber((e.ObtainMark*100)/ e.AcademicExam.TotalMarks);
+                    if (gpa<=0)
+                    {
+                        cgpaPoint = 0;
+                        return cgpaPoint;
+                    }
+                    totalGPA += gpa;
+                }
+                cgpaPoint =totalGPA/totalSubject;
+            }
+            return cgpaPoint;
+        }
+        private async Task<int> GetTotalFailFromExam(int examGroupId, int studentId)
+        {
+            int totalFail = 0;
+            var eDetails = await _academicExamDetailsManager.GetAllByExamGroupAndStudentId(examGroupId, studentId);
+            if (eDetails!=null)
+            {
+                foreach (var e in eDetails)
+                {
+                    double gpa = await GetGradePointByNumber(e.ObtainMark);
+                    if (gpa<=0)
+                    {
+                        totalFail++;
+                        continue;
+                    }
+                }
+            }
+            return totalFail;
+        }
+        private async Task<int> GetAttendancePercentage(int monthId, int studentId)
+        {
+            int attendancePercentage = 0;
+            try
+            {
+                int year = DateTime.Now.Year; // Change this to the desired year
+                int monthNumber = monthId; // Change this to the desired month (1 for January, 2 for February, etc.)
+
+                // Get the first day of the specified month
+                DateTime startDate = new DateTime(year, monthNumber, 1);
+
+                // Get the last day of the specified month by adding one month and subtracting one day
+                DateTime endDate = startDate.AddMonths(1).AddDays(-1);
+                Student student = await _studentManager.GetByIdAsync(studentId);
+
+                var attendanceList = await _attendanceMachineManager.GetAttendanceByDateRangeAsync(startDate.ToString(), endDate.ToString());
+                List<DateTime> monthlyHolidays = await _OffDayManager.GetMonthlyHolidaysAsync(startDate.ToString("MMyyyy"));
+                var myAttendances = attendanceList.Where(t => t.CardNo == student.ClassRoll.ToString().PadLeft(8, '0')).ToList();
+                int monthDays = DateTime.DaysInMonth(DateTime.Today.Year, monthId);
+                IDictionary<int, bool> daysPresents = new Dictionary<int, bool>();
+                for (int i = 1; i <= monthDays; i++)
+                {
+                    var currentDate = startDate.AddDays(i - 1).ToString("ddMMyyyy");
+                    var attended = myAttendances.Where(a => a.PunchDatetime.ToString("ddMMyyyy") == currentDate).Any();
+                    if (attended)
+                    {
+                        daysPresents.Add(i, true);
+                    }
+                    else
+                    {
+                        daysPresents.Add(i, false);
+                    }
+                }
+                int total = daysPresents.Where(m => m.Value == true).Count();
+                attendancePercentage = (total * 100) / (monthDays - monthlyHolidays.Count);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return attendancePercentage;
+        }
+
+        public JsonResult IsResultProcessed(int groupId, int classId)
+        {
+            bool isExist = _examResultManager.IsResultProcessedAsync(groupId, classId);
+            return new JsonResult(isExist);
         }
     }
 }

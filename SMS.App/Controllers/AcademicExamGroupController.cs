@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using SchoolManagementSystem;
 using SMS.App.Utilities.MACIPServices;
 using SMS.App.ViewModels.AcademicVM;
+using SMS.App.ViewModels.ExamVM;
 using SMS.BLL.Contracts;
 using SMS.Entities;
 using System;
@@ -20,22 +23,43 @@ namespace SMS.App.Controllers
         private readonly IAcademicSessionManager _academicSessionManager;
         private readonly IAcademicExamTypeManager _academicExamTypeManager;
         private readonly IAcademicExamManager _academicExamManager;
-        public AcademicExamGroupController(IAcademicExamGroupManager examGroupManager, IAcademicSessionManager academicSessionManager, IAcademicExamTypeManager academicExamTypeManager, IAcademicExamManager academicExamManager)
+        private readonly IMapper _mapper;
+        private readonly IExamResultManager _examResultManager;
+        public AcademicExamGroupController(IAcademicExamGroupManager examGroupManager, IAcademicSessionManager academicSessionManager, IAcademicExamTypeManager academicExamTypeManager, IAcademicExamManager academicExamManager, IMapper mapper, IExamResultManager examResultManager)
         {
             _examGroupManager = examGroupManager;
             _academicSessionManager = academicSessionManager;
             _academicExamTypeManager = academicExamTypeManager;
             _academicExamManager = academicExamManager;
+            _mapper = mapper;
+            _examResultManager = examResultManager;
+
         }
         // GET: AcademicExamGroupController
         public async Task<ActionResult> Index()
         {
-            List<AcademicExamGroup> result = new List<AcademicExamGroup>();
+            List<AcademicExamGroup> examGroupList = new List<AcademicExamGroup>();
             AcademicExamGroupVM academicExamGroupVM = new AcademicExamGroupVM();
             try
             {
-                result = (List<AcademicExamGroup>)await _examGroupManager.GetAllAsync();
-                academicExamGroupVM.AcademicExamGroups = result;
+                examGroupList = (List<AcademicExamGroup>)await _examGroupManager.GetAllAsync();
+                foreach (var item in examGroupList)
+                {
+                    AcademicExamGroupIndexVM e = new AcademicExamGroupIndexVM();
+                    e = _mapper.Map<AcademicExamGroupIndexVM>(item);
+                    int resultProcessed = 0;
+                    foreach (var exa in item.AcademicExams)
+                    {
+                        bool isExamExist = _examResultManager.IsResultProcessedAsync(e.Id, exa.AcademicClassId);
+                        if (isExamExist)
+                        {
+                            resultProcessed++;
+                        }
+                    }
+                    e.NumberOfProcessResults = resultProcessed;
+                    academicExamGroupVM.AcademicExamGroupIndexVMList.Add(e);
+                }
+
                 academicExamGroupVM.AcademicSessionList = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name").ToList();
                 academicExamGroupVM.ExamTypeList = new SelectList(await _academicExamTypeManager.GetAllAsync(), "Id", "ExamTypeName").ToList();
             }
@@ -47,9 +71,26 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicExamGroupController/Details/5
-        public ActionResult Details(int id)
+        public async Task<ActionResult> Details(int id)
         {
-            return View();
+            if (TempData["failed"]!=null)
+            {
+                TempData["failed"] = TempData["failed"].ToString();
+            }
+            if (TempData["success"] != null)
+            {
+                TempData["created"] = TempData["success"].ToString();
+            }
+            ViewBag.ScrollPosition = HttpContext.Session.GetInt32("ScrollPosition");
+            if (ViewBag.ScrollPosition == null)
+            {
+                ViewBag.ScrollPosition = 0;
+            }
+            GlobalUI.PageTitle = "Exam Group Details";
+
+            AcademicExamGroup academicExamGroup = await _examGroupManager.GetByIdAsync(id);
+            AcademicExamGroupIndexVM academicExamGroupIndexVM = _mapper.Map<AcademicExamGroupIndexVM>(academicExamGroup);
+            return View(academicExamGroupIndexVM);
         }
 
         // POST: AcademicExamGroupController/Create
@@ -61,7 +102,7 @@ namespace SMS.App.Controllers
             {
                 TempData["error"] = "Something wrong";
                 AcademicExamGroupVM academicExamGroupVM = new AcademicExamGroupVM();
-                academicExamGroupVM.AcademicExamGroups = (List<AcademicExamGroup>)await _examGroupManager.GetAllAsync();
+                //academicExamGroupVM.AcademicExamGroups = (List<AcademicExamGroup>)await _examGroupManager.GetAllAsync();
                 academicExamGroupVM.ExamGroupName = academicExamGroup.ExamGroupName;
                 academicExamGroupVM.academicExamTypeId = academicExamGroup.academicExamTypeId;
                 academicExamGroupVM.ExamMonthId = academicExamGroup.ExamMonthId;
@@ -206,7 +247,7 @@ namespace SMS.App.Controllers
             return RedirectToAction("index");
         }
 
-        public async Task<JsonResult> getExamGroups(int monthId, int examTypeId)
+        public async Task<JsonResult> GetExamGroups(int monthId, int examTypeId)
         {
             List<AcademicExamGroup> examGroup = new List<AcademicExamGroup>();
             try

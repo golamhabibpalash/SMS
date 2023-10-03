@@ -6,7 +6,7 @@
 @model SMS.App.ViewModels.AcademicVM.AcademicExamGroupVM
     <div class="row">
         <div class="col-md-8">
-            @if (Model.AcademicExamGroups.Any())
+            @if (Model.AcademicExamGroupIndexVMList.Any())
             {
                 <table class="table table-striped table-bordered table-responsive-sm">
                     <thead class="bg-navy-blue">
@@ -16,12 +16,13 @@
                             <td>Exam Type</td>
                             <td>Academic Session</td>
                             <td>Total Exams</td>
+                            <td>Result Porcess</td>
                             <td>Group Status</td>
                             <td class="text-center">Action</td>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in Model.AcademicExamGroups)
+                        @foreach (var item in Model.AcademicExamGroupIndexVMList)
                         {
                             <tr>
                                 <td>@(++sl)</td>
@@ -29,23 +30,24 @@
                                 <td>@item.academicExamType.ExamTypeName</td>
                                 <td>@item.AcademicSession.Name</td>
                                 <td>@item.AcademicExams.Count</td>
+                                <td>@item.NumberOfProcessResults</td>
                                 <td>
-                                @if (item.Status)
-                                {
-                                    <i class="fas fa-check"></i>
-                                }
-                                else
-                                {
-                                    <span>Inactive</span>
-                                }
+                                    @if (item.Status)
+                                    {
+                                        <i class="fas fa-check"></i>
+                                    }
+                                    else
+                                    {
+                                        <span>Inactive</span>
+                                    }
                                 </td>
                                 <td class="text-center">
                                     <div class="" role="group">
                                         @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
                                         {
-                                            <a  class=" btn-sm  rounded editBtnClass" data-toggle="tooltip" data-id="@item.Id" data-groupName="@item.ExamGroupName" data-examTypeId="@item.academicExamTypeId" data-sessionId="@item.AcademicSessionId" data-monthid="@item.ExamMonthId" data-status="@item.Status" data-placement="top" title="Edit" id="EditBtnId"><i style="cursor:pointer" class="fa fa-edit text-dark"></i> </a>
+                                            <a class=" btn-sm  rounded editBtnClass" data-toggle="tooltip" data-id="@item.Id" data-groupName="@item.ExamGroupName" data-examTypeId="@item.academicExamTypeId" data-sessionId="@item.AcademicSessionId" data-monthid="@item.ExamMonthId" data-status="@item.Status" data-placement="top" title="Edit" id="EditBtnId"><i style="cursor:pointer" class="fa fa-edit text-dark"></i> </a>
                                         }
-                                        <a  class="btn-sm rounded" data-toggle="tooltip" data-placement="top" title="Details" id="InfoBtnId"><i style="cursor:pointer" class="fa fa-info text-info"></i> </a>
+                                        <a asp-action="Details" asp-route-id="@item.Id" asp-controller="AcademicExamGroup" class="btn-sm rounded" data-toggle="tooltip" data-placement="top" title="Details" id="InfoBtnId"><i style="cursor:pointer" class="fa fa-info text-info"></i> </a>
                                         @if (User.IsInRole("SuperAdmin"))
                                         {
                                             <a class="btn-sm rounded deleteBtnClass " data-id="@item.Id" data-toggle="modal" data-target="#DeleteModal" data-placement="right" title="Delete"><i style="cursor:pointer" class="fa fa-trash text-danger"></i> </a>
@@ -156,10 +158,7 @@
 @section scripts{
     <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
     <script>
-        let deleted = '@TempData["deleted"]';
-        let created = '@TempData["created"]';
-        let updated = '@TempData["updated"]';
-        let failed = '@TempData["error"]';
+        
 
         function createExamName() {
             let academicExamType = $("#academicExamTypeId option:selected").text();

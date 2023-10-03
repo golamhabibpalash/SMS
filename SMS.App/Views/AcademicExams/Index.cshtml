@@ -22,26 +22,29 @@
 
 @section Styles{
     <link href="~/css/switch.css" rel="stylesheet" />
-<style>
-    #loading{
-        position:fixed;
-        left:0;top:0;
-        width:100%;
-        height:100%;
-    }
-        #loading img
+    <style>
+        #loading
         {
             position: fixed;
-            left: 40%;
-            top: 40%;
-            width: 20%;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
         }
-</style>
+
+            #loading img
+            {
+                position: fixed;
+                left: 40%;
+                top: 40%;
+                width: 20%;
+            }
+    </style>
 }
 <div class="row">
     <div class="col-md-12">
         <table class="table table-sm table-striped table-bordered table-responsive-sm" id="myTable">
-            <thead class=" table-info ">
+            <thead class=" table-info">
                 <tr>
                     <th class="text-center">#</th>
                     @*<td>Exam Name</td>*@
@@ -76,7 +79,10 @@
                         {
                             <tr class="table-primary">
                                 <td class="border-0"></td>
-                                <td class="border-0" colspan="8"><span class="font-weight-bolder">@item2.Key - @item2.Count() Exam/s</span></td>
+                                <td class="border-0" colspan="7"><span class="font-weight-bolder">@item2.Key - @item2.Count() Exam/s</span></td>
+                                <td>
+                                    <a href="#">Create Result</a>
+                                </td>
                             </tr>
                             foreach (var item in item2)
                             {
@@ -199,10 +205,10 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        @*<label class="col-md-2 col-form-label text-md-right" asp-for="Status"></label>
-                <div class="col-md-1">
-                    <input asp-for="Status" class="form-control" />
-                </div>*@
+                        <label class="col-md-2 col-form-label text-md-right" asp-for="Status"></label>
+                        <div class="col-md-1">
+                            <input asp-for="Status" class="form-control" />
+                        </div>
                         <div class="offset-md-3 col-md-9 text-md-right">
                             <button type="button" class="btn-sm btn-secondary" data-dismiss="modal">Close</button>
                             <button type="button" class="btn-sm btn-primary" id="examAddBtn" onclick="ExamAddBtnClick()">Add Exam</button>
@@ -211,7 +217,7 @@
                     </div>
                 </form>
 
-                
+
             </div>
             <div class="modal-footer p-0" id="editupdatemodalfooter">
                 <div class="col-md-12">
@@ -247,13 +253,12 @@
     </div>
 </div>
 <div id="loading" style="display:none;top:0;left:0;z-index:9999; position:fixed;width:100%;height:100%; ">
-    <img src="~/Images/loading1.gif"  width="50%;" alt="Loading_Images"/>
+    <img src="~/Images/loading1.gif" width="50%;" alt="Loading_Images" />
 </div>
 @section Scripts{
 
     <script src="~/js/AcademicExam/AcademicExam.js"></script>
     <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
-
     <script>
         let deleted = '@TempData["deleted"]';
         let created = '@TempData["created"]';

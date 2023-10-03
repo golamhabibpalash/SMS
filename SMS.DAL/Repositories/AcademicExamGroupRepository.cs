@@ -13,19 +13,36 @@ namespace SMS.DAL.Repositories
 {
     public class AcademicExamGroupRepository:Repository<AcademicExamGroup>, IAcademicExamGroupRepository
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _dbContext;
         public AcademicExamGroupRepository(ApplicationDbContext context):base(context)
         {
-            _context = context;
+            _dbContext = context;
         }
         public override async Task<IReadOnlyCollection<AcademicExamGroup>> GetAllAsync()
         {
-            var result = await _context.AcademicExamGroups.Include(s => s.AcademicSession).Include(s => s.academicExamType).Include(s => s.AcademicExams).ToListAsync();
+            var result = await _dbContext.AcademicExamGroups.Include(s => s.AcademicSession).Include(s => s.academicExamType).Include(s => s.AcademicExams).ToListAsync();
             return result;
         }
         public async Task<IReadOnlyCollection<AcademicExamGroup>> GetByMonthExamType(int monthId, int examTypeId)
         {
-            var result = await _context.AcademicExamGroups.Where(s => s.ExamMonthId == monthId && s.academicExamTypeId == examTypeId).ToListAsync();
+            var result = await _dbContext.AcademicExamGroups.Where(s => s.ExamMonthId == monthId && s.academicExamTypeId == examTypeId).ToListAsync();
+            return result;
+        }
+
+        public override async Task<AcademicExamGroup> GetByIdAsync(int id)
+        {
+            var result = await _dbContext
+                .AcademicExamGroups
+                .Include(s => s.academicExamType)
+                .Include(s => s.AcademicExams)
+                    .ThenInclude(m => m.AcademicClass)
+                .Include(s => s.AcademicExams).ThenInclude(c =>c.AcademicSubject)
+                .Include(s => s.AcademicSession)
+                .Include(s => s.AcademicExams)
+                    .ThenInclude(s => s.Employee)
+                .Include(s => s.AcademicExams)
+                    .ThenInclude(m => m.AcademicExamDetails                    )
+                .FirstOrDefaultAsync(s => s.Id == id);
             return result;
         }
     }

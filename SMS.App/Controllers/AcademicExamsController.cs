@@ -240,18 +240,7 @@ namespace SMS.App.Controllers
             }
             //Checking is it same data!
             AcademicExam exam = await _examManager.GetByIdAsync(academicExam.Id);
-            if (exam.AcademicExamGroupId == academicExam.AcademicExamGroupId && 
-                exam.AcademicClassId == academicExam.AcademicClassId && 
-                exam.AcademicSectionId==academicExam.AcademicSectionId && 
-                exam.AcademicSubjectId == academicExam.AcademicSubjectId &&
-                exam.EmployeeId == academicExam.EmployeeId && 
-                exam.TotalMarks == academicExam.TotalMarks &&
-                exam.Status == academicExam.Status)
-            {
-                TempData["error"] = "oh ho! Same data, Nothing to change!";
-                return RedirectToAction("index");
-            }
-
+            
             try
             {
                 academicExam.EditedAt = DateTime.Now;

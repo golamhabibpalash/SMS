@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using SMS.DAL.Contracts;
 using SMS.DAL.Repositories.Base;
 using SMS.DB;
@@ -66,5 +67,7 @@ namespace SMS.DAL.Repositories
 
             return exams;
         }
+
+        
     }
 }

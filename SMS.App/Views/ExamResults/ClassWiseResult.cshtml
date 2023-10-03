@@ -11,10 +11,10 @@
                     .Distinct()
                     .ToList();
     }
-    bool isImrove = true;
+    //bool isImrove = true;
     string studentNameTitleCase = string.Empty;
 }
-@section Styles{ 
+@section Styles{
     <style>
         .loading-container
         {
@@ -26,11 +26,12 @@
             left: 0;
             width: 100%;
             height: 100%;
-            min-height:700px;
+            min-height: 700px;
             background-color: rgba(255, 255, 255, 0.8);
             z-index: 9999;
-            display:none;
+            display: none;
         }
+
         .loadingimage img
         {
             max-width: 50%;
@@ -54,6 +55,14 @@
                 </div>
                 <div>
                     <input type="submit" class="btn btn-info btn-sm" value="Search" onclick="reloadData()">
+                </div>
+                <div>
+                    @if (ViewBag.IsLoading == true)
+                    {
+                        <a style="display:none" class="btn btn-sm btn-success processResultBtn" asp-controller="ExamResults" asp-action="ProcessResult" asp-route-classId="ViewBag.classId" data-classId="ViewBag.classId" asp-route-groupId="ViewBag.examGroupId" data-groupId="ViewBag.examGroupId" onclick="reloadData()">Process Result</a>
+
+                        <a style="display:none" class="btn btn-sm btn-danger deleteResultBtn" asp-controller="ExamResults" asp-action="DeleteResult" asp-route-classId="ViewBag.classId" data-classId="ViewBag.classId" asp-route-groupId="ViewBag.examGroupId" data-groupId="ViewBag.examGroupId" onclick="reloadData()">Delete Result</a>
+                    }
                 </div>
             </div>
         </form>
@@ -85,12 +94,12 @@
                         @if (!isHeader)
                         {
                             <tr class="table-info align-middle" id="headerTr">
-                                <td class="align-middle">#</td>
-                                <td class="align-middle">Class Roll</td>
-                                <td class="align-middle">Student Name</td>
+                                <th class="align-middle">#</th>
+                                <th class="align-middle">Class Roll</th>
+                                <th class="align-middle">Student Name</th>
                                 @foreach (var exDetail in exam.ExaminationResultDetailsVMs)
                                 {
-                                    <td class="p-0 m-0">
+                                    <th class="p-0 m-0">
                                         <table class="w-100">
                                             <tr>
                                                 <td colspan="3" class="text-nowrap text-center">@exDetail.SubjectName <br />(Highest @exDetail.HighestObtainMark of @exDetail.ExamMarks)</td>
@@ -101,62 +110,72 @@
                                                 <td>Grade</td>
                                             </tr>
                                         </table>
-                                    </td>
+                                    </th>
                                 }
-                                <td class="align-middle">Total Marks</td>
-                                <td class="align-middle">CGPA</td>
-                                <td class="align-middle">Grade</td>
-                                <td class="align-middle">Status</td>
-                                <td class="align-middle">Fail/s</td>
-                                <td class="align-middle">Attendance %</td>
-                                <td class="align-middle">Rank</td>
-                                <td class="align-middle">Previous Rank</td>
+                                <th class="align-middle">Total Marks   </th>
+                                <th class="align-middle">CGPA  </th>
+                                <th class="align-middle">Grade  </th>
+                                <th class="align-middle">Status  </th>
+                                <th class="align-middle">Fail/s  </th>
+                                <th class="align-middle">Attendance %  </th>
+                                <th class="align-middle">Rank  </th>
+                                <th class="align-middle">Previous Rank  </th>
+                                <th class="align-middle">Gender  </th>
+                                <th class="align-middle">Phone 1 </th>
+                                <th class="align-middle">Phone 2 </th>
                             </tr>
                         }
-                <tr class="align-middle text-center">
-                    <td>@(++sl).</td>
-                    <td> @exam.ClassRoll </td>
-                    @{ 
-                        TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
-                        studentNameTitleCase = textInfo.ToTitleCase(exam.StudentName);
-                    }
-                    <td class="text-nowrap text-left">@studentNameTitleCase</td>
+                        <tr class="align-middle text-center">
+                            <td>@(++sl).</td>
+                            <td> @exam.ClassRoll </td>
+                            @{
+                                TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+                                studentNameTitleCase = textInfo.ToTitleCase(exam.StudentName);
+                            }
+                            <td class="text-nowrap text-left">@studentNameTitleCase</td>
 
-                    @if (exam.ExaminationResultDetailsVMs != null)
-                    {
-                        foreach (var exDetail in exam.ExaminationResultDetailsVMs)
-                        {
-                            <td class="p-0 m-0 align-bottom parentTd">
-                                <table class="w-100 h-100 innerTable">
-                                    <tr>
-                                        <td style="width:35%" class="childTd">@exDetail.ObtainMarks</td>
-                                        <td style="width:33%" class="childTd">@exDetail.ObtainPoint</td>
-                                        <td style="width:32%" class="childTd">@exDetail.ObtainGrade</td>
-                                    </tr>
-                                </table>
-                            </td>
-                        }
-                    }
-                    <td>@exam.TotalMarks</td>
-                    <td>@exam.CGPA.ToString("0.00")</td>
-                    <td>@exam.Grade</td>
-                    <td>@exam.GradeComment</td>
-                    <td>@exam.FailSubCount</td>
-                    <td>@exam.AttendancePercent</td>
-                    
-                    <td>
-                        @exam.Rank
-                                        @if (exam.Rank < exam.PreviousMonthRank)
-                                        {
-                                            <i class="fas fa-level-up text-success"></i>
-                                        }
-                                        else
-                                        {
-                                            <i class="fas fa-level-down text-warning"></i>
-                                        }
+                            @if (exam.ExaminationResultDetailsVMs != null)
+                            {
+                                foreach (var exDetail in exam.ExaminationResultDetailsVMs)
+                                {
+                                    <td class="p-0 m-0 align-bottom parentTd">
+                                        <table class="w-100 h-100 innerTable">
+                                            <tr>
+                                                <td style="width: 35%; height: 60px;" class="childTd border-0">@exDetail.ObtainMarks</td>
+                                                <td style="width: 33%; height: 60px;" class="childTd border-0">@exDetail.ObtainPoint</td>
+                                                <td style="width: 32%; height: 60px;" class="childTd border-0">@exDetail.ObtainGrade</td>
+                                            </tr>
+                                        </table>
                                     </td>
-                    <td>@exam.PreviousMonthRank</td>
-                </tr>
+                                }
+                            }
+                            <td>@exam.TotalMarks</td>
+                            <td>@exam.CGPA.ToString("0.00")</td>
+                            <td>@exam.Grade</td>
+                            <td>@exam.GradeComment</td>
+                            <td>@exam.FailSubCount</td>
+                            <td>@exam.AttendancePercent</td>
+
+                            <td>
+                                @exam.Rank
+                                @if (exam.Rank < exam.PreviousMonthRank)
+                                {
+                                    <i class="fas fa-level-up text-success"></i>
+                                }
+                                else
+                                {
+                                    <i class="fas fa-level-down text-warning"></i>
+                                }
+                            </td>
+                            <td>@exam.PreviousMonthRank</td>
+                            <td class="align-middle">@exam.Gender.Name</td>
+                            <td class="align-middle">
+                                @exam.Phone1
+                            </td>
+                            <td class="align-middle">
+                                @exam.Phone2
+                            </td>
+                        </tr>
 
                         isHeader = true;
                     }
@@ -165,7 +184,6 @@
 
                 </tfoot>
             </table>
-
         }
 
     </div>
@@ -179,9 +197,10 @@
 </div>
 
 @section Scripts{
-    <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
+
 
     <script>
+
         let dataLoaded = false;
         $(document).on("dataLoaded", function () {
             // Set the flag variable to true.
@@ -192,7 +211,6 @@
             document.getElementById("loadingImage").style.display = "block";
             $("#loadingContainer").fadeIn(200);
             document.getElementById("myTable").style.display = "none";
-
         }
 
         function hideLoadingImage() {
@@ -208,17 +226,12 @@
             if (dataLoaded) {
                 hideLoadingImage();
             }
-            // Simulate a delay to show the loading image (remove this in production)
-            //setTimeout(function () {
-            //    hideLoadingImage();
-            //    // Update your data on the page
-            //},3000); // 2 seconds delay for demonstration
         }
     </script>
     <script>
         // Wait for the DOM to be fully loaded
         document.addEventListener("DOMContentLoaded", function () {
-           
+
             //Code for Table Header/Heading
             // Get the <th> and <tr> elements
             var headerTh = document.getElementById("headerTh");
@@ -269,5 +282,40 @@
                 });
             });
         });
+    </script>
+
+    <script>
+        // Call the functions based on your conditions
+        window.onload = function () {
+            var processButtons = document.querySelectorAll('.processResultBtn');
+            processButtons.forEach(function (button) {
+                var classId = button.getAttribute('data-classId');
+                var groupId = button.getAttribute('data-groupId');
+
+                $.ajax({
+                    url: '/ExamResults/IsResultProcessed',
+                    data: { groupId: groupId, classId: classId },
+                    cache: false,
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function (d) {
+                        if (d) {
+                            button.style.display = 'none';
+                            var otherBtn = button.nextElementSibling;
+                            otherBtn.style.display = 'block';
+                        }
+                        else {
+                            button.style.display = 'block';
+                            var otherBtn = button.nextElementSibling;
+                            otherBtn.style.display = 'none';
+                        }
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                });
+            });
+
+        };
     </script>
 }

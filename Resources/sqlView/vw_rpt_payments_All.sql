@@ -1,7 +1,7 @@
 USE [SMSDB]
 GO
 
-/****** Object:  View [dbo].[vw_rpt_payments_All]    Script Date: 04-May-23 6:32:40 PM ******/
+/****** Object:  View [dbo].[vw_rpt_payments_All]    Script Date: 18-Sep-23 6:56:50 AM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -9,7 +9,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-CREATE OR ALTER   view [dbo].[vw_rpt_payments_All]
+
+CREATE OR ALTER     view [dbo].[vw_rpt_payments_All]
 as
 SELECT 
 Convert(varchar,s.ClassRoll)[ClassRoll],
@@ -22,7 +23,8 @@ Convert(varchar(10),p.PaidDate)[PaidDate],
 p.TotalPayment[TotalPayment],
 Convert(varchar,s.AcademicClassId)[AcademicClassId],
 Convert(varchar,s.AcademicSectionId)[AcademicSectionId],
-c.Name[AcademicClassName]
+c.Name[AcademicClassName],
+h.IsResidential
 from StudentPayment p
 inner join StudentPaymentDetails as d on p.Id=d.StudentPaymentId
 inner join StudentFeeHead as h on d.StudentFeeHeadId = h.Id

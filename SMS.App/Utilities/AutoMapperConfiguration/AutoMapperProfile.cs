@@ -34,6 +34,10 @@ namespace SMS.App.Utilities.AutoMapperConfiguration
 
             CreateMap<AcademicExam, AcademicExamVM>();
             CreateMap<AcademicExamVM, AcademicExam>();
+            
+            CreateMap<AcademicExamGroup, AcademicExamGroupIndexVM>();
+            CreateMap<AcademicExamGroupIndexVM, AcademicExamGroup>();
+
         }
     }
 }

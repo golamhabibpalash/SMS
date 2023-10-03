@@ -26,9 +26,9 @@ namespace SMS.App.Utilities.Others
                     return Convert(amount_int) + " Point " + Convert(amount_dec) + " Only.";
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                // TODO: handle exception  
+                  // TODO: handle exception  
             }
             return "";
         }

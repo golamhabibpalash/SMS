@@ -20,5 +20,6 @@ namespace SMS.BLL.Contracts
         Task<List<Student>> GetTodaysAbsentStudentAsync(string date);
         Task<List<Tran_MachineRawPunch>> GetAttendanceByDateRangeAsync(string StartDate, string EndDate);
         Task<List<Employee>> GetTodaysAbsentEmployeeAsync(string date);
+        Task<List<Tran_MachineRawPunch>> GetAttendanceByMonthSingleStudent(int studentId, int monthId);
     }
 }

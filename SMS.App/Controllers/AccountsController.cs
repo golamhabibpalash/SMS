@@ -2,15 +2,12 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using MimeKit;
 using SMS.App.Utilities.EmailServices;
 using SMS.App.Utilities.MACIPServices;
 using SMS.App.Utilities.ShortMessageService;
 using SMS.App.ViewModels.AdministrationVM;
 using SMS.BLL.Contracts;
-using SMS.DB;
 using SMS.Entities;
 using System;
 using System.Collections.Generic;

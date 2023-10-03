@@ -53,5 +53,15 @@ namespace BLL.Managers.Base
         {
             return _repository.GetById(id);
         }
+
+        public async Task<bool> SaveAfterAddAsync()
+        {
+            return await _repository.SaveAfterAddAsync();
+        }
+
+        public bool AddWithoutSave(T entity)
+        {
+            return _repository.AddWithoutSave(entity);
+        }
     }
 }

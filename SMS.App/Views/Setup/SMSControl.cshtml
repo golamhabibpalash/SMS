@@ -13,7 +13,8 @@
     <div class="row">
         <div class="col-md-6">
             <div class="card">
-                <div class="card-header text-primary font-weight-bolder h4">Attendance SMS Service
+                <div class="card-header text-primary font-weight-bolder h4">
+                    Attendance SMS Service
                     <label class="switch">
                         <input asp-for="AttendanceSMSService" type="checkbox">
                         <span class="slider round"></span>
@@ -24,7 +25,7 @@
                     <table class="table table-sm table-bordered text-center mb-0">
                         <tr>
                             <td rowspan="3" class="align-middle font-weight-bold h5">
-                                Checkin SMS <br />                                
+                                Checkin SMS <br />
                                 <label class="switch">
                                     <input asp-for="CheckInSMS" title="CheckIn SMS Switch" />
                                     <span class="slider round"></span>
@@ -46,12 +47,12 @@
                             <td class="font-weight-bold">
                                 Students (Boys) <br />
                                 <label class="col-form-label">
-                                    
+
                                     <label class="switch">
                                         <input asp-for="CheckInSMSStudentBoys" type="checkbox">
                                         <span class="slider round"></span>
                                     </label>
-                                    
+
                                 </label>
                             </td>
                         </tr>
@@ -112,24 +113,44 @@
 
                         <tr>
                             <td rowspan="2" class="align-middle h5 font-weight-bold">
-                                Others Attendance SMS Service<br />                                
+                                Absent Notification<br />
+                                <label class="switch">
+                                    <input asp-for="AbsentNotification" />
+                                    <span class="slider round"></span>
+                                </label>
+                            </td>
+                            <td class="font-weight-bold">
+                                Absent Student Notification <br />
+                                <label class="col-form-label">
+                                    <label class="switch">
+                                        <input asp-for="AbsentNotificationStudent" type="checkbox">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="font-weight-bold">
+                                Absent Employee Notification <br />
+                                <label class="col-form-label">
+                                    <label class="switch">
+                                        <input asp-for="AbsentNotificationEmployee" type="checkbox">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </label>
+                            </td>
+                        </tr>
+
+
+                        <tr>
+                            <td rowspan="1" class="align-middle h5 font-weight-bold">
+                                Others Attendance SMS Service<br />
                             </td>
                             <td class="font-weight-bold">
                                 Summary SMS Service <br />
                                 <label class="col-form-label">
                                     <label class="switch">
                                         <input asp-for="CheckInSMSSummary" type="checkbox">
-                                        <span class="slider round"></span>
-                                    </label>
-                                </label>
-                            </td>
-                        </tr>
-                        <tr>                           
-                            <td class="font-weight-bold">
-                                Absent Student Notification <br />
-                                <label class="col-form-label">
-                                    <label class="switch">
-                                        <input asp-for="AbsentNotification" type="checkbox">
                                         <span class="slider round"></span>
                                     </label>
                                 </label>
@@ -150,38 +171,63 @@
             <div class="card">
                 <div class="card-header text-center">
                     <input type="submit" value="Submit" class="btn btn-sm btn-primary rounded-1" />
-                    <input type="button" class="btn-danger btn btn-sm rounded-1"  value="Cancel"/>
+                    <input type="button" class="btn-danger btn btn-sm rounded-1" value="Cancel" />
                 </div>
             </div>
         </div>
     </div>
 </form>
-
+<dl class="row">
+    <dt class="col-md-3">Last Modified by:</dt>
+    <dd class="col-md-9">Name of the Employee</dd>
+    <dt class="col-md-3">Last Modified date:</dt>
+    <dd class="col-md-9 text-md-left">@DateTime.Now.ToString("dd MMM yyyy")</dd>
+</dl>
 
 @section Scripts{
 
-<script>
-    $(document).ready(function () {
+    <script>
+
+
+        $(document).ready(function () {
+            $(function () {
+                let saved = '@TempData["saved"]';
+                let deleted = '@TempData["deleted"]';
+                let edited = '@TempData["edited"]';
+                let failed = '@TempData["failed"]'
+                if (saved != "") {
+                    alertify.success(saved);
+                    }
+                if (deleted != "") {
+                    alertify.error(deleted);
+                    }
+                if (edited != "") {
+                    alertify.message(edited);
+                    }
+                if (failed != "") {
+                    alertify.error(failed);
+                    }
+            });
 
         $('#CheckInSMSEmployees').change(function () {
             if ($(this).prop('checked')) {
                 $('#CheckInSMS').prop('checked', true);
                 $('#AttendanceSMSService').prop('checked', true);
-            } 
+            }
         });
 
         $('#CheckInSMSStudentBoys').change(function () {
             if ($(this).prop('checked')) {
                 $('#CheckInSMS').prop('checked', true);
                 $('#AttendanceSMSService').prop('checked', true);
-            } 
+            }
         });
 
         $('#CheckInSMSStudentGirls').change(function () {
             if ($(this).prop('checked')) {
                 $('#CheckInSMS').prop('checked', true);
                 $('#AttendanceSMSService').prop('checked', true);
-            } 
+            }
         });
 
         $('#CheckInSMS').change(function () {
@@ -228,7 +274,7 @@
         });
 
         $('#CheckInSMSSummary').change(function () {
-            if (!$(this).prop('checked')) {                
+            if (!$(this).prop('checked')) {
             }
             else {
                 $('#AttendanceSMSService').prop('checked', true);
@@ -236,10 +282,30 @@
         });
 
         $('#AbsentNotification').change(function () {
-            if (!$(this).prop('checked')) {                
+            if (!$(this).prop('checked')) {
+                $('#AbsentNotificationEmployee').prop('checked', false);
+                $('#AbsentNotificationStudent').prop('checked', false);
             }
             else {
                 $('#AttendanceSMSService').prop('checked', true);
+            }
+        });
+
+        $('#AbsentNotificationEmployee').change(function () {
+            if (!$(this).prop('checked')) {
+            }
+            else {
+                $('#AttendanceSMSService').prop('checked', true);
+                $('#AbsentNotification').prop('checked', true);
+            }
+        });
+
+        $('#AbsentNotificationStudent').change(function () {
+            if (!$(this).prop('checked')) {
+            }
+            else {
+                $('#AttendanceSMSService').prop('checked', true);
+                $('#AbsentNotification').prop('checked', true);
             }
         });
 
@@ -258,10 +324,13 @@
                 $('#CheckOutSMSStudentGirls').prop('checked', false);
 
                 $('#CheckInSMSSummary').prop('checked', false);
+
                 $('#AbsentNotification').prop('checked', false);
-            } 
+                $('#AbsentNotificationStudent').prop('checked', false);
+                $('#AbsentNotificationEmployee').prop('checked', false);
+            }
         });
 
     });
-</script>
+    </script>
 }

@@ -42,7 +42,10 @@ namespace SMS.App.Controllers
             attendanceSetupVM.CheckOutSMSStudentGirls = setupMobileSMS.CheckOutSMSServiceForGirlsStudent;
 
             attendanceSetupVM.CheckInSMSSummary = setupMobileSMS.CheckInSMSSummary;
+            
             attendanceSetupVM.AbsentNotification = setupMobileSMS.AbsentNotification;
+            attendanceSetupVM.AbsentNotificationStudent = setupMobileSMS.AbsentNotificationStudent;
+            attendanceSetupVM.AbsentNotificationEmployee = setupMobileSMS.AbsentNotificationEmployee;
             //if (setupMobileSMS != null)
             //{
             //    return View(setupMobileSMS);
@@ -73,6 +76,9 @@ namespace SMS.App.Controllers
                 objSetupMobileSMS.AbsentNotification = attendanceSetupVM.AbsentNotification;
                 objSetupMobileSMS.CheckInSMSSummary = attendanceSetupVM.CheckInSMSSummary;
 
+                objSetupMobileSMS.AbsentNotificationEmployee = attendanceSetupVM.AbsentNotificationEmployee;
+                objSetupMobileSMS.AbsentNotificationStudent = attendanceSetupVM.AbsentNotificationStudent;
+
                 try
                 {
                     bool isUpdated = await _setupMobileSMSManager.UpdateAsync(objSetupMobileSMS);
@@ -80,7 +86,7 @@ namespace SMS.App.Controllers
                     {
                         msg = "SMS Setup Updated successful";
                         TempData["edited"] = msg;
-                        return RedirectToAction("AttendanceBackgroundJob", "Hangfire");
+                        return View();
                     }
                     else
                     {

@@ -22,5 +22,8 @@ namespace SMS.BLL.Contracts.Base
         Task<bool> IsExistByIdAsync(int id);
 
         Task<bool> IsExistAsync(T entity);
+
+        Task<bool> SaveAfterAddAsync();
+        bool AddWithoutSave(T entity);
     }
 }

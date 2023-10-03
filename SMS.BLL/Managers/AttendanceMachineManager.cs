@@ -39,6 +39,12 @@ namespace SMS.BLL.Managers
             return result;
         }
 
+        public async Task<List<Tran_MachineRawPunch>> GetAttendanceByMonthSingleStudent(int studentId, int monthId)
+        {
+            var result = await _attendanceMachineRepository.GetAttendanceByMonthSingleStudent(studentId, monthId);
+            return result;
+        }
+
         public async Task<List<Tran_MachineRawPunch>> GetCheckinDataByDateAsync(string date)
         {
             List<Tran_MachineRawPunch> allCheckInAttendnace = new List<Tran_MachineRawPunch>();
@@ -59,6 +65,13 @@ namespace SMS.BLL.Managers
                 allCheckOutAttendnace = result;
             }
             return allCheckOutAttendnace;
+        }
+
+        public async Task<List<Employee>> GetTodaysAbsentEmployeeAsync(string date)
+        {
+            List<Employee> employees = new List<Employee>();
+            employees = await _attendanceMachineRepository.GetTodaysAbsentEmployeeAsync(date);
+            return employees;
         }
 
         public async Task<List<Student>> GetTodaysAbsentStudentAsync(string date)

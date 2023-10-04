@@ -59,7 +59,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Repeatedly,YearlyFrequency,CreatedBy,CreatedAt,EditedBy,EditedAt,ContraFeeheadId")] StudentFeeHead studentFeeHead)
+        public async Task<IActionResult> Create([Bind("Id,Name,Repeatedly,YearlyFrequency,CreatedBy,CreatedAt,EditedBy,EditedAt,ContraFeeheadId,IsResidential")] StudentFeeHead studentFeeHead)
         {
             string msg = "";
             var sfhExist = await _studentFeeHeadManager.GetByNameAsync(studentFeeHead.Name);
@@ -104,7 +104,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Repeatedly,YearlyFrequency,CreatedBy,CreatedAt,EditedBy,EditedAt,ContraFeeheadId")] StudentFeeHead studentFeeHead)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Repeatedly,YearlyFrequency,CreatedBy,CreatedAt,EditedBy,EditedAt,ContraFeeheadId,IsResidential")] StudentFeeHead studentFeeHead)
         {
             string msg = "";
             int isChanged = 0;
@@ -125,7 +125,7 @@ namespace SMS.App.Controllers
 
             if (sfhExist!=null)
             {
-                if (studentFeeHead.Name != sfhExist.Name || studentFeeHead.Repeatedly != sfhExist.Repeatedly || studentFeeHead.YearlyFrequency != sfhExist.YearlyFrequency || studentFeeHead.ContraFeeheadId != sfhExist.ContraFeeheadId)
+                if (studentFeeHead.Name != sfhExist.Name || studentFeeHead.Repeatedly != sfhExist.Repeatedly || studentFeeHead.YearlyFrequency != sfhExist.YearlyFrequency || studentFeeHead.ContraFeeheadId != sfhExist.ContraFeeheadId || studentFeeHead.IsResidential !=sfhExist.IsResidential)
                 {
                     isChanged = 1;
                 }
@@ -172,7 +172,7 @@ namespace SMS.App.Controllers
                             TempData["edit"] = "Edited Successfully.";
                         }
                     }
-                    catch (Exception ex)
+                    catch (Exception )
                     {
                         var StudentFeeHeadExists = await _studentFeeHeadManager.GetByIdAsync(id);
                         if (StudentFeeHeadExists==null)
@@ -181,7 +181,7 @@ namespace SMS.App.Controllers
                         }
                         else
                         {
-                            throw ex;
+                            throw;
                         }
                     }
                     return RedirectToAction(nameof(Index));

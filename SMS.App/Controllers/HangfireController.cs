@@ -638,7 +638,7 @@ namespace SMS.App.Controllers
                             else
                             {
                                 string empName = !string.IsNullOrEmpty(objEmployee.EmployeeNameBangla) ? objEmployee.EmployeeNameBangla : objEmployee.EmployeeName;
-                                string smsText = GenerateCheckInSMSText(empName, attendance.PunchDatetime.ToString("hh:mm tt"));
+                                string smsText = GenerateCheckOutSMSText(empName, attendance.PunchDatetime.ToString("hh:mm tt"));
                                 bool isSent = await MobileSMS.SendSMS(phoneNumber, smsText);
                                 if (isSent)
                                 {
@@ -1030,9 +1030,14 @@ namespace SMS.App.Controllers
             }
             return false;
         }
-        private bool TimeValidate(string smsType,string time)
-        {
-            return false;
-        }
+
+        #region Income SMS===========================================================
+        #region Daily Student Collection ============================================
+
+        #endregion Daily Student Collection XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        #endregion Income SMS XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+        #region Expense SMS =========================================================
+        #endregion Expense SMS XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
     }
 }

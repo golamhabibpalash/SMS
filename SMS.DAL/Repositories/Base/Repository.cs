@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using SMS.DAL.Contracts.Base;
 using System;
+using SMS.Entities;
 
 namespace SMS.DAL.Repositories.Base
 {
@@ -31,9 +32,9 @@ namespace SMS.DAL.Repositories.Base
 
         public virtual async Task<bool> AddAsync(T entity)
         {
-            Table.Add(entity);
+            await Table.AddAsync(entity);
             return await _context.SaveChangesAsync() > 0;
-        }
+        }       
 
         public virtual async Task<bool> UpdateAsync(T entity)
         {
@@ -69,6 +70,36 @@ namespace SMS.DAL.Repositories.Base
         public T GetById(int id)
         {
             return Table.Find(id);
+        }
+
+        public async Task<bool> SaveAfterAddAsync()
+        {
+            try
+            {
+                bool isSaved = await _context.SaveChangesAsync() > 0;
+                if (isSaved)
+                {
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return false;
+        }
+
+        public bool AddWithoutSave(T entity)
+        {
+            try
+            {
+                Table.Add(entity);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

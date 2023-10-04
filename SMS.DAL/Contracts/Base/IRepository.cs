@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SMS.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,5 +24,8 @@ namespace SMS.DAL.Contracts.Base
         Task<bool> IsExistByIdAsync(int id);
 
         Task<bool> IsExistAsync(T entity);
+
+        Task<bool> SaveAfterAddAsync();
+        bool AddWithoutSave(T entity);
     }
 }

@@ -15,12 +15,16 @@
       "destination": "wwwroot/lib/jspdf-autotable/"
     },
     {
+      "library": "jquery@1.10.2",
+      "destination": "wwwroot/lib/jquery/j1.10.2/jquery/"
+    },
+    {
       "library": "jspdf@2.5.1",
       "destination": "wwwroot/lib/jspdf/"
     },
     {
-      "library": "jquery@1.10.2",
-      "destination": "wwwroot/lib/jquery/j1.10.2/jquery/"
+      "library": "jquery@3.7.1",
+      "destination": "wwwroot/lib/jquery/jquery3.7/jquery/"
     }
   ]
 }

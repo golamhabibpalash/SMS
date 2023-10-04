@@ -202,6 +202,15 @@ builder.Services.AddScoped<IGradingTableRepository, GradingTableRepository>();
 builder.Services.AddScoped<IStudentFeeAllocationManager, StudentFeeAllocationManager>();
 builder.Services.AddScoped<IStudentFeeAllocationRepository, StudentFeeAllocationRepository>();
 
+builder.Services.AddScoped<IAcademicClassSubjectManager, AcademicClassSubjectManager>();
+builder.Services.AddScoped<IAcademicClassSubjectRepository, AcademicClassSubjectRepository>();
+
+builder.Services.AddScoped<ISubjectEnrollmentManager, SubjectEnrollmentManager>();
+builder.Services.AddScoped<ISubjectEnrollmentRepository, SubjectEnrollmentRepository>();
+
+builder.Services.AddScoped<ISubjectEnrollmentDetailManager, SubjectEnrollmentDetailManager>();
+builder.Services.AddScoped<ISubjectEnrollmentDetailRepository, SubjectEnrollmentDetailRepository>();
+
 //Reporting part start here===================================
 builder.Services.AddScoped<IReportManager, ReportManager>();
 builder.Services.AddScoped<IReportRepository, ReportRepository>();

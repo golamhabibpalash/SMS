@@ -30,6 +30,7 @@ namespace SMS.DAL.Repositories
                 .OrderBy(a => a.ClassSerial)
                 .Include(s => s.Students)
                 .Include(s => s.AcademicSubjects)
+                .OrderBy(s => s.ClassSerial)
                 .ToListAsync();
             return aClassList;
         }

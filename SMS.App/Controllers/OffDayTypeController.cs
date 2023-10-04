@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
-using Org.BouncyCastle.Utilities.IO.Pem;
 using SMS.App.Utilities.MACIPServices;
 using SMS.BLL.Contracts;
 using SMS.Entities;

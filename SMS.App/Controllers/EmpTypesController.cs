@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SMS.App.Utilities.MACIPServices;
 using SMS.BLL.Contracts;
 using SMS.DB;
 using SMS.Entities;
@@ -62,6 +63,7 @@ namespace SMS.App.Controllers
             {
                 empType.CreatedAt = DateTime.Now;
                 empType.CreatedBy = HttpContext.Session.GetString("UserId");
+                empType.MACAddress = MACService.GetMAC();
 
                 await _empTypeManager.AddAsync(empType);
                 return RedirectToAction(nameof(Index));
@@ -101,6 +103,8 @@ namespace SMS.App.Controllers
 
                     empType.EditedAt = DateTime.Now;
                     empType.EditedBy = HttpContext.Session.GetString("UserId");
+                    empType.MACAddress = MACService.GetMAC();
+
                     await _empTypeManager.UpdateAsync(empType);
                 }
                 catch (DbUpdateConcurrencyException)

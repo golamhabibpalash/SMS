@@ -47,6 +47,14 @@ namespace SMS.DAL.Repositories
             return attendanceList;
         }
 
+        public async Task<List<Tran_MachineRawPunch>> GetAttendanceByMonthSingleStudent(int studentId, int monthId)
+        {
+            var stuId = new SqlParameter("studentId", studentId);
+            var mId = new SqlParameter("monthId", monthId);
+            List<Tran_MachineRawPunch> allAttendance = await _context.Tran_MachineRawPunch.FromSqlInterpolated($"sp_get_Attendance_by_Month_SingleStudent {stuId},{mId}").ToListAsync();
+            return allAttendance;
+        }
+
         public async Task<List<Tran_MachineRawPunch>> GetCheckinDataByDateAsync(string date)
         {
             var pDate = new SqlParameter("date", date);
@@ -67,6 +75,20 @@ namespace SMS.DAL.Repositories
             try
             {
                 var result = await _context.Tran_MachineRawPunch.FromSqlInterpolated($"sp_Get_CheckOut_Data {date}").ToListAsync();
+                return result;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<List<Employee>> GetTodaysAbsentEmployeeAsync(string date)
+        {
+            var pDate = new SqlParameter("date", date);
+            try
+            {
+                var result = await _context.Employee.FromSqlInterpolated($"sp_get_todays_absent_employees_by_date {date}").ToListAsync();
                 return result;
             }
             catch (Exception)
@@ -96,5 +118,7 @@ namespace SMS.DAL.Repositories
 
             return existAttendance;
         }
+
+
     }
 }

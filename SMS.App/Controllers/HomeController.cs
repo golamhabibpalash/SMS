@@ -2,21 +2,10 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.VisualBasic.Syntax;
-using Microsoft.Extensions.Logging;
-using Microsoft.VisualBasic;
 using SMS.App.Utilities.MACIPServices;
-using SMS.App.ViewModels.AttendanceVM;
-using SMS.App.ViewModels.Students;
 using SMS.BLL.Contracts;
-using SMS.DAL.Contracts;
 using SMS.Entities;
-using SMS.Entities.AdditionalModels;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Dynamic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SMS.App.Controllers

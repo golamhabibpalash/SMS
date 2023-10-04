@@ -36,7 +36,7 @@
 }
 <div class="row">
     <div class="col-md-12">
-        <div class="jumbotron mb-0">
+        <div class="jumbotron mb-0 vh-100">
             <div class="row">
                 <div class="col-md-12 text-center">
 
@@ -259,23 +259,23 @@
     <script>
         $(document).ready(function () {
 
-        $(function () {
-            let saved = '@TempData["saved"]';
-            let deleted = '@TempData["deleted"]';
-            let edited = '@TempData["edited"]';
-            let failed = '@TempData["failed"]'
-            if (saved != "") {
-                alertify.success(saved);
-                }
-            if (deleted != "") {
-                alertify.error(deleted);
-                }
-            if (edited != "") {
-                alertify.message(edited);
-                }
-            if (failed != "") {
-                alertify.error(failed);
-                }
+            $(function () {
+                let saved = '@TempData["saved"]';
+                let deleted = '@TempData["deleted"]';
+                let edited = '@TempData["edited"]';
+                let failed = '@TempData["failed"]'
+                if (saved != "") {
+                    alertify.success(saved);
+                    }
+                if (deleted != "") {
+                    alertify.error(deleted);
+                    }
+                if (edited != "") {
+                    alertify.message(edited);
+                    }
+                if (failed != "") {
+                    alertify.error(failed);
+                    }
             });
         });
 

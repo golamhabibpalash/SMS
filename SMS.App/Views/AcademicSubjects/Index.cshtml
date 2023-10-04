@@ -52,11 +52,14 @@
             </th>
         </tr>
     </thead>
-    <tbody>
+    <tbody>        
         @foreach (var item in Model.OrderBy(m => m.AcademicClassId).ThenBy(s => s.SubjectCode))
         {
             ApplicationUser aUser = await _userManager.FindByIdAsync(item.CreatedBy);
-            createdBy = aUser.UserName;
+            if (aUser != null)
+            {
+                createdBy = aUser.UserName;
+            }
             if (item.EditedBy != null)
             {
                 aUser = await _userManager.FindByIdAsync(item.EditedBy);
@@ -69,9 +72,6 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.SubjectName)
                 </td>
-                @*<td>
-                        @Html.DisplayFor(modelItem => item.AcademicClass.Name)
-                    </td>*@
                 <td>
                     @Html.DisplayFor(modelItem => item.SubjectCode)
                 </td>

@@ -226,9 +226,18 @@ namespace SMS.App.Controllers
                 if (institute != null)
                 {
                     DateOnly dateOnly = new DateOnly(1900, 01, 01);
-
+                    string amPmIndicator = model.StartingTime.ToString("tt", System.Globalization.CultureInfo.InvariantCulture);
                     institute.StartingTime = model.StartingTime;
+                    if (amPmIndicator=="pm")
+                    {
+                        institute.StartingTime.AddHours(12);
+                    }
+                    amPmIndicator = model.ClosingTime.ToString("tt", System.Globalization.CultureInfo.InvariantCulture);
                     institute.ClosingTime = model.ClosingTime;
+                    if (amPmIndicator.ToLower()=="pm")
+                    {
+                        institute.ClosingTime.AddHours(12);
+                    }
 
                     TimeSpan span = model.LateTimeStart-model.StartingTime;
 

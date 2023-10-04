@@ -137,9 +137,10 @@ namespace SMS.DAL.Repositories.Reports
         }
         public async Task<List<StudentWiseMarkSheetVM>> GetStudentWiseMarkSheet(int examGroupId, int classId)
         {            
-            string query = $"select t.* from vw_rpt_student_wise_marksheet t where t.examGroupId='"+examGroupId+"' and t.classId='"+classId+"' order by t.ClassRoll";
-            List<StudentWiseMarkSheetVM> result = await _context.StudentWiseMarkSheetVMs.FromSqlRaw(query).ToListAsync();
+            string query = $"select t.* from vw_rpt_student_wise_marksheet t where t.examGroupId='"+examGroupId+ "' and t.AcademicClassId='" + classId+"' order by t.ClassRoll";
+            var result = await _context.StudentWiseMarkSheetVMs.FromSqlRaw(query).ToListAsync();
+
             return result;
-        }
+        }        
     }
 }

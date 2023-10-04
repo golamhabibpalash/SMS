@@ -2,6 +2,15 @@
 @{
     ViewData["Title"] = "Payments Report";
     GlobalUI.PageTitle = ViewData["Title"].ToString();
+
+
+
+    var items = new List<SelectListItem>
+    {
+        new SelectListItem { Text = "all", Value = "all" },
+        new SelectListItem { Text = "residential", Value = "residential" },
+        new SelectListItem { Text = "nonResidential", Value = "nonResidential" }
+    };
 }
 
 <div class="row">
@@ -42,6 +51,14 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="form-group row">
+                            <label for="classId" class="col-sm-3 col-form-label">Payment Category</label>
+                            <div class="col-sm-9">
+                                <select id="PaymentCategoryId" class="form-control" asp-items="@items">
+                                    <option disabled selected >-Select Payment Category-</option>
+                                </select>
+                            </div>
+                        </div>
                         <div class="text-right">
                             <span id="loadReportBtn" class="btn btn-sm btn-info">Load Report</span>
                         </div>
@@ -67,8 +84,9 @@
                     <input type="hidden" id="exportToDate" name="toDate" />
                     <input type="hidden" id="exportAcademicClassId" name="academicClassId" />
                     <input type="hidden" id="exportAcademicSectionId" name="academicSectionId" />
+                    <input type="hidden" id="exportPaymentCategory" name="paymentCategory" />
                     <div class="btn-group btn-sm mr-2 " role="group" aria-label="First group">
-                        <input type="hidden" name="fileName" value="Student Payment Report" />
+                        <input type="hidden" name="fileName" value="Student Payment Report @DateTime.Now.ToString("hh:mm tt dd MMM yyyy")" />
                         <button type="submit" name="reportType" value="pdf" class="btn-sm btn btn-danger" data-toggle="tooltip" title="Export PDF" data-placement="left"><i class="fas fa-file-pdf"></i></button>
                         <button type="submit" name="reportType" value="xls" class="btn-sm btn btn-success" data-toggle="tooltip" title="Export xls" data-placement="top"><i class="fas fa-file-excel"></i></button>
                         <button type="submit" name="reportType" value="word" class="btn-sm btn btn-primary" data-toggle="tooltip" title="Export doc" data-placement="top"><i class="fas fa-file-word"></i></button>
@@ -98,11 +116,13 @@
                 let academicClassId = '0';
                 let fromDate = '';
                 let toDate = '';
+                let paymentCategory = '';
 
                 fromDate = $('#sFromDate').val();
                 toDate = $('#sToDate').val();
                 academicClassId = $('#AcademicClassId option:selected').val();
                 aSection = $('#AcademicSectionId option:selected').val();
+                paymentCategory = $('#PaymentCategoryId option:selected').val();
 
                 if (fromDate == '' && toDate == '') {
                     $('#InvalidForm').show();
@@ -115,8 +135,9 @@
                     $('#exportAcademicSectionId').attr('value', aSection);
                     $('#exportFromDate').attr('value', fromDate);
                     $('#exportToDate').attr('value', toDate);
+                    $('#exportPaymentCategory').attr('value', paymentCategory);
 
-                    $('#myIframe').attr('src', '/Reports/StudentPaymentReportExport?reportType=' + reportType + '&&fromDate=' + fromDate + '&&toDate=' + toDate + '&&academicClassId=' + academicClassId + '&&academicSectionId=' + aSection);
+                    $('#myIframe').attr('src', '/Reports/StudentPaymentReportExport?reportType=' + reportType + '&&fromDate=' + fromDate + '&&toDate=' + toDate + '&&academicClassId=' + academicClassId + '&&academicSectionId=' + aSection + "&&paymentCategory=" + paymentCategory);
 
                     var iframe = document.getElementById('myIframe');
                     $('#loading').show();

@@ -57,6 +57,10 @@
                     <input asp-for="AdmissionDate" class="form-control" value="@DateTime.Now.Date" />
                     <span asp-validation-for="AdmissionDate" class="text-danger"></span>
                 </div>
+
+                <div class="checkbox offset-md-2 col-md-4 text-md-left">
+                    <label class="col-form-label"><input asp-for="IsResidential"> Residential</label>
+                </div>
             </div>
 
 
@@ -271,6 +275,7 @@
                     </select>
                     <span asp-validation-for="PermanentUpazilaId" class="text-danger"></span>
                 </div>
+
             </div>
             <div class="form-group row">
                 <label asp-for="AddressInfo" class="control-label col-form-label text-md-right col-md-2"></label>

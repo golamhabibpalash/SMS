@@ -29,12 +29,13 @@
     //double currentDue = 0;
     //double totalDue = 0;
     int paymentScheduleSL = 1;
-    double paymentScheduleSubTotal = 0.0;
+    //double paymentScheduleSubTotal = 0.0;
     double paymentScheduleTotal = 0.0;
     int paymentSchedulePaidSL = 1;
     double paidScheduleTotal = 0.0;
     DateTime todate = new DateTime(DateTime.Now.Year, 1, 1);
     string fileName = Model.Student.ClassRoll + "_Payment_Report_" + DateTime.Now.ToString("dd-MM-yyyy");
+    //int attSl = 0;
 }
 @section Styles{
     <style>
@@ -59,13 +60,13 @@
     <div class="col-md-3 bg-navy-blue mh-100 rounded">
         <div class="row pt-2">
             <div class="col-md-12 text-center">
-                @if (Model.Student.Photo != null)
+                @if (string.IsNullOrEmpty(Model.Student.Photo))
                 {
-                    <img class="rounded-circle" src="/Images/Student/@Model.Student.Photo" alt="Student Photo" style="width:40%;" />
+                    <img class="rounded-circle" src="~/Images/Student/noimage.jpg" alt="Student Photo" onerror="this.src='@Url.Content("~/Images/Student/noimage.jpg")'" style="width:40%;" />
                 }
                 else
                 {
-                    <img class="rounded-circle" src="/Images/noProfileImage.png" alt="Student Photo" style="width:40%;" />
+                    <img class="rounded-circle" src="~/Images/Student/@Model.Student.Photo" alt="Student Photo" onerror="this.src='@Url.Content("~/Images/Student/noimage.jpg")'" style="width:40%;" />
                 }
             </div>
         </div>
@@ -130,7 +131,7 @@
             <div class="card-header">
                 <ul class="nav nav-tabs card-header-tabs" id="bologna-list">
                     <li class="nav-item bg-navy-blue text-light border">
-                        <a class="nav-link text-warning active" href="#personal" role="tab" aria-controls="personal" aria-selected="true">Personal Information</a>
+                        <a class="nav-link text-warning active" href="#personal" id="personalTab" role="tab" aria-controls="personal" aria-selected="true">Personal Information</a>
                     </li>
                     <li class="nav-item bg-navy-blue border">
                         <a class="nav-link text-warning" href="#academic" role="tab" aria-controls="academic" aria-selected="true">Academic Information</a>
@@ -351,6 +352,18 @@
 
                                         }
                                     </tr>
+                                    <tr>
+                                        <td>Residential</td>
+                                        <td>:</td>
+                                            @if (Model.Student.IsResidential)
+                                            {
+                                                <td>Residential</td>
+                                            }
+                                            else
+                                            {
+                                                <td>Non Residential</td>
+                                            }
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -461,7 +474,7 @@
                                         </div>
                                     </div>
                                     <div class="">
-                                        <table class="table table-hover table-bordered mb-0">
+                                        <table class="table table-hover table-bordered table-responsive-sm mb-0">
                                             <thead class="bg-blue-sky">
                                                 <tr>
                                                     <td>#</td>
@@ -494,10 +507,6 @@
                                                             <td>@payment.Remarks</td>
                                                             <td>@createdBy</td>
                                                             <td class="text-md-left">@payment.CreatedAt.ToString("dd MMM yyyy")</td>
-                                                            <!--<td>-->
-                                                                @*<i class="fas fa-edit fa-lg"></i>
-                                                                    <i class="fa-solid fa-receipt fa-lg"></i>*@
-                                                            <!--</td>-->
                                                         </tr>
                                                     }
                                                     totalPaid += payment.TotalPayment;
@@ -530,32 +539,35 @@
                         </div>
                     </div>
                     <div id="attendance" class="tab-pane">
-                        <div class="text-center">
-                            <h4 class="text-danger">This page is under construction</h4>
-                        </div>
-                        @for (int i = 1; i <= DateTime.Now.Month; i++)
+                        @foreach (var item in Model.AttendanceDetails)
                         {
-                            <div class="col-md-3 card bg-navy-blue text-light m-2">
-                                <div class="card-header">Month @System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i) </div>
-                                <div class="card-body">
+                            <div class="col-md-3 card p-0 m-1">
+                                <div class="card-header p-1">
+                                <h6>Month: @item.MonthName</h6> 
+                                </div>
+                                <div class="card-body p-1">
                                     <table>
                                         <tr>
-                                            <td>Attended</td>
+                                            <td class="text-left">Total Attended</td>
                                             <td>:</td>
-                                            <td>18 (24) Days</td>
+                                            <td class="text-left">@item.AttendanceCount (@item.TotalDays) Days</td>
                                         </tr>
                                         <tr>
-                                            <td>Att. Percentage</td>
+                                            <td class="text-left">Attendance Percentage</td>
                                             <td>:</td>
-                                            <td>79%</td>
+                                            <td class="text-left">@item.PresentPercentage%</td>
                                         </tr>
                                     </table>
                                 </div>
-                                <div class="card-footer">
-                                    <button class="btn btn-sm btn-outline-light btn-outline-light">Details</button>
+                                <div class="card-footer p-0 text-left">
+                                    <span class="bg-success p-1 text-center text-light" style="display:block; width:@item.PresentPercentage%">@item.PresentPercentage%</span>                                   
                                 </div>
                             </div>
+
+
                         }
+
+
                     </div>
                     <div id="results" class="tab-pane">
                         <div class="text-center">
@@ -590,11 +602,47 @@
 @section Scripts{
     <script>
         $(document).ready(function () {
-
             $('#bologna-list a').on('click', function (e) {
                 e.preventDefault()
                 $(this).tab('show')
             });
         });
+
+        let tabName = '@ViewBag.tabName';
+        if (tabName != '') {
+            let personal = document.getElementById('personal');
+            let academic = document.getElementById('academic');
+            let financials = document.getElementById('financials');
+            let attendance = document.getElementById('attendance');
+            let result = document.getElementById('results');
+            let documents = document.getElementById('documents');
+
+            personal.classList.remove('active');
+            academic.classList.remove('active');
+            financials.classList.remove('active');
+            attendance.classList.remove('active');
+            result.classList.remove('active');
+            documents.classList.remove('active');
+
+            // Get an element by its 'aria-controls' attribute
+            var personalTab = document.querySelector('[aria-controls="personal"]');
+            var academicTab = document.querySelector('[aria-controls="academic"]');
+            var financialsTab = document.querySelector('[aria-controls="financials"]');
+            var attendanceTab = document.querySelector('[aria-controls="attendance"]');
+            var resultsTab = document.querySelector('[aria-controls="results"]');
+            var documentsTab = document.querySelector('[aria-controls="documents"]');
+
+            personalTab.classList.remove('active');
+            academicTab.classList.remove('active');
+            financialsTab.classList.remove('active');
+            attendanceTab.classList.remove('active');
+            resultsTab.classList.remove('active');
+            documentsTab.classList.remove('active');
+
+            if (tabName == 'financials') {
+                financials.classList.add('active');
+                financialsTab.classList.add('active');
+            }
+        }
     </script>
 }

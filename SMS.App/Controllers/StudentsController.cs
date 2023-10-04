@@ -17,6 +17,7 @@ using SMS.Entities;
 using SMS.Entities.AdditionalModels;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -48,10 +49,11 @@ namespace SchoolManagementSystem.Controllers
         private readonly IAttendanceMachineManager _attendanceMachineManager;
         private readonly IInstituteManager _instituteManager;
         private readonly IStudentActivateHistManager _studentActivateHistManager;
+        private readonly IOffDayManager _offDayManager;
         #endregion
 
         #region Constructor
-        public StudentsController(IStudentManager studentManager, IAcademicClassManager academicClassManager, IWebHostEnvironment host, IMapper mapper, IAcademicSessionManager academicSessionManager, IStudentPaymentManager studentPaymentManager, IDistrictManager districtManager, IUpazilaManager upazilaManager, IAcademicSectionManager academicSectionManager, IBloodGroupManager bloodGroupManager, IDivisionManager divisionManager, INationalityManager nationalityManager, IGenderManager genderManager, IReligionManager religionManager, IStudentFeeHeadManager studentFeeHeadManager, IClassFeeListManager classFeeListManager, UserManager<ApplicationUser> userManager, IPhoneSMSManager phoneSMSManager, IAttendanceMachineManager attendanceMachineManager, IInstituteManager instituteManager, IStudentActivateHistManager studentActivateHistManager)
+        public StudentsController(IStudentManager studentManager, IAcademicClassManager academicClassManager, IWebHostEnvironment host, IMapper mapper, IAcademicSessionManager academicSessionManager, IStudentPaymentManager studentPaymentManager, IDistrictManager districtManager, IUpazilaManager upazilaManager, IAcademicSectionManager academicSectionManager, IBloodGroupManager bloodGroupManager, IDivisionManager divisionManager, INationalityManager nationalityManager, IGenderManager genderManager, IReligionManager religionManager, IStudentFeeHeadManager studentFeeHeadManager, IClassFeeListManager classFeeListManager, UserManager<ApplicationUser> userManager, IPhoneSMSManager phoneSMSManager, IAttendanceMachineManager attendanceMachineManager, IInstituteManager instituteManager, IStudentActivateHistManager studentActivateHistManager, IOffDayManager offDayManager)
         {
             _academicClassManager = academicClassManager;
             _host = host;
@@ -74,24 +76,36 @@ namespace SchoolManagementSystem.Controllers
             _attendanceMachineManager = attendanceMachineManager;
             _instituteManager = instituteManager;
             _studentActivateHistManager = studentActivateHistManager;
+            _offDayManager = offDayManager;
         }
         #endregion
 
         #region Index
         [Authorize(Roles = "SuperAdmin, Admin,Teacher")]
-        public async Task<IActionResult> Index(int? academicSessionid, int? academicClassId,int?academicSectionId, string aStatus, string sortOrder, string searchString, int? pageNumber, int? pageSize)
+        public async Task<IActionResult> Index(int? academicClassId, int? academicSectionId, string aStatus, string sortOrder, string searchString, int? pageNumber, int? pageSize, string aCategory)
         {
             ViewData["rollSortParam"] = String.IsNullOrEmpty(sortOrder) ? "roll_desc" : "";
             ViewData["academicClassSortParam"] = sortOrder == "academicClass" ? "class_desc" : "academicClass";
             ViewData["CurrentFilter"] = searchString;
             ViewData["academicClassId"] = academicClassId;
 
-            var students = await _studentManager.GetCurrentStudentListAsync(academicClassId,academicSectionId);
-            
+            var students = await _studentManager.GetCurrentStudentListAsync(academicClassId, academicSectionId);
+            if (!string.IsNullOrEmpty(aCategory))
+            {
+                if (aCategory == "residential")
+                {
+                    students = students.Where(s => s.IsResidential).ToList();
+                }
+                else if (aCategory == "nonResidential")
+                {
+                    students = students.Where(s => s.IsResidential == false).ToList();
+                }
+            }
+
             if (!String.IsNullOrEmpty(searchString))
             {
-                students = students.Where(s => s.StudentName.Contains(searchString) || 
-                s.ClassRoll.ToString().Contains(searchString) || 
+                students = students.Where(s => s.StudentName.ToLower().Contains(searchString.ToLower()) ||
+                s.ClassRoll.ToString().Contains(searchString) ||
                 s.PhoneNo.Contains(searchString)).ToList();
             }
 
@@ -101,7 +115,7 @@ namespace SchoolManagementSystem.Controllers
                 bool isActive = aStatus == "1" ? true : false;
                 students = students.Where(s => s.Status == isActive).ToList();
             }
-            int totalFound = ViewBag.totalFound = students.Count();            
+            int totalFound = ViewBag.totalFound = students.Count();
 
             List<IsActiveVM> isActiveVMs = new List<IsActiveVM>();
             IsActiveVM status1 = new IsActiveVM();
@@ -119,7 +133,7 @@ namespace SchoolManagementSystem.Controllers
             status3.sName = "All";
             isActiveVMs.Add(status3);
 
-            switch(sortOrder)
+            switch (sortOrder)
             {
                 case "roll_desc":
                     students = students.OrderByDescending(s => s.ClassRoll).ToList();
@@ -136,16 +150,23 @@ namespace SchoolManagementSystem.Controllers
             }
 
             var sectionList = await _academicSectionManager.GetAllAsync();
-            ViewBag.academicSessionId = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name",academicSessionid);
-            ViewBag.academicClassId = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name",academicClassId);
+            ViewBag.academicClassId = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", academicClassId);
 
-            ViewBag.academicSectionId = new SelectList(sectionList.Where(s => s.AcademicClassId==academicClassId), "Id", "Name", academicSectionId);
+            ViewBag.academicSectionId = new SelectList(sectionList.Where(s => s.AcademicClassId == academicClassId), "Id", "Name", academicSectionId);
             ViewBag.aStatus = new SelectList(isActiveVMs.ToList(), "Id", "sName", aStatus);
-            
-            int pSize = 30;
-            if (pageSize!=null)
+
+            var studentCategory = new List<SelectListItem>
             {
-                if (pageSize>0)
+                new SelectListItem { Text = "all", Value = "all" },
+                new SelectListItem { Text = "residential", Value = "residential" },
+                new SelectListItem { Text = "nonResidential", Value = "nonResidential" }
+            };
+            ViewBag.aCategory = new SelectList(studentCategory.ToList(), "Value", "Text", aCategory);
+
+            int pSize = 30;
+            if (pageSize != null)
+            {
+                if (pageSize > 0)
                 {
                     pSize = (int)pageSize;
                 }
@@ -155,16 +176,16 @@ namespace SchoolManagementSystem.Controllers
                 }
             }
 
-            ViewData["pageSize"] = pageSize > 0?pageSize:pSize ;
+            ViewData["pageSize"] = pageSize > 0 ? pageSize : pSize;
             return View(PaginatedList<SMS.Entities.AdditionalModels.StudentListVM>.Create(students, pageNumber ?? 1, pSize));
         }
         #endregion
 
         #region Details
         // GET: Students/Details/5
-        [Authorize,AllowAnonymous]
-        public async Task<IActionResult> Details(int? id)
-        {            
+        [Authorize, AllowAnonymous]
+        public async Task<IActionResult> Details(int? id, string tabName)
+        {
             if (id == null)
             {
                 return NotFound();
@@ -179,27 +200,82 @@ namespace SchoolManagementSystem.Controllers
                 }
             }
 
-            var student =await _studentManager.GetByIdAsync((int)id);
+            var student = await _studentManager.GetByIdAsync((int)id);
             if (student == null)
             {
                 return NotFound();
             }
+
+
+            #region Payment===========================================================================================================================
             var stuPayments = await _studentPaymentManager.GetAllByStudentIdAsync((int)id);
 
             List<StudentPaymentScheduleVM> paymentSchedule = await _studentPaymentManager.GetStudentPaymentSchedule(student.Id);
+            if (student.IsResidential)
+            {
+                paymentSchedule = paymentSchedule.Where(s => s.IsResidential == true).ToList();
+            }
+            else
+            {
+                paymentSchedule = paymentSchedule.Where(s => s.IsResidential == false).ToList();
+            }
             List<StudentPaymentSchedulePaidVM> studentPaymentSchedulePaidVMs = await _studentPaymentManager.GetStudentPaymentSchedulePaid(student.Id);
             StudentDetailsVM sd = new();
             sd.StudentPayments = stuPayments;
             sd.Student = student;
-            
+
             sd.StudentPaymentSchedules = paymentSchedule;
             sd.StudentPaymentSchedulePaidVMs = studentPaymentSchedulePaidVMs;
 
             sd.TotalDue = await GetTotalDue(student.Id);
             sd.CurrentDue = await GetCurrntDue(student.Id);
+            #endregion Payment=========================================================================================================================
+
+
+            #region Attendance ========================================================================================================================
+            try
+            {
+                int startingMonth = Convert.ToInt32(student.AdmissionDate.Date.ToString("MM"));
+                if (startingMonth < 12)
+                {
+                    startingMonth = 1;
+                }
+                int presentMonth = Convert.ToInt32(DateTime.Now.Date.ToString("MM"));
+                List<AttendanceIndivisualVM> attendanceIndivisualVMs = new List<AttendanceIndivisualVM>();
+                for (int i = startingMonth; i <= presentMonth; i++)
+                {
+                    AttendanceIndivisualVM attendanceIndivisualVM = new AttendanceIndivisualVM();
+                    var monthlyAttendance = await _attendanceMachineManager.GetAttendanceByMonthSingleStudent(student.Id, i);
+                    attendanceIndivisualVM.AttendanceCount = monthlyAttendance.Count;
+                    var holidays = await _offDayManager.GetMonthlyHolidaysAsync(i.ToString().PadLeft(2, '0') + DateTime.Now.Year.ToString());
+                    attendanceIndivisualVM.TotalDays = DateTime.DaysInMonth(DateTime.Now.Year, i) - holidays.Count;
+                    if (monthlyAttendance.Count > 0)
+                    {
+                        attendanceIndivisualVM.PresentPercentage = (monthlyAttendance.Count * 100) / (attendanceIndivisualVM.TotalDays);
+                    }
+                    else
+                    {
+                        attendanceIndivisualVM.PresentPercentage = 0;
+                    }
+                    attendanceIndivisualVM.MonthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i);
+                    attendanceIndivisualVMs.Add(attendanceIndivisualVM);
+                }
+                sd.AttendanceDetails = attendanceIndivisualVMs;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            #endregion Attendance =====================================================================================================================
+
             ViewBag.districts = await _districtManager.GetAllAsync();
             ViewBag.Upazila = await _upazilaManager.GetAllAsync();
-
+            ViewBag.tabName = "";
+            if (!string.IsNullOrEmpty(tabName))
+            {
+                ViewBag.tabName = tabName;
+            }
             return View(sd);
         }
         #endregion
@@ -223,7 +299,7 @@ namespace SchoolManagementSystem.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "SuperAdmin, Admin")]
-        public async Task<IActionResult> Create([Bind("Id,Name,NameBangla,ClassRoll,FatherName,MotherName,AdmissionDate,Email,PhoneNo,Photo,DOB,BirthCertificateNo,BirthCertificateImage,ReligionId,GenderId,BloodGroupId,NationalityId,PresentAddressArea,PresentAddressPO,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddressArea,PermanentAddressPO,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,AcademicSessionId,AcademicClassId,AcademicSectionId,AddressInfo,PreviousSchool,Status,CreatedBy,CreatedAt,EditedBy,EditedAt,GuardianPhone,MACAddress")] StudentCreateVM newStudent, IFormFile sPhoto, IFormFile DOBFile)
+        public async Task<IActionResult> Create([Bind("Id,Name,NameBangla,ClassRoll,FatherName,MotherName,AdmissionDate,Email,PhoneNo,Photo,DOB,BirthCertificateNo,BirthCertificateImage,ReligionId,GenderId,BloodGroupId,NationalityId,PresentAddressArea,PresentAddressPO,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddressArea,PermanentAddressPO,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,AcademicSessionId,AcademicClassId,AcademicSectionId,AddressInfo,PreviousSchool,Status,CreatedBy,CreatedAt,EditedBy,EditedAt,GuardianPhone,MACAddress,IsResidential")] StudentCreateVM newStudent, IFormFile sPhoto, IFormFile DOBFile)
         {
             newStudent.ClassRoll = await CreateRoll(newStudent.AcademicSessionId, newStudent.AcademicClassId, newStudent.ClassRoll);
             var rollIsExist = await _studentManager.GetStudentByClassRollAsync(newStudent.ClassRoll);
@@ -261,7 +337,7 @@ namespace SchoolManagementSystem.Controllers
                     }
                     newStudent.CreatedBy = HttpContext.Session.GetString("UserId");
                     newStudent.CreatedAt = DateTime.Now;
-                    
+
 
                     var student = _mapper.Map<Student>(newStudent);
                     bool saveStudent = await _studentManager.AddAsync(student);
@@ -287,7 +363,7 @@ namespace SchoolManagementSystem.Controllers
                             PhoneNumber = student.PhoneNo,
                             NormalizedUserName = student.Name,
                             UserType = 's',
-                            ReferenceId = student.Id                            
+                            ReferenceId = student.Id
                         };
 
                         const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -305,10 +381,10 @@ namespace SchoolManagementSystem.Controllers
                                 bool smsSend = await MobileSMS.SendSMS(student.PhoneNo, text);
                                 if (smsSend == true)
                                 {
-                                    PhoneSMS phoneSMS = new() { 
-                                        Text = text, 
-                                        CreatedAt = DateTime.Now, 
-                                        CreatedBy = student.Email, 
+                                    PhoneSMS phoneSMS = new() {
+                                        Text = text,
+                                        CreatedAt = DateTime.Now,
+                                        CreatedBy = student.Email,
                                         MobileNumber = student.PhoneNo,
                                         MACAddress = MACService.GetMAC(),
                                         SMSType = "NewUser"
@@ -330,12 +406,12 @@ namespace SchoolManagementSystem.Controllers
             {
                 ViewBag.msg = "Roll number is already exist";
             }
-            newStudent.AcademicSessionList = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name",newStudent.AcademicSessionId).ToList();
-            newStudent.AcademicClassList = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name",newStudent.AcademicClassId).ToList();
+            newStudent.AcademicSessionList = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name", newStudent.AcademicSessionId).ToList();
+            newStudent.AcademicClassList = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", newStudent.AcademicClassId).ToList();
             newStudent.BloodGroupList = new SelectList(await _bloodGroupManager.GetAllAsync(), "Id", "Name", newStudent.BloodGroupId).ToList();
-            newStudent.GenderList = new SelectList(await _genderManager.GetAllAsync(), "Id", "Name",newStudent.GenderId).ToList();
-            newStudent.NationalityList = new SelectList(await _nationalityManager.GetAllAsync(), "Id", "Name",newStudent.NationalityId).ToList();
-            newStudent.ReligionList = new SelectList(await _religionManager.GetAllAsync(), "Id", "Name",newStudent.ReligionId).ToList();
+            newStudent.GenderList = new SelectList(await _genderManager.GetAllAsync(), "Id", "Name", newStudent.GenderId).ToList();
+            newStudent.NationalityList = new SelectList(await _nationalityManager.GetAllAsync(), "Id", "Name", newStudent.NationalityId).ToList();
+            newStudent.ReligionList = new SelectList(await _religionManager.GetAllAsync(), "Id", "Name", newStudent.ReligionId).ToList();
             newStudent.DivisionList = new SelectList(await _divisionManager.GetAllAsync(), "Id", "Name").ToList();
 
 
@@ -364,7 +440,7 @@ namespace SchoolManagementSystem.Controllers
             newStudent.AcademicSessionList = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name", newStudent.AcademicSessionId).ToList();
             newStudent.AcademicClassList = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", newStudent.AcademicClassId).ToList();
 
-            newStudent.AcademicSectionList = new SelectList(academicSections.Where(m => m.AcademicClassId==student.AcademicClassId), "Id", "Name", newStudent.AcademicSectionId).ToList();
+            newStudent.AcademicSectionList = new SelectList(academicSections.Where(m => m.AcademicClassId == student.AcademicClassId), "Id", "Name", newStudent.AcademicSectionId).ToList();
             newStudent.BloodGroupList = new SelectList(await _bloodGroupManager.GetAllAsync(), "Id", "Name", newStudent.BloodGroupId).ToList();
             newStudent.GenderList = new SelectList(await _genderManager.GetAllAsync(), "Id", "Name", newStudent.GenderId).ToList();
             newStudent.NationalityList = new SelectList(await _nationalityManager.GetAllAsync(), "Id", "Name", newStudent.NationalityId).ToList();
@@ -373,23 +449,23 @@ namespace SchoolManagementSystem.Controllers
             newStudent.PermanentDivisionList = new SelectList(await _divisionManager.GetAllAsync(), "Id", "Name", newStudent.PermanentDivisionId).ToList();
             ViewData["DistrictList"] = new SelectList(await _districtManager.GetAllAsync(), "Id", "Name", newStudent.PresentDistrictId);
             ViewData["UpazilaList"] = new SelectList(await _upazilaManager.GetAllAsync(), "Id", "Name", newStudent.PresentDistrictId);
-            
+
             return View(newStudent);
         }
 
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "SuperAdmin, Admin")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,NameBangla,ClassRoll,FatherName,MotherName,AdmissionDate,Email,PhoneNo,Photo,DOB,BirthCertificateNo,BirthCertificateImage,ReligionId,GenderId,BloodGroupId,NationalityId,PresentAddressArea,PresentAddressPO,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddressArea,PermanentAddressPO,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,AcademicSessionId,AcademicClassId,AcademicSectionId,AddressInfo,PreviousSchool,CreatedBy,CreatedAt,EditedBy,EditedAt,GuardianPhone,Status,MACAddress")] Student student, IFormFile sPhoto, IFormFile DOBFile)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,NameBangla,ClassRoll,FatherName,MotherName,AdmissionDate,Email,PhoneNo,Photo,DOB,BirthCertificateNo,BirthCertificateImage,ReligionId,GenderId,BloodGroupId,NationalityId,PresentAddressArea,PresentAddressPO,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddressArea,PermanentAddressPO,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,AcademicSessionId,AcademicClassId,AcademicSectionId,AddressInfo,PreviousSchool,CreatedBy,CreatedAt,EditedBy,EditedAt,GuardianPhone,Status,MACAddress,IsResidential")] Student student, IFormFile sPhoto, IFormFile DOBFile)
         {
             if (id != student.Id)
             {
                 return NotFound();
             }
             var rollIsExist = await _studentManager.GetStudentByClassRollAsync(id, student.ClassRoll);
-            if (rollIsExist ==null)
-             {
+            if (rollIsExist == null)
+            {
 
                 if (ModelState.IsValid)
                 {
@@ -430,7 +506,7 @@ namespace SchoolManagementSystem.Controllers
                         student.MACAddress = MACService.GetMAC();
 
                         isUpdated = await _studentManager.UpdateAsync(student);
-                        if (isUpdated ==true)
+                        if (isUpdated == true)
                         {
                             TempData["edit"] = "Updated Successfully";
                             return RedirectToAction(nameof(Index));
@@ -496,7 +572,7 @@ namespace SchoolManagementSystem.Controllers
         {
             var student = await _studentManager.GetByIdAsync(id);
             bool isSaved = await _studentManager.RemoveAsync(student);
-            if (isSaved==true)
+            if (isSaved == true)
             {
                 TempData["delete"] = "Deleted Successfully.";
                 return RedirectToAction(nameof(Index));
@@ -505,7 +581,7 @@ namespace SchoolManagementSystem.Controllers
             {
                 return RedirectToAction("Delete", new { id });
             }
-            
+
         }
         #endregion
 
@@ -534,18 +610,18 @@ namespace SchoolManagementSystem.Controllers
                 else
                 {
                     var instituteInfo = await _instituteManager.GetFirstOrDefaultAsync();
-                    
+
                     DateTime schoolLateTime = Convert.ToDateTime(instituteInfo.LateTime);
                     if (attendance.PunchDatetime.Hour > schoolLateTime.Hour)
                     {
-                        ViewBag.lateAttendance = "You are late today ( "+attendance.PunchDatetime.ToString("hh:mm tt")+")";
+                        ViewBag.lateAttendance = "You are late today ( " + attendance.PunchDatetime.ToString("hh:mm tt") + ")";
                     }
                     else
                     {
-                        ViewBag.attendance = "You are attended ("+ attendance.PunchDatetime.ToString("hh:mm tt") + ") today";
+                        ViewBag.attendance = "You are attended (" + attendance.PunchDatetime.ToString("hh:mm tt") + ") today";
                     }
                 }
-                
+
             }
             else
             {
@@ -558,7 +634,7 @@ namespace SchoolManagementSystem.Controllers
         private bool StudentExists(int id)
         {
             var student = _studentManager.GetByIdAsync(id);
-            if (student!=null)
+            if (student != null)
             {
                 return true;
             }
@@ -590,14 +666,14 @@ namespace SchoolManagementSystem.Controllers
             string aClass = admissionClass.ClassSerial.ToString("d2");
             //string stuCount = (totalStudent.Count+1).ToString("d3");
             string cRoll = providedRoll.ToString("d3");
-            int roll = Convert.ToInt32(year+aClass+cRoll);
+            int roll = Convert.ToInt32(year + aClass + cRoll);
             return roll;
         }
 
         public async Task<IActionResult> StudentReport()
         {
             var students = await _studentManager.GetAllAsync();
-            
+
             return View();
         }
 
@@ -615,7 +691,7 @@ namespace SchoolManagementSystem.Controllers
                 {
                     if (existingStudent.AdmissionDate.Date <= Convert.ToDateTime(operationDate).Date)
                     {
-                        
+
                         existingStudent.Status = studentStatus;
                         existingStudent.EditedBy = HttpContext.Session.GetString("UserId");
                         existingStudent.EditedAt = DateTime.Now;
@@ -651,8 +727,8 @@ namespace SchoolManagementSystem.Controllers
             {
                 TempData["edit"] = "Updated Successfully";
             }
-            
-            return RedirectToAction("Edit", new {id=studentId });        
+
+            return RedirectToAction("Edit", new { id = studentId });
         }
 
         public int StudentCount()
@@ -667,16 +743,16 @@ namespace SchoolManagementSystem.Controllers
             int admissionYear = st.AdmissionDate.Year;
             int currentYear = DateTime.Now.Year;
 
-            int admissionMonth =admissionYear<currentYear?1:st.AdmissionDate.Month;
-            double monthlyFee =await GetFeeAsync(st.AcademicClassId,1, st.AcademicSessionId); //1=monthlyfee, 2=admissionFee, 3=ExamFee
+            int admissionMonth = admissionYear < currentYear ? 1 : st.AdmissionDate.Month;
+            double monthlyFee = await GetFeeAsync(st.AcademicClassId, 1, st.AcademicSessionId); //1=monthlyfee, 2=admissionFee, 3=ExamFee
             double admissionFee = await GetFeeAsync(st.AcademicClassId, 2, st.AcademicSessionId); //1=monthlyfee, 2=admissionFee, 3=ExamFee
-            double totalAmount = ((12 - (admissionMonth-1)) * monthlyFee) + admissionFee;
-            double totalPaid =await GetTotalPaid(st.Id);
+            double totalAmount = ((12 - (admissionMonth - 1)) * monthlyFee) + admissionFee;
+            double totalPaid = await GetTotalPaid(st.Id);
             double totalDue = totalAmount - totalPaid;
             totalDue = totalDue >= 0 ? totalDue : 0;
             return totalDue;
         }
-        
+
         private async Task<double> GetCurrntDue(int studId)
         {
             double currentDue = 0.00;
@@ -692,14 +768,14 @@ namespace SchoolManagementSystem.Controllers
                 feeLists = feeLists
                     .Where(s => s.AcademicSessionId == st.AcademicSessionId).ToList();
                 var res = from cFee in feeLists
-                            select (cFee.Amount*cFee.StudentFeeHead.YearlyFrequency);
-                 var sdfsdf = feeLists.Select(s => s.Amount*s.StudentFeeHead.YearlyFrequency).Sum();
+                          select (cFee.Amount * cFee.StudentFeeHead.YearlyFrequency);
+                var sdfsdf = feeLists.Select(s => s.Amount * s.StudentFeeHead.YearlyFrequency).Sum();
 
-                double monthlyFee = await GetFeeAsync(st.AcademicClassId, 1,st.AcademicSessionId); //1=monthlyfee, 2=admissionFee, 3=ExamFee, 4=SessionFee
+                double monthlyFee = await GetFeeAsync(st.AcademicClassId, 1, st.AcademicSessionId); //1=monthlyfee, 2=admissionFee, 3=ExamFee, 4=SessionFee
                 double admissionFee = await GetFeeAsync(st.AcademicClassId, 2, st.AcademicSessionId); //1=monthlyfee, 2=admissionFee, 3=ExamFee, 4=SessionFee
                 double examFee = await GetFeeAsync(st.AcademicClassId, 3, st.AcademicSessionId); //1=monthlyfee, 2=admissionFee, 3=ExamFee, 4=SessionFee
                 double sessionFee = await GetFeeAsync(st.AcademicClassId, 4, st.AcademicSessionId); //1=monthlyfee, 2=admissionFee, 3=ExamFee, 4=SessionFee
-                if (st.AdmissionDate.ToString("dd-MM-yyyy")== "01-01-"+admissionYear)
+                if (st.AdmissionDate.ToString("dd-MM-yyyy") == "01-01-" + admissionYear)
                 {
                     totalAmount = ((DateTime.Now.Month - (admissionMonth - 1)) * monthlyFee) + sessionFee;
                     if (Convert.ToInt32(DateTime.Today.ToString("MM")) >= 6 && Convert.ToInt32(DateTime.Today.ToString("MM")) < 11)
@@ -735,7 +811,7 @@ namespace SchoolManagementSystem.Controllers
         }
         private async Task<double> GetFeeAsync(int aClassId, int feeHeadId, int sessionId)
         {
-            ClassFeeList classFeeList =await _classFeeListManager.GetByClassIdAndFeeHeadIdAsync(aClassId, feeHeadId,sessionId);
+            ClassFeeList classFeeList = await _classFeeListManager.GetByClassIdAndFeeHeadIdAsync(aClassId, feeHeadId, sessionId);
             if (classFeeList != null)
             {
                 return classFeeList.Amount;
@@ -755,7 +831,7 @@ namespace SchoolManagementSystem.Controllers
         {
             try
             {
-                if (academicSessionId==null)
+                if (academicSessionId == null)
                 {
                     AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSession();
                     academicSessionId = academicSession.Id;
@@ -769,6 +845,19 @@ namespace SchoolManagementSystem.Controllers
                 throw;
             }
         }
-
+        public async Task<JsonResult> GetStudentsBySessionIdClassIdSectionId(int? academicSessionId, int academicClassId, int? academicSectionId)
+        {
+            if (academicSessionId == null || academicSessionId <= 0)
+            {
+                AcademicSession currentSession = await _academicSessionManager.GetCurrentAcademicSession();
+                academicSessionId = currentSession.Id;
+            }
+            if (academicSectionId == null || academicSectionId<=0)
+            {
+                academicSectionId = 0;
+            }
+            var studets  = await _studentManager.GetStudentsByClassSessionSectionAsync((int)academicSessionId,academicClassId,(int)academicSectionId);
+            return Json(studets.OrderBy(s => s.ClassRoll));
+        }
     }
 }

@@ -64,6 +64,9 @@
                     <input asp-for="AdmissionDate" class="form-control" />
                     <span asp-validation-for="AdmissionDate" class="text-danger"></span>
                 </div>
+                <div class="checkbox offset-md-2 col-md-4 text-md-left">
+                    <label class="col-form-label"><input asp-for="IsResidential"> Residential</label>
+                </div>
             </div>
 
 
@@ -311,7 +314,8 @@
             </div>
             <div class="form-group form-check row">
                 <label class="form-check-label control-label col-form-label col-md-4 offset-2">
-                    <span class="alert alert-info">@Model.Name is @studentStatus</span> <i class="btn btn-info" data-toggle="modal" data-target="#exampleModalCenter">Change</i>;
+                    <span class="alert alert-info">@Model.Name is @studentStatus</span> 
+                    <i class="btn btn-info" data-toggle="modal" data-target="#exampleModalCenter">Change</i>;
                 </label>
             </div>
             <div class="form-group text-right">

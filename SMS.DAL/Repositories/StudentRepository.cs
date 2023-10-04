@@ -35,7 +35,7 @@ namespace SMS.DAL.Repositories
         }
         public override async Task<Student> GetByIdAsync(int id)
         {
-            return await _context.Student.Include(s => s.AcademicClass)
+            Student result = await _context.Student.Include(s => s.AcademicClass)
                 .Include(s => s.AcademicSection)
                 .Include(s => s.AcademicSession)
                 .Include(s => s.BloodGroup)
@@ -49,6 +49,8 @@ namespace SMS.DAL.Repositories
                 .Include(s => s.PermanentDistrict)
                 .Include(s => s.PermanentDivision)
                 .FirstOrDefaultAsync(s => s.Id == id);
+
+            return result;
         }
 
         public async Task<List<StudentListVM>> GetCurrentStudentListAsync(int? AcademicClassId, int? AcademicSectionId)
@@ -89,6 +91,8 @@ namespace SMS.DAL.Repositories
         public async Task<List<Student>> GetStudentsByClassIdAndSessionIdAsync(int sessionId, int classId)
         {
             List<Student> students = await _context.Student
+                .Include(s => s.AcademicSection)
+                .Include(s => s.Gender)
                 .Where(s => s.AcademicSessionId == sessionId 
                 && s.AcademicClassId == classId)
                 .ToListAsync();
@@ -98,17 +102,25 @@ namespace SMS.DAL.Repositories
         public async Task<List<Student>> GetStudentsByClassSessionSectionAsync(int sessionId, int classId, int sectionId)
         {
             List<Student> students = new List<Student>();
-            if (sectionId == 0)
+            students = await _context
+                .Student
+                .Include(s => s.AcademicSection)
+                .Include(s => s.AcademicSession)
+                .Include(s => s.AcademicClass)
+                .ToListAsync();
+
+            if (classId!=0)
             {
-                students = await _context.Student.Where(s => s.AcademicSessionId == sessionId && s.AcademicClassId == classId).ToListAsync();
+                students = students.Where(s => s.AcademicClassId == classId).ToList();
             }
-            else
+
+            if (sectionId != 0)
             {
-                students = await _context.Student
-                    .Where(s => s.AcademicSessionId == sessionId 
-                    && s.AcademicClassId == classId 
-                    && s.AcademicSectionId == sectionId)
-                    .ToListAsync();
+                students = (List<Student>)students.Where(s => s.AcademicSectionId == sectionId).ToList();
+            }
+            if (sessionId != 0)
+            {
+                students = (List<Student>)students.Where(s => s.AcademicSessionId == sessionId).ToList();
             }
             return students;
         }

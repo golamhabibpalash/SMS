@@ -15,5 +15,14 @@ namespace SMS.App.ViewModels.Students
         public double CurrentDue { get; set; }
         public List<StudentPaymentScheduleVM> StudentPaymentSchedules { get; set; } = new List<StudentPaymentScheduleVM>();
         public List<StudentPaymentSchedulePaidVM> StudentPaymentSchedulePaidVMs { get; set; } = new List<StudentPaymentSchedulePaidVM>();
+        public List<AttendanceIndivisualVM> AttendanceDetails { get; set; }
+    }
+
+    public class AttendanceIndivisualVM
+    {
+        public string MonthName { get; set; }
+        public int AttendanceCount { get; set; }
+        public int TotalDays { get; set; }
+        public int PresentPercentage { get; set; }
     }
 }

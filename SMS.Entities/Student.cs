@@ -103,6 +103,7 @@ namespace SMS.Entities
 
         [Display(Name = "Previous School")]
         public string PreviousSchool { get; set; }
+        public bool IsResidential { get; set; } = false;
 
         public ICollection<AttachDoc> Documents { get; set; }
 

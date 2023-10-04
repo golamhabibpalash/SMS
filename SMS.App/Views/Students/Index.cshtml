@@ -2,6 +2,7 @@
 @using System.IO;
 @using SMS.App.Utilities.Pagination;
 @using Microsoft.AspNetCore.Hosting;
+@using System.Globalization;
 
 @inject UserManager<ApplicationUser> _userManager;
 @inject IWebHostEnvironment env;
@@ -11,82 +12,76 @@
 @{
     ViewData["Title"] = "Students";
     GlobalUI.PageTitle = ViewBag.Title;
-    string phoneCode = "+880";
+    //string phoneCode = "+880";
     string totalFound = ViewBag.totalFound == null ? "Nothing Found" : ViewBag.totalFound + " Found";
+    TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+    string name = string.Empty;
+    int stSl = 0;
+
+
 }
 <div class="col-md-12">
     <form asp-action="Index" asp-controller="Students">
         <div class="alert mb-0 alert-info">
             <div class="form-group row mb-0">
-                <label for="aAcademicSessionId" class="col-form-label text-md-right">Academic Session</label>
-                <div class="col-md-2">
-                    <select asp-items="ViewBag.academicSessionId" class="form-control" id="aAcademicSessionId" name="academicSessionid">
-                        <option selected disabled>Select Session</option>
-                    </select>
+                <div class="text-md-left col-md-10">
+                    <div class="col-md-2">
+                        <select class="form-control" id="aAcademicClassId" name="academicClassId" asp-items="ViewBag.academicClassId">
+                            <option selected disabled>Select Class</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-control" id="aAcademicSectionId" name="academicSectionId" asp-items="ViewBag.academicSectionId">
+                            <option selected disabled>Select Section</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-control" id="aStatus" name="aStatus" asp-items="ViewBag.aStatus">
+                            <option selected disabled>Select Status</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-control" id="aCategory" name="aCategory" asp-items="ViewBag.aCategory">
+                            <option selected disabled>Select Category</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <input class="form-control" type="text" name="searchString" value="@ViewData["CurrentFilter"]" placeholder="Find by Roll/Name/Phone" />
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-control col-md-4" name="pageSize">
+                            <option disabled>Page Size</option>
+                            <option value="@ViewData["pageSize"]">@ViewData["pageSize"]</option>
+                            <option value="30">30</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                            <option value="0">All</option>
+                        </select>
+                        <label class="col-form-label text-light pl-md-1">@totalFound</label>
+                    </div>
+
                 </div>
-                <label for="aAcademicClassId" class="col-form-label text-md-right">Academic Class</label>
-                <div class="col-md-2">
-                    <select class="form-control" id="aAcademicClassId" name="academicClassId" asp-items="ViewBag.academicClassId">
-                        <option selected disabled>Select Class</option>
-                    </select>
+                <div class="col-md-2 text-md-right">
+                    <div class="row">
+                        <button type="submit" class="btn btn-sm form-control btn-light col-md-6"><i class="fa fa-search"></i> Find</button>
+                        <a class="btn btn-sm btn-warning form-control text-success col-md-5" asp-action="Index">Reset List</a>
+                    </div>
                 </div>
-                <label for="aAcademicSectionId" class="col-form-label text-md-right">Academic Section</label>
-                <div class="col-md-2">
-                    <select class="form-control" id="aAcademicSectionId" name="academicSectionId" asp-items="ViewBag.academicSectionId">
-                        <option selected disabled>Select Section</option>
-                    </select>
-                </div>
-                <label for="aStatus" class="col-form-label text-md-right">Status</label>
-                <div class="col-md-2">
-                    <select class="form-control" id="aStatus" name="aStatus" asp-items="ViewBag.aStatus">
-                        <option selected disabled>Select Status</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-search"></i> Find</button>
-                <label class="col-form-label text-light">@totalFound</label>
             </div>
 
         </div>
+
+        <input type="hidden" name="sortOrder" value="@ViewData["rollSortParam"]" />
+        <input type="hidden" name="searchString" value="@ViewData["CurrentFilter"]" />
     </form>
 </div>
 <div class="row p-1">
     <div class="col-md-12">
-        <div class="row">
-            <div class="col-md-6">
-                <form asp-action="Index" name="pageSize">
-                    <input type="hidden" name="sortOrder" value="@ViewData["rollSortParam"]" />
-                    <input type="hidden" name="searchString" value="@ViewData["CurrentFilter"]" />
-                    <div class="form-group row">
-                        <label class="col-md-2 col-form-label text-left text-md-right">Page Size</label>
-                        <div class="col-md-2">
-                            <select class="form-control" name="pageSize">
-                                <option value="@ViewData["pageSize"]">@ViewData["pageSize"]</option>
-                                <option value="30">30</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
-                                <option value="0">All</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2"><button type="submit" class="btn-sm btn-info">Set</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="col-md-6 text-right">
-                <form asp-action="Index" method="get">
-                    <div class="form-actions no-color">
-                        <p>
-                            Find by Roll/Name/Phone: <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" />
-                            <input type="submit" value="Search" class="btn-sm btn-outline-info" /> |
-                            <a asp-action="Index">Back to Full List</a>
-                        </p>
-                    </div>
-                </form>
-            </div>
-        </div>
+
         <table class="table table-hover table-bordered table-responsive-sm table-striped" id="">
             <thead class="bg-blue text-light">
                 <tr>
+                    <th>#</th>
                     <th>
                         <a class="text-light" asp-action="Index" asp-route-pageSize="@ViewData["pageSize"]" asp-route-sortOrder="@ViewData["rollSortParam"]" asp-route-currentFilter="@ViewData["CurrentFilter"]"> Class Roll <i class="fa fa-sort"></i></a>
                     </th>
@@ -106,6 +101,7 @@
                 @foreach (var item in Model)
                 {
                     <tr>
+                        <td>@(++stSl)</td>
                         <td>
                             @Html.DisplayFor(modelItem => item.ClassRoll)
                         </td>
@@ -134,8 +130,30 @@
                         </td>
 
                         <td>
+                            @{
+                                name = textInfo.ToTitleCase(item.StudentName);
+                            }
                             <a asp-action="Details" asp-route-id="@item.Id" asp-controller="Students">
-                                @item.StudentName.ToUpper()
+                                @if (item.Status)
+                                {
+                                    <span>
+                                        @name
+                                        @if (item.IsResidential)
+                                        {
+                                            <span class="badge badge-info"><i class="fas fa-home"></i></span> 
+                                        }
+                                    </span>
+                                }
+                                else
+                                {
+                            <span class="text-danger">
+                                @name
+                                @if (item.IsResidential)
+                                {
+                                    <span class="badge badge-info"><i class="fas fa-home"></i></span>
+                                }
+                            </span>
+                                }
                             </a>
                         </td>
                         <td> @item.NameBangla</td>
@@ -192,18 +210,20 @@
 </div>
 
 @section Scripts{
-    <script src="~/js/DataTable/dataTable.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    @*<script src="~/js/DataTable/dataTable.js"></script>
 
     <script src="~/js/DataTable/dataTables.buttons.min.js"></script>
     <script src="~/js/DataTable/jszip.min.js"></script>
     <script src="~/js/DataTable/pdfmake.min.js"></script>
     <script src="~/js/DataTable/vfs_fonts.js"></script>
-    <script src="~/js/DataTable/buttons.html5.min.js"></script>
+    <script src="~/js/DataTable/buttons.html5.min.js"></script>*@
 
     <script>
-        $("#myTable_info").detach().insertAfter('#myTable_length');
 
         $(document).ready(function () {
+            $("#myTable_info").detach().insertAfter('#myTable_length');
 
             //$('#myTable').DataTable({
             //    dom: 'Bfrtip',
@@ -213,82 +233,85 @@
             //});
 
 
-        $(function () {
-            let saved = '@TempData["saved"]';
-            let deleted = '@TempData["deleted"]';
-            let edited = '@TempData["edited"]';
-            let failed = '@TempData["failed"]'
-            if (saved != "") {
-                alertify.success("Saved Successfully");
-                }
-            if (deleted != "") {
-                alertify.error("Deleted Successfully");
-                }
-            if (edited != "") {
-                alertify.message('Updated Successfully');
-                }
-            if (failed != "") {
-                alertify.error(failed);
-                }
+            $(function () {
+                let saved = '@TempData["saved"]';
+                let deleted = '@TempData["deleted"]';
+                let edited = '@TempData["edited"]';
+                let failed = '@TempData["failed"]'
+                if (saved != "") {
+                    alertify.success("Saved Successfully");
+                    }
+                if (deleted != "") {
+                    alertify.error("Deleted Successfully");
+                    }
+                if (edited != "") {
+                    alertify.message('Updated Successfully');
+                    }
+                if (failed != "") {
+                    alertify.error(failed);
+                    }
             });
-        });
-        
-        
-        $('#aAcademicClassId').change(function () {
-            let id = $('#aAcademicClassId option:selected').val();
-            let sessionId = $('#aAcademicSessionId option:selected').val();
 
-            $.ajax({
-                url: "/api/academicsections/getbyclasswithsessionId?classId=" + id + "&sessionId=" + sessionId,
-                dataType: "JSON",
-                type: "POST",
-                cache: false,
-                success: function (data) {
-                    $('#aAcademicSectionId').empty();
 
-                    if (data != null || data != '') {
-                        var o = '<option disabled selected>Select Section Name</option>';
-                        var o2 = '<option value="0">No Section</option>';
-                        $('#aAcademicSectionId').append(o);
-                        $('#aAcademicSectionId').append(o2);
+            $('#aAcademicClassId').change(function () {
+                let id = $('#aAcademicClassId option:selected').val();
+                let sessionId = $('#aAcademicSessionId option:selected').val();
+
+                $.ajax({
+                    url: "/api/academicsections/getbyclasswithsessionId?classId=" + id + "&sessionId=" + sessionId,
+                    dataType: "JSON",
+                    type: "POST",
+                    cache: false,
+                    success: function (data) {
+                        $('#aAcademicSectionId').empty();
+
+                        if (data != null || data != '') {
+                            var o = '<option disabled selected>Select Section Name</option>';
+                            var o2 = '<option value="0">No Section</option>';
+                            $('#aAcademicSectionId').append(o);
+                            $('#aAcademicSectionId').append(o2);
+                            $.each(data, function (i, obj) {
+                                console.log(obj.name);
+                                var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
+                                $('#aAcademicSectionId').append(op);
+                            });
+                        }
+                        else {
+                            var o = '<option disabled selected>Section Not Found</option>';
+                            $('#aAcademicSectionId').append(o);
+                        }
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                });
+            });
+            $('#aAcademicSessionId').change(function () {
+                $('#aAcademicSectionId').empty();
+                $.ajax({
+                    url: "/academicClasses/getAll",
+                    dataType: "JSON",
+                    type: "POST",
+                    cache: false,
+                    success: function (data) {
+                        $('#aAcademicClassId').empty();
+                        var o = '<option disabled selected>Select Class Name</option>';
+                        $('#aAcademicClassId').append(o);
                         $.each(data, function (i, obj) {
                             console.log(obj.name);
                             var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
-                            $('#aAcademicSectionId').append(op);
+                            $('#aAcademicClassId').append(op);
                         });
+                    },
+                    error: function (err) {
+                        console.log(err);
                     }
-                    else {
-                        var o = '<option disabled selected>Section Not Found</option>';
-                        $('#aAcademicSectionId').append(o);
-                    }
-                },
-                error: function (err) {
-                    console.log(err);
-                }
+                });
             });
+
         });
-        $('#aAcademicSessionId').change(function () {
-            $('#aAcademicSectionId').empty();
-            $.ajax({
-                url: "/academicClasses/getAll",
-                dataType: "JSON",
-                type: "POST",
-                cache: false,
-                success: function (data) {
-                    $('#aAcademicClassId').empty();
-                    var o = '<option disabled selected>Select Class Name</option>';
-                    $('#aAcademicClassId').append(o);
-                    $.each(data, function (i, obj) {
-                        console.log(obj.name);
-                        var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
-                        $('#aAcademicClassId').append(op);
-                    });
-                },
-                error: function (err) {
-                    console.log(err);
-                }
-            });
-        });
+
+
     </script>
 
 }

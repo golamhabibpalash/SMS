@@ -1,9 +1,12 @@
 ﻿@model SMS.App.ViewModels.SetupVM.AttendanceSetupVM
 
+@inject UserManager<ApplicationUser> _userManager;
 
 @{
     ViewData["Title"] = "SMS Setup";
     GlobalUI.PageTitle = ViewBag.Title;
+
+    string lastEditedUser = string.Empty;
 }
 @section Styles{
     <link href="~/css/switch.css" rel="stylesheet" />
@@ -68,7 +71,6 @@
                             </td>
                         </tr>
 
-
                         <tr>
                             <td rowspan="3" class="align-middle h5 font-weight-bold">
                                 Checkout SMS<br />
@@ -110,7 +112,6 @@
                             </td>
                         </tr>
 
-
                         <tr>
                             <td rowspan="2" class="align-middle h5 font-weight-bold">
                                 Absent Notification<br />
@@ -141,7 +142,6 @@
                             </td>
                         </tr>
 
-
                         <tr>
                             <td rowspan="1" class="align-middle h5 font-weight-bold">
                                 Others Attendance SMS Service<br />
@@ -163,6 +163,24 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header text-primary font-weight-bolder h4">Other SMS Service</div>
+                <div class="card-body p-0">
+                    <table class="table table-sm table-bordered text-center mb-0">
+                        <tr>
+                            <td rowspan="1" class="align-middle h5 font-weight-bold">
+                                Payment Related SMS<br />
+                            </td>
+                            <td class="font-weight-bold">
+                                Daily Collection <br />
+                                <label class="col-form-label">
+                                    <label class="switch">
+                                        <input asp-for="DailyCollectionSMSService" type="checkbox">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </label>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -177,11 +195,15 @@
         </div>
     </div>
 </form>
-<dl class="row">
-    <dt class="col-md-3">Last Modified by:</dt>
-    <dd class="col-md-9">Name of the Employee</dd>
-    <dt class="col-md-3">Last Modified date:</dt>
-    <dd class="col-md-9 text-md-left">@DateTime.Now.ToString("dd MMM yyyy")</dd>
+<dl class="row p-2">
+    <dt class="col-md-2">Last Modified by:</dt>
+    @{ 
+        ApplicationUser aUser = await _userManager.FindByIdAsync(Model.EditedBy);
+        lastEditedUser = aUser.UserName;
+    }
+    <dd class="col-md-9">@lastEditedUser</dd>
+    <dt class="col-md-2">Last Modified date:</dt>
+    <dd class="col-md-9 text-md-left">@Model.EditedAt.ToString("G")</dd>
 </dl>
 
 @section Scripts{
@@ -308,6 +330,7 @@
                 $('#AbsentNotification').prop('checked', true);
             }
         });
+
 
         $('#AttendanceSMSService').change(function () {
             if (!$(this).prop('checked')) {

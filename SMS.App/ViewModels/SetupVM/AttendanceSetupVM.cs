@@ -1,4 +1,6 @@
-﻿namespace SMS.App.ViewModels.SetupVM
+﻿using System;
+
+namespace SMS.App.ViewModels.SetupVM
 {
     public class AttendanceSetupVM
     {
@@ -16,5 +18,8 @@
         public bool AbsentNotification { get; set; }
         public bool AbsentNotificationStudent { get; set; }
         public bool AbsentNotificationEmployee { get; set; }
+        public bool DailyCollectionSMSService { get; set; }
+        public string EditedBy { get; set; }
+        public DateTime EditedAt { get; set; }
     }
 }

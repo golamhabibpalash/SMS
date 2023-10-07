@@ -1,8 +1,14 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SMS.App.Utilities.MACIPServices;
 using SMS.App.ViewModels.SetupVM;
 using SMS.BLL.Contracts;
 using SMS.Entities;
+using SMS.Entities.RptModels.AttendanceVM;
+using System;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Threading.Tasks;
 
@@ -12,9 +18,11 @@ namespace SMS.App.Controllers
     public class SetupController : Controller
     {
         private readonly ISetupMobileSMSManager _setupMobileSMSManager;
-        public SetupController(ISetupMobileSMSManager setupMobileSMSManager)
+        private readonly IMapper _mapper;
+        public SetupController(ISetupMobileSMSManager setupMobileSMSManager, IMapper mapper)
         {
             _setupMobileSMSManager = setupMobileSMSManager;
+            _mapper = mapper;
         }
         public IActionResult Index()
         {
@@ -26,30 +34,15 @@ namespace SMS.App.Controllers
         {
             SetupMobileSMS setupMobileSMS = await _setupMobileSMSManager.GetByIdAsync(1);
             AttendanceSetupVM attendanceSetupVM = new AttendanceSetupVM();
-
-            attendanceSetupVM.Id = setupMobileSMS.Id;
-
-            attendanceSetupVM.AttendanceSMSService = setupMobileSMS.AttendanceSMSService;
-
-            attendanceSetupVM.CheckInSMS = setupMobileSMS.CheckInSMSService;            
-            attendanceSetupVM.CheckInSMSEmployees = setupMobileSMS.CheckInSMSServiceForEmployees;
-            attendanceSetupVM.CheckInSMSStudentBoys = setupMobileSMS.CheckInSMSServiceForMaleStudent;
-            attendanceSetupVM.CheckInSMSStudentGirls = setupMobileSMS.CheckInSMSServiceForGirlsStudent;
-
-            attendanceSetupVM.CheckOutSMS = setupMobileSMS.CheckOutSMSService;
-            attendanceSetupVM.CheckOutSMSEmployees = setupMobileSMS.CheckOutSMSServiceForEmployees;
-            attendanceSetupVM.CheckOutSMSStudentBoys = setupMobileSMS.CheckOutSMSServiceForMaleStudent;
-            attendanceSetupVM.CheckOutSMSStudentGirls = setupMobileSMS.CheckOutSMSServiceForGirlsStudent;
-
-            attendanceSetupVM.CheckInSMSSummary = setupMobileSMS.CheckInSMSSummary;
+            try
+            {
+                attendanceSetupVM = _mapper.Map<AttendanceSetupVM>(setupMobileSMS);
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
             
-            attendanceSetupVM.AbsentNotification = setupMobileSMS.AbsentNotification;
-            attendanceSetupVM.AbsentNotificationStudent = setupMobileSMS.AbsentNotificationStudent;
-            attendanceSetupVM.AbsentNotificationEmployee = setupMobileSMS.AbsentNotificationEmployee;
-            //if (setupMobileSMS != null)
-            //{
-            //    return View(setupMobileSMS);
-            //}
             return View(attendanceSetupVM);
         }
 
@@ -61,24 +54,11 @@ namespace SMS.App.Controllers
             {
                 SetupMobileSMS objSetupMobileSMS = await _setupMobileSMSManager.GetByIdAsync(attendanceSetupVM.Id);
 
-                objSetupMobileSMS.AttendanceSMSService = attendanceSetupVM.AttendanceSMSService;
+                objSetupMobileSMS = _mapper.Map<SetupMobileSMS>(attendanceSetupVM);
 
-                objSetupMobileSMS.CheckInSMSService = attendanceSetupVM.CheckInSMS;
-                objSetupMobileSMS.CheckInSMSServiceForEmployees = attendanceSetupVM.CheckInSMSEmployees;
-                objSetupMobileSMS.CheckInSMSServiceForMaleStudent = attendanceSetupVM.CheckInSMSStudentBoys;
-                objSetupMobileSMS.CheckInSMSServiceForGirlsStudent = attendanceSetupVM.CheckInSMSStudentGirls;
-
-
-                objSetupMobileSMS.CheckOutSMSService = attendanceSetupVM.CheckOutSMS;
-                objSetupMobileSMS.CheckOutSMSServiceForEmployees = attendanceSetupVM.CheckOutSMSEmployees;
-                objSetupMobileSMS.CheckOutSMSServiceForMaleStudent = attendanceSetupVM.CheckOutSMSStudentBoys;
-                objSetupMobileSMS.CheckOutSMSServiceForGirlsStudent = attendanceSetupVM.CheckOutSMSStudentGirls;
-                objSetupMobileSMS.AbsentNotification = attendanceSetupVM.AbsentNotification;
-                objSetupMobileSMS.CheckInSMSSummary = attendanceSetupVM.CheckInSMSSummary;
-
-                objSetupMobileSMS.AbsentNotificationEmployee = attendanceSetupVM.AbsentNotificationEmployee;
-                objSetupMobileSMS.AbsentNotificationStudent = attendanceSetupVM.AbsentNotificationStudent;
-
+                objSetupMobileSMS.EditedAt = DateTime.Now;
+                objSetupMobileSMS.EditedBy = HttpContext.Session.GetString("UserId");
+                objSetupMobileSMS.MACAddress = MACService.GetMAC();
                 try
                 {
                     bool isUpdated = await _setupMobileSMSManager.UpdateAsync(objSetupMobileSMS);
@@ -86,7 +66,11 @@ namespace SMS.App.Controllers
                     {
                         msg = "SMS Setup Updated successful";
                         TempData["edited"] = msg;
-                        return View();
+                        return RedirectToAction("AttendanceBackgroundJob", "Hangfire");
+                        //TempData["edited"] = msg;
+                        //attendanceSetupVM.EditedAt = DateTime.Now;
+                        //attendanceSetupVM.EditedBy = HttpContext.Session.GetString("UserId");   
+                        //return View(attendanceSetupVM);
                     }
                     else
                     {
@@ -99,10 +83,8 @@ namespace SMS.App.Controllers
                     throw;
                 }
             }
-
             return View(attendanceSetupVM);
         }
 
-        //public Task<Iac>
     }
 }

@@ -26,6 +26,7 @@ using Microsoft.CodeAnalysis.FlowAnalysis;
 using Hangfire.Storage;
 using System.Drawing.Imaging;
 using Microsoft.AspNetCore.Authorization;
+using System.Runtime.InteropServices.JavaScript;
 
 namespace SMS.App.Controllers
 {
@@ -42,9 +43,11 @@ namespace SMS.App.Controllers
         private readonly ISetupMobileSMSManager _setupMobileSMSManager;
         private readonly IOffDayManager _offDayManager;
         private readonly IInstituteManager _instituteManager;
+        private readonly IStudentPaymentManager _studentPaymentManager;
+        
 
         #region Constructor Start =================================================
-        public HangfireController(IStudentManager studentManager, IAttendanceMachineManager attendanceMachineManager, IEmployeeManager employeeManager, IPhoneSMSManager phoneSMSManager, ISetupMobileSMSManager setupMobileSMSManager, IOffDayManager offDayManager, IInstituteManager instituteManager)
+        public HangfireController(IStudentManager studentManager, IAttendanceMachineManager attendanceMachineManager, IEmployeeManager employeeManager, IPhoneSMSManager phoneSMSManager, ISetupMobileSMSManager setupMobileSMSManager, IOffDayManager offDayManager, IInstituteManager instituteManager, IStudentPaymentManager studentPaymentManager)
         {
             _studentManager = studentManager;
             _attendanceMachineManager = attendanceMachineManager;
@@ -53,6 +56,7 @@ namespace SMS.App.Controllers
             _setupMobileSMSManager = setupMobileSMSManager;
             _offDayManager = offDayManager;
             _instituteManager = instituteManager;
+            _studentPaymentManager = studentPaymentManager;
         }
         #endregion Constructor Finished xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxX
 
@@ -112,8 +116,15 @@ namespace SMS.App.Controllers
                     RecurringJob.AddOrUpdate(() => SendAbsentNotificationSMS(), "1 0 "+smsTimeHr+" * * 6-4", TimeZoneInfo.Local);
                     //At 10:00:01 AM, Saturday through Thursday
                 }
+                if (setupMobileSMS.DailyCollectionSMSService==true)
+                {
+                    RecurringJob.AddOrUpdate(() => SendDailyCollectionSMS(), "5 18 * * 0-4,6", TimeZoneInfo.Local);
+                    //At 6:05 pm, saturday through Thursday
+                    //5 18 ? *SUN,MON,TUE,WED,THU,SAT *
+                }
             }
-            return RedirectToAction("Index", "Home");
+            
+            return RedirectToAction("SMSControl", "Setup");
         }
 
         #region CheckIn SMS Section Start===========================================
@@ -1033,7 +1044,78 @@ namespace SMS.App.Controllers
 
         #region Income SMS===========================================================
         #region Daily Student Collection ============================================
+        [HttpGet]
+        public async Task<IActionResult> SendDailyCollectionSMS()
+        {
+            var currentMonthHolidays = await _offDayManager.GetMonthlyHolidaysAsync(DateTime.Now.ToString("MMyyyy"));
+            if (currentMonthHolidays != null && currentMonthHolidays.Count > 0)
+            {
+                foreach (var holiday in currentMonthHolidays)
+                {
+                    if (holiday.ToString("ddMMyyyy") == DateTime.Now.ToString("ddMMyyyy"))
+                    {
+                        return BadRequest("Today is offday");
+                    }
+                }
+            }
 
+            SetupMobileSMS setupMobileSMS = await _setupMobileSMSManager.GetByIdAsync(1);
+            if (setupMobileSMS.DailyCollectionSMSService == false)
+            {
+                return BadRequest();
+            }
+
+            if (setupMobileSMS.DailyCollectionSMSService)
+            {
+                var paymentsSummery = await _studentPaymentManager.GetStudentPaymentSummerySMS_VMsAsync(DateTime.Today);
+                if (paymentsSummery != null)
+                {
+                    StudentPaymentSummerySMS_VM studentPaymentSummerySMS_VM = paymentsSummery.FirstOrDefault();
+                    try
+                    {
+                        //Phone SMS Send
+                        string[] phoneNumber = { "01717678134", "01743922314" };
+                        string smsType = "Collection Summary";
+
+                        string smsText = $"Payment Collection ({DateTime.Today.ToString("dd MMM yyyy")}):\n" +
+                            $"Residential: {studentPaymentSummerySMS_VM.ResidentialPayment}\n" +
+                            $"Non-Residential:{studentPaymentSummerySMS_VM.NonResidentialPayment} \n" +
+                            $"Total = {studentPaymentSummerySMS_VM.ResidentialPayment+studentPaymentSummerySMS_VM.NonResidentialPayment}\n"+
+                            $"-Noble Residential School";
+
+                        foreach (var num in phoneNumber)
+                        {
+                            bool isAlreadySent = await _phoneSMSManager.IsSMSSendForAttendance(num, smsType, DateTime.Today.ToString("dd-MM-yyyy"));
+                            if (!isAlreadySent)
+                            {
+                                bool isSend = await MobileSMS.SendSMS(num, smsText);
+                                if (isSend)
+                                {
+                                    PhoneSMS phoneSMS = new()
+                                    {
+                                        Text = smsText,
+                                        CreatedAt = DateTime.Now,
+                                        CreatedBy = "Automation",
+                                        MobileNumber = num,
+                                        MACAddress = MACService.GetMAC(),
+                                        SMSType = smsType
+                                    };
+                                    await _phoneSMSManager.AddAsync(phoneSMS);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+
+                }
+            }
+
+            
+            return null;
+        }
         #endregion Daily Student Collection XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         #endregion Income SMS XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 

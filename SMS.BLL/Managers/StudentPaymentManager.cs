@@ -74,5 +74,20 @@ namespace SMS.BLL.Managers
         {
             return await _studentPaymentRepository.GetStudentPaymentSchedulePaid(studId);
         }
+
+        public async Task<List<StudentPaymentSummerySMS_VM>> GetStudentPaymentSummerySMS_VMsAsync(DateTime date)
+        {
+            List<StudentPaymentSummerySMS_VM> paymentSummery = new List<StudentPaymentSummerySMS_VM>();
+            try
+            {
+                paymentSummery = await _studentPaymentRepository.GetStudentPaymentSummerySMS_VMsAsync(date);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return paymentSummery;
+        }
     }
 }

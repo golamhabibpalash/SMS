@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using SMS.DAL.Contracts;
 using SMS.DAL.Repositories.Base;
 using SMS.DB;
@@ -72,6 +73,23 @@ namespace SMS.DAL.Repositories
             }
             
            
+            return payments;
+        }
+        public async Task<List<StudentPaymentSummerySMS_VM>> GetStudentPaymentSummerySMS_VMsAsync(DateTime date)
+        {
+            List<StudentPaymentSummerySMS_VM> payments = new List<StudentPaymentSummerySMS_VM>();
+            string pDate = date.ToString("yyyymmdd");
+            try
+            {
+                payments = await _context.studentPaymentSummerySMS_VMs.FromSqlInterpolated($"sp_Get_PaymentSummery_Daily_SMS {pDate}").ToListAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
             return payments;
         }
         public async Task<List<StudentPaymentSummeryVM>> GetPaymentSummeryByMonthYear(string monthYear)

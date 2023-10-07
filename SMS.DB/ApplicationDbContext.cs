@@ -85,6 +85,9 @@ namespace SMS.DB
         public DbSet<StudentPaymentSummeryVM> StudentPaymentSummeryVMs { get; set; }
 
         [NotMapped]
+        public DbSet<StudentPaymentSummerySMS_VM> studentPaymentSummerySMS_VMs { get; set; }
+
+        [NotMapped]
         public DbSet<rptStudentPaymentsVM> RptStudentPaymetnsVMs { get; set; }
 
         [NotMapped]
@@ -110,6 +113,7 @@ namespace SMS.DB
             base.OnModelCreating(builder);
             builder.Entity<AttendanceVM>(entity => entity.HasNoKey());
             builder.Entity<StudentPaymentSummeryVM>(entity => entity.HasNoKey());
+            builder.Entity<StudentPaymentSummerySMS_VM>(entity => entity.HasNoKey());
             builder.Entity<RptStudentVM>().ToView(nameof(RptStudentVMs)).HasNoKey();
             builder.Entity<rptStudentPaymentsVM>().ToView(nameof(RptStudentPaymetnsVMs)).HasNoKey();
             builder.Entity<RptAdmitCardVM>().ToView(nameof(RptAdmitCardVMs)).HasNoKey();

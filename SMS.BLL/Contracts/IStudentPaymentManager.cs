@@ -17,5 +17,6 @@ namespace SMS.BLL.Contracts
         Task<IReadOnlyCollection<StudentPaymentSummeryVM>> GetPaymentSummeryByDate(string date); 
         Task<List<StudentPaymentScheduleVM>> GetStudentPaymentSchedule(int studId);
         Task<List<StudentPaymentSchedulePaidVM>> GetStudentPaymentSchedulePaid(int studId);
+        Task<List<StudentPaymentSummerySMS_VM>> GetStudentPaymentSummerySMS_VMsAsync(DateTime date);
     }
 }

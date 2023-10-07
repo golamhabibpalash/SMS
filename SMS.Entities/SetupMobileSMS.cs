@@ -17,7 +17,6 @@ namespace SMS.Entities
         public bool CheckInSMSServiceForGirlsStudent { get; set; }
         public bool CheckInSMSServiceForEmployees { get; set; }
         public bool CheckInSMSSummary { get; set; }
-
         public bool CheckOutSMSService { get; set; }
         public bool CheckOutSMSServiceForMaleStudent { get; set; }
         public bool CheckOutSMSServiceForGirlsStudent { get; set; }
@@ -26,6 +25,7 @@ namespace SMS.Entities
 
         #region Payment SMS Service
         public bool PaymentSMSService { get; set; }
+        public bool DailyCollectionSMSService { get; set; }
         #endregion
 
         #region Administration SMS Service

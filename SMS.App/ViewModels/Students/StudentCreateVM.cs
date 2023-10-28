@@ -112,6 +112,8 @@ namespace SMS.App.ViewModels.Students
         [Display(Name = "Previous School")]
         public string PreviousSchool { get; set; }
         public bool IsResidential { get; set; } = false;
+        [Display(Name ="SMS Service")]
+        public bool SMSService { get; set; } = true;
         public ICollection<AttachDoc> Documents { get; set; }
 
         [Display(Name = "Active/Inactive")]

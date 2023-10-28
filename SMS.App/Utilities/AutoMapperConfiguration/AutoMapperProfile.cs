@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using SMS.App.ViewModels.Employees;
 using SMS.App.ViewModels.ExamVM;
+using SMS.App.ViewModels.SetupVM;
 using SMS.App.ViewModels.Students;
 using SMS.Entities;
 using System;
@@ -38,6 +39,8 @@ namespace SMS.App.Utilities.AutoMapperConfiguration
             CreateMap<AcademicExamGroup, AcademicExamGroupIndexVM>();
             CreateMap<AcademicExamGroupIndexVM, AcademicExamGroup>();
 
+            CreateMap<SetupMobileSMS, AttendanceSetupVM>();
+            CreateMap<AttendanceSetupVM,SetupMobileSMS>();
         }
     }
 }

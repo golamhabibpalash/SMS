@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <UserSecretsId>aspnet-SchoolManagementSystem-75AC8697-780A-4215-A7FE-E83F96B3C344</UserSecretsId>
+    <GenerateRuntimeConfigurationFiles>True</GenerateRuntimeConfigurationFiles>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -12,15 +13,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="FakesAssemblies\**" />
     <Compile Remove="Views\Reports\RPT\**" />
     <Compile Remove="wwwroot\FA\**" />
     <Compile Remove="wwwroot\Reports\Versioning\**" />
+    <Content Remove="FakesAssemblies\**" />
     <Content Remove="Views\Reports\RPT\**" />
     <Content Remove="wwwroot\FA\**" />
     <Content Remove="wwwroot\Reports\Versioning\**" />
+    <EmbeddedResource Remove="FakesAssemblies\**" />
     <EmbeddedResource Remove="Views\Reports\RPT\**" />
     <EmbeddedResource Remove="wwwroot\FA\**" />
     <EmbeddedResource Remove="wwwroot\Reports\Versioning\**" />
+    <None Remove="FakesAssemblies\**" />
     <None Remove="Views\Reports\RPT\**" />
     <None Remove="wwwroot\FA\**" />
     <None Remove="wwwroot\Reports\Versioning\**" />
@@ -42,13 +47,19 @@
 
   <ItemGroup>
     <PackageReference Include="AspNetCore.Reporting" Version="2.1.0" />
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="Hangfire" Version="1.8.5" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.11" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.11" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="7.0.11" />
     <PackageReference Include="Microsoft.CodeAnalysis.Compilers" Version="4.7.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="7.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.11">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.QualityTools.Testing.Fakes" Version="16.11.230815" />
     <PackageReference Include="NodaTime" Version="3.1.9" />
 
 	<PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="7.0.11" />
@@ -105,6 +116,10 @@
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Views\AcademicExamType\Delete.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalDesignTimeBuildInput Remove="FakesAssemblies\**" />
   </ItemGroup>
 
 </Project>

@@ -8,7 +8,7 @@
 }
 
 <div class="row">
-    <div class="col-md-6">
+    @*<div class="col-md-6">
         <img class="rounded-circle" src="~/Images/Student/noimage.jpg" alt="@Model.Name Photo" />
 
         @if (string.IsNullOrEmpty(Model.Photo))
@@ -19,13 +19,13 @@
         {
             <img class="rounded-circlerounded-circlerounded-circlerounded-circle" src="~/Images/Student/@Model.Photo" alt="@Model.Name Photo" />
         }
-    </div>
+    </div>*@
     <div class="col-md-6 flex align-items-center">
         <button class="btn btn-danger">This page is underconstruction</button>
     </div>
 </div>
 
-<div class="row">
+@*<div class="row">
     <div class="col-md-12 m-2">
         @if (ViewBag.activeStatus != null)
         {
@@ -44,8 +44,8 @@
             <span class="alert alert-warning">@ViewBag.lateAttendance</span>
         }
     </div>
-</div>
-<hr />
+</div>*@
+@*<hr />
 <div class="row text-light">
     <div class="col-md-3">
         <div class="card bg-info">
@@ -76,4 +76,4 @@
             <td>@Model.Name</td>
         </tr>
     </table>
-</div>
+</div>*@

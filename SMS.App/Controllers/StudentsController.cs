@@ -299,7 +299,7 @@ namespace SchoolManagementSystem.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "SuperAdmin, Admin")]
-        public async Task<IActionResult> Create([Bind("Id,Name,NameBangla,ClassRoll,FatherName,MotherName,AdmissionDate,Email,PhoneNo,Photo,DOB,BirthCertificateNo,BirthCertificateImage,ReligionId,GenderId,BloodGroupId,NationalityId,PresentAddressArea,PresentAddressPO,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddressArea,PermanentAddressPO,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,AcademicSessionId,AcademicClassId,AcademicSectionId,AddressInfo,PreviousSchool,Status,CreatedBy,CreatedAt,EditedBy,EditedAt,GuardianPhone,MACAddress,IsResidential")] StudentCreateVM newStudent, IFormFile sPhoto, IFormFile DOBFile)
+        public async Task<IActionResult> Create([Bind("Id,Name,NameBangla,ClassRoll,FatherName,MotherName,AdmissionDate,Email,PhoneNo,Photo,DOB,BirthCertificateNo,BirthCertificateImage,ReligionId,GenderId,BloodGroupId,NationalityId,PresentAddressArea,PresentAddressPO,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddressArea,PermanentAddressPO,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,AcademicSessionId,AcademicClassId,AcademicSectionId,AddressInfo,PreviousSchool,Status,CreatedBy,CreatedAt,EditedBy,EditedAt,GuardianPhone,MACAddress,IsResidential,SMSService")] StudentCreateVM newStudent, IFormFile sPhoto, IFormFile DOBFile)
         {
             newStudent.ClassRoll = await CreateRoll(newStudent.AcademicSessionId, newStudent.AcademicClassId, newStudent.ClassRoll);
             var rollIsExist = await _studentManager.GetStudentByClassRollAsync(newStudent.ClassRoll);
@@ -457,7 +457,7 @@ namespace SchoolManagementSystem.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "SuperAdmin, Admin")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,NameBangla,ClassRoll,FatherName,MotherName,AdmissionDate,Email,PhoneNo,Photo,DOB,BirthCertificateNo,BirthCertificateImage,ReligionId,GenderId,BloodGroupId,NationalityId,PresentAddressArea,PresentAddressPO,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddressArea,PermanentAddressPO,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,AcademicSessionId,AcademicClassId,AcademicSectionId,AddressInfo,PreviousSchool,CreatedBy,CreatedAt,EditedBy,EditedAt,GuardianPhone,Status,MACAddress,IsResidential")] Student student, IFormFile sPhoto, IFormFile DOBFile)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,NameBangla,ClassRoll,FatherName,MotherName,AdmissionDate,Email,PhoneNo,Photo,DOB,BirthCertificateNo,BirthCertificateImage,ReligionId,GenderId,BloodGroupId,NationalityId,PresentAddressArea,PresentAddressPO,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddressArea,PermanentAddressPO,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,AcademicSessionId,AcademicClassId,AcademicSectionId,AddressInfo,PreviousSchool,CreatedBy,CreatedAt,EditedBy,EditedAt,GuardianPhone,Status,MACAddress,IsResidential,SMSService")] Student student, IFormFile sPhoto, IFormFile DOBFile)
         {
             if (id != student.Id)
             {
@@ -508,7 +508,7 @@ namespace SchoolManagementSystem.Controllers
                         isUpdated = await _studentManager.UpdateAsync(student);
                         if (isUpdated == true)
                         {
-                            TempData["edit"] = "Updated Successfully";
+                            TempData["updated"] = "Updated Successfully";
                             return RedirectToAction(nameof(Index));
                         }
                     }
@@ -563,7 +563,6 @@ namespace SchoolManagementSystem.Controllers
 
             return View(student);
         }
-
 
         [Authorize(Roles = "SuperAdmin")]
         [HttpPost, ActionName("Delete")]
@@ -824,6 +823,8 @@ namespace SchoolManagementSystem.Controllers
             double paidAmount = studentPayments.Sum(s => s.TotalPayment);
             return paidAmount;
         }
+       
+        #region APIs //All of the students related APIs will placed here
 
         [Route("api/Students/getbyclasswithsessionId")]
         [HttpPost]
@@ -859,5 +860,6 @@ namespace SchoolManagementSystem.Controllers
             var studets  = await _studentManager.GetStudentsByClassSessionSectionAsync((int)academicSessionId,academicClassId,(int)academicSectionId);
             return Json(studets.OrderBy(s => s.ClassRoll));
         }
+        #endregion APIs
     }
 }

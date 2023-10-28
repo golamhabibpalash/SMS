@@ -38,7 +38,7 @@
             <div class="form-group row">
                 <label asp-for="AcademicSectionId" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
-                    <select asp-for="AcademicSectionId" class="form-control input-sm" >
+                    <select asp-for="AcademicSectionId" class="form-control input-sm">
                         <option disabled selected>Select Class First</option>
                         <option value="">No Section</option>
                     </select>
@@ -116,7 +116,7 @@
                     <input asp-for="Email" class="form-control" />
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
-                
+
                 <label asp-for="GuardianPhone" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
                     <input asp-for="GuardianPhone" class="form-control" />
@@ -130,7 +130,7 @@
                     <input asp-for="PhoneNo" class="form-control" maxlength="11" />
                     <span asp-validation-for="PhoneNo" class="text-danger"></span>
                 </div>
-                
+
                 <label asp-for="BirthCertificateNo" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
                     <input asp-for="BirthCertificateNo" class="form-control" />
@@ -290,6 +290,17 @@
                     <input asp-for="PreviousSchool" class="form-control" />
                     <span asp-validation-for="PreviousSchool" class="text-danger"></span>
                 </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-10 offset-md-2">
+                    <h6 class="alert alert-heading alert-info">Other's Information </h6>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-form-label col-md-4 offset-md-2">
+                    <input class="" asp-for="SMSService" /> @Html.DisplayNameFor(model => model.SMSService)
+                </label>
             </div>
             <div class="form-group row">
                 <label class="col-form-label col-md-4 offset-md-2">

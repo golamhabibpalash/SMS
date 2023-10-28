@@ -2,14 +2,19 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using SMS.App.Utilities.MACIPServices;
 using SMS.App.ViewModels.SetupVM;
+using SMS.App.ViewModels.Students;
 using SMS.BLL.Contracts;
+using SMS.BLL.Managers;
 using SMS.Entities;
 using SMS.Entities.RptModels.AttendanceVM;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
@@ -19,10 +24,14 @@ namespace SMS.App.Controllers
     {
         private readonly ISetupMobileSMSManager _setupMobileSMSManager;
         private readonly IMapper _mapper;
-        public SetupController(ISetupMobileSMSManager setupMobileSMSManager, IMapper mapper)
+        private readonly IStudentManager _studentManager;  
+        private readonly IAcademicClassManager _academicClassManager;
+        public SetupController(ISetupMobileSMSManager setupMobileSMSManager, IMapper mapper, IStudentManager studentManager, IAcademicClassManager academicClassManager)
         {
             _setupMobileSMSManager = setupMobileSMSManager;
             _mapper = mapper;
+            _studentManager = studentManager;
+            _academicClassManager = academicClassManager;
         }
         public IActionResult Index()
         {
@@ -86,5 +95,51 @@ namespace SMS.App.Controllers
             return View(attendanceSetupVM);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> StudentWiseSMSService(int? academicClassId)
+        {
+            var students = await _studentManager.GetAllAsync();
+            students = students.Where(s => s.Status == true).ToList();
+            StudentWiseSMSServiceVM studentWiseSMSServiceVM = new StudentWiseSMSServiceVM();
+            if (academicClassId!=null)
+            {
+                students = students.Where(s => s.AcademicClassId == academicClassId).ToList();
+                studentWiseSMSServiceVM.Students = (List<Student>)students;
+            }
+
+            ViewBag.academicClassId = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", academicClassId);
+
+            return View(studentWiseSMSServiceVM); 
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> StudentWiseSMSService(StudentWiseSMSServiceVM studentWiseSMSServiceVM)
+        {
+            if (studentWiseSMSServiceVM!=null)
+            {
+                try
+                {
+                    int totalUpdated = 0;
+                    foreach (var student in studentWiseSMSServiceVM.Students)
+                    {
+                        Student student1 = await _studentManager.GetByIdAsync(student.Id);
+                        if (student1.SMSService != student.SMSService)
+                        {
+                            student1.SMSService = student.SMSService;
+                            await _studentManager.UpdateAsync(student1);
+                            totalUpdated++; 
+                        }
+                    }
+                    ViewBag.totalUpdated = totalUpdated;
+                    TempData["updated"] = "Total " + totalUpdated + " data updated";
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
+            ViewBag.academicClassId = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name");
+            return View();
+        }
     }
 }

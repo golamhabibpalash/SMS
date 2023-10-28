@@ -47,7 +47,7 @@ namespace SMS.DAL.Repositories
                 .Include(s => s.AcademicSubject)
                 .Include(s => s.Employee)
                 .Include(s => s.AcademicSection)
-                .Include(s => s.AcademicExamDetails.OrderBy(s => s.Student.ClassRoll))
+                .Include(s => s.AcademicExamDetails.Where(s => s.Student.Status==true).OrderBy(s => s.Student.ClassRoll))
                     .ThenInclude(s => s.Student)
                 .Where(s => s.Id == id)
                 .FirstOrDefaultAsync();

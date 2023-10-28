@@ -27,6 +27,7 @@ using Hangfire.Storage;
 using System.Drawing.Imaging;
 using Microsoft.AspNetCore.Authorization;
 using System.Runtime.InteropServices.JavaScript;
+using Hangfire.Storage.Monitoring;
 
 namespace SMS.App.Controllers
 {
@@ -118,9 +119,9 @@ namespace SMS.App.Controllers
                 }
                 if (setupMobileSMS.DailyCollectionSMSService==true)
                 {
-                    RecurringJob.AddOrUpdate(() => SendDailyCollectionSMS(), "5 18 * * 0-4,6", TimeZoneInfo.Local);
-                    //At 6:05 pm, saturday through Thursday
-                    //5 18 ? *SUN,MON,TUE,WED,THU,SAT *
+                    RecurringJob.AddOrUpdate(() => SendDailyCollectionSMS(), "1 0 18 * * 1-4,6-7", TimeZoneInfo.Local);
+                    //At 6:00 pm, saturday through Thursday
+                    //0 18 ? *SUN,MON,TUE,WED,THU,SAT *
                 }
             }
             
@@ -210,7 +211,7 @@ namespace SMS.App.Controllers
                             }
                             Student student = await _studentManager.GetStudentByClassRollAsync(Convert.ToInt32(attendance.CardNo.Trim()));
 
-                            if (student == null || student.GenderId != 1 || student.Status == false)
+                            if (student == null || student.GenderId != 1 || student.Status == false || student.SMSService == false)
                             {
                                 continue;
                             }
@@ -294,7 +295,7 @@ namespace SMS.App.Controllers
                             }
                             Student student = await _studentManager.GetStudentByClassRollAsync(Convert.ToInt32(attendance.CardNo.Trim()));
 
-                            if (student == null || student.GenderId != 2 || student.Status == false)
+                            if (student == null || student.GenderId != 2 || student.Status == false || student.SMSService != true)
                             {
                                 continue;
                             }
@@ -1044,7 +1045,7 @@ namespace SMS.App.Controllers
 
         #region Income SMS===========================================================
         #region Daily Student Collection ============================================
-        [HttpGet]
+       
         public async Task<IActionResult> SendDailyCollectionSMS()
         {
             var currentMonthHolidays = await _offDayManager.GetMonthlyHolidaysAsync(DateTime.Now.ToString("MMyyyy"));
@@ -1064,23 +1065,23 @@ namespace SMS.App.Controllers
             {
                 return BadRequest();
             }
-
-            if (setupMobileSMS.DailyCollectionSMSService)
+            try
             {
-                var paymentsSummery = await _studentPaymentManager.GetStudentPaymentSummerySMS_VMsAsync(DateTime.Today);
-                if (paymentsSummery != null)
+
+                if (setupMobileSMS.DailyCollectionSMSService)
                 {
-                    StudentPaymentSummerySMS_VM studentPaymentSummerySMS_VM = paymentsSummery.FirstOrDefault();
-                    try
+                    var paymentsSummery = await _studentPaymentManager.GetStudentPaymentSummerySMS_VMsAsync(DateTime.Today);
+                    if (paymentsSummery != null)
                     {
-                        //Phone SMS Send
+                        StudentPaymentSummerySMS_VM studentPaymentSummerySMS_VM = paymentsSummery.FirstOrDefault();
+
                         string[] phoneNumber = { "01717678134", "01743922314" };
-                        string smsType = "Collection Summary";
+                        string smsType = "Collection_sum";
 
                         string smsText = $"Payment Collection ({DateTime.Today.ToString("dd MMM yyyy")}):\n" +
                             $"Residential: {studentPaymentSummerySMS_VM.ResidentialPayment}\n" +
                             $"Non-Residential:{studentPaymentSummerySMS_VM.NonResidentialPayment} \n" +
-                            $"Total = {studentPaymentSummerySMS_VM.ResidentialPayment+studentPaymentSummerySMS_VM.NonResidentialPayment}\n"+
+                            $"Total = {studentPaymentSummerySMS_VM.ResidentialPayment + studentPaymentSummerySMS_VM.NonResidentialPayment}\n" +
                             $"-Noble Residential School";
 
                         foreach (var num in phoneNumber)
@@ -1104,15 +1105,16 @@ namespace SMS.App.Controllers
                                 }
                             }
                         }
-                    }
-                    catch (Exception)
-                    {
-                        throw;
-                    }
 
+                    }
                 }
-            }
 
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
             
             return null;
         }

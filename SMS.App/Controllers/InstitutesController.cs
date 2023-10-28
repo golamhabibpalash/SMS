@@ -208,6 +208,8 @@ namespace SMS.App.Controllers
         [HttpGet]
         public async Task<ActionResult> SchoolTimeTable()
         {
+            GlobalUI.PageTitle = "School Time Table";
+
             Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
             InstituteTimeVM instituteTimeVM = new InstituteTimeVM() { };
             instituteTimeVM.StartingTime = institute.StartingTime;
@@ -220,6 +222,8 @@ namespace SMS.App.Controllers
         [HttpPost]
         public async Task<ActionResult> SchoolTimeTable(InstituteTimeVM model)
         {
+            GlobalUI.PageTitle = "School Time Table";
+
             if (ModelState.IsValid)
             {
                 Institute institute = await _instituteManager.GetFirstOrDefaultAsync();

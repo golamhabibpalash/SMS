@@ -67,9 +67,9 @@
         </div>
         <div class="row" id="exportOptions" style="display:none">
             <div class="col-md-12 d-flex justify-content-end">
-                <form asp-action="MarkSheettReportExport" asp-controller="Reports" method="get">
+                <form asp-action="MarkSheetReportExport" asp-controller="Reports" method="get">
                     <div class="btn-group btn-sm mr-2 " role="group" aria-label="First group">
-                        <input type="hidden" name="fileName" value="Mark_Sheet_@DateTime.Now.ToString("dd_MMM_yyyy")" />
+                        <input type="hidden" name="fileName" id="exportFileName" value="Mark_Sheet_@DateTime.Now.ToString("dd_MMM_yyyy")" />
                         <input type="hidden" id="exportSessionId" name="fromDate" />
                         <input type="hidden" id="exportToDate" name="toDate" />
                         <input type="hidden" id="exportExamGroupId" name="examGroupId" />
@@ -109,6 +109,7 @@
 
                 aSessionId = $('#aAcademicSession option:selected').val();
                 aClassId = $('#aAcademicClass option:selected').val();
+                
                 aExamGroupId = $('#aExamGroup option:selected').val();
                 aSectionId = $('#aAcademicSection option:selected').val();
                 aStudentId = $('#aStudentId option:selected').val();
@@ -129,6 +130,8 @@
                     $('#exportsectionId').attr('value', aSectionId);
                     $('#exportStudentId').attr('value', aStudentId);
 
+                    $('#exportFileName').attr('value', getFileName());
+
                     $('#myIframe').attr('src', '/Reports/MarkSheetReportExport?reportType=' + reportType + '&fileName=' + fileName + '&examGroupId=' + aExamGroupId + '&academicClassId=' + aClassId + '&sectionId=' + aSectionId + '&sessionId=' + aSessionId +'&studentId=' + aStudentId);
 
                     var iframe = document.getElementById('myIframe');
@@ -142,6 +145,12 @@
                 }
             });
         });
+        function getFileName() {
+            let className = $('#aAcademicClass option:selected').text();
+            let studentname = $('#aStudentId option:selected').text();
+            let fileName = 'MarkSheet_' + className + '_' + studentname;
+            return fileName;
+        }
 
         $('#aAcademicClass').change(function () {
             let id = $('#aAcademicClass option:selected').val();

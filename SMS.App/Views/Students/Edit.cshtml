@@ -312,9 +312,22 @@
                     <span asp-validation-for="PreviousSchool" class="text-danger"></span>
                 </div>
             </div>
+
+
+            <div class="row">
+                <div class="col-md-10 offset-md-2">
+                    <h6 class="alert alert-heading alert-info">Other's Information </h6>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-form-label col-md-4 offset-md-2">
+                    <input class="" asp-for="SMSService" /> @Html.DisplayNameFor(model => model.SMSService)
+                </label>
+            </div>
+
             <div class="form-group form-check row">
                 <label class="form-check-label control-label col-form-label col-md-4 offset-2">
-                    <span class="alert alert-info">@Model.Name is @studentStatus</span> 
+                    <span class="alert alert-info">@Model.Name is @studentStatus</span>
                     <i class="btn btn-info" data-toggle="modal" data-target="#exampleModalCenter">Change</i>;
                 </label>
             </div>
@@ -344,10 +357,10 @@
                     <div class="form-group row">
                         <label class="col-md-3 col-form-label">Date</label>
                         <div class="col-md-9">
-                            <input class="date form-control" type="date" name="operationDate"  />
+                            <input class="date form-control" type="date" name="operationDate" />
                         </div>
-                    </div>     
-                    <div class="form-group row">                        
+                    </div>
+                    <div class="form-group row">
                         <label class="col-md-3 col-form-label" for="studentStatus1">
                             Status
                         </label>
@@ -379,6 +392,7 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script src="~/js/Student/Edit.js"></script>
+    <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
     <script>
         $(document).ready(function () {
             $('#sPhotoId').on('change', function () {
@@ -390,4 +404,5 @@
             document.getElementById("statusForm").submit();
         }
     </script>
+
 }

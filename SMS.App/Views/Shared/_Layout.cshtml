@@ -123,7 +123,7 @@
     <div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
         <div class="sidebar-brand d-none d-md-flex">
 
-            <span class="nav-item"><a class="nav-link" href="#"> @userName </a></span>
+            <span class="nav-item"><a class="nav-link" > @userName </a></span>
         </div>
 
         <ul class="sidebar-nav" data-coreui="navigation" data-simplebar="">
@@ -362,6 +362,9 @@
                                 <li class="nav-item">
                                     <a class="nav-link" asp-action="SMSControl" asp-controller="Setup">SMS Setup</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-action="StudentWiseSMSService" asp-controller="Setup">Student-wise SMS Service</a>
+                                </li>
                             </ul>
                         </li>
                         <li class="nav-item nav-group">
@@ -374,7 +377,7 @@
                         </li>
                     </ul>
                 </li>
-                <li class="separator"></li>
+                @*<li class="separator"></li>*@
                 <li class="nav-group">
                     <a class="nav-link nav-group-toggle"><i class="nav-icon fal fa-file-chart-line fa-lg text-warning"></i>  Reports </a>
                     <ul class="nav-group-items">
@@ -442,7 +445,7 @@
         <button class="sidebar-toggler" type="button" data-coreui-toggle="unfoldable"></button>
     </div>
     <div class="wrapper d-flex flex-column min-vh-100 bg-light">
-        <header class="header header-sticky mb-4">
+        <header class="header header-sticky mb-4" style="background-color:aliceblue">
             <div class="container d-flex justify-content-between">
 
                 <div id="1stPart" class="d-flex">
@@ -453,7 +456,7 @@
                     <ul class="header-nav">
                         <li class="nav-item">
                             <a class="nav-link">
-                                <text id="pageTitleId" class="h5">
+                                <text id="pageTitleId" class="">
 
                                     @if (GlobalUI.PageTitle.Length > 15)
                                     {

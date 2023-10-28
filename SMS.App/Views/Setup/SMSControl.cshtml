@@ -13,6 +13,20 @@
 }
 
 <form asp-action="smscontrol" method="post">
+    <div class="row mb-1">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header text-primary font-weight-bolder h4">
+                    SMS Service
+                    <label class="switch">
+                        <input asp-for="SMSService" type="checkbox">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-6">
             <div class="card">
@@ -30,7 +44,7 @@
                             <td rowspan="3" class="align-middle font-weight-bold h5">
                                 Checkin SMS <br />
                                 <label class="switch">
-                                    <input asp-for="CheckInSMS" title="CheckIn SMS Switch" />
+                                    <input asp-for="CheckInSMSService" title="CheckIn SMS Switch" />
                                     <span class="slider round"></span>
                                 </label>
                             </td>
@@ -39,7 +53,7 @@
                                 <label class="col-form-label">
 
                                     <label class="switch">
-                                        <input asp-for="CheckInSMSEmployees" type="checkbox">
+                                        <input asp-for="CheckInSMSServiceForEmployees" type="checkbox">
                                         <span class="slider round"></span>
                                     </label>
 
@@ -52,7 +66,7 @@
                                 <label class="col-form-label">
 
                                     <label class="switch">
-                                        <input asp-for="CheckInSMSStudentBoys" type="checkbox">
+                                        <input asp-for="CheckInSMSServiceForMaleStudent" type="checkbox">
                                         <span class="slider round"></span>
                                     </label>
 
@@ -64,7 +78,7 @@
                                 Students (Girls) <br />
                                 <label class="col-form-label">
                                     <label class="switch">
-                                        <input asp-for="CheckInSMSStudentGirls" type="checkbox">
+                                        <input asp-for="CheckInSMSServiceForGirlsStudent" type="checkbox">
                                         <span class="slider round"></span>
                                     </label>
                                 </label>
@@ -75,7 +89,7 @@
                             <td rowspan="3" class="align-middle h5 font-weight-bold">
                                 Checkout SMS<br />
                                 <label class="switch">
-                                    <input asp-for="CheckOutSMS" />
+                                    <input asp-for="CheckOutSMSService" />
                                     <span class="slider round"></span>
                                 </label>
                             </td>
@@ -83,7 +97,7 @@
                                 Employee <br />
                                 <label class="col-form-label">
                                     <label class="switch">
-                                        <input asp-for="CheckOutSMSEmployees" type="checkbox">
+                                        <input asp-for="CheckOutSMSServiceForEmployees" type="checkbox">
                                         <span class="slider round"></span>
                                     </label>
                                 </label>
@@ -94,7 +108,7 @@
                                 Students (Boys) <br />
                                 <label class="col-form-label">
                                     <label class="switch">
-                                        <input asp-for="CheckOutSMSStudentBoys" type="checkbox">
+                                        <input asp-for="CheckOutSMSServiceForMaleStudent" type="checkbox">
                                         <span class="slider round"></span>
                                     </label>
                                 </label>
@@ -105,7 +119,7 @@
                                 Students (Girls) <br />
                                 <label class="col-form-label">
                                     <label class="switch">
-                                        <input asp-for="CheckOutSMSStudentGirls" type="checkbox">
+                                        <input asp-for="CheckOutSMSServiceForGirlsStudent" type="checkbox">
                                         <span class="slider round"></span>
                                     </label>
                                 </label>
@@ -166,11 +180,22 @@
                 <div class="card-body p-0">
                     <table class="table table-sm table-bordered text-center mb-0">
                         <tr>
-                            <td rowspan="1" class="align-middle h5 font-weight-bold">
+                            <td rowspan="2" class="align-middle h5 font-weight-bold">
                                 Payment Related SMS<br />
                             </td>
                             <td class="font-weight-bold">
-                                Daily Collection <br />
+                                Payment SMS Service <br />
+                                <label class="col-form-label">
+                                    <label class="switch">
+                                        <input asp-for="PaymentSMSService" type="checkbox">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="font-weight-bold">
+                                Daily Collection SMS<br />
                                 <label class="col-form-label">
                                     <label class="switch">
                                         <input asp-for="DailyCollectionSMSService" type="checkbox">
@@ -197,13 +222,16 @@
 </form>
 <dl class="row p-2">
     <dt class="col-md-2">Last Modified by:</dt>
-    @{ 
+    @{
         ApplicationUser aUser = await _userManager.FindByIdAsync(Model.EditedBy);
-        lastEditedUser = aUser.UserName;
+        if (aUser != null)
+        {
+            lastEditedUser = aUser.UserName;
+        }
     }
     <dd class="col-md-9">@lastEditedUser</dd>
     <dt class="col-md-2">Last Modified date:</dt>
-    <dd class="col-md-9 text-md-left">@Model.EditedAt.ToString("G")</dd>
+    <dd class="col-md-9 text-md-left">@Model.EditedAt.ToString("dd MMM yyyy hh:mm:ss tt")</dd>
 </dl>
 
 @section Scripts{
@@ -231,67 +259,75 @@
                     }
             });
 
-        $('#CheckInSMSEmployees').change(function () {
+            $('#CheckInSMSServiceForEmployees').change(function () {
             if ($(this).prop('checked')) {
-                $('#CheckInSMS').prop('checked', true);
+                $('#CheckInSMSService').prop('checked', true);
                 $('#AttendanceSMSService').prop('checked', true);
+                $('#SMSService').prop('checked', true);
             }
         });
 
-        $('#CheckInSMSStudentBoys').change(function () {
+            $('#CheckInSMSServiceForMaleStudent').change(function () {
             if ($(this).prop('checked')) {
-                $('#CheckInSMS').prop('checked', true);
+                $('#CheckInSMSService').prop('checked', true);
                 $('#AttendanceSMSService').prop('checked', true);
+                $('#SMSService').prop('checked', true);
             }
         });
 
-        $('#CheckInSMSStudentGirls').change(function () {
+            $('#CheckInSMSServiceForGirlsStudent').change(function () {
             if ($(this).prop('checked')) {
-                $('#CheckInSMS').prop('checked', true);
+                $('#CheckInSMSService').prop('checked', true);
                 $('#AttendanceSMSService').prop('checked', true);
+                $('#SMSService').prop('checked', true);
             }
         });
 
-        $('#CheckInSMS').change(function () {
+            $('#CheckInSMSService').change(function () {
             if (!$(this).prop('checked')) {
-                $('#CheckInSMSEmployees').prop('checked', false);
-                $('#CheckInSMSStudentBoys').prop('checked', false);
-                $('#CheckInSMSStudentGirls').prop('checked', false);
+                $('#CheckInSMSServiceForEmployees').prop('checked', false);
+                $('#CheckInSMSServiceForMaleStudent').prop('checked', false);
+                $('#CheckInSMSServiceForGirlsStudent').prop('checked', false);
             }
             else {
                 $('#AttendanceSMSService').prop('checked', true);
+                $('#SMSService').prop('checked', true);
             }
         });
 
-        $('#CheckOutSMSEmployees').change(function () {
+            $('#CheckOutSMSServiceForEmployees').change(function () {
             if ($(this).prop('checked')) {
-                $('#CheckOutSMS').prop('checked', true);
+                $('#CheckOutSMSService').prop('checked', true);
                 $('#AttendanceSMSService').prop('checked', true);
+                $('#SMSService').prop('checked', true);
             }
         });
 
-        $('#CheckOutSMSStudentBoys').change(function () {
+            $('#CheckOutSMSServiceForMaleStudent').change(function () {
             if ($(this).prop('checked')) {
-                $('#CheckOutSMS').prop('checked', true);
+                $('#CheckOutSMSService').prop('checked', true);
                 $('#AttendanceSMSService').prop('checked', true);
+                $('#SMSService').prop('checked', true);
             }
         });
 
-        $('#CheckOutSMSStudentGirls').change(function () {
+            $('#CheckOutSMSServiceForGirlsStudent').change(function () {
             if ($(this).prop('checked')) {
-                $('#CheckOutSMS').prop('checked', true);
+                $('#CheckOutSMSService').prop('checked', true);
                 $('#AttendanceSMSService').prop('checked', true);
+                $('#SMSService').prop('checked', true);
             }
         });
 
-        $('#CheckOutSMS').change(function () {
+            $('#CheckOutSMSService').change(function () {
             if (!$(this).prop('checked')) {
-                $('#CheckOutSMSEmployees').prop('checked', false);
-                $('#CheckOutSMSStudentBoys').prop('checked', false);
-                $('#CheckOutSMSStudentGirls').prop('checked', false);
+                $('#CheckOutSMSServiceForEmployees').prop('checked', false);
+                $('#CheckOutSMSServiceForMaleStudent').prop('checked', false);
+                $('#CheckOutSMSServiceForGirlsStudent').prop('checked', false);
             }
             else {
                 $('#AttendanceSMSService').prop('checked', true);
+                $('#SMSService').prop('checked', true);
             }
         });
 
@@ -300,6 +336,7 @@
             }
             else {
                 $('#AttendanceSMSService').prop('checked', true);
+                $('#SMSService').prop('checked', true);
             }
         });
 
@@ -310,6 +347,7 @@
             }
             else {
                 $('#AttendanceSMSService').prop('checked', true);
+                $('#SMSService').prop('checked', true);
             }
         });
 
@@ -319,6 +357,7 @@
             else {
                 $('#AttendanceSMSService').prop('checked', true);
                 $('#AbsentNotification').prop('checked', true);
+                $('#SMSService').prop('checked', true);
             }
         });
 
@@ -328,6 +367,23 @@
             else {
                 $('#AttendanceSMSService').prop('checked', true);
                 $('#AbsentNotification').prop('checked', true);
+                $('#SMSService').prop('checked', true);
+            }
+        });
+
+            $('#PaymentSMSService').change(function () {
+            if (!$(this).prop('checked')) {
+            }
+            else {
+                $('#SMSService').prop('checked', true);
+            }
+        });
+
+            $('#DailyCollectionSMSService').change(function () {
+            if (!$(this).prop('checked')) {
+            }
+            else {
+                $('#SMSService').prop('checked', true);
             }
         });
 
@@ -335,16 +391,16 @@
         $('#AttendanceSMSService').change(function () {
             if (!$(this).prop('checked')) {
 
-                $('#CheckInSMS').prop('checked', false);
-                $('#CheckOutSMS').prop('checked', false);
+                $('#CheckInSMSService').prop('checked', false);
+                $('#CheckOutSMSService').prop('checked', false);
 
-                $('#CheckInSMSEmployees').prop('checked', false);
-                $('#CheckInSMSStudentBoys').prop('checked', false);
-                $('#CheckInSMSStudentGirls').prop('checked', false);
+                $('#CheckInSMSServiceForEmployees').prop('checked', false);
+                $('#CheckInSMSServiceForMaleStudent').prop('checked', false);
+                $('#CheckInSMSServiceForGirlsStudent').prop('checked', false);
 
-                $('#CheckOutSMSEmployees').prop('checked', false);
-                $('#CheckOutSMSStudentBoys').prop('checked', false);
-                $('#CheckOutSMSStudentGirls').prop('checked', false);
+                $('#CheckOutSMSServiceForEmployees').prop('checked', false);
+                $('#CheckOutSMSServiceForMaleStudent').prop('checked', false);
+                $('#CheckOutSMSServiceForGirlsStudent').prop('checked', false);
 
                 $('#CheckInSMSSummary').prop('checked', false);
 
@@ -352,7 +408,41 @@
                 $('#AbsentNotificationStudent').prop('checked', false);
                 $('#AbsentNotificationEmployee').prop('checked', false);
             }
+            else {
+                $('#SMSService').prop('checked', true);
+
+            }
         });
+        
+
+
+            $('#SMSService').change(function () {
+            if (!$(this).prop('checked')) {
+
+                $('#AttendanceSMSService').prop('checked', false);
+
+                $('#CheckInSMSService').prop('checked', false);
+                $('#CheckOutSMSService').prop('checked', false);
+
+                $('#CheckInSMSServiceForEmployees').prop('checked', false);
+                $('#CheckInSMSServiceForMaleStudent').prop('checked', false);
+                $('#CheckInSMSServiceForGirlsStudent').prop('checked', false);
+
+                $('#CheckOutSMSServiceForEmployees').prop('checked', false);
+                $('#CheckOutSMSServiceForMaleStudent').prop('checked', false);
+                $('#CheckOutSMSServiceForGirlsStudent').prop('checked', false);
+
+                $('#CheckInSMSSummary').prop('checked', false);
+
+                $('#AbsentNotification').prop('checked', false);
+                $('#AbsentNotificationStudent').prop('checked', false);
+                $('#AbsentNotificationEmployee').prop('checked', false);
+
+                $('#PaymentSMSService').prop('checked', false);
+                $('#DailyCollectionSMSService').prop('checked', false);
+            }
+        });
+
 
     });
     </script>

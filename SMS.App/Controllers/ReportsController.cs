@@ -466,10 +466,6 @@ namespace SMS.App.Controllers
             {
                 results = results.Where(s => s.StudentId == studentId).ToList();
             }
-            var gTables = TempData["gTables"] = await _gradingTableManager.GetAllAsync();
-            LocalReport localSubReport = new LocalReport();
-            localSubReport.ReportPath = _host.WebRootPath + "//Reports/Rpt_GradingTable.rdlc";
-            localSubReport.DataSources.Add(new ReportDataSource("GradingTable_DataSet", gTables));
 
             AcademicExamGroup academicExamGroup = await _academicExamGroupManager.GetByIdAsync(examGroupId);
             AcademicClass academicClass = await _academicClassManager.GetByIdAsync(academicClassId);
@@ -492,11 +488,10 @@ namespace SMS.App.Controllers
             RenderType renderType = RenderType.Pdf;
             renderType = !string.IsNullOrEmpty(reportType) ? GetRenderType(reportType) : renderType;
             var path = _host.WebRootPath + "\\Reports\\Rpt_MarkSheet.rdlc";
-            //AspNetCore.Reporting.LocalReport localReport = new(path);
 
             using var report = new Microsoft.Reporting.NETCore.LocalReport();
             report.DataSources.Add(new ReportDataSource("DataSet1", results));
-            report.DataSources.Add(new ReportDataSource("GradingTable_DataSet", gTables));
+
             string publicationDate = results.Select(r => r.CreatedAt).FirstOrDefault().ToString("dd MMM yyyy");
             try
                 {
@@ -522,7 +517,7 @@ namespace SMS.App.Controllers
 
 
             //sub report processeing
-            report.SubreportProcessing += new SubreportProcessingEventHandler(SubReportProcessingAsync);
+            //report.SubreportProcessing += new SubreportProcessingEventHandler(SubReportProcessingAsync);
             #endregion Subreport
 
 
@@ -722,6 +717,53 @@ namespace SMS.App.Controllers
             return File(pdf, mediaType);
 
         }
+        public async Task<IActionResult> ReceiptPaymentExport(string reportType, int paymentId, string myFileName)
+        {
+            Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
+            if (institute == null)
+            {
+                return new JsonResult("Institute Information not found!");
+            }
+            string mediaType = "application/pdf";
+            var path = _host.WebRootPath + "\\Reports\\Rpt_Payment_Receipt.rdlc";
+
+            string imageParam = "";
+            var imagePath = _host.WebRootPath + "\\Images\\Institute\\institute.jpeg";
+
+            Image image = Image.FromFile(imagePath);
+            using (MemoryStream ms = new MemoryStream())
+            {
+                image.Save(ms, image.RawFormat);
+                byte[] imageBytes = ms.ToArray();
+                imageParam = Convert.ToBase64String(imageBytes);
+            }
+            List<RptPaymentReceiptVM> rptPaymentReceiptVMs = await _reportManager.GetPaymentReceiptReport(paymentId);
+
+            string numberToWord = string.Empty;
+            if (rptPaymentReceiptVMs != null && rptPaymentReceiptVMs.Count > 0)
+            {
+                numberToWord = NumberToWords.ConvertAmount(rptPaymentReceiptVMs.Select(s => s.TotalPayment).FirstOrDefault());
+            }
+
+            using var report = new LocalReport();
+            report.DataSources.Add(new ReportDataSource("Payment_Receipt_DataSet", rptPaymentReceiptVMs));
+            var parameters = new[] {
+                new ReportParameter("InstituteName", institute.Name),
+                new ReportParameter("InstituteAddress", institute.Address),
+                //new ReportParameter("EIINNo", institute.EIIN),
+                new ReportParameter("Logo", imageParam),
+                new ReportParameter("ReportName", "Payment Receipt"),
+                new ReportParameter("AmountInWord", numberToWord)
+            };
+            report.ReportPath = path;
+            report.SetParameters(parameters);
+            var pdf = report.Render("pdf");
+            if (!string.IsNullOrEmpty(myFileName) && myFileName.Length > 0)
+            {
+                return File(pdf, MediaTypeNames.Application.Octet, GetReportName(myFileName, reportType));
+            }
+            return File(pdf, mediaType);
+        }
         #endregion Student Payment Reports
 
         #region Admit Card Reports
@@ -771,6 +813,7 @@ namespace SMS.App.Controllers
 
 
             var admitCard = await _reportManager.GetAdmitCard(monthId, aClassId, aSection);
+            admitCard = admitCard.Where(s => s.StudentStauts == true).ToList();
             if (admitCard.Count <= 0)
             {
                 return new JsonResult("No data found");
@@ -785,56 +828,7 @@ namespace SMS.App.Controllers
         }
         #endregion Admit Card Reports
 
-        #region Payment Receipt
-        public async Task<IActionResult> ReceiptPaymentExport(string reportType, int paymentId, string myFileName)
-        {
-            Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
-            if (institute == null)
-            {
-                return new JsonResult("Institute Information not found!");
-            }
-            string mediaType = "application/pdf";
-            var path = _host.WebRootPath + "\\Reports\\Rpt_Payment_Receipt.rdlc";
-
-            string imageParam = "";
-            var imagePath = _host.WebRootPath + "\\Images\\Institute\\institute.jpeg";
-
-            Image image = Image.FromFile(imagePath);
-            using (MemoryStream ms = new MemoryStream())
-            {
-                image.Save(ms, image.RawFormat);
-                byte[] imageBytes = ms.ToArray();
-                imageParam = Convert.ToBase64String(imageBytes);
-            }
-            List<RptPaymentReceiptVM> rptPaymentReceiptVMs = await _reportManager.GetPaymentReceiptReport(paymentId);
-
-            string numberToWord = string.Empty;
-            if (rptPaymentReceiptVMs != null && rptPaymentReceiptVMs.Count > 0)
-            {
-                numberToWord = NumberToWords.ConvertAmount(rptPaymentReceiptVMs.Select(s => s.TotalPayment).FirstOrDefault());
-            }
-
-            using var report = new LocalReport();
-            report.DataSources.Add(new ReportDataSource("Payment_Receipt_DataSet", rptPaymentReceiptVMs));
-            var parameters = new[] {
-                new ReportParameter("InstituteName", institute.Name),
-                new ReportParameter("InstituteAddress", institute.Address),
-                //new ReportParameter("EIINNo", institute.EIIN),
-                new ReportParameter("Logo", imageParam),
-                new ReportParameter("ReportName", "Payment Receipt"),
-                new ReportParameter("AmountInWord", numberToWord)
-            };
-            report.ReportPath = path;
-            report.SetParameters(parameters);
-            var pdf = report.Render("pdf");
-            if (!string.IsNullOrEmpty(myFileName) && myFileName.Length > 0)
-            {
-                return File(pdf, MediaTypeNames.Application.Octet, GetReportName(myFileName, reportType));
-            }
-            return File(pdf, mediaType);
-        }
-        #endregion
-
+       
         #region Common Methods
         private static RenderType GetRenderType(string reportType)
         {

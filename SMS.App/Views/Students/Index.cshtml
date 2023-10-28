@@ -17,8 +17,6 @@
     TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
     string name = string.Empty;
     int stSl = 0;
-
-
 }
 <div class="col-md-12">
     <form asp-action="Index" asp-controller="Students">
@@ -124,7 +122,7 @@
                                     }
                                 }
 
-                                <img src=@avatar alt="@item.StudentName" style="max-width:50px; max-height:80px" />
+                                <img src=@avatar alt="@item.StudentName" style="max-width:50px; max-height:50px; border-radius:50%;" />
 
                             </a>
                         </td>
@@ -140,19 +138,19 @@
                                         @name
                                         @if (item.IsResidential)
                                         {
-                                            <span class="badge badge-info"><i class="fas fa-home"></i></span> 
+                                            <span class="badge badge-info"><i class="fas fa-home"></i></span>
                                         }
                                     </span>
                                 }
                                 else
                                 {
-                            <span class="text-danger">
-                                @name
-                                @if (item.IsResidential)
-                                {
-                                    <span class="badge badge-info"><i class="fas fa-home"></i></span>
-                                }
-                            </span>
+                                    <span class="text-danger">
+                                        @name
+                                        @if (item.IsResidential)
+                                        {
+                                            <span class="badge badge-info"><i class="fas fa-home"></i></span>
+                                        }
+                                    </span>
                                 }
                             </a>
                         </td>
@@ -211,29 +209,18 @@
 
 @section Scripts{
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
 
     @*<script src="~/js/DataTable/dataTable.js"></script>
 
-    <script src="~/js/DataTable/dataTables.buttons.min.js"></script>
-    <script src="~/js/DataTable/jszip.min.js"></script>
-    <script src="~/js/DataTable/pdfmake.min.js"></script>
-    <script src="~/js/DataTable/vfs_fonts.js"></script>
-    <script src="~/js/DataTable/buttons.html5.min.js"></script>*@
+        <script src="~/js/DataTable/dataTables.buttons.min.js"></script>
+        <script src="~/js/DataTable/jszip.min.js"></script>
+        <script src="~/js/DataTable/pdfmake.min.js"></script>
+        <script src="~/js/DataTable/vfs_fonts.js"></script>
+        <script src="~/js/DataTable/buttons.html5.min.js"></script>*@
 
-    <script>
+<script>
 
-        $(document).ready(function () {
-            $("#myTable_info").detach().insertAfter('#myTable_length');
-
-            //$('#myTable').DataTable({
-            //    dom: 'Bfrtip',
-            //    buttons: [
-            //        'copy', 'csv', 'excel', 'pdf', 'print'
-            //    ]
-            //});
-
-
-            $(function () {
                 let saved = '@TempData["saved"]';
                 let deleted = '@TempData["deleted"]';
                 let edited = '@TempData["edited"]';
@@ -249,8 +236,20 @@
                     }
                 if (failed != "") {
                     alertify.error(failed);
-                    }
-            });
+    }
+
+
+        $(document).ready(function () {
+            $("#myTable_info").detach().insertAfter('#myTable_length');
+
+            //$('#myTable').DataTable({
+            //    dom: 'Bfrtip',
+            //    buttons: [
+            //        'copy', 'csv', 'excel', 'pdf', 'print'
+            //    ]
+            //});
+
+
 
 
             $('#aAcademicClassId').change(function () {
@@ -312,6 +311,6 @@
         });
 
 
-    </script>
+</script>
 
 }

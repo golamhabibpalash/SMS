@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SMS.DB;
 
@@ -11,9 +12,11 @@ using SMS.DB;
 namespace SMS.DB.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231013173620_GradingTableHistAdded")]
+    partial class GradingTableHistAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1632,9 +1635,6 @@ namespace SMS.DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AcademicExamGroupId")
-                        .IsUnique();
-
                     b.ToTable("GradingTableHists");
                 });
 
@@ -2657,9 +2657,6 @@ namespace SMS.DB.Migrations
                     b.Property<int>("ReligionId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("SMSService")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
 
@@ -3520,17 +3517,6 @@ namespace SMS.DB.Migrations
                     b.Navigation("AcademicSubject");
 
                     b.Navigation("ExamResult");
-                });
-
-            modelBuilder.Entity("SMS.Entities.GradingTableHist", b =>
-                {
-                    b.HasOne("SMS.Entities.AcademicExamGroup", "AcademicExamGroup")
-                        .WithMany()
-                        .HasForeignKey("AcademicExamGroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AcademicExamGroup");
                 });
 
             modelBuilder.Entity("SMS.Entities.Notification", b =>

@@ -71,6 +71,7 @@ namespace SMS.DB
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<SubjectEnrollment> SubjectEnrollments { get; set; }
         public DbSet<SubjectEnrollmentDetail> SubjectEnrollmentDetails { get; set; }
+        public DbSet<GradingTableHist> GradingTableHists { get; set; }
 
         [NotMapped]
         public DbSet<RptStudentVM> RptStudentVMs { get; set; }
@@ -125,6 +126,8 @@ namespace SMS.DB
             builder.Entity<StudentPaymentSchedulePaidVM>().ToView(nameof(StudentPaymentSchedulePaidVMs)).HasNoKey();
             builder.Entity<SubjectWiseMarkSheetVM>().ToView(nameof(SubjectWiseMarkSheetVMs)).HasNoKey();
             builder.Entity<StudentWiseMarkSheetVM>().ToView(nameof(StudentWiseMarkSheetVMs)).HasNoKey();
+
+            builder.Entity<GradingTableHist>().HasIndex(s => s.AcademicExamGroupId).IsUnique();
         }        
     }
 }

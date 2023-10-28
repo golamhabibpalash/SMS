@@ -104,6 +104,7 @@ namespace SMS.Entities
         [Display(Name = "Previous School")]
         public string PreviousSchool { get; set; }
         public bool IsResidential { get; set; } = false;
+        public bool SMSService { get; set; } = true;
 
         public ICollection<AttachDoc> Documents { get; set; }
 

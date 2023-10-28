@@ -1,5 +1,5 @@
 ﻿
 $(function () {
-      alertify.warning("Update Fail");
+      alertify.warning("Fail to update");
 });
 

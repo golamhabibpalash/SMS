@@ -12,6 +12,7 @@ namespace SMS.Entities
 
         #region Attendance SMS Service
         public bool AttendanceSMSService { get; set; }
+
         public bool CheckInSMSService { get; set; }
         public bool CheckInSMSServiceForMaleStudent { get; set; }
         public bool CheckInSMSServiceForGirlsStudent { get; set; }

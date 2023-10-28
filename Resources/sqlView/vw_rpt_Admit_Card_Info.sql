@@ -1,12 +1,13 @@
 USE [SMSDB]
 GO
 
-/****** Object:  View [dbo].[vw_rpt_Admit_Card_Info]    Script Date: 17-Jul-23 9:20:50 PM ******/
+/****** Object:  View [dbo].[vw_rpt_Admit_Card_Info]    Script Date: 18-Oct-23 11:35:51 AM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -28,6 +29,7 @@ select s.Id[StudentId],
 	r.Name[Religion],
 	i.Name[InstituteName],
 	i.EIIN,
+	s.Status[StudentStauts],
 	g.Name[Gender] from Institute i, AcademicExams e
 left join AcademicExamGroups eg on e.AcademicExamGroupId = eg.Id
 left join AcademicExamDetails d on e.Id = d.AcademicExamId
@@ -40,6 +42,5 @@ left join AcademicSection sec on s.AcademicSectionId = sec.Id
 left join Gender g on s.GenderId = g.Id
 left join Religion r on s.ReligionId = r.Id
 GO
-
 
 

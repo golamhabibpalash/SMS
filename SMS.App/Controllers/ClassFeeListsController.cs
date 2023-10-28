@@ -75,7 +75,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,StudentFeeHeadId,AcademicSessionId,Amount,AcademicClassId,CreatedBy,CreatedAt,EditedBy,EditedAt")] ClassFeeList classFeeList)
+        public async Task<IActionResult> Create([Bind("Id,StudentFeeHeadId,AcademicSessionId,Amount,AcademicClassId,CreatedBy,CreatedAt,EditedBy,EditedAt, StartDate, EndDate")] ClassFeeList classFeeList)
         {
             string msg = "";
 
@@ -134,18 +134,31 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,StudentFeeHeadId,AcademicSessionId,Amount,AcademicClassId,CreatedBy,CreatedAt,EditedBy,EditedAt")] ClassFeeList classFeeList)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,StudentFeeHeadId,AcademicSessionId,Amount,AcademicClassId,CreatedBy,CreatedAt,EditedBy,EditedAt, StartDate, EndDate")] ClassFeeList classFeeList)
         {
             if (id != classFeeList.Id)
             {
                 return NotFound();
             }
-            
+
+
+            ViewData["AcademicSessionId"] = new SelectList(await academicSessionManager.GetAllAsync(), "Id", "Name", classFeeList.AcademicSessionId);
+            ViewData["StudentFeeHeadId"] = new SelectList(await _studentFeeHeadManager.GetAllAsync(), "Id", "Name", classFeeList.StudentFeeHeadId);
+            ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", classFeeList.AcademicClassId);
 
             if (ModelState.IsValid)
             {
                 try
                 {
+                    var classFeeLists = await _classFeeListManager.GetAllAsync();
+                    var feeList = (from s in classFeeLists
+                                  where s.StartDate>=classFeeList.StartDate && s.EndDate<=classFeeList.EndDate && s.Id!= classFeeList.Id
+                                  select s).FirstOrDefault();
+                    if (feeList != null)
+                    {
+                        TempData["failed"] = "Data is available on this date";
+                        return View(classFeeList);
+                    }
                     classFeeList.EditedAt = DateTime.Now;
                     classFeeList.EditedBy = HttpContext.Session.GetString("UserId");
                     classFeeList.MACAddress = MACService.GetMAC();
@@ -167,8 +180,8 @@ namespace SMS.App.Controllers
                         throw;
                     }
                 }
-                TempData["fail"] = "Fail to Update";
-                return View();
+                TempData["failed"] = "Fail to Update";
+                return View(classFeeList);
             }
            
             return View(classFeeList);

@@ -1,9 +1,11 @@
 ﻿@model IEnumerable<SMS.Entities.ClassFeeList>
+@inject UserManager<ApplicationUser> _userManager;
 
 @{
     ViewData["Title"] = "Fee List";
     GlobalUI.PageTitle = "Class Fee Lists";
     int sl = 0;
+    string createdBy = string.Empty;
 }
 
 <div class="shadow-lg p-2">
@@ -30,7 +32,10 @@
                     <th>
                         @Html.DisplayNameFor(model => model.Amount)
                     </th>
-                    <th class="no-sort">
+                    <th>
+                        Created By
+                    </th>
+                    <th>
                         <a class="p-2 btn-sm btn-warning btn-round" asp-action="Create"><i class="fa fa-plus"></i> Add</a>
                     </th>
                 </tr>
@@ -60,6 +65,17 @@
                                 @Html.DisplayFor(modelItem => item.Amount)
                             </td>
                             <td>
+                                @if (item.CreatedBy != null)
+                                {
+                                    ApplicationUser aUser = await _userManager.FindByIdAsync(item.CreatedBy);
+                                    createdBy = aUser.UserName;
+                                }
+                                else
+                                {
+                                    createdBy = "N/F";
+                                }
+                            </td>
+                            <td>
                                 <partial name="_Edit_Details_Delete" model="@item.Id" />
                             </td>
                         </tr>
@@ -80,7 +96,12 @@
                                 @Html.DisplayFor(modelItem => item.AcademicSession.Name)
                             </td>
                             <td>
+                                @item.StartDate.ToString("dd MMM yyyy") - @item.EndDate.ToString("dd MMM yyyy")
+                            </td>
+                            <td>
                                 @Html.DisplayFor(modelItem => item.Amount)
+                            </td>
+                            <td>
                             </td>
                             <td>
                                 <partial name="_Edit_Details_Delete" model="@item.Id" />
@@ -94,6 +115,19 @@
 
     </div>
 
+</div>
+
+<div class="row">
+    <table class="table">
+        <tr>
+            <td>Last Edited BY: </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Last Edited Date: </td>
+            <td></td>
+        </tr>
+    </table>
 </div>
 @section Scripts{
     <script src="~/js/DataTable/dataTable.js"></script>

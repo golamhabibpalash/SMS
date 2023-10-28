@@ -78,7 +78,7 @@ namespace SMS.DAL.Repositories
         public async Task<List<StudentPaymentSummerySMS_VM>> GetStudentPaymentSummerySMS_VMsAsync(DateTime date)
         {
             List<StudentPaymentSummerySMS_VM> payments = new List<StudentPaymentSummerySMS_VM>();
-            string pDate = date.ToString("yyyymmdd");
+            string pDate = date.ToString("yyyyMMdd");
             try
             {
                 payments = await _context.studentPaymentSummerySMS_VMs.FromSqlInterpolated($"sp_Get_PaymentSummery_Daily_SMS {pDate}").ToListAsync();

@@ -27,5 +27,6 @@ namespace SMS.Entities.RptModels
         public string EIIN { get; set; }
         public string Gender { get; set; }
         public string Religion { get; set; }
+        public bool StudentStauts { get; set;}
     }
 }

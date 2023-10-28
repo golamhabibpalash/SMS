@@ -617,11 +617,13 @@ namespace SMS.App.Controllers
         {
             int totalFail = 0;
             var eDetails = await _academicExamDetailsManager.GetAllByExamGroupAndStudentId(examGroupId, studentId);
+            double obtainPercentageMark = 0.00;
             if (eDetails!=null)
             {
                 foreach (var e in eDetails)
                 {
-                    double gpa = await GetGradePointByNumber(e.ObtainMark);
+                    obtainPercentageMark = (e.ObtainMark * 100) / e.AcademicExam.TotalMarks;
+                    double gpa = await GetGradePointByNumber(obtainPercentageMark);
                     if (gpa<=0)
                     {
                         totalFail++;

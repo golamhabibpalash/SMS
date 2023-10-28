@@ -119,7 +119,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model.AcademicExamDetails)
+                    @foreach (var item in Model.AcademicExamDetails.Where(s =>s.Student.Status==true))
                     {
                         if (item.EditedBy != null)
                         {
@@ -137,7 +137,7 @@
                                 }
                                 else
                                 {
-                                    <input class="markInput" tabindex="@tabIndex" asp-for="AcademicExamDetails[detailId].ObtainMark" max="@Model.TotalMarks" inputmode="numeric" pattern="[0-9]*" placeholder="0" style="width:60px;height:35px;text-align:center;border:none" onkeyup="handleInputKeyUp(this)"/>
+                                    <input class="markInput" tabindex="@tabIndex" asp-for="AcademicExamDetails[detailId].ObtainMark" max="@Model.TotalMarks" inputmode="numeric" pattern="[0-9]*" placeholder="0" style="width:60px;height:35px;text-align:center;border:none" onchange="handleInputChange(this)" data-academicExamId="@item.AcademicExamId" data-Id="@item.Id" data-StudentId="@item.StudentId"/>
                                 }
                             </td>
                             <td class="flex-wrap justify-content-center">
@@ -191,7 +191,6 @@
     <script>
         $(document).ready(function () {
             var inputFields = document.getElementsByClassName("markInput");
-
             // Loop through all input fields with class "markInput"
             for (var i = 0; i < inputFields.length; i++) {
                 var inputValue = inputFields[i].value.trim();
@@ -200,19 +199,58 @@
                 }
             }
         });
+        function handleInputChange(inputElement) {
+            var maxAttributeValue = inputElement.getAttribute("max");
+            var academicexamid = inputElement.getAttribute("data-academicexamid");
+            var studentid = inputElement.getAttribute("data-studentid");
+            var id = inputElement.getAttribute("data-id");
+            var obtainMark = inputElement.value;
+
+            if (Number(obtainMark) > Number(maxAttributeValue)) {
+                inputElement.classList.add("error");
+                alert("Mark should not exceed from Total Mark.");
+            } else {
+                inputElement.classList.remove("error");
+
+                var examDetail = JSON.stringify({
+                    AcademicExamId: academicexamid,
+                    ObtainMark: obtainMark,
+                    StudentId: studentid,
+                    Id: id,
+                    Status: true,
+                    Remarks: "",
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: "/AcademicExams/ExamMarkSubmitAjax",
+                    data: examDetail,
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (data) {
+                        // Handle the response from the server
+                        console.log(data);
+                    },
+                    error: function (error) {
+                        console.log("Error:", error);
+                    },
+                });
+            }
+        }
 
 
         function submitForm() {
             var inputFields = document.getElementsByClassName("markInput");
-
+            var inputFieldNumber = 0;
+            var maxNumber = 0;
             // Loop through all input fields with class "markInput"
             for (var i = 0; i < inputFields.length; i++) {
-                var inputValue = inputFields[i].value.trim();
-                if (inputValue === "" || inputValue === null) {
+                inputFieldNumber = inputFields[i].value.trim();
+                if (inputFieldNumber === "" || inputFieldNumber === null) {
                     inputFields[i].value = "0";
                 }
-                const maxValue = inputFields[i].max;
-                if (inputValue > maxValue) {
+                maxNumber = inputFields[i].max;
+                if (Number(inputFieldNumber) > Number(maxNumber)) {
                     inputFields[i].classList.add("error");
                     alert("Mark should not exceed from Total Mark.");
                     return; // Stop form submission
@@ -224,18 +262,6 @@
 
             // Now, you can submit the form
             document.getElementById("myForm").submit();
-        }
-
-        function handleInputKeyUp(inputElement) {
-            const maxValue = parseFloat(inputElement.max);
-            const inputValue = parseFloat(inputElement.value) || 0;
-
-            // Check if the input value exceeds the max value
-            if (inputValue > maxValue) {
-                inputElement.classList.add("error"); // Add 'error' class to change the color to red
-            } else {
-                inputElement.classList.remove("error"); // Remove 'error' class if the value is valid
-            }
         }
     </script>
 }

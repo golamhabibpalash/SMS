@@ -129,7 +129,7 @@ namespace SMS.App.Controllers
             academicExamVM.AcademicSubject = exam.AcademicSubject;
             academicExamVM.Employee = exam.Employee;
             academicExamVM.TotalMarks = exam.TotalMarks;
-            
+
             return View(exam);
         }
 
@@ -165,6 +165,7 @@ namespace SMS.App.Controllers
                             success++;
                             AcademicExamGroup academicExamGroup = await _examGroupManager.GetByIdAsync(exam.AcademicExamGroupId);
                             var students = await _studentManager.GetStudentsByClassIdAndSessionIdAsync(academicExamGroup.AcademicSessionId, exam.AcademicClassId);
+                            students = students.Where(s => s.Status == true).ToList();
                             foreach (Student student in students.Where(s => s.Status=true))
                             {
                                 if (exam.AcademicSectionId!=null || exam.AcademicSectionId>0)
@@ -388,6 +389,36 @@ namespace SMS.App.Controllers
                 }
             }
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> ExamMarkSubmitAjax([FromBody] AcademicExamDetail examDetail)
+        {
+            AcademicExamDetail existingDetails = new();
+            if (examDetail != null)
+            {
+                try
+                {
+                existingDetails = await _academicExamDetailsManager.GetByIdAsync(examDetail.Id);
+                    if (existingDetails != null)
+                    {
+                        if (existingDetails.ObtainMark != examDetail.ObtainMark || existingDetails.Remarks != examDetail.Remarks || existingDetails.Status != examDetail.Status)
+                        {
+                            examDetail.MACAddress = MACService.GetMAC();
+                            examDetail.EditedAt = DateTime.Now;
+                            examDetail.EditedBy = HttpContext.Session.GetString("UserId");
+                            await _academicExamDetailsManager.UpdateAsync(examDetail);
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+            
+            return Json(existingDetails);
         }
         public async Task<ActionResult> AdmitCard()
         {

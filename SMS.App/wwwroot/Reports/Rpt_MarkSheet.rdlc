@@ -2624,19 +2624,6 @@
               </Border>
             </Style>
           </Tablix>
-          <Subreport Name="Subreport1">
-            <ReportName>Rpt_GradingTable</ReportName>
-            <Top>14.12558cm</Top>
-            <Left>0.28787cm</Left>
-            <Height>7.6cm</Height>
-            <Width>7.5cm</Width>
-            <ZIndex>1</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-            </Style>
-          </Subreport>
         </ReportItems>
         <Height>21.72558cm</Height>
         <Style>

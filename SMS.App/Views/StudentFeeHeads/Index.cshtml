@@ -1,30 +1,39 @@
 ﻿@model IEnumerable<SMS.Entities.StudentFeeHead>
+@inject UserManager<ApplicationUser> _userManager;
 
 @{
     ViewData["Title"] = "Fee Head";
     GlobalUI.PageTitle = "Student Payment Type List";
     int sl = 0;
+    string createdBy = string.Empty;
+    string updatedBy = string.Empty;
 }
 
 
-<table class="table table-responsive-sm">
+<table class="table table-responsive-sm" id="myTable">
     <thead>
         <tr>
             <th>#</th>
             <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
-            <th>
+            @*<th>
                 @Html.DisplayNameFor(model => model.Repeatedly)
-            </th>
-            <th>
+            </th>*@
+            @*<th>
                 @Html.DisplayNameFor(model => model.YearlyFrequency)
             </th>
             <th>
                 Contra Type
-            </th>
+            </th>*@
             <th>
                 Residential
+            </th>
+            <th>
+                Created by
+            </th>
+            <th>
+                Updated by
             </th>
             <th>
                 <a class="rounded btn btn-info btn-sm" asp-action="Create"> <i class="fa fa-plus"></i> Add New</a>
@@ -39,14 +48,14 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Name)
                 </td>
-                <td>
+                @*<td>
                     @Html.DisplayFor(modelItem => item.Repeatedly)
-                </td>
-                <td>
+                </td>*@
+                @*<td>
                     @Html.DisplayFor(modelItem => item.YearlyFrequency)
                 </td>
                 <td title="Vise versa payment type">
-                    @if (item.ContraFeeheadId>0)
+                    @if (item.ContraFeeheadId > 0)
                     {
                         <span>@item.ContraFeeheadId</span>
                     }
@@ -54,7 +63,7 @@
                     {
                         <span>N/A</span>
                     }
-                </td>
+                </td>*@
                 <td>
                     @if (item.IsResidential)
                     {
@@ -64,6 +73,30 @@
                     {
                         <span>Non Residential</span>
                     }
+                </td>
+                <td>
+                    @if (item.CreatedBy != null)
+                    {
+                        ApplicationUser aUser = await _userManager.FindByIdAsync(item.CreatedBy);
+                        createdBy = aUser.UserName;
+                    }
+                    else
+                    {
+                        createdBy = "N/F";
+                    }
+                    <span>@createdBy</span>
+                </td>
+                <td>
+                    @if (item.EditedBy != null)
+                    {
+                        ApplicationUser aUser = await _userManager.FindByIdAsync(item.EditedBy);
+                        updatedBy = aUser.UserName;
+                    }
+                    else
+                    {
+                        updatedBy = "N/F";
+                    }
+                    <span>@updatedBy</span>
                 </td>
                 <td>
                     <partial name="_Edit_Details_Delete" model="@item.Id" />

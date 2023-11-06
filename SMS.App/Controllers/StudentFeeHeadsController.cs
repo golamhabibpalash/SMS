@@ -31,7 +31,8 @@ namespace SMS.App.Controllers
         // GET: StudentFeeHeads
         public async Task<IActionResult> Index()
         {
-            return View(await _studentFeeHeadManager.GetAllAsync());
+            var feeHead = await _studentFeeHeadManager.GetAllAsync();
+            return View(feeHead);
         }
 
         // GET: StudentFeeHeads/Details/5

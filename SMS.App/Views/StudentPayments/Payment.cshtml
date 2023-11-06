@@ -117,7 +117,7 @@
 @if (Model != null)
 {
     <div class="row text-white" id="paymentDiv">
-        <div class="col-md-4 mh-100 p-1 ">
+        <div class="col-md-3 mh-100 p-1 ">
             <div class="card bg-navy-blue" style="min-height:430px;">
 
                 <div class="row">
@@ -161,7 +161,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-8 mh-100 p-1">
+        <div class="col-md-4 mh-100 p-1">
             <div class="card bg-navy-blue" style="min-height:430px;">
                 <form asp-action="payment" asp-controller="StudentPayments" method="post">
                     <input type="hidden" asp-for="StudentPayment.StudentId" value="@Model.StudentId" />
@@ -235,12 +235,8 @@
                 </form>
             </div>
         </div>
-    </div>
-    <div class="row mt-1" id="historyDiv">
-        <div class="col-md-12 bg-dark mb-1">
-            <h5 class="text-center p-2 text-light h5">Payment History</h5>
-        </div>
-        <div class="col-md-12 mh-100">
+
+        <div class="col-md-5 mh-100">
             <div class="card">
                 @if (Model.StudentPayments != null && Model.StudentPayments.Count > 0)
                 {
@@ -254,14 +250,14 @@
                                 <td>Paid Amount</td>
                                 <td>Remark</td>
                                 <td>Received By</td>
-                                <td>Received Date</td>
+                                @*<td>Received Date</td>*@
                                 <td>Action</td>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var item in Model.StudentPayments)
                             {
-                                if (item.CreatedBy!=null)
+                                if (item.CreatedBy != null)
                                 {
                                     ApplicationUser aUser = await _userManager.FindByIdAsync(item.CreatedBy);
                                     createdBy = aUser.UserName;
@@ -280,7 +276,7 @@
                                         <td>@payDetail.StudentPayment.TotalPayment</td>
                                         <td>@payDetail.StudentPayment.Remarks</td>
                                         <td>@createdBy</td>
-                                        <td>@payDetail.StudentPayment.CreatedAt</td>
+                                        @*<td>@payDetail.StudentPayment.CreatedAt</td>*@
                                         <td>
                                             <div class="btn-group">
                                                 <button data-paymentId="@item.Id" data-studentName="@item.Student.Name" data-academicClass="@item.Student.AcademicClass.Name" data-classRoll="@item.Student.ClassRoll" data-academicSession="@item.Student.AcademicSession.Name" data-paidDate="@item.PaidDate.ToString()" data-receipt="@payDetail.StudentPayment.ReceiptNo" data-amount="@payDetail.StudentPayment.TotalPayment" data-paymentType="@payDetail.StudentFeeHead.Name" type="button" class="btn btn-light btn-outline-info btn-sm modalViewId" data-toggle="modal" data-target="#exampleModalCenter" id="modalViewId_">
@@ -303,8 +299,173 @@
             </div>
         </div>
     </div>
+    <div class="row mt-1" id="historyDiv">
+        <div class="col-md-12 bg-dark mb-1">
+            <h5 class="text-center p-2 text-light h5">Payment History</h5>
+        </div>
+        @*<div class="col-md-12">
+            @if (Model.StudentPayments != null && Model.StudentPayments.Count > 0)
+            {
+                <table>
+                    <thead></thead>
+                    <tbody>
+                        @foreach (var item in Model.StudentPayments)
+                        {
+                            <tr>
+                                @foreach (var pDetails in item.StudentPaymentDetails.GroupBy(s => s.StudentFeeHeadId))
+                                {
+                                    <td>@pDetails</td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>*@
+    </div>
+    <div class="row">
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th>Payment Group</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Payment ID</th>
+                    <th>Paid Mode</th>
+                    <th>Amount</th>
+                    <th>Paid Date</th>
+                    <th>Remark</th>
+                    <th>Balance</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td rowspan="3">Monthly Payment January</td>
+                    <td rowspan="3">1000</td>
+                    <td>Partial</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>200</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><span class="fas fa-arrow-alt-square-right"></span></td>
+                    <td>562389</td>
+                    <td>Cash</td>
+                    <td>300</td>
+                    <td>15 Jan 2023</td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <span class="fas fa-file-pdf text-danger"></span>
+                        <span class="fas fa-arrow-circle-left"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td><span class="fas fa-arrow-alt-square-right"></span></td>
+                    <td>569921</td>
+                    <td>Cash</td>
+                    <td>500</td>
+                    <td>15 Feb 2023</td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <span class="fas fa-file-pdf text-danger"></span>
+                        <span class="fas fa-arrow-circle-left"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Monthly Payment February</td>
+                    <td>1100</td>
+                    <td>Unpaid</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>1100</td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 }
-
+<div class="row">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title d-flex justify-content-between">
+                    <span class="text-primary font-weight-bolder">Monthly Payment January</span>
+                    <span class="text-primary font-weight-bolder">1000</span>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Id</th>
+                            <th>Mode</th>
+                            <th>Paid Date</th>
+                            <th>Remark</th>
+                            <th class="text-right">Amount</th>
+                            @*<th>Action</th>*@
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <span class="fas fa-file-pdf text-danger"></span>
+                                <span class="fas fa-arrow-circle-left"></span>
+                            </td>
+                            <td>231220046</td>
+                            <td>Cash</td>
+                            <td>15 Jan 2023</td>
+                            <td>January Fee</td>
+                            <td class="text-right">600</td>
+                            @*<td>
+                                <span class="fas fa-file-pdf text-danger"></span>
+                                <span class="fas fa-arrow-circle-left"></span>
+                            </td>*@
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="fas fa-file-pdf text-danger"></span>
+                                <span class="fas fa-arrow-circle-left"></span>
+                            </td>
+                            <td>231228008</td>
+                            <td>Cash</td>
+                            <td>28 Jan 2023</td>
+                            <td>January Fee</td>
+                            <td class="text-right">200</td>
+                            @*<td>
+                                <span class="fas fa-file-pdf text-danger"></span>
+                                <span class="fas fa-arrow-circle-left"></span>
+                            </td>*@
+                        </tr>
+                    </tbody>
+                    <tfoot class="text-danger">
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>Due</td>
+                            <td class="text-right">200</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="card-footer">
+                <span>payment Status: <span class="text-warning">Partial</span></span>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Modal -->
 
 <div style="color:black;font-weight:100" class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">

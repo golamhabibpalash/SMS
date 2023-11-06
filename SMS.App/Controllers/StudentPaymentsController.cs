@@ -143,6 +143,7 @@ namespace SMS.App.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "CreatePaymentPolicy")]
         public async Task<IActionResult> Payment(StudentPaymentVM paymentObject)
         {
             try
@@ -240,6 +241,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: StudentPayments/Create
+        [Authorize(Policy = "CreatePaymentPolicy")]
         public async Task<IActionResult> Create()
         {
             ViewData["StudentId"] = new SelectList(await _studentManager.GetAllAsync(), "Id", "Name");
@@ -251,6 +253,7 @@ namespace SMS.App.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "CreatePaymentPolicy")]
         public async Task<IActionResult> Create( StudentPaymentVM studentyPaymentVM, IFormFile waiverAttachment)
         {
             Student student = new();
@@ -269,7 +272,7 @@ namespace SMS.App.Controllers
                         return RedirectToAction("login", "Accounts");
                     }
                     studentyPaymentVM.StudentPayment.CreatedBy = HttpContext.Session.GetString("UserId");
-
+                    
                     StudentPayment sPayment = new();
                     sPayment = studentyPaymentVM.StudentPayment;
 
@@ -278,6 +281,7 @@ namespace SMS.App.Controllers
                         sPayment.StudentPaymentDetails = studentyPaymentVM.StudentPayment.StudentPaymentDetails;
                     }
 
+                    sPayment.MACAddress = MACService.GetMAC();
                     bool isSaved = await _studentPaymentManager.AddAsync(sPayment);
                     if (isSaved)
                     {

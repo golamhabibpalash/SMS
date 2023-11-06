@@ -6,6 +6,7 @@
     GlobalUI.PageTitle = "Class Fee Lists";
     int sl = 0;
     string createdBy = string.Empty;
+    string updatedBy = string.Empty;
 }
 
 <div class="shadow-lg p-2">
@@ -27,13 +28,13 @@
                         Academic Session
                     </th>
                     <th>
-                        Period
-                    </th>
-                    <th>
                         @Html.DisplayNameFor(model => model.Amount)
                     </th>
                     <th>
                         Created By
+                    </th>
+                    <th>
+                        Updated By
                     </th>
                     <th>
                         <a class="p-2 btn-sm btn-warning btn-round" asp-action="Create"><i class="fa fa-plus"></i> Add</a>
@@ -59,9 +60,6 @@
                                 @Html.DisplayFor(modelItem => item.AcademicSession.Name)
                             </td>
                             <td>
-                                @item.StartDate.ToString("dd MMM yyyy") - @item.EndDate.ToString("dd MMM yyyy")
-                            </td>
-                            <td>
                                 @Html.DisplayFor(modelItem => item.Amount)
                             </td>
                             <td>
@@ -73,6 +71,17 @@
                                 else
                                 {
                                     createdBy = "N/F";
+                                }
+                            </td>
+                            <td>
+                                @if (item.EditedBy != null)
+                                {
+                                    ApplicationUser aUser = await _userManager.FindByIdAsync(item.EditedBy);
+                                    updatedBy = aUser.UserName;
+                                }
+                                else
+                                {
+                                    updatedBy = "N/F";
                                 }
                             </td>
                             <td>
@@ -96,12 +105,29 @@
                                 @Html.DisplayFor(modelItem => item.AcademicSession.Name)
                             </td>
                             <td>
-                                @item.StartDate.ToString("dd MMM yyyy") - @item.EndDate.ToString("dd MMM yyyy")
-                            </td>
-                            <td>
                                 @Html.DisplayFor(modelItem => item.Amount)
                             </td>
                             <td>
+                                @if (item.CreatedBy != null)
+                                {
+                                    ApplicationUser aUser = await _userManager.FindByIdAsync(item.CreatedBy);
+                                    createdBy = aUser.UserName;
+                                }
+                                else
+                                {
+                                    createdBy = "N/F";
+                                }
+                            </td>
+                            <td>
+                                @if (item.EditedBy != null)
+                                {
+                                    ApplicationUser aUser = await _userManager.FindByIdAsync(item.EditedBy);
+                                    updatedBy = aUser.UserName;
+                                }
+                                else
+                                {
+                                    updatedBy = "N/F";
+                                }
                             </td>
                             <td>
                                 <partial name="_Edit_Details_Delete" model="@item.Id" />

@@ -32,7 +32,7 @@
                         @Html.DisplayFor(modelItem => item.Name)
                     </td>
                     <td>
-                        <partial name="_Edit_Details_Delete" model="@item.Id" />
+                        <partial name="_Edit_Details_Delete" model="@item.Id" data-editedBy="" data-editedAt="" />
                     </td>
                 </tr>
             }

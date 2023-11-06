@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SMS.DB;
 
@@ -11,9 +12,11 @@ using SMS.DB;
 namespace SMS.DB.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231103042733_claimstoreAdded")]
+    partial class claimstoreAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1014,12 +1017,13 @@ namespace SMS.DB.Migrations
                     b.Property<string>("MACAddress")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("SubModuleId")
-                        .HasColumnType("int");
+                    b.Property<string>("ModuleName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SubModuleName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("SubModuleId");
 
                     b.ToTable("ClaimStores");
                 });
@@ -1974,85 +1978,6 @@ namespace SMS.DB.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PhoneSMS");
-                });
-
-            modelBuilder.Entity("SMS.Entities.ProjectModule", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("EditedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("EditedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MACAddress")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ModuleName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Remarks")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ProjectModules");
-                });
-
-            modelBuilder.Entity("SMS.Entities.ProjectSubModule", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("EditedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("EditedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MACAddress")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ProjectModuleId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Remarks")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SubModuleName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProjectModuleId");
-
-                    b.ToTable("ProjectSubModules");
                 });
 
             modelBuilder.Entity("SMS.Entities.Question", b =>
@@ -3445,17 +3370,6 @@ namespace SMS.DB.Migrations
                     b.Navigation("AcademicSubject");
                 });
 
-            modelBuilder.Entity("SMS.Entities.ClaimStores", b =>
-                {
-                    b.HasOne("SMS.Entities.ProjectSubModule", "SubModule")
-                        .WithMany("ClaimStoresList")
-                        .HasForeignKey("SubModuleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("SubModule");
-                });
-
             modelBuilder.Entity("SMS.Entities.ClassFeeList", b =>
                 {
                     b.HasOne("SMS.Entities.AcademicClass", "AcademicClass")
@@ -3685,17 +3599,6 @@ namespace SMS.DB.Migrations
                         .IsRequired();
 
                     b.Navigation("OffDayType");
-                });
-
-            modelBuilder.Entity("SMS.Entities.ProjectSubModule", b =>
-                {
-                    b.HasOne("SMS.Entities.ProjectModule", "ProjectModule")
-                        .WithMany("SubModuleList")
-                        .HasForeignKey("ProjectModuleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ProjectModule");
                 });
 
             modelBuilder.Entity("SMS.Entities.Question", b =>
@@ -3973,16 +3876,6 @@ namespace SMS.DB.Migrations
             modelBuilder.Entity("SMS.Entities.ExamResult", b =>
                 {
                     b.Navigation("ExamResultDetails");
-                });
-
-            modelBuilder.Entity("SMS.Entities.ProjectModule", b =>
-                {
-                    b.Navigation("SubModuleList");
-                });
-
-            modelBuilder.Entity("SMS.Entities.ProjectSubModule", b =>
-                {
-                    b.Navigation("ClaimStoresList");
                 });
 
             modelBuilder.Entity("SMS.Entities.Question", b =>

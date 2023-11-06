@@ -72,6 +72,9 @@ namespace SMS.DB
         public DbSet<SubjectEnrollment> SubjectEnrollments { get; set; }
         public DbSet<SubjectEnrollmentDetail> SubjectEnrollmentDetails { get; set; }
         public DbSet<GradingTableHist> GradingTableHists { get; set; }
+        public DbSet<ClaimStores> ClaimStores { get; set; }
+        public DbSet<ProjectModule> ProjectModules { get; set; }
+        public DbSet<ProjectSubModule> ProjectSubModules { get; set; }
 
         [NotMapped]
         public DbSet<RptStudentVM> RptStudentVMs { get; set; }

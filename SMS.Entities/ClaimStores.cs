@@ -7,13 +7,11 @@ using System.Threading.Tasks;
 
 namespace SMS.Entities
 {
-    public static class ClaimStores
+    public class ClaimStores:CommonProps
     {
-        public static List<Claim> AllClaims = new List<Claim>()
-        {
-            new Claim("Create Role", "Create Role"),
-            new Claim("Edit Role","Edit Role"),
-            new Claim("Delete Role","Delete Role")
-        };
+        public string ClaimType { get; set; }
+        public string ClaimValue { get; set; }
+        public int SubModuleId { get; set; }
+        public ProjectSubModule SubModule { get; set; }
     }
 }

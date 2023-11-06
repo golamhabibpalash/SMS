@@ -1,0 +1,215 @@
+﻿@model SMS.App.ViewModels.ClaimContext.ClaimStoreVM
+
+@inject UserManager<ApplicationUser> _userManager;
+
+@{
+    int sl = 0;
+    string createdBy = string.Empty;
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="p-1" id="claimStoreCreateUpdateForm">
+            <fieldset class="border p-3 shadow">
+                <legend class="" style="width:inherit" id="create_update_title_id">Create new Claims</legend>
+                <form asp-action="Create" method="post" id="createUpdateForm">
+                    <input type="hidden" asp-for="ClaimStores.Id" value="" />
+                    <div class="form-group row">
+                        <label asp-for="ModuleSelectList" class="col-sm-3 col-form-label text-right text-sm-left"></label>
+                        <div class="col-sm-9">
+                            <select asp-items="Model.ModuleSelectList" Id="ModuleSelectList" class="form-control">
+                                <option selected disabled>Select Module</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label asp-for="SubModuleSelectList" class="col-sm-3 col-form-label text-right text-sm-left"></label>
+                        <div class="col-sm-9">
+                            <select asp-for="ClaimStores.SubModuleId" name="ClaimStores.SubModuleId" class="form-control">
+                                <option selected disabled>Select Sub Module</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label asp-for="ClaimStores.ClaimValue" class="col-sm-3 col-form-label text-right text-sm-left"></label>
+                        <div class="col-sm-9">
+                            <input asp-for="ClaimStores.ClaimValue" class="form-control" placeholder="Policy Name as it is">
+                            <span asp-validation-for="ClaimStores.ClaimValue"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label asp-for="ClaimStores.ClaimType" class="col-sm-3 col-form-label text-right text-sm-left"></label>
+                        <div class="col-sm-9">
+                            <input asp-for="ClaimStores.ClaimType" class="form-control" placeholder="Claim Name (User will view)">
+                            <span asp-validation-for="ClaimStores.ClaimType"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-sm-10 text-right">
+                            <input type="submit" class="btn btn-primary" id="submitId" value="Create" />
+                        </div>
+                    </div>
+                </form>
+            </fieldset>
+
+        </div>
+    </div>
+    <div class="col-md-8">
+        <table class="shadow table table-responsive-sm table-striped table-striped-columns" id="myTable">
+            <thead class="table-info">
+                <tr>
+                    <th>#</th>
+                    <th>Claim Value</th>
+                    <th>Claim Type</th>
+                    <th>Sub Module</th>
+                    <th>Module</th>
+                    <th>Created By</th>
+                    <th>Acation</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.ClaimStoresList != null && Model.ClaimStoresList.Count > 0)
+                {
+                    foreach (var item in Model.ClaimStoresList)
+                    {
+                        <tr>
+                            <td>@(++sl)</td>
+                            <td>@item.ClaimValue</td>
+                            <td>@item.ClaimType</td>
+                            <td>@item.SubModule.SubModuleName</td>
+                            <td>@item.SubModule.ProjectModule.ModuleName</td>
+                            <td>
+                                @if (item.CreatedBy != null)
+                                {
+                                    ApplicationUser aUser = await _userManager.FindByIdAsync(item.CreatedBy);
+                                    createdBy = aUser.UserName;
+                                }
+                                else
+                                {
+                                    createdBy = "N/F";
+                                }
+                                <span>@createdBy</span>
+                            </td>
+                            <td>
+                                <button class="btn btn-warning btn-sm updateBtn" id="updateBtn" data-claimType="@item.ClaimType" data-claimValue="@item.ClaimValue" data-subModuleId="@item.SubModuleId" data-moduleid="@item.SubModule.ProjectModuleId" data-claimId="@item.Id">Edit</button>
+                                <button class="btn btn-danger btn-sm">Delete</button>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr class="text-center">
+                        <td colspan="7" class="alert">Nothing Found</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<partial name="_LastUpdated" />
+
+@*<div class="row" style="position:absolute;bottom:15px;">
+    <table class="table table-responsive table-responsive-sm">
+        <tr>
+            <td>Last Updated By</td>
+            <td>:</td>
+            <td>
+                @if (ViewBag.LastUpdatedBy != null)
+                {
+                    ApplicationUser aUser = await _userManager.FindByIdAsync(ViewBag.LastUpdatedBy);
+                    createdBy = aUser.UserName;
+                }
+                @createdBy
+            </td>
+        </tr>
+        <tr>
+            <td>Last Updated At</td>
+            <td>:</td>
+            <td> @ViewBag.LastUpdatedAt</td>
+        </tr>
+    </table>
+</div>*@
+
+@section Scripts{
+    <script>
+        $('#ModuleSelectList').change(function () {
+            let id = $('#ModuleSelectList option:selected').val();
+
+            $.ajax({
+                url: "/ProjectSubModules/getAllByModuleId?moduleId=" + id,
+                dataType: "JSON",
+                type: "POST",
+                cache: false,
+                success: function (data) {
+                    $('#ClaimStores_SubModuleId').empty();
+
+                    if (data != null || data != '') {
+                        //var o = '<option disabled selected>Select Sub Module</option>';
+                        //$('#ClaimStores_SubModuleId').append(o);
+                        $.each(data, function (i, obj) {
+                            var op = '<option value="' + obj.id + '">' + obj.subModuleName + '</option>';
+                            $('#ClaimStores_SubModuleId').append(op);
+                        });
+                    }
+                    else {
+                        var o = '<option disabled selected>Sub Module Not Found</option>';
+                        $('#ClaimStores_SubModuleId').append(o);
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        });
+
+        // Add a click event listener to the button
+        $(".updateBtn").click(function () {
+            let form = document.getElementById('createUpdateForm');
+            form.action = "/ClaimStores/Edit";
+            document.getElementById('claimStoreCreateUpdateForm').style.backgroundColor = '#2A3F54'; /*'#f7cc93';*/
+
+            var fieldSet = document.getElementById('claimStoreCreateUpdateForm');
+            fieldSet.classList.remove('border-primary');
+
+
+            var legendData = document.getElementById('create_update_title_id');
+            legendData.innerText = "Update Claim";
+            legendData.classList.remove('text-primary');
+
+            document.getElementById('create_update_title_id').style.color = "#fff";
+
+            document.getElementById('claimStoreCreateUpdateForm').style.color = '#fff';
+            document.getElementById('submitId').value = 'Update';
+
+            //let rDoc = document.getElementById('SFAllocation_FeeAllocationApplication');
+
+            var moduleId = $(this).data("moduleid");
+            var subModuleId = $(this).data("submoduleid");
+            var claimValue = $(this).data("claimvalue");
+            var claimType = $(this).data("claimtype");
+            var claimId = $(this).data("claimid");
+
+            $('#ClaimStores_Id').val(claimId);
+
+            $("#ModuleSelectList").val(moduleId).trigger('change');
+            $('#ClaimStores_ClaimValue').val(claimValue);
+            $('#ClaimStores_ClaimType').val(claimType);
+            $("#ClaimStores_SubModuleId").val(subModuleId).trigger('change');
+        });
+        $('#deleteBtnId').click(function () {
+            var studentId = $(this).data("studentid");
+            var classId = $(this).data("classid");
+            var feeType = $(this).data("feetype");
+            var amount = $(this).data("amount");
+            var refDoc = $(this).data("refdoc");
+            var isActive = $(this).data("isactive");
+            var id = $(this).data("id");
+            var item = $(this).data('item');
+            $('#StudentFeeAllocationId').val(id);
+        });
+
+    </script>
+}

@@ -327,8 +327,22 @@
                         <li class="nav-item nav-group">
                             <a class="nav-link nav-group-toggle"><span class="nav-icon text-danger  fas fa-key"></span> User Setting  </a>
                             <ul class="nav-group-items">
+                                <li class="nav-item"><a class="nav-link" asp-action="UserProfile" asp-controller="Administrations">User Profile</a></li>
                                 <li class="nav-item"><a class="nav-link" asp-action="userList" asp-controller="Accounts">User List</a></li>
                                 <li class="nav-item"><a class="nav-link" asp-action="roleList" asp-controller="Accounts">Role List</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item nav-group">
+                            <a class="nav-link nav-group-toggle"><span class="nav-icon text-light  fas fa-snowflake"></span> Module/Sub Module  </a>
+                            <ul class="nav-group-items">
+                                <li class="nav-item"><a class="nav-link" asp-action="Index" asp-controller="ProjectModules">Module</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-action="Index" asp-controller="ProjectSubModules">Sub Module</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item nav-group">
+                            <a class="nav-link nav-group-toggle"><span class="nav-icon text-danger  fas fa-clarinet"></span> Claim Stores  </a>
+                            <ul class="nav-group-items">
+                                <li class="nav-item"><a class="nav-link" asp-action="Index" asp-controller="ClaimStores">Claim List</a></li>
                             </ul>
                         </li>
                     </ul>

@@ -49,8 +49,11 @@ namespace SMS.App.Controllers
             _academicExamDetailsManager = academicExamDetailsManager;
         }
         // GET: ExamResultsController
+        [Authorize(Policy = "IndexExamResultsPolicy")]
         public async Task<ActionResult> Index()
         {
+            GlobalUI.PageTitle = "Exams Result";
+
             List<ExamResultVM> exams = new();
 
             List<AcademicExam> existingExams = (List<AcademicExam>)await _academicExamManager.GetAllAsync();
@@ -86,6 +89,7 @@ namespace SMS.App.Controllers
             return View(exams);
         }
 
+        [Authorize(Policy = "ResultExamResultsPolicy")]
         public async Task<ActionResult> Result()
         {
             GlobalUI.PageTitle = "Academic Results";
@@ -97,15 +101,20 @@ namespace SMS.App.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "ResultExamResultsPolicy")]
         public IActionResult Result(string resultType,int examGroupId, int classId)
         {
             return View();
         }
-        public ActionResult SubjecttWiseResult()
+
+        [Authorize(Policy = "SubjectWiseResultExamResultsPolicy")]
+        public ActionResult SubjectWiseResult()
         {
             GlobalUI.PageTitle = GlobalUI.SiteTitle = "Student-Wise Result";
             return View();
         }
+        
+        [Authorize(Policy = "ClassWiseResultExamResultsPolicy")]
         public async Task<ActionResult> ClassWiseResult()
         {
             GlobalUI.PageTitle = GlobalUI.SiteTitle = "Class-Wise Result";
@@ -117,6 +126,7 @@ namespace SMS.App.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "ClassWiseResultExamResultsPolicy")]
         public async Task<ActionResult> ClassWiseResult(int examGroupId, int classId)
         {
             GlobalUI.PageTitle = "Class-Wise Result";
@@ -246,6 +256,7 @@ namespace SMS.App.Controllers
             return View(examinationResultVMs);
         }
 
+        [Authorize(Policy = "ClassWiseResultAfterProcessExamResultsPolicy")]
         public async Task<ActionResult> ClassWiseResultAfterProcess()
         {
             GlobalUI.PageTitle = GlobalUI.SiteTitle = "Class-Wise Result";
@@ -255,7 +266,9 @@ namespace SMS.App.Controllers
             ViewBag.IsLoading = false;
             return View();
         }
+        
         [HttpPost]
+        [Authorize(Policy = "ClassWiseResultAfterProcessExamResultsPolicy")]
         public async Task<ActionResult> ClassWiseResultAfterProcess(string resultType, int examGroupId, int classId)
         {
             GlobalUI.PageTitle = "Class-Wise Result 1";
@@ -274,15 +287,19 @@ namespace SMS.App.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> SubjectWiseResultAfterProcess()
-        {
-            return View();
-        }
-        public async Task<ActionResult> SubjectWiseResultAfterProcess(int subjectId)
+        [Authorize(Policy = "SubjectWiseResultAfterProcessExamResultsPolicy")]
+        public ActionResult SubjectWiseResultAfterProcess()
         {
             return View();
         }
 
+        [Authorize(Policy = "SubjectWiseResultAfterProcessExamResultsPolicy")]
+        public ActionResult SubjectWiseResultAfterProcess(int subjectId)
+        {
+            return View();
+        }
+
+        [Authorize(Policy = "StudentWiseResultAfterProcessExamResultsPolicy")]
         public async Task<ActionResult> StudentWiseResult()
         {
             GlobalUI.PageTitle = GlobalUI.SiteTitle = "Student-Wise Result";
@@ -295,12 +312,14 @@ namespace SMS.App.Controllers
         }
 
         // GET: ExamResultsController/Details/5
+        [Authorize(Policy = "DetailsExamResultsPolicy")]
         public ActionResult Details(int id)
         {
             return View();
         }
 
         // GET: ExamResultsController/Create
+        [Authorize(Policy = "CreateExamResultsPolicy")]
         public ActionResult Create()
         {
             return View();
@@ -309,6 +328,7 @@ namespace SMS.App.Controllers
         // POST: ExamResultsController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "CreateExamResultsPolicy")]
         public ActionResult Create(IFormCollection collection)
         {
             try
@@ -322,6 +342,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: ExamResultsController/Edit/5
+        [Authorize(Policy = "EditExamResultsPolicy")]
         public ActionResult Edit(int id)
         {
             return View();
@@ -330,6 +351,7 @@ namespace SMS.App.Controllers
         // POST: ExamResultsController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "EditExamResultsPolicy")]
         public ActionResult Edit(int id, IFormCollection collection)
         {
             try
@@ -342,6 +364,7 @@ namespace SMS.App.Controllers
             }
         }
 
+        [Authorize(Policy = "ProcessResultExamResultsPolicy")]
         public async Task<ActionResult> ProcessResult(int classId, int groupId, int scrollPosition)
         {
             //// Storing scroll position in session
@@ -429,6 +452,7 @@ namespace SMS.App.Controllers
             return RedirectToAction("UpdateRanking", new { groupId = groupId,classId=classId }) ;
         }
 
+        [Authorize(Policy = "UpdateRankingExamResultsPolicy")]
         public async Task<IActionResult> UpdateRanking(int groupId, int classId)
         {
             int rankingUpdate = 0;
@@ -469,10 +493,13 @@ namespace SMS.App.Controllers
         }
 
         // GET: ExamResultsController/Delete/5
+        [Authorize(Policy = "DeleteExamResultsPolicy")]
         public ActionResult Delete(int id)
         {
             return View();
         }
+
+        [Authorize(Policy = "DeleteResultExamResultsPolicy")]
         public async Task<ActionResult> DeleteResult(int classId, int groupId, int scrollPosition)
         {
             //// Storing scroll position in session
@@ -494,9 +521,11 @@ namespace SMS.App.Controllers
             }
             return RedirectToAction("details", "AcademicExamGroup", new {id=groupId });
         }
+        
         // POST: ExamResultsController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "DeleteExamResultsPolicy")]
         public ActionResult Delete(int id, IFormCollection collection)
         {
             try

@@ -40,6 +40,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicSubjects
+        [Authorize(Policy = "IndexAcademicSubjectPolicy")]
         public async Task<IActionResult> Index()
         {
             ViewData["AcademicSubjectTypeId"] = new SelectList(await _academicSubjectTypeManager.GetAllAsync(), "Id", "SubjectTypeName");
@@ -50,6 +51,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicSubjects/Details/5
+        [Authorize(Policy = "DetailsAcademicSubjectPolicy")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -67,6 +69,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicSubjects/Create
+        [Authorize(Policy = "CreateAcademicSubjectPolicy")]
         public async Task<IActionResult> Create()
         {
             ViewData["AcademicSubjectTypeId"] = new SelectList(await _academicSubjectTypeManager.GetAllAsync(), "Id", "SubjectTypeName");
@@ -78,6 +81,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "CreateAcademicSubjectPolicy")]
         public async Task<IActionResult> Create([Bind("Id,SubjectName,AcademicSubjectTypeId,AcademicClassId,SubjectCode,SubjectFor,TotalMarks,Status,CreatedBy,CreatedAt,EditedBy,EditedAt,QuestionFormatId,ReligionId")] AcademicSubject academicSubject)
         {
             academicSubject.Status = true;
@@ -114,6 +118,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicSubjects/Edit/5
+        [Authorize(Policy = "EditAcademicSubjectPolicy")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -135,6 +140,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "EditAcademicSubjectPolicy")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,SubjectName,AcademicSubjectTypeId,SubjectCode,SubjectFor,TotalMarks,Status,CreatedBy,CreatedAt,EditedBy,EditedAt,QuestionFormatId,AcademicClassId,ReligionId")] AcademicSubject academicSubject)
         {
             if (id != academicSubject.Id)
@@ -173,6 +179,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicSubjects/Delete/5
+        [Authorize(Policy = "DeleteAcademicSubjectPolicy")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -192,6 +199,7 @@ namespace SMS.App.Controllers
         // POST: AcademicSubjects/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "DeleteAcademicSubjectPolicy")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var academicSubject = await _academicSubjectManager.GetByIdAsync(id);
@@ -201,6 +209,7 @@ namespace SMS.App.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        
         private bool AcademicSubjectExists(int id)
         {
             var academicSubject = _academicSubjectManager.GetByIdAsync(id);
@@ -214,18 +223,21 @@ namespace SMS.App.Controllers
             }
         }
 
+        
         public async Task<JsonResult> GetSubjectsByClassId(int classId)
         {
             var subjects = await _classSubjectManager.GetSubjectsByClassIdAsync(classId);
             return Json(subjects);
         }
 
+        
         public async Task<JsonResult> GetSubjectDetailsBySubjectId(int SubjectId)
         {
             var existingSubject = await _academicSubjectManager.GetByIdAsync(SubjectId);
             return Json(existingSubject);
         }
 
+        [Authorize(Policy = "ViewClassWiseSubjectAllocationAcademicSubjectPolicy")]
         public async Task<IActionResult> ClassWiseSubjectAllocation()
         {
             GlobalUI.PageTitle = "Class-wise Subjects";
@@ -239,6 +251,7 @@ namespace SMS.App.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "CreateClassWiseSubjectAllocationAcademicSubjectPolicy")]
         public async Task<IActionResult> ClassWiseSubjectAllocationCreate(List<AcademicClassSubject> academicClassSubjects)
         {
             int count = 0;
@@ -260,6 +273,7 @@ namespace SMS.App.Controllers
             }
             return RedirectToAction("ClassWiseSubjectAllocation");
         }
+        [Authorize(Policy = "DeleteClassWiseSubjectAllocationAcademicSubjectPolicy")]
         public async Task<IActionResult> ClassWiseSubjectAllocationDelete(int id)
         {
             if (id <= 0)

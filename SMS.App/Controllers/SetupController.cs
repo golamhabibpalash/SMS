@@ -33,12 +33,15 @@ namespace SMS.App.Controllers
             _studentManager = studentManager;
             _academicClassManager = academicClassManager;
         }
+
+        [Authorize(Policy = "IndexSetupPolicy")]
         public IActionResult Index()
         {
             return View();
         }
 
         [HttpGet]
+        [Authorize(Policy = "SMSControlSetupPolicy")]
         public async Task<IActionResult> SMSControl()
         {
             SetupMobileSMS setupMobileSMS = await _setupMobileSMSManager.GetByIdAsync(1);
@@ -56,6 +59,7 @@ namespace SMS.App.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "SMSControlSetupPolicy")]
         public async Task<IActionResult> SMSControl(AttendanceSetupVM attendanceSetupVM)
         {
             string msg = "";
@@ -96,6 +100,7 @@ namespace SMS.App.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "StudentWiseSMSServiceSetupPolicy")]
         public async Task<IActionResult> StudentWiseSMSService(int? academicClassId)
         {
             var students = await _studentManager.GetAllAsync();
@@ -113,6 +118,7 @@ namespace SMS.App.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "StudentWiseSMSServiceSetupPolicy")]
         public async Task<IActionResult> StudentWiseSMSService(StudentWiseSMSServiceVM studentWiseSMSServiceVM)
         {
             if (studentWiseSMSServiceVM!=null)

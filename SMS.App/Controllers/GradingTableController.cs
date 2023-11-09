@@ -25,6 +25,7 @@ namespace SMS.App.Controllers
         }
 
 
+        [Authorize(Policy = "IndexGradingTablePolicy")]
         public async Task<IActionResult> Index()
         {
             List<GradingIndexVM> gradingIndexVMs = new List<GradingIndexVM>();
@@ -45,15 +46,21 @@ namespace SMS.App.Controllers
 
             return View(gradingIndexVMs.OrderByDescending(s => s.GradePoint));
         }
+        
+        [Authorize(Policy = "DetailsGradingTablePolicy")]
         public IActionResult Details()
         {
             return View();
         }
+        
+        [Authorize(Policy = "CreateGradingTablePolicy")]
         public IActionResult Create()
         {
             return View();
         }
+        
         [HttpPost]
+        [Authorize(Policy = "CreateGradingTablePolicy")]
         public async Task<IActionResult> Create(GradingTable obj)
         {
             if (ModelState.IsValid)
@@ -78,7 +85,9 @@ namespace SMS.App.Controllers
             }
             return View(obj);
         }
+        
         [HttpGet]
+        [Authorize(Policy = "EditGradingTablePolicy")]
         public async Task<IActionResult> Edit(int id)
         {
             GradingTable gradingTable = await _gradingTableManager.GetByIdAsync(id);
@@ -90,7 +99,9 @@ namespace SMS.App.Controllers
 
             return View(gradingTable);
         }
+        
         [HttpPost]
+        [Authorize(Policy = "EditGradingTablePolicy")]
         public async Task<IActionResult> Edit(GradingTable obj)
         {
             if (ModelState.IsValid)
@@ -115,6 +126,8 @@ namespace SMS.App.Controllers
             }
             return View(obj);
         }
+
+        [Authorize(Policy = "DeleteGradingTablePolicy")]
         public async Task<IActionResult> Delete(int id)
         {
             var s = await _gradingTableManager.GetByIdAsync(id);
@@ -124,7 +137,9 @@ namespace SMS.App.Controllers
             }
             return View(s);
         }
+        
         [HttpPost]
+        [Authorize(Policy = "DeleteGradingTablePolicy")]
         public async Task<IActionResult> DeleteConfirm(int id, string dVal)
         {
             bool isDelete = true;

@@ -37,6 +37,8 @@ namespace SMS.App.Controllers
         {
             return View();
         }
+
+        [Authorize(Policy = "SubjectEnrollSubjectEnrollmentPolicy")]
         public async Task<IActionResult> SubjectEnroll(int? stRoll) 
         {
             GlobalUI.PageTitle = "Subject Enrollment";
@@ -125,6 +127,7 @@ namespace SMS.App.Controllers
             return RedirectToAction("SubjectEnroll", "SubjectEnrollment", new {stRoll= student.ClassRoll});
         }
         [HttpPost]
+        [Authorize(Policy = "SetOptionalSubjectSubjectEnrollmentPolicy")]
         public async Task<IActionResult> SetOptionalSubject(int StudentId, int subjectId) 
         {
             Student student = await _studentManager.GetByIdAsync(StudentId);

@@ -29,6 +29,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: StudentFeeHeads
+        [Authorize(Policy = "IndexStudentFeeHeadsPolicy")]
         public async Task<IActionResult> Index()
         {
             var feeHead = await _studentFeeHeadManager.GetAllAsync();
@@ -36,6 +37,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: StudentFeeHeads/Details/5
+        [Authorize(Policy = "DetailsStudentFeeHeadsPolicy")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -53,6 +55,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: StudentFeeHeads/Create
+        [Authorize(Policy = "CreateStudentFeeHeadsPolicy")]
         public IActionResult Create()
         {
             return View();
@@ -60,6 +63,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "CreateStudentFeeHeadsPolicy")]
         public async Task<IActionResult> Create([Bind("Id,Name,Repeatedly,YearlyFrequency,CreatedBy,CreatedAt,EditedBy,EditedAt,ContraFeeheadId,IsResidential")] StudentFeeHead studentFeeHead)
         {
             string msg = "";
@@ -88,6 +92,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: StudentFeeHeads/Edit/5
+        [Authorize(Policy = "EditStudentFeeHeadsPolicy")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -105,6 +110,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "EditStudentFeeHeadsPolicy")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Repeatedly,YearlyFrequency,CreatedBy,CreatedAt,EditedBy,EditedAt,ContraFeeheadId,IsResidential")] StudentFeeHead studentFeeHead)
         {
             string msg = "";
@@ -193,6 +199,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: StudentFeeHeads/Delete/5
+        [Authorize(Policy = "DeleteStudentFeeHeadsPolicy")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -212,6 +219,7 @@ namespace SMS.App.Controllers
         // POST: StudentFeeHeads/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "DeleteStudentFeeHeadsPolicy")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var studentFeeHead = await _studentFeeHeadManager.GetByIdAsync(id);

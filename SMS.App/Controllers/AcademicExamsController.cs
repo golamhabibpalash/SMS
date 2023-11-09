@@ -57,6 +57,7 @@ namespace SMS.App.Controllers
 
         // GET: AcademicExamsController
         [Authorize(Roles ="Admin, Teacher, SuperAdmin")]
+        [Authorize(Policy = "IndexAcademicExamPolicy")]
         public async Task<ActionResult> Index()
         {
             ViewModels.AcademicVM.AcademicExamVM academicExamVM = new ViewModels.AcademicVM.AcademicExamVM();
@@ -91,6 +92,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicExamsController/Details/5
+        [Authorize(Policy = "DetailsAcademicExamPolicy")]
         public async Task<ActionResult> Details(int id)
         {
 
@@ -138,6 +140,7 @@ namespace SMS.App.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "SuperAdmin, Admin")]
+        [Authorize(Policy = "CreateAcademicExamPolicy")]
         public async Task<ActionResult> Create(List<AcademicExam> AcademicExam)
         {
             int success = 0;
@@ -217,6 +220,7 @@ namespace SMS.App.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "SuperAdmin, Admin")]
+        [Authorize(Policy = "EditAcademicExamPolicy")]
         public async Task<ActionResult> Edit(int id, AcademicExam academicExam, ViewModels.ExamVM.AcademicExamVM academicExamVM)
         {
 
@@ -309,6 +313,7 @@ namespace SMS.App.Controllers
 
         // GET: AcademicExamsController/Delete/5
         [HttpPost]
+        [Authorize(Policy = "DeleteAcademicExamPolicy")]
         public async Task<JsonResult> Delete(int id)
         {
             AcademicExam academicExam = await _examManager.GetByIdAsync(id);
@@ -370,6 +375,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "ExamMarkSubmitAcademicExamPolicy")]
         public async Task<ActionResult> ExmaMarkSubmit(ExamDetailsVM examDetailVM)
         {
             List<AcademicExamDetail> academicExamDetail = new ();
@@ -420,6 +426,8 @@ namespace SMS.App.Controllers
             
             return Json(existingDetails);
         }
+
+        [Authorize(Policy = "AdmitCardAcademicExamPolicy")]
         public async Task<ActionResult> AdmitCard()
         {
             ViewData["ExamType"] = new SelectList(await _examTypeManager.GetAllAsync(), "Id", "ExamTypeName");
@@ -449,7 +457,9 @@ namespace SMS.App.Controllers
             }
             return Json(new { msg = "Exam not found!" });
         }
+        
         [HttpPost]
+        [Authorize(Policy = "LockAcademicExamPolicy")]
         public async Task<ActionResult> LockExam(int exId)
         {
             string msg = string.Empty;

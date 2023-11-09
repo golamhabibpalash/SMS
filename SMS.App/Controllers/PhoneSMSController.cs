@@ -29,6 +29,8 @@ namespace SMS.App.Controllers
             _employeeManager = employeeManager;
             _studentManager = studentManager;
         }
+
+        [Authorize(Policy = "IndexPhoneSMSPolicy")]
         public async Task<IActionResult> Index(string smsType, string smsText,string phoneNo, int rowCount,string fromDate, string toDate)
         {
             int dataCount = 0;
@@ -89,12 +91,14 @@ namespace SMS.App.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "CreatePhoneSMSPolicy")]
         public IActionResult Create()
         {
             return View();
         }
         
         [HttpPost]
+        [Authorize(Policy = "CreatePhoneSMSPolicy")]
         public async Task<IActionResult> Create(SMSCreateVM model)
         {
             if (ModelState.IsValid)

@@ -27,6 +27,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicSubjectTypes
+        [Authorize(Policy = "IndexAcademicSubjectTypesPolicy")]
         public async Task<IActionResult> Index()
         {
             
@@ -34,6 +35,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicSubjectTypes/Details/5
+        [Authorize(Policy = "DetailsAcademicSubjectTypesPolicy")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -51,6 +53,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicSubjectTypes/Create
+        [Authorize(Policy = "CreateAcademicSubjectTypesPolicy")]
         public IActionResult Create()
         {
             return View();
@@ -59,6 +62,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "CreateAcademicSubjectTypesPolicy")]
         public async Task<IActionResult> Create([Bind("Id,SubjectTypeName,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSubjectType academicSubjectType)
         {
             if (ModelState.IsValid)
@@ -73,6 +77,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicSubjectTypes/Edit/5
+        [Authorize(Policy = "EditAcademicSubjectTypesPolicy")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -89,11 +94,9 @@ namespace SMS.App.Controllers
             return View(academicSubjectType);
         }
 
-        // POST: AcademicSubjectTypes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "EditAcademicSubjectTypesPolicy")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,SubjectTypeName,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSubjectType academicSubjectType)
         {
             if (id != academicSubjectType.Id)
@@ -127,6 +130,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicSubjectTypes/Delete/5
+        [Authorize(Policy = "DeleteAcademicSubjectTypesPolicy")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -146,6 +150,7 @@ namespace SMS.App.Controllers
         // POST: AcademicSubjectTypes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "DeleteAcademicSubjectTypesPolicy")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var academicSubjectType = await _academicSubjectTypeManager.GetByIdAsync(id);

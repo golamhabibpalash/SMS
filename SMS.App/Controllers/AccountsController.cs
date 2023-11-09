@@ -38,12 +38,15 @@ namespace SMS.App.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "RegisterAccountsPolicy")]
         public IActionResult Register()
         {
             return View();
         }
 
         [HttpPost]
+
+        [Authorize(Policy = "RegisterAccountsPolicy")]
         public async Task<IActionResult> Register(RegisterVM model)
         {
             if (ModelState.IsValid)
@@ -91,6 +94,7 @@ namespace SMS.App.Controllers
         }
 
         [Authorize(Roles = "SuperAdmin")]
+        [Authorize(Policy = "EditUserAccountsPolicy")]
         public async Task<IActionResult> EditUser(string id)
         {
             ApplicationUser user = await _userManager.FindByIdAsync(id);
@@ -111,6 +115,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [Authorize(Roles = "SuperAdmin")]
+        [Authorize(Policy = "EditUserAccountsPolicy")]
         public async Task<IActionResult> EditUser(string id, EditUserVM model)
         {
             ApplicationUser user = await _userManager.FindByIdAsync(id);
@@ -202,6 +207,7 @@ namespace SMS.App.Controllers
 
 
         [Authorize(Roles = "SuperAdmin")]
+        [Authorize(Policy = "DeleteUserAccountsPolicy")]
         public async Task<IActionResult> DeleteUser(string id)
         {
             ApplicationUser user = await _userManager.FindByIdAsync(id);
@@ -216,6 +222,8 @@ namespace SMS.App.Controllers
         [HttpPost]
         [ActionName("DeleteUser")]
         [Authorize(Roles = "SuperAdmin")]
+
+        [Authorize(Policy = "DeleteUserAccountsPolicy")]
         public async Task<IActionResult> ConfirmDelete(string id,ApplicationUser model)
         {
             if (id != model.Id)
@@ -409,6 +417,7 @@ namespace SMS.App.Controllers
         }
 
         [Authorize(Roles ="SuperAdmin")]
+        [Authorize(Policy = "ViewRolesAccountsPolicy")]
         public async Task<IActionResult> RoleList()
         {
             List<RoleListWIthUserVM> roleListWIthUserVMs = new List<RoleListWIthUserVM>();
@@ -439,6 +448,7 @@ namespace SMS.App.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "CreateRoleAccountsPolicy")]
         public async Task<IActionResult> CreateRole(CreateRoleVM model)
         {
             if (ModelState.IsValid)
@@ -457,6 +467,7 @@ namespace SMS.App.Controllers
         }
 
         [HttpGet]        
+        [Authorize(Policy = "EditRoleAccountsPolicy")]
         public async Task<IActionResult> EditRole(string id)
         {
             var role = await _roleManager.FindByIdAsync(id);
@@ -483,7 +494,8 @@ namespace SMS.App.Controllers
 
             return View(editRoleVM);
         }
-        
+
+        [Authorize(Policy = "EditRoleAccountsPolicy")]
         public async Task<IActionResult> EditRole(EditRoleVM model)
         {
             IdentityRole role = await _roleManager.FindByIdAsync(model.Id);
@@ -506,6 +518,7 @@ namespace SMS.App.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "AddOrRemoveUserAccountsPolicy")]
         public async Task<IActionResult> AddOrRemoveUser(string id)
         {
             var existRole = await _roleManager.FindByIdAsync(id);
@@ -539,6 +552,7 @@ namespace SMS.App.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "AddOrRemoveUserAccountsPolicy")]
         public async Task<IActionResult> AddOrRemoveUser(List<UserRoleVM> model,string roleId)
         {
             var role = await _roleManager.FindByIdAsync(roleId);
@@ -642,34 +656,5 @@ namespace SMS.App.Controllers
             }
             return Json("");
         }
-
-        //[HttpGet]
-        //public async Task<IActionResult> ManageUserClaims(string userId)
-        //{
-        //    var user = await _userManager.FindByIdAsync(userId);
-        //    if (user==null)
-        //    {
-        //        ViewBag.errorMessage = $"User with Id = {user} cannot be found";
-        //        return View("NotFound");
-        //    }
-        //    var existingUserClaims = await _userManager.GetClaimsAsync(user);
-        //    var modelObject = new UserClaimsViewModel
-        //    {
-        //        UserId = userId
-        //    };
-        //    foreach (var claim in ClaimStores.AllClaims)
-        //    {
-        //        UserClaim userClaim = new UserClaim
-        //        {
-        //            ClaimType = claim.Type
-        //        };
-        //        if (existingUserClaims.Any(c=> c.Type == claim.Type))
-        //        {
-        //            userClaim.IsSelected = true;
-        //        }
-        //        modelObject.Claims.Add(userClaim);
-        //    }
-        //    return View(modelObject);
-        //}
     }
 }

@@ -22,12 +22,14 @@ namespace SMS.App.Controllers
         }
 
         // GET: DesignationTypes
+        [Authorize(Policy = "IndexDesignationTypesPolicy")]
         public async Task<IActionResult> Index()
         {
             return View(await _designationTypeManager.GetAllAsync());
         }
 
         // GET: DesignationTypes/Details/5
+        [Authorize(Policy = "DetailsDesignationTypesPolicy")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -45,6 +47,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: DesignationTypes/Create
+        [Authorize(Policy = "CreateDesignationTypesPolicy")]
         public IActionResult Create()
         {
             return View();
@@ -52,6 +55,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "CreateDesignationTypesPolicy")]
         public async Task<IActionResult> Create([Bind("Id,DesignationTypeName,CreatedBy,CreatedAt,EditedBy,EditedAt")] DesignationType designationType)
         {
 
@@ -67,6 +71,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: DesignationTypes/Edit/5
+        [Authorize(Policy = "EditDesignationTypesPolicy")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -84,6 +89,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "EditDesignationTypesPolicy")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,DesignationTypeName,CreatedBy,CreatedAt,EditedBy,EditedAt")] DesignationType designationType)
         {
             if (id != designationType.Id)
@@ -117,6 +123,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: DesignationTypes/Delete/5
+        [Authorize(Policy = "DeleteDesignationTypesPolicy")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -136,6 +143,7 @@ namespace SMS.App.Controllers
         // POST: DesignationTypes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "DeleteDesignationTypesPolicy")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var designationType = await _designationTypeManager.GetByIdAsync(id);

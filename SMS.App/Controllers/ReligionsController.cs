@@ -23,12 +23,14 @@ namespace SMS.App.Controllers
         }
 
         // GET: Religions
+        [Authorize(Policy = "IndexReligionsPolicy")]
         public async Task<IActionResult> Index()
         {
             return View(await _religionManager.GetAllAsync());
         }
 
         // GET: Religions/Details/5
+        [Authorize(Policy = "DetailsReligionsPolicy")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -53,6 +55,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "CreateReligionsPolicy")]
         public async Task<IActionResult> Create([Bind("Id,Name,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] Religion religion)
         {
             if (ModelState.IsValid)
@@ -86,6 +89,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "EditReligionsPolicy")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] Religion religion)
         {
             if (id != religion.Id)
@@ -120,6 +124,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: Religions/Delete/5
+        [Authorize(Policy = "DeleteReligionsPolicy")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -139,6 +144,7 @@ namespace SMS.App.Controllers
         // POST: Religions/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "DeleteReligionsPolicy")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var religion = await _religionManager.GetByIdAsync((int)id);

@@ -24,6 +24,7 @@ namespace SMS.App.Controllers
             _roleManager = roleManager;
         }
 
+        [Authorize(Policy = "IndexRolesPolicy")]
         public IActionResult Index()
         {
             string msg = "";
@@ -38,12 +39,14 @@ namespace SMS.App.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "CreateRolesPolicy")]
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize(Policy = "CreateRolesPolicy")]
         public async Task<IActionResult> Create(string rname)
         {
             string msg = "";
@@ -73,6 +76,7 @@ namespace SMS.App.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "AssignRolesPolicy")]
         public IActionResult AssignRole()
         {
             string msg = "";
@@ -90,6 +94,7 @@ namespace SMS.App.Controllers
         }
         
         [HttpPost]
+        [Authorize(Policy = "AssignRolesPolicy")]
         public async Task<IActionResult> AssignRole(string appUser, string appRole)
         {
             string msg = "";

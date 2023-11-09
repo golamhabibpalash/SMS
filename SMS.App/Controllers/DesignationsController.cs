@@ -28,6 +28,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: Designations
+        [Authorize(Policy = "IndexDesignationsPolicy")]
         public async Task<IActionResult> Index()
         {
 
@@ -35,6 +36,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: Designations/Details/5
+        [Authorize(Policy = "DetailsDesignationsPolicy")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -52,6 +54,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: Designations/Create
+        [Authorize(Policy = "CreateDesignationsPolicy")]
         public async Task<IActionResult> Create()
         {
             ViewData["DesignationTypeList"] = new SelectList(await _designationTypeManager.GetAllAsync(), "Id", "DesignationTypeName");
@@ -62,6 +65,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "CreateDesignationsPolicy")]
         public async Task<IActionResult> Create([Bind("Id,DesignationName,DesignationTypeId,EmpTypeId,CreatedBy,CreatedAt,EditedBy,EditedAt")] Designation designation)
         {
             
@@ -80,6 +84,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: Designations/Edit/5
+        [Authorize(Policy = "EditDesignationsPolicy")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -100,6 +105,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "EditDesignationsPolicy")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,DesignationName,DesignationTypeId,EmpTypeId,CreatedBy,CreatedAt,EditedBy,EditedAt")] Designation designation)
         {
             if (id != designation.Id)
@@ -138,6 +144,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: Designations/Delete/5
+        [Authorize(Policy = "DeleteDesignationsPolicy")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -156,6 +163,7 @@ namespace SMS.App.Controllers
 
         // POST: Designations/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Policy = "DeleteDesignationsPolicy")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

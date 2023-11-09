@@ -33,13 +33,8 @@ namespace SMS.App.Controllers
             _roleManager = roleManager;
             _claimStoreManager = claimStoreManager;
         }
-        public IActionResult AdminRegistration()
-        {
-            return View();
-        }
 
-
-        [Authorize(Policy = "UserProfileGetAdministrationsPolicy")]
+        [Authorize(Policy = "ViewUserProfileAdministrationsPolicy")]
         public async Task<IActionResult> UserProfile(string userId)
         {
             GlobalUI.PageTitle = "User Profile";
@@ -86,7 +81,7 @@ namespace SMS.App.Controllers
             return View(userProfileVM);
         }
         [HttpPost]
-        [Authorize(Policy ="UserProfilePostAdministrationsPolicy")]
+        [Authorize(Policy = "EditUserProfileAdministrationsPolicy")]
         public async Task<IActionResult> UserProfile(UserProfileVM model)
         {
             GlobalUI.PageTitle = "User Profile";
@@ -162,11 +157,5 @@ namespace SMS.App.Controllers
             }
             return View(model);
         }
-        //[HttpPost]
-        //public IActionResult UserProfile(int empId)
-        //{
-        //    ViewData["EmployeeList"] = new SelectList(await _employeeManager.GetAllAsync(), "Id", "Name");
-        //    return View();
-        //}
     }
 }

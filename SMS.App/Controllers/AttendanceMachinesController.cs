@@ -40,6 +40,7 @@ namespace SMS.App.Controllers
             _phoneSMSManager = phoneSMSManager;
         }
         // GET: AttendanceMachinesController
+        [Authorize(Policy = "IndexAttendanceMachinesPolicy")]
         public async Task<ActionResult> Index(string attendanceFor, DateTime dateTime, string attendanceType,  int? aSessionId, int? aClassId)
         {
             string date = dateTime.ToString("yyyy-MM-dd");
@@ -73,6 +74,7 @@ namespace SMS.App.Controllers
         }
 
 
+        [Authorize(Policy = "DetailsAttendanceMachinesPolicy")]
         public async Task<ActionResult> Details(int id)
         {
             var attendance = await _attendanceMachineManager.GetByIdAsync(id);
@@ -80,6 +82,7 @@ namespace SMS.App.Controllers
         }
 
 
+        [Authorize(Policy = "CreateAttendanceMachinesPolicy")]
         public async Task<ActionResult> Create()
         {
             ViewData["AcademicClassList"] = new SelectList(await _academicClassManager.GetAllAsync(),"Id","Name");
@@ -87,8 +90,8 @@ namespace SMS.App.Controllers
         }
 
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost,ValidateAntiForgeryToken]
+        [Authorize(Policy = "CreateAttendanceMachinesPolicy")]
         public async Task<ActionResult> Create(Tran_MachineRawPunch model, bool isSMSSend)
         {
             string msg = string.Empty;
@@ -138,6 +141,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AttendanceMachinesController/Edit/5
+        [Authorize(Policy = "EditAttendanceMachinesPolicy")]
         public async Task<ActionResult> Edit(int id)
         {
             var attendance = await _attendanceMachineManager.GetByIdAsync(id);
@@ -145,8 +149,8 @@ namespace SMS.App.Controllers
         }
 
         // POST: AttendanceMachinesController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost,ValidateAntiForgeryToken]
+        [Authorize(Policy = "EditAttendanceMachinesPolicy")]
         public async Task<ActionResult> Edit(int id, Tran_MachineRawPunch model)
         {
             if (id != model.Tran_MachineRawPunchId)
@@ -163,6 +167,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AttendanceMachinesController/Delete/5
+        [Authorize(Policy = "DeleteAttendanceMachinesPolicy")]
         public ActionResult Delete(int id)
         {
             return View();
@@ -171,6 +176,7 @@ namespace SMS.App.Controllers
         // POST: AttendanceMachinesController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "DeleteAttendanceMachinesPolicy")]
         public ActionResult Delete(int id, IFormCollection collection)
         {
             try

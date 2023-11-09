@@ -66,6 +66,7 @@ namespace SMS.App.Controllers
         #endregion Constructor
 
         #region Student List Report
+        [Authorize(Policy = "StudentsReportsPolicy")]
         public async Task<IActionResult> StudentsReport()
         {
             Rpt_Student_VM rpt_Student_VM = new()
@@ -76,6 +77,7 @@ namespace SMS.App.Controllers
             return View(rpt_Student_VM);
         }
 
+        [Authorize(Policy = "StudentsReportsPolicy")]
         public async Task<IActionResult> StudentsReportExport(string reportType, string fileName, int? academicClassId, int? academicSectionId)
         {
             AcademicSession aSession = await _academicSessionManager.GetCurrentAcademicSession();
@@ -139,13 +141,14 @@ namespace SMS.App.Controllers
         #endregion Student List Report
 
         #region Attendance Reports
-
+        [Authorize(Policy = "DailyAttendanceReportsPolicy")]
         public async Task<IActionResult> DailyAttendanceReport()
         {
             ViewData["AcademicClass"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name").ToList();
             return View();
         }
 
+        [Authorize(Policy = "DailyAttendanceReportsPolicy")]
         public async Task<IActionResult> DailyAttendnaceReportExport(string reportType, string fromDate, string academicClassId, string academicSectionId, string attendanceType, string fileName)
         {
 
@@ -194,6 +197,7 @@ namespace SMS.App.Controllers
 
         }
         //Monthly Attendance Report
+        [Authorize(Policy = "AttendanceReportsPolicy")]
         public async Task<IActionResult> AttendanceReport()
         {
             ViewBag.AcademicClasslist = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name").ToList();
@@ -216,6 +220,7 @@ namespace SMS.App.Controllers
 
         //Monthly Attendance Report
         [HttpPost]
+        [Authorize(Policy = "AttendanceReportsPolicy")]
         public async Task<IActionResult> AttendanceReport(int monthId, int classId)
         {
             ViewBag.AcademicClasslist = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", classId).ToList();
@@ -308,8 +313,9 @@ namespace SMS.App.Controllers
         }
         #endregion Attendance Reports
 
-        #region Result or MarkSheet
 
+        #region Result or MarkSheet
+        [Authorize(Policy = "SubjectWiseMarkSheetReportsPolicy")]
         public async Task<IActionResult> SubjectWiseMarkSheet(string reportType, int examId, string fileName)
         {
             Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
@@ -375,6 +381,7 @@ namespace SMS.App.Controllers
 
         }
 
+        [Authorize(Policy = "SubjectWiseMarkSheetReportsPolicy")]
         public async Task<IActionResult> StudentWiseMarkSheet(string reportType, int examGroupId, int classId, string fileName)
         {
             Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
@@ -441,6 +448,7 @@ namespace SMS.App.Controllers
             return File(pdf, mediaType);
         }
 
+        [Authorize(Policy = "MarkSheetReportsPolicy")]
         public async Task<IActionResult> MarkSheetReport()
         {
             GlobalUI.PageTitle = "Auto Mark-Sheet Generate";
@@ -450,6 +458,7 @@ namespace SMS.App.Controllers
             return View();
         }
 
+        [Authorize(Policy = "MarkSheetReportsPolicy")]
         public async Task<IActionResult> MarkSheetReportExport(string reportType, string fileName, int examGroupId, int academicClassId, int? sectionId, int sessionId,int studentId)
         {
             var results = await _reportManager.GetStudentWiseMarkSheet(examGroupId, academicClassId);
@@ -545,14 +554,17 @@ namespace SMS.App.Controllers
             ReportDataSource reportDataSource = new ReportDataSource("",gTables);
             e.DataSources.Add(reportDataSource);
         }
-        
+
         #endregion Result or MarkSheet
 
         #region Student Payment Reports
+        [Authorize(Policy = "StudentPaymentInfoReportsPolicy")]
         public IActionResult StudentPaymentInfo()
         {
             return View();
         }
+
+        [Authorize(Policy = "StudentPaymentInfoReportsPolicy")]
         public async Task<IActionResult> StudentPaymentInfoExport(string reportType, string fileName, int classRoll, string fromDate, string toDate)
         {
             Student student = await _studentManager.GetStudentByClassRollAsync(classRoll);
@@ -621,6 +633,7 @@ namespace SMS.App.Controllers
             }
             return File(pdf, mediaType);
         }
+        [Authorize(Policy = "StudentPaymentReportsPolicy")]
         public async Task<IActionResult> StudentPaymentReport()
         {
             ViewData["AcademicClass"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name").ToList();
@@ -636,6 +649,8 @@ namespace SMS.App.Controllers
             //ViewBag["paymentCategory"] = new SelectList(items, "Value", "Text");
             return View();
         }
+
+        [Authorize(Policy = "StudentPaymentReportsPolicy")]
         public async Task<IActionResult> StudentPaymentReportExport(string reportType, string fileName, string fromDate, string toDate, string academicClassId, string academicSectionId, string paymentCategory)
         {
             string reportName = "Payments Report";
@@ -717,6 +732,8 @@ namespace SMS.App.Controllers
             return File(pdf, mediaType);
 
         }
+
+        [Authorize(Policy = "ReceiptPaymentReportsPolicy")]
         public async Task<IActionResult> ReceiptPaymentExport(string reportType, int paymentId, string myFileName)
         {
             Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
@@ -767,6 +784,7 @@ namespace SMS.App.Controllers
         #endregion Student Payment Reports
 
         #region Admit Card Reports
+        [Authorize(Policy = "AdmitCardReportsPolicy")]
         public async Task<IActionResult> AdmitCardExport(string reportType, string fileName, int monthId, string academicClassId, string academicSectionId)
         {
             string imageParam = "";
@@ -828,7 +846,7 @@ namespace SMS.App.Controllers
         }
         #endregion Admit Card Reports
 
-       
+
         #region Common Methods
         private static RenderType GetRenderType(string reportType)
         {

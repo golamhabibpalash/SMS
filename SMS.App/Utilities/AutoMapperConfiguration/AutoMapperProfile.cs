@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using SMS.App.ViewModels.ClaimContext;
 using SMS.App.ViewModels.Employees;
 using SMS.App.ViewModels.ExamVM;
+using SMS.App.ViewModels.ModuleSubModuleVM;
 using SMS.App.ViewModels.SetupVM;
 using SMS.App.ViewModels.Students;
 using SMS.Entities;
@@ -41,6 +43,14 @@ namespace SMS.App.Utilities.AutoMapperConfiguration
 
             CreateMap<SetupMobileSMS, AttendanceSetupVM>();
             CreateMap<AttendanceSetupVM,SetupMobileSMS>();
+            
+            CreateMap<ProjectSubModule, ProjectSubModuleVM>();
+            CreateMap<ProjectSubModuleVM, ProjectSubModule>();
+
+            CreateMap<ClaimStores, ClaimStoreVM>();
+            CreateMap<ClaimStoreVM, ClaimStores>();
+
+
         }
     }
 }

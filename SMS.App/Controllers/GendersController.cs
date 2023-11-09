@@ -24,12 +24,14 @@ namespace SMS.App.Controllers
         }
 
         // GET: Genders
+        [Authorize(Policy = "IndexGendersPolicy")]
         public async Task<IActionResult> Index()
         {
             return View(await _genderManager.GetAllAsync());
         }
 
         // GET: Genders/Details/5
+        [Authorize(Policy = "DetailsGendersPolicy")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -47,6 +49,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: Genders/Create
+        [Authorize(Policy = "CreateGendersPolicy")]
         public IActionResult Create()
         {
             return View();
@@ -54,6 +57,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "CreateGendersPolicy")]
         public async Task<IActionResult> Create([Bind("Id,Name,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] Gender gender)
         {
             if (ModelState.IsValid)
@@ -69,6 +73,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: Genders/Edit/5
+        [Authorize(Policy = "EditGendersPolicy")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -86,6 +91,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "EditGendersPolicy")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] Gender gender)
         {
             if (id != gender.Id)
@@ -119,6 +125,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: Genders/Delete/5
+        [Authorize(Policy = "DeleteGendersPolicy")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -138,6 +145,7 @@ namespace SMS.App.Controllers
         // POST: Genders/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "DeleteGendersPolicy")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var gender = await _genderManager.GetByIdAsync(id);

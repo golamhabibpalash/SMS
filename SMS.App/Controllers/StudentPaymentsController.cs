@@ -51,6 +51,7 @@ namespace SMS.App.Controllers
 
         // GET: StudentPayments
         [HttpGet]
+        [Authorize(Policy = "IndexStudentPaymentsPolicy")]
         public async Task<IActionResult> Index()
         {
             try
@@ -82,6 +83,7 @@ namespace SMS.App.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "PaymentStudentPaymentsPolicy")]
         public async Task<IActionResult> Payment(int? stRoll)
         {
             ViewData["AcademicClassList"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name");
@@ -143,7 +145,7 @@ namespace SMS.App.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "CreatePaymentPolicy")]
+        [Authorize(Policy = "PaymentStudentPaymentsPolicy")]
         public async Task<IActionResult> Payment(StudentPaymentVM paymentObject)
         {
             try
@@ -241,7 +243,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: StudentPayments/Create
-        [Authorize(Policy = "CreatePaymentPolicy")]
+        [Authorize(Policy = "CreateStudentPaymentsPolicy")]
         public async Task<IActionResult> Create()
         {
             ViewData["StudentId"] = new SelectList(await _studentManager.GetAllAsync(), "Id", "Name");
@@ -253,7 +255,7 @@ namespace SMS.App.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Policy = "CreatePaymentPolicy")]
+        [Authorize(Policy = "CreateStudentPaymentsPolicy")]
         public async Task<IActionResult> Create( StudentPaymentVM studentyPaymentVM, IFormFile waiverAttachment)
         {
             Student student = new();
@@ -300,6 +302,8 @@ namespace SMS.App.Controllers
         }
 
         // GET: StudentPayments/Edit/5
+
+        [Authorize(Policy = "EditStudentPaymentsPolicy")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -329,6 +333,7 @@ namespace SMS.App.Controllers
         // POST: StudentPayments/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "EditStudentPaymentsPolicy")]
         public async Task<IActionResult> Edit(int id, StudentPayment studentPayment)
         {
             if (id != studentPayment.Id)
@@ -381,6 +386,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: StudentPayments/Delete/5
+        [Authorize(Policy = "DeleteStudentPaymentsPolicy")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -400,6 +406,7 @@ namespace SMS.App.Controllers
         // POST: StudentPayments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "DeleteStudentPaymentsPolicy")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var studentPayment = await _studentPaymentManager.GetByIdAsync((int)id);
@@ -407,6 +414,7 @@ namespace SMS.App.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Policy = "DuePaymentStudentPaymentsPolicy")]
         public async Task<IActionResult> DuePayment() 
         {
             GlobalUI.PageTitle = "Due Payment List";
@@ -416,7 +424,9 @@ namespace SMS.App.Controllers
             ViewBag.isFromPost = false;
             return View(duePaymentVM); 
         }
+       
         [HttpPost]
+        [Authorize(Policy = "DuePaymentStudentPaymentsPolicy")]
         public async Task<IActionResult> DuePayment(int? aSessionId, int? AcademicClassId, int? AcademicSectionId, int studentId, int dueType)
         {
             GlobalUI.PageTitle = "Due Payment List";

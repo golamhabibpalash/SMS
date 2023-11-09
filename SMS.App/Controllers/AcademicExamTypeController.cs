@@ -20,6 +20,7 @@ namespace SMS.App.Controllers
             _academicExamTypeManager = academicExamTypeManager;
         }
         // GET: AcademicExamTypeController
+        [Authorize(Policy = "IndexAcademicExamTypePolicy")]
         public async Task<ActionResult> Index()
         {
             var allExamTypes = await _academicExamTypeManager.GetAllAsync();
@@ -27,6 +28,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicExamTypeController/Details/5
+        [Authorize(Policy = "DetailsAcademicExamTypePolicy")]
         public async Task<ActionResult> Details(int id)
         {
             AcademicExamType academicExamType = await _academicExamTypeManager.GetByIdAsync(id);
@@ -34,6 +36,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicExamTypeController/Create
+        [Authorize(Policy = "CraeteAcademicExamTypePolicy")]
         public ActionResult Create()
         {
             return View();
@@ -42,6 +45,7 @@ namespace SMS.App.Controllers
         // POST: AcademicExamTypeController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "CraeteAcademicExamTypePolicy")]
         public async Task<ActionResult> Create(AcademicExamType academicExamType)
         {
             try
@@ -78,6 +82,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicExamTypeController/Edit/5
+        [Authorize(Policy = "EditAcademicExamTypePolicy")]
         public async Task<ActionResult> Edit(int id)
         {
             AcademicExamType academicExamType = await _academicExamTypeManager.GetByIdAsync(id);
@@ -87,6 +92,7 @@ namespace SMS.App.Controllers
         // POST: AcademicExamTypeController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "EditAcademicExamTypePolicy")]
         public async Task<ActionResult> Edit(int id, AcademicExamType academicExamType)
         {
             try
@@ -113,6 +119,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicExamTypeController/Delete/5
+        [Authorize(Policy = "DeleteAcademicExamTypePolicy")]
         public async Task<ActionResult> Delete(int id)
         {
             GlobalUI.PageTitle = "Delete Academic Exam Type";
@@ -123,6 +130,7 @@ namespace SMS.App.Controllers
         // POST: AcademicExamTypeController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "DeleteAcademicExamTypePolicy")]
         public async Task<ActionResult> Delete(int id, AcademicExamType aExamType)
         {
             try

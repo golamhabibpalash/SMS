@@ -19,6 +19,7 @@ namespace SMS.App.Controllers
             _expenseTypeRepository = expenseTypeRepository;
         }
         // GET: ExpensTypesController
+        [Authorize(Policy = "IndexExpensTypesPolicy")]
         public async Task<ActionResult> Index()
         {
             GlobalUI.PageTitle = "Expense Type";
@@ -30,12 +31,14 @@ namespace SMS.App.Controllers
         }
 
         // GET: ExpensTypesController/Details/5
+        [Authorize(Policy = "DetailsExpensTypesPolicy")]
         public ActionResult Details(int id)
         {
             return View();
         }
 
         // GET: ExpensTypesController/Create
+        [Authorize(Policy = "CreateExpensTypesPolicy")]
         public ActionResult Create()
         {
             return View();
@@ -44,6 +47,7 @@ namespace SMS.App.Controllers
         // POST: ExpensTypesController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "CreateExpensTypesPolicy")]
         public ActionResult Create(IFormCollection collection)
         {
             try
@@ -57,6 +61,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: ExpensTypesController/Edit/5
+        [Authorize(Policy = "EditExpensTypesPolicy")]
         public ActionResult Edit(int id)
         {
             return View();
@@ -65,6 +70,7 @@ namespace SMS.App.Controllers
         // POST: ExpensTypesController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "EditExpensTypesPolicy")]
         public ActionResult Edit(int id, IFormCollection collection)
         {
             try
@@ -78,6 +84,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: ExpensTypesController/Delete/5
+        [Authorize(Policy = "DeleteExpensTypesPolicy")]
         public ActionResult Delete(int id)
         {
             return View();
@@ -86,6 +93,7 @@ namespace SMS.App.Controllers
         // POST: ExpensTypesController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "DeleteExpensTypesPolicy")]
         public ActionResult Delete(int id, IFormCollection collection)
         {
             try

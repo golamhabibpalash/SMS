@@ -19,6 +19,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: QuestionFormationController
+        [Authorize(Policy = "IndexQuestionFormationPolicy")]
         public async Task<ActionResult> Index()
         {
             var formats = await _questionFormationManager.GetAllAsync();
@@ -26,6 +27,7 @@ namespace SMS.App.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "CreateQuestionFormationPolicy")]
         public async Task<JsonResult> CreatFormation(QuestionFormat model)
         {
             model.Id = 0;
@@ -64,6 +66,7 @@ namespace SMS.App.Controllers
             return Json(new { qf = "", msg ="Please provide all data correctly."});
         }
 
+        [Authorize(Policy = "EditQuestionFormationPolicy")]
         public async Task<JsonResult> EditFormation(QuestionFormat model)
         {
             bool isUpdated = await _questionFormationManager.UpdateAsync(model);

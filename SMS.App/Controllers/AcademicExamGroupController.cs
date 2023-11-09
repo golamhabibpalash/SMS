@@ -36,6 +36,7 @@ namespace SMS.App.Controllers
 
         }
         // GET: AcademicExamGroupController
+        [Authorize(Policy = "IndexAcademicExamGroupPolicy")]
         public async Task<ActionResult> Index()
         {
             List<AcademicExamGroup> examGroupList = new List<AcademicExamGroup>();
@@ -71,6 +72,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicExamGroupController/Details/5
+        [Authorize(Policy = "DetailsAcademicExamGroupPolicy")]
         public async Task<ActionResult> Details(int id)
         {
             if (TempData["failed"]!=null)
@@ -96,6 +98,7 @@ namespace SMS.App.Controllers
         // POST: AcademicExamGroupController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "CreateAcademicExamGroupPolicy")]
         public async Task<ActionResult> Create(AcademicExamGroup academicExamGroup)
         {
             if (!ModelState.IsValid)
@@ -148,6 +151,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicExamGroupController/Edit/5
+        [Authorize(Policy = "EditAcademicExamGroupPolicy")]
         public async Task<ActionResult> Edit(int id)
         {
             AcademicExamGroup academicExamGroup = await _examGroupManager.GetByIdAsync(id);
@@ -167,6 +171,7 @@ namespace SMS.App.Controllers
         // POST: AcademicExamGroupController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "EditAcademicExamGroupPolicy")]
         public async Task<ActionResult> Edit(int id, AcademicExamGroup academicExamGroup)
         {
             if (id!=academicExamGroup.Id)
@@ -211,6 +216,7 @@ namespace SMS.App.Controllers
 
         // GET: AcademicExamGroupController/Delete/5
         [HttpPost]
+        [Authorize(Policy = "DeleteAcademicExamGroupPolicy")]
         public async Task<ActionResult> Delete(int id)
         {
             AcademicExamGroup academicExamGroup = await _examGroupManager.GetByIdAsync(id);

@@ -25,12 +25,14 @@ namespace SMS.App.Controllers
         }
 
         // GET: Divisions
+        [Authorize(Policy = "IndexDivisionsPolicy")]
         public async Task<IActionResult> Index()
         {
             return View(await _divisionManager.GetAllAsync());
         }
 
         // GET: Divisions/Details/5
+        [Authorize(Policy = "DetailsDivisionsPolicy")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -48,6 +50,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: Divisions/Create
+        [Authorize(Policy = "CreateDivisionsPolicy")]
         public IActionResult Create()
         {
             return View();
@@ -56,6 +59,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "CreateDivisionsPolicy")]
         public async Task<IActionResult> Create([Bind("Id,Name,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] Division division)
         {
             if (ModelState.IsValid)
@@ -70,6 +74,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: Divisions/Edit/5
+        [Authorize(Policy = "EditDivisionsPolicy")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -87,6 +92,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "EditDivisionsPolicy")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] Division division)
         {
             if (id != division.Id)
@@ -120,6 +126,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: Divisions/Delete/5
+        [Authorize(Policy = "DeleteDivisionsPolicy")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -139,6 +146,7 @@ namespace SMS.App.Controllers
         // POST: Divisions/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "DeleteDivisionsPolicy")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var division = await _divisionManager.GetByIdAsync(id);

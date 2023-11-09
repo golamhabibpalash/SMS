@@ -25,12 +25,15 @@ namespace SMS.App.Controllers
         }
 
         // GET: EmpTypes
+
+        [Authorize(Policy = "IndexEmpTypesPolicy")]
         public async Task<IActionResult> Index()
         {
             return View(await _empTypeManager.GetAllAsync());
         }
 
         // GET: EmpTypes/Details/5
+        [Authorize(Policy = "DetailsEmpTypesPolicy")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -48,6 +51,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: EmpTypes/Create
+        [Authorize(Policy = "CreateEmpTypesPolicy")]
         public IActionResult Create()
         {
             return View();
@@ -56,6 +60,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "CreateEmpTypesPolicy")]
         public async Task<IActionResult> Create([Bind("Id,Name,CreatedBy,CreatedAt,EditedBy,EditedAt")] EmpType empType)
         {
             
@@ -72,6 +77,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: EmpTypes/Edit/5
+        [Authorize(Policy = "EditEmpTypesPolicy")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -89,6 +95,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "EditEmpTypesPolicy")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,CreatedBy,CreatedAt,EditedBy,EditedAt")] EmpType empType)
         {
             if (id != empType.Id)
@@ -124,6 +131,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: EmpTypes/Delete/5
+        [Authorize(Policy = "DeleteEmpTypesPolicy")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -143,6 +151,7 @@ namespace SMS.App.Controllers
         // POST: EmpTypes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "DeleteEmpTypesPolicy")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var empType = await _empTypeManager.GetByIdAsync((int)id);

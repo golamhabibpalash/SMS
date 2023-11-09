@@ -31,6 +31,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: StudentFeeLists
+        [Authorize(Policy = "IndexClassFeeListsPolicy")]
         public async Task<IActionResult> Index()
         {
             string msg = "";
@@ -47,6 +48,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: StudentFeeLists/Details/5
+        [Authorize(Policy = "DetailsClassFeeListsPolicy")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -64,6 +66,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: StudentFeeLists/Create
+        [Authorize(Policy = "CreateClassFeeListsPolicy")]
         public async Task<IActionResult> Create()
         {
             
@@ -75,6 +78,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "CreateClassFeeListsPolicy")]
         public async Task<IActionResult> Create([Bind("Id,StudentFeeHeadId,AcademicSessionId,Amount,AcademicClassId,CreatedBy,CreatedAt,EditedBy,EditedAt, StartDate, EndDate")] ClassFeeList classFeeList)
         {
             string msg = "";
@@ -113,6 +117,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: StudentFeeLists/Edit/5
+        [Authorize(Policy = "EditClassFeeListsPolicy")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -134,6 +139,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "EditClassFeeListsPolicy")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,StudentFeeHeadId,AcademicSessionId,Amount,AcademicClassId,CreatedBy,CreatedAt,EditedBy,EditedAt, StartDate, EndDate")] ClassFeeList classFeeList)
         {
             if (id != classFeeList.Id)
@@ -188,6 +194,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: StudentFeeLists/Delete/5
+        [Authorize(Policy = "DeleteClassFeeListsPolicy")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -207,6 +214,7 @@ namespace SMS.App.Controllers
         // POST: StudentFeeLists/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "DeleteClassFeeListsPolicy")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var classFeeList = await _classFeeListManager.GetByIdAsync(id);

@@ -18,6 +18,7 @@ namespace SMS.App.Controllers
             _offDayTypeManager = offDayTypeManager;
         }
         // GET: OffDayTypeController
+        [Authorize(Policy = "IndexOffDayTypesPolicy")]
         public async Task<ActionResult> Index()
         {
             string msg = string.Empty;
@@ -38,6 +39,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: OffDayTypeController/Details/5
+        [Authorize(Policy = "DetailsOffDayTypesPolicy")]
         public async Task<ActionResult> Details(int id)
         {
             var result = await _offDayTypeManager.GetByIdAsync(id);
@@ -45,6 +47,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: OffDayTypeController/Create
+        [Authorize(Policy = "CreateOffDayTypesPolicy")]
         public ActionResult Create()
         {
             return View();
@@ -53,6 +56,7 @@ namespace SMS.App.Controllers
         // POST: OffDayTypeController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "CreateOffDayTypesPolicy")]
         public async Task<ActionResult> Create(OffDayType offDayType)
         {
             try
@@ -78,6 +82,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: OffDayTypeController/Edit/5
+        [Authorize(Policy = "EditOffDayTypesPolicy")]
         public async Task<ActionResult> Edit(int id)
         {
             OffDayType offDayType = await _offDayTypeManager.GetByIdAsync(id);
@@ -87,6 +92,7 @@ namespace SMS.App.Controllers
         // POST: OffDayTypeController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "EditOffDayTypesPolicy")]
         public async Task<ActionResult> Edit(int id, OffDayType offDayType)
         {
             if (offDayType.Id != id)
@@ -127,6 +133,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: OffDayTypeController/Delete/5
+        [Authorize(Policy = "DeleteOffDayTypesPolicy")]
         public ActionResult Delete(int id)
         {
             return View();
@@ -135,6 +142,7 @@ namespace SMS.App.Controllers
         // POST: OffDayTypeController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "DeleteOffDayTypesPolicy")]
         public ActionResult Delete(int id, IFormCollection collection)
         {
             try

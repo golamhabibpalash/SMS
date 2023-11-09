@@ -26,6 +26,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: Upazilas
+        [Authorize(Policy = "IndexUpazilasPolicy")]
         public async Task<IActionResult> Index()
         {
 
@@ -33,6 +34,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: Upazilas/Details/5
+        [Authorize(Policy = "DetailsUpazilasPolicy")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -50,6 +52,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: Upazilas/Create
+        [Authorize(Policy = "CreateUpazilasPolicy")]
         public async Task<IActionResult> Create()
         {
             ViewData["DistrictId"] = new SelectList(await _districtManager.GetAllAsync(), "Id", "Name");
@@ -59,8 +62,8 @@ namespace SMS.App.Controllers
         // POST: Upazilas/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost,ValidateAntiForgeryToken]
+        [Authorize(Policy = "CreateUpazilasPolicy")]
         public async Task<IActionResult> Create([Bind("Id,Name,DistrictId,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] Upazila Upazila)
         {
             if (ModelState.IsValid)
@@ -77,6 +80,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: Upazilas/Edit/5
+        [Authorize(Policy = "EditUpazilasPolicy")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -95,6 +99,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "EditUpazilasPolicy")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,DistrictId,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] Upazila Upazila)
         {
             if (id != Upazila.Id)
@@ -129,6 +134,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: Upazilas/Delete/5
+        [Authorize(Policy = "DeleteUpazilasPolicy")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -146,8 +152,8 @@ namespace SMS.App.Controllers
         }
 
         // POST: Upazilas/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ActionName("Delete"),ValidateAntiForgeryToken]
+        [Authorize(Policy = "DeleteUpazilasPolicy")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var Upazila = await _upazilaManager.GetByIdAsync(id);

@@ -30,6 +30,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicClasses
+        [Authorize(Policy = "IndexAcademicClassesPolicy")]
         public async Task<IActionResult> Index()
         {
             var AcademicClassList =await _academicClassManager.GetAllAsync();
@@ -38,6 +39,8 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicClasses/Details/5
+
+        [Authorize(Policy = "DetailsAcademicClassesPolicy")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -55,6 +58,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicClasses/Create
+        [Authorize(Policy = "CreateAcademicClassesPolicy")]
         public async Task<IActionResult> Create()
         {
             var allSession = await _academicSessionManager.GetAllAsync();
@@ -67,6 +71,7 @@ namespace SMS.App.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "CreateAcademicClassesPolicy")]
         public async Task<IActionResult> Create([Bind("Id,Name,AcademicSessionId,ClassSerial,Description,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicClass academicClass)
         {
             string msg = "";
@@ -99,6 +104,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicClasses/Edit/5
+        [Authorize(Policy = "EditAcademicClassesPolicy")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -120,6 +126,7 @@ namespace SMS.App.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "EditAcademicClassesPolicy")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,AcademicSessionId,ClassSerial,Description,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicClass academicClass)
         {
             string msg = "";
@@ -157,6 +164,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicClasses/Delete/5
+        [Authorize(Policy = "DeleteAcademicClassesPolicy")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -176,6 +184,7 @@ namespace SMS.App.Controllers
         // POST: AcademicClasses/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "DeleteAcademicClassesPolicy")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var academicClass = await _academicClassManager.GetByIdAsync(id);

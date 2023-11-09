@@ -26,12 +26,14 @@ namespace SMS.App.Controllers
         }
 
         // GET: BloodGroups
+        [Authorize(Policy = "IndexBloodGroupsPolicy")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.BloodGroup.ToListAsync());
         }
 
         // GET: BloodGroups/Details/5
+        [Authorize(Policy = "DetailsBloodGroupsPolicy")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -50,6 +52,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: BloodGroups/Create
+        [Authorize(Policy = "CreateBloodGroupsPolicy")]
         public IActionResult Create()
         {
             return View();
@@ -57,6 +60,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "CreateBloodGroupsPolicy")]
         public async Task<IActionResult> Create([Bind("Id,Name,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] BloodGroup bloodGroup)
         {
             string msg = "";
@@ -82,6 +86,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: BloodGroups/Edit/5
+        [Authorize(Policy = "EditBloodGroupsPolicy")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -99,6 +104,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "EditBloodGroupsPolicy")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] BloodGroup bloodGroup)
         {
             if (id != bloodGroup.Id)
@@ -134,6 +140,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: BloodGroups/Delete/5
+        [Authorize(Policy = "DeleteBloodGroupsPolicy")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -154,6 +161,7 @@ namespace SMS.App.Controllers
         // POST: BloodGroups/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "DeleteBloodGroupsPolicy")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var bloodGroup = await _context.BloodGroup.FindAsync(id);

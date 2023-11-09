@@ -24,12 +24,14 @@ namespace SMS.App.Controllers
         }
 
         // GET: Nationalities
+        [Authorize(Policy = "IndexNationalitiesPolicy")]
         public async Task<IActionResult> Index()
         {
             return View(await _nationalityManager.GetAllAsync());
         }
 
         // GET: Nationalities/Details/5
+        [Authorize(Policy = "DetailsNationalitiesPolicy")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -47,6 +49,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: Nationalities/Create
+        [Authorize(Policy = "CreateNationalitiesPolicy")]
         public IActionResult Create()
         {
             return View();
@@ -56,6 +59,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "CreateNationalitiesPolicy")]
         public async Task<IActionResult> Create([Bind("Id,Name,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] Nationality nationality)
         {
             
@@ -73,6 +77,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: Nationalities/Edit/5
+        [Authorize(Policy = "EditNationalitiesPolicy")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -90,6 +95,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "EditNationalitiesPolicy")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] Nationality nationality)
         {
             if (id != nationality.Id)
@@ -125,6 +131,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: Nationalities/Delete/5
+        [Authorize(Policy = "DeleteNationalitiesPolicy")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -144,6 +151,7 @@ namespace SMS.App.Controllers
         // POST: Nationalities/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "DeleteNationalitiesPolicy")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var nationality = await _nationalityManager.GetByIdAsync((int)id);

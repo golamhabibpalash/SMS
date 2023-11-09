@@ -28,6 +28,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicSessions
+        [Authorize(Policy = "IndexAcademicSessionPolicy")]
         public async Task<IActionResult> Index()
         {
             //var aSession = await _context.AcademicSession.OrderBy(a => a.Name.Trim().Substring(0,4)).ToListAsync();
@@ -36,6 +37,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicSessions/Details/5
+        [Authorize(Policy = "DetailsAcademicSessionPolicy")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -56,6 +58,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicSessions/Create
+        [Authorize(Policy = "CreateAcademicSessionPolicy")]
         public IActionResult Create()
         {
             return View();
@@ -64,6 +67,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "CreateAcademicSessionPolicy")]
         public async Task<IActionResult> Create([Bind("Id,Name,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSession academicSession)
         {
             string msg = "";
@@ -101,6 +105,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicSessions/Edit/5
+        [Authorize(Policy = "EditAcademicSessionPolicy")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -120,6 +125,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "EditAcademicSessionPolicy")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSession academicSession)
         {
             string msg = "";
@@ -162,6 +168,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicSessions/Delete/5
+        [Authorize(Policy = "DeleteAcademicSessionPolicy")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -183,6 +190,7 @@ namespace SMS.App.Controllers
         // POST: AcademicSessions/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "DeleteAcademicSessionPolicy")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             //var academicSession = await _context.AcademicSession.FindAsync(id);

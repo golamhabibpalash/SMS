@@ -58,7 +58,8 @@ namespace SMS.App.Controllers
         }
 
 
-        [Authorize(Roles = "SuperAdmin, Admin,Teacher")] 
+        [Authorize(Roles = "SuperAdmin, Admin,Teacher")]
+        [Authorize(Policy = "IndexEmployeesPolicy")]
         public async Task<IActionResult> Index()
         {
             var empList = await _employeeManager.GetAllAsync();
@@ -66,6 +67,7 @@ namespace SMS.App.Controllers
         }
 
         [Authorize(Roles = "SuperAdmin, Admin,Teacher")]
+        [Authorize(Policy = "DetailsEmployeesPolicy")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -86,6 +88,7 @@ namespace SMS.App.Controllers
 
         // GET: Employees/Create
         [Authorize(Roles = "SuperAdmin, Admin")]
+        [Authorize(Policy = "CreateEmployeesPolicy")]
         public async Task<IActionResult> Create()
         {
             EmployeeCreateVM employee = new ();
@@ -103,6 +106,7 @@ namespace SMS.App.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "SuperAdmin, Admin")]
+        [Authorize(Policy = "CreateEmployeesPolicy")]
         public async Task<IActionResult> Create([Bind("Id,EmployeeName,EmployeeNameBangla,DOB,Image,GenderId,ReligionId,NationalityId,NIDNo,NIDCard,Phone,Email,Nominee,NomineePhone,EmpTypeId,DesignationId,JoiningDate,PresentAddress,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddress,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,CreatedBy,CreatedAt,EditedBy,EditedAt,Status,BloodGroupId")] EmployeeCreateVM employeeVM, IFormFile empImage, IFormFile nidCard)
         {
             var employee1 = employeeVM;
@@ -238,6 +242,7 @@ namespace SMS.App.Controllers
 
         // GET: Employees/Edit/5
         [Authorize]
+        [Authorize(Policy = "EditEmployeesPolicy")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -288,6 +293,7 @@ namespace SMS.App.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "SuperAdmin, Admin")]
+        [Authorize(Policy = "EditEmployeesPolicy")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,EmployeeName,EmployeeNameBangla,DOB,Image,GenderId,ReligionId,NationalityId,NIDNo,NIDCard,Phone,Email,Nominee,NomineePhone,EmpTypeId,DesignationId,JoiningDate,PresentAddress,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddress,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,CreatedBy,CreatedAt,EditedBy,EditedAt,Status,BloodGroupId")] EmployeeEditVM employeeVM, IFormFile Image, IFormFile NIDCard)
         {
             string msg = "";
@@ -392,6 +398,7 @@ namespace SMS.App.Controllers
         // GET: Employees/Delete/5
 
         [Authorize(Roles = "SuperAdmin")]
+        [Authorize(Policy = "DeleteEmployeesPolicy")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -412,6 +419,7 @@ namespace SMS.App.Controllers
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "SuperAdmin")]
+        [Authorize(Policy = "DeleteEmployeesPolicy")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var emp = await _employeeManager.GetByIdAsync(id);

@@ -26,6 +26,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: Districts
+        [Authorize(Policy = "IndexDistrictsPolicy")]
         public async Task<IActionResult> Index()
         {
             var districts =await _districtManager.GetAllAsync() ;
@@ -33,6 +34,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: Districts/Details/5
+        [Authorize(Policy = "DetailsDistrictsPolicy")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -50,6 +52,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: Districts/Create
+        [Authorize(Policy = "CreateDistrictsPolicy")]
         public async Task<IActionResult> Create()
         {
             ViewData["DivisionId"] = new SelectList(await _divisionManager.GetAllAsync(), "Id", "Id");
@@ -58,6 +61,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "CreateDistrictsPolicy")]
         public async Task<IActionResult> Create([Bind("Id,Name,DivisionId,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] District district)
         {
             if (ModelState.IsValid)
@@ -73,6 +77,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: Districts/Edit/5
+        [Authorize(Policy = "EditDistrictsPolicy")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -91,6 +96,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "EditDistrictsPolicy")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,DivisionId,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] District district)
         {
             if (id != district.Id)
@@ -125,6 +131,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: Districts/Delete/5
+        [Authorize(Policy = "DeleteDistrictsPolicy")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -144,6 +151,7 @@ namespace SMS.App.Controllers
         // POST: Districts/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "DeleteDistrictsPolicy")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var district = await _districtManager.GetByIdAsync((int)id);

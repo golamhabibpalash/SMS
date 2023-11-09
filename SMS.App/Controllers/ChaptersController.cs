@@ -22,6 +22,7 @@ namespace SMS.App.Controllers
             _academicClassManager = academicClassManager;
         }
 
+        [Authorize(Policy = "ViewChaptersPolicy")]
         public async Task<IActionResult> Index()
         {
             var chapters = await _chapterManager.GetAllAsync();
@@ -31,6 +32,7 @@ namespace SMS.App.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "CreateChaptersPolicy")]
         public async Task<JsonResult> Create(Chapter chData)
         {
             try

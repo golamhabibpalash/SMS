@@ -21,6 +21,7 @@ namespace SMS.App.Controllers
             _offDayTypeManager = offDayTypeManager;
         }
         // GET: OffDaysControllercs
+        [Authorize(Policy = "IndexOffDaysPolicy")]
         public async Task<ActionResult> Index()
         {
             var objects = await _offDayManager.GetAllAsync();
@@ -28,6 +29,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: OffDaysControllercs/Details/5
+        [Authorize(Policy = "DetailsOffDaysPolicy")]
         public async Task<ActionResult> Details(int id)
         {
             OffDay offDay = await _offDayManager.GetByIdAsync(id);
@@ -35,6 +37,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: OffDaysControllercs/Create
+        [Authorize(Policy = "CreateOffDaysPolicy")]
         public async Task<ActionResult> Create()
         {
             ViewBag.OffDayType = new SelectList(await _offDayTypeManager.GetAllAsync(), "Id", "OffDayTypeName");
@@ -44,6 +47,7 @@ namespace SMS.App.Controllers
         // POST: OffDaysControllercs/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "CreateOffDaysPolicy")]
         public async Task<ActionResult> Create(OffDay offDay)
         {
             ViewBag.OffDayType = new SelectList(await _offDayTypeManager.GetAllAsync(),"Id", "OffDayTypeName");
@@ -90,6 +94,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: OffDaysControllercs/Edit/5
+        [Authorize(Policy = "EditOffDaysPolicy")]
         public async Task<ActionResult> Edit(int id)
         {
             OffDay offDay = await _offDayManager.GetByIdAsync(id);
@@ -104,6 +109,7 @@ namespace SMS.App.Controllers
         // POST: OffDaysControllercs/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "EditOffDaysPolicy")]
         public async Task<ActionResult> Edit(int id, OffDay offDay)
         {   
             if (ModelState.IsValid)
@@ -136,6 +142,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: OffDaysControllercs/Delete/5
+        [Authorize(Policy = "DeleteOffDaysPolicy")]
         public async Task<ActionResult> Delete(int id)
         {
             OffDay oDay = await _offDayManager.GetByIdAsync(id);
@@ -145,6 +152,7 @@ namespace SMS.App.Controllers
         // POST: OffDaysControllercs/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "DeleteOffDaysPolicy")]
         public async Task<ActionResult> Delete(int id, OffDay offDay)
         {
             try

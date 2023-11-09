@@ -26,6 +26,8 @@ namespace SMS.App.Controllers
 
         }
         // GET: StudentFeeAllocationsController
+
+        [Authorize(Policy = "IndexStudentFeeAllocationsPolicy")]
         public async Task<ActionResult> Index()
         {
             StudentFeeAllocationVM studentFeeAllocationVM = new StudentFeeAllocationVM();            
@@ -37,12 +39,14 @@ namespace SMS.App.Controllers
         }
 
         // GET: StudentFeeAllocationsController/Details/5
+        [Authorize(Policy = "DetailsStudentFeeAllocationsPolicy")]
         public ActionResult Details(int id)
         {
             return View();
         }
 
         // GET: StudentFeeAllocationsController/Create
+        [Authorize(Policy = "CreateStudentFeeAllocationsPolicy")]
         public ActionResult Create()
         {
             return View();
@@ -51,6 +55,7 @@ namespace SMS.App.Controllers
         // POST: StudentFeeAllocationsController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "CreateStudentFeeAllocationsPolicy")]
         public async Task<ActionResult> Create(StudentFeeAllocationVM studentFeeAllocationVM)
         {
             StudentFeeAllocation studentFeeAllocation = new StudentFeeAllocation();
@@ -78,6 +83,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: StudentFeeAllocationsController/Edit/5
+        [Authorize(Policy = "EditStudentFeeAllocationsPolicy")]
         public ActionResult Edit(int id)
         {
             return View();
@@ -86,6 +92,7 @@ namespace SMS.App.Controllers
         // POST: StudentFeeAllocationsController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "EditStudentFeeAllocationsPolicy")]
         public async Task<ActionResult> Edit(int id, StudentFeeAllocationVM studentFeeAllocationVM)
         {
             if (ModelState.IsValid)
@@ -127,6 +134,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: StudentFeeAllocationsController/Delete/5
+        [Authorize(Policy = "DeleteStudentFeeAllocationsPolicy")]
         public ActionResult Delete(int id)
         {
             return View();
@@ -135,6 +143,7 @@ namespace SMS.App.Controllers
         // POST: StudentFeeAllocationsController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "DeleteStudentFeeAllocationsPolicy")]
         public async Task<ActionResult> Delete(int id, IFormCollection formCollection)
         {
             //StudentFeeAllocationId

@@ -82,6 +82,7 @@ namespace SchoolManagementSystem.Controllers
 
         #region Index
         [Authorize(Roles = "SuperAdmin, Admin,Teacher")]
+        [Authorize(Policy = "IndexStudentsPolicy")]
         public async Task<IActionResult> Index(int? academicClassId, int? academicSectionId, string aStatus, string sortOrder, string searchString, int? pageNumber, int? pageSize, string aCategory)
         {
             ViewData["rollSortParam"] = String.IsNullOrEmpty(sortOrder) ? "roll_desc" : "";
@@ -184,6 +185,7 @@ namespace SchoolManagementSystem.Controllers
         #region Details
         // GET: Students/Details/5
         [Authorize, AllowAnonymous]
+        [Authorize(Policy = "DetailsStudentsPolicy")]
         public async Task<IActionResult> Details(int? id, string tabName)
         {
             if (id == null)
@@ -282,6 +284,7 @@ namespace SchoolManagementSystem.Controllers
 
         #region Create
         [Authorize(Roles = "SuperAdmin, Admin")]
+        [Authorize(Policy = "CreateStudentsPolicy")]
         public async Task<IActionResult> Create()
         {
             StudentCreateVM student = new();
@@ -296,9 +299,9 @@ namespace SchoolManagementSystem.Controllers
             return View(student);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost,ValidateAntiForgeryToken]
         [Authorize(Roles = "SuperAdmin, Admin")]
+        [Authorize(Policy = "CreateStudentsPolicy")]
         public async Task<IActionResult> Create([Bind("Id,Name,NameBangla,ClassRoll,FatherName,MotherName,AdmissionDate,Email,PhoneNo,Photo,DOB,BirthCertificateNo,BirthCertificateImage,ReligionId,GenderId,BloodGroupId,NationalityId,PresentAddressArea,PresentAddressPO,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddressArea,PermanentAddressPO,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,AcademicSessionId,AcademicClassId,AcademicSectionId,AddressInfo,PreviousSchool,Status,CreatedBy,CreatedAt,EditedBy,EditedAt,GuardianPhone,MACAddress,IsResidential,SMSService")] StudentCreateVM newStudent, IFormFile sPhoto, IFormFile DOBFile)
         {
             newStudent.ClassRoll = await CreateRoll(newStudent.AcademicSessionId, newStudent.AcademicClassId, newStudent.ClassRoll);
@@ -423,6 +426,7 @@ namespace SchoolManagementSystem.Controllers
         #region Edit
         [HttpGet]
         [Authorize(Roles = "SuperAdmin, Admin")]
+        [Authorize(Policy = "EditStudentsPolicy")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -454,9 +458,9 @@ namespace SchoolManagementSystem.Controllers
         }
 
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost,ValidateAntiForgeryToken]
         [Authorize(Roles = "SuperAdmin, Admin")]
+        [Authorize(Policy = "EditStudentsPolicy")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,NameBangla,ClassRoll,FatherName,MotherName,AdmissionDate,Email,PhoneNo,Photo,DOB,BirthCertificateNo,BirthCertificateImage,ReligionId,GenderId,BloodGroupId,NationalityId,PresentAddressArea,PresentAddressPO,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddressArea,PermanentAddressPO,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,AcademicSessionId,AcademicClassId,AcademicSectionId,AddressInfo,PreviousSchool,CreatedBy,CreatedAt,EditedBy,EditedAt,GuardianPhone,Status,MACAddress,IsResidential,SMSService")] Student student, IFormFile sPhoto, IFormFile DOBFile)
         {
             if (id != student.Id)
@@ -547,6 +551,7 @@ namespace SchoolManagementSystem.Controllers
 
         #region Delete
         [Authorize(Roles = "SuperAdmin")]
+        [Authorize(Policy = "DeleteStudentsPolicy")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -565,8 +570,8 @@ namespace SchoolManagementSystem.Controllers
         }
 
         [Authorize(Roles = "SuperAdmin")]
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
+        [Authorize(Policy = "DeleteStudentsPolicy")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var student = await _studentManager.GetByIdAsync(id);
@@ -586,6 +591,7 @@ namespace SchoolManagementSystem.Controllers
 
         #region Profile
         [Authorize, AllowAnonymous]
+        [Authorize(Policy = "ProfileStudentsPolicy")]
         public async Task<IActionResult> Profile(int id)
         {
 
@@ -643,6 +649,8 @@ namespace SchoolManagementSystem.Controllers
             }
         }
 
+
+        [Authorize(Policy = "DueAmountStudentsPolicy")]
         public async Task<double> DueAmount(int id)
         {
             Student student = await _studentManager.GetByIdAsync(id);
@@ -656,6 +664,7 @@ namespace SchoolManagementSystem.Controllers
 
             return months;
         }
+
         private async Task<int> CreateRoll(int sessionId, int ClassId, int providedRoll)
         {
             var admissionSession = await _academicSessionManager.GetByIdAsync(sessionId);

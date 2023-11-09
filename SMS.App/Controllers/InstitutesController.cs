@@ -26,8 +26,8 @@ namespace SMS.App.Controllers
             _instituteManager = instituteManager;
             _host = host;
         }
-        
 
+        [Authorize(Policy = "IndexInstitutesPolicy")]
         public async Task<ActionResult> Index()
         {
             var result = await _instituteManager.GetAllAsync();
@@ -38,8 +38,7 @@ namespace SMS.App.Controllers
                 {
                     return View(instituteInfo);
                 }
-            }
-            
+            }            
             return RedirectToAction("Create");
         }
 
@@ -57,6 +56,7 @@ namespace SMS.App.Controllers
 
 
         [HttpPost, ValidateAntiForgeryToken]
+        [Authorize(Policy = "CreateInstitutesPolicy")]
         public async Task<ActionResult> Create(Institute institute, IFormFile logo, IFormFile banner)
         {
             if (ModelState.IsValid)
@@ -118,6 +118,7 @@ namespace SMS.App.Controllers
 
 
         [HttpPost,ValidateAntiForgeryToken]
+        [Authorize(Policy = "EditInstitutesPolicy")]
         public async Task<ActionResult> Edit(int id,Institute existingInstitute, IFormFile logo, IFormFile banner, IFormFile fav_Icon)
         {
             if (ModelState.IsValid)
@@ -220,6 +221,7 @@ namespace SMS.App.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "SchoolTimeTableInstitutesPolicy")]
         public async Task<ActionResult> SchoolTimeTable(InstituteTimeVM model)
         {
             GlobalUI.PageTitle = "School Time Table";

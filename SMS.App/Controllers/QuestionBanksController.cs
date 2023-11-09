@@ -29,12 +29,14 @@ namespace SMS.App.Controllers
             _questionManager = questionManager;
             _host = host;
         }
+        [Authorize(Policy = "IndexQuestionBanksPolicy")]
         public async Task<IActionResult> Index()
         {
             ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name");
             return View();
         }
 
+        [Authorize(Policy = "AllQuestionQuestionBanksPolicy")]
         public async Task<IActionResult> AllQuestion() 
         {
             var questionBanks = await _questionManager.GetAllAsync();
@@ -42,6 +44,7 @@ namespace SMS.App.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "CreateQuestionBanksPolicy")]
         public async Task<JsonResult> CreateQuestion(QuestionVM model, IList<IFormFile> files, IFormFile Image)
         {
             Question nQuestion = new Question();            
@@ -108,6 +111,7 @@ namespace SMS.App.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "EditQuestionBanksPolicy")]
         public async Task<IActionResult> Edit(int id)
         {
             var existingQuestion = await _questionManager.GetByIdAsync(id);
@@ -148,6 +152,7 @@ namespace SMS.App.Controllers
 
 
         [HttpPost]
+        [Authorize(Policy = "EditQuestionBanksPolicy")]
         public async Task<IActionResult> Edit(QuestionEditVM model, IFormCollection form)
         {
             Question question = await _questionManager.GetByIdAsync(model.Id);

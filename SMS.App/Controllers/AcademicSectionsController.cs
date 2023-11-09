@@ -31,6 +31,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicSections
+        [Authorize(Policy = "IndexAcademicSectionPolicy")]
         public async Task<IActionResult> Index()
         {
             var aSectiion = await _academicSectionManager.GetAllAsync();
@@ -38,6 +39,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicSections/Details/5
+        [Authorize(Policy = "DetailsAcademicSectionPolicy")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -55,6 +57,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicSections/Create
+        [Authorize(Policy = "CreateAcademicSectionPolicy")]
         public async Task<IActionResult> Create()
         {
             ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name");
@@ -65,6 +68,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "CreateAcademicSectionPolicy")]
         public async Task<IActionResult> Create([Bind("Id,Name,Status,AcademicClassId,AcademicSessionId")] AcademicSection academicSection)
         {
             var academicClass =await _academicClassManager.GetByIdAsync(academicSection.AcademicClassId);
@@ -89,6 +93,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicSections/Edit/5
+        [Authorize(Policy = "EditAcademicSectionPolicy")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -105,6 +110,7 @@ namespace SMS.App.Controllers
         // POST: AcademicSections/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "EditAcademicSectionPolicy")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Status,AcademicClassId,AcademicSessionId,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSection academicSection)
         {
             if (id != academicSection.Id)
@@ -150,6 +156,7 @@ namespace SMS.App.Controllers
         }
 
         // GET: AcademicSections/Delete/5
+        [Authorize(Policy = "DeleteAcademicSectionPolicy")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -168,6 +175,7 @@ namespace SMS.App.Controllers
         // POST: AcademicSections/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "DeleteAcademicSectionPolicy")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var academicSection = await _academicSectionManager.GetByIdAsync(id);

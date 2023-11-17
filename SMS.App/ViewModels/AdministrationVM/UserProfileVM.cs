@@ -9,5 +9,7 @@ namespace SMS.App.ViewModels.AdministrationVM
         public Employee Employee { get; set; } 
         public UserRoleClaimsVM UserRoleClaimsVM { get; set; }
         public SelectList UserList { get; set; }
+        public List<ClaimStores> ClaimStore { get; set; }
+        public List<ProjectModule> Modules { get; set; }
     }
 }

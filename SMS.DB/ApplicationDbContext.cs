@@ -115,6 +115,16 @@ namespace SMS.DB
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<ClaimStores>()
+                .HasIndex(p=> new { p.ClaimValue, p.ClaimType})
+                .IsUnique(true);
+            
+            builder.Entity<ProjectModule>()
+                .HasIndex(p=> new { p.ModuleName})
+                .IsUnique(true);
+
+
             builder.Entity<AttendanceVM>(entity => entity.HasNoKey());
             builder.Entity<StudentPaymentSummeryVM>(entity => entity.HasNoKey());
             builder.Entity<StudentPaymentSummerySMS_VM>(entity => entity.HasNoKey());

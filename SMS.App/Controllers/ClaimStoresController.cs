@@ -40,14 +40,14 @@ namespace SMS.App.Controllers
 
             ClaimStoreVM claimStoreVM = new ClaimStoreVM();
             claimStoreVM.ModuleSelectList = new SelectList(await _projectModuleManager.GetAllAsync(), "Id", "ModuleName");
-            claimStoreVM.ClaimStoresList = claims.ToList();
+            claimStoreVM.ClaimStoresList = claims.OrderBy(s => s.SubModule.SubModuleName).ToList();
             return View(claimStoreVM);
         }
 
         // POST: ClaimStoresController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Policy = "CreateClaimStoresPolicy")]
+        //[Authorize(Policy = "CreateClaimStoresPolicy")]
         public async Task<ActionResult> Create(ClaimStoreVM modelObject)
         {
             try
@@ -95,7 +95,10 @@ namespace SMS.App.Controllers
                     TempData["failed"] = "Data not found";
                     return RedirectToAction("Index");
                 }
-                existingClaimStore = _mapper.Map<ClaimStores>(modelObject.ClaimStores);
+
+                existingClaimStore.ClaimValue = modelObject.ClaimStores.ClaimValue;
+                existingClaimStore.ClaimType = modelObject.ClaimStores.ClaimType;
+                existingClaimStore.SubModuleId = modelObject.ClaimStores.SubModuleId;
                 existingClaimStore.EditedAt = DateTime.Now; 
                 existingClaimStore.EditedBy = HttpContext.Session.GetString("UserId");
                 existingClaimStore.MACAddress = MACService.GetMAC();
@@ -123,19 +126,26 @@ namespace SMS.App.Controllers
         }
 
         // POST: ClaimStoresController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         [Authorize(Policy = "DeleteClaimStoresPolicy")]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> Delete(int id, ClaimStores claimStores)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var existingClaim = await _claimStoreManager.GetByIdAsync(claimStores.Id);
+                if (existingClaim != null)
+                {
+                    bool isDeleted = await _claimStoreManager.RemoveAsync(existingClaim);
+                    if (isDeleted) {
+                        TempData["created"] = "Existing Claim Deleted Successfully";
+                    }
+                }                
             }
             catch
             {
-                return View();
+                TempData["failed"] = "Exception! Fail to Delete";
             }
+            return RedirectToAction(nameof(Index));
         }
     }
 }

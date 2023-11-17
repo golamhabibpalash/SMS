@@ -13,6 +13,7 @@ using SMS.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -26,12 +27,14 @@ namespace SMS.App.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IClaimStoreManager _claimStoreManager;
-        public AdministrationsController(IEmployeeManager employeeManager,UserManager<ApplicationUser> userManager,RoleManager<IdentityRole> roleManager, IClaimStoreManager claimStoreManager )
+        private readonly IProjectModuleManager _projectModuleManager;
+        public AdministrationsController(IEmployeeManager employeeManager, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IClaimStoreManager claimStoreManager, IProjectModuleManager projectModuleManager)
         {
             _employeeManager = employeeManager;
             _userManager = userManager;
             _roleManager = roleManager;
             _claimStoreManager = claimStoreManager;
+            _projectModuleManager = projectModuleManager;
         }
 
         [Authorize(Policy = "ViewUserProfileAdministrationsPolicy")]
@@ -41,19 +44,19 @@ namespace SMS.App.Controllers
             UserProfileVM userProfileVM = new UserProfileVM();
             var allUser = _userManager.Users;
             allUser = allUser.Where(s => s.UserType == 'e').OrderBy(s => s.UserName);
-            ViewBag.UserList = userProfileVM.UserList= new SelectList(allUser, "Id", "UserName");
+            ViewBag.UserList = userProfileVM.UserList = new SelectList(allUser, "Id", "UserName");
 
             UserRoleClaimsVM userRoleClaimsVM = new UserRoleClaimsVM();
-
-            if (userId!=null)
+            List<ProjectModule> modules = (List<ProjectModule>)await _projectModuleManager.GetAllAsync();
+            if (userId != null)
             {
-                ApplicationUser aUser =await _userManager.FindByIdAsync(userId);
-                if (aUser!=null)
+                ApplicationUser aUser = await _userManager.FindByIdAsync(userId);
+                if (aUser != null)
                 {
                     ViewBag.UserName = aUser.UserName;
                     var userIsInRole = await _userManager.GetRolesAsync(aUser);
                     var userInClaims = await _userManager.GetClaimsAsync(aUser);
-                    
+
                     Employee employee = await _employeeManager.GetByIdAsync(aUser.ReferenceId);
                     userProfileVM.Employee = employee;
                     //userRoleClaimsVM.ApplicationRoles = new List<SelectListItem>();
@@ -74,10 +77,12 @@ namespace SMS.App.Controllers
                     }).ToList();
 
                     userProfileVM.UserRoleClaimsVM = userRoleClaimsVM;
+                    userProfileVM.ClaimStore = (List<ClaimStores>)claimStore;
                 }
             }
+            userProfileVM.Modules = modules;
 
-            ViewData["EmployeeList"] = new SelectList(await _employeeManager.GetAllAsync(),"Id","Name");
+            ViewData["EmployeeList"] = new SelectList(await _employeeManager.GetAllAsync(), "Id", "Name");
             return View(userProfileVM);
         }
         [HttpPost]
@@ -89,7 +94,8 @@ namespace SMS.App.Controllers
             allUser = allUser.Where(s => s.UserType == 'e');
             model.UserList = new SelectList(allUser, "Id", "UserName");
             ApplicationUser aUser = await _userManager.FindByIdAsync(model.UserRoleClaimsVM.ApplicationUser.Id);
-            if (aUser!=null)
+            List<ProjectModule> modules = (List<ProjectModule>)await _projectModuleManager.GetAllAsync();
+            if (aUser != null)
             {
                 try
                 {
@@ -101,6 +107,7 @@ namespace SMS.App.Controllers
                         allClaim.Add(new Claim(item.ClaimType, item.ClaimValue));
                     }
                     List<Claim> selectedClaim = new List<Claim>();
+
                     var selectedClaimValues = model.UserRoleClaimsVM.ApplicationClaims.Where(x => x.Selected);
 
                     selectedClaim = (from cs in allClaim
@@ -155,6 +162,7 @@ namespace SMS.App.Controllers
                     TempData["failed"] = "Exception! User Profile Update Failed";
                 }
             }
+            model.Modules = modules;
             return View(model);
         }
     }

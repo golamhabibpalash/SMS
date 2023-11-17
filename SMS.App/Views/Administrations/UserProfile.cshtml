@@ -1,4 +1,31 @@
 ﻿@model SMS.App.ViewModels.AdministrationVM.UserProfileVM
+@{
+    // Query to group by ProjectModule, SubModule, and ClaimStore
+
+    var groupedData = Model.Modules
+      .Select(projectModule => new
+      {
+          ProjectModuleName = projectModule.ModuleName,
+          SubModules = projectModule.SubModuleList
+              .Select(subModule => new
+              {
+                  SubModuleId = subModule.Id,
+                  SubModuleName = subModule.SubModuleName,
+                  ClaimStores = subModule.ClaimStoresList
+                      .Select(claimStore => new
+                      {
+                          ClaimId = claimStore.Id,
+                          ClaimType = claimStore.ClaimType,
+                          ClaimValue = claimStore.ClaimValue
+                      })
+              })
+      });
+    int i = 0;
+    int m = 0;
+    int s = 0;
+    int index = 0;
+    SelectListItem targetItem = new SelectListItem();
+}
 <div class="row">
     <div class="row pt-3 pb-2" style="background-color: #2A3F54;">
         <div class="col-md-12 text-center">
@@ -10,7 +37,7 @@
                         </button>
                         @if (ViewBag.UserName != null)
                         {
-                            <span>@ViewBag.UserName</span>
+                            <span class="text-light">@ViewBag.UserName</span>
                         }
                     </div>
                     <div class="col-md-4 offset-md-3" style="visibility:hidden">
@@ -39,8 +66,11 @@
     <div class="row">
         <div class="col-md-3">
             <div class="card">
-                <div class="card-title">User Information</div>
-                <div class="card-header"></div>
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="h4">User Information</span>
+                    </div>
+                </div>
                 <div class="card-body">
                     <div class="text-md-center">
                         <img src="~/Images/Employee/photo/@Model.Employee.Image" alt="Alternate Text" onerror="this.src='@Url.Content("~/Images/Student/noimage.jpg")'" style="width:40%;" />
@@ -54,7 +84,7 @@
                                     Employee ID :
                                 </dt>
                                 <dd class="col-sm-8 col-8 border-bottom">
-                                    @Html.DisplayFor(model => model.Employee.Id)
+                                    @Model.Employee.Id.ToString().PadLeft(5,'0')
                                 </dd>
                                 <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
                                     Name :
@@ -62,11 +92,18 @@
                                 <dd class="col-sm-8 col-8 border-bottom">
                                     @Html.DisplayFor(model => model.Employee.EmployeeName)
                                 </dd>
+
                                 <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
                                     নাম (বাংলা) :
                                 </dt>
                                 <dd class="col-sm-8 col-8 border-bottom">
                                     @Html.DisplayFor(model => model.Employee.EmployeeNameBangla)
+                                </dd>
+                                <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
+                                    Designation :
+                                </dt>
+                                <dd class="col-sm-8 col-8 border-bottom">
+                                    @Html.DisplayFor(model => model.Employee.Designation.DesignationName)
                                 </dd>
                                 <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
                                     Joining Date :
@@ -86,6 +123,19 @@
                                 <dd class="col-sm-8 col-8 border-bottom">
                                     @Model.Employee.Email
                                 </dd>
+                                <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
+                                    Active Status :
+                                </dt>
+                                <dd class="col-sm-8 col-8 border-bottom">
+                                    @if (Model.Employee.Status)
+                                    {
+                                        <span class="bg-info p-1"><i class="text-light fas  fa-check"></i></span>
+                                    }
+                                    else
+                                    {
+                                        <span class="bg-danger p-1"><i class="text-light">X</i></span>
+                                    }
+                                </dd>
                             </dl>
                         </div>
                     </div>
@@ -93,11 +143,11 @@
                 <div class="card-footer">
                     <div class="card-title text-center">Roles</div>
                     <div class="card-body">
-                        @for (int i = 0; i < Model.UserRoleClaimsVM.ApplicationRoles.Count; i++)
+                        @for (int j = 0; j < Model.UserRoleClaimsVM.ApplicationRoles.Count; j++)
                         {
                             <div>
-                                <input type="hidden" asp-for="@Model.UserRoleClaimsVM.ApplicationRoles[i].Value" />
-                                <input asp-for="@Model.UserRoleClaimsVM.ApplicationRoles[i].Selected" /> <label asp-for="@Model.UserRoleClaimsVM.ApplicationRoles[i].Selected"> @Model.UserRoleClaimsVM.ApplicationRoles[i].Text</label>
+                                <input type="hidden" asp-for="@Model.UserRoleClaimsVM.ApplicationRoles[j].Value" />
+                                <input asp-for="@Model.UserRoleClaimsVM.ApplicationRoles[j].Selected" /> <label asp-for="@Model.UserRoleClaimsVM.ApplicationRoles[j].Selected"> @Model.UserRoleClaimsVM.ApplicationRoles[j].Text</label>
                             </div>
                         }
                     </div>
@@ -105,91 +155,86 @@
             </div>
         </div>
         <div class="col-md-9">
-            <div class="card">
-                <ul class="nav nav-tabs" id="myTab" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="pagePermission-tab" data-bs-toggle="tab" data-bs-target="#pagePermission" type="button" role="tab" aria-controls="pagePermission" aria-selected="true">Page Permission</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Profile</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Contact</button>
-                    </li>
-                </ul>
-                <div class="tab-content" id="myTabContent">
-                    <div class="tab-pane fade show active" id="pagePermission" role="tabpanel" aria-labelledby="pagePermission-tab">
+            <div class="">
+                <div class="card">
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item active">
+                            <a class="nav-link active" data-toggle="tab" href="#claimPermission">Page Permission</a>
+                        </li>
+                        <li class="nav-item ">
+                            <a class="nav-link" data-toggle="tab" href="#profile">Profile</a>
+                        </li>
+                    </ul>
 
-                        <div class="row">
 
-                            <div class="col-md-3">
-                                <div class="card shadow">
-                                    <form asp-action="UserProfile" method="post">
-                                        <input type="hidden" asp-for="@Model.UserRoleClaimsVM.ApplicationUser.Id"  />
-                                        <div class="card-title text-center">Claims</div>
-                                        <div class="card-body">
-
-                                            @for (int i = 0; i < Model.UserRoleClaimsVM.ApplicationClaims.Count; i++)
-                                            {
-                                                <div>
-                                                    <input type="hidden" asp-for="@Model.UserRoleClaimsVM.ApplicationClaims[i].Value" />
-                                                    <input asp-for="@Model.UserRoleClaimsVM.ApplicationClaims[i].Selected" />
-                                                    <label class="col-form-label" asp-for="@Model.UserRoleClaimsVM.ApplicationClaims[i].Selected">@Model.UserRoleClaimsVM.ApplicationClaims[i].Text</label>
-                                                </div>
-                                            }
-                                        </div>
-                                        <div class="card-footer">
-                                            <input type="submit" value="Update" class="btn btn-info btn-sm" />
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-
-                            <div class="col-md-3">
-                                <div class="card shadow">
-                                    <div class="card-title text-center">Academic</div>
-                                    <div class="card-body">
-                                        @for (int i = 0; i < 3; i++)
+                    <div class="overflow-scroll" style="max-height:750px">
+                        <div class="tab-content">
+                            <div class="tab-pane fade in active show" id="claimPermission">
+                                    <div class="row">
+                                        @if (groupedData != null)
                                         {
-                                            <div>
-                                                <input id="id_@i" type="checkbox" name="name" value="" />
-                                                <label for="id_@i">Page @i Name </label>
-                                            </div>
+                                            <form asp-action="UserProfile" method="post">
+                                                <input type="hidden" asp-for="@Model.UserRoleClaimsVM.ApplicationUser.Id" />
+                                                @foreach (var module in Model.Modules)
+                                                {
+                                                    <div class="p-3 rounded">
+                                                        <fieldset class="border p-3 shadow border-primary">
+                                                            <legend class="p-0 text-primary" style="width:inherit" id="legendTitle">@module.ModuleName</legend>
+                                                            <div class="">
+                                                                <div class="shadow">
+                                                                    @foreach (var sModule in module.SubModuleList)
+                                                                    {
+                                                                        <div class="col-md-3 mb-3">
+                                                                            <div class="card shadow">
+                                                                                <div class="card-header">
+                                                                                    <h5 class=" text-info">@sModule.SubModuleName</h5>
+                                                                                </div>
+                                                                                <div class="card-body" style="min-height:128px;">
+                                                                                    @foreach (var claim in sModule.ClaimStoresList)
+                                                                                    {
+                                                                                        targetItem = Model.UserRoleClaimsVM.ApplicationClaims.FirstOrDefault(s => s.Value == claim.ClaimValue);
+                                                                                        index = Model.UserRoleClaimsVM.ApplicationClaims.IndexOf(targetItem);
+                                                                                        <div>
+                                                                                            <input asp-for="@Model.UserRoleClaimsVM.ApplicationClaims[index].Selected" />
+                                                                                            <input type="hidden" asp-for="@Model.UserRoleClaimsVM.ApplicationClaims[index].Value" />
+                                                                                            <label asp-for="@Model.UserRoleClaimsVM.ApplicationClaims[index].Selected">@claim.ClaimType</label>
+                                                                                        </div>
+                                                                                        i++;
+                                                                                    }
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        s++;
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </fieldset>
+                                                    </div>
+                                                    m++;
+                                                }
+                                                <div class="row">
+                                                    <input type="submit" value="Update" class="btn btn-info btn-sm" />
+                                                </div>
+                                            </form>
                                         }
                                     </div>
-                                </div>
+
+          
                             </div>
-                            <div class="col-md-3">
-                                <div class="card shadow">
-                                    <div class="card-title text-center">Administrations</div>
-                                    <div class="card-body"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="card shadow">
-                                    <div class="card-title text-center">Accounts</div>
-                                    <div class="card-body"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="card shadow">
-                                    <div class="card-title text-center">Others</div>
-                                    <div class="card-body"></div>
+                            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                                <div class="">
+                                    <div class="jumbotron text-center">
+                                        <h2>This portion is under construction</h2>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
-                    <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
                 </div>
             </div>
         </div>
     </div>
-
 }
-
-
-
 
 <!-- Student Select Modal -->
 <div class="modal fade" id="employeeSearchModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

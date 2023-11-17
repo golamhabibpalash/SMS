@@ -11,11 +11,11 @@ using System.Threading.Tasks;
 
 namespace SMS.DAL.Repositories
 {
-    public class ProjectModuleRepository:Repository<ProjectModule>, IProjectModuleRepository
+    public class ProjectModuleRepository : Repository<ProjectModule>, IProjectModuleRepository
     {
-        public ProjectModuleRepository(ApplicationDbContext context):base(context)
+        public ProjectModuleRepository(ApplicationDbContext context) : base(context)
         {
-            
+
         }
         public override async Task<ProjectModule> GetByIdAsync(int id)
         {
@@ -29,6 +29,14 @@ namespace SMS.DAL.Repositories
             {
                 throw;
             }
+        }
+        public override async Task<IReadOnlyCollection<ProjectModule>> GetAllAsync()
+        {
+            var result = await _context.ProjectModules
+                .Include(s => s.SubModuleList)
+                .ThenInclude(s => s.ClaimStoresList)
+                .ToListAsync();
+            return result;
         }
     }
 }

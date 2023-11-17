@@ -12,7 +12,8 @@ namespace SMS.Entities
     {
         [Display(Name ="Institute Name")]
         public string Name { get; set; }
-
+        [Display(Name ="Short Name")]
+        public string ShortName { get; set; }
         public string EIIN { get; set; }
         [Display(Name ="Branch Name")]
         public string BranchName { get; set; }

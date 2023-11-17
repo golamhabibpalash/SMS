@@ -169,15 +169,17 @@ namespace SMS.App.Controllers
                     bool isUpdate = await _instituteManager.UpdateAsync(existingInstitute);
                     if (isUpdate)
                     {
-                        TempData["updated"] = "Information updated successfully";
+                        //TempData["updated"] = "Information updated successfully";
+                        TempData["created"] = "Information updated successfully";
                     }
                     else
                     {
-                        TempData["error"] = "Failed to update.";
+                        TempData["failed"] = "Failed to update.";
                     }
                 }
                 catch
                 {
+                    TempData["failed"] = "Exception! Failed to Update";
                     return View(existingInstitute);
                 }
             }

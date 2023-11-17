@@ -994,10 +994,10 @@ namespace SMS.DB.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -1020,6 +1020,10 @@ namespace SMS.DB.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("SubModuleId");
+
+                    b.HasIndex("ClaimValue", "ClaimType")
+                        .IsUnique()
+                        .HasFilter("[ClaimValue] IS NOT NULL AND [ClaimType] IS NOT NULL");
 
                     b.ToTable("ClaimStores");
                 });
@@ -1736,6 +1740,9 @@ namespace SMS.DB.Migrations
                     b.Property<string>("Phone2")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ShortName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Slogan")
                         .HasColumnType("nvarchar(max)");
 
@@ -2000,7 +2007,7 @@ namespace SMS.DB.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ModuleName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
@@ -2009,6 +2016,10 @@ namespace SMS.DB.Migrations
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ModuleName")
+                        .IsUnique()
+                        .HasFilter("[ModuleName] IS NOT NULL");
 
                     b.ToTable("ProjectModules");
                 });

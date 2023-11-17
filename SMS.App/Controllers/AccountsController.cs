@@ -25,9 +25,10 @@ namespace SMS.App.Controllers
         private readonly IStudentManager _studentManager;
         private readonly IEmployeeManager _employeeManager;
         private readonly IPhoneSMSManager _phoneSMSManager;
+        private readonly IInstituteManager _instituteManager;
         //private readonly ApplicationDbContext _context;
 
-        public AccountsController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IStudentManager studentManager, IEmployeeManager employeeManager, RoleManager<IdentityRole> roleManager, IPhoneSMSManager phoneSMSManager)
+        public AccountsController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IStudentManager studentManager, IEmployeeManager employeeManager, RoleManager<IdentityRole> roleManager, IPhoneSMSManager phoneSMSManager, IInstituteManager instituteManager)
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -35,6 +36,7 @@ namespace SMS.App.Controllers
             _employeeManager = employeeManager;
             _roleManager = roleManager;
             _phoneSMSManager = phoneSMSManager;
+            _instituteManager = instituteManager;
         }
 
         [HttpGet]
@@ -298,8 +300,8 @@ namespace SMS.App.Controllers
                     Random rnd = new Random();
                     int randomNumber = rnd.Next(100000, 999999);
                     HttpContext.Session.SetString("randomNumber", randomNumber.ToString());
-
-                    string text = "Your OTP is:" + randomNumber + " -Noble Residential School";
+                    var instituteInfo = await _instituteManager.GetAllAsync();
+                    string text = "Your OTP is:" + randomNumber + " -"+instituteInfo.FirstOrDefault().Name;
 
                     if (model.verificationBy=="SMS")
                     {

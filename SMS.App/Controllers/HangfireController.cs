@@ -738,10 +738,11 @@ namespace SMS.App.Controllers
                                          join e in employees on a.CardNo equals e.Phone.Substring(e.Phone.Length - 9)
                                          select a).Count();
                         string msgText = string.Empty;
+                        var instituteInfo = await _instituteManager.GetAllAsync();
                         msgText = $"Attendance Summary ({DateTime.Today.ToString("dd MMM yyyy")}):\n" +
                             $"Employees: {totalEmployee} \n" +
                             $"Students:({totalBoysStudent}+{totalGirlsStudent})= {totalStudent} \n" +
-                            $"-Noble Residential School";
+                            $"-"+instituteInfo.FirstOrDefault().ShortName;
 
                         if (totalStudent <= 0)
                         {
@@ -749,7 +750,7 @@ namespace SMS.App.Controllers
                         }
 
                         //Email Send
-                        string[] toEmail = { "golamhabibpalash@gmail.com", "sss139157@gmail.com" };
+                        string[] toEmail = { "golamhabibpalash@gmail.com", instituteInfo.FirstOrDefault().Email };
                         //string toEmail = "golamhabibpalash@gmail.com";
                         string emailSubject = "Todays attended report summary";
                         string mailBody = msgText;
@@ -761,7 +762,7 @@ namespace SMS.App.Controllers
                         }
 
                         //Phone SMS Send
-                        string[] phoneNumber = { "01717678134", "01743922314" };
+                        string[] phoneNumber = { "01717678134",instituteInfo.FirstOrDefault().Phone1 };
                         string smsType = "CheckIn Summary";
                         foreach (var num in phoneNumber)
                         {
@@ -1074,15 +1075,15 @@ namespace SMS.App.Controllers
                     if (paymentsSummery != null)
                     {
                         StudentPaymentSummerySMS_VM studentPaymentSummerySMS_VM = paymentsSummery.FirstOrDefault();
+                        var instituteInfo = await _instituteManager.GetAllAsync();
 
-                        string[] phoneNumber = { "01717678134", "01743922314" };
+                        string[] phoneNumber = { "01717678134",instituteInfo.FirstOrDefault().Phone1 };
                         string smsType = "Collection_sum";
-
                         string smsText = $"Payment Collection ({DateTime.Today.ToString("dd MMM yyyy")}):\n" +
                             $"Residential: {studentPaymentSummerySMS_VM.ResidentialPayment}\n" +
                             $"Non-Residential:{studentPaymentSummerySMS_VM.NonResidentialPayment} \n" +
                             $"Total = {studentPaymentSummerySMS_VM.ResidentialPayment + studentPaymentSummerySMS_VM.NonResidentialPayment}\n" +
-                            $"-Noble Residential School";
+                            $"-"+instituteInfo.FirstOrDefault().Name;
 
                         foreach (var num in phoneNumber)
                         {

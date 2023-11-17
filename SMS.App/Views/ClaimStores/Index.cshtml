@@ -56,6 +56,7 @@
         </div>
     </div>
     <div class="col-md-8">
+
         <table class="shadow table table-responsive-sm table-striped table-striped-columns" id="myTable">
             <thead class="table-info">
                 <tr>
@@ -91,9 +92,15 @@
                                 }
                                 <span>@createdBy</span>
                             </td>
-                            <td>
+                            <td class="d-flex">
                                 <button class="btn btn-warning btn-sm updateBtn" id="updateBtn" data-claimType="@item.ClaimType" data-claimValue="@item.ClaimValue" data-subModuleId="@item.SubModuleId" data-moduleid="@item.SubModule.ProjectModuleId" data-claimId="@item.Id">Edit</button>
-                                <button class="btn btn-danger btn-sm">Delete</button>
+                                <form asp-action="delete" method="post" id="delete">
+                                    <input type="hidden" asp-for="ClaimStores.Id" value="@item.Id" />
+                                    <input type="hidden" asp-for="ClaimStores.SubModuleId" value="@item.SubModuleId" />
+                                    <input type="hidden" asp-for="ClaimStores.ClaimType" value="@item.ClaimType" />
+                                    <input type="hidden" asp-for="ClaimStores.ClaimValue" value="@item.ClaimValue" />
+                                    <input type="submit" value="Delete" class="btn btn-sm btn-danger" />
+                                </form>
                             </td>
                         </tr>
                     }
@@ -106,34 +113,15 @@
                 }
             </tbody>
         </table>
+
     </div>
 </div>
 
 <partial name="_LastUpdated" />
 
-@*<div class="row" style="position:absolute;bottom:15px;">
-    <table class="table table-responsive table-responsive-sm">
-        <tr>
-            <td>Last Updated By</td>
-            <td>:</td>
-            <td>
-                @if (ViewBag.LastUpdatedBy != null)
-                {
-                    ApplicationUser aUser = await _userManager.FindByIdAsync(ViewBag.LastUpdatedBy);
-                    createdBy = aUser.UserName;
-                }
-                @createdBy
-            </td>
-        </tr>
-        <tr>
-            <td>Last Updated At</td>
-            <td>:</td>
-            <td> @ViewBag.LastUpdatedAt</td>
-        </tr>
-    </table>
-</div>*@
 
 @section Scripts{
+    <script src="~/js/DataTable/dataTable.js"></script>
     <script>
         $('#ModuleSelectList').change(function () {
             let id = $('#ModuleSelectList option:selected').val();
@@ -199,17 +187,12 @@
             $('#ClaimStores_ClaimType').val(claimType);
             $("#ClaimStores_SubModuleId").val(subModuleId).trigger('change');
         });
-        $('#deleteBtnId').click(function () {
-            var studentId = $(this).data("studentid");
-            var classId = $(this).data("classid");
-            var feeType = $(this).data("feetype");
-            var amount = $(this).data("amount");
-            var refDoc = $(this).data("refdoc");
-            var isActive = $(this).data("isactive");
-            var id = $(this).data("id");
-            var item = $(this).data('item');
-            $('#StudentFeeAllocationId').val(id);
-        });
 
+        $(function () {
+            $('form#delete').submit(function () {
+                var c = confirm("Click OK to continue?");
+                return c;
+            });
+        });
     </script>
 }

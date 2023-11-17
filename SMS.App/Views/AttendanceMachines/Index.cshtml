@@ -4,10 +4,13 @@
 @inject IAcademicClassManager _academicClassManager
 @inject IAcademicSessionManager _academicSessionManager
 @inject UserManager<ApplicationUser> _userManger
+@inject IInstituteManager _instituteManager;
 
 @model IEnumerable<SMS.Entities.AdditionalModels.AttendanceVM>
 
 @{
+    var info = await _instituteManager.GetAllAsync();
+
     ViewData["Title"] = "Attendances";
     GlobalUI.PageTitle = ViewBag.Title;
 
@@ -89,17 +92,17 @@
 <div id="heading_part" style="background: lightskyblue">
     <div class="row">
         <div class="col-md-12 text-center">
-            <h1>Noble Residential School</h1>
-            <h6>Pirgacha, Rangpur</h6>
+            <h1>@info.FirstOrDefault().Name</h1>
+            <h6>@info.FirstOrDefault().Address</h6>
             <h4 class="border-bottom text-dark">(@ViewBag.attendanceFor Daily Attendance Sheet)</h4>
             <div>
                 <div style="float:left">Date: @datetime</div>
                 @if (ViewBag.attendanceFor == "students")
                 {
-                    <div  style="float:left">Class: @className</div>
+                    <div style="float:left">Class: @className</div>
                 }
                 <div style="float:right">Total: @total</div>
-            </div>           
+            </div>
         </div>
     </div>
 </div>
@@ -134,7 +137,7 @@
                         }
                     </select>
                 </div>
-               
+
 
 
 
@@ -255,10 +258,10 @@
                     </td>
                     @if (ViewBag.attendanceFor == "students")
                     {
-                        
+
                         <td>@item.Class_Designation</td>
                         <td>
-                            @item.Phone.PadLeft(11,'0') (personal) 
+                            @item.Phone.PadLeft(11, '0') (personal)
                             <br />
                             @item.GuardianPhone.PadLeft(11, '0') (guardian)
                         </td>
@@ -322,7 +325,7 @@ else
 
             $('#userTypeId').change(function () {
                 let uType = $('#userTypeId option:selected').val();
-                
+
                 if (uType == 'students') {
                     $('.designationArea').css("display", "none");
                     $('.sessionArea').css("display", "block");

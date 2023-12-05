@@ -294,7 +294,6 @@ jQuery(function () {
 });
 
 jQuery('.editBtn').click(function () {
-    alert($(this).data('id'));
     let paymentDetailId = $(this).data('id');
     $.ajax({
         url: '/StudentPaymentDetails/GetPaymentDetailById',
@@ -306,10 +305,20 @@ jQuery('.editBtn').click(function () {
             $('#StudentPayment_ReceiptNo').val(data.studentPayment.receiptNo);
             $('#StudentPayment_PaidDate').val(data.studentPayment.paidDate.substring(0, 10));
             $('#StudentPayment_StudentPaymentDetails_0__StudentFeeHeadId').val(data.studentFeeHeadId);
+            $('#StudentPayment_StudentPaymentDetails_0__PaidAmount').val(data.paidAmount);
             $('#StudentPayment_TotalPayment').val(data.studentPayment.totalPayment);
             $('#StudentPayment_Remarks').val(data.studentPayment.remarks);
+            $('#StudentPayment_Id').val(data.studentPayment.id);
+            $('#Id').val(data.studentPayment.id);
             $('#submitBtn').val('Update');
 
+            var form = $("#studentPaymentFormId");
+
+            // Change the asp-action attribute
+            form.attr("asp-action", "Edit");
+
+            // You may also want to update the form's action attribute if needed
+            form.attr("action", "/StudentPayments/Edit");
         },
         error: function (jqXHR, textStatus, errorThrown) {
             console.log(textStatus + ': ' + errorThrown);

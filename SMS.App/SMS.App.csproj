@@ -47,8 +47,8 @@
 
   <ItemGroup>
     <PackageReference Include="AspNetCore.Reporting" Version="2.1.0" />
-    <PackageReference Include="AutoMapper" Version="12.0.1" />
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference Include="AutoMapper" Version="11.0.0" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="Hangfire" Version="1.8.5" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.11" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.11" />
@@ -64,7 +64,7 @@
 
 	<PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="7.0.11" />
 
-	<PackageReference Include="ReportViewerCore.NETCore" Version="15.1.18" />
+	<PackageReference Include="ReportViewerCore.NETCore" Version="15.1.19" />
 
   </ItemGroup>
 
@@ -108,6 +108,7 @@
     <ProjectReference Include="..\SMS.BLL\SMS.BLL.csproj" />
     <ProjectReference Include="..\SMS.DB\SMS.DB.csproj" />
     <ProjectReference Include="..\SMS.Entities\SMS.Entities.csproj" />
+    <ProjectReference Include="..\SMS.Frameworks\SMS.Frameworks.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -123,12 +123,16 @@
     <div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
         <div class="sidebar-brand d-none d-md-flex">
 
-            <span class="nav-item"><a class="nav-link" > @userName </a></span>
+            <span class="nav-item">
+                <a asp-action="Index" asp-controller="Home" class="nav-link text-center">
+                    <img class="img-circle img-fluid p-2" src="~/Images/Institute/@instituteLogo" alt="Logo" style="font-size: 20px; width:50%;" />
+                </a>
+            </span>
         </div>
 
         <ul class="sidebar-nav" data-coreui="navigation" data-simplebar="">
             <li class="nav-group">
-                <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-users fa-lg text-light"></i> Students </a>
+                <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-users fa-lg"></i> Students </a>
                 <ul class="nav-group-items">
                     <li class="nav-item">
                         <a class="nav-link" asp-action="Index" asp-controller="Students"> Students Information</a>
@@ -156,7 +160,7 @@
                 </ul>
             </li>
             <li class="nav-group">
-                <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-layer-group text-primary fa-lg"></i> Modules </a>
+                <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-layer-group fa-lg"></i> Modules </a>
                 <ul class="nav-group-items">
                     <li class="nav-item">
                         <a class="nav-link" asp-action="" asp-controller="DutyRoster"> Duty Roster</a>
@@ -196,16 +200,16 @@
             @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
             {
                 <li class="nav-group">
-                    <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-calculator text-light fa-lg"></i> Accounts </a>
+                    <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-calculator fa-lg"></i> Accounts </a>
                     <ul class="nav-group-items">
                         <li class="nav-item">
-                            <a class="nav-link" asp-action="Income" asp-controller="accounts"> <i class="nav-icon fas fa-dollar-sign"></i> Income</a>
+                            <a class="nav-link" asp-action="Income" asp-controller="accounts">  Income</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-action="Expense" asp-controller="accounts"> <i class="nav-icon fas fa-credit-card"></i> Expense</a>
+                            <a class="nav-link" asp-action="Expense" asp-controller="accounts">  Expense</a>
                         </li>
                         <li class="nav-item nav-group">
-                            <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-credit-card"></i> Fee Setup </a>
+                            <a class="nav-link nav-group-toggle"> Fee Setup </a>
                             <ul class="nav-group-items">
                                 <li class="nav-item">
                                     <a class="nav-link" asp-action="Index" asp-controller="ClassFeeLists">Class Fee</a>
@@ -216,21 +220,21 @@
                             </ul>
                         </li>
                         <li class="nav-item nav-group">
-                            <a class="nav-link" asp-action="Index" asp-controller="Payrolls"><i class="nav-icon fas fa-money-bill"></i>Payroll </a>
+                            <a class="nav-link" asp-action="Index" asp-controller="Payrolls">Payroll </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-action="Index" asp-controller="StudentFeeAllocations"><i class="nav-icon fas fa-money-check"></i> Student Fee Allocation </a>
+                            <a class="nav-link" asp-action="Index" asp-controller="StudentFeeAllocations"> Student Fee Allocation </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-action="Index" asp-controller="StudentPayments"><i class="nav-icon fas fa-cash-register"></i> Fees Collection </a>
+                            <a class="nav-link" asp-action="Index" asp-controller="StudentPayments"> Fees Collection </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-action="DuePayment" asp-controller="StudentPayments"><i class="nav-icon fas fa-dollar-sign"></i> Due Payments </a>
+                            <a class="nav-link" asp-action="DuePayment" asp-controller="StudentPayments"> Due Payments </a>
                         </li>
                     </ul>
                 </li>
                 <li class="nav-group">
-                    <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-book-open text-success fa-lg"></i> Academic </a>
+                    <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-book-open fa-lg"></i> Academic </a>
                     <ul class="nav-group-items">
                         <li class="nav-item">
                             <a class="nav-link" asp-action="Index" asp-controller="AcademicSessions">Academic Session</a>
@@ -294,7 +298,7 @@
                     </ul>
                 </li>
                 <li class="nav-group">
-                    <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-user-cog text-primary fa-lg"></i> Administration </a>
+                    <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-user-cog fa-lg"></i> Administration </a>
                     <ul class="nav-group-items">
                         <li class="nav-group nav-item">
                             <a class="nav-link nav-group-toggle"> Employee Related </a>
@@ -312,20 +316,20 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" asp-action="SchoolTimeTable" asp-controller="Institutes"><span class="nav-icon text-warning fas fa-watch-calculator"></span> School Time setting</a>
+                            <a class="nav-link" asp-action="SchoolTimeTable" asp-controller="Institutes"> School Time setting</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-action="Index" asp-controller="Institutes"><span class="nav-icon fas fa-university text-light"></span> Institute info</a>
+                            <a class="nav-link" asp-action="Index" asp-controller="Institutes"> Institute info</a>
                         </li>
                         <li class="nav-item nav-group">
-                            <a class="nav-link nav-group-toggle"><span class="nav-icon fas fa-lights-holiday"></span> Holiday </a>
+                            <a class="nav-link nav-group-toggle"> Holiday </a>
                             <ul class="nav-group-items">
                                 <li class="nav-item"><a class="nav-link" asp-controller="OffDays" asp-action="Index">Holidays</a></li>
                                 <li class="nav-item"><a class="nav-link" asp-controller="OffDayType" asp-action="Index">Holiday Type</a></li>
                             </ul>
                         </li>
                         <li class="nav-item nav-group">
-                            <a class="nav-link nav-group-toggle"><span class="nav-icon text-danger  fas fa-key"></span> User Setting  </a>
+                            <a class="nav-link nav-group-toggle"> User Setting  </a>
                             <ul class="nav-group-items">
                                 <li class="nav-item"><a class="nav-link" asp-action="UserProfile" asp-controller="Administrations">User Profile</a></li>
                                 <li class="nav-item"><a class="nav-link" asp-action="userList" asp-controller="Accounts">User List</a></li>
@@ -333,14 +337,14 @@
                             </ul>
                         </li>
                         <li class="nav-item nav-group">
-                            <a class="nav-link nav-group-toggle"><span class="nav-icon text-light  fas fa-snowflake"></span> Module/Sub Module  </a>
+                            <a class="nav-link nav-group-toggle"> Module/Sub Module  </a>
                             <ul class="nav-group-items">
                                 <li class="nav-item"><a class="nav-link" asp-action="Index" asp-controller="ProjectModules">Module</a></li>
                                 <li class="nav-item"><a class="nav-link" asp-action="Index" asp-controller="ProjectSubModules">Sub Module</a></li>
                             </ul>
                         </li>
                         <li class="nav-item nav-group">
-                            <a class="nav-link nav-group-toggle"><span class="nav-icon text-danger  fas fa-clarinet"></span> Claim Stores  </a>
+                            <a class="nav-link nav-group-toggle"> Claim Stores  </a>
                             <ul class="nav-group-items">
                                 <li class="nav-item"><a class="nav-link" asp-action="Index" asp-controller="ClaimStores">Claim List</a></li>
                             </ul>
@@ -348,10 +352,15 @@
                     </ul>
                 </li>
                 <li class="nav-group">
-                    <a class="nav-link" asp-action="Index" asp-controller="ClassRoutine"><i class="nav-icon fas fa-calendar-alt text-info fa-lg"></i> Class Routine </a>
+                    <a class="nav-link  nav-group-toggle" asp-action="Index" asp-controller="ClassRoutine"> <i class="nav-icon fas fa-tasks"></i>  Class Routine </a>
+                    @*<ul class="nav-group-items">
+                            <li class="nav-group nav-item">
+                                <a href="#">Routine</a>
+                            </li>
+                        </ul>*@
                 </li>
                 <li class="nav-group">
-                    <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-cog text-danger fa-lg"></i>   Settings </a>
+                    <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-cog"></i>   Settings </a>
                     <ul class="nav-group-items">
                         <li class="nav-item nav-group">
                             <a class="nav-link nav-group-toggle"> Others </a>
@@ -393,7 +402,7 @@
                 </li>
                 @*<li class="separator"></li>*@
                 <li class="nav-group">
-                    <a class="nav-link nav-group-toggle"><i class="nav-icon fal fa-file-chart-line fa-lg text-warning"></i>  Reports </a>
+                    <a class="nav-link nav-group-toggle"><i class="nav-icon fal fa-file-chart-line fa-lg"></i>  Reports </a>
                     <ul class="nav-group-items">
                         <li class="nav-item nav-group">
                             <a class="nav-link nav-group-toggle"> Students </a>
@@ -419,7 +428,7 @@
                             </ul>
                         </li>
                         <li class="nav-item nav-group">
-                            <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-clock"></i> Attendance </a>
+                            <a class="nav-link nav-group-toggle"> Attendance </a>
                             <ul class="nav-group-items">
                                 <li class="nav-item">
                                     <a class="nav-link" asp-action="DailyAttendanceReport" asp-controller="Reports">Daily Attendance Report</a>
@@ -528,8 +537,6 @@
                         <span class=" p-2" id="userProfileIcon" data-toggle="tooltip" data-placement="bottom" title="@userName">
                             <img src="@userImage" alt="profile Image" class="img-circle" data-toggle="popover" data-placement="bottom" style="width:25px;" onclick="openNav()" />
                         </span>
-
-
                         <div id="myNav" class="overlay">
                             <button class="btn btn-sm btn-danger btn-block closebtn" onclick="closeNav()">Close</button>
 

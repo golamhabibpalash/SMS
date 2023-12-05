@@ -77,10 +77,6 @@ namespace SMS.App.Controllers
             
             return View();
         }
-        public IActionResult PaymentNew()
-        {
-            return View();
-        }
 
         [HttpGet]
         [Authorize(Policy = "PaymentStudentPaymentsPolicy")]
@@ -128,12 +124,60 @@ namespace SMS.App.Controllers
                 }
 
                 ViewData["FeeList"] = new SelectList(feeHeadList, "Id", "Name");
+                AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSession();
                 foreach (var item in classfeelist)
                 {
-                    feeList.Add(item);
+                    if (item.AcademicSessionId == academicSession.Id)
+                    {
+                        feeList.Add(item);
+                    }
                 }
                 spvm.ClassFeeLists = feeList;
-                ViewBag.roll = stRoll;
+                ViewBag.roll = stRoll;                
+
+                foreach (var item in feeList.Where(s => s.StudentFeeHead.IsResidential == student.IsResidential))
+                {
+                    PaymentItemVM paymentItemVM = new PaymentItemVM();
+                    paymentItemVM.ClassFeeListName = item.StudentFeeHead.Name;
+                    paymentItemVM.Amount = item.Amount;
+                   
+                    double tBal = 0;
+                    foreach (var pay in studentPayments)
+                    {
+                        paymentItemVM.Id = pay.Id;
+                        foreach (var payDetails in pay.StudentPaymentDetails)
+                        {
+                            if (payDetails.StudentFeeHeadId==item.StudentFeeHeadId)
+                            {
+                                PaymentItemDetailVM paymentItemDetailVM = new PaymentItemDetailVM();
+                                paymentItemDetailVM.PaymentDetailId = payDetails.Id;
+                                paymentItemDetailVM.Receipt = pay.ReceiptNo;
+                                paymentItemDetailVM.PaymentAmount = payDetails.PaidAmount;
+                                paymentItemDetailVM.PaidDate = payDetails.CreatedAt;
+                                paymentItemDetailVM.ReceivedBy = payDetails.CreatedBy;
+                                paymentItemDetailVM.StudentFeeHeadId = payDetails.StudentFeeHeadId;
+                                paymentItemDetailVM.PaymentRemarks = pay.Remarks;
+                                paymentItemDetailVM.PaymentId = pay.Id;
+                                paymentItemVM.PaymentItemDetailVMs.Add(paymentItemDetailVM);
+                                tBal += payDetails.PaidAmount;
+                            }
+                        }
+                    }
+                    paymentItemVM.Balance = item.Amount - tBal;
+                    if (item.Amount <= tBal)
+                    {
+                        paymentItemVM.Status = "Paid";
+                    }
+                    else if(paymentItemVM.Balance == item.Amount)
+                    {
+                        paymentItemVM.Status = "Unpaid";
+                    }
+                    else
+                    {
+                        paymentItemVM.Status = "Partial";
+                    }
+                    spvm.PaymentItemVMs.Add(paymentItemVM);
+                }
                 return View(spvm);
             }
             else
@@ -191,7 +235,9 @@ namespace SMS.App.Controllers
                                         item.PaidAmount = paymentObject.StudentPayment.TotalPayment;
                                     }
                                     StudentFeeHead feeHead = await _studentFeeHeadManager.GetByIdAsync(item.StudentFeeHeadId);
-                                    string smsText = studentObject.Name + " has Paid " + item.PaidAmount + "Tk as " + feeHead.Name + " -Noble";
+                                    var instituteInfo = await _instituteManager.GetAllAsync();
+
+                                    string smsText = studentObject.Name + " has Paid " + item.PaidAmount + "Tk as " + feeHead.Name + " -"+ instituteInfo.FirstOrDefault().Name;
                                     string phoneNo = studentObject.GuardianPhone;
                                     bool isSend = await MobileSMS.SendSMS(phoneNo, smsText);
                                     if (isSend)
@@ -347,6 +393,8 @@ namespace SMS.App.Controllers
                 {
                     studentPayment.EditedAt = DateTime.Now;
                     studentPayment.EditedBy = HttpContext.Session.GetString("UserId");
+                    studentPayment.TotalPayment = studentPayment.StudentPaymentDetails.Sum(s => s.PaidAmount);
+
                     studentPayment.MACAddress = MACService.GetMAC();
                     foreach (var item in studentPayment.StudentPaymentDetails)
                     {
@@ -355,7 +403,7 @@ namespace SMS.App.Controllers
                         item.MACAddress = MACService.GetMAC();
                         item.StudentPaymentId = studentPayment.Id;
                         item.StudentPayment = studentPayment;
-                        bool isPaymentDetailsUpdated = await _studentPaymentDetailsManager.UpdateAsync(item);
+                        //bool isPaymentDetailsUpdated = await _studentPaymentDetailsManager.UpdateAsync(item);
                     }
                     studentPayment.Student = await _studentManager.GetByIdAsync(studentPayment.StudentId);
 
@@ -384,7 +432,10 @@ namespace SMS.App.Controllers
             }
                 return RedirectToAction("Payment", new { stRoll = studentPayment.Student.ClassRoll});
         }
-
+        public IActionResult Page()
+        {
+            return View();
+        }
         // GET: StudentPayments/Delete/5
         [Authorize(Policy = "DeleteStudentPaymentsPolicy")]
         public async Task<IActionResult> Delete(int? id)

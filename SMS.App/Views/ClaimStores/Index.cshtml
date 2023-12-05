@@ -1,76 +1,76 @@
 ﻿@model SMS.App.ViewModels.ClaimContext.ClaimStoreVM
 
-@inject UserManager<ApplicationUser> _userManager;
+@inject UserManager<ApplicationUser>  _userManager;
 
 @{
     int sl = 0;
     string createdBy = string.Empty;
 }
 
-<div class="row">
-    <div class="col-md-4">
-        <div class="p-1" id="claimStoreCreateUpdateForm">
-            <fieldset class="border p-3 shadow">
-                <legend class="" style="width:inherit" id="create_update_title_id">Create new Claims</legend>
-                <form asp-action="Create" method="post" id="createUpdateForm">
-                    <input type="hidden" asp-for="ClaimStores.Id" value="" />
-                    <div class="form-group row">
-                        <label asp-for="ModuleSelectList" class="col-sm-3 col-form-label text-right text-sm-left"></label>
-                        <div class="col-sm-9">
-                            <select asp-items="Model.ModuleSelectList" Id="ModuleSelectList" class="form-control">
-                                <option selected disabled>Select Module</option>
-                            </select>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="p-1" id="claimStoreCreateUpdateForm">
+                <fieldset class="border p-3 shadow">
+                    <legend class="" style="width: inherit" id="create_update_title_id">Create new Claims</legend>
+                    <form asp-action="Create" method="post" id="createUpdateForm">
+                        <input type="hidden" asp-for="ClaimStores.Id" value="" />
+                        <div class="form-group row">
+                            <label asp-for="ModuleSelectList" class="col-sm-3 col-form-label text-right text-sm-left"></label>
+                            <div class="col-sm-9">
+                                <select asp-items="Model.ModuleSelectList" id="ModuleSelectList" class="form-control">
+                                    <option selected disabled>Select Module</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <label asp-for="SubModuleSelectList" class="col-sm-3 col-form-label text-right text-sm-left"></label>
-                        <div class="col-sm-9">
-                            <select asp-for="ClaimStores.SubModuleId" name="ClaimStores.SubModuleId" class="form-control">
-                                <option selected disabled>Select Sub Module</option>
-                            </select>
+                        <div class="form-group row">
+                            <label asp-for="SubModuleSelectList" class="col-sm-3 col-form-label text-right text-sm-left"></label>
+                            <div class="col-sm-9">
+                                <select asp-for="ClaimStores.SubModuleId" name="ClaimStores.SubModuleId" class="form-control">
+                                    <option selected disabled>Select Sub Module</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <label asp-for="ClaimStores.ClaimValue" class="col-sm-3 col-form-label text-right text-sm-left"></label>
-                        <div class="col-sm-9">
-                            <input asp-for="ClaimStores.ClaimValue" class="form-control" placeholder="Policy Name as it is">
-                            <span asp-validation-for="ClaimStores.ClaimValue"></span>
+                        <div class="form-group row">
+                            <label asp-for="ClaimStores.ClaimValue" class="col-sm-3 col-form-label text-right text-sm-left"></label>
+                            <div class="col-sm-9">
+                                <input asp-for="ClaimStores.ClaimValue" class="form-control" placeholder="Policy Name as it is">
+                                <span asp-validation-for="ClaimStores.ClaimValue"></span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <label asp-for="ClaimStores.ClaimType" class="col-sm-3 col-form-label text-right text-sm-left"></label>
-                        <div class="col-sm-9">
-                            <input asp-for="ClaimStores.ClaimType" class="form-control" placeholder="Claim Name (User will view)">
-                            <span asp-validation-for="ClaimStores.ClaimType"></span>
+                        <div class="form-group row">
+                            <label asp-for="ClaimStores.ClaimType" class="col-sm-3 col-form-label text-right text-sm-left"></label>
+                            <div class="col-sm-9">
+                                <input asp-for="ClaimStores.ClaimType" class="form-control" placeholder="Claim Name (User will view)">
+                                <span asp-validation-for="ClaimStores.ClaimType"></span>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="form-group row">
-                        <div class="col-sm-10 text-right">
-                            <input type="submit" class="btn btn-primary" id="submitId" value="Create" />
+                        <div class="form-group row">
+                            <div class="col-sm-10 text-right">
+                                <input type="submit" class="btn btn-primary" id="submitId" value="Create" />
+                            </div>
                         </div>
-                    </div>
-                </form>
-            </fieldset>
+                    </form>
+                </fieldset>
 
+            </div>
         </div>
-    </div>
-    <div class="col-md-8">
+        <div class="col-md-8">
 
-        <table class="shadow table table-responsive-sm table-striped table-striped-columns" id="myTable">
-            <thead class="table-info">
-                <tr>
-                    <th>#</th>
-                    <th>Claim Value</th>
-                    <th>Claim Type</th>
-                    <th>Sub Module</th>
-                    <th>Module</th>
-                    <th>Created By</th>
-                    <th>Acation</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Model.ClaimStoresList != null && Model.ClaimStoresList.Count > 0)
+            <table class="shadow table table-responsive-sm table-striped table-striped-columns" id="myTable">
+                <thead class="table-info">
+                    <tr>
+                        <th>#</th>
+                        <th>Claim Value</th>
+                        <th>Claim Type</th>
+                        <th>Sub Module</th>
+                        <th>Module</th>
+                        <th>Created By</th>
+                        <th>Acation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.ClaimStoresList != null && Model.ClaimStoresList.Count > 0)
                 {
                     foreach (var item in Model.ClaimStoresList)
                     {
@@ -80,8 +80,7 @@
                             <td>@item.ClaimType</td>
                             <td>@item.SubModule.SubModuleName</td>
                             <td>@item.SubModule.ProjectModule.ModuleName</td>
-                            <td>
-                                @if (item.CreatedBy != null)
+                            <td>@if (item.CreatedBy != null)
                                 {
                                     ApplicationUser aUser = await _userManager.FindByIdAsync(item.CreatedBy);
                                     createdBy = aUser.UserName;
@@ -93,7 +92,7 @@
                                 <span>@createdBy</span>
                             </td>
                             <td class="d-flex">
-                                <button class="btn btn-warning btn-sm updateBtn" id="updateBtn" data-claimType="@item.ClaimType" data-claimValue="@item.ClaimValue" data-subModuleId="@item.SubModuleId" data-moduleid="@item.SubModule.ProjectModuleId" data-claimId="@item.Id">Edit</button>
+                                <button class="btn btn-warning btn-sm updateBtn" id="updateBtn" data-claimtype="@item.ClaimType" data-claimvalue="@item.ClaimValue" data-submoduleid="@item.SubModuleId" data-moduleid="@item.SubModule.ProjectModuleId" data-claimid="@item.Id">Edit</button>
                                 <form asp-action="delete" method="post" id="delete">
                                     <input type="hidden" asp-for="ClaimStores.Id" value="@item.Id" />
                                     <input type="hidden" asp-for="ClaimStores.SubModuleId" value="@item.SubModuleId" />
@@ -110,17 +109,17 @@
                     <tr class="text-center">
                         <td colspan="7" class="alert">Nothing Found</td>
                     </tr>
-                }
-            </tbody>
-        </table>
+                    }
+                </tbody>
+            </table>
 
+        </div>
     </div>
-</div>
 
-<partial name="_LastUpdated" />
+    <partial name="_LastUpdated" />
 
 
-@section Scripts{
+    @section Scripts{
     <script src="~/js/DataTable/dataTable.js"></script>
     <script>
         $('#ModuleSelectList').change(function () {

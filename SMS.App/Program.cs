@@ -189,7 +189,7 @@ builder.Services.AddAuthorization(options =>
 
     //Designation
     options.AddPolicy("IndexDesignationsPolicy", policy => policy.RequireClaim("View Designations"));
-    options.AddPolicy("DetailsDesignationsPolicy", policy => policy.RequireClaim("Details Designations"));
+    options.AddPolicy("DetailsDesignationsPolicy", policy => policy.RequireClaim("View Details Designations"));
     options.AddPolicy("CreateDesignationsPolicy", policy => policy.RequireClaim("Create Designations"));
     options.AddPolicy("EditDesignationsPolicy", policy => policy.RequireClaim("Edit Designations"));
     options.AddPolicy("DeleteDesignationsPolicy", policy => policy.RequireClaim("Delete Designations"));
@@ -312,16 +312,16 @@ builder.Services.AddAuthorization(options =>
 
     //Question Banks
     options.AddPolicy("IndexQuestionBanksPolicy", policy => policy.RequireClaim("View Question Banks"));
-    options.AddPolicy("AllQuestionQuestionBanksPolicy", policy => policy.RequireClaim("View All Question"));
-    options.AddPolicy("CreateProjectSubModulesPolicy", policy => policy.RequireClaim("Create Question"));
-    options.AddPolicy("EditProjectSubModulesPolicy", policy => policy.RequireClaim("Edit Question"));
+    options.AddPolicy("AllQuestionQuestionBanksPolicy", policy => policy.RequireClaim("View All Question Bank"));
+    options.AddPolicy("CreateQuestionBanksPolicy", policy => policy.RequireClaim("Create Question Bank"));
+    options.AddPolicy("EditQuestionBanksPolicy", policy => policy.RequireClaim("Edit Question Bank"));
 
     //Question Formation
     options.AddPolicy("IndexQuestionFormationPolicy", policy => policy.RequireClaim("View Question Formation"));
     options.AddPolicy("CreateQuestionFormationPolicy", policy => policy.RequireClaim("Create Question Formation"));
     options.AddPolicy("EditQuestionFormationPolicy", policy => policy.RequireClaim("Edit Question Formation"));
 
-    //Project Sub Module
+    //Religions
     options.AddPolicy("IndexReligionsPolicy", policy => policy.RequireClaim("View Religions"));
     options.AddPolicy("DetailsReligionsPolicy", policy => policy.RequireClaim("Details Religions"));
     options.AddPolicy("CreateReligionsPolicy", policy => policy.RequireClaim("Create Religions"));
@@ -375,6 +375,7 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("EditStudentPaymentsPolicy", policy => policy.RequireClaim("Edit Student Payment"));
     options.AddPolicy("DeleteStudentPaymentsPolicy", policy => policy.RequireClaim("Delete Student Payment"));
     options.AddPolicy("DuePaymentStudentPaymentsPolicy", policy => policy.RequireClaim("Student Due Payment"));
+    options.AddPolicy("DueAmountStudentsPolicy", policy => policy.RequireClaim("View Due Amount"));
 
     //Students
     options.AddPolicy("IndexStudentsPolicy", policy => policy.RequireClaim("View Student List"));
@@ -383,7 +384,6 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("EditStudentsPolicy", policy => policy.RequireClaim("Edit Student"));
     options.AddPolicy("DeleteStudentsPolicy", policy => policy.RequireClaim("Delete Student"));
     options.AddPolicy("ProfileStudentsPolicy", policy => policy.RequireClaim("View Student Profile"));
-    options.AddPolicy("DueAmountStudentsPolicy", policy => policy.RequireClaim("View Due Amount"));
 
     //Student Enrollment
     options.AddPolicy("SubjectEnrollSubjectEnrollmentPolicy", policy => policy.RequireClaim("View Student List"));

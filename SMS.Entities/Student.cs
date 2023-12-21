@@ -1,11 +1,8 @@
-﻿
-using SMS.Entities.AdditionalModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace SMS.Entities
 {
@@ -129,6 +126,8 @@ namespace SMS.Entities
         public AcademicClass AcademicClass { get; set; }
         public Gender Gender { get; set; }
         public Religion Religion { get; set; }
+
+        public string? UniqueId { get; set; }
 
         public List<Attendance> Attendances { get; set; }
         //public string LastAction { get; set; } = string.Empty;

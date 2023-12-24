@@ -84,7 +84,7 @@
                                     Employee ID :
                                 </dt>
                                 <dd class="col-sm-8 col-8 border-bottom">
-                                    @Model.Employee.Id.ToString().PadLeft(5,'0')
+                                    @Model.Employee.Id.ToString().PadLeft(5, '0')
                                 </dd>
                                 <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
                                     Name :
@@ -170,56 +170,59 @@
                     <div class="overflow-scroll" style="max-height:750px">
                         <div class="tab-content">
                             <div class="tab-pane fade in active show" id="claimPermission">
-                                    <div class="row">
-                                        @if (groupedData != null)
-                                        {
-                                            <form asp-action="UserProfile" method="post">
-                                                <input type="hidden" asp-for="@Model.UserRoleClaimsVM.ApplicationUser.Id" />
-                                                @foreach (var module in Model.Modules)
-                                                {
-                                                    <div class="p-3 rounded">
-                                                        <fieldset class="border p-3 shadow border-primary">
-                                                            <legend class="p-0 text-primary" style="width:inherit" id="legendTitle">@module.ModuleName</legend>
-                                                            <div class="">
-                                                                <div class="shadow">
-                                                                    @foreach (var sModule in module.SubModuleList)
-                                                                    {
-                                                                        <div class="col-sm-6 col-md-4 col-lg-3 mb-3">
-                                                                            <div class="card shadow">
-                                                                                <div class="card-header">
-                                                                                    <h5 class=" text-info">@sModule.SubModuleName</h5>
-                                                                                </div>
-                                                                                <div class="card-body" style="min-height:128px;">
-                                                                                    @foreach (var claim in sModule.ClaimStoresList)
-                                                                                    {
-                                                                                        targetItem = Model.UserRoleClaimsVM.ApplicationClaims.FirstOrDefault(s => s.Value == claim.ClaimValue);
-                                                                                        index = Model.UserRoleClaimsVM.ApplicationClaims.IndexOf(targetItem);
-                                                                                        <div>
-                                                                                            <input asp-for="@Model.UserRoleClaimsVM.ApplicationClaims[index].Selected" />
-                                                                                            <input type="hidden" asp-for="@Model.UserRoleClaimsVM.ApplicationClaims[index].Value" />
-                                                                                            <label asp-for="@Model.UserRoleClaimsVM.ApplicationClaims[index].Selected">@claim.ClaimType</label>
-                                                                                        </div>
-                                                                                        i++;
-                                                                                    }
-                                                                                </div>
+                                <div class="row">
+                                    @if (groupedData != null)
+                                    {
+                                        <form asp-action="UserProfile" method="post">
+                                            <input type="hidden" asp-for="@Model.UserRoleClaimsVM.ApplicationUser.Id" />
+                                            @foreach (var module in Model.Modules)
+                                            {
+                                                <div class="p-3 rounded">
+                                                    <fieldset class="border p-3 shadow border-primary">
+                                                        <legend class="p-0 text-primary" style="width:inherit" id="legendTitle">@module.ModuleName</legend>
+                                                        <div class="">
+                                                            <div class="shadow">
+                                                                @foreach (var sModule in module.SubModuleList.OrderBy(s => s.SubModuleName))
+                                                                {
+                                                                    <div class="col-sm-6 col-md-4 col-lg-3 mb-3">
+                                                                        <div class="card shadow">
+                                                                            <div class="card-header">
+                                                                                <h5 class=" text-info">
+                                                                                    @sModule.SubModuleName
+                                                                                    <label class="h6 text-dark">( <input type="checkbox" class="checkAll" /> Select All )</label>
+                                                                                </h5>
+                                                                            </div>
+                                                                            <div class="card-body" style="height:130px;overflow-y:auto">
+                                                                                @foreach (var claim in sModule.ClaimStoresList)
+                                                                                {
+                                                                                    targetItem = Model.UserRoleClaimsVM.ApplicationClaims.FirstOrDefault(s => s.Value == claim.ClaimValue);
+                                                                                    index = Model.UserRoleClaimsVM.ApplicationClaims.IndexOf(targetItem);
+                                                                                    <div>
+                                                                                        <input asp-for="@Model.UserRoleClaimsVM.ApplicationClaims[index].Selected" />
+                                                                                        <input type="hidden" asp-for="@Model.UserRoleClaimsVM.ApplicationClaims[index].Value" />
+                                                                                        <label asp-for="@Model.UserRoleClaimsVM.ApplicationClaims[index].Selected">@claim.ClaimType</label>
+                                                                                    </div>
+                                                                                    i++;
+                                                                                }
                                                                             </div>
                                                                         </div>
-                                                                        s++;
-                                                                    }
-                                                                </div>
+                                                                    </div>
+                                                                    s++;
+                                                                }
                                                             </div>
-                                                        </fieldset>
-                                                    </div>
-                                                    m++;
-                                                }
-                                                <div class="row">
-                                                    <input type="submit" value="Update" class="btn btn-info btn-sm" />
+                                                        </div>
+                                                    </fieldset>
                                                 </div>
-                                            </form>
-                                        }
-                                    </div>
+                                                m++;
+                                            }
+                                            <div class="row">
+                                                <input type="submit" value="Update" class="btn btn-info btn-sm" />
+                                            </div>
+                                        </form>
+                                    }
+                                </div>
 
-          
+
                             </div>
                             <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                                 <div class="">
@@ -269,6 +272,12 @@
             let cRoll = $('#ddUserId option:selected').val();
             $('#UserIdInput').val(cRoll);
             $('#frmSearchByUserId').submit();
+        });
+        $('.checkAll').change(function () {
+            var nearestCardNode = $(this).closest('.card');
+            var inputs = nearestCardNode.find('input');
+            var isChecked = $(this).is(':checked');
+            inputs.prop('checked', isChecked);
         });
     </script>
 }

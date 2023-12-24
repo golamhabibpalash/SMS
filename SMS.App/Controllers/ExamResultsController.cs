@@ -187,7 +187,10 @@ namespace SMS.App.Controllers
                 foreach (var exam in examList)
                 {
                     ExaminationResultDetailsVMs exDetail = new ExaminationResultDetailsVMs();
-
+                    if (student.ClassRoll == 2309029)
+                    {
+                        Console.WriteLine();
+                    }
                     exDetail.SubjectName = exam.AcademicSubject.SubjectName;
                     exDetail.IsReligion = exam.AcademicSubject.ReligionId!=null?true:false;
                     exDetail.ObtainMarks = exam.AcademicExamDetails.Where(s => s.StudentId == student.Id && s.AcademicExamId == exam.Id).Sum(s => s.ObtainMark);
@@ -537,27 +540,27 @@ namespace SMS.App.Controllers
                 return View();
             }
         }
-
         private async Task<double> GetGradePointByNumber(double number)
         {
-            double point = 0.00;
             try
             {
                 var gradings = await _gradingTableManager.GetAllAsync();
+                int intValue = (int)Math.Round(number);
+                var result = gradings.FirstOrDefault(s => s.NumberRangeMin <= intValue && s.NumberRangeMax >= intValue)?.GradePoint;
+                if (result.HasValue && result.Value >= 0)
+                {
+                    return (double)result.Value;
+                }
 
-                var result = from g in gradings
-                             where number >= g.NumberRangeMin && number <= g.NumberRangeMax
-                             select g.GradePoint;
-
-                point = Math.Round(Convert.ToDouble(result.FirstOrDefault()),2);
+                return 0.00;
             }
-            catch (Exception)
+            catch
             {
-                throw;
+                throw; 
             }
-
-            return point;
         }
+
+
         private async Task<string> GetGradeByPoint(double number)
         {
             string grade = string.Empty;

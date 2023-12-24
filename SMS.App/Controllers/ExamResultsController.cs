@@ -187,10 +187,6 @@ namespace SMS.App.Controllers
                 foreach (var exam in examList)
                 {
                     ExaminationResultDetailsVMs exDetail = new ExaminationResultDetailsVMs();
-                    if (student.ClassRoll == 2309029)
-                    {
-                        Console.WriteLine();
-                    }
                     exDetail.SubjectName = exam.AcademicSubject.SubjectName;
                     exDetail.IsReligion = exam.AcademicSubject.ReligionId!=null?true:false;
                     exDetail.ObtainMarks = exam.AcademicExamDetails.Where(s => s.StudentId == student.Id && s.AcademicExamId == exam.Id).Sum(s => s.ObtainMark);

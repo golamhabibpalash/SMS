@@ -57,15 +57,17 @@ namespace SMS.App.Controllers
                     TempData["failed"] = "Data not found";
                     return RedirectToAction("Index");
                 }
-                var claimStores = await _claimStoreManager.GetAllAsync();
-                bool isExist = claimStores.Any(s => s.ClaimValue == modelObject.ClaimStores.ClaimValue && s.SubModuleId==modelObject.ClaimStores.SubModuleId);
-                if (isExist)
+                //var claimStores = await _claimStoreManager.GetAllAsync();               
+                if (await _claimStoreManager.IsExistAsync(modelObject.ClaimStores.ClaimValue, modelObject.ClaimStores.SubModuleId))
                 {
                     TempData["failed"] = modelObject.ClaimStores.ClaimValue + " is already exist in this Sub Module";
                     return RedirectToAction("Index");
                 }
                 modelObject.ClaimStores.CreatedAt = DateTime.Now;
                 modelObject.ClaimStores.CreatedBy = HttpContext.Session.GetString("UserId");
+                modelObject.ClaimStores.EditedAt = DateTime.Now;
+                modelObject.ClaimStores.EditedBy = HttpContext.Session.GetString("UserId");
+
                 modelObject.ClaimStores.MACAddress = MACService.GetMAC();
                 bool isAdded = await _claimStoreManager.AddAsync(modelObject.ClaimStores);
                 if (isAdded)

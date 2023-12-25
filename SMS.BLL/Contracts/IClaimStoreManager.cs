@@ -10,5 +10,6 @@ namespace SMS.BLL.Contracts
 {
     public interface IClaimStoreManager:IManager<ClaimStores>
     {
+        Task<bool> IsExistAsync(string claimValue, int subModuleId);
     }
 }

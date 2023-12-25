@@ -27,5 +27,6 @@ namespace SMS.DAL.Contracts.Base
 
         Task<bool> SaveAfterAddAsync();
         bool AddWithoutSave(T entity);
+        IQueryable<T> Table { get; }
     }
 }

@@ -5,34 +5,36 @@ using System.Threading.Tasks;
 using SMS.DAL.Contracts.Base;
 using System;
 using SMS.Entities;
+using System.Linq;
 
 namespace SMS.DAL.Repositories.Base
 {
     public abstract class Repository<T> : Contracts.Base.IRepository<T> where T:class
     {
         protected readonly ApplicationDbContext _context;
+        //private DbSet<T> _entities;
         public Repository(ApplicationDbContext context)
         {
             _context = context;
         }
-        public DbSet<T> Table 
+        public DbSet<T> Entity 
         {
             get { return _context.Set<T>(); } 
         }
 
         public virtual async Task<T> GetByIdAsync(int id)
         {
-            return await Table.FindAsync(id);
+            return await Entity.FindAsync(id);
         }
 
         public virtual async Task<IReadOnlyCollection<T>> GetAllAsync()
         {
-            return await Table.ToListAsync();
+            return await Entity.ToListAsync();
         }
 
         public virtual async Task<bool> AddAsync(T entity)
         {
-            await Table.AddAsync(entity);
+            await Entity.AddAsync(entity);
             return await _context.SaveChangesAsync() > 0;
         }       
 
@@ -44,13 +46,13 @@ namespace SMS.DAL.Repositories.Base
 
         public virtual async Task<bool> RemoveAsync(T entity)
         {
-            Table.Remove(entity);
+            Entity.Remove(entity);
             return await _context.SaveChangesAsync() > 0;
         }
 
         public virtual async Task<bool> IsExistByIdAsync(int id)
         {
-            var result = await Table.FindAsync(id);
+            var result = await Entity.FindAsync(id);
             if (result!=null)
             {
                 return true;
@@ -63,13 +65,13 @@ namespace SMS.DAL.Repositories.Base
 
         public virtual async Task<bool> IsExistAsync(T entity)
         {
-            await Table.FindAsync(entity);
+            await Entity.FindAsync(entity);
             return true;
         }
 
         public T GetById(int id)
         {
-            return Table.Find(id);
+            return Entity.Find(id);
         }
 
         public async Task<bool> SaveAfterAddAsync()
@@ -93,7 +95,7 @@ namespace SMS.DAL.Repositories.Base
         {
             try
             {
-                Table.Add(entity);
+                Entity.Add(entity);
                 return true;
             }
             catch (Exception)
@@ -101,5 +103,6 @@ namespace SMS.DAL.Repositories.Base
                 return false;
             }
         }
+        public virtual IQueryable<T> Table => Entity;
     }
 }

@@ -157,7 +157,7 @@ namespace SMS.App.Configurations
             options.AddPolicy("IndexExamResultsPolicy", policy => policy.RequireClaim("View Student-Wise Exam Result"));
             options.AddPolicy("SubjectWiseResultExamResultsPolicy", policy => policy.RequireClaim("View Subject-Wise Current Result"));
             options.AddPolicy("ClassWiseResultExamResultsPolicy", policy => policy.RequireClaim("View Class-Wise Current Result"));
-            options.AddPolicy("ClassWiseResultAfterProcessExamResultsPolicy", policy => policy.RequireClaim("View Cluss-wise Processed Result"));
+            options.AddPolicy("ClassWiseResultAfterProcessExamResultsPolicy", policy => policy.RequireClaim("View Class-wise Processed Result"));
             options.AddPolicy("SubjectWiseResultAfterProcessExamResultsPolicy", policy => policy.RequireClaim("View Subject-wise Processed Result"));
             options.AddPolicy("StudentWiseResultAfterProcessExamResultsPolicy", policy => policy.RequireClaim("View Student-Wise Processed Result"));
             options.AddPolicy("DetailsExamResultsPolicy", policy => policy.RequireClaim("Delete Employee Types"));

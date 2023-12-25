@@ -257,6 +257,7 @@ namespace SMS.App.Configurations
             options.AddPolicy("DailyAttendanceReportsPolicy", policy => policy.RequireClaim("View Daily Attendance Report"));
             options.AddPolicy("AttendanceReportsPolicy", policy => policy.RequireClaim("View Attendance Report"));
             options.AddPolicy("SubjectWiseMarkSheetReportsPolicy", policy => policy.RequireClaim("View Subject-Wise Marksheet Report"));
+            options.AddPolicy("StudentWiseMarkSheetReportsPolicy", policy => policy.RequireClaim("View Studetn-Wise Marksheet Report"));
             options.AddPolicy("StudentPaymentInfoReportsPolicy", policy => policy.RequireClaim("View Student Payment Details Report"));
             options.AddPolicy("StudentPaymentReportsPolicy", policy => policy.RequireClaim("View Student payment Report"));
             options.AddPolicy("ReceiptPaymentReportsPolicy", policy => policy.RequireClaim("View Payment Receipt Report"));

@@ -64,7 +64,7 @@ namespace SMS.App.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "CreateStudentFeeHeadsPolicy")]
-        public async Task<IActionResult> Create([Bind("Id,Name,Repeatedly,YearlyFrequency,CreatedBy,CreatedAt,EditedBy,EditedAt,ContraFeeheadId,IsResidential")] StudentFeeHead studentFeeHead)
+        public async Task<IActionResult> Create([Bind("Id,Name,Repeatedly,YearlyFrequency,CreatedBy,CreatedAt,EditedBy,EditedAt,ContraFeeheadId,IsResidential,SL")] StudentFeeHead studentFeeHead)
         {
             string msg = "";
             var sfhExist = await _studentFeeHeadManager.GetByNameAsync(studentFeeHead.Name);
@@ -113,7 +113,7 @@ namespace SMS.App.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "EditStudentFeeHeadsPolicy")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Repeatedly,YearlyFrequency,CreatedBy,CreatedAt,EditedBy,EditedAt,ContraFeeheadId,IsResidential")] StudentFeeHead studentFeeHead)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Repeatedly,YearlyFrequency,CreatedBy,CreatedAt,EditedBy,EditedAt,ContraFeeheadId,IsResidential,SL")] StudentFeeHead studentFeeHead)
         {
             string msg = "";
             int isChanged = 0;
@@ -134,7 +134,7 @@ namespace SMS.App.Controllers
 
             if (sfhExist!=null)
             {
-                if (studentFeeHead.Name != sfhExist.Name || studentFeeHead.Repeatedly != sfhExist.Repeatedly || studentFeeHead.YearlyFrequency != sfhExist.YearlyFrequency || studentFeeHead.ContraFeeheadId != sfhExist.ContraFeeheadId || studentFeeHead.IsResidential !=sfhExist.IsResidential)
+                if (studentFeeHead.Name != sfhExist.Name || studentFeeHead.Repeatedly != sfhExist.Repeatedly || studentFeeHead.YearlyFrequency != sfhExist.YearlyFrequency || studentFeeHead.ContraFeeheadId != sfhExist.ContraFeeheadId || studentFeeHead.IsResidential !=sfhExist.IsResidential || studentFeeHead.SL!=sfhExist.SL)
                 {
                     isChanged = 1;
                 }

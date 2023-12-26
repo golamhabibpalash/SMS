@@ -17,5 +17,6 @@ namespace SMS.Entities
         public int? ContraFeeheadId { get; set; } = 0; //To create relation with other fee head
         [Display(Name = "Is Residential")]
         public bool IsResidential { get; set; } = false; //Is it use for Residential Student
+        [Display(Name = "Serial")] public int? SL { get; set; }
     }
 }

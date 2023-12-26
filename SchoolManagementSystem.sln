@@ -20,6 +20,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMS.Reports", "SMS.Reports\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMS.Frameworks", "SMS.Frameworks\SMS.Frameworks.csproj", "{CD5CA80C-ACB3-4F83-BCCB-83EEF3D117BD}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SMS.Test", "SMS.Test", "{AF6991AA-E38A-4EAA-93DA-05598C6C2704}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

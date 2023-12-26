@@ -291,7 +291,16 @@
                                     <tr>
                                         <td>Section</td>
                                         <td>:</td>
-                                        <td>@Model.Student.AcademicSection.Name</td>
+                                        <td>
+                                            @if (Model?.Student != null && Model.Student.AcademicSection != null)
+                                            {
+                                                @Model.Student.AcademicSection.Name
+                                            }
+                                            else
+                                            {
+                                                <text>N/A</text>
+                                            }
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td>Admission Date</td>

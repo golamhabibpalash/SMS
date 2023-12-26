@@ -80,6 +80,8 @@ namespace SMS.App.Controllers
                 {
                     studentFeeHead.CreatedBy = HttpContext.Session.GetString("UserId");
                     studentFeeHead.CreatedAt = DateTime.Now;
+                    studentFeeHead.EditedBy = HttpContext.Session.GetString("UserId");
+                    studentFeeHead.EditedAt = DateTime.Now;
                     studentFeeHead.MACAddress = MACService.GetMAC();
                     await _studentFeeHeadManager.AddAsync(studentFeeHead);
 
@@ -154,12 +156,12 @@ namespace SMS.App.Controllers
                         studentFeeHead.EditedAt = DateTime.Now;
                         studentFeeHead.EditedBy = HttpContext.Session.GetString("UserId");
                         studentFeeHead.MACAddress = MACService.GetMAC();
+                        studentFeeHead.CreatedBy = sfhExist.CreatedBy;
+                        studentFeeHead.CreatedAt = sfhExist.CreatedAt;
 
                         bool isSaved = await _studentFeeHeadManager.UpdateAsync(studentFeeHead);
                         if (isSaved)
                         {
-
-
                             if (studentFeeHead.ContraFeeheadId > 0)
                             {
                                 StudentFeeHead existingFeeHead = await _studentFeeHeadManager.GetByIdAsync((int)studentFeeHead.ContraFeeheadId);

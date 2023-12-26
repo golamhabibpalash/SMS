@@ -42,8 +42,7 @@ namespace SMS.App.Controllers
         {
             GlobalUI.PageTitle = "User Profile";
             UserProfileVM userProfileVM = new UserProfileVM();
-            var allUser = _userManager.Users;
-            allUser = allUser.Where(s => s.UserType == 'e').OrderBy(s => s.UserName);
+            var allUser = _userManager.Users.Where(s => s.UserType == 'e').OrderBy(s => s.UserName);
             ViewBag.UserList = userProfileVM.UserList = new SelectList(allUser, "Id", "UserName");
 
             UserRoleClaimsVM userRoleClaimsVM = new UserRoleClaimsVM();
@@ -90,10 +89,11 @@ namespace SMS.App.Controllers
         public async Task<IActionResult> UserProfile(UserProfileVM model)
         {
             GlobalUI.PageTitle = "User Profile";
-            var allUser = _userManager.Users;
-            allUser = allUser.Where(s => s.UserType == 'e');
-            model.UserList = new SelectList(allUser, "Id", "UserName");
+            var allUser = _userManager.Users.Where(s => s.UserType == 'e');
+
             ApplicationUser aUser = await _userManager.FindByIdAsync(model.UserRoleClaimsVM.ApplicationUser.Id);
+            ViewBag.UserList = model.UserList = new SelectList(allUser, "Id", "UserName",aUser.Id);
+
             List<ProjectModule> modules = (List<ProjectModule>)await _projectModuleManager.GetAllAsync();
             if (aUser != null)
             {

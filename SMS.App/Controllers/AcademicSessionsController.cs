@@ -64,10 +64,7 @@ namespace SMS.App.Controllers
             return View();
         }
 
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Policy = "CreateAcademicSessionPolicy")]
+        [HttpPost, ValidateAntiForgeryToken,  Authorize(Policy = "CreateAcademicSessionPolicy")]
         public async Task<IActionResult> Create([Bind("Id,Name,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSession academicSession)
         {
             string msg = "";
@@ -75,11 +72,7 @@ namespace SMS.App.Controllers
             {
                 if (ModelState.IsValid)
                 {
-
-                    var existingSessions = await _sessionManager.GetAllAsync();
-                    var existingSession = existingSessions.FirstOrDefault(s => s.Name.Trim() == academicSession.Name.Trim());
-
-                    if (existingSession != null)
+                    if (await _sessionManager.IsExistByName(academicSession.Name))
                     {
                         msg = "This name is already exists.";
                         TempData["error"] = msg ;
@@ -87,13 +80,16 @@ namespace SMS.App.Controllers
                     else
                     {
                         academicSession.CreatedAt = DateTime.Now;
-                    academicSession.CreatedBy = HttpContext.Session.GetString("UserId");
-
-                    await _sessionManager.AddAsync(academicSession);
-                        TempData["create"] = "Created Successfully";
+                        academicSession.CreatedBy = HttpContext.Session.GetString("UserId");
+                        academicSession.EditedBy = HttpContext.Session.GetString("UserId");
+                        academicSession.EditedAt = DateTime.Now;
+                        bool isSaved = await _sessionManager.AddAsync(academicSession);
+                        if (isSaved)
+                        {
+                            TempData["create"] = "Created Successfully";
+                        }
                         return RedirectToAction(nameof(Index));
                     }
-
                 }
             }
             else
@@ -133,7 +129,6 @@ namespace SMS.App.Controllers
             {
                 return NotFound();
             }
-            //var existStudent = _context.AcademicSession.FirstOrDefault(a => a.Name.Trim() == academicSession.Name.Trim() && a.Id != id);
 
                 if (ModelState.IsValid)
                     {
@@ -141,15 +136,11 @@ namespace SMS.App.Controllers
                         {
                             academicSession.EditedBy = HttpContext.Session.GetString("UserId");
                             academicSession.EditedAt = DateTime.Now;
-
-                            //_context.Update(academicSession);
-
-                        await _sessionManager.UpdateAsync(academicSession);
-                            
+                            await _sessionManager.UpdateAsync(academicSession);                            
                         }
                         catch (DbUpdateConcurrencyException)
                         {
-                            if (!AcademicSessionExists(academicSession.Id))
+                            if (await _sessionManager.IsExistByIdAsync(academicSession.Id))
                             {
                                 return NotFound();
                             }
@@ -176,8 +167,6 @@ namespace SMS.App.Controllers
                 return NotFound();
             }
 
-            //var academicSession = await _context.AcademicSession
-            //    .FirstOrDefaultAsync(m => m.Id == id);
             var academicSession = await _sessionManager.GetByIdAsync((int)id);
             if (academicSession == null)
             {
@@ -193,27 +182,24 @@ namespace SMS.App.Controllers
         [Authorize(Policy = "DeleteAcademicSessionPolicy")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            //var academicSession = await _context.AcademicSession.FindAsync(id);
-            //_context.AcademicSession.Remove(academicSession);
-            var academicSession = await _sessionManager.GetByIdAsync(id);
-            await _sessionManager.RemoveAsync(academicSession);
-            TempData["delete"] = "Deleted Successfully.";
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool AcademicSessionExists(int id)
-        {
-            var isExist =  _sessionManager.GetByIdAsync(id);
-            if (isExist!=null)
+            try
             {
-                return false;
+                var academicSession = await _sessionManager.GetByIdAsync(id);
+                if (academicSession == null)
+                {
+                    TempData["error"] = "Session not found.";
+                }
+                else
+                {
+                    await _sessionManager.RemoveAsync(academicSession);
+                    TempData["delete"] = "Deleted Successfully.";
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return true;
+                TempData["error"] = "An error occurred while deleting the session.";
             }
+                return RedirectToAction(nameof(Index));
         }
-
-        
     }
 }

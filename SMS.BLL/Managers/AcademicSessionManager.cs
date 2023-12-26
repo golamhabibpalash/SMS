@@ -1,4 +1,5 @@
 ﻿using BLL.Managers.Base;
+using Microsoft.EntityFrameworkCore;
 using SMS.BLL.Contracts;
 using SMS.DAL.Contracts;
 using SMS.DAL.Repositories;
@@ -24,5 +25,9 @@ namespace SMS.BLL.Managers
             return await _academicSessionRepository.GetCurrentAcademicSession();
         }
 
+        public Task<bool> IsExistByName(string name)
+        {
+           return _academicSessionRepository.Table.AnyAsync(s => s.Name .Equals(name));
+        }
     }
 }

@@ -448,7 +448,7 @@ namespace SMS.App.Controllers
             return File(pdf, mediaType);
         }
 
-        [Authorize(Policy = "MarkSheetReportsPolicy")]
+        [Authorize(Policy = "StudentWiseMarkSheetReportsPolicy")]
         public async Task<IActionResult> MarkSheetReport()
         {
             GlobalUI.PageTitle = "Auto Mark-Sheet Generate";
@@ -458,7 +458,7 @@ namespace SMS.App.Controllers
             return View();
         }
 
-        [Authorize(Policy = "MarkSheetReportsPolicy")]
+        [Authorize(Policy = "StudentWiseMarkSheetReportsPolicy")]
         public async Task<IActionResult> MarkSheetReportExport(string reportType, string fileName, int examGroupId, int academicClassId, int? sectionId, int sessionId,int studentId)
         {
             var results = await _reportManager.GetStudentWiseMarkSheet(examGroupId, academicClassId);
@@ -521,13 +521,6 @@ namespace SMS.App.Controllers
                 return new JsonResult(ex.InnerException.Message);
                 throw;
             }
-
-            #region Subreport
-
-
-            //sub report processeing
-            //report.SubreportProcessing += new SubreportProcessingEventHandler(SubReportProcessingAsync);
-            #endregion Subreport
 
 
 

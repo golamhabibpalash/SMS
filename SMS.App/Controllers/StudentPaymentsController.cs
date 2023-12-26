@@ -112,7 +112,7 @@ namespace SMS.App.Controllers
 
                 feeHeadList = (from f in feeHeadList
                                join t in classfeelist on f.Id equals t.StudentFeeHeadId
-                               where t.AcademicSessionId == currentSession.Id
+                               where t.AcademicSessionId == student.AcademicSessionId
                                select f).ToList();
                 if (student.IsResidential)
                 {

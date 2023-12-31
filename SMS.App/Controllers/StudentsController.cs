@@ -425,9 +425,7 @@ namespace SchoolManagementSystem.Controllers
         #endregion
 
         #region Edit
-        [HttpGet]
-        [Authorize(Roles = "SuperAdmin, Admin")]
-        [Authorize(Policy = "EditStudentsPolicy")]
+        [HttpGet, Authorize(Roles = "SuperAdmin, Admin",  Policy = "EditStudentsPolicy")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -519,14 +517,7 @@ namespace SchoolManagementSystem.Controllers
                     }
                     catch (DbUpdateConcurrencyException)
                     {
-                        if (!StudentExists(student.Id))
-                        {
-                            return NotFound();
-                        }
-                        else
-                        {
                             throw;
-                        }
                     }
                 }
             }
@@ -636,19 +627,6 @@ namespace SchoolManagementSystem.Controllers
             return View(student);
         }
         #endregion
-
-        private bool StudentExists(int id)
-        {
-            var student = _studentManager.GetByIdAsync(id);
-            if (student != null)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
 
 
         [Authorize(Policy = "DueAmountStudentsPolicy")]

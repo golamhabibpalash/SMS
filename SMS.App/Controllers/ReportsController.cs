@@ -522,13 +522,6 @@ namespace SMS.App.Controllers
                 throw;
             }
 
-            #region Subreport
-
-
-            //sub report processeing
-            //report.SubreportProcessing += new SubreportProcessingEventHandler(SubReportProcessingAsync);
-            #endregion Subreport
-
 
 
             var pdf = report.Render("pdf");

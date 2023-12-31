@@ -17,15 +17,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
-            @*<th>
-                @Html.DisplayNameFor(model => model.Repeatedly)
-            </th>*@
-            @*<th>
-                @Html.DisplayNameFor(model => model.YearlyFrequency)
-            </th>
-            <th>
-                Contra Type
-            </th>*@
             <th>
                 Residential
             </th>
@@ -41,29 +32,13 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.OrderBy(s => s.SL))
         {
             <tr>
-                <td>@(++sl).</td>
+                <td>@item.SL</td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Name)
                 </td>
-                @*<td>
-                    @Html.DisplayFor(modelItem => item.Repeatedly)
-                </td>*@
-                @*<td>
-                    @Html.DisplayFor(modelItem => item.YearlyFrequency)
-                </td>
-                <td title="Vise versa payment type">
-                    @if (item.ContraFeeheadId > 0)
-                    {
-                        <span>@item.ContraFeeheadId</span>
-                    }
-                    else
-                    {
-                        <span>N/A</span>
-                    }
-                </td>*@
                 <td>
                     @if (item.IsResidential)
                     {

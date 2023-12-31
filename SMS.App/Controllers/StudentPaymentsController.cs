@@ -112,7 +112,7 @@ namespace SMS.App.Controllers
 
                 feeHeadList = (from f in feeHeadList
                                join t in classfeelist on f.Id equals t.StudentFeeHeadId
-                               where t.AcademicSessionId == currentSession.Id
+                               where t.AcademicSessionId == student.AcademicSessionId
                                select f).ToList();
                 if (student.IsResidential)
                 {
@@ -123,7 +123,7 @@ namespace SMS.App.Controllers
                     feeHeadList = feeHeadList.Where(s => s.IsResidential == false).ToList();
                 }
 
-                ViewData["FeeList"] = new SelectList(feeHeadList, "Id", "Name");
+                ViewData["FeeList"] = new SelectList(feeHeadList.OrderBy(s => s.SL), "Id", "Name");
                 AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSession();
                 foreach (var item in classfeelist)
                 {
@@ -201,8 +201,9 @@ namespace SMS.App.Controllers
                 studentPaymentObject.TotalPayment = paymentObject.StudentPayment.TotalPayment;
                 studentPaymentObject.PaidDate = paymentObject.StudentPayment.PaidDate;
                 studentPaymentObject.Remarks = paymentObject.StudentPayment.Remarks;
+                var feeList = await _studentFeeHeadManager.GetAllAsync();
+                ViewData["FeeList"] = new SelectList(feeList.OrderBy(s => s.SL), "Id", "Name");
 
-                ViewData["FeeList"] = new SelectList(await _studentFeeHeadManager.GetAllAsync(), "Id", "Name");
                 if (paymentObject.StudentPayment.StudentPaymentDetails != null)
                 {
                     foreach (var paymentDetails in paymentObject.StudentPayment.StudentPaymentDetails)

@@ -64,7 +64,7 @@ namespace SMS.App.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "CreateStudentFeeHeadsPolicy")]
-        public async Task<IActionResult> Create([Bind("Id,Name,Repeatedly,YearlyFrequency,CreatedBy,CreatedAt,EditedBy,EditedAt,ContraFeeheadId,IsResidential")] StudentFeeHead studentFeeHead)
+        public async Task<IActionResult> Create([Bind("Id,Name,Repeatedly,YearlyFrequency,CreatedBy,CreatedAt,EditedBy,EditedAt,ContraFeeheadId,IsResidential,SL")] StudentFeeHead studentFeeHead)
         {
             string msg = "";
             var sfhExist = await _studentFeeHeadManager.GetByNameAsync(studentFeeHead.Name);
@@ -80,6 +80,8 @@ namespace SMS.App.Controllers
                 {
                     studentFeeHead.CreatedBy = HttpContext.Session.GetString("UserId");
                     studentFeeHead.CreatedAt = DateTime.Now;
+                    studentFeeHead.EditedBy = HttpContext.Session.GetString("UserId");
+                    studentFeeHead.EditedAt = DateTime.Now;
                     studentFeeHead.MACAddress = MACService.GetMAC();
                     await _studentFeeHeadManager.AddAsync(studentFeeHead);
 
@@ -111,7 +113,7 @@ namespace SMS.App.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "EditStudentFeeHeadsPolicy")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Repeatedly,YearlyFrequency,CreatedBy,CreatedAt,EditedBy,EditedAt,ContraFeeheadId,IsResidential")] StudentFeeHead studentFeeHead)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Repeatedly,YearlyFrequency,CreatedBy,CreatedAt,EditedBy,EditedAt,ContraFeeheadId,IsResidential,SL")] StudentFeeHead studentFeeHead)
         {
             string msg = "";
             int isChanged = 0;
@@ -132,7 +134,7 @@ namespace SMS.App.Controllers
 
             if (sfhExist!=null)
             {
-                if (studentFeeHead.Name != sfhExist.Name || studentFeeHead.Repeatedly != sfhExist.Repeatedly || studentFeeHead.YearlyFrequency != sfhExist.YearlyFrequency || studentFeeHead.ContraFeeheadId != sfhExist.ContraFeeheadId || studentFeeHead.IsResidential !=sfhExist.IsResidential)
+                if (studentFeeHead.Name != sfhExist.Name || studentFeeHead.Repeatedly != sfhExist.Repeatedly || studentFeeHead.YearlyFrequency != sfhExist.YearlyFrequency || studentFeeHead.ContraFeeheadId != sfhExist.ContraFeeheadId || studentFeeHead.IsResidential !=sfhExist.IsResidential || studentFeeHead.SL!=sfhExist.SL)
                 {
                     isChanged = 1;
                 }
@@ -154,12 +156,12 @@ namespace SMS.App.Controllers
                         studentFeeHead.EditedAt = DateTime.Now;
                         studentFeeHead.EditedBy = HttpContext.Session.GetString("UserId");
                         studentFeeHead.MACAddress = MACService.GetMAC();
+                        studentFeeHead.CreatedBy = sfhExist.CreatedBy;
+                        studentFeeHead.CreatedAt = sfhExist.CreatedAt;
 
                         bool isSaved = await _studentFeeHeadManager.UpdateAsync(studentFeeHead);
                         if (isSaved)
                         {
-
-
                             if (studentFeeHead.ContraFeeheadId > 0)
                             {
                                 StudentFeeHead existingFeeHead = await _studentFeeHeadManager.GetByIdAsync((int)studentFeeHead.ContraFeeheadId);

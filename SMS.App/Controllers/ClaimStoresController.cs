@@ -55,13 +55,13 @@ namespace SMS.App.Controllers
                 if (modelObject.ClaimStores == null)
                 {
                     TempData["failed"] = "Data not found";
-                    return RedirectToAction("Index");
+                    return RedirectToAction(nameof(Index));
                 }
                 //var claimStores = await _claimStoreManager.GetAllAsync();               
                 if (await _claimStoreManager.IsExistAsync(modelObject.ClaimStores.ClaimValue, modelObject.ClaimStores.SubModuleId))
                 {
                     TempData["failed"] = modelObject.ClaimStores.ClaimValue + " is already exist in this Sub Module";
-                    return RedirectToAction("Index");
+                    return RedirectToAction(nameof(Index));
                 }
                 modelObject.ClaimStores.CreatedAt = DateTime.Now;
                 modelObject.ClaimStores.CreatedBy = HttpContext.Session.GetString("UserId");

@@ -44,7 +44,7 @@ namespace SMS.App.Controllers
             ViewBag.currentSessionId = currentSession.Id;
             var result = await _classFeeListManager.GetAllAsync();
             
-            return View(result.OrderByDescending(s => s.AcademicSessionId).ThenBy(m => m.AcademicClassId).ThenBy( s=> s.StudentFeeHeadId));
+            return View(result);
         }
 
         // GET: StudentFeeLists/Details/5
@@ -158,14 +158,20 @@ namespace SMS.App.Controllers
                 try
                 {
                     var classFeeLists = await _classFeeListManager.GetAllAsync();
-                    var feeList = (from s in classFeeLists
-                                  where s.StartDate>=classFeeList.StartDate && s.EndDate<=classFeeList.EndDate && s.Id!= classFeeList.Id
-                                  select s).FirstOrDefault();
-                    if (feeList != null)
+
+                    var feeList = classFeeLists.FirstOrDefault(s => s.Id != classFeeList.Id && (s.AcademicClassId == classFeeList.AcademicClassId && s.AcademicSessionId == classFeeList.AcademicSessionId && s.StudentFeeHeadId == classFeeList.StudentFeeHeadId));
+
+                    var existingData = await _classFeeListManager.GetClassFeeListByClassIdFeeHeadIdSessionIdAsync(classFeeList.AcademicClassId, classFeeList.StudentFeeHeadId, classFeeList.AcademicSessionId);
+                    if (existingData!=null)
                     {
-                        TempData["failed"] = "Data is available on this date";
-                        return View(classFeeList);
+                        var existingSingleData = existingData.FirstOrDefault();
+                        if (existingSingleData.Id!=id)
+                        {
+                            TempData["failed"] = "This data is exist";
+                            return RedirectToAction(nameof(Edit), new {id = classFeeList.Id});
+                        }
                     }
+
                     classFeeList.EditedAt = DateTime.Now;
                     classFeeList.EditedBy = HttpContext.Session.GetString("UserId");
                     classFeeList.MACAddress = MACService.GetMAC();

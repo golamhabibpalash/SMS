@@ -15,5 +15,6 @@ namespace SMS.Entities
         public double AllocatedAmount { get; set; }
         public bool IsActive { get; set; } = true;
         public string FeeAllocationApplication { get; set; } =string.Empty;
+        public string UniqueId { get; set; }
     }
 }

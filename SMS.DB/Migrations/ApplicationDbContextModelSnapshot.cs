@@ -2915,6 +2915,9 @@ namespace SMS.DB.Migrations
                     b.Property<int>("StudentId")
                         .HasColumnType("int");
 
+                    b.Property<string>("UniqueId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("StudentFeeHeadId");
@@ -3011,6 +3014,9 @@ namespace SMS.DB.Migrations
 
                     b.Property<double>("TotalPayment")
                         .HasColumnType("float");
+
+                    b.Property<string>("UniqueId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("WaiverAmount")
                         .HasColumnType("float");

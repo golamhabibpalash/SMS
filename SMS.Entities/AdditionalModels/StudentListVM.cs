@@ -17,5 +17,6 @@ namespace SMS.Entities.AdditionalModels
         public bool Status { get; set; }
         public int ClassSerial { get; set; }
         public bool IsResidential { get; set; }
+        public string UniqueId { get; set; }
     }
 }

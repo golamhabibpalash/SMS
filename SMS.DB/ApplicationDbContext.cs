@@ -155,6 +155,10 @@ namespace SMS.DB
                 .HasIndex(s => new { s.UniqueId })
                 .IsUnique(true);
 
+            builder.Entity<Student>()
+                .HasIndex(s => new { s.ClassRoll })
+                .IsUnique(true);
+
             builder.Entity<AttendanceVM>(entity => entity.HasNoKey());
             builder.Entity<StudentPaymentSummeryVM>(entity => entity.HasNoKey());
             builder.Entity<StudentPaymentSummerySMS_VM>(entity => entity.HasNoKey());

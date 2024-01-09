@@ -45,5 +45,10 @@ namespace SMS.BLL.Managers
         {
             return await studentRepository.GetStudentsByClassSessionSectionAsync(sessionId, classId, sectionId);
         }
+        public async Task<string> GetUniqueIdByStudenyId(int stuId)
+        {
+            Student student = await studentRepository.GetByIdAsync(stuId);
+            return student.UniqueId;
+        }
     }
 }

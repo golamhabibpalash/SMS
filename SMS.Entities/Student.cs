@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -127,6 +128,7 @@ namespace SMS.Entities
         public Gender Gender { get; set; }
         public Religion Religion { get; set; }
 
+        [NotNull, Required]
         public string UniqueId { get; set; }
 
         public List<Attendance> Attendances { get; set; }

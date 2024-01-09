@@ -1,0 +1,436 @@
+﻿
+
+<li class="nav-group">
+    <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-users fa-lg"></i> Student Management </a>
+    <ul class="nav-group-items">
+        <li class="nav-item">
+            <a class="nav-link" asp-action="Index" asp-controller="Students"> Students List</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-action="Create" asp-controller="Students">Student Registration</a>
+        </li>
+
+        <li class="nav-item nav-group">
+            <a class="nav-link nav-group-toggle">  Student Attendance </a>
+            <ul class="nav-group-items">
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="AttendanceMachines"> Attendance</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="DailyAttendanceReport" asp-controller="Reports">Attendances </a>
+                </li>
+                <li class="nav-item"><a class="nav-link" asp-action="create" asp-controller="attendancemachines">Add Attendances </a></li>
+            </ul>
+        </li>
+    </ul>
+</li>
+
+@*Academic Management
+    Class Management
+    Section Management
+    Subject Management
+    Exam Management
+    Result Management*@
+
+<li class="nav-group">
+    @*Academic Management*@
+    <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-book-open fa-lg"></i> Academic Management</a>
+    <ul class="nav-group-items">
+        <li class="nav-item">
+            <a class="nav-link" asp-action="Index" asp-controller="AcademicSessions">Academic Session</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-action="Index" asp-controller="AcademicClasses">Academic Class</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-action="Index" asp-controller="AcademicSections">Academic Section</a>
+        </li>
+        <li class="nav-item nav-group">
+            <a class="nav-link nav-group-toggle">  Academic Subject </a>
+            <ul class="nav-group-items">
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="AcademicSubjectTypes">Academic Subject Type</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="AcademicSubjects">Subjects</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="ClassWiseSubjectAllocation" asp-controller="AcademicSubjects">Class-Wise Allocation</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="SubjectEnroll" asp-controller="SubjectEnrollment">Subject Enrollment</a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-action="Index" asp-controller="GradingTable">Grading System</a>
+        </li>
+
+        <li class="nav-item nav-group">
+            <a class="nav-link nav-group-toggle"> Examinations</a>
+            <ul class="nav-group-items">
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="AcademicExamGroup">Exam Groups</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="AcademicExams">All Examinations</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="AcademicExamType">Examination Types</a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="nav-item nav-group">
+            <a class="nav-link nav-group-toggle"> Exam Results </a>
+            <ul class="nav-group-items">
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="ClassWiseResult" asp-controller="ExamResults">Class-wise Results</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="ExamResults">Subject-wise Results</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="StudentWiseResult" asp-controller="ExamResults">Student-Wise Results</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</li>
+
+
+@*Staff Management
+    Staff information
+    Attendance & Leaves
+    Payroll management
+    Performance appraisals
+    Staff allocation to courses*@
+
+
+@*@if ((User.Identity as ClaimsIdentity)?.HasClaim(c => c.Value == "IndexEmployeesPolicy" || c.Value == "DetailsEmployeesPolicy" || c.Value == "CreateEmployeesPolicy" || c.Value == "EditEmployeesPolicy" || c.Value == "DeleteEmployeesPolicy") == true)
+    {
+
+    }*@
+<li class="nav-group">
+    <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-user fa-lg"></i> Staff Management </a>
+    <ul class="nav-group-items">
+        <li class="nav-item"><a class="nav-link" asp-action="Create" asp-controller="Employees"> Add Employee </a></li>
+        <li class="nav-item"><a class="nav-link" asp-action="Index" asp-controller="Employees"> All Staff </a></li>
+        <li class="nav-item">
+            <a class="nav-link" asp-action="Index" asp-controller="attendancemachines" asp-route-attendanceFor="employees" asp-route-dateTime="@DateTime.Today.ToString("yyyy-MM-dd")"> Employees Attendance</a>
+        </li>
+        <li class="nav-item">
+            <a href="#">Leavs</a>
+        </li>
+        <li class="nav-item nav-group">
+            <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-user fa-lg"></i>Payroll Management </a>
+            <ul class="nav-group-items">
+                <li class="nav-item">
+                    <a href="#">Payroll</a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item nav-group">
+            <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-user fa-lg"></i>Performance appraisals </a>
+            <ul class="nav-group-items">
+                <li class="nav-item">
+                    <a href="#">Performance</a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item">
+            <a href="#">Staff allocation to courses</a>
+        </li>
+    </ul>
+</li>
+
+@*
+    Fee Management
+        Fee structure configuration
+        Fee collection and tracking
+        Payment reminders and notifications
+        Online fee payment gateway integration
+        Fee concession and scholarship management
+*@
+
+<li class="nav-group">
+    <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-calculator fa-lg"></i> Fee Management </a>
+    <ul class="nav-group-items">
+        <li class="nav-item">
+            <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-calculator fa-lg"></i> Fee structure configuration </a>
+            <ul class="nav-group-items">
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="ClassFeeLists">Class Fee</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="StudentFeeHeads">Fee Head</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+    <ul class="nav-group-items">
+        <li class="nav-item">
+            <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-calculator fa-lg"></i> Fee collection and tracking </a>
+        </li>
+    </ul>
+    <ul class="nav-group-items">
+        <li class="nav-item">
+            <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-calculator fa-lg"></i> Payment reminders and notifications </a>
+        </li>
+    </ul>
+    <ul class="nav-group-items">
+        <li class="nav-item">
+            <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-calculator fa-lg"></i> Online fee payment gateway integration </a>
+        </li>
+    </ul>
+    <ul class="nav-group-items">
+        <li class="nav-item">
+            <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-calculator fa-lg"></i> Fee concession and scholarship management </a>
+        </li>
+    </ul>
+
+    <ul class="nav-group-items">
+        <li class="nav-item">
+            <a class="nav-link" asp-action="Income" asp-controller="accounts">  Income</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-action="Expense" asp-controller="accounts">  Expense</a>
+        </li>
+        @*<li class="nav-item nav-group">
+                <a class="nav-link nav-group-toggle"> Fee Setup </a>
+                <ul class="nav-group-items">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-action="Index" asp-controller="ClassFeeLists">Class Fee</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-action="Index" asp-controller="StudentFeeHeads">Fee Head</a>
+                    </li>
+                </ul>
+            </li>*@
+        <li class="nav-item nav-group">
+            <a class="nav-link" asp-action="Index" asp-controller="Payrolls">Payroll </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-action="Index" asp-controller="StudentFeeAllocations"> Student Fee Allocation </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-action="Index" asp-controller="StudentPayments"> Fees Collection </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-action="DuePayment" asp-controller="StudentPayments"> Due Payments </a>
+        </li>
+    </ul>
+</li>
+
+
+@*
+    Fee
+*@
+
+<li class="nav-group">
+    <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-layer-group fa-lg"></i> Modules </a>
+    <ul class="nav-group-items">
+        <li class="nav-item">
+            <a class="nav-link" asp-action="" asp-controller="DutyRoster"> Duty Roster</a>
+        </li>
+        <li class="nav-group">
+            <a class="nav-link nav-group-toggle"> SMS Panel </a>
+            <ul class="nav-group-items">
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Create" asp-controller="PhoneSMS"> SMS Create</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="PhoneSMS"> SMS List</a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link nav-group-toggle"> Question Bank </a>
+            <ul class="nav child_menu">
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="QuestionBanks"> Questions </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="QuestionFormation"> Question Formation</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="Chapters"> Chapters </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</li>
+
+
+@*@if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
+    {
+
+
+    }*@
+
+
+<li class="nav-group">
+    <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-user-cog fa-lg"></i> Administration </a>
+    <ul class="nav-group-items">
+        <li class="nav-group nav-item">
+            <a class="nav-link nav-group-toggle"> Employee Related </a>
+            <ul class="nav-group-items">
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="EmpTypes">Employee Type</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="Designations">Designation</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="DesignationTypes">Designation Type</a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" asp-action="SchoolTimeTable" asp-controller="Institutes"> School Time setting</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-action="Index" asp-controller="Institutes"> Institute info</a>
+        </li>
+        <li class="nav-item nav-group">
+            <a class="nav-link nav-group-toggle"> Holiday </a>
+            <ul class="nav-group-items">
+                <li class="nav-item"><a class="nav-link" asp-controller="OffDays" asp-action="Index">Holidays</a></li>
+                <li class="nav-item"><a class="nav-link" asp-controller="OffDayType" asp-action="Index">Holiday Type</a></li>
+            </ul>
+        </li>
+        <li class="nav-item nav-group">
+            <a class="nav-link nav-group-toggle"> User Setting  </a>
+            <ul class="nav-group-items">
+                <li class="nav-item"><a class="nav-link" asp-action="UserProfile" asp-controller="Administrations">User Profile</a></li>
+                <li class="nav-item"><a class="nav-link" asp-action="userList" asp-controller="Accounts">User List</a></li>
+                <li class="nav-item"><a class="nav-link" asp-action="roleList" asp-controller="Accounts">Role List</a></li>
+            </ul>
+        </li>
+        <li class="nav-item nav-group">
+            <a class="nav-link nav-group-toggle"> Module/Sub Module  </a>
+            <ul class="nav-group-items">
+                <li class="nav-item"><a class="nav-link" asp-action="Index" asp-controller="ProjectModules">Module</a></li>
+                <li class="nav-item"><a class="nav-link" asp-action="Index" asp-controller="ProjectSubModules">Sub Module</a></li>
+            </ul>
+        </li>
+        <li class="nav-item nav-group">
+            <a class="nav-link nav-group-toggle"> Claim Stores  </a>
+            <ul class="nav-group-items">
+                <li class="nav-item"><a class="nav-link" asp-action="Index" asp-controller="ClaimStores">Claim List</a></li>
+            </ul>
+        </li>
+    </ul>
+</li>
+<li class="nav-group">
+    <a class="nav-link  nav-group-toggle" asp-action="Index" asp-controller="ClassRoutine"> <i class="nav-icon fas fa-tasks"></i>  Class Routine </a>
+    @*<ul class="nav-group-items">
+            <li class="nav-group nav-item">
+                <a href="#">Routine</a>
+            </li>
+        </ul>*@
+</li>
+<li class="nav-group">
+    <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-cog"></i>   Settings </a>
+    <ul class="nav-group-items">
+        <li class="nav-item nav-group">
+            <a class="nav-link nav-group-toggle"> Others </a>
+            <ul class="nav-group-items">
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="Genders">Gender</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="Nationalities">Nationality</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="BloodGroups">Blood Group</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="Religions">Religion</a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item nav-group">
+            <a class="nav-link nav-group-toggle"> SMS Control </a>
+            <ul class="nav-group-items">
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="SMSControl" asp-controller="Setup">SMS Setup</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="StudentWiseSMSService" asp-controller="Setup">Student-wise SMS Service</a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item nav-group">
+            <a class="nav-link nav-group-toggle"> Residential</a>
+            <ul class="nav-group-items">
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="PaymentSchedule" asp-controller="Residential">Payment Structure</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</li>
+@*<li class="separator"></li>*@
+<li class="nav-group">
+    <a class="nav-link nav-group-toggle"><i class="nav-icon fal fa-file-chart-line fa-lg"></i>  Reports </a>
+    <ul class="nav-group-items">
+        <li class="nav-item nav-group">
+            <a class="nav-link nav-group-toggle"> Students </a>
+            <ul class="nav-group-items">
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="studentsreport" asp-controller="reports">Current Students</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="ArchieveStudents">Archieve Students</a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item nav-group">
+            <a class="nav-link nav-group-toggle"> Payments </a>
+            <ul class="nav-group-items">
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="StudentPaymentInfo" asp-controller="Reports">Single Payment</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="StudentPaymentReport" asp-controller="Reports">Students Payments</a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item nav-group">
+            <a class="nav-link nav-group-toggle"> Attendance </a>
+            <ul class="nav-group-items">
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="DailyAttendanceReport" asp-controller="Reports">Daily Attendance Report</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="AttendanceReport" asp-controller="Reports">Monthly Attendance Report</a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item nav-group">
+            <a class="nav-link nav-group-toggle">  Academic Exams</a>
+            <ul class="nav-group-items">
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="AdmitCard" asp-controller="AcademicExams">Admit Cards</a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item nav-group">
+            <a class="nav-link nav-group-toggle">  Academic Result </a>
+            <ul class="nav-group-items">
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="ClassWiseResultAfterProcess" asp-controller="ExamResults">Class-Wise Result</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="SubjectWiseResltAfterProcess" asp-controller="ExamResults">Subject-Wise Result</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="MarkSheetReport" asp-controller="Reports">Mark Sheet</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</li>

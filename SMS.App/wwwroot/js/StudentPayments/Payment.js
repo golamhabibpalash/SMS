@@ -82,9 +82,10 @@ $('#StudentPayment_StudentPaymentDetails_0__PaidAmount').on('input', function ()
 $('#StudentPayment_StudentPaymentDetails_0__StudentFeeHeadId').change(function () {
     let id = $('#StudentPayment_StudentPaymentDetails_0__StudentFeeHeadId option:selected').val();
     let classId = $('#academicClassId').val();
+    let sessionId = $('#academicSessionId').val();
     $.ajax({
         url: '/StudentFeeHeads/GetById',
-        data: { id: id, classId: classId },
+        data: { id: id, classId: classId, sessionId: sessionId },
         cache: false,
         type: 'POST',
         dataType: 'json',

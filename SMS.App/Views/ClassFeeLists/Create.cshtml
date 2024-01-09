@@ -44,6 +44,13 @@
                     <span asp-validation-for="Amount" class="text-danger"></span>
                 </div>
             </div>
+            <div class="form-group row">
+                <label asp-for="SL" class="col-md-2 text-md-right col-form-label control-label"></label>
+                <div class="col-md-4">
+                    <input asp-for="SL" class="form-control" placeholder="0,1,2,3,4,...." />
+                    <span asp-validation-for="SL" class="text-danger"></span>
+                </div>
+            </div>
 
             <div class="form-group text-center">
                 <partial name="_Create_Back" />

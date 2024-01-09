@@ -18,7 +18,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMS.BLL", "SMS.BLL\SMS.BLL.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMS.Reports", "SMS.Reports\SMS.Reports.csproj", "{C910C73E-0504-4E89-B137-CB7C4500841A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMS.Frameworks", "SMS.Frameworks\SMS.Frameworks.csproj", "{CD5CA80C-ACB3-4F83-BCCB-83EEF3D117BD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMS.Frameworks", "SMS.Frameworks\SMS.Frameworks.csproj", "{CD5CA80C-ACB3-4F83-BCCB-83EEF3D117BD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SMS.Test", "SMS.Test", "{AF6991AA-E38A-4EAA-93DA-05598C6C2704}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

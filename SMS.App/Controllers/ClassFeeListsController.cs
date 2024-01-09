@@ -44,7 +44,7 @@ namespace SMS.App.Controllers
             ViewBag.currentSessionId = currentSession.Id;
             var result = await _classFeeListManager.GetAllAsync();
             
-            return View(result.OrderByDescending(s => s.AcademicSessionId).ThenBy(m => m.AcademicClassId).ThenBy( s=> s.StudentFeeHeadId));
+            return View(result);
         }
 
         // GET: StudentFeeLists/Details/5
@@ -69,8 +69,8 @@ namespace SMS.App.Controllers
         [Authorize(Policy = "CreateClassFeeListsPolicy")]
         public async Task<IActionResult> Create()
         {
-            
-            ViewData["StudentFeeHeadId"] = new SelectList(await _studentFeeHeadManager.GetAllAsync(), "Id", "Name");
+            var feeHeads = await _studentFeeHeadManager.GetAllAsync();
+            ViewData["StudentFeeHeadId"] = new SelectList(feeHeads.OrderBy(s => s.SL), "Id", "Name");
             ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync() , "Id", "Name");
             ViewData["AcademicSessionId"] = new SelectList(await academicSessionManager.GetAllAsync(), "Id", "Name");
             return View();
@@ -79,7 +79,7 @@ namespace SMS.App.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "CreateClassFeeListsPolicy")]
-        public async Task<IActionResult> Create([Bind("Id,StudentFeeHeadId,AcademicSessionId,Amount,AcademicClassId,CreatedBy,CreatedAt,EditedBy,EditedAt, StartDate, EndDate")] ClassFeeList classFeeList)
+        public async Task<IActionResult> Create([Bind("Id,StudentFeeHeadId,AcademicSessionId,Amount,AcademicClassId,CreatedBy,CreatedAt,EditedBy,EditedAt, StartDate, EndDate,SL")] ClassFeeList classFeeList)
         {
             string msg = "";
 
@@ -97,6 +97,8 @@ namespace SMS.App.Controllers
                 {
                     classFeeList.CreatedAt = DateTime.Now;
                     classFeeList.CreatedBy = HttpContext.Session.GetString("UserId");
+                    classFeeList.EditedAt = DateTime.Now;
+                    classFeeList.EditedBy = HttpContext.Session.GetString("UserId");
                     classFeeList.MACAddress = MACService.GetMAC();
                     bool isSaved = await _classFeeListManager.AddAsync(classFeeList);
                     if (isSaved)
@@ -107,10 +109,9 @@ namespace SMS.App.Controllers
                     return RedirectToAction(nameof(Index));
                 }
             }
-
-
+            var feeHeads = await _studentFeeHeadManager.GetAllAsync();
             ViewData["AcademicSessionId"] = new SelectList(await academicSessionManager.GetAllAsync(), "Id", "Name", classFeeList.AcademicSessionId);
-            ViewData["StudentFeeHeadId"] = new SelectList(await _studentFeeHeadManager.GetAllAsync(), "Id", "Name",classFeeList.StudentFeeHeadId);
+            ViewData["StudentFeeHeadId"] = new SelectList(feeHeads.OrderBy(s => s.SL), "Id", "Name",classFeeList.StudentFeeHeadId);
             ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", classFeeList.AcademicClassId);
 
             return View(classFeeList);
@@ -130,9 +131,9 @@ namespace SMS.App.Controllers
             {
                 return NotFound();
             }
-
+            var feeHeads = await _studentFeeHeadManager.GetAllAsync();
             ViewData["AcademicSessionId"] = new SelectList(await academicSessionManager.GetAllAsync(), "Id", "Name", classFeeList.AcademicSessionId);
-            ViewData["StudentFeeHeadId"] = new SelectList(await _studentFeeHeadManager.GetAllAsync(), "Id", "Name", classFeeList.StudentFeeHeadId);
+            ViewData["StudentFeeHeadId"] = new SelectList(feeHeads.OrderBy(s => s.SL), "Id", "Name", classFeeList.StudentFeeHeadId);
             ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", classFeeList.AcademicClassId);
             return View(classFeeList);
         }
@@ -140,16 +141,16 @@ namespace SMS.App.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "EditClassFeeListsPolicy")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,StudentFeeHeadId,AcademicSessionId,Amount,AcademicClassId,CreatedBy,CreatedAt,EditedBy,EditedAt, StartDate, EndDate")] ClassFeeList classFeeList)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,StudentFeeHeadId,AcademicSessionId,Amount,AcademicClassId,CreatedBy,CreatedAt,EditedBy,EditedAt, StartDate, EndDate,SL")] ClassFeeList classFeeList)
         {
             if (id != classFeeList.Id)
             {
                 return NotFound();
             }
 
-
+            var feeHeads = await _studentFeeHeadManager.GetAllAsync();
             ViewData["AcademicSessionId"] = new SelectList(await academicSessionManager.GetAllAsync(), "Id", "Name", classFeeList.AcademicSessionId);
-            ViewData["StudentFeeHeadId"] = new SelectList(await _studentFeeHeadManager.GetAllAsync(), "Id", "Name", classFeeList.StudentFeeHeadId);
+            ViewData["StudentFeeHeadId"] = new SelectList(feeHeads.OrderBy(s => s.SL), "Id", "Name", classFeeList.StudentFeeHeadId);
             ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", classFeeList.AcademicClassId);
 
             if (ModelState.IsValid)
@@ -157,14 +158,20 @@ namespace SMS.App.Controllers
                 try
                 {
                     var classFeeLists = await _classFeeListManager.GetAllAsync();
-                    var feeList = (from s in classFeeLists
-                                  where s.StartDate>=classFeeList.StartDate && s.EndDate<=classFeeList.EndDate && s.Id!= classFeeList.Id
-                                  select s).FirstOrDefault();
-                    if (feeList != null)
+
+                    var feeList = classFeeLists.FirstOrDefault(s => s.Id != classFeeList.Id && (s.AcademicClassId == classFeeList.AcademicClassId && s.AcademicSessionId == classFeeList.AcademicSessionId && s.StudentFeeHeadId == classFeeList.StudentFeeHeadId));
+
+                    var existingData = await _classFeeListManager.GetClassFeeListByClassIdFeeHeadIdSessionIdAsync(classFeeList.AcademicClassId, classFeeList.StudentFeeHeadId, classFeeList.AcademicSessionId);
+                    if (existingData!=null)
                     {
-                        TempData["failed"] = "Data is available on this date";
-                        return View(classFeeList);
+                        var existingSingleData = existingData.FirstOrDefault();
+                        if (existingSingleData.Id!=id)
+                        {
+                            TempData["failed"] = "This data is exist";
+                            return RedirectToAction(nameof(Edit), new {id = classFeeList.Id});
+                        }
                     }
+
                     classFeeList.EditedAt = DateTime.Now;
                     classFeeList.EditedBy = HttpContext.Session.GetString("UserId");
                     classFeeList.MACAddress = MACService.GetMAC();

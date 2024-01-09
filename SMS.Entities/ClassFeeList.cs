@@ -26,5 +26,7 @@ namespace SMS.Entities
 
         public StudentFeeHead StudentFeeHead { get; set; }
         public AcademicClass AcademicClass { get; set; }
+        [Display(Name ="Serial")]
+        public int? SL { get; set; }
     }
 }

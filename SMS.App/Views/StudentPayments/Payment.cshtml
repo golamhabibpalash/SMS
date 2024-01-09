@@ -145,7 +145,7 @@
                                 <input id="rollInput" placeholder="Input Student Roll Number" class="form-control" name="stRoll" />
                             }
                             <div class="input-group-append">
-                                <button class="btn btn-info rounded" type="submit"><i class="fas fa-search"></i> Go</button>
+                                <button class="btn btn-info rounded btn-sm" type="submit"><i class="fas fa-search"></i> Go</button>
                             </div>
                         </div>
                     </div>
@@ -209,10 +209,11 @@
             <div class="panel bg-navy-blue rounded rounded-2" style="min-height:232px;">
                 <div class="form-horizontal">
                     <form asp-action="payment" asp-controller="StudentPayments" method="post" id="studentPaymentFormId">
+                        <input type="hidden" id="academicSessionId" value="@Model.StudentPayment.Student.AcademicSessionId" />
                         <input type="hidden" asp-for="StudentPayment.StudentId" value="@Model.StudentId" />
-                        <input type="hidden" asp-for="StudentPayment.ReceiptNo"  />
-                        <input type="hidden" asp-for="StudentPayment.Id"  />
-                        <input type="hidden" asp-for="Id"   />
+                        <input type="hidden" asp-for="StudentPayment.ReceiptNo" />
+                        <input type="hidden" asp-for="StudentPayment.Id" />
+                        <input type="hidden" asp-for="Id" />
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group row pt-2">

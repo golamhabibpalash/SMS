@@ -127,7 +127,7 @@ namespace SMS.Entities
         public Gender Gender { get; set; }
         public Religion Religion { get; set; }
 
-        public string? UniqueId { get; set; }
+        public string UniqueId { get; set; }
 
         public List<Attendance> Attendances { get; set; }
         //public string LastAction { get; set; } = string.Empty;

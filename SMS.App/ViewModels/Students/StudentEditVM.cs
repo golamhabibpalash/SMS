@@ -129,9 +129,11 @@ namespace SMS.App.ViewModels.Students
         [Display(Name = "Edited By")]
         public string EditedBy { get; set; }
 
+        [Display(Name = "Unique ID")] 
+        public string UniqueId { get; set; }
+
         [Display(Name = "Edited at")]
         public DateTime EditedAt { get; set; }
-
         public List<SelectListItem> AcademicSessionList { get; set; }
         public List<SelectListItem> AcademicClassList { get; set; }
         public List<SelectListItem> AcademicSectionList { get; set; }

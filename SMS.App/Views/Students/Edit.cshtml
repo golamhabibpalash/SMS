@@ -21,6 +21,7 @@
         <form asp-action="Edit" asp-controller="Students" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="UniqueId" />
             <input type="hidden" asp-for="Status" value="@Model.Status" />
             <div class="row">
                 <div class="col-md-10 offset-md-2">

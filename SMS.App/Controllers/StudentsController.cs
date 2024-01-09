@@ -343,6 +343,7 @@ namespace SchoolManagementSystem.Controllers
 
 
                     var student = _mapper.Map<Student>(newStudent);
+                    student.UniqueId =await GenerateUniquId(student);
                     bool saveStudent = await _studentManager.AddAsync(student);
                     if (saveStudent == true)
                     {
@@ -366,7 +367,7 @@ namespace SchoolManagementSystem.Controllers
                             PhoneNumber = student.PhoneNo,
                             NormalizedUserName = student.Name,
                             UserType = 's',
-                            ReferenceId = student.Id
+                            ReferenceId = Convert.ToInt32(student.UniqueId)
                         };
 
                         const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -812,6 +813,10 @@ namespace SchoolManagementSystem.Controllers
             return paidAmount;
         }
        
+        private async Task<string> GenerateUniquId(Student student)
+        {
+            return student.UniqueId.ToString(); 
+        }
         #region APIs //All of the students related APIs will placed here
 
         [Route("api/Students/getbyclasswithsessionId")]

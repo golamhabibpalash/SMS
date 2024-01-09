@@ -266,7 +266,7 @@ namespace SMS.DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AcademicClass");
+                    b.ToTable("AcademicClass", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.AcademicClassSubject", b =>
@@ -307,7 +307,7 @@ namespace SMS.DB.Migrations
 
                     b.HasIndex("AcademicSubjectId");
 
-                    b.ToTable("AcademicClassSubjects");
+                    b.ToTable("AcademicClassSubjects", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.AcademicExam", b =>
@@ -366,7 +366,7 @@ namespace SMS.DB.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("AcademicExams");
+                    b.ToTable("AcademicExams", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.AcademicExamDetail", b =>
@@ -413,7 +413,7 @@ namespace SMS.DB.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("AcademicExamDetails");
+                    b.ToTable("AcademicExamDetails", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.AcademicExamGroup", b =>
@@ -460,7 +460,7 @@ namespace SMS.DB.Migrations
 
                     b.HasIndex("academicExamTypeId");
 
-                    b.ToTable("AcademicExamGroups");
+                    b.ToTable("AcademicExamGroups", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.AcademicExamType", b =>
@@ -498,7 +498,7 @@ namespace SMS.DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AcademicExamTypes");
+                    b.ToTable("AcademicExamTypes", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.AcademicSection", b =>
@@ -542,7 +542,7 @@ namespace SMS.DB.Migrations
 
                     b.HasIndex("AcademicSessionId");
 
-                    b.ToTable("AcademicSection");
+                    b.ToTable("AcademicSection", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.AcademicSession", b =>
@@ -580,7 +580,7 @@ namespace SMS.DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AcademicSession");
+                    b.ToTable("AcademicSession", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.AcademicSubject", b =>
@@ -642,7 +642,7 @@ namespace SMS.DB.Migrations
 
                     b.HasIndex("QuestionFormatId");
 
-                    b.ToTable("AcademicSubject");
+                    b.ToTable("AcademicSubject", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.AcademicSubjectType", b =>
@@ -676,7 +676,7 @@ namespace SMS.DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AcademicSubjectType");
+                    b.ToTable("AcademicSubjectType", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.AdditionalModels.AttendanceVM", b =>
@@ -699,7 +699,7 @@ namespace SMS.DB.Migrations
                     b.Property<string>("PunchTime")
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("AttendanceVMs");
+                    b.ToTable("AttendanceVMs", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.AdditionalModels.StudentListVM", b =>
@@ -791,7 +791,7 @@ namespace SMS.DB.Migrations
                     b.Property<decimal>("ResidentialPayment")
                         .HasColumnType("decimal(18,2)");
 
-                    b.ToTable("studentPaymentSummerySMS_VMs");
+                    b.ToTable("studentPaymentSummerySMS_VMs", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.AdditionalModels.StudentPaymentSummeryVM", b =>
@@ -802,7 +802,7 @@ namespace SMS.DB.Migrations
                     b.Property<double>("Payments")
                         .HasColumnType("float");
 
-                    b.ToTable("StudentPaymentSummeryVMs");
+                    b.ToTable("StudentPaymentSummeryVMs", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.AttachDoc", b =>
@@ -846,7 +846,7 @@ namespace SMS.DB.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("AttachDocs");
+                    b.ToTable("AttachDocs", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.Attendance", b =>
@@ -909,7 +909,7 @@ namespace SMS.DB.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("Attendances");
+                    b.ToTable("Attendances", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.BloodGroup", b =>
@@ -943,7 +943,7 @@ namespace SMS.DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BloodGroup");
+                    b.ToTable("BloodGroup", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.Chapter", b =>
@@ -982,7 +982,7 @@ namespace SMS.DB.Migrations
 
                     b.HasIndex("AcademicSubjectId");
 
-                    b.ToTable("Chapters");
+                    b.ToTable("Chapters", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.ClaimStores", b =>
@@ -1025,7 +1025,7 @@ namespace SMS.DB.Migrations
                         .IsUnique()
                         .HasFilter("[ClaimValue] IS NOT NULL AND [ClaimType] IS NOT NULL");
 
-                    b.ToTable("ClaimStores");
+                    b.ToTable("ClaimStores", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.ClassFeeList", b =>
@@ -1083,7 +1083,7 @@ namespace SMS.DB.Migrations
 
                     b.HasIndex("StudentFeeHeadId");
 
-                    b.ToTable("ClassFeeList");
+                    b.ToTable("ClassFeeList", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.Designation", b =>
@@ -1124,7 +1124,7 @@ namespace SMS.DB.Migrations
 
                     b.HasIndex("EmpTypeId");
 
-                    b.ToTable("Designation");
+                    b.ToTable("Designation", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.DesignationType", b =>
@@ -1155,7 +1155,7 @@ namespace SMS.DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DesignationType");
+                    b.ToTable("DesignationType", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.District", b =>
@@ -1194,7 +1194,7 @@ namespace SMS.DB.Migrations
 
                     b.HasIndex("DivisionId");
 
-                    b.ToTable("District");
+                    b.ToTable("District", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.Division", b =>
@@ -1228,7 +1228,7 @@ namespace SMS.DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Division");
+                    b.ToTable("Division", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.EmpType", b =>
@@ -1261,7 +1261,7 @@ namespace SMS.DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("EmpType");
+                    b.ToTable("EmpType", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.Employee", b =>
@@ -1395,7 +1395,7 @@ namespace SMS.DB.Migrations
 
                     b.HasIndex("ReligionId");
 
-                    b.ToTable("Employee");
+                    b.ToTable("Employee", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.EmployeeActivateHist", b =>
@@ -1436,7 +1436,7 @@ namespace SMS.DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("EmployeeActivateHists");
+                    b.ToTable("EmployeeActivateHists", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.ExamResult", b =>
@@ -1501,7 +1501,7 @@ namespace SMS.DB.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("ExamResults");
+                    b.ToTable("ExamResults", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.ExamResultDetail", b =>
@@ -1551,7 +1551,7 @@ namespace SMS.DB.Migrations
 
                     b.HasIndex("ExamResultId");
 
-                    b.ToTable("ExamResultDetails");
+                    b.ToTable("ExamResultDetails", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.Gender", b =>
@@ -1585,7 +1585,7 @@ namespace SMS.DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Gender");
+                    b.ToTable("Gender", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.GradingTable", b =>
@@ -1630,7 +1630,7 @@ namespace SMS.DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("GradingTables");
+                    b.ToTable("GradingTables", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.GradingTableHist", b =>
@@ -1681,7 +1681,7 @@ namespace SMS.DB.Migrations
                     b.HasIndex("AcademicExamGroupId")
                         .IsUnique();
 
-                    b.ToTable("GradingTableHists");
+                    b.ToTable("GradingTableHists", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.Institute", b =>
@@ -1754,7 +1754,7 @@ namespace SMS.DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Institute");
+                    b.ToTable("Institute", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.Nationality", b =>
@@ -1788,7 +1788,7 @@ namespace SMS.DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Nationality");
+                    b.ToTable("Nationality", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.Notification", b =>
@@ -1827,7 +1827,7 @@ namespace SMS.DB.Migrations
 
                     b.HasIndex("NotificationEventId");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("Notifications", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.NotificationEvent", b =>
@@ -1861,7 +1861,7 @@ namespace SMS.DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("NotificationEvents");
+                    b.ToTable("NotificationEvents", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.OffDay", b =>
@@ -1909,7 +1909,7 @@ namespace SMS.DB.Migrations
 
                     b.HasIndex("OffDayTypeId");
 
-                    b.ToTable("OffDays");
+                    b.ToTable("OffDays", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.OffDayType", b =>
@@ -1945,7 +1945,7 @@ namespace SMS.DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OffDayTypes");
+                    b.ToTable("OffDayTypes", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.PhoneSMS", b =>
@@ -1983,7 +1983,7 @@ namespace SMS.DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PhoneSMS");
+                    b.ToTable("PhoneSMS", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.ProjectModule", b =>
@@ -2024,7 +2024,7 @@ namespace SMS.DB.Migrations
                         .IsUnique()
                         .HasFilter("[ModuleName] IS NOT NULL");
 
-                    b.ToTable("ProjectModules");
+                    b.ToTable("ProjectModules", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.ProjectSubModule", b =>
@@ -2066,7 +2066,7 @@ namespace SMS.DB.Migrations
 
                     b.HasIndex("ProjectModuleId");
 
-                    b.ToTable("ProjectSubModules");
+                    b.ToTable("ProjectSubModules", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.Question", b =>
@@ -2108,7 +2108,7 @@ namespace SMS.DB.Migrations
 
                     b.HasIndex("ChapterId");
 
-                    b.ToTable("Questions");
+                    b.ToTable("Questions", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.QuestionDetails", b =>
@@ -2147,7 +2147,7 @@ namespace SMS.DB.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("QuestionDetails");
+                    b.ToTable("QuestionDetails", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.QuestionFormat", b =>
@@ -2186,7 +2186,7 @@ namespace SMS.DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("QuestionFormats");
+                    b.ToTable("QuestionFormats", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.Religion", b =>
@@ -2220,7 +2220,7 @@ namespace SMS.DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Religion");
+                    b.ToTable("Religion", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.RptModels.AttendanceVM.RptDailyAttendaceVM", b =>
@@ -2664,7 +2664,7 @@ namespace SMS.DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SetupMobileSMSs");
+                    b.ToTable("SetupMobileSMSs", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.Student", b =>
@@ -2833,7 +2833,7 @@ namespace SMS.DB.Migrations
                         .IsUnique()
                         .HasFilter("[UniqueId] IS NOT NULL");
 
-                    b.ToTable("Student");
+                    b.ToTable("Student", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.StudentActivateHist", b =>
@@ -2874,7 +2874,7 @@ namespace SMS.DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("StudentActivateHists");
+                    b.ToTable("StudentActivateHists", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.StudentFeeAllocation", b =>
@@ -2924,7 +2924,7 @@ namespace SMS.DB.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("StudentFeeAllocations");
+                    b.ToTable("StudentFeeAllocations", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.StudentFeeHead", b =>
@@ -2970,7 +2970,7 @@ namespace SMS.DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("StudentFeeHead");
+                    b.ToTable("StudentFeeHead", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.StudentPayment", b =>
@@ -3028,7 +3028,7 @@ namespace SMS.DB.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("StudentPayment");
+                    b.ToTable("StudentPayment", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.StudentPaymentDetails", b =>
@@ -3069,7 +3069,7 @@ namespace SMS.DB.Migrations
 
                     b.HasIndex("StudentPaymentId");
 
-                    b.ToTable("StudentPaymentDetails");
+                    b.ToTable("StudentPaymentDetails", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.SubjectEnrollment", b =>
@@ -3102,7 +3102,7 @@ namespace SMS.DB.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("SubjectEnrollments");
+                    b.ToTable("SubjectEnrollments", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.SubjectEnrollmentDetail", b =>
@@ -3148,7 +3148,7 @@ namespace SMS.DB.Migrations
 
                     b.HasIndex("SubjectEnrollmentId");
 
-                    b.ToTable("SubjectEnrollmentDetails");
+                    b.ToTable("SubjectEnrollmentDetails", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.Tran_MachineRawPunch", b =>
@@ -3184,7 +3184,7 @@ namespace SMS.DB.Migrations
 
                     b.HasKey("Tran_MachineRawPunchId");
 
-                    b.ToTable("Tran_MachineRawPunch");
+                    b.ToTable("Tran_MachineRawPunch", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.Upazila", b =>
@@ -3223,7 +3223,7 @@ namespace SMS.DB.Migrations
 
                     b.HasIndex("DistrictId");
 
-                    b.ToTable("Upazila");
+                    b.ToTable("Upazila", (string)null);
                 });
 
             modelBuilder.Entity("SMS.Entities.ApplicationUser", b =>

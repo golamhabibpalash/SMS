@@ -339,9 +339,14 @@ namespace SchoolManagementSystem.Controllers
                         }
                         newStudent.BirthCertificateImage = fileName;
                     }
+                    if (HttpContext.Session.GetString("UserId")==null)
+                    {
+                        return RedirectToAction("Login", "Accounts");
+                    }
                     newStudent.CreatedBy = HttpContext.Session.GetString("UserId");
                     newStudent.CreatedAt = DateTime.Now;
-
+                    newStudent.EditedAt = DateTime.Now;
+                    newStudent.EditedBy = HttpContext.Session.GetString("UserId");
 
                     var student = _mapper.Map<Student>(newStudent);
                     student.UniqueId =await GenerateUniquId(student);

@@ -154,10 +154,10 @@
 *@
 
 <li class="nav-group">
-    <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-calculator fa-lg"></i> Fee Management </a>
+    <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-lg fa-money-bill"></i> Financial Management </a>
     <ul class="nav-group-items">
-        <li class="nav-item">
-            <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-calculator fa-lg"></i> Fee structure configuration </a>
+        <li class="nav-item nav-group">
+            <a class="nav-link nav-group-toggle"> Fee configuration </a>
             <ul class="nav-group-items">
                 <li class="nav-item">
                     <a class="nav-link" asp-action="Index" asp-controller="ClassFeeLists">Class Fee</a>
@@ -165,27 +165,34 @@
                 <li class="nav-item">
                     <a class="nav-link" asp-action="Index" asp-controller="StudentFeeHeads">Fee Head</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="StudentFeeAllocations"> Student Fee Allocation </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-calculator fa-lg"></i> Onlinepayment gateway </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-calculator fa-lg"></i> Reminders and Notifications </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+    <ul class="nav-group-items">
+        <li class="nav-item nav-group">
+            <a class="nav-link nav-group-toggle"> Collection & Due </a>
+            <ul class="nav-group-items">
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="StudentPayments"> Fees Collection </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="DuePayment" asp-controller="StudentPayments"> Due Payments </a>
+                </li>
             </ul>
         </li>
     </ul>
     <ul class="nav-group-items">
         <li class="nav-item">
-            <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-calculator fa-lg"></i> Fee collection and tracking </a>
-        </li>
-    </ul>
-    <ul class="nav-group-items">
-        <li class="nav-item">
-            <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-calculator fa-lg"></i> Payment reminders and notifications </a>
-        </li>
-    </ul>
-    <ul class="nav-group-items">
-        <li class="nav-item">
-            <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-calculator fa-lg"></i> Online fee payment gateway integration </a>
-        </li>
-    </ul>
-    <ul class="nav-group-items">
-        <li class="nav-item">
-            <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-calculator fa-lg"></i> Fee concession and scholarship management </a>
+            <a class="nav-link nav-group-toggle"> Fee concession and scholarship management </a>
         </li>
     </ul>
 
@@ -196,28 +203,8 @@
         <li class="nav-item">
             <a class="nav-link" asp-action="Expense" asp-controller="accounts">  Expense</a>
         </li>
-        @*<li class="nav-item nav-group">
-                <a class="nav-link nav-group-toggle"> Fee Setup </a>
-                <ul class="nav-group-items">
-                    <li class="nav-item">
-                        <a class="nav-link" asp-action="Index" asp-controller="ClassFeeLists">Class Fee</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-action="Index" asp-controller="StudentFeeHeads">Fee Head</a>
-                    </li>
-                </ul>
-            </li>*@
         <li class="nav-item nav-group">
             <a class="nav-link" asp-action="Index" asp-controller="Payrolls">Payroll </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" asp-action="Index" asp-controller="StudentFeeAllocations"> Student Fee Allocation </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" asp-action="Index" asp-controller="StudentPayments"> Fees Collection </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" asp-action="DuePayment" asp-controller="StudentPayments"> Due Payments </a>
         </li>
     </ul>
 </li>
@@ -260,13 +247,6 @@
         </li>
     </ul>
 </li>
-
-
-@*@if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
-    {
-
-
-    }*@
 
 
 <li class="nav-group">

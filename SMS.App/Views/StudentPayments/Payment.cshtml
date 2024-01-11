@@ -385,7 +385,11 @@
                                                         <td class="text-right">@payDetail.PaymentAmount</td>
                                                         <td>
                                                             <span class="btn-sm">
-                                                                <i class="fas fa-file-pdf text-danger" style="font-size:12px;"></i>
+                                                                <button data-paymentid="@item.Id" data-studentName="Student Name" data-academicClass="item.Student.AcademicClass.Name" data-classRoll="item.Student.ClassRoll" data-academicSession="item.Student.AcademicSession.Name" data-paidDate="item.PaidDate.ToString()" data-receipt="payDetail.StudentPayment.ReceiptNo" data-amount="000" data-paymentType="payDetail.StudentFeeHead.Name" type="button" class="btn btn-sm modalViewId" data-toggle="modal" data-target="#exampleModalCenter" id="modalViewId_">
+                                                                    <i class="fas fa-file-pdf text-danger" style="font-size:12px;"></i>
+                                                                </button>
+
+
                                                             </span>
                                                             <span class="btn-sm">
                                                                 <button class="btn btn-sm editBtn" data-id="@payDetail.PaymentDetailId" data-receiptNo="@payDetail.Receipt" data-paidDate="@payDetail.PaidDate" data-studentFeeHeadId="@payDetail.StudentFeeHeadId" data-totalPayment="@item.Amount" data-remarks="@payDetail.PaymentRemarks" data-paymentId="@item.Id">
@@ -425,7 +429,7 @@
                             <tr>
                                 <td class="text-right"></td>
                                 <td class="text-right"></td>
-                                <td class="text-right h4"> Fianl Balance</td>
+                                <td class="text-right h4"> Final Balance</td>
                                 <td class="text-right h4 @(finalBalance>0?"text-danger":"")">@finalBalance</td>
                                 <td></td>
                             </tr>

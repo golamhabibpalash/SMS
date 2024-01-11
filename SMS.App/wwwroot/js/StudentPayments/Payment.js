@@ -58,7 +58,8 @@ $('#StudentPayment_StudentPaymentDetails_0__PaidAmount').on('input', function ()
         }
     });
 
-}); $('#StudentPayment_TotalPayment').change('input', function () {
+});
+$('#StudentPayment_TotalPayment').change('input', function () {
     var paidAmount = $(this).val();
     $('#StudentPayment_TotalPayment').val(paidAmount);
 
@@ -190,17 +191,17 @@ jQuery('#plusButton').click(function () {
 });
 /////////////////////// 1st time(Previous) created code
 //Code for waiverFor div show and hide
-jQuery('#waiverCheckId').click(function () {
-    let isChecked = $('#waiverCheckId').is(':checked');
-    if (isChecked == true) {
-        $('#waiverDivId').show();
-        $('#StudentPayment_WaiverAmount').attr('disabled', false);
-    }
-    else {
-        $('#waiverDivId').hide();
-        $('#StudentPayment_WaiverAmount').attr('disabled', true);
-    }
-});
+//jQuery('#waiverCheckId').click(function () {
+//    let isChecked = $('#waiverCheckId').is(':checked');
+//    if (isChecked == true) {
+//        $('#waiverDivId').show();
+//        $('#StudentPayment_WaiverAmount').attr('disabled', false);
+//    }
+//    else {
+//        $('#waiverDivId').hide();
+//        $('#StudentPayment_WaiverAmount').attr('disabled', true);
+//    }
+//});
 
 //Code for Attachement Enable or Disable
 jQuery('#attachmentCheckId').click(function () {
@@ -243,29 +244,29 @@ let mkdate = function (dateObject) {
 };
 
 //Modal Code for Payment Slip
-jQuery('.modalViewId').click(function () {
+//jQuery('.modalViewId').click(function () {
     
-    let receiptNo = $(this).data('receipt');
-    let getData = $(this).data('paiddate');
-    let myDate = mkdate(getData);
-    let academicClass = $(this).data('academicclass');
-    let classRoll = $(this).data('classroll');
-    let studentName = $(this).data('studentname');
-    let academicSession = $(this).data('academicsession');
-    let totalAmount = $(this).data('amount');
-    let paymentType = $(this).data('paymenttype');
-    let amountInWord = inWords($(this).data('amount'));
+//    let receiptNo = $(this).data('receipt');
+//    let getData = $(this).data('paiddate');
+//    let myDate = mkdate(getData);
+//    let academicClass = $(this).data('academicclass');
+//    let classRoll = $(this).data('classroll');
+//    let studentName = $(this).data('studentname');
+//    let academicSession = $(this).data('academicsession');
+//    let totalAmount = $(this).data('amount');
+//    let paymentType = $(this).data('paymenttype');
+//    let amountInWord = inWords($(this).data('amount'));
 
-    $('#rctReciptNo').html(receiptNo);
-    $('#rctPaymentDate').html(myDate);
-    $('#rctAcademicClass').html(academicClass);
-    $('#rctClassRoll').html(classRoll);
-    $('#rctStudentName').html(studentName);
-    $('#rctAcademicSession').html(academicSession);
-    $('#rctAmount').html(totalAmount+'Tk');
-    $('#rctPaymentType').html(paymentType);
-    $('#rctAmountInWords').html('Taka ' + amountInWord + 'Only');
-});
+//    $('#rctReciptNo').html(receiptNo);
+//    $('#rctPaymentDate').html(myDate);
+//    $('#rctAcademicClass').html(academicClass);
+//    $('#rctClassRoll').html(classRoll);
+//    $('#rctStudentName').html(studentName);
+//    $('#rctAcademicSession').html(academicSession);
+//    $('#rctAmount').html(totalAmount+'Tk');
+//    $('#rctPaymentType').html(paymentType);
+//    $('#rctAmountInWords').html('Taka ' + amountInWord + 'Only');
+//});
 
 //function GetTotalPayment(amount, howTimes) {
 //    var total = amount * howTimes;
@@ -276,7 +277,7 @@ var a = ['', 'one ', 'two ', 'three ', 'four ', 'five ', 'six ', 'seven ', 'eigh
 var b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
 
 function inWords(num) {
-    if ((num = num.toString()).length > 9) return 'overflow';
+    if ((num == num.toString()).length > 9) return 'overflow';
     n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
     if (!n) return; var str = '';
     str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'crore ' : '';

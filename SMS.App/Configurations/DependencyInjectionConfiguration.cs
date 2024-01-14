@@ -153,6 +153,9 @@ namespace SMS.App.Configurations
             services.AddScoped<IProjectSubModuleManager, ProjectSubModuleManager>();
             services.AddScoped<IProjectSubModuleRepository, ProjectSubModuleRepository>();
 
+            services.AddScoped<IApplicationSettingsManager, ApplicationSettingsManager>();
+            services.AddScoped<IApplicationSettingsRepository, ApplicationSettingsRepository>();
+
             //Reporing part start here===================================
             services.AddScoped<IReportManager, ReportManager>();
             services.AddScoped<IReportRepository, ReportRepository>();

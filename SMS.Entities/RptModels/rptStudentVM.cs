@@ -17,5 +17,6 @@
         public string SectionName { get; set; }
         public string AcademicClassId { get; set; }
         public string AcademicSectionId { get; set; }
+        public string UniqueId { get; set; }
     }
 }

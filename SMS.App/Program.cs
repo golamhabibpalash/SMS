@@ -52,18 +52,6 @@ builder.Services.AddControllers()
      options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
  );
 
-
-
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.AccessDeniedPath = new PathString("/Accounts/AccessDenied");
-    options.Cookie.Name = "Cookie";
-    options.Cookie.HttpOnly = true;
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
-    options.LoginPath = new PathString("/Accounts/Login");
-    options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
-    options.SlidingExpiration = true;
-});
 builder.Services.AddMvc(options =>
 {
     var policy = new AuthorizationPolicyBuilder()
@@ -74,12 +62,8 @@ builder.Services.AddMvc(options =>
     .AddSessionStateTempDataProvider();
 
 
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(40);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-});
+builder.Services.AddSessionConfiguration();
+ServiceExtensions.ConfigureApplicationCookie(builder.Services);
 builder.Services.AddAuthorization(options =>
 {
     AuthorizationPolicies.ConfigureAuthorization(options);

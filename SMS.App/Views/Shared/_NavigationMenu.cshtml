@@ -1,5 +1,4 @@
-﻿
-
+﻿<!-- #region Student_Management -->
 <li class="nav-group">
     <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-users fa-lg"></i> Student Management </a>
     <ul class="nav-group-items">
@@ -24,14 +23,8 @@
         </li>
     </ul>
 </li>
-
-@*Academic Management
-    Class Management
-    Section Management
-    Subject Management
-    Exam Management
-    Result Management*@
-
+<!-- #endregion Student_Management-->
+<!-- #region Academic Management -->
 <li class="nav-group">
     @*Academic Management*@
     <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-book-open fa-lg"></i> Academic Management</a>
@@ -95,22 +88,28 @@
                 </li>
             </ul>
         </li>
+
+
+        <li class="nav-item">
+            <a class="nav-link nav-group-toggle"> Question Bank </a>
+            <ul class="nav child_menu">
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="QuestionBanks"> Questions </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="QuestionFormation"> Question Formation</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="Chapters"> Chapters </a>
+                </li>
+            </ul>
+        </li>
     </ul>
 </li>
 
 
-@*Staff Management
-    Staff information
-    Attendance & Leaves
-    Payroll management
-    Performance appraisals
-    Staff allocation to courses*@
-
-
-@*@if ((User.Identity as ClaimsIdentity)?.HasClaim(c => c.Value == "IndexEmployeesPolicy" || c.Value == "DetailsEmployeesPolicy" || c.Value == "CreateEmployeesPolicy" || c.Value == "EditEmployeesPolicy" || c.Value == "DeleteEmployeesPolicy") == true)
-    {
-
-    }*@
+<!-- #endregion  Academic Management -->
+<!-- #region Staff Management -->
 <li class="nav-group">
     <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-user fa-lg"></i> Staff Management </a>
     <ul class="nav-group-items">
@@ -120,39 +119,24 @@
             <a class="nav-link" asp-action="Index" asp-controller="attendancemachines" asp-route-attendanceFor="employees" asp-route-dateTime="@DateTime.Today.ToString("yyyy-MM-dd")"> Employees Attendance</a>
         </li>
         <li class="nav-item">
-            <a href="#">Leavs</a>
+            <a class="nav-link" href="#">Leavs</a>
         </li>
+
         <li class="nav-item nav-group">
-            <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-user fa-lg"></i>Payroll Management </a>
+            <a class="nav-link nav-group-toggle">Performance appraisals </a>
             <ul class="nav-group-items">
                 <li class="nav-item">
-                    <a href="#">Payroll</a>
-                </li>
-            </ul>
-        </li>
-        <li class="nav-item nav-group">
-            <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-user fa-lg"></i>Performance appraisals </a>
-            <ul class="nav-group-items">
-                <li class="nav-item">
-                    <a href="#">Performance</a>
+                    <a class="nav-link" href="#">Employee Evaluation</a>
                 </li>
             </ul>
         </li>
         <li class="nav-item">
-            <a href="#">Staff allocation to courses</a>
+            <a class="nav-link" href="#">Staff allocation to courses</a>
         </li>
     </ul>
 </li>
-
-@*
-    Fee Management
-        Fee structure configuration
-        Fee collection and tracking
-        Payment reminders and notifications
-        Online fee payment gateway integration
-        Fee concession and scholarship management
-*@
-
+<!-- #endregion -->
+<!-- #region Financial Management -->
 <li class="nav-group">
     <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-lg fa-money-bill"></i> Financial Management </a>
     <ul class="nav-group-items">
@@ -169,10 +153,10 @@
                     <a class="nav-link" asp-action="Index" asp-controller="StudentFeeAllocations"> Student Fee Allocation </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-calculator fa-lg"></i> Onlinepayment gateway </a>
+                    <a class="nav-link nav-group-toggle"> Onlinepayment gateway </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-calculator fa-lg"></i> Reminders and Notifications </a>
+                    <a class="nav-link nav-group-toggle">Notify & Reminders</a>
                 </li>
             </ul>
         </li>
@@ -204,22 +188,21 @@
             <a class="nav-link" asp-action="Expense" asp-controller="accounts">  Expense</a>
         </li>
         <li class="nav-item nav-group">
-            <a class="nav-link" asp-action="Index" asp-controller="Payrolls">Payroll </a>
+            <a class="nav-link nav-group-toggle">Payroll Management </a>
+            <ul class="nav-group-items">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Payroll</a>
+                </li>
+            </ul>
         </li>
     </ul>
 </li>
 
-
-@*
-    Fee
-*@
-
+<!-- #endregion -->
+<!-- #region Messaging Suite -->
 <li class="nav-group">
-    <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-layer-group fa-lg"></i> Modules </a>
+    <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-comments fa-lg"></i> Messaging Suits </a>
     <ul class="nav-group-items">
-        <li class="nav-item">
-            <a class="nav-link" asp-action="" asp-controller="DutyRoster"> Duty Roster</a>
-        </li>
         <li class="nav-group">
             <a class="nav-link nav-group-toggle"> SMS Panel </a>
             <ul class="nav-group-items">
@@ -231,24 +214,41 @@
                 </li>
             </ul>
         </li>
-        <li class="nav-item">
-            <a class="nav-link nav-group-toggle"> Question Bank </a>
-            <ul class="nav child_menu">
+        <li class="nav-group">
+            <a class="nav-link nav-group-toggle"> Email Panel </a>
+            <ul class="nav-group-items">
                 <li class="nav-item">
-                    <a class="nav-link" asp-action="Index" asp-controller="QuestionBanks"> Questions </a>
+                    <a class="nav-link"> Email Create</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" asp-action="Index" asp-controller="QuestionFormation"> Question Formation</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-action="Index" asp-controller="Chapters"> Chapters </a>
+                    <a class="nav-link"> Email List</a>
                 </li>
             </ul>
         </li>
     </ul>
 </li>
-
-
+<!-- #endregion -->
+<!-- #region Time Management -->
+<li class="nav-group">
+    <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-business-time fa-lg"></i> Time Management</a>
+    <ul class="nav-group-items">
+        <li class="nav-item">
+            <a class="nav-link">Attendances</a>
+        </li>
+    </ul>
+    <ul class="nav-group-items">
+        <li class="nav-item">
+            <a class="nav-link">Class Routine</a>
+        </li>
+    </ul>
+    <ul class="nav-group-items">
+        <li class="nav-item">
+            <a class="nav-link" asp-action="" asp-controller="DutyRoster"> Duty Roster</a>
+        </li>
+    </ul>
+</li>
+<!-- #endregion -->
+<!-- #region Administration -->
 <li class="nav-group">
     <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-user-cog fa-lg"></i> Administration </a>
     <ul class="nav-group-items">
@@ -303,14 +303,8 @@
         </li>
     </ul>
 </li>
-<li class="nav-group">
-    <a class="nav-link  nav-group-toggle" asp-action="Index" asp-controller="ClassRoutine"> <i class="nav-icon fas fa-tasks"></i>  Class Routine </a>
-    @*<ul class="nav-group-items">
-            <li class="nav-group nav-item">
-                <a href="#">Routine</a>
-            </li>
-        </ul>*@
-</li>
+<!-- #endregion -->
+<!-- #region Settings -->
 <li class="nav-group">
     <a class="nav-link nav-group-toggle"><i class="nav-icon fas fa-cog"></i>   Settings </a>
     <ul class="nav-group-items">
@@ -352,9 +346,10 @@
         </li>
     </ul>
 </li>
-@*<li class="separator"></li>*@
+<!-- #endregion -->
+<!-- #region Report & Analytics -->
 <li class="nav-group">
-    <a class="nav-link nav-group-toggle"><i class="nav-icon fal fa-file-chart-line fa-lg"></i>  Reports </a>
+    <a class="nav-link nav-group-toggle"><i class="nav-icon fal fa-file-chart-line fa-lg"></i> Reports & Analytics </a>
     <ul class="nav-group-items">
         <li class="nav-item nav-group">
             <a class="nav-link nav-group-toggle"> Students </a>
@@ -414,3 +409,4 @@
         </li>
     </ul>
 </li>
+<!-- #endregion -->

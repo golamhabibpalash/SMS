@@ -127,6 +127,9 @@
         .panelPointer{
             cursor:pointer;
         }
+        .panelPointer:hover{
+            background-color:antiquewhite;
+        }
     </style>
 }
 <div class="row">
@@ -145,12 +148,12 @@
                                 <input id="rollInput" placeholder="Input Student Roll Number" class="form-control" name="stRoll" />
                             }
                             <div class="input-group-append">
-                                <button class="btn btn-info rounded btn-sm" type="submit"><i class="fas fa-search"></i> Go</button>
+                                <button class="btn btn-sm btn-info rounded" type="submit"><i class="fas fa-search"></i> Go</button>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4 text-md-left">
-                        <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal">
+                        <button type="button" class="btn btn-light btn-sm" data-toggle="modal" data-target="#exampleModal">
                             Select
                         </button>
                     </div>
@@ -206,7 +209,7 @@
             </div>
         </div>
         <div class="col-md-6 mh-100">
-            <div class="panel bg-navy-blue rounded rounded-2" style="min-height:232px;">
+            <div class="panel bg-navy-blue rounded rounded-2 " id="inputPanel" style="min-height:232px;">
                 <div class="form-horizontal">
                     <form asp-action="payment" asp-controller="StudentPayments" method="post" id="studentPaymentFormId">
                         <input type="hidden" id="academicSessionId" value="@Model.StudentPayment.Student.AcademicSessionId" />
@@ -214,6 +217,8 @@
                         <input type="hidden" asp-for="StudentPayment.ReceiptNo" />
                         <input type="hidden" asp-for="StudentPayment.Id" />
                         <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="StudentPayment.UniqueId" />
+                        <input type="hidden" asp-for="StudentPayment.StudentPaymentDetails[0].Id" />
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group row pt-2">
@@ -296,10 +301,10 @@
                     @foreach (var item in Model.PaymentItemVMs)
                     {
                         detailSl = 0;
-                        <div class="card">
-                            <div id="heading_@collapsCount" class="@(item.PaymentItemDetailVMs.Count>0?"card-header panelPointer":"card-header") " data-toggle="collapse" data-target="#collapse_@collapsCount" aria-expanded="true" aria-controls="collapse_@collapsCount">
+                        <div class="card mb-2">
+                            <div id="heading_@collapsCount" class="@(item.PaymentItemDetailVMs.Count>0?"card-header panelPointer":"card-header") p-0" data-toggle="collapse" data-target="#collapse_@collapsCount" aria-expanded="true" aria-controls="collapse_@collapsCount">
                                 <table class="table table-borderless p-0 m-0">
-                                    <thead>
+                                    @*<thead>
                                         <tr>
                                             <td style="width:5%"></td>
                                             <td style="width:35%"></td>
@@ -307,11 +312,11 @@
                                             <td style="width:10%"></td>
                                             <td style="width:10%"></td>
                                         </tr>
-                                    </thead>
+                                    </thead>*@
                                     <tbody>
                                         <tr>
-                                            <td class=" ">@collapsCount</td>
-                                            <td class="text-left">
+                                            <td class=" " style="width:5%">@collapsCount</td>
+                                            <td class="text-left" style="width:35%">
                                                 @item.ClassFeeListName
 
                                                 @if (item.PaymentItemDetailVMs.Count > 0)
@@ -319,26 +324,26 @@
                                                     <i class="fas fa-arrow-down"></i>
                                                 }
                                             </td>
-                                            <td class="text-right"> @item.Amount</td>
+                                            <td class="text-right" style="width:10%"> @item.Amount</td>
                                             @if (item.Balance <= 0)
                                             {
-                                                <td class="text-right">@item.Balance</td>
+                                                <td class="text-right" style="width:10%">@item.Balance</td>
                                             }
                                             else
                                             {
-                                                <td class="text-danger text-right">@item.Balance</td>
+                                                <td class="text-danger text-right" style="width:10%">@item.Balance</td>
                                             }
                                             @if (item.Status == "Unpaid")
                                             {
-                                                <td class="text-danger text-right">@item.Status <i class="fas fa-thumbs-down"></i></td>
+                                                <td class="text-danger text-right" style="width:10%">@item.Status <i class="fas fa-thumbs-down"></i></td>
                                             }
                                             else if (item.Status == "Partial")
                                             {
-                                                <td class="text-primary text-right">@item.Status <i class="fas fa-thumbs-down"></i></td>
+                                                <td class="text-primary text-right" style="width:10%">@item.Status <i class="fas fa-thumbs-down"></i></td>
                                             }
                                             else
                                             {
-                                                <td class="text-right text-success">@item.Status <i class="fas fa-thumbs-up"></i></td>
+                                                <td class="text-right text-success" style="width:10%">@item.Status <i class="fas fa-thumbs-up"></i></td>
                                             }
                                         </tr>
                                     </tbody>
@@ -350,8 +355,8 @@
                             @if (item.PaymentItemDetailVMs.Count > 0)
                             {
                                 <div id="collapse_@collapsCount" class="collapse" aria-labelledby="heading_@collapsCount" data-parent="#accordionExample">
-                                    <div class="well m-0">
-                                        <table class="table table-striped text-center table-bordered">
+                                    <div class="">
+                                        <table class="table table-striped text-center table-bordered table-hover">
                                             <thead class="bg-navy-blue">
                                                 <tr>
                                                     <td>#</td>
@@ -361,7 +366,7 @@
                                                     <td>Received by</td>
                                                     <td>Remarks</td>
                                                     <td class="text-right">Amount</td>
-                                                    <td>Action</td>
+                                                    <td >Action</td>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -385,19 +390,19 @@
                                                         <td class="text-right">@payDetail.PaymentAmount</td>
                                                         <td>
                                                             <span class="btn-sm">
-                                                                <button data-paymentid="@item.Id" data-studentName="Student Name" data-academicClass="item.Student.AcademicClass.Name" data-classRoll="item.Student.ClassRoll" data-academicSession="item.Student.AcademicSession.Name" data-paidDate="item.PaidDate.ToString()" data-receipt="payDetail.StudentPayment.ReceiptNo" data-amount="000" data-paymentType="payDetail.StudentFeeHead.Name" type="button" class="btn btn-sm modalViewId" data-toggle="modal" data-target="#exampleModalCenter" id="modalViewId_">
-                                                                    <i class="fas fa-file-pdf text-danger" style="font-size:12px;"></i>
+                                                                <button data-paymentid="@item.Id" data-studentName="Student Name" data-academicClass="item.Student.AcademicClass.Name" data-classRoll="item.Student.ClassRoll" data-academicSession="item.Student.AcademicSession.Name" data-paidDate="item.PaidDate.ToString()" data-receipt="payDetail.StudentPayment.ReceiptNo" data-amount="000" data-paymentType="payDetail.StudentFeeHead.Name" type="button" class="btn btn-sm modalViewId shadow rounded" data-toggle="modal" data-target="#exampleModalCenter" id="modalViewId_">
+                                                                    <i class="fas fa-print text-secondary" style="font-size:12px;"></i>
                                                                 </button>
-
-
                                                             </span>
                                                             <span class="btn-sm">
-                                                                <button class="btn btn-sm editBtn" data-id="@payDetail.PaymentDetailId" data-receiptNo="@payDetail.Receipt" data-paidDate="@payDetail.PaidDate" data-studentFeeHeadId="@payDetail.StudentFeeHeadId" data-totalPayment="@item.Amount" data-remarks="@payDetail.PaymentRemarks" data-paymentId="@item.Id">
+                                                                <button class="btn btn-sm editBtn shadow rounded" data-id="@payDetail.PaymentDetailId" data-receiptNo="@payDetail.Receipt" data-paidDate="@payDetail.PaidDate" data-studentFeeHeadId="@payDetail.StudentFeeHeadId" data-totalPayment="@item.Amount" data-remarks="@payDetail.PaymentRemarks" data-paymentId="@item.Id">
                                                                     <i class="fas fa-edit text-secondary" style="font-size:12px;"></i>
                                                                 </button>
                                                             </span>
                                                             <span class="btn-sm">
-                                                                <i class="fas fa-trash text-danger" style="font-size:12px;"></i>
+                                                                <button class="btn btn-sm shadow rounded">
+                                                                    <i class="fas fa-trash text-danger" style="font-size:12px;"></i>
+                                                                </button>
                                                             </span>
                                                         </td>
                                                     </tr>

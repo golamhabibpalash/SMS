@@ -303,14 +303,19 @@ jQuery('.editBtn').click(function () {
         dataType: 'json',
         data: { paymentDetailId: paymentDetailId },
         success: function (data) {
-            console.log(data);
+            $("#StudentPayment_StudentPaymentDetails_0__PaidAmount").focus();
+            $("#inputPanel").removeClass('bg-navy-blue').addClass('bg-warning');
+
             $('#StudentPayment_ReceiptNo').val(data.studentPayment.receiptNo);
             $('#StudentPayment_PaidDate').val(data.studentPayment.paidDate.substring(0, 10));
             $('#StudentPayment_StudentPaymentDetails_0__StudentFeeHeadId').val(data.studentFeeHeadId);
             $('#StudentPayment_StudentPaymentDetails_0__PaidAmount').val(data.paidAmount);
+            $('#StudentPayment_StudentPaymentDetails_0__Id').val(data.id);
             $('#StudentPayment_TotalPayment').val(data.studentPayment.totalPayment);
             $('#StudentPayment_Remarks').val(data.studentPayment.remarks);
             $('#StudentPayment_Id').val(data.studentPayment.id);
+
+            $('#StudentPayment_UniqueId').val(data.studentPayment.uniqueId);
             $('#Id').val(data.studentPayment.id);
             $('#submitBtn').val('Update');
 

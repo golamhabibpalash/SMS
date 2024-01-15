@@ -12,5 +12,6 @@ namespace SMS.App.ViewModels.PaymentVM
         public double Balance { get; set; }
         public string Status { get; set; } //Paid,Unpaid,Partial
         public List<PaymentItemDetailVM>    PaymentItemDetailVMs { get; set; } = new List<PaymentItemDetailVM>();
+        public string UniqueId { get; set; }
     }
 }

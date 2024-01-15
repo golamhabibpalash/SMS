@@ -21,6 +21,10 @@
           <DataField>ClassRoll</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
+        <Field Name="UniqueId">
+          <DataField>UniqueId</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="StudentName">
           <DataField>StudentName</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -176,37 +180,37 @@
                               <TablixBody>
                                 <TablixColumns>
                                   <TablixColumn>
-                                    <Width>1.50192cm</Width>
+                                    <Width>2.31946cm</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>5cm</Width>
+                                    <Width>4.23402cm</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>2.54481cm</Width>
+                                    <Width>2.52343cm</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>4.39563cm</Width>
+                                    <Width>4.74466cm</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>2.06856cm</Width>
+                                    <Width>1.81766cm</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>4.87314cm</Width>
+                                    <Width>4.85176cm</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>2.33795cm</Width>
+                                    <Width>2.31657cm</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>1.46002cm</Width>
+                                    <Width>1.43864cm</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>1.34064cm</Width>
+                                    <Width>1.31926cm</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>1.0896cm</Width>
+                                    <Width>1.06822cm</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>1.38064cm</Width>
+                                    <Width>1.35926cm</Width>
                                   </TablixColumn>
                                 </TablixColumns>
                                 <TablixRows>
@@ -222,7 +226,7 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>Roll</Value>
+                                                    <Value>UID(Roll)</Value>
                                                     <Style>
                                                       <FontFamily>helvetica</FontFamily>
                                                       <FontWeight>Bold</FontWeight>
@@ -370,10 +374,10 @@
                                                 <Color>LightGrey</Color>
                                                 <Style>Solid</Style>
                                               </Border>
-                                              <PaddingLeft>2pt</PaddingLeft>
-                                              <PaddingRight>2pt</PaddingRight>
-                                              <PaddingTop>2pt</PaddingTop>
-                                              <PaddingBottom>2pt</PaddingBottom>
+                                              <PaddingLeft>1pt</PaddingLeft>
+                                              <PaddingRight>1pt</PaddingRight>
+                                              <PaddingTop>1pt</PaddingTop>
+                                              <PaddingBottom>1pt</PaddingBottom>
                                             </Style>
                                           </Textbox>
                                         </CellContents>
@@ -593,7 +597,8 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>=Fields!ClassRoll.Value</Value>
+                                                    <Value>=Fields!UniqueId.Value &amp; "(" &amp; Right(CStr(Val(Fields!ClassRoll.Value.ToString())), 3)
+ &amp; ")"</Value>
                                                     <Style>
                                                       <FontStyle>Italic</FontStyle>
                                                       <FontFamily>helvetica</FontFamily>
@@ -733,7 +738,7 @@
                                                     <Style>
                                                       <FontStyle>Italic</FontStyle>
                                                       <FontFamily>helvetica</FontFamily>
-                                                      <FontSize>8pt</FontSize>
+                                                      <FontSize>7pt</FontSize>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
@@ -746,12 +751,13 @@
                                                 <Color>LightGrey</Color>
                                                 <Style>Solid</Style>
                                               </Border>
-                                              <PaddingLeft>2pt</PaddingLeft>
-                                              <PaddingRight>2pt</PaddingRight>
-                                              <PaddingTop>2pt</PaddingTop>
-                                              <PaddingBottom>2pt</PaddingBottom>
+                                              <PaddingLeft>1pt</PaddingLeft>
+                                              <PaddingRight>1pt</PaddingRight>
+                                              <PaddingTop>1pt</PaddingTop>
+                                              <PaddingBottom>1pt</PaddingBottom>
                                             </Style>
                                           </Textbox>
+                                          <rd:Selected>true</rd:Selected>
                                         </CellContents>
                                       </TablixCell>
                                       <TablixCell>
@@ -1008,7 +1014,6 @@
                             </Border>
                           </Style>
                         </Rectangle>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>

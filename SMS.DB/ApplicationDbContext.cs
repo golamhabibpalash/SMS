@@ -102,6 +102,7 @@ namespace SMS.DB
         public DbSet<ClaimStores> ClaimStores { get; set; }
         public DbSet<ProjectModule> ProjectModules { get; set; }
         public DbSet<ProjectSubModule> ProjectSubModules { get; set; }
+        public DbSet<ApplicationSettings> ApplicationSettings { get; set; }
 
         [NotMapped]
         public DbSet<RptStudentVM> RptStudentVMs { get; set; }
@@ -152,11 +153,11 @@ namespace SMS.DB
                 .IsUnique(true);
 
             builder.Entity<Student>()
-                .HasIndex(s => new { s.UniqueId })
+                .HasIndex(s => new { s.UniqueId, s.ClassRoll })
                 .IsUnique(true);
 
-            builder.Entity<Student>()
-                .HasIndex(s => new { s.ClassRoll })
+            builder.Entity<ApplicationSettings>()
+                .HasIndex(s => new { s.ShortName })
                 .IsUnique(true);
 
             builder.Entity<AttendanceVM>(entity => entity.HasNoKey());

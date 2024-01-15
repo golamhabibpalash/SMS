@@ -135,7 +135,7 @@ namespace SMS.App.Controllers
                 spvm.ClassFeeLists = feeList;
                 ViewBag.roll = stRoll;                
 
-                foreach (var item in feeList.Where(s => s.StudentFeeHead.IsResidential == student.IsResidential))
+                foreach (var item in feeList.Where(s => s.StudentFeeHead.IsResidential == student.IsResidential).OrderBy(s => s.SL))
                 {
                     PaymentItemVM paymentItemVM = new PaymentItemVM();
                     paymentItemVM.ClassFeeListName = item.StudentFeeHead.Name;
@@ -185,7 +185,6 @@ namespace SMS.App.Controllers
                 TempData["msg"] = "Student Not Found";
                 return RedirectToAction("Index");
             }
-            
         }
 
         [HttpPost]
@@ -211,13 +210,20 @@ namespace SMS.App.Controllers
                     {
                         paymentDetails.CreatedAt = DateTime.Now;
                         paymentDetails.CreatedBy = HttpContext.Session.GetString("UserId");
+                        
+                        paymentDetails.EditedAt = DateTime.Now;
+                        paymentDetails.EditedBy = HttpContext.Session.GetString("UserId");
+
                         paymentDetails.MACAddress = MACService.GetMAC();
                         studentPaymentDetailsObject.Add(paymentDetails);                 
                     }
                     studentPaymentObject.ReceiptNo = paymentObject.StudentPayment.ReceiptNo;
                     studentPaymentObject.CreatedAt = DateTime.Now;
                     studentPaymentObject.CreatedBy = HttpContext.Session.GetString("UserId");
+                    studentPaymentObject.EditedAt = DateTime.Now;
+                    studentPaymentObject.EditedBy = HttpContext.Session.GetString("UserId");
                     studentPaymentObject.MACAddress = MACService.GetMAC();
+
                     studentPaymentObject.StudentPaymentDetails = studentPaymentDetailsObject;
 
                     bool isSaved = await _studentPaymentManager.AddAsync(studentPaymentObject);
@@ -251,6 +257,8 @@ namespace SMS.App.Controllers
                                         sms.MobileNumber = phoneNo;
                                         sms.CreatedAt = DateTime.Now;
                                         sms.CreatedBy = HttpContext.Session.GetString("UserId");
+                                        sms.EditedAt = DateTime.Now;
+                                        sms.EditedBy = HttpContext.Session.GetString("UserId");
 
                                         await _phoneSMSManager.AddAsync(sms);
                                     }
@@ -393,25 +401,27 @@ namespace SMS.App.Controllers
             {
                 try
                 {
-                    studentPayment.EditedAt = DateTime.Now;
-                    studentPayment.EditedBy = HttpContext.Session.GetString("UserId");
-                    studentPayment.TotalPayment = studentPayment.StudentPaymentDetails.Sum(s => s.PaidAmount);
+                    StudentPayment existingStudentPayment = await _studentPaymentManager.GetByIdAsync(id);
+                    existingStudentPayment.EditedAt = DateTime.Now;
+                    existingStudentPayment.EditedBy = HttpContext.Session.GetString("UserId");
+                    existingStudentPayment.TotalPayment = studentPayment.StudentPaymentDetails.Sum(s => s.PaidAmount);
 
-                    studentPayment.MACAddress = MACService.GetMAC();
-                    foreach (var item in studentPayment.StudentPaymentDetails)
-                    {
-                        item.EditedAt = DateTime.Now;
-                        item.EditedBy = HttpContext.Session.GetString("UserId");
-                        item.MACAddress = MACService.GetMAC();
-                        item.StudentPaymentId = studentPayment.Id;
-                        item.StudentPayment = studentPayment;
-                        //bool isPaymentDetailsUpdated = await _studentPaymentDetailsManager.UpdateAsync(item);
-                    }
-                    studentPayment.Student = await _studentManager.GetByIdAsync(studentPayment.StudentId);
-
-                    bool isUpdated = await _studentPaymentManager.UpdateAsync(studentPayment);
+                    existingStudentPayment.MACAddress = MACService.GetMAC();
+                    existingStudentPayment.Student = studentPayment.Student = await _studentManager.GetByIdAsync(studentPayment.StudentId);
+                    bool isUpdated = await _studentPaymentManager.UpdateAsync(existingStudentPayment);
                     if (isUpdated)
                     {
+                        foreach (var item in studentPayment.StudentPaymentDetails)
+                        {
+                            StudentPaymentDetails existingDetails = await _studentPaymentDetailsManager.GetByIdAsync(item.Id);
+                            existingDetails.EditedAt = DateTime.Now;
+                            existingDetails.EditedBy = HttpContext.Session.GetString("UserId");
+                            existingDetails.MACAddress = MACService.GetMAC();
+                            existingDetails.StudentPaymentId = studentPayment.Id;
+                            existingDetails.PaidAmount = item.PaidAmount;
+                            existingDetails.StudentPayment = studentPayment;
+                            await _studentPaymentDetailsManager.UpdateAsync(existingDetails);
+                        }
                         TempData["updated"] = "Payment updated successfull";                        
                     }
                 }

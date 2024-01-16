@@ -405,7 +405,7 @@ namespace SMS.App.Controllers
                     existingStudentPayment.EditedAt = DateTime.Now;
                     existingStudentPayment.EditedBy = HttpContext.Session.GetString("UserId");
                     existingStudentPayment.TotalPayment = studentPayment.StudentPaymentDetails.Sum(s => s.PaidAmount);
-
+                    existingStudentPayment.PaidDate = studentPayment.PaidDate;
                     existingStudentPayment.MACAddress = MACService.GetMAC();
                     existingStudentPayment.Student = studentPayment.Student = await _studentManager.GetByIdAsync(studentPayment.StudentId);
                     bool isUpdated = await _studentPaymentManager.UpdateAsync(existingStudentPayment);

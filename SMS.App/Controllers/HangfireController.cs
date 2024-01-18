@@ -1,33 +1,17 @@
-﻿using BLL.Managers.Base;
-using Hangfire;
-using Hangfire.Common;
-using Microsoft.AspNetCore.Http;
+﻿using Hangfire;
+using Hangfire.Storage;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SMS.App.Utilities.EmailServices;
+using SMS.App.Utilities.MACIPServices;
+using SMS.App.Utilities.ShortMessageService;
 using SMS.BLL.Contracts;
 using SMS.Entities;
+using SMS.Entities.AdditionalModels;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Transactions;
 using System.Linq;
-using SMS.DB.Migrations;
-using SMS.App.ViewModels.AttendanceVM;
-using System.Net;
-using System.Net.Http;
-using SMS.App.Utilities.ShortMessageService;
-using SMS.App.Utilities.MACIPServices;
-using SMS.BLL.Managers;
-using static System.Net.Mime.MediaTypeNames;
-using SMS.Entities.AdditionalModels;
-using System.Web;
-using System.Collections;
-using Microsoft.CodeAnalysis.FlowAnalysis;
-using Hangfire.Storage;
-using System.Drawing.Imaging;
-using Microsoft.AspNetCore.Authorization;
-using System.Runtime.InteropServices.JavaScript;
-using Hangfire.Storage.Monitoring;
+using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
 {

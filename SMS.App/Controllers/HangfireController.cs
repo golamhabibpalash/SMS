@@ -704,14 +704,14 @@ namespace SMS.App.Controllers
                         var employees = await _employeeManager.GetAllAsync();
 
                         totalGirlsStudent = (from a in allCheckInAttendance
-                                             join s in students.Where(s => s.Status == true) on Convert.ToInt32(a.CardNo.Trim()) equals s.ClassRoll
+                                             join s in students.Where(s => s.Status == true) on a.CardNo.Trim() equals s.UniqueId.Trim()
                                              where s.GenderId == 2
                                              select a).Count();
 
 
 
                         totalBoysStudent = (from a in allCheckInAttendance
-                                            join s in students.Where(s => s.Status == true) on Convert.ToInt32(a.CardNo.Trim()) equals s.ClassRoll
+                                            join s in students.Where(s => s.Status == true) on a.CardNo.Trim() equals s.UniqueId.Trim()
                                             where s.GenderId == 1
                                             select a).Count();
 
@@ -719,7 +719,7 @@ namespace SMS.App.Controllers
 
 
                         totalEmployee = (from a in allCheckInAttendance
-                                         join e in employees on a.CardNo equals e.Phone.Substring(e.Phone.Length - 9)
+                                         join e in employees on a.CardNo.Trim() equals e.Id.ToString().Trim()
                                          select a).Count();
                         string msgText = string.Empty;
                         var instituteInfo = await _instituteManager.GetAllAsync();
@@ -763,6 +763,8 @@ namespace SMS.App.Controllers
                                     Text = msgText,
                                     CreatedAt = DateTime.Now,
                                     CreatedBy = "Automation",
+                                    EditedBy = "Automation",
+                                    EditedAt = DateTime.Now,
                                     MobileNumber = num,
                                     MACAddress = MACService.GetMAC(),
                                     SMSType = smsType

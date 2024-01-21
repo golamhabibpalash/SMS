@@ -311,7 +311,7 @@ namespace SMS.App.Configurations
             options.AddPolicy("ProfileStudentsPolicy", policy => policy.RequireClaim("View Student Profile"));
 
             //Student Enrollment
-            options.AddPolicy("SubjectEnrollSubjectEnrollmentPolicy", policy => policy.RequireClaim("View Student List"));
+            options.AddPolicy("SubjectEnrollSubjectEnrollmentPolicy", policy => policy.RequireClaim("View Enrollment List"));
             options.AddPolicy("SetOptionalSubjectSubjectEnrollmentPolicy", policy => policy.RequireClaim("Update Optional Subject"));
 
             //Upazila

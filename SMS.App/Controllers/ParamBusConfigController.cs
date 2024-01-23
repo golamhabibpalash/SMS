@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SchoolManagementSystem;
@@ -14,6 +15,7 @@ using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
 {
+    [Authorize(Roles = "SuperAdmin, Admin")]
     public class ParamBusConfigController : Controller
     {
         private readonly IParamBusConfigManager _paramBusConfigManager;
@@ -24,6 +26,7 @@ namespace SMS.App.Controllers
             _mapper = mapper;
         }
 
+        [Authorize(Policy = "IndexParamBusConfigPolicy")]
         public async Task<IActionResult> Index()
         {
             GlobalUI.PageTitle = "Configure Parameter";
@@ -32,20 +35,9 @@ namespace SMS.App.Controllers
             paramBusConfigVM.ParamBusConfigs = (IList<ParamBusConfig>)configs;
             return View(paramBusConfigVM);
         }
-        public IActionResult UpSert(int? id = 0)
-        {
-            if (id!=null || id>0)
-            {
-                GlobalUI.PageTitle = "Update Configure Parameter";
-            }
-            else
-            {
-                GlobalUI.PageTitle = "Create Configure Parameter";
-            }
-            
-            return View();
-        }
+        
         [HttpPost]
+        [Authorize(Policy = "UpSertParamBusConfigPolicy")]
         public async Task<IActionResult> UpSert(ParamBusConfig paramBusConfig)
         {
             if (paramBusConfig.Id>0)
@@ -70,7 +62,6 @@ namespace SMS.App.Controllers
                 }
                 catch (Exception)
                 {
-
                     TempData["failed"] = "Exception! Fail to update";
                 }
             }

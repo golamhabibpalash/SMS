@@ -29,13 +29,14 @@ namespace SMS.DB
         public DbSet<AcademicSubject> AcademicSubject { get; set; }
         public DbSet<AcademicClassSubject> AcademicClassSubjects { get; set; }
         public DbSet<AcademicSubjectType> AcademicSubjectType { get; set; }
-        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
-        public DbSet<AttachDoc> AttachDocs { get; set; }
-        public DbSet<Attendance> Attendances { get; set; }
         public DbSet<AcademicExamType> AcademicExamTypes { get; set; }
         public DbSet<AcademicExam> AcademicExams { get; set; }
         public DbSet<AcademicExamGroup> AcademicExamGroups { get; set; }
         public DbSet<AcademicExamDetail> AcademicExamDetails { get; set; }
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<ApplicationSettings> ApplicationSettings { get; set; }
+        public DbSet<AttachDoc> AttachDocs { get; set; }
+        public DbSet<Attendance> Attendances { get; set; }
         #endregion
 
         #region B
@@ -45,6 +46,7 @@ namespace SMS.DB
         #region C
         public DbSet<ClassFeeList> ClassFeeList { get; set; }
         public DbSet<Chapter> Chapters { get; set; }
+        public DbSet<ClaimStores> ClaimStores { get; set; }
         #endregion
 
         #region D
@@ -56,7 +58,10 @@ namespace SMS.DB
 
         #region E
         public DbSet<Employee> Employee { get; set; }
+        public DbSet<EmployeeActivateHist> EmployeeActivateHists { get; set; }
         public DbSet<EmpType> EmpType { get; set; }
+        public DbSet<ExamResult> ExamResults { get; set; }
+        public DbSet<ExamResultDetail> ExamResultDetails { get; set; }
         #endregion
 
         #region F
@@ -64,45 +69,63 @@ namespace SMS.DB
 
         #region G
         public DbSet<Gender> Gender { get; set; }
+        public DbSet<GradingTable> GradingTables { get; set; }
+        public DbSet<GradingTableHist> GradingTableHists { get; set; }
         #endregion
 
         #region I
         public DbSet<Institute> Institute { get; set; }
         #endregion
 
+        #region N
+        public DbSet<Nationality> Nationality { get; set; }
+        public DbSet<NotificationEvent> NotificationEvents { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        #endregion
+
+        #region O
+        public DbSet<OffDay> OffDays { get; set; }
+        public DbSet<OffDayType> OffDayTypes { get; set; }
+        #endregion
+
+        #region P
+        public DbSet<ParamBusConfig> ParamBusConfigs { get; set; }
+        public DbSet<PhoneSMS> PhoneSMS { get; set; }
+        public DbSet<ProjectModule> ProjectModules { get; set; }
+        public DbSet<ProjectSubModule> ProjectSubModules { get; set; }
+        #endregion
+
+        #region Q
+        public DbSet<QuestionFormat> QuestionFormats { get; set; }
+        public DbSet<QuestionDetails> QuestionDetails { get; set; }
+        public DbSet<Question> Questions { get; set; }
+        #endregion
+
+        #region R
+        public DbSet<Religion> Religion { get; set; }
+        #endregion
+
         #region S
+        public DbSet<SetupMobileSMS> SetupMobileSMSs { get; set; }
         public DbSet<Student> Student { get; set; }
         public DbSet<StudentFeeHead> StudentFeeHead { get; set; }
         public DbSet<StudentPayment> StudentPayment { get; set; }
         public DbSet<StudentPaymentDetails> StudentPaymentDetails { get; set; }
         public DbSet<StudentActivateHist> StudentActivateHists { get; set; }
-        #endregion
-
-        public DbSet<Nationality> Nationality { get; set; }
-        public DbSet<Religion> Religion { get; set; }
-        public DbSet<Upazila> Upazila { get; set; }
-        public DbSet<PhoneSMS> PhoneSMS { get; set; }
-        public DbSet<Tran_MachineRawPunch> Tran_MachineRawPunch { get; set; }
-        public DbSet<Question> Questions { get; set; }
-        public DbSet<QuestionDetails> QuestionDetails { get; set; }
-        public DbSet<QuestionFormat> QuestionFormats { get; set; }
-        public DbSet<EmployeeActivateHist> EmployeeActivateHists { get; set; }
-        public DbSet<SetupMobileSMS> SetupMobileSMSs { get; set; }
-        public DbSet<OffDay> OffDays { get; set; }
-        public DbSet<OffDayType> OffDayTypes { get; set; }
-        public DbSet<ExamResult> ExamResults { get; set; }
-        public DbSet<ExamResultDetail> ExamResultDetails { get; set; }
-        public DbSet<GradingTable> GradingTables { get; set; }
         public DbSet<StudentFeeAllocation> StudentFeeAllocations { get; set; }
-        public DbSet<NotificationEvent> NotificationEvents { get; set; }
-        public DbSet<Notification> Notifications { get; set; }
         public DbSet<SubjectEnrollment> SubjectEnrollments { get; set; }
         public DbSet<SubjectEnrollmentDetail> SubjectEnrollmentDetails { get; set; }
-        public DbSet<GradingTableHist> GradingTableHists { get; set; }
-        public DbSet<ClaimStores> ClaimStores { get; set; }
-        public DbSet<ProjectModule> ProjectModules { get; set; }
-        public DbSet<ProjectSubModule> ProjectSubModules { get; set; }
-        public DbSet<ApplicationSettings> ApplicationSettings { get; set; }
+        #endregion
+
+        #region T
+        public DbSet<Tran_MachineRawPunch> Tran_MachineRawPunch { get; set; }
+        #endregion
+
+        #region U
+        public DbSet<Upazila> Upazila { get; set; }
+        #endregion
+
+        
 
         [NotMapped]
         public DbSet<RptStudentVM> RptStudentVMs { get; set; }
@@ -160,6 +183,14 @@ namespace SMS.DB
                 .HasIndex(s => new { s.ShortName })
                 .IsUnique(true);
 
+            builder.Entity<GradingTableHist>()
+                .HasIndex(s => s.AcademicExamGroupId)
+                .IsUnique();
+
+            builder.Entity<ParamBusConfig>()
+                .HasIndex(s => new { s.ParamSL, s.ConfigName })
+                .IsUnique();
+
             builder.Entity<AttendanceVM>(entity => entity.HasNoKey());
             builder.Entity<StudentPaymentSummeryVM>(entity => entity.HasNoKey());
             builder.Entity<StudentPaymentSummerySMS_VM>(entity => entity.HasNoKey());
@@ -175,7 +206,6 @@ namespace SMS.DB
             builder.Entity<SubjectWiseMarkSheetVM>().ToView(nameof(SubjectWiseMarkSheetVMs)).HasNoKey();
             builder.Entity<StudentWiseMarkSheetVM>().ToView(nameof(StudentWiseMarkSheetVMs)).HasNoKey();
 
-            builder.Entity<GradingTableHist>().HasIndex(s => s.AcademicExamGroupId).IsUnique();
         }        
     }
 }

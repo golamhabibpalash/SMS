@@ -30,6 +30,10 @@ namespace SMS.BLL.Managers
         {
             return await studentRepository.GetStudentByClassRollAsync(classRoll);
         }
+        public async Task<Student> GetStudentByUniqueIdAsync(string uniqueId)
+        {
+            return await studentRepository.GetStudentByUniqueIdAsync(uniqueId);
+        }
 
         public async Task<Student> GetStudentByClassRollAsync(int id, int classRoll)
         {

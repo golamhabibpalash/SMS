@@ -80,6 +80,15 @@ namespace SMS.DAL.Repositories
                 .FirstOrDefaultAsync(s => s.ClassRoll == classRoll);
             return student;
         }
+        public async Task<Student> GetStudentByUniqueIdAsync(string uniqueId)
+        {
+            var student = await _context.Student
+                .Include(s => s.AcademicClass)
+                .Include(s => s.AcademicSession)
+                .Include(s => s.AcademicSection)
+                .FirstOrDefaultAsync(s => s.UniqueId == uniqueId);
+            return student;
+        }
 
         public async Task<Student> GetStudentByClassRollAsync(int id, int classRoll)
         {

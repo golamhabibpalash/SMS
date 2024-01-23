@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using SMS.App.ViewModels.ClaimContext;
+using SMS.App.ViewModels.ConfigureVM;
 using SMS.App.ViewModels.Employees;
 using SMS.App.ViewModels.ExamVM;
 using SMS.App.ViewModels.ModuleSubModuleVM;
@@ -49,7 +50,6 @@ namespace SMS.App.Utilities.AutoMapperConfiguration
 
             CreateMap<ClaimStores, ClaimStoreVM>();
             CreateMap<ClaimStoreVM, ClaimStores>();
-
 
         }
     }

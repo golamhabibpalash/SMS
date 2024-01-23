@@ -14,10 +14,12 @@ namespace SMS.DAL.Contracts
 
         Task<Tran_MachineRawPunch> GetTodaysAttendanceByUserIdAsync(int attendanceId);
         Task<List<Tran_MachineRawPunch>> GetCheckinDataByDateAsync(string date);
+        Task<List<Tran_MachineRawPunch>> GetEmpCheckinDataByDateAsync(string date);
         Task<List<Tran_MachineRawPunch>> GetCheckOutDataByDateAsync(string date);
         Task<List<Student>> GetTodaysAbsentStudentAsync(string date);
         Task<List<Tran_MachineRawPunch>> GetAttendanceByDateRangeAsync(string StartDate, string EndDate);
         Task<List<Employee>> GetTodaysAbsentEmployeeAsync(string date);
         Task<List<Tran_MachineRawPunch>> GetAttendanceByMonthSingleStudent(int studentId, int monthId);
+
     }
 }

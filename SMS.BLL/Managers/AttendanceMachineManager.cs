@@ -55,6 +55,16 @@ namespace SMS.BLL.Managers
             }
             return allCheckInAttendnace;
         }
+        public async Task<List<Tran_MachineRawPunch>> GetEmpCheckinDataByDateAsync(string date)
+        {
+            List<Tran_MachineRawPunch> allCheckInAttendnace = new List<Tran_MachineRawPunch>();
+            var result =await _attendanceMachineRepository.GetEmpCheckinDataByDateAsync(date);
+            if (result.Count>0)
+            {
+                allCheckInAttendnace = result;
+            }
+            return allCheckInAttendnace;
+        }
 
         public async Task<List<Tran_MachineRawPunch>> GetCheckOutDataByDateAsync(string date)
         {

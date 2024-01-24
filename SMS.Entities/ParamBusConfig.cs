@@ -16,3 +16,6 @@
 //4 Checkout TIme Stop
 //5 Break Time Start
 //6 Break Time Stop
+//7 Attendance Summery SMS Time
+//8 Absent Student Notification Time
+//9 Daily Collection Summery SMS Notification Time

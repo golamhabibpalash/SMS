@@ -10,5 +10,6 @@ namespace SMS.BLL.Contracts
 {
     public interface IParamBusConfigManager:IManager<ParamBusConfig>
     {
+        Task<ParamBusConfig> GetByParamSL(int paramSL);
     }
 }

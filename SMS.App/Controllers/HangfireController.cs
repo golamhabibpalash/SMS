@@ -20,7 +20,6 @@ namespace SMS.App.Controllers
     [Authorize]
     public class HangfireController : ControllerBase
     {
-
         private readonly IStudentManager _studentManager;
         private readonly IAttendanceMachineManager _attendanceMachineManager;
         private readonly IEmployeeManager _employeeManager;
@@ -29,10 +28,11 @@ namespace SMS.App.Controllers
         private readonly IOffDayManager _offDayManager;
         private readonly IInstituteManager _instituteManager;
         private readonly IStudentPaymentManager _studentPaymentManager;
+        private readonly IParamBusConfigManager _paramBusConfigManager;
         
 
         #region Constructor Start =================================================
-        public HangfireController(IStudentManager studentManager, IAttendanceMachineManager attendanceMachineManager, IEmployeeManager employeeManager, IPhoneSMSManager phoneSMSManager, ISetupMobileSMSManager setupMobileSMSManager, IOffDayManager offDayManager, IInstituteManager instituteManager, IStudentPaymentManager studentPaymentManager)
+        public HangfireController(IStudentManager studentManager, IAttendanceMachineManager attendanceMachineManager, IEmployeeManager employeeManager, IPhoneSMSManager phoneSMSManager, ISetupMobileSMSManager setupMobileSMSManager, IOffDayManager offDayManager, IInstituteManager instituteManager, IStudentPaymentManager studentPaymentManager, IParamBusConfigManager paramBusConfigManager)
         {
             _studentManager = studentManager;
             _attendanceMachineManager = attendanceMachineManager;
@@ -42,6 +42,7 @@ namespace SMS.App.Controllers
             _offDayManager = offDayManager;
             _instituteManager = instituteManager;
             _studentPaymentManager = studentPaymentManager;
+            _paramBusConfigManager = paramBusConfigManager;
         }
         #endregion Constructor Finished xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxX
 
@@ -76,35 +77,57 @@ namespace SMS.App.Controllers
             {
                 if (setupMobileSMS.CheckInSMSSummary == true)
                 {
-                    int smsTimeHr = startTimeHr + 1;
-                    var cronEx = "5 " + smsTimeHr + " * * 6-4";
+                    var smsTime = await _paramBusConfigManager.GetByParamSL(7);
+
+                    var finalTimeHr = smsTime?.ParamValue.Substring(0, smsTime.ParamValue.IndexOf(':')) ?? (startTimeHr + 1).ToString();
+                    var finalTimeMn = smsTime?.ParamValue.Substring(smsTime.ParamValue.IndexOf(':'),smsTime.ParamValue.Length) ?? (startTimeMn + 5).ToString();
+
+                    var cronEx = $"{finalTimeMn} {finalTimeHr} * * 6-4";
                     RecurringJob.AddOrUpdate(() => SMSSendDailyAttendanceSummary(), cronEx);
                     //At 11:05 AM, Saturday through Thursday
                 }
                 if (setupMobileSMS.CheckInSMSService == true)
                 {
-                    int smsStartTime = startTimeHr - 1;
-                    int smsEndTime = startTimeHr + 1;
-                    RecurringJob.AddOrUpdate(() => SendCheckInSMS(), "*/10 "+smsStartTime+"-"+smsEndTime+" * * 6-4", TimeZoneInfo.Local);
+                    var smsStartTime = await _paramBusConfigManager.GetByParamSL(1);
+                    var smsEndStop = await _paramBusConfigManager.GetByParamSL(2);
+
+                    var smsStartTimeHr = smsStartTime?.ParamValue.Substring(0, smsStartTime.ParamValue.IndexOf(':')) ?? (startTimeHr - 1).ToString();
+                    var smsStartTimeMn = smsStartTime?.ParamValue.Substring(smsStartTime.ParamValue.IndexOf(':'), smsStartTime.ParamValue.Length) ?? (startTimeHr - 1).ToString();
+                    var smsEndTimeHr = smsEndStop?.ParamValue.Substring(0, smsStartTime.ParamValue.IndexOf(':')) ?? (startTimeHr + 1).ToString();
+                    var cronEx = $"*/10 {smsStartTimeHr}-{smsEndTimeHr} * * 6-4";
+                    RecurringJob.AddOrUpdate(() => SendCheckInSMS(), cronEx, TimeZoneInfo.Local);
                     //Every 10 minutes, between 08:00 AM and 09:59 AM, Saturday through Thursday
                 } 
 
                 if (setupMobileSMS.CheckOutSMSService == true)
                 {
+                    var checkOutStartTime = await _paramBusConfigManager.GetByParamSL(3);
+                    var checkOutEndTime = await _paramBusConfigManager.GetByParamSL(4);
+
                     int smsStartTime = (startTimeHr + instituteEndHr)/2;
+                    var smsStartTimeHr = checkOutStartTime?.ParamValue.Substring(0, checkOutStartTime.ParamValue.IndexOf(':')) ?? smsStartTime.ToString();
                     int smsEndTime = instituteEndHr + 1;
-                    RecurringJob.AddOrUpdate(() => SendCheckOutSMS(), "*/10 "+smsStartTime+"-"+smsEndTime+" * * 6-4", TimeZoneInfo.Local);
+                    var smsEndTimeHr = checkOutEndTime?.ParamValue.Substring(0, checkOutEndTime.ParamValue.IndexOf(':')) ?? smsEndTime.ToString();
+                    var cron = $"*/10 {smsStartTimeHr}-{smsEndTimeHr} * * 6-4";
+                    RecurringJob.AddOrUpdate(() => SendCheckOutSMS(), cron, TimeZoneInfo.Local);
                     //Every 10 minutes, between 12:00 PM and 03:59 PM, Saturday through Thursday
                 }
                 if (setupMobileSMS.AbsentNotification == true)
                 {
+                    var absentStudentNotifiactionTime = await _paramBusConfigManager.GetByParamSL(8);
                     int smsTimeHr = startTimeHr + 2;
-                    RecurringJob.AddOrUpdate(() => SendAbsentNotificationSMS(), "1 0 "+smsTimeHr+" * * 6-4", TimeZoneInfo.Local);
+                    var notificationTimeHr = absentStudentNotifiactionTime?.ParamValue.Substring(0, absentStudentNotifiactionTime.ParamValue.IndexOf(':')) ?? smsTimeHr.ToString();
+                    var cron = "1 0 " + notificationTimeHr + " * * 6-4";
+                    RecurringJob.AddOrUpdate(() => SendAbsentNotificationSMS(), cron, TimeZoneInfo.Local);
                     //At 10:00:01 AM, Saturday through Thursday
                 }
                 if (setupMobileSMS.DailyCollectionSMSService==true)
                 {
-                    RecurringJob.AddOrUpdate(() => SendDailyCollectionSMS(), "1 0 18 * * 1-4,6-7", TimeZoneInfo.Local);
+                    var dailyCollectionSummmeryNotificationTime = await _paramBusConfigManager.GetByParamSL(9);
+                    var smsTimeHr = "18";
+                    var notificationTimeHr = dailyCollectionSummmeryNotificationTime?.ParamValue.Substring(0, dailyCollectionSummmeryNotificationTime.ParamValue.IndexOf(':')) ?? smsTimeHr.ToString();
+                    var cron = $"1 {notificationTimeHr} * * 6-4";
+                    RecurringJob.AddOrUpdate(() => SendDailyCollectionSMS(), cron, TimeZoneInfo.Local);
                     //At 6:00 pm, saturday through Thursday
                     //0 18 ? *SUN,MON,TUE,WED,THU,SAT *
                 }

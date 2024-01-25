@@ -62,7 +62,6 @@ namespace SMS.App.Controllers
             var instituteEndHr = instituteCloseTime.Hour;
             var instituteEndMn = instituteCloseTime.Minute;
 
-
             var lateTimeHr = instituteLateTime.Hour;
             var lateTimeMn = instituteLateTime.Minute;
 
@@ -98,7 +97,6 @@ namespace SMS.App.Controllers
                     RecurringJob.AddOrUpdate(() => SendCheckInSMS(), cronEx, TimeZoneInfo.Local);
                     //Every 10 minutes, between 08:00 AM and 09:59 AM, Saturday through Thursday
                 } 
-
                 if (setupMobileSMS.CheckOutSMSService == true)
                 {
                     var checkOutStartTime = await _paramBusConfigManager.GetByParamSL(3);
@@ -121,8 +119,7 @@ namespace SMS.App.Controllers
                     RecurringJob.AddOrUpdate(() => SendAbsentNotificationSMS(), cron, TimeZoneInfo.Local);
                     //At 10:00:01 AM, Saturday through Thursday
                 }
-            }
-            
+            }            
             return RedirectToAction("SMSControl", "Setup");
         }
 

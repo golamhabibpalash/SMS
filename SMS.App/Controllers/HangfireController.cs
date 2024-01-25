@@ -121,21 +121,27 @@ namespace SMS.App.Controllers
                     RecurringJob.AddOrUpdate(() => SendAbsentNotificationSMS(), cron, TimeZoneInfo.Local);
                     //At 10:00:01 AM, Saturday through Thursday
                 }
-                if (setupMobileSMS.DailyCollectionSMSService==true)
-                {
-                    var dailyCollectionSummmeryNotificationTime = await _paramBusConfigManager.GetByParamSL(9);
-                    var smsTimeHr = "18";
-                    var notificationTimeHr = dailyCollectionSummmeryNotificationTime?.ParamValue.Substring(0, dailyCollectionSummmeryNotificationTime.ParamValue.IndexOf(':')) ?? smsTimeHr.ToString();
-                    var cron = $"1 {notificationTimeHr} * * 6-4";
-                    RecurringJob.AddOrUpdate(() => SendDailyCollectionSMS(), cron, TimeZoneInfo.Local);
-                    //At 6:00 pm, saturday through Thursday
-                    //0 18 ? *SUN,MON,TUE,WED,THU,SAT *
-                }
             }
             
             return RedirectToAction("SMSControl", "Setup");
         }
 
+        public async Task<IActionResult> PaymentBackgroundJob()
+        {
+            SetupMobileSMS setupMobileSMS = await _setupMobileSMSManager.GetByIdAsync(1);
+
+            if (setupMobileSMS.DailyCollectionSMSService == true)
+            {
+                var dailyCollectionSummmeryNotificationTime = await _paramBusConfigManager.GetByParamSL(9);
+                var smsTimeHr = "18";
+                var notificationTimeHr = dailyCollectionSummmeryNotificationTime?.ParamValue.Substring(0, dailyCollectionSummmeryNotificationTime.ParamValue.IndexOf(':')) ?? smsTimeHr.ToString();
+                var cron = $"1 {notificationTimeHr} * * 6-4";
+                RecurringJob.AddOrUpdate(() => SendDailyCollectionSMS(), cron, TimeZoneInfo.Local);
+                //At 6:00 pm, saturday through Thursday
+                //0 18 ? *SUN,MON,TUE,WED,THU,SAT *
+            }
+            return Ok();
+        }
         #region CheckIn SMS Section Start===========================================
         public async Task<string> SendCheckInSMS()
         {

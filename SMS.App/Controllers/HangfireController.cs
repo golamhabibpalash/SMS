@@ -747,7 +747,7 @@ namespace SMS.App.Controllers
                         string toEmailString = await _paramBusConfigManager.GetValueByParamSL(11);
                         if (toEmailString!=null)
                         {
-                            string[] toEmail = toEmailString.Split(':');
+                            string[] toEmail = toEmailString.Split(',');
                             string emailSubject = "Todays attended report summary";
                             string mailBody = msgText;
                             int i = 0;
@@ -762,7 +762,7 @@ namespace SMS.App.Controllers
                         string phoneNumberString = await _paramBusConfigManager.GetValueByParamSL(10);
                         if (phoneNumberString!=null)
                         {
-                            string[] phoneNumber = phoneNumberString.Split(':');
+                            string[] phoneNumber = phoneNumberString.Split(',');
                             string smsType = "CheckIn Summary";
                             if (phoneNumber.Length > 0)
                             {

@@ -77,6 +77,12 @@ namespace SMS.App.Controllers
             
             return View();
         }
+        [HttpGet]
+        public async Task<IActionResult> PaymentNew()
+        {
+            return View();
+        }
+
 
         [HttpGet]
         [Authorize(Policy = "PaymentStudentPaymentsPolicy")]
@@ -92,7 +98,10 @@ namespace SMS.App.Controllers
             StudentPaymentVM spvm = new ();
             var inst = await _instituteManager.GetFirstOrDefaultAsync();
             ViewBag.InstituteName = inst.Name;
-            var student = await _studentManager.GetStudentByClassRollAsync((int)stRoll);
+            var stu = await _studentManager.GetStudentByClassRollAsync((int)stRoll);
+            try
+            {
+            var student = await _studentManager.GetStudentByUniqueIdAsync(stu.UniqueId);
             if (student!=null)
             {
                 StudentPayment sp = new();
@@ -184,6 +193,12 @@ namespace SMS.App.Controllers
             {
                 TempData["msg"] = "Student Not Found";
                 return RedirectToAction("Index");
+            }
+
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
 

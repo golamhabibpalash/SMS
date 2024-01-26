@@ -17,6 +17,5 @@ namespace SMS.DAL.Contracts
         Task<List<Student>> GetStudentsByClassIdAndSessionIdAsync(int sessionId, int classId);
         Task<List<Student>> GetStudentsByClassSessionSectionAsync(int sessionId, int classId, int sectionId);
         Task<List<StudentListVM>> GetCurrentStudentListAsync(int? AcademicClassId, int? AcademicSectionId);
-        Task<Student> GetStudentByUniqueIdAsync(string uniqueId);
     }
 }

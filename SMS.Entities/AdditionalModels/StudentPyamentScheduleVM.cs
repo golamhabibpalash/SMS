@@ -10,7 +10,7 @@ namespace SMS.Entities.AdditionalModels
     {
         public string PaymentType { get; set; }
         public double Amount { get; set; }
-        public int? yearlyFrequency { get; set; }
+        public int yearlyFrequency { get; set; } = 0;
         public bool IsResidential { get; set; }
     }
 }

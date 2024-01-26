@@ -29,7 +29,6 @@ namespace SMS.App.Controllers
         private readonly IInstituteManager _instituteManager;
         private readonly IStudentPaymentManager _studentPaymentManager;
         private readonly IParamBusConfigManager _paramBusConfigManager;
-        
 
         #region Constructor Start =================================================
         public HangfireController(IStudentManager studentManager, IAttendanceMachineManager attendanceMachineManager, IEmployeeManager employeeManager, IPhoneSMSManager phoneSMSManager, ISetupMobileSMSManager setupMobileSMSManager, IOffDayManager offDayManager, IInstituteManager instituteManager, IStudentPaymentManager studentPaymentManager, IParamBusConfigManager paramBusConfigManager)
@@ -81,7 +80,7 @@ namespace SMS.App.Controllers
                     var finalTimeHr = smsTime?.ParamValue.Substring(0, smsTime.ParamValue.IndexOf(':')) ?? (startTimeHr + 1).ToString();
                     var finalTimeMn = smsTime?.ParamValue.Substring(smsTime.ParamValue.IndexOf(':'),smsTime.ParamValue.Length) ?? (startTimeMn + 5).ToString();
 
-                    var cronEx = $"{finalTimeMn} {finalTimeHr} * * 6-4";
+                    var cronEx = $"{finalTimeMn} {finalTimeHr} * * 0-4,6";
                     RecurringJob.AddOrUpdate(() => SMSSendDailyAttendanceSummary(), cronEx);
                     //At 11:05 AM, Saturday through Thursday
                 }
@@ -115,7 +114,8 @@ namespace SMS.App.Controllers
                     var absentStudentNotifiactionTime = await _paramBusConfigManager.GetByParamSL(8);
                     int smsTimeHr = startTimeHr + 2;
                     var notificationTimeHr = absentStudentNotifiactionTime?.ParamValue.Substring(0, absentStudentNotifiactionTime.ParamValue.IndexOf(':')) ?? smsTimeHr.ToString();
-                    var cron = "1 0 " + notificationTimeHr + " * * 6-4";
+                    var notificationTimeMn = absentStudentNotifiactionTime?.ParamValue.Substring(absentStudentNotifiactionTime.ParamValue.IndexOf(':'), absentStudentNotifiactionTime.ParamValue.Length) ?? "1";
+                    var cron = $"{notificationTimeMn} {notificationTimeHr} * * 0-4,6";
                     RecurringJob.AddOrUpdate(() => SendAbsentNotificationSMS(), cron, TimeZoneInfo.Local);
                     //At 10:00:01 AM, Saturday through Thursday
                 }
@@ -707,8 +707,6 @@ namespace SMS.App.Controllers
                 int totalStudent = 0;
                 int totalGirlsStudent = 0;
                 int totalBoysStudent = 0;
-
-
                 try
                 {
                     DateTime tDate = DateTime.Today;
@@ -723,15 +721,12 @@ namespace SMS.App.Controllers
                                              where s.GenderId == 2
                                              select a).Count();
 
-
-
                         totalBoysStudent = (from a in allCheckInAttendance
                                             join s in students.Where(s => s.Status == true) on a.CardNo.Trim() equals s.UniqueId.Trim()
                                             where s.GenderId == 1
                                             select a).Count();
 
                         totalStudent = totalBoysStudent + totalGirlsStudent;
-
 
                         totalEmployee = (from a in allCheckInAttendance
                                          join e in employees on a.CardNo.Trim() equals e.Id.ToString().Trim()
@@ -749,48 +744,58 @@ namespace SMS.App.Controllers
                         }
 
                         //Email Send
-                        string[] toEmail = { "golamhabibpalash@gmail.com", instituteInfo.FirstOrDefault().Email };
-                        //string toEmail = "golamhabibpalash@gmail.com";
-                        string emailSubject = "Todays attended report summary";
-                        string mailBody = msgText;
-                        int i = 0;
-                        foreach (var item in toEmail)
+                        string toEmailString = await _paramBusConfigManager.GetValueByParamSL(11);
+                        if (toEmailString!=null)
                         {
-                            EmailService.SendEmail(toEmail[i], emailSubject, mailBody);
-                            i++;
+                            string[] toEmail = toEmailString.Split(':');
+                            string emailSubject = "Todays attended report summary";
+                            string mailBody = msgText;
+                            int i = 0;
+                            foreach (var item in toEmail)
+                            {
+                                EmailService.SendEmail(toEmail[i], emailSubject, mailBody);
+                                i++;
+                            }
                         }
 
                         //Phone SMS Send
-                        string[] phoneNumber = { "01717678134",instituteInfo.FirstOrDefault().Phone1 };
-                        string smsType = "CheckIn Summary";
-                        foreach (var num in phoneNumber)
+                        string phoneNumberString = await _paramBusConfigManager.GetValueByParamSL(10);
+                        if (phoneNumberString!=null)
                         {
-                            bool isAlreadySent = await _phoneSMSManager.IsSMSSendForAttendance(num, smsType, DateTime.Today.ToString("dd-MM-yyyy"));
-                            if (isAlreadySent)
+                            string[] phoneNumber = phoneNumberString.Split(':');
+                            string smsType = "CheckIn Summary";
+                            if (phoneNumber.Length > 0)
                             {
-                                continue;
-                            }
-                            bool isSend = await MobileSMS.SendSMS(num, msgText);
-                            if (isSend)
-                            {
-                                PhoneSMS phoneSMS = new()
+                                foreach (var num in phoneNumber)
                                 {
-                                    Text = msgText,
-                                    CreatedAt = DateTime.Now,
-                                    CreatedBy = "Automation",
-                                    EditedBy = "Automation",
-                                    EditedAt = DateTime.Now,
-                                    MobileNumber = num,
-                                    MACAddress = MACService.GetMAC(),
-                                    SMSType = smsType
-                                };
-                                try
-                                {
-                                    await _phoneSMSManager.AddAsync(phoneSMS);
-                                }
-                                catch (Exception)
-                                {
-                                    throw;
+                                    bool isAlreadySent = await _phoneSMSManager.IsSMSSendForAttendance(num, smsType, DateTime.Today.ToString("dd-MM-yyyy"));
+                                    if (isAlreadySent)
+                                    {
+                                        continue;
+                                    }
+                                    bool isSend = await MobileSMS.SendSMS(num, msgText);
+                                    if (isSend)
+                                    {
+                                        PhoneSMS phoneSMS = new()
+                                        {
+                                            Text = msgText,
+                                            CreatedAt = DateTime.Now,
+                                            CreatedBy = "Automation",
+                                            EditedBy = "Automation",
+                                            EditedAt = DateTime.Now,
+                                            MobileNumber = num,
+                                            MACAddress = MACService.GetMAC(),
+                                            SMSType = smsType
+                                        };
+                                        try
+                                        {
+                                            await _phoneSMSManager.AddAsync(phoneSMS);
+                                        }
+                                        catch (Exception)
+                                        {
+                                            throw;
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -800,7 +805,6 @@ namespace SMS.App.Controllers
                 {
                     throw;
                 }
-
             }
 
             return Ok();
@@ -953,6 +957,8 @@ namespace SMS.App.Controllers
                                 Text = smsText,
                                 CreatedAt = DateTime.Now,
                                 CreatedBy = "Automation",
+                                EditedAt = DateTime.Now,
+                                EditedBy = "Automation",
                                 MobileNumber = phoneNumber,
                                 MACAddress = MACService.GetMAC(),
                                 SMSType = smsType

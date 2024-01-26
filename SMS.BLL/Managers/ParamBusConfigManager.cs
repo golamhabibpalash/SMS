@@ -21,5 +21,13 @@ namespace SMS.BLL.Managers
         {
             return await _repository.Table.FirstOrDefaultAsync(s => s.ParamSL == paramSL);
         }
+
+        public async Task<string> GetValueByParamSL(int paramSL)
+        {
+            return await _repository.Table
+                .Where(s => s.ParamSL ==paramSL)
+                .Select(s => s.ParamValue)
+                .FirstOrDefaultAsync();
+        }
     }
 }

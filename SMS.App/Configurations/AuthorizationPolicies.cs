@@ -218,7 +218,7 @@ namespace SMS.App.Configurations
 
             //Param Bus Config
             options.AddPolicy("IndexParamBusConfigPolicy", policy => policy.RequireClaim("View Config Data"));
-            options.AddPolicy("UpSertParamBusConfigPolicy", policy => policy.RequireClaim("Create/Update Cofig Data"));
+            options.AddPolicy("UpSertParamBusConfigPolicy", policy => policy.RequireClaim("Create/Update Config Data"));
 
             //Project Module
             options.AddPolicy("IndexProjectModulesPolicy", policy => policy.RequireClaim("View Project Modules"));

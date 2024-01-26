@@ -68,6 +68,12 @@ namespace SMS.App.Controllers
             else
             {
                 GlobalUI.PageTitle = "Create Configure Parameter";
+                ParamBusConfig existParamBusConfig = await _paramBusConfigManager.GetByParamSL(paramBusConfig.ParamSL);
+                if (existParamBusConfig != null)
+                {
+                    TempData["failed"] = "Sorry! Same Config SL is already exist";
+                    return RedirectToAction(nameof(Index));
+                }
                 try
                 {
                     if (ModelState.IsValid)

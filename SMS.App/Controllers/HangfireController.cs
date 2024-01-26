@@ -92,7 +92,7 @@ namespace SMS.App.Controllers
                     var smsStartTimeHr = smsStartTime?.ParamValue.Substring(0, smsStartTime.ParamValue.IndexOf(':')) ?? (startTimeHr - 1).ToString();
                     var smsStartTimeMn = smsStartTime?.ParamValue.Substring(smsStartTime.ParamValue.IndexOf(':'), smsStartTime.ParamValue.Length) ?? (startTimeHr - 1).ToString();
                     var smsEndTimeHr = smsEndStop?.ParamValue.Substring(0, smsStartTime.ParamValue.IndexOf(':')) ?? (startTimeHr + 1).ToString();
-                    var cronEx = $"*/10 {smsStartTimeHr}-{smsEndTimeHr} * * 6-4";
+                    var cronEx = $"*/10 {smsStartTimeHr}-{smsEndTimeHr} * * 0-4,6";
                     RecurringJob.AddOrUpdate(() => SendCheckInSMS(), cronEx, TimeZoneInfo.Local);
                     //Every 10 minutes, between 08:00 AM and 09:59 AM, Saturday through Thursday
                 } 
@@ -105,7 +105,7 @@ namespace SMS.App.Controllers
                     var smsStartTimeHr = checkOutStartTime?.ParamValue.Substring(0, checkOutStartTime.ParamValue.IndexOf(':')) ?? smsStartTime.ToString();
                     int smsEndTime = instituteEndHr + 1;
                     var smsEndTimeHr = checkOutEndTime?.ParamValue.Substring(0, checkOutEndTime.ParamValue.IndexOf(':')) ?? smsEndTime.ToString();
-                    var cron = $"*/10 {smsStartTimeHr}-{smsEndTimeHr} * * 6-4";
+                    var cron = $"*/10 {smsStartTimeHr}-{smsEndTimeHr} * * 0-4,6";
                     RecurringJob.AddOrUpdate(() => SendCheckOutSMS(), cron, TimeZoneInfo.Local);
                     //Every 10 minutes, between 12:00 PM and 03:59 PM, Saturday through Thursday
                 }
@@ -132,7 +132,7 @@ namespace SMS.App.Controllers
                 var dailyCollectionSummmeryNotificationTime = await _paramBusConfigManager.GetByParamSL(9);
                 var smsTimeHr = "18";
                 var notificationTimeHr = dailyCollectionSummmeryNotificationTime?.ParamValue.Substring(0, dailyCollectionSummmeryNotificationTime.ParamValue.IndexOf(':')) ?? smsTimeHr.ToString();
-                var cron = $"1 {notificationTimeHr} * * 6-4";
+                var cron = $"1 {notificationTimeHr} * * 0-4,6";
                 RecurringJob.AddOrUpdate(() => SendDailyCollectionSMS(), cron, TimeZoneInfo.Local);
                 //At 6:00 pm, saturday through Thursday
                 //0 18 ? *SUN,MON,TUE,WED,THU,SAT *
@@ -551,7 +551,7 @@ namespace SMS.App.Controllers
         private async Task<IActionResult> CheckOutSMSSendDailyAttendanceGirls()
         {
             DateTime date = DateTime.Today;
-            List<Tran_MachineRawPunch> todaysCheckOutAttendances = new List<Tran_MachineRawPunch>();
+            List<Tran_MachineRawPunch> todaysCheckOutAttendances;
             todaysCheckOutAttendances = await _attendanceMachineManager.GetCheckOutDataByDateAsync(date.ToString("dd-MM-yyyy"));
             try
             {
@@ -1072,7 +1072,6 @@ namespace SMS.App.Controllers
             }
             try
             {
-
                 if (setupMobileSMS.DailyCollectionSMSService)
                 {
                     var paymentsSummery = await _studentPaymentManager.GetStudentPaymentSummerySMS_VMsAsync(DateTime.Today);
@@ -1081,43 +1080,45 @@ namespace SMS.App.Controllers
                         StudentPaymentSummerySMS_VM studentPaymentSummerySMS_VM = paymentsSummery.FirstOrDefault();
                         var instituteInfo = await _instituteManager.GetAllAsync();
 
-                        string[] phoneNumber = { "01717678134",instituteInfo.FirstOrDefault().Phone1 };
-                        string smsType = "Collection_sum";
-                        string smsText = $"Payment Collection ({DateTime.Today.ToString("dd MMM yyyy")}):\n" +
-                            $"Residential: {studentPaymentSummerySMS_VM.ResidentialPayment}\n" +
-                            $"Non-Residential:{studentPaymentSummerySMS_VM.NonResidentialPayment} \n" +
-                            $"Total = {studentPaymentSummerySMS_VM.ResidentialPayment + studentPaymentSummerySMS_VM.NonResidentialPayment}\n" +
-                            $"-"+instituteInfo.FirstOrDefault().Name;
-
-                        foreach (var num in phoneNumber)
+                        string phoneNumberString = await _paramBusConfigManager.GetValueByParamSL(12);
+                        if (phoneNumberString!=null)
                         {
-                            bool isAlreadySent = await _phoneSMSManager.IsSMSSendForAttendance(num, smsType, DateTime.Today.ToString("dd-MM-yyyy"));
-                            if (!isAlreadySent)
+                            string[] phoneNumber = phoneNumberString.Split(',');
+                            string smsType = "Collection_sum";
+                            string smsText = $"Payment Collection ({DateTime.Today.ToString("dd MMM yyyy")}):\n" +
+                                $"Residential: {studentPaymentSummerySMS_VM.ResidentialPayment}\n" +
+                                $"Non-Residential:{studentPaymentSummerySMS_VM.NonResidentialPayment} \n" +
+                                $"Total = {studentPaymentSummerySMS_VM.ResidentialPayment + studentPaymentSummerySMS_VM.NonResidentialPayment}\n" +
+                                $"-"+instituteInfo.FirstOrDefault().Name;
+
+                            foreach (var num in phoneNumber)
                             {
-                                bool isSend = await MobileSMS.SendSMS(num, smsText);
-                                if (isSend)
+                                bool isAlreadySent = await _phoneSMSManager.IsSMSSendForAttendance(num, smsType, DateTime.Today.ToString("dd-MM-yyyy"));
+                                if (!isAlreadySent)
                                 {
-                                    PhoneSMS phoneSMS = new()
+                                    bool isSend = await MobileSMS.SendSMS(num, smsText);
+                                    if (isSend)
                                     {
-                                        Text = smsText,
-                                        CreatedAt = DateTime.Now,
-                                        CreatedBy = "Automation",
-                                        MobileNumber = num,
-                                        MACAddress = MACService.GetMAC(),
-                                        SMSType = smsType
-                                    };
-                                    await _phoneSMSManager.AddAsync(phoneSMS);
+                                        PhoneSMS phoneSMS = new()
+                                        {
+                                            Text = smsText,
+                                            CreatedAt = DateTime.Now,
+                                            CreatedBy = "Automation",
+                                            MobileNumber = num,
+                                            MACAddress = MACService.GetMAC(),
+                                            SMSType = smsType
+                                        };
+                                        await _phoneSMSManager.AddAsync(phoneSMS);
+                                    }
                                 }
                             }
                         }
-
                     }
                 }
 
             }
             catch (Exception)
             {
-
                 throw;
             }
             

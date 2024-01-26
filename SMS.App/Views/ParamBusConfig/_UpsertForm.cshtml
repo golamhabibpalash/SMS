@@ -1,25 +1,26 @@
 ﻿@model ParamBusConfig
 
-
-
     <form id="upsertForm" asp-action="upsert" method="post">
         <input type="hidden" name="Id" value="0" id="Id"/>
         <div class="form-group row">
             <label asp-for="ParamSL" class="col-sm-2 col-form-label">Config SL</label>
             <div class="col-sm-10">
                 <input min="1" asp-for="ParamSL" class="form-control">
+                <span class="text-danger" asp-validation-for="ParamSL"></span>
             </div>
         </div>
         <div class="form-group row">
             <label asp-for="ConfigName" class="col-sm-2 col-form-label">Name</label>
             <div class="col-sm-10">
-                <input asp-for="ConfigName" class="form-control" placeholder="Input Config Name">
+                <input asp-for="ConfigName" class="form-control" placeholder="Input Config Name" required>
+                <span class="text-danger" asp-validation-for="ConfigName"></span>
             </div>
         </div>
         <div class="form-group row">
             <label asp-for="ParamValue" class="col-sm-2 col-form-label">Value</label>
             <div class="col-sm-10">
-                <input asp-for="ParamValue" class="form-control" placeholder="Input Config Value">
+                <input asp-for="ParamValue" class="form-control" placeholder="Input Config Value" required>
+                <span class="text-danger" asp-validation-for="ParamValue"></span>
             </div>
         </div>
         <div class="form-group row">

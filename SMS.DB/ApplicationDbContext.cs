@@ -188,7 +188,11 @@ namespace SMS.DB
                 .IsUnique();
 
             builder.Entity<ParamBusConfig>()
-                .HasIndex(s => new { s.ParamSL, s.ConfigName })
+                .HasIndex(s => s.ParamSL)
+                .IsUnique();
+
+            builder.Entity<ParamBusConfig>()
+                .HasIndex(s => s.ConfigName )
                 .IsUnique();
 
             builder.Entity<AttendanceVM>(entity => entity.HasNoKey());

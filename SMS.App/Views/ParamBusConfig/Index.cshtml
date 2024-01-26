@@ -6,8 +6,8 @@
 }
 @if (Model.ParamBusConfigs.Any())
 {
-    <table class="table table-hover table-striped table-info">
-        <thead>
+    <table class="table table-hover table-striped">
+        <thead class="table-info">
             <tr>
                 <td>SL</td>
                 <td>Config Name</td>
@@ -21,7 +21,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model.ParamBusConfigs)
+            @foreach (var item in Model.ParamBusConfigs.OrderBy(s => s.ParamSL))
             {
                 <tr>
                     <td>@item.ParamSL</td>
@@ -93,6 +93,8 @@ else
     });
     $('#addBtn').click(function () {
         document.getElementById('submitBtn').textContent = 'Create';
+        $('#upsertForm')[0].reset();
+        $('#Id').val(0);
     })
 </script>
 }

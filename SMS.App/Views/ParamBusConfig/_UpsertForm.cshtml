@@ -1,0 +1,47 @@
+﻿@model ParamBusConfig
+
+
+
+    <form id="upsertForm" asp-action="upsert" method="post">
+        <input type="hidden" name="Id" value="0" id="Id"/>
+        <div class="form-group row">
+            <label asp-for="ParamSL" class="col-sm-2 col-form-label">Config SL</label>
+            <div class="col-sm-10">
+                <input min="1" asp-for="ParamSL" class="form-control">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label asp-for="ConfigName" class="col-sm-2 col-form-label">Name</label>
+            <div class="col-sm-10">
+                <input asp-for="ConfigName" class="form-control" placeholder="Input Config Name">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label asp-for="ParamValue" class="col-sm-2 col-form-label">Value</label>
+            <div class="col-sm-10">
+                <input asp-for="ParamValue" class="form-control" placeholder="Input Config Value">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label asp-for="Remarks" class="col-sm-2 col-form-label">Remarks</label>
+            <div class="col-sm-10">
+                <input asp-for="Remarks" class="form-control" placeholder="Remarks / Descriptions">
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-2">Checkbox</div>
+            <div class="col-sm-10">
+                <div class="form-check">
+                    <input asp-for="IsActive" class="form-check-input" >
+                    <label class="form-check-label" asp-for="IsActive">
+                        Is Active
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="offset-sm-2 col-sm-10">
+                <button id="submitBtn" type="submit" class="btn btn-primary">Create</button>
+            </div>
+        </div>
+    </form>

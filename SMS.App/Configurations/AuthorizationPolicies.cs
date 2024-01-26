@@ -216,6 +216,10 @@ namespace SMS.App.Configurations
             options.AddPolicy("EditOffDayTypesPolicy", policy => policy.RequireClaim("Edit Off Day Types"));
             options.AddPolicy("DeleteOffDayTypesPolicy", policy => policy.RequireClaim("Delete Off Day Types"));
 
+            //Param Bus Config
+            options.AddPolicy("IndexParamBusConfigPolicy", policy => policy.RequireClaim("View Config Data"));
+            options.AddPolicy("UpSertParamBusConfigPolicy", policy => policy.RequireClaim("Create/Update Cofig Data"));
+
             //Project Module
             options.AddPolicy("IndexProjectModulesPolicy", policy => policy.RequireClaim("View Project Modules"));
             options.AddPolicy("DetailsProjectModulesPolicy", policy => policy.RequireClaim("Details Project Modules"));

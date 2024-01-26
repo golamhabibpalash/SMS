@@ -1,33 +1,17 @@
-﻿using BLL.Managers.Base;
-using Hangfire;
-using Hangfire.Common;
-using Microsoft.AspNetCore.Http;
+﻿using Hangfire;
+using Hangfire.Storage;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SMS.App.Utilities.EmailServices;
+using SMS.App.Utilities.MACIPServices;
+using SMS.App.Utilities.ShortMessageService;
 using SMS.BLL.Contracts;
 using SMS.Entities;
+using SMS.Entities.AdditionalModels;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Transactions;
 using System.Linq;
-using SMS.DB.Migrations;
-using SMS.App.ViewModels.AttendanceVM;
-using System.Net;
-using System.Net.Http;
-using SMS.App.Utilities.ShortMessageService;
-using SMS.App.Utilities.MACIPServices;
-using SMS.BLL.Managers;
-using static System.Net.Mime.MediaTypeNames;
-using SMS.Entities.AdditionalModels;
-using System.Web;
-using System.Collections;
-using Microsoft.CodeAnalysis.FlowAnalysis;
-using Hangfire.Storage;
-using System.Drawing.Imaging;
-using Microsoft.AspNetCore.Authorization;
-using System.Runtime.InteropServices.JavaScript;
-using Hangfire.Storage.Monitoring;
+using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
 {
@@ -93,7 +77,8 @@ namespace SMS.App.Controllers
                 if (setupMobileSMS.CheckInSMSSummary == true)
                 {
                     int smsTimeHr = startTimeHr + 1;
-                    RecurringJob.AddOrUpdate(() => SMSSendDailyAttendanceSummary(), "5 "+smsTimeHr+" * * 6-4", TimeZoneInfo.Local);
+                    var cronEx = "5 " + smsTimeHr + " * * 6-4";
+                    RecurringJob.AddOrUpdate(() => SMSSendDailyAttendanceSummary(), cronEx);
                     //At 11:05 AM, Saturday through Thursday
                 }
                 if (setupMobileSMS.CheckInSMSService == true)
@@ -205,11 +190,7 @@ namespace SMS.App.Controllers
                     {
                         foreach (Tran_MachineRawPunch attendance in todaysAllCheckInAttendance)
                         {
-                            if (attendance.CardNo.Length > 8)
-                            {
-                                continue;
-                            }
-                            Student student = await _studentManager.GetStudentByClassRollAsync(Convert.ToInt32(attendance.CardNo.Trim()));
+                            Student student = await _studentManager.GetStudentByUniqueIdAsync(attendance.CardNo.Trim());
 
                             if (student == null || student.GenderId != 1 || student.Status == false || student.SMSService == false)
                             {
@@ -249,6 +230,8 @@ namespace SMS.App.Controllers
                                                 SMSType = smsType,
                                                 CreatedBy = "Automation",
                                                 CreatedAt = DateTime.Now,
+                                                EditedBy = "Automation",
+                                                EditedAt = DateTime.Now,
                                                 MACAddress = MACService.GetMAC()
                                             };
                                             bool isSave = await _phoneSMSManager.AddAsync(phoneSMS);
@@ -289,11 +272,7 @@ namespace SMS.App.Controllers
                     {
                         foreach (Tran_MachineRawPunch attendance in todaysAllCheckInAttendance)
                         {
-                            if (attendance.CardNo.Length > 8)
-                            {
-                                continue;
-                            }
-                            Student student = await _studentManager.GetStudentByClassRollAsync(Convert.ToInt32(attendance.CardNo.Trim()));
+                            Student student = await _studentManager.GetStudentByUniqueIdAsync(attendance.CardNo.Trim());
 
                             if (student == null || student.GenderId != 2 || student.Status == false || student.SMSService != true)
                             {
@@ -302,7 +281,7 @@ namespace SMS.App.Controllers
                             else
                             {
                                 string smsType = "CheckIn";
-                                string phoneNumber = student.GuardianPhone != null ? student.GuardianPhone : student.PhoneNo != null ? student.PhoneNo : string.Empty;
+                                string phoneNumber = student.GuardianPhone ?? (student.PhoneNo != null ? student.PhoneNo : string.Empty);
                                 if (string.IsNullOrEmpty(phoneNumber))
                                 {
                                     continue;
@@ -334,6 +313,8 @@ namespace SMS.App.Controllers
                                                 SMSType = smsType,
                                                 CreatedBy = "Automation",
                                                 CreatedAt = DateTime.Now,
+                                                EditedBy = "Automation",
+                                                EditedAt = DateTime.Now,
                                                 MACAddress = MACService.GetMAC()
                                             };
                                             bool isSave = await _phoneSMSManager.AddAsync(phoneSMS);
@@ -364,7 +345,8 @@ namespace SMS.App.Controllers
             }
             if (attendanceSMSSetup.CheckInSMSServiceForEmployees == true)
             {
-                var todaysAllAttendance = await _attendanceMachineManager.GetCheckinDataByDateAsync(DateTime.Now.ToString("dd-MM-yyyy"));
+                var todaysAllAttendance = await _attendanceMachineManager.GetEmpCheckinDataByDateAsync(DateTime.Now.ToString("dd-MM-yyyy"));
+                
                 if (todaysAllAttendance.Count > 0)
                 {
 
@@ -377,11 +359,7 @@ namespace SMS.App.Controllers
                         string attTime = string.Empty;
                         foreach (var att in todaysAllAttendance)
                         {
-                            if (att.CardNo.Length <= 8)
-                            {
-                                continue;
-                            }
-                            Employee empObject = await _employeeManager.GetByPhoneAttendance(att.CardNo);
+                            Employee empObject = await _employeeManager.GetByIdAsync(Convert.ToInt32(att.CardNo.Trim()));
                             if (empObject == null)
                             {
                                 continue;
@@ -412,7 +390,9 @@ namespace SMS.App.Controllers
                                         {
                                             Text = smsText,
                                             CreatedAt = DateTime.Now,
-                                            CreatedBy = "Automation",
+                                            CreatedBy = "Automation",                                            
+                                            EditedAt = DateTime.Now,
+                                            EditedBy = "Automation",
                                             MobileNumber = phoneNumber,
                                             MACAddress = MACService.GetMAC(),
                                             SMSType = smsType
@@ -625,16 +605,9 @@ namespace SMS.App.Controllers
                 {
                     foreach (Tran_MachineRawPunch attendance in todaysCheckOutAttendances)
                     {
-                        if (attendance.CardNo.Length <= 8)
-                        {
-                            continue;
-                        }
-                        Employee objEmployee = await _employeeManager.GetByPhoneAttendance(attendance.CardNo);
-                        if (objEmployee == null)
-                        {
-                            continue;
-                        }
-                        if (objEmployee.Status == false)
+                        Employee objEmployee = await _employeeManager.GetByIdAsync(Convert.ToInt32(attendance.CardNo.Trim()));
+
+                        if (objEmployee == null || objEmployee.Status !=true)
                         {
                             continue;
                         }
@@ -720,14 +693,14 @@ namespace SMS.App.Controllers
                         var employees = await _employeeManager.GetAllAsync();
 
                         totalGirlsStudent = (from a in allCheckInAttendance
-                                             join s in students.Where(s => s.Status == true) on Convert.ToInt32(a.CardNo.Trim()) equals s.ClassRoll
+                                             join s in students.Where(s => s.Status == true) on a.CardNo.Trim() equals s.UniqueId.Trim()
                                              where s.GenderId == 2
                                              select a).Count();
 
 
 
                         totalBoysStudent = (from a in allCheckInAttendance
-                                            join s in students.Where(s => s.Status == true) on Convert.ToInt32(a.CardNo.Trim()) equals s.ClassRoll
+                                            join s in students.Where(s => s.Status == true) on a.CardNo.Trim() equals s.UniqueId.Trim()
                                             where s.GenderId == 1
                                             select a).Count();
 
@@ -735,7 +708,7 @@ namespace SMS.App.Controllers
 
 
                         totalEmployee = (from a in allCheckInAttendance
-                                         join e in employees on a.CardNo equals e.Phone.Substring(e.Phone.Length - 9)
+                                         join e in employees on a.CardNo.Trim() equals e.Id.ToString().Trim()
                                          select a).Count();
                         string msgText = string.Empty;
                         var instituteInfo = await _instituteManager.GetAllAsync();
@@ -779,6 +752,8 @@ namespace SMS.App.Controllers
                                     Text = msgText,
                                     CreatedAt = DateTime.Now,
                                     CreatedBy = "Automation",
+                                    EditedBy = "Automation",
+                                    EditedAt = DateTime.Now,
                                     MobileNumber = num,
                                     MACAddress = MACService.GetMAC(),
                                     SMSType = smsType

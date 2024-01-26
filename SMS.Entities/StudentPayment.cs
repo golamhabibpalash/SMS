@@ -32,6 +32,7 @@ namespace SMS.Entities
 
 
         public Student Student { get; set; }
+        [Required]
         public string UniqueId { get; set; }
 
         public List<StudentPaymentDetails> StudentPaymentDetails { get; set; }

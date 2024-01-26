@@ -21,6 +21,7 @@
         <form asp-action="Edit" asp-controller="Students" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="UniqueId" />
             <input type="hidden" asp-for="Status" value="@Model.Status" />
             <div class="row">
                 <div class="col-md-10 offset-md-2">
@@ -66,6 +67,14 @@
                 </div>
                 <div class="checkbox offset-md-2 col-md-4 text-md-left">
                     <label class="col-form-label"><input asp-for="IsResidential"> Residential</label>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label asp-for="UniqueId" class="control-label col-form-label text-md-right col-md-2"></label>
+                <div class="col-md-4">
+                    <input asp-for="UniqueId" class="form-control" disabled />
+                    <span asp-validation-for="UniqueId" class="text-danger"></span>
                 </div>
             </div>
 

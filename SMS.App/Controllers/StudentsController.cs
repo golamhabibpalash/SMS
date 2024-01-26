@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Controllers
@@ -302,108 +303,123 @@ namespace SchoolManagementSystem.Controllers
         [HttpPost,ValidateAntiForgeryToken]
         [Authorize(Roles = "SuperAdmin, Admin")]
         [Authorize(Policy = "CreateStudentsPolicy")]
-        public async Task<IActionResult> Create([Bind("Id,Name,NameBangla,ClassRoll,FatherName,MotherName,AdmissionDate,Email,PhoneNo,Photo,DOB,BirthCertificateNo,BirthCertificateImage,ReligionId,GenderId,BloodGroupId,NationalityId,PresentAddressArea,PresentAddressPO,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddressArea,PermanentAddressPO,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,AcademicSessionId,AcademicClassId,AcademicSectionId,AddressInfo,PreviousSchool,Status,CreatedBy,CreatedAt,EditedBy,EditedAt,GuardianPhone,MACAddress,IsResidential,SMSService")] StudentCreateVM newStudent, IFormFile sPhoto, IFormFile DOBFile)
+        public async Task<IActionResult> Create([Bind("Id,Name,NameBangla,ClassRoll,FatherName,MotherName,AdmissionDate,Email,PhoneNo,Photo,DOB,BirthCertificateNo,BirthCertificateImage,ReligionId,GenderId,BloodGroupId,NationalityId,PresentAddressArea,PresentAddressPO,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddressArea,PermanentAddressPO,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,AcademicSessionId,AcademicClassId,AcademicSectionId,AddressInfo,PreviousSchool,Status,CreatedBy,CreatedAt,EditedBy,EditedAt,GuardianPhone,MACAddress,IsResidential,SMSService, UniqueId")] StudentCreateVM newStudent, IFormFile sPhoto, IFormFile DOBFile)
         {
             newStudent.ClassRoll = await CreateRoll(newStudent.AcademicSessionId, newStudent.AcademicClassId, newStudent.ClassRoll);
             var rollIsExist = await _studentManager.GetStudentByClassRollAsync(newStudent.ClassRoll);
             if (rollIsExist == null)
             {
-                if (ModelState.IsValid)
+                try
                 {
-                    if (sPhoto != null)
+                    if (ModelState.IsValid)
                     {
-                        string fileExt = Path.GetExtension(sPhoto.FileName);
-                        string root = _host.WebRootPath;
-                        string folder = "Images/Student/";
-                        string sessionYear = (await _academicSessionManager.GetByIdAsync(newStudent.AcademicSessionId)).ToString();
-                        string year = sessionYear.Substring(0, 4);
-                        string fileName = "S_" + year + "_" + newStudent.ClassRoll + fileExt;
-                        string pathCombine = Path.Combine(root, folder, fileName);
-                        using (var stream = new FileStream(pathCombine, FileMode.Create))
+                        if (sPhoto != null)
                         {
-                            await sPhoto.CopyToAsync(stream);
-                        }
-                        newStudent.Photo = fileName;
-                    }
-                    if (DOBFile != null)
-                    {
-                        string fileExt = Path.GetExtension(DOBFile.FileName);
-                        string root = _host.WebRootPath;
-                        string folder = "Images/Student/";
-                        string fileName = "S_" + newStudent.DOB.ToString("ddMMyyyy") + "_" + newStudent.ClassRoll + fileExt;
-                        string pathCombine = Path.Combine(root, folder, fileName);
-                        using (var stream = new FileStream(pathCombine, FileMode.Create))
-                        {
-                            await sPhoto.CopyToAsync(stream);
-                        }
-                        newStudent.BirthCertificateImage = fileName;
-                    }
-                    newStudent.CreatedBy = HttpContext.Session.GetString("UserId");
-                    newStudent.CreatedAt = DateTime.Now;
-
-
-                    var student = _mapper.Map<Student>(newStudent);
-                    bool saveStudent = await _studentManager.AddAsync(student);
-                    if (saveStudent == true)
-                    {
-                        StudentActivateHist studentActivateHist = new() {
-                            StudentId = student.Id,
-                            IsActive = true,
-                            ActionDateTime = DateTime.Now,
-                            LastAction = "Add",
-                            CreatedAt = DateTime.Now,
-                            CreatedBy = HttpContext.Session.GetString("UserId"),
-                            MACAddress = MACService.GetMAC()
-                        };
-                        await _studentActivateHistManager.AddAsync(studentActivateHist);
-
-                        TempData["create"] = "Created Successfully";
-                        ApplicationUser newStudentUser = new() {
-                            UserName = student.ClassRoll.ToString(),
-                            Email = student.Email,
-                            EmailConfirmed = true,
-                            PhoneNumberConfirmed = true,
-                            PhoneNumber = student.PhoneNo,
-                            NormalizedUserName = student.Name,
-                            UserType = 's',
-                            ReferenceId = student.Id
-                        };
-
-                        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-                        var random = new Random();
-                        string autoGeneratedPassword = new string(Enumerable.Repeat(chars, 6).Select(s => s[random.Next(s.Length)]).ToArray());
-
-                        var result = await _userManager.CreateAsync(newStudentUser, autoGeneratedPassword);
-                        if (result.Succeeded)
-                        {
-                            ApplicationUser user = await _userManager.FindByNameAsync(student.ClassRoll.ToString());
-                            var roleAssignResult = await _userManager.AddToRoleAsync(user, "Student");
-                            if (roleAssignResult.Succeeded)
+                            string fileExt = Path.GetExtension(sPhoto.FileName);
+                            string root = _host.WebRootPath;
+                            string folder = "Images/Student/";
+                            string sessionYear = (await _academicSessionManager.GetByIdAsync(newStudent.AcademicSessionId)).ToString();
+                            string year = sessionYear.Substring(0, 4);
+                            string fileName = "S_" + year + "_" + newStudent.ClassRoll + fileExt;
+                            string pathCombine = Path.Combine(root, folder, fileName);
+                            using (var stream = new FileStream(pathCombine, FileMode.Create))
                             {
-                                var instituteInfo = await _instituteManager.GetAllAsync();
-                                string text = "Dear,\n" + student.Name + ",\nYour User: " + user.UserName + "\nPassword:" + autoGeneratedPassword + "\n-"+ instituteInfo.FirstOrDefault().Name;
-                                bool smsSend = await MobileSMS.SendSMS(student.PhoneNo, text);
-                                if (smsSend == true)
-                                {
-                                    PhoneSMS phoneSMS = new() {
-                                        Text = text,
-                                        CreatedAt = DateTime.Now,
-                                        CreatedBy = student.Email,
-                                        MobileNumber = student.PhoneNo,
-                                        MACAddress = MACService.GetMAC(),
-                                        SMSType = "NewUser"
-                                    };
-                                    await _phoneSMSManager.AddAsync(phoneSMS);
-                                }
+                                await sPhoto.CopyToAsync(stream);
+                            }
+                            newStudent.Photo = fileName;
+                        }
+                        if (DOBFile != null)
+                        {
+                            string fileExt = Path.GetExtension(DOBFile.FileName);
+                            string root = _host.WebRootPath;
+                            string folder = "Images/Student/";
+                            string fileName = "S_" + newStudent.DOB.ToString("ddMMyyyy") + "_" + newStudent.ClassRoll + fileExt;
+                            string pathCombine = Path.Combine(root, folder, fileName);
+                            using (var stream = new FileStream(pathCombine, FileMode.Create))
+                            {
+                                await sPhoto.CopyToAsync(stream);
+                            }
+                            newStudent.BirthCertificateImage = fileName;
+                        }
+                        if (HttpContext.Session.GetString("UserId")==null)
+                        {
+                            return RedirectToAction("Login", "Accounts");
+                        }
+                        newStudent.CreatedBy = HttpContext.Session.GetString("UserId");
+                        newStudent.CreatedAt = DateTime.Now;
+                        newStudent.EditedAt = DateTime.Now;
+                        newStudent.EditedBy = HttpContext.Session.GetString("UserId");
 
-                                if (newStudent.Email != null)
-                                {
+                        var student = _mapper.Map<Student>(newStudent);
+                        student.UniqueId =await GenerateUniquId(student);
+                        student.MACAddress = MACService.GetMAC();
+                        bool saveStudent = await _studentManager.AddAsync(student);
+                        if (saveStudent == true)
+                        {
+                            StudentActivateHist studentActivateHist = new() {
+                                StudentId = student.Id,
+                                IsActive = true,
+                                ActionDateTime = DateTime.Now,
+                                LastAction = "Add",
+                                CreatedAt = DateTime.Now,
+                                CreatedBy = HttpContext.Session.GetString("UserId"),
+                                MACAddress = MACService.GetMAC()
+                            };
+                            await _studentActivateHistManager.AddAsync(studentActivateHist);
 
+                            TempData["create"] = "Created Successfully";
+                            ApplicationUser newStudentUser = new() {
+                                UserName = student.UniqueId,
+                                Email = student.Email,
+                                EmailConfirmed = true,
+                                PhoneNumberConfirmed = true,
+                                PhoneNumber = student.PhoneNo,
+                                NormalizedUserName = student.Name,
+                                UserType = 's',
+                                ReferenceId = Convert.ToInt32(student.UniqueId)
+                            };
+
+                            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+                            var random = new Random();
+                            string autoGeneratedPassword = new string(Enumerable.Repeat(chars, 6).Select(s => s[random.Next(s.Length)]).ToArray());
+
+                            var result = await _userManager.CreateAsync(newStudentUser, autoGeneratedPassword);
+                            if (result.Succeeded)
+                            {
+                                var roleAssignResult = await _userManager.AddToRoleAsync(newStudentUser, "Student");
+                                if (roleAssignResult.Succeeded)
+                                {
+                                    var instituteInfo = await _instituteManager.GetAllAsync();
+                                    string text = "Dear,\n" + student.Name + ",\nYour User: " + newStudentUser.UserName + "\nPassword:" + autoGeneratedPassword + "\n-"+ instituteInfo.FirstOrDefault().Name;
+                                    bool smsSend = await MobileSMS.SendSMS(student.PhoneNo, text);
+                                    if (smsSend == true)
+                                    {
+                                        PhoneSMS phoneSMS = new() {
+                                            Text = text,
+                                            CreatedAt = DateTime.Now,
+                                            CreatedBy = "System",
+                                            EditedAt = DateTime.Now,
+                                            EditedBy = "System",
+                                            MobileNumber = student.PhoneNo,
+                                            MACAddress = MACService.GetMAC(),
+                                            SMSType = "NewUser"
+                                        };
+                                        await _phoneSMSManager.AddAsync(phoneSMS);
+                                    }
+
+                                    if (newStudent.Email != null)
+                                    {
+
+                                    }
                                 }
                             }
+                            return RedirectToAction(nameof(Index));
                         }
-                        return RedirectToAction(nameof(Index));
-                    }
+                     }
+                }
+                catch (Exception)
+                {
+                    throw;
                 }
             }
             else
@@ -460,7 +476,7 @@ namespace SchoolManagementSystem.Controllers
         [HttpPost,ValidateAntiForgeryToken]
         [Authorize(Roles = "SuperAdmin, Admin")]
         [Authorize(Policy = "EditStudentsPolicy")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,NameBangla,ClassRoll,FatherName,MotherName,AdmissionDate,Email,PhoneNo,Photo,DOB,BirthCertificateNo,BirthCertificateImage,ReligionId,GenderId,BloodGroupId,NationalityId,PresentAddressArea,PresentAddressPO,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddressArea,PermanentAddressPO,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,AcademicSessionId,AcademicClassId,AcademicSectionId,AddressInfo,PreviousSchool,CreatedBy,CreatedAt,EditedBy,EditedAt,GuardianPhone,Status,MACAddress,IsResidential,SMSService")] Student student, IFormFile sPhoto, IFormFile DOBFile)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,NameBangla,ClassRoll,FatherName,MotherName,AdmissionDate,Email,PhoneNo,Photo,DOB,BirthCertificateNo,BirthCertificateImage,ReligionId,GenderId,BloodGroupId,NationalityId,PresentAddressArea,PresentAddressPO,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddressArea,PermanentAddressPO,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,AcademicSessionId,AcademicClassId,AcademicSectionId,AddressInfo,PreviousSchool,CreatedBy,CreatedAt,EditedBy,EditedAt,GuardianPhone,Status,MACAddress,IsResidential,SMSService,UniqueId")] Student student, IFormFile sPhoto, IFormFile DOBFile)
         {
             if (id != student.Id)
             {
@@ -725,7 +741,6 @@ namespace SchoolManagementSystem.Controllers
 
         private async Task<double> GetTotalDue(int stuId)
         {
-
             Student st = await _studentManager.GetByIdAsync(stuId);
             int admissionYear = st.AdmissionDate.Year;
             int currentYear = DateTime.Now.Year;
@@ -812,6 +827,15 @@ namespace SchoolManagementSystem.Controllers
             return paidAmount;
         }
        
+        private async Task<string> GenerateUniquId(Student student)
+        {
+            string uniqueId = string.Empty;
+            uniqueId = student.DOB.ToString("yyMMdd");
+            AcademicSession academicSession =await _academicSessionManager.GetByIdAsync(student.AcademicSessionId);
+            uniqueId += academicSession.Name.Substring(academicSession.Name.Length - 1, 1);
+            uniqueId += student.ClassRoll.ToString().Substring(student.ClassRoll.ToString().Length - 2, 2);
+            return uniqueId;
+        }
         #region APIs //All of the students related APIs will placed here
 
         [Route("api/Students/getbyclasswithsessionId")]

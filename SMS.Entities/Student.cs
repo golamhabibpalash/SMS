@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -14,7 +15,7 @@ namespace SMS.Entities
         [Display(Name ="Student Name (Bangla)")]
         public string NameBangla { get; set; }
 
-        [Display(Name = "Class Roll")]
+        [Display(Name = "Class Roll"), NotNull]
         public int ClassRoll { get; set; }
 
         [Display(Name = "Academic Class")]
@@ -127,7 +128,8 @@ namespace SMS.Entities
         public Gender Gender { get; set; }
         public Religion Religion { get; set; }
 
-        public string? UniqueId { get; set; }
+        [NotNull, Required]
+        public string UniqueId { get; set; }
 
         public List<Attendance> Attendances { get; set; }
         //public string LastAction { get; set; } = string.Empty;

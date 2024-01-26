@@ -743,6 +743,9 @@ namespace SMS.DB.Migrations
                     b.Property<string>("StudentName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UniqueId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.ToTable((string)null);
 
                     b.ToView("StudentListVMs", (string)null);
@@ -803,6 +806,54 @@ namespace SMS.DB.Migrations
                         .HasColumnType("float");
 
                     b.ToTable("StudentPaymentSummeryVMs");
+                });
+
+            modelBuilder.Entity("SMS.Entities.ApplicationSettings", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EditedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EditedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MACAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SetupName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ShortName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ShortName")
+                        .IsUnique();
+
+                    b.ToTable("ApplicationSettings");
                 });
 
             modelBuilder.Entity("SMS.Entities.AttachDoc", b =>
@@ -1948,6 +1999,53 @@ namespace SMS.DB.Migrations
                     b.ToTable("OffDayTypes");
                 });
 
+            modelBuilder.Entity("SMS.Entities.ParamBusConfig", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ConfigName")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EditedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EditedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MACAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ParamSL")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ParamValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParamSL", "ConfigName")
+                        .IsUnique()
+                        .HasFilter("[ConfigName] IS NOT NULL");
+
+                    b.ToTable("ParamBusConfigs");
+                });
+
             modelBuilder.Entity("SMS.Entities.PhoneSMS", b =>
                 {
                     b.Property<int>("Id")
@@ -2484,6 +2582,9 @@ namespace SMS.DB.Migrations
                     b.Property<string>("StudentName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UniqueId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.ToTable((string)null);
 
                     b.ToView("RptStudentVMs", (string)null);
@@ -2799,6 +2900,7 @@ namespace SMS.DB.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("UniqueId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -2829,9 +2931,8 @@ namespace SMS.DB.Migrations
 
                     b.HasIndex("ReligionId");
 
-                    b.HasIndex("UniqueId")
-                        .IsUnique()
-                        .HasFilter("[UniqueId] IS NOT NULL");
+                    b.HasIndex("UniqueId", "ClassRoll")
+                        .IsUnique();
 
                     b.ToTable("Student");
                 });
@@ -3016,6 +3117,7 @@ namespace SMS.DB.Migrations
                         .HasColumnType("float");
 
                     b.Property<string>("UniqueId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("WaiverAmount")

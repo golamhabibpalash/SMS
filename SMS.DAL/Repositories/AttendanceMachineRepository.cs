@@ -69,6 +69,20 @@ namespace SMS.DAL.Repositories
             }
         }
 
+        public async Task<List<Tran_MachineRawPunch>> GetEmpCheckinDataByDateAsync(string date)
+        {
+            var pDate = new SqlParameter("date", date);
+            try
+            {
+                var result = await _context.Tran_MachineRawPunch.FromSqlInterpolated($"sp_Get_Checkin_Data_Emp {date}").ToListAsync();
+                return result;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async Task<List<Tran_MachineRawPunch>> GetCheckOutDataByDateAsync(string date)
         {
             var pDate = new SqlParameter("date", date);

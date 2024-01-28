@@ -96,7 +96,7 @@
             $('#loadReportBtn').click(function () {
 
                 $('#myIframe').attr('src', '');
-                let fileName = '';
+                let fileName = 'attendance_report_@DateTime.Now.ToString("ddMMMyyyy_hh:mm:ss")';
                 let reportType = 'pdf';
                 let aSection = '0';
                 let academicClassId = '0';
@@ -108,7 +108,7 @@
                 academicClassId = $('#AcademicClassId option:selected').val();
                 aSection = $('#AcademicSectionId option:selected').val();
                 attendanceType = $('#AttendanceType option:selected').val();
-                attendanceFor = $('#attendancForId option:selected').val();
+                attendanceFor = $('#attendancForId').val();
 
                 if (fromDate == '' || attendanceFor == '') {
                     $('#InvalidForm').show();
@@ -122,7 +122,7 @@
                     $('#exportFromDate').attr('value', fromDate);
                     $('#exportAttendanceType').attr('value', attendanceType);
 
-                    $('#myIframe').attr('src', '/Reports/DailyAttendnaceReportExport?reportType=' + reportType + '&&fromDate=' + fromDate + '&&academicClassId=' + academicClassId + '&&academicSectionId=' + aSection + "&&attendanceType=" + attendanceType + "&&fileName=" + fileName);
+                    $('#myIframe').attr('src', '/Reports/DailyAttendnaceReportExport?reportType=' + reportType + '&&fromDate=' + fromDate + '&&academicClassId=' + academicClassId + '&&academicSectionId=' + aSection + "&&attendanceType=" + attendanceType + "&&fileName=" + fileName + "&&attendanceFor=" + attendanceFor);
 
                     var iframe = document.getElementById('myIframe');
                     $('#loading').show();

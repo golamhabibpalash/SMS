@@ -1,7 +1,7 @@
 USE [SMSDB]
 GO
 
-/****** Object:  View [dbo].[vw_rpt_student_attendance]    Script Date: 1/16/2024 5:10:57 PM ******/
+/****** Object:  View [dbo].[vw_rpt_student_attendance]    Script Date: 1/28/2024 12:05:32 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -9,9 +9,11 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
 ALTER     view [dbo].[vw_rpt_student_attendance]
 as
-select s.classroll[CardNo],
+select s.UniqueId[CardNo],
+s.classroll[ClassRoll],
 s.Name[Name],
 c.Name[Class_Designation],
 s.PhoneNo[Phone],

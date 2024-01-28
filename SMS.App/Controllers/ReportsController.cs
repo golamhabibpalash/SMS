@@ -149,7 +149,7 @@ namespace SMS.App.Controllers
         }
 
         [Authorize(Policy = "DailyAttendanceReportsPolicy")]
-        public async Task<IActionResult> DailyAttendnaceReportExport(string reportType, string fromDate, string academicClassId, string academicSectionId, string attendanceType, string fileName)
+        public async Task<IActionResult> DailyAttendnaceReportExport(string reportType, string fromDate, string academicClassId, string academicSectionId, string attendanceType, string fileName, string attendanceFor)
         {
 
             Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
@@ -171,7 +171,7 @@ namespace SMS.App.Controllers
                 byte[] imageBytes = ms.ToArray();
                 imageParam = Convert.ToBase64String(imageBytes);
             }
-            string attendanceFor = "employee";
+            attendanceFor = attendanceFor=="s"?"student":"employee";
             AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSession();
 
             List<RptDailyAttendaceVM> studentDailyAttendance = await _reportManager.GetDailyAttendanceReport(fromDate, academicClassId, academicSectionId, attendanceType, academicSession.Id.ToString(), attendanceFor);

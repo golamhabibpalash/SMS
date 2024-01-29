@@ -1,4 +1,5 @@
 ﻿using BLL.Managers.Base;
+using Microsoft.EntityFrameworkCore;
 using SMS.BLL.Contracts;
 using SMS.DAL.Contracts;
 using SMS.Entities;
@@ -13,14 +14,24 @@ namespace SMS.BLL.Managers
     public class ClassFeeListManager : Manager<ClassFeeList>, IClassFeeListManager
     {
         private readonly IClassFeeListRepository _classFeeListRepository;
-        public ClassFeeListManager(IClassFeeListRepository classFeeListRepository) :base(classFeeListRepository)
+        private readonly IStudentManager studentManager;
+
+        public ClassFeeListManager(IClassFeeListRepository classFeeListRepository, IStudentManager studentManager) :base(classFeeListRepository)
         {
             _classFeeListRepository = classFeeListRepository;
+            this.studentManager = studentManager;
         }
 
         public async Task<List<ClassFeeList>> GetAllByClassIdAsync(int classId)
         {
             return await _classFeeListRepository.GetAllByClassIdAsync(classId);
+        }
+
+        public async Task<List<ClassFeeList>> GetAllByStudentId(int studId)
+        {
+            Student student = await studentManager.GetByIdAsync(studId);
+            List<ClassFeeList> classFeeLists =await _classFeeListRepository.Table.Where(s => s.AcademicClassId == student.AcademicClassId && s.AcademicSessionId == student.AcademicSessionId && s.StudentFeeHead.IsResidential == student.IsResidential).ToListAsync();
+            return classFeeLists;
         }
 
         public async Task<ClassFeeList> GetByClassIdAndFeeHeadIdAsync(int classId, int feeHeadId, int sessionId)

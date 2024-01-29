@@ -811,6 +811,21 @@ namespace SchoolManagementSystem.Controllers
             }
             return currentDue;
         }
+        private async Task<double> GetCurrentDue(int stuId)
+        {
+            double currentDue = 0;
+            Student st = await _studentManager.GetByIdAsync(stuId);
+            try
+            {
+                List<ClassFeeList> feeLists = await _classFeeListManager.GetAllByStudentId(st.Id);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return currentDue;
+        }
         private async Task<double> GetFeeAsync(int aClassId, int feeHeadId, int sessionId)
         {
             ClassFeeList classFeeList = await _classFeeListManager.GetByClassIdAndFeeHeadIdAsync(aClassId, feeHeadId, sessionId);

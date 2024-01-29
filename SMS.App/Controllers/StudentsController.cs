@@ -108,7 +108,7 @@ namespace SchoolManagementSystem.Controllers
             {
                 students = students.Where(s => s.StudentName.ToLower().Contains(searchString.ToLower()) ||
                 s.ClassRoll.ToString().Contains(searchString) ||
-                s.PhoneNo.Contains(searchString)).ToList();
+                s.PhoneNo.Contains(searchString) || s.UniqueId.Contains(searchString)).ToList();
             }
 
 

@@ -234,7 +234,11 @@
         </div>
         <footer class="footer fixed-bottom">
             <div></div>
-            <div class="ms-auto">&copy; Powered By @info.FirstOrDefault().ShortName</div>
+            @{
+                string shortName = string.Empty;
+                shortName = info.FirstOrDefault().ShortName != null ? info.FirstOrDefault().ShortName : "GHP";
+}
+            <div class="ms-auto">&copy; Powered By @shortName</div>
         </footer>
     </div>
 

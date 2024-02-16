@@ -215,7 +215,7 @@ namespace SMS.App.Controllers
                 studentPaymentObject.TotalPayment = paymentObject.StudentPayment.TotalPayment;
                 studentPaymentObject.PaidDate = paymentObject.StudentPayment.PaidDate;
                 studentPaymentObject.Remarks = paymentObject.StudentPayment.Remarks;
-                studentPaymentObject.UniqueId = await _studentManager.GetUniqueIdByStudenyId(paymentObject.StudentPayment.StudentId);
+                studentPaymentObject.UniqueId = await _studentManager.GetUniqueIdByStudentId(paymentObject.StudentPayment.StudentId);
                 var feeList = await _studentFeeHeadManager.GetAllAsync();
                 ViewData["FeeList"] = new SelectList(feeList.OrderBy(s => s.SL), "Id", "Name");
 

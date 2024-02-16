@@ -81,7 +81,7 @@ namespace SMS.App.Controllers
                     var finalTimeMn = smsTime?.ParamValue.Substring(smsTime.ParamValue.IndexOf(':')+1) ?? (startTimeMn + 5).ToString();
 
                     var cronEx = $"{finalTimeMn} {finalTimeHr} * * 0-4,6";
-                    RecurringJob.AddOrUpdate(() => SMSSendDailyAttendanceSummary(), cronEx);
+                    RecurringJob.AddOrUpdate(() => SMSSendDailyAttendanceSummary(), cronEx, TimeZoneInfo.Local);
                     //At 11:05 AM, Saturday through Thursday
                 }
                 if (setupMobileSMS.CheckInSMSService == true)

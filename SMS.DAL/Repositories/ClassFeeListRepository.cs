@@ -1,8 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using SMS.DAL.Contracts;
 using SMS.DAL.Repositories.Base;
 using SMS.DB;
 using SMS.Entities;
+using SMS.Entities.AdditionalModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,6 +62,14 @@ namespace SMS.DAL.Repositories
             }
 
             return results;
+        }
+
+        public async Task<double> GetFeeAmountByFeeListSL(string uniquId, int sl)
+        {
+            var pUniquId = new SqlParameter("@uniquId", uniquId);
+            var pSl = new SqlParameter("@sl", sl);
+            var result = await _context.Database.ExecuteSqlInterpolatedAsync($"exec sp_get_amount_by_classFee_sl {pUniquId}, {pSl}");
+            return result;
         }
     }
 }

@@ -59,6 +59,14 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="form-group row">
+                            <label for="classId" class="col-sm-3 col-form-label">Payment Type</label>
+                            <div class="col-sm-9">
+                                <select id="PaymentTypeId" class="form-control" >
+                                    <option disabled selected >-Select Payment Type-</option>
+                                </select>
+                            </div>
+                        </div>
                         <div class="text-right">
                             <span id="loadReportBtn" class="btn btn-sm btn-info">Load Report</span>
                         </div>
@@ -117,12 +125,15 @@
                 let fromDate = '';
                 let toDate = '';
                 let paymentCategory = '';
+                let paymentType = '';
+
 
                 fromDate = $('#sFromDate').val();
                 toDate = $('#sToDate').val();
                 academicClassId = $('#AcademicClassId option:selected').val();
                 aSection = $('#AcademicSectionId option:selected').val();
                 paymentCategory = $('#PaymentCategoryId option:selected').val();
+                paymentType = $('#PaymentTypeId option:selected').val();
 
                 if (fromDate == '' && toDate == '') {
                     $('#InvalidForm').show();
@@ -136,8 +147,9 @@
                     $('#exportFromDate').attr('value', fromDate);
                     $('#exportToDate').attr('value', toDate);
                     $('#exportPaymentCategory').attr('value', paymentCategory);
+                    $('#exportPaymentType').attr('value', paymentType);
 
-                    $('#myIframe').attr('src', '/Reports/StudentPaymentReportExport?reportType=' + reportType + '&&fromDate=' + fromDate + '&&toDate=' + toDate + '&&academicClassId=' + academicClassId + '&&academicSectionId=' + aSection + "&&paymentCategory=" + paymentCategory);
+                    $('#myIframe').attr('src', '/Reports/StudentPaymentReportExport?reportType=' + reportType + '&&fromDate=' + fromDate + '&&toDate=' + toDate + '&&academicClassId=' + academicClassId + '&&academicSectionId=' + aSection + "&&paymentCategory=" + paymentCategory + "&&paymentType=" + paymentType);
 
                     var iframe = document.getElementById('myIframe');
                     $('#loading').show();
@@ -190,6 +202,38 @@
                 });
             });
 
+
+            $('#PaymentCategoryId').change(function () {
+                let isResidential = $('#PaymentCategoryId option:selected').val();
+                $.ajax({
+                    url: "/studentFeeHeads/GetFeeHeads?isResidential=" + isResidential,
+                    dataType: "JSON",
+                    type: "POST",
+                    cache: false,
+                    success: function (data) {
+                        $('#PaymentTypeId').empty();
+
+                        if (data != null || data != '') {
+                            var o = '<option disabled selected value="">Select Payment Type</option>';
+                            var o2 = '<option value="">All Type</option>';
+                            $('#PaymentTypeId').append(o);
+                            $('#PaymentTypeId').append(o2);
+                            $.each(data, function (i, obj) {
+                                console.log(obj.name);
+                                var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
+                                $('#PaymentTypeId').append(op);
+                            });
+                        }
+                        else {
+                            var o = '<option disabled selected>Section Not Found</option>';
+                            $('#AcademicSectionId').append(o);
+                        }
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                });
+            });
         });
 
     </script>

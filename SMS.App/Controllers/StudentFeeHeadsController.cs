@@ -239,5 +239,30 @@ namespace SMS.App.Controllers
             var classFeeList = await _classFeeListManager.GetByClassIdAndFeeHeadIdAsync(classId, id,(int)sessionId);
             return Json(classFeeList);
         }
+        public async Task<JsonResult> GetFeeHeads(string isResidential)
+        {
+            var allFeeHeads = await _studentFeeHeadManager.GetAllAsync();
+            try
+            {
+                if (isResidential == "all")
+                {
+                    allFeeHeads = allFeeHeads;
+                }
+                else if (isResidential == "residential")
+                {
+                    allFeeHeads = allFeeHeads.Where(a => a.IsResidential == true).ToList();
+                }
+                else
+                {
+                    allFeeHeads = allFeeHeads.Where(a => a.IsResidential == false).ToList();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return Json(allFeeHeads);
+        }
     }
 }

@@ -262,7 +262,7 @@ namespace SMS.App.Controllers
                 throw;
             }
 
-            return Json(allFeeHeads);
+            return Json(allFeeHeads.OrderBy(s => s.SL));
         }
     }
 }

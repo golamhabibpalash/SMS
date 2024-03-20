@@ -761,7 +761,6 @@ namespace SchoolManagementSystem.Controllers
         private async Task<double> GetCurrntDue(int studId)
         {
             double currentDue = 0.00;
-            double totalAmount = 0.00;
             int startMonth = 0;
             int currentMonth = DateTime.Now.Month;
 
@@ -790,18 +789,22 @@ namespace SchoolManagementSystem.Controllers
                 admissionOrSessionFee = await _classFeeListManager.GetFeeAmountByFeeListSlAsync(st.UniqueId, feeHeadValue);
 
                 //monthly fee calculation
-                for (int i = st.AdmissionDate.Month; i <= DateTime.Now.Month; i++)
+                for (
+                    int i = st.AdmissionDate.Month; i <= DateTime.Now.Month; i++)
                 {
                     feeHeadValue = i;
                     cMonthlyFee += await _classFeeListManager.GetFeeAmountByFeeListSlAsync(st.UniqueId, feeHeadValue);
                 }
                 //others fee calculation
                 var othersFeeList = await _classFeeListManager.GetByClassIdSessionIdAsync(st.AcademicClassId, st.AcademicSessionId);
-                if (othersFeeList!=null)
+                if (othersFeeList != null)
                 {
                     foreach (var item in othersFeeList)
                     {
-                        othersFee += item.Amount;
+                        if (item.SL>13)
+                        {
+                            othersFee += item.Amount;
+                        }
                     }
                 }
                 totalCurrentPayable = admissionOrSessionFee + cMonthlyFee + othersFee;

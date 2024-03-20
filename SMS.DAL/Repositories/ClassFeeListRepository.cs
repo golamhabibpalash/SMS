@@ -7,6 +7,7 @@ using SMS.Entities;
 using SMS.Entities.AdditionalModels;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -66,10 +67,21 @@ namespace SMS.DAL.Repositories
 
         public async Task<double> GetFeeAmountByFeeListSL(string uniquId, int sl)
         {
-            var pUniquId = new SqlParameter("@uniquId", uniquId);
-            var pSl = new SqlParameter("@sl", sl);
-            var result = await _context.Database.ExecuteSqlInterpolatedAsync($"exec sp_get_amount_by_classFee_sl {pUniquId}, {pSl}");
-            return result;
+            var feeAmountParam = new SqlParameter("@FeeAmount", SqlDbType.Float)
+            {
+                Direction = ParameterDirection.Output
+            };
+
+            await _context.Database.ExecuteSqlRawAsync(
+                $"exec sp_get_amount_by_classFee_sl @uniqueId, @sl, @FeeAmount OUTPUT",
+                new SqlParameter("@uniqueId", uniquId),
+                new SqlParameter("@sl", sl),
+                feeAmountParam);
+
+            double feeAmount = Convert.ToDouble(feeAmountParam.Value);
+            return feeAmount;
         }
+
+
     }
 }

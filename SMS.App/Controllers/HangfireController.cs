@@ -711,12 +711,13 @@ namespace SMS.App.Controllers
                         var employees = await _employeeManager.GetAllAsync();
 
                         totalGirlsStudent = (from a in allCheckInAttendance
-                                             join s in students.Where(s => s.Status == true) on a.CardNo.Trim() equals s.UniqueId.Trim()
-                                             where s.GenderId == 2
+                                             join s in students
+                                                 .Where(s => s.Status == true && s.GenderId == 2)
+                                                 on int.Parse(a.CardNo.Trim()) equals int.Parse(s.UniqueId.Trim())
                                              select a).Count();
 
                         totalBoysStudent = (from a in allCheckInAttendance
-                                            join s in students.Where(s => s.Status == true) on a.CardNo.Trim() equals s.UniqueId.Trim()
+                                            join s in students.Where(s => s.Status == true) on int.Parse(a.CardNo.Trim()) equals int.Parse(s.UniqueId.Trim())
                                             where s.GenderId == 1
                                             select a).Count();
 

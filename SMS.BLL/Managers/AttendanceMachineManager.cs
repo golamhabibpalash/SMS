@@ -47,7 +47,7 @@ namespace SMS.BLL.Managers
 
         public async Task<List<Tran_MachineRawPunch>> GetCheckinDataByDateAsync(string date)
         {
-            List<Tran_MachineRawPunch> allCheckInAttendnace = new List<Tran_MachineRawPunch>();
+            List<Tran_MachineRawPunch> allCheckInAttendnace = new();
             var result =await _attendanceMachineRepository.GetCheckinDataByDateAsync(date);
             if (result.Count>0)
             {

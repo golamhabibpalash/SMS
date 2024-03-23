@@ -1,7 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Identity;
 @using SMS.App.ViewModels.AttendanceVM
 
-@*@model SMS.App.ViewModels.Students.DashboardIndexVM*@
+@model SMS.App.ViewModels.Students.DashboardIndexVM
 
 @inject UserManager<ApplicationUser> _userManager;
 
@@ -17,13 +17,13 @@
     {
         logo = ViewBag.InstituteLogo;
     }
-    //double monthlyTotal = 0.0;
-    //double dailyTotal = 0.0;
+    double monthlyTotal = 0.0;
+    double dailyTotal = 0.0;
 
 }
 
 @section Styles{
-    @*<link href="~/lib/fullCalendar/main.min.css" rel="stylesheet" />*@
+    <link href="~/lib/fullCalendar/main.min.css" rel="stylesheet" />
 <style>
     .logo
     {
@@ -64,7 +64,7 @@
     </div>
     <div class="row">
 
-    @*<div class="col-sm-12 col-md-6 col-12">
+    <div class="col-sm-12 col-md-6 col-12">
         <div class="card shadow">
             <div class="card-header text-center h5">Todays Attendance</div>
             <div class="">
@@ -162,8 +162,7 @@
             </div>
         </div>
     </div>
-    @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
-    {
+ 
         <div class="col-sm-12 col-md-6 col-12">
             <div class="card shadow ">
                 <div class="card-header h5 text-center">
@@ -250,7 +249,7 @@
             </div>
         </div>
 
-    }*@
+  
 
 </div>
 

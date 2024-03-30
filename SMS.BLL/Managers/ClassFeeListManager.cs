@@ -41,6 +41,12 @@ namespace SMS.BLL.Managers
             return result;
         }
 
+        public async Task<List<ClassFeeList>> GetByClassIdSessionIdStudentIdAsync(int classId, int sessionId, int studentId)
+        {
+            List<ClassFeeList> result = await _classFeeListRepository.GetByClassIdSessionIdStudentIdAsync(classId, sessionId, studentId);
+            return result;
+        }
+
         public async Task<List<ClassFeeList>> GetClassFeeListByClassIdFeeHeadIdSessionIdAsync(int classId, int feeHeadId, int sessionId)
         {
             List<ClassFeeList> result = await _classFeeListRepository.GetClassFeeListByClassIdFeeHeadIdSessionIdAsync(classId, feeHeadId, sessionId);

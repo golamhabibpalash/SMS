@@ -181,7 +181,7 @@ namespace SchoolManagementSystem.Controllers
             }
 
             ViewData["pageSize"] = pageSize > 0 ? pageSize : pSize;
-            return View(PaginatedList<SMS.Entities.AdditionalModels.StudentListVM>.Create(students, pageNumber ?? 1, pSize));
+            return View(PaginatedList<SMS.Entities.AdditionalModels.StudentListVM>.Create(students.OrderBy(s => s.ClassSerial).ThenBy(s => s.ClassRoll).ToList(), pageNumber ?? 1, pSize));
         }
         #endregion
 
@@ -210,9 +210,7 @@ namespace SchoolManagementSystem.Controllers
             {
                 return NotFound();
             }
-
-
-            #region Payment===========================================================================================================================
+            #region Payment==========================================================================================
             var stuPayments = await _studentPaymentManager.GetAllByStudentIdAsync((int)id);
 
             List<StudentPaymentScheduleVM> paymentSchedule = await _studentPaymentManager.GetStudentPaymentSchedule(student.Id);
@@ -234,10 +232,8 @@ namespace SchoolManagementSystem.Controllers
 
             sd.TotalDue = await GetTotalDue(student.Id);
             sd.CurrentDue = await GetCurrntDue(student.Id);
-            #endregion Payment=========================================================================================================================
-
-
-            #region Attendance ========================================================================================================================
+            #endregion Payment============================================================================
+            #region Attendance =============================================================================
             try
             {
                 int startingMonth = Convert.ToInt32(student.AdmissionDate.Date.ToString("MM"));
@@ -795,7 +791,7 @@ namespace SchoolManagementSystem.Controllers
                     cMonthlyFee += await _classFeeListManager.GetFeeAmountByFeeListSlAsync(st.UniqueId, feeHeadValue);
                 }
                 //others fee calculation
-                var othersFeeList = await _classFeeListManager.GetByClassIdSessionIdAsync(st.AcademicClassId, st.AcademicSessionId);
+                var othersFeeList = await _classFeeListManager.GetByClassIdSessionIdStudentIdAsync(st.AcademicClassId, st.AcademicSessionId,st.Id);
                 if (othersFeeList != null)
                 {
                     foreach (var item in othersFeeList)

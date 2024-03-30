@@ -404,11 +404,11 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach (var item in Model.StudentPaymentSchedules.OrderBy(s => s.PaymentType))
+                                                    @foreach (var item in Model.StudentPaymentSchedules.OrderBy(s => s.SL))
                                                     {
                                                         <tr>
                                                             <td>@(paymentScheduleSL++)</td>
-                                                            <td>@item.PaymentType</td>
+                                                            <td class="text-left">@item.PaymentType</td>
                                                             <td>@item.Amount <span class="badge badge-pill badge-warning">@item.yearlyFrequency</span></td>
                                                             <td class="text-right">@(item.Amount * item.yearlyFrequency)</td>
                                                         </tr>

@@ -12,5 +12,6 @@ namespace SMS.Entities.AdditionalModels
         public double Amount { get; set; }
         public int yearlyFrequency { get; set; } = 0;
         public bool IsResidential { get; set; }
+        public int SL { get; set; }
     }
 }

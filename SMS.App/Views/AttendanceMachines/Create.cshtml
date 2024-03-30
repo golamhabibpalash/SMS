@@ -60,7 +60,7 @@
                     cache: false,
                     success: function (data) {
                         $.each(data, function (i, obj) {
-                            var op = '<option value="' + obj.classRoll + '">' +obj.classRoll+" ("+ obj.name +")"+'</option>';
+                            var op = '<option value="' + obj.uniqueId + '">' +obj.classRoll+" ("+ obj.name +")"+'</option>';
                             $('#CardNo').append(op);
                         });
 

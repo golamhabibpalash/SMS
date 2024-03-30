@@ -178,6 +178,7 @@ namespace SMS.App.Controllers
             AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSession();
 
             List<RptDailyAttendaceVM> studentDailyAttendance = await _reportManager.GetDailyAttendanceReport(fromDate, academicClassId, academicSectionId, attendanceType, academicSession.Id.ToString(), attendanceFor);
+            string totalStudents = studentDailyAttendance.Count.ToString();
             using var report = new Microsoft.Reporting.NETCore.LocalReport();
             report.DataSources.Add(new ReportDataSource("AttendanceReportDS", studentDailyAttendance));
             var parameters = new[] {
@@ -187,7 +188,8 @@ namespace SMS.App.Controllers
                 new ReportParameter("Logo", imageParam),
                 new ReportParameter("ReportName", "Daily Attendance Report"),
                 new ReportParameter("AttendanceDate", fromDate),
-                new ReportParameter("ReportDate", DateTime.Today.ToString("dd MMM yyyy"))
+                new ReportParameter("ReportDate", DateTime.Today.ToString("dd MMM yyyy")),
+                new ReportParameter("TotalStudent",totalStudents)
             };
             report.ReportPath = path;
             report.SetParameters(parameters);

@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -42,7 +43,7 @@ namespace SMS.DAL.Repositories
         public async Task<ClassFeeList> GetByClassIdAndFeeHeadIdAsync(int classId, int feeHeadId, int sessionId)
         {
             var feeListExist = await _context.ClassFeeList
-                .FirstOrDefaultAsync(s => s.AcademicClassId == classId && s.StudentFeeHeadId == feeHeadId && s.AcademicSessionId==sessionId);
+                .FirstOrDefaultAsync(s => s.AcademicClassId == classId && s.StudentFeeHeadId == feeHeadId && s.AcademicSessionId == sessionId);
 
             return feeListExist;
         }
@@ -64,7 +65,6 @@ namespace SMS.DAL.Repositories
 
             return results;
         }
-
         public async Task<double> GetFeeAmountByFeeListSL(string uniquId, int sl)
         {
             var feeAmountParam = new SqlParameter("@FeeAmount", SqlDbType.Float)
@@ -82,6 +82,23 @@ namespace SMS.DAL.Repositories
             return feeAmount;
         }
 
-
+        public async Task<List<ClassFeeList>> GetByClassIdSessionIdStudentIdAsync(int classId, int sessionId, int studentId)
+        {
+            List<ClassFeeList> results = new();
+            try
+            {
+                results =await (from t in _context.ClassFeeList
+                          join h in _context.StudentFeeHead on t.StudentFeeHeadId equals h.Id into joinFeedHead
+                          from h in joinFeedHead.DefaultIfEmpty()
+                          join s in _context.Student on t.AcademicClassId equals s.AcademicClassId
+                          where s.Id == studentId && h.IsResidential == s.IsResidential && t.AcademicSessionId == s.AcademicSessionId
+                          select t).ToListAsync();                          
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return results;
+        }
     }
 }

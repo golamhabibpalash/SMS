@@ -565,7 +565,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Total 000 Students</Value>
+                    <Value>="Total " &amp; Parameters!TotalStudent.Value &amp; " Students"</Value>
                     <Style />
                   </TextRun>
                 </TextRuns>
@@ -626,14 +626,9 @@
               <Width>7.26842in</Width>
               <Style>
                 <Border>
-                  <Style>None</Style>
+                  <Style>Solid</Style>
+                  <Width>0.25pt</Width>
                 </Border>
-                <TopBorder>
-                  <Style>Solid</Style>
-                </TopBorder>
-                <BottomBorder>
-                  <Style>Solid</Style>
-                </BottomBorder>
                 <BackgroundColor>LightGrey</BackgroundColor>
                 <PaddingLeft>2pt</PaddingLeft>
                 <PaddingRight>2pt</PaddingRight>
@@ -902,6 +897,11 @@
       <DataType>String</DataType>
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
+    <ReportParameter Name="TotalStudent">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
   </ReportParameters>
   <ReportParametersLayout>
     <GridLayoutDefinition>
@@ -942,6 +942,11 @@
           <ColumnIndex>2</ColumnIndex>
           <RowIndex>1</RowIndex>
           <ParameterName>ReportDate</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>3</ColumnIndex>
+          <RowIndex>1</RowIndex>
+          <ParameterName>TotalStudent</ParameterName>
         </CellDefinition>
       </CellDefinitions>
     </GridLayoutDefinition>

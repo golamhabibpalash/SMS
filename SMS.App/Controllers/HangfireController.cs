@@ -210,7 +210,7 @@ namespace SMS.App.Controllers
                     {
                         foreach (Tran_MachineRawPunch attendance in todaysAllCheckInAttendance)
                         {
-                            Student student = await _studentManager.GetStudentByUniqueIdAsync(attendance.CardNo.Trim());
+                            Student student = await _studentManager.GetStudentByUniqueIdAsync(Convert.ToInt32(attendance.CardNo.Trim()).ToString());
 
                             if (student == null || student.GenderId != 1 || student.Status == false || student.SMSService == false)
                             {
@@ -292,7 +292,7 @@ namespace SMS.App.Controllers
                     {
                         foreach (Tran_MachineRawPunch attendance in todaysAllCheckInAttendance)
                         {
-                            Student student = await _studentManager.GetStudentByUniqueIdAsync(attendance.CardNo.Trim());
+                            Student student = await _studentManager.GetStudentByUniqueIdAsync(Convert.ToInt32(attendance.CardNo.Trim()).ToString());
 
                             if (student == null || student.GenderId != 2 || student.Status == false || student.SMSService != true)
                             {

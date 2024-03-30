@@ -16,6 +16,7 @@ using SMS.App.Utilities.ShortMessageService;
 using SchoolManagementSystem;
 using SMS.App.ViewModels.PaymentVM;
 using SMS.App.Utilities.Others;
+using System.Net.Http;
 
 namespace SMS.App.Controllers
 {
@@ -33,8 +34,9 @@ namespace SMS.App.Controllers
         private readonly IInstituteManager _instituteManager;
         private readonly IAcademicSessionManager _academicSessionManager;
         private readonly IAcademicSectionManager _academicSectionManager;
+        private readonly HttpClient _httpClient;
 
-        public StudentPaymentsController(IStudentPaymentManager studentPaymentManager, IStudentManager studentManager, IClassFeeListManager classFeeListManager, IAcademicClassManager academicClassManager, IStudentFeeHeadManager studentFeeHeadManager, IStudentPaymentDetailsManager studentPaymentDetailsManager, ISetupMobileSMSManager setupMobileSMSManager, IPhoneSMSManager phoneSMSManager, IInstituteManager instituteManager, IAcademicSessionManager academicSessionManager, IAcademicSectionManager academicSectionManager)
+        public StudentPaymentsController(IStudentPaymentManager studentPaymentManager, IStudentManager studentManager, IClassFeeListManager classFeeListManager, IAcademicClassManager academicClassManager, IStudentFeeHeadManager studentFeeHeadManager, IStudentPaymentDetailsManager studentPaymentDetailsManager, ISetupMobileSMSManager setupMobileSMSManager, IPhoneSMSManager phoneSMSManager, IInstituteManager instituteManager, IAcademicSessionManager academicSessionManager, IAcademicSectionManager academicSectionManager, HttpClient httpClient)
         {
             _studentPaymentManager = studentPaymentManager;
             _studentManager = studentManager;
@@ -47,6 +49,7 @@ namespace SMS.App.Controllers
             _instituteManager = instituteManager;
             _academicSessionManager = academicSessionManager;
             _academicSectionManager = academicSectionManager;
+            _httpClient = httpClient;
         }
 
         // GET: StudentPayments
@@ -539,7 +542,7 @@ namespace SMS.App.Controllers
                     DuePaymentDetailsVM duePaymentDetailsVM = new DuePaymentDetailsVM();
                     duePaymentDetailsVM.StudentId = item.Id;
                     duePaymentDetailsVM.Student = item;
-                    duePaymentDetailsVM.TotalDue =await GetCurrntDue(item.Id);
+                    duePaymentDetailsVM.TotalDue = await GetCurrentDue(item.Id);
                     duePaymentDetailsVMs.Add(duePaymentDetailsVM);
                 }
             }
@@ -569,75 +572,70 @@ namespace SMS.App.Controllers
             DateTime finalDate = new DateTime(sessionYear, 12, 31);
             return 0.0;
         }
-        public async Task<double> GetCurrentDue(int stuRoll)
-        {
-            Student student = await _studentManager.GetStudentByClassRollAsync(stuRoll);
+        //public async Task<double> GetCurrentDue(int stuRoll)
+        //{
+        //    Student student = await _studentManager.GetStudentByClassRollAsync(stuRoll);
 
-            var session = student.AcademicSession.Name.Trim().Split('-', 4);
-            int sessionYear = Convert.ToInt32(session);
+        //    var session = student.AcademicSession.Name.Trim().Split('-', 4);
+        //    int sessionYear = Convert.ToInt32(session);
 
-            DateTime startingDate = new DateTime(sessionYear,01,01);
-            DateTime finalDate = new DateTime(sessionYear, 12, 31);
+        //    DateTime startingDate = new DateTime(sessionYear,01,01);
+        //    DateTime finalDate = new DateTime(sessionYear, 12, 31);
 
-            return 0.0;
-        }
+        //    return 0.0;
+        //}
 
-        private async Task<double> GetCurrntDue(int studId)
+        private async Task<double> GetCurrentDue(int studId)
         {
             double currentDue = 0.00;
-            double totalAmount = 0.00;
-            Student st = await _studentManager.GetByIdAsync(studId);
             try
             {
-                int admissionYear = st.AdmissionDate.Year;
-                int currentYear = DateTime.Now.Year;
 
-                int admissionMonth = admissionYear < currentYear ? 1 : st.AdmissionDate.Month;
-                List<ClassFeeList> feeLists = await _classFeeListManager.GetAllByClassIdAsync(st.AcademicClassId);
-                feeLists = feeLists
-                    .Where(s => s.AcademicSessionId == st.AcademicSessionId).ToList();
-                if (st.IsResidential)
+                Student st = await _studentManager.GetByIdAsync(studId);
+                if (st == null)
                 {
-                    feeLists = feeLists.Where(s => s.StudentFeeHead.IsResidential).ToList();
+                    return 0;
                 }
-                else if (st.IsResidential)
-                {
-                    feeLists = feeLists.Where(s => s.StudentFeeHead.IsResidential==false).ToList();
-                }
-                var res = from cFee in feeLists
-                          select (cFee.Amount * cFee.StudentFeeHead.YearlyFrequency);
-                var sdfsdf = feeLists.Select(s => s.Amount * s.StudentFeeHead.YearlyFrequency).Sum();
 
-                double monthlyFee = await GetFeeAsync(st.AcademicClassId, 1, st.AcademicSessionId); //1=monthlyfee, 2=admissionFee, 3=ExamFee, 4=SessionFee
-                double admissionFee = await GetFeeAsync(st.AcademicClassId, 2, st.AcademicSessionId); //1=monthlyfee, 2=admissionFee, 3=ExamFee, 4=SessionFee
-                double examFee = await GetFeeAsync(st.AcademicClassId, 3, st.AcademicSessionId); //1=monthlyfee, 2=admissionFee, 3=ExamFee, 4=SessionFee
-                double sessionFee = await GetFeeAsync(st.AcademicClassId, 4, st.AcademicSessionId); //1=monthlyfee, 2=admissionFee, 3=ExamFee, 4=SessionFee
-                if (st.AdmissionDate.ToString("dd-MM-yyyy") == "01-01-" + admissionYear)
+                double totalCurrentPayable = 0;
+                double totalCurrentPaid = 0;
+                double admissionOrSessionFee = 0;
+                int feeHeadValue = 0;
+                double cMonthlyFee = 0;
+                double othersFee = 0;
+
+
+                //0     = admission fee
+                //1-12  = monthly fee
+                //13    = session fee
+                //14- >   other's fee
+
+                //admission or session fee calculation
+                feeHeadValue = st.AdmissionDate.Year < DateTime.Now.Year ? 13 : 0;
+                admissionOrSessionFee = await _classFeeListManager.GetFeeAmountByFeeListSlAsync(st.UniqueId, feeHeadValue);
+
+                //monthly fee calculation
+                for (
+                    int i = st.AdmissionDate.Month; i <= DateTime.Now.Month; i++)
                 {
-                    totalAmount = ((DateTime.Now.Month - (admissionMonth - 1)) * monthlyFee) + sessionFee;
-                    if (Convert.ToInt32(DateTime.Today.ToString("MM")) >= 6 && Convert.ToInt32(DateTime.Today.ToString("MM")) < 11)
+                    feeHeadValue = i;
+                    cMonthlyFee += await _classFeeListManager.GetFeeAmountByFeeListSlAsync(st.UniqueId, feeHeadValue);
+                }
+                //others fee calculation
+                var othersFeeList = await _classFeeListManager.GetByClassIdSessionIdStudentIdAsync(st.AcademicClassId, st.AcademicSessionId, st.Id);
+                if (othersFeeList != null)
+                {
+                    foreach (var item in othersFeeList)
                     {
-                        totalAmount = totalAmount + examFee;
-                    }
-                    if (Convert.ToInt32(DateTime.Today.ToString("MM")) > 11)
-                    {
-                        totalAmount = totalAmount + (2 * examFee);
+                        if (item.SL > 13)
+                        {
+                            othersFee += item.Amount;
+                        }
                     }
                 }
-                else
-                {
-                    totalAmount = ((DateTime.Now.Month - (admissionMonth - 1)) * monthlyFee) + admissionFee;
-                    if (Convert.ToInt32(DateTime.Today.ToString("MM")) >= 6 && Convert.ToInt32(DateTime.Today.ToString("MM")) < 11)
-                    {
-                        totalAmount = totalAmount + examFee;
-                    }
-                    if (Convert.ToInt32(DateTime.Today.ToString("MM")) > 11)
-                    {
-                        totalAmount = totalAmount + (2 * examFee);
-                    }
-                }
-                double totalPaid = await GetTotalPaid(st.Id);
-                currentDue = totalAmount - totalPaid;
+                totalCurrentPayable = admissionOrSessionFee + cMonthlyFee + othersFee;
+                totalCurrentPaid = await GetTotalPaid(studId);
+                currentDue = totalCurrentPayable - totalCurrentPaid;
             }
             catch (Exception)
             {

@@ -753,7 +753,7 @@ namespace SchoolManagementSystem.Controllers
             return totalDue;
         }
 
-        private async Task<double> GetCurrntDue(int studId)
+        public async Task<double> GetCurrntDue(int studId)
         {
             double currentDue = 0.00;
             int startMonth = 0;

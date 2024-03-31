@@ -104,7 +104,7 @@ namespace SMS.App.Controllers
             var stu = await _studentManager.GetStudentByClassRollAsync((int)stRoll);
             try
             {
-            var student = await _studentManager.GetStudentByUniqueIdAsync(stu.UniqueId);
+            var student = await _studentManager.GetStudentByUniqueIdAsync(Convert.ToInt32(stu.UniqueId).ToString());
             if (student!=null)
             {
                 StudentPayment sp = new();

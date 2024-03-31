@@ -134,38 +134,42 @@
                     {
                         trColor = string.Empty;
                     }
-                        <tr style="background-color:@trColor">
-                            <td>@(++sl)</td>
-                            <td>@exam.Student.ClassRoll</td>
-                            <td class="text-nowrap">@exam.Student.Name</td>
-                            @if (exam.ExamResultDetails != null)
+                <tr style="background-color:@trColor">
+                    <td>@(++sl)</td>
+                    <td>@exam.Student.ClassRoll</td>
+                    <td class="text-nowrap">@exam.Student.Name</td>
+                    @if (exam.ExamResultDetails != null)
+                    {
+                        foreach (var eDetail in exam.ExamResultDetails)
+                        {
+                            <td>@eDetail.ObtainMark</td>
+                            if (@eDetail.GPA == 0)
                             {
-                                foreach (var eDetail in exam.ExamResultDetails)
-                                {
-                                    <td>@eDetail.ObtainMark</td>
-                                    if (@eDetail.GPA == 0)
-                                    {
-                                        <td style="background-color:salmon">@eDetail.GPA</td>
-                                    }
-                                    else
-                                    {
-                                        <td>@eDetail.GPA</td>
-                                    }
-                                    <td>@eDetail.Grade</td>
-                                }
+                                <td style="background-color:salmon">@eDetail.GPA</td>
                             }
-                            <td>@exam.TotalObtainMarks</td>
-                            <td style="background-color:@trColor">@exam.CGPA</td>
-                            <td>@exam.FinalGrade</td>
-                            <td >@exam.GradeComments</td>
-                            <td>@exam.TotalFails</td>
-                            <td>@(exam.AttendancePercentage+"%")</td>
-                            <td>@(exam.Rank)</td>
-                            <td></td>
-                            <td>@exam.Student.Gender.Name</td>
-                            <td>@exam.Student.GuardianPhone.ToString().PadLeft(11, '0')</td>
-                            <td>@exam.Student.PhoneNo.ToString().PadLeft(11, '0')</td>
-                        </tr>
+                            else
+                            {
+                                <td>@eDetail.GPA</td>
+                            }
+                            <td>@eDetail.Grade</td>
+                        }
+                    }
+                    <td>@exam.TotalObtainMarks</td>
+                    <td style="background-color:@trColor">@exam.CGPA</td>
+                    <td>@exam.FinalGrade</td>
+                    <td>@exam.GradeComments</td>
+                    <td>@exam.TotalFails</td>
+                    <td>@(exam.AttendancePercentage+"%")</td>
+                    <td>@(exam.Rank)</td>
+                    <td></td>
+                    <td>@exam.Student.Gender.Name</td>
+                    <td>
+                        @(exam.Student.GuardianPhone != null && exam.Student.GuardianPhone.Trim() != string.Empty
+    ? exam.Student.GuardianPhone.ToString().PadLeft(11, '0')
+    : "N/A")
+                    </td>
+                    <td>@exam.Student.PhoneNo.ToString().PadLeft(11, '0')</td>
+                </tr>
                         }
                     </tbody>
 

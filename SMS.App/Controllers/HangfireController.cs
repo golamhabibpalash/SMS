@@ -57,7 +57,7 @@ namespace SMS.App.Controllers
 
             var startTimeHr = instituteStartTime.Hour;
             var startTimeMn = instituteStartTime.Minute;
-             
+
             var instituteEndHr = instituteCloseTime.Hour;
             var instituteEndMn = instituteCloseTime.Minute;
 
@@ -78,7 +78,7 @@ namespace SMS.App.Controllers
                     var smsTime = await _paramBusConfigManager.GetByParamSL(7);
 
                     var finalTimeHr = smsTime?.ParamValue.Substring(0, smsTime.ParamValue.IndexOf(':')) ?? (startTimeHr + 1).ToString();
-                    var finalTimeMn = smsTime?.ParamValue.Substring(smsTime.ParamValue.IndexOf(':')+1) ?? (startTimeMn + 5).ToString();
+                    var finalTimeMn = smsTime?.ParamValue.Substring(smsTime.ParamValue.IndexOf(':') + 1) ?? (startTimeMn + 5).ToString();
 
                     var cronEx = $"{finalTimeMn} {finalTimeHr} * * 0-4,6";
                     RecurringJob.AddOrUpdate(() => SMSSendDailyAttendanceSummary(), cronEx, TimeZoneInfo.Local);
@@ -90,18 +90,18 @@ namespace SMS.App.Controllers
                     var smsEndStop = await _paramBusConfigManager.GetByParamSL(2);
 
                     var smsStartTimeHr = smsStartTime?.ParamValue.Substring(0, smsStartTime.ParamValue.IndexOf(':')) ?? (startTimeHr - 1).ToString();
-                    var smsStartTimeMn = smsStartTime?.ParamValue.Substring(smsStartTime.ParamValue.IndexOf(':')+1) ?? (startTimeHr - 1).ToString();
+                    var smsStartTimeMn = smsStartTime?.ParamValue.Substring(smsStartTime.ParamValue.IndexOf(':') + 1) ?? (startTimeHr - 1).ToString();
                     var smsEndTimeHr = smsEndStop?.ParamValue.Substring(0, smsStartTime.ParamValue.IndexOf(':')) ?? (startTimeHr + 1).ToString();
                     var cronEx = $"*/10 {smsStartTimeHr}-{smsEndTimeHr} * * 0-4,6";
                     RecurringJob.AddOrUpdate(() => SendCheckInSMS(), cronEx, TimeZoneInfo.Local);
                     //Every 10 minutes, between 08:00 AM and 09:59 AM, Saturday through Thursday
-                } 
+                }
                 if (setupMobileSMS.CheckOutSMSService == true)
                 {
                     var checkOutStartTime = await _paramBusConfigManager.GetByParamSL(3);
                     var checkOutEndTime = await _paramBusConfigManager.GetByParamSL(4);
 
-                    int smsStartTime = (startTimeHr + instituteEndHr)/2;
+                    int smsStartTime = (startTimeHr + instituteEndHr) / 2;
                     var smsStartTimeHr = checkOutStartTime?.ParamValue.Substring(0, checkOutStartTime.ParamValue.IndexOf(':')) ?? smsStartTime.ToString();
                     int smsEndTime = instituteEndHr + 1;
                     var smsEndTimeHr = checkOutEndTime?.ParamValue.Substring(0, checkOutEndTime.ParamValue.IndexOf(':')) ?? smsEndTime.ToString();
@@ -114,7 +114,7 @@ namespace SMS.App.Controllers
                     var absentStudentNotifiactionTime = await _paramBusConfigManager.GetByParamSL(8);
                     int smsTimeHr = startTimeHr + 2;
                     var notificationTimeHr = absentStudentNotifiactionTime?.ParamValue.Substring(0, absentStudentNotifiactionTime.ParamValue.IndexOf(':')) ?? smsTimeHr.ToString();
-                    var notificationTimeMn = absentStudentNotifiactionTime?.ParamValue.Substring(absentStudentNotifiactionTime.ParamValue.IndexOf(':')+1) ?? "1";
+                    var notificationTimeMn = absentStudentNotifiactionTime?.ParamValue.Substring(absentStudentNotifiactionTime.ParamValue.IndexOf(':') + 1) ?? "1";
                     var cron = $"{notificationTimeMn} {notificationTimeHr} * * 0-4,6";
                     RecurringJob.AddOrUpdate(() => SendAbsentNotificationSMS(), cron, TimeZoneInfo.Local);
                     //At 10:00:01 AM, Saturday through Thursday
@@ -129,7 +129,7 @@ namespace SMS.App.Controllers
                     //At 6:00 pm, saturday through Thursday
                     //0 18 ? *SUN,MON,TUE,WED,THU,SAT *
                 }
-            }            
+            }
             return RedirectToAction("SMSControl", "Setup");
         }
 
@@ -322,7 +322,7 @@ namespace SMS.App.Controllers
                                             continue;
                                         }
                                         bool isAlreadySMSSent2nd = await _phoneSMSManager.IsSMSSendForAttendance(phoneNumber, smsType, DateTime.Now.ToString("dd-MM-yyyy"));
-                                        if (isAlreadySMSSent2nd) { continue; }  
+                                        if (isAlreadySMSSent2nd) { continue; }
                                         bool isSMSSent = await MobileSMS.SendSMS(phoneNumber, smsText);
                                         if (isSMSSent)
                                         {
@@ -366,7 +366,7 @@ namespace SMS.App.Controllers
             if (attendanceSMSSetup.CheckInSMSServiceForEmployees == true)
             {
                 var todaysAllAttendance = await _attendanceMachineManager.GetEmpCheckinDataByDateAsync(DateTime.Now.ToString("dd-MM-yyyy"));
-                
+
                 if (todaysAllAttendance.Count > 0)
                 {
 
@@ -410,7 +410,7 @@ namespace SMS.App.Controllers
                                         {
                                             Text = smsText,
                                             CreatedAt = DateTime.Now,
-                                            CreatedBy = "Automation",                                            
+                                            CreatedBy = "Automation",
                                             EditedAt = DateTime.Now,
                                             EditedBy = "Automation",
                                             MobileNumber = phoneNumber,
@@ -553,11 +553,11 @@ namespace SMS.App.Controllers
                 {
                     foreach (Tran_MachineRawPunch attendance in todaysCheckOutAttendances)
                     {
-                        if (attendance.CardNo.Length != 8)
-                        {
-                            continue;
-                        }
-                        Student student = await _studentManager.GetStudentByClassRollAsync(Convert.ToInt32(attendance.CardNo.Trim()));
+                        //if (attendance.CardNo.Length != 8)
+                        //{
+                        //    continue;
+                        //}
+                        Student student = await _studentManager.GetStudentByUniqueIdAsync(attendance.CardNo.Trim());
                         if (student == null)
                         {
                             continue;
@@ -627,7 +627,7 @@ namespace SMS.App.Controllers
                     {
                         Employee objEmployee = await _employeeManager.GetByIdAsync(Convert.ToInt32(attendance.CardNo.Trim()));
 
-                        if (objEmployee == null || objEmployee.Status !=true)
+                        if (objEmployee == null || objEmployee.Status != true)
                         {
                             continue;
                         }
@@ -679,7 +679,7 @@ namespace SMS.App.Controllers
         public async Task<IActionResult> SMSSendDailyAttendanceSummary()
         {
             var currentMonthHolidays = await _offDayManager.GetMonthlyHolidaysAsync(DateTime.Now.ToString("MMyyyy"));
-            if (currentMonthHolidays != null && currentMonthHolidays.Count>0)
+            if (currentMonthHolidays != null && currentMonthHolidays.Count > 0)
             {
                 foreach (var holiday in currentMonthHolidays)
                 {
@@ -731,7 +731,7 @@ namespace SMS.App.Controllers
                         msgText = $"Attendance Summary ({DateTime.Today.ToString("dd MMM yyyy")}):\n" +
                             $"Employees: {totalEmployee} \n" +
                             $"Students:({totalBoysStudent}+{totalGirlsStudent})= {totalStudent} \n" +
-                            $"-"+instituteInfo.FirstOrDefault().ShortName;
+                            $"-" + instituteInfo.FirstOrDefault().ShortName;
 
                         if (totalStudent <= 0)
                         {
@@ -740,7 +740,7 @@ namespace SMS.App.Controllers
 
                         //Email Send
                         string toEmailString = await _paramBusConfigManager.GetValueByParamSL(11);
-                        if (toEmailString!=null)
+                        if (toEmailString != null)
                         {
                             string[] toEmail = toEmailString.Split(',');
                             string emailSubject = "Todays attended report summary";
@@ -755,7 +755,7 @@ namespace SMS.App.Controllers
 
                         //Phone SMS Send
                         string phoneNumberString = await _paramBusConfigManager.GetValueByParamSL(10);
-                        if (phoneNumberString!=null)
+                        if (phoneNumberString != null)
                         {
                             string[] phoneNumber = phoneNumberString.Split(',');
                             string smsType = "CheckIn Summary";
@@ -828,13 +828,13 @@ namespace SMS.App.Controllers
 
             DateTime tDate = DateTime.Today;
             var allCheckInAttendance = await _attendanceMachineManager.GetCheckinDataByDateAsync(tDate.ToString("dd-MM-yyyy"));
-            
+
             if (allCheckInAttendance != null && allCheckInAttendance.Count > 10)
             {
                 SetupMobileSMS setupMobileSMS = await _setupMobileSMSManager.GetByIdAsync(1);
                 if (setupMobileSMS.AbsentNotification == true)
                 {
-                    if (setupMobileSMS.AbsentNotificationStudent==true)
+                    if (setupMobileSMS.AbsentNotificationStudent == true)
                     {
                         await AbsentStudentSendSMS();
                     }
@@ -852,7 +852,7 @@ namespace SMS.App.Controllers
             string date = DateTime.Now.ToString("dd-MM-yyyy");
             List<Student> absentStudents = await _attendanceMachineManager.GetTodaysAbsentStudentAsync(date);
             List<Student> totalStudent = (List<Student>)await _studentManager.GetAllAsync();
-            
+
             if (absentStudents == null || absentStudents.Count <= 0)
             {
                 return null;
@@ -880,7 +880,7 @@ namespace SMS.App.Controllers
                         {
                             continue;
                         }
-                        string smsText = GenerateAbsentNotificationText(studentName,"student", 1);
+                        string smsText = GenerateAbsentNotificationText(studentName, "student", 1);
                         bool isSMSSent = await MobileSMS.SendSMS(phoneNumber, smsText);
                         if (isSMSSent)
                         {
@@ -906,13 +906,13 @@ namespace SMS.App.Controllers
             return Ok();
         }
         #endregion Absent Student Notification by SMS Finished here xxxxxxxxxxxxxxxxxxx
-        
+
         #region Absent Employee Notification
         private async Task<IActionResult> AbsentEmployeeSendSMS()
         {
             string date = DateTime.Now.ToString("dd-MM-yyyy");
             List<Employee> absentEmployees = await _attendanceMachineManager.GetTodaysAbsentEmployeeAsync(date);
-            if (absentEmployees==null || absentEmployees.Count<=0)
+            if (absentEmployees == null || absentEmployees.Count <= 0)
             {
                 return null;
             }
@@ -922,7 +922,7 @@ namespace SMS.App.Controllers
                 {
                     foreach (var employee in absentEmployees)
                     {
-                        if (employee.Status!=true)
+                        if (employee.Status != true)
                         {
                             continue;
                         }
@@ -943,7 +943,7 @@ namespace SMS.App.Controllers
                         {
                             continue;
                         }
-                        string smsText = GenerateAbsentNotificationText(employeeName,"employee", 1);
+                        string smsText = GenerateAbsentNotificationText(employeeName, "employee", 1);
                         bool isSMSSent = await MobileSMS.SendSMS(phoneNumber, smsText);
                         if (isSMSSent)
                         {
@@ -1015,9 +1015,9 @@ namespace SMS.App.Controllers
             if (absentDayCount == 1)
             {
                 string dateTime = DateTime.Now.ToString("dd MMM yyyy");
-                if (smsFor=="employee")
+                if (smsFor == "employee")
                 {
-                    msg = name+" is not in school today.";
+                    msg = name + " is not in school today.";
                 }
                 else
                 {
@@ -1045,7 +1045,7 @@ namespace SMS.App.Controllers
 
         #region Income SMS===========================================================
         #region Daily Student Collection ============================================
-       
+
         public async Task<IActionResult> SendDailyCollectionSMS()
         {
             var currentMonthHolidays = await _offDayManager.GetMonthlyHolidaysAsync(DateTime.Now.ToString("MMyyyy"));
@@ -1076,7 +1076,7 @@ namespace SMS.App.Controllers
                         var instituteInfo = await _instituteManager.GetAllAsync();
 
                         string phoneNumberString = await _paramBusConfigManager.GetValueByParamSL(12);
-                        if (phoneNumberString!=null)
+                        if (phoneNumberString != null)
                         {
                             string[] phoneNumber = phoneNumberString.Split(',');
                             string smsType = "Collection_sum";
@@ -1084,7 +1084,7 @@ namespace SMS.App.Controllers
                                 $"Residential: {studentPaymentSummerySMS_VM.ResidentialPayment}\n" +
                                 $"Non-Residential:{studentPaymentSummerySMS_VM.NonResidentialPayment} \n" +
                                 $"Total = {studentPaymentSummerySMS_VM.ResidentialPayment + studentPaymentSummerySMS_VM.NonResidentialPayment}\n" +
-                                $"-"+instituteInfo.FirstOrDefault().Name;
+                                $"-" + instituteInfo.FirstOrDefault().Name;
 
                             foreach (var num in phoneNumber)
                             {
@@ -1116,7 +1116,7 @@ namespace SMS.App.Controllers
             {
                 throw;
             }
-            
+
             return null;
         }
         #endregion Daily Student Collection XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX

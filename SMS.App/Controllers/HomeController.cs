@@ -69,6 +69,7 @@ namespace SMS.App.Controllers
             {
                 institute = allInfo.FirstOrDefault();
                 ViewBag.InstituteName = institute.Name;
+                ViewBag.InstituteLogo = institute.Logo;
             }
             var user = await _userManager.GetUserAsync(User);
             HttpContext.Session.SetString("UserId", user.Id);
@@ -175,6 +176,6 @@ namespace SMS.App.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-        
+
     }
 }

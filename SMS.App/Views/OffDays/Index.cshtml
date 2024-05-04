@@ -1,10 +1,14 @@
 ﻿@model IEnumerable<OffDay>
 
+@inject UserManager<ApplicationUser> _userManager;
+
 @{
-    ViewData["Title"] = "Off Day List";
+    ViewData["Title"] = "Holidays";
     GlobalUI.PageTitle = ViewData["Title"].ToString();
 
     int sl = 0;
+    System.Text.StringBuilder CreatedBy = new System.Text.StringBuilder();
+    System.Text.StringBuilder UpdatedBy = new System.Text.StringBuilder();
 }
 
 <div class="row">
@@ -17,15 +21,16 @@
                 <td>End Date</td>
                 <td>Total Days</td>
                 <td>Description</td>
+                <td>Created / Updated by</td>
                 <td>
-                    <a asp-action="Create" asp-controller="OffDays" class="btn btn-info btn-sm">Add Holiday</a> 
+                    <a asp-action="Create" asp-controller="OffDays" class="btn btn-info btn-sm">Add Holiday</a>
                 </td>
             </tr>
         </thead>
         <tbody>
             @if (Model.Count() > 0 || Model != null)
             {
-                foreach (var item in Model)
+                foreach (var item in Model.OrderByDescending(m => m.OffDayStartingDate))
                 {
                     <tr>
                         <td>@(++sl).</td>
@@ -34,6 +39,28 @@
                         <td>@item.OffDayEndDate.ToString("dd MMM yyyy")</td>
                         <td>@item.TotalDays</td>
                         <td>@item.Description</td>
+                        @{
+                            ApplicationUser aUser = await _userManager.FindByIdAsync(item.CreatedBy);
+                            if (aUser != null)
+                            {
+                                CreatedBy.Clear();
+                                CreatedBy.Append(aUser.UserName);
+                            }
+                            @if (item.EditedBy != null)
+                            {
+                                aUser = await _userManager.FindByIdAsync(item.EditedBy);
+                                UpdatedBy.Clear();
+                                UpdatedBy.Append(aUser.UserName);
+                            }
+                        }
+                        <td>
+                            @CreatedBy
+                        @if (!string.IsNullOrEmpty(UpdatedBy.ToString()))
+                        {
+                        <span>/ @UpdatedBy</span>
+                        @UpdatedBy.Clear();
+                    }
+                        </td>
                         <td>
                             <partial name="_Edit_Details_Delete" model="@item.Id" />
                         </td>

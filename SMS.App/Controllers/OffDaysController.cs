@@ -15,7 +15,7 @@ namespace SMS.App.Controllers
     {
         private readonly IOffDayManager _offDayManager;
         private readonly IOffDayTypeManager _offDayTypeManager;
-        public OffDaysController(IOffDayManager offDayManager,IOffDayTypeManager offDayTypeManager)
+        public OffDaysController(IOffDayManager offDayManager, IOffDayTypeManager offDayTypeManager)
         {
             _offDayManager = offDayManager;
             _offDayTypeManager = offDayTypeManager;
@@ -50,7 +50,7 @@ namespace SMS.App.Controllers
         [Authorize(Policy = "CreateOffDaysPolicy")]
         public async Task<ActionResult> Create(OffDay offDay)
         {
-            ViewBag.OffDayType = new SelectList(await _offDayTypeManager.GetAllAsync(),"Id", "OffDayTypeName");
+            ViewBag.OffDayType = new SelectList(await _offDayTypeManager.GetAllAsync(), "Id", "OffDayTypeName");
             if (ModelState.IsValid)
             {
                 try
@@ -90,16 +90,18 @@ namespace SMS.App.Controllers
 
             TempData["failed"] = "Failed";
             return View(offDay);
-            
+
         }
 
         // GET: OffDaysControllercs/Edit/5
+        [HttpGet]
         [Authorize(Policy = "EditOffDaysPolicy")]
         public async Task<ActionResult> Edit(int id)
         {
             OffDay offDay = await _offDayManager.GetByIdAsync(id);
-            if (offDay!=null)
+            if (offDay != null)
             {
+                ViewBag.OffDayType = new SelectList(await _offDayTypeManager.GetAllAsync(), "Id", "OffDayTypeName", offDay.OffDayType);
                 return View(offDay);
             }
             TempData["failed"] = "Not Found";
@@ -111,7 +113,7 @@ namespace SMS.App.Controllers
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "EditOffDaysPolicy")]
         public async Task<ActionResult> Edit(int id, OffDay offDay)
-        {   
+        {
             if (ModelState.IsValid)
             {
                 try
@@ -121,14 +123,16 @@ namespace SMS.App.Controllers
                     existingOffDay.OffDayTypeId = offDay.OffDayTypeId;
                     existingOffDay.OffDayStartingDate = offDay.OffDayStartingDate;
                     existingOffDay.OffDayEndDate = offDay.OffDayEndDate;
-                    existingOffDay.TotalDays = (offDay.OffDayEndDate - offDay.OffDayStartingDate).Days;
+                    int totalDays = (offDay.OffDayEndDate - offDay.OffDayStartingDate).Days;
+                    existingOffDay.TotalDays = totalDays <= 0 ? 1 : totalDays;                    
                     existingOffDay.MACAddress = MACService.GetMAC();
                     existingOffDay.EditedAt = DateTime.Now;
                     existingOffDay.EditedBy = HttpContext.Session.GetString("UserId");
+                    existingOffDay.Description = offDay.Description;
                     bool isUpdated = await _offDayManager.UpdateAsync(existingOffDay);
                     if (isUpdated)
                     {
-                        TempData["created"] = "Created Successfully"; 
+                        TempData["created"] = "Updated Successful";
                         return RedirectToAction(nameof(Index));
                     }
                 }
@@ -169,7 +173,7 @@ namespace SMS.App.Controllers
                     TempData["failed"] = "Failed to delete";
                     return View(offDay);
                 }
-                
+
             }
             catch
             {

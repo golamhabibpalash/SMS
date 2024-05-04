@@ -1,13 +1,15 @@
 ﻿@model OffDay
 
 @{
-    ViewData["Title"] = "Holiday Create";
+    ViewData["Title"] = "Update Holiday";
     GlobalUI.PageTitle = ViewData["Title"].ToString();
 }
 
 <div class="row">
     <div class="col-md-8 offset-2">
-        <form asp-action="Create" method="post">
+        <form asp-action="Edit" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
             <fieldset class="border p-3">
                 <legend class="" style="width:inherit">Holiday Information</legend>
                 <div class="form-group row">
@@ -55,7 +57,9 @@
 
                 <div class="form-group row">
                     <div class="col-sm-10 text-right">
-                        <partial name="_Create_Back" />
+                        <button type="submit" class="btn btn-warning">Submit</button>
+                        <a asp-action="Index" class="btn btn-success btn-sm rounded-1" data-toggle="tooltip" data-placement="top" title="List"><i class="fa fa-list"></i></a>
+                        @*<partial name="_Edit_Back" model="@Model.Id" />*@
                     </div>
                 </div>
             </fieldset>
@@ -77,17 +81,5 @@
                 }
             });
         });
-
-
-
-        //$("#SingleDayId").change(function () {
-        //    if ($('#SingleDayId').is(':checked') == true) {
-        //        let val = $("#OffDayStartingDate").val();
-        //        alert(val);
-        //        $("#OffDayEndDate").val() = val;
-        //        let val2 = $("#OffDayEndDate").val();
-        //        alert(val2);
-        //    }
-        //});
     </script>
 }

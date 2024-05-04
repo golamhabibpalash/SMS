@@ -175,27 +175,49 @@ namespace SMS.App.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(model.AppUser, model.Password, model.RememberMe, false);
-                if (result.Succeeded)
+                try
                 {
-                    var userList = _userManager.Users;
+                    //Checking the user is entering user/mobile/email/roll
+                    //01. If student enter with the currnet roll number
+                    var result = await _signInManager.PasswordSignInAsync(model.AppUser, model.Password, model.RememberMe,false);
+                    if (!result.Succeeded)
+                    {
+                        if(model.AppUser.Length == 7)
+                        {
+                            //search student with the roll number
+                            Student existingStudent = await _studentManager.GetStudentByClassRollAsync(Convert.ToInt32(model.AppUser));
+                            if(existingStudent != null)
+                            {
+                                result = await _signInManager.PasswordSignInAsync(existingStudent.UniqueId, model.Password, model.RememberMe, false);
+                            }
+                        }
+                    }
+                    if (result.Succeeded)
+                    {
+                        var userList = _userManager.Users;
 
-                    var appUser = await userList.FirstOrDefaultAsync(u => u.UserName == model.AppUser);
+                        var appUser = await userList.FirstOrDefaultAsync(u => u.UserName == model.AppUser);
 
-                    if (appUser.UserType == 's')
-                    {
-                        return RedirectToAction("profile", "students", new { id = appUser.ReferenceId });
+                        if (appUser.UserType == 's')
+                        {
+                            return RedirectToAction("profile", "students", new { id = appUser.ReferenceId });
+                        }
+                        if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+                        {
+                            return Redirect(model.ReturnUrl);
+                        }
+                        else
+                        {
+                            return RedirectToAction("index", "home");
+                        }
                     }
-                    if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
-                    {
-                        return Redirect(model.ReturnUrl);
-                    }
-                    else
-                    {
-                        return RedirectToAction("index", "home");
-                    }
+                    ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
                 }
-                ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
+                catch (Exception e)
+                {
+                    ModelState.AddModelError("exception", e.Message);
+                }
+                
             }
             return View();
         }

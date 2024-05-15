@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SMS.BLL.Contracts;
-using SMS.DB;
 using SMS.Entities;
+using System;
+using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
 {
@@ -64,18 +60,18 @@ namespace SMS.App.Controllers
             return View();
         }
 
-        [HttpPost, ValidateAntiForgeryToken,  Authorize(Policy = "CreateAcademicSessionPolicy")]
+        [HttpPost, ValidateAntiForgeryToken, Authorize(Policy = "CreateAcademicSessionPolicy")]
         public async Task<IActionResult> Create([Bind("Id,Name,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSession academicSession)
         {
             string msg = "";
-            if (academicSession.Name!=null)
+            if (academicSession.Name != null)
             {
                 if (ModelState.IsValid)
                 {
                     if (await _sessionManager.IsExistByName(academicSession.Name))
                     {
                         msg = "This name is already exists.";
-                        TempData["error"] = msg ;
+                        TempData["error"] = msg;
                     }
                     else
                     {
@@ -130,29 +126,29 @@ namespace SMS.App.Controllers
                 return NotFound();
             }
 
-                if (ModelState.IsValid)
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    academicSession.EditedBy = HttpContext.Session.GetString("UserId");
+                    academicSession.EditedAt = DateTime.Now;
+                    await _sessionManager.UpdateAsync(academicSession);
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (await _sessionManager.IsExistByIdAsync(academicSession.Id))
                     {
-                        try
-                        {
-                            academicSession.EditedBy = HttpContext.Session.GetString("UserId");
-                            academicSession.EditedAt = DateTime.Now;
-                            await _sessionManager.UpdateAsync(academicSession);                            
-                        }
-                        catch (DbUpdateConcurrencyException)
-                        {
-                            if (await _sessionManager.IsExistByIdAsync(academicSession.Id))
-                            {
-                                return NotFound();
-                            }
-                            else
-                            {
-                                throw;
-                            }
-                        }
-
-                    TempData["edit"] = "Updated Successfully";
-                    return RedirectToAction(nameof(Index));
+                        return NotFound();
                     }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                TempData["edit"] = "Updated Successfully";
+                return RedirectToAction(nameof(Index));
+            }
 
             ViewBag.msg = msg;
             return View(academicSession);
@@ -197,9 +193,9 @@ namespace SMS.App.Controllers
             }
             catch (Exception ex)
             {
-                TempData["error"] = "An error occurred while deleting the session.";
+                TempData["error"] = ex.Message;
             }
-                return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index));
         }
     }
 }

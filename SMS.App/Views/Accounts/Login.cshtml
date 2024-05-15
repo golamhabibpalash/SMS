@@ -6,7 +6,10 @@
 }
 
 <form asp-action="login" asp-controller="accounts" method="post">
-    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+    <p class="text-danger">@Model.Error</p>
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger">
+        <p>@Model.Error</p>
+    </div>
     <input type="hidden" asp-for="ReturnUrl" value="@TempData["ReturnUrl"]" />
     <div class="col-md-12 pb-2">
         <h4 class="text-center text-light">Login</h4>
@@ -20,7 +23,7 @@
         </div>
         <div class="form-group row">
             <div class="col-md-10 col-sm-12 text-left form-inline pl-0">
-                <input asp-for="RememberMe" > <label for="RememberMe" class="text-light pl-1"> Remember</label>
+                <input asp-for="RememberMe"> <label for="RememberMe" class="text-light pl-1"> Remember</label>
             </div>
         </div>
         <div class="form-group row">

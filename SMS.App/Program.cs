@@ -11,13 +11,18 @@ using SMS.App.Configurations;
 using SMS.App.Utilities.Automation.Hangfire;
 using SMS.DB;
 using SMS.Entities;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseSqlServer(connectionString);
+    options.UseSqlServer(connectionString,
+        sqlServerOptionsAction: sqlOptions =>
+        {
+            sqlOptions.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
+        });
     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 });
 builder.Services.AddHttpClient();

@@ -84,7 +84,7 @@ namespace SMS.App.Controllers
             }
             return View();
         }
-        
+
         public IActionResult UserList()
         {
             if (TempData["msg"] != null)
@@ -121,16 +121,16 @@ namespace SMS.App.Controllers
         public async Task<IActionResult> EditUser(string id, EditUserVM model)
         {
             ApplicationUser user = await _userManager.FindByIdAsync(id);
-            
-                user.UserName = model.Email;
-                user.NormalizedEmail = model.Email.ToUpper();
-                user.Email = model.Email;
-                user.EmailConfirmed = model.EmailConfirmed;
-                user.PhoneNumber = model.PhoneNumber;
-                user.PhoneNumberConfirmed = model.PhoneNumberConfirmed;
-                user.ReferenceId = model.ReferenceId;
-                user.UserType = model.UserType;
-            
+
+            user.UserName = model.Email;
+            user.NormalizedEmail = model.Email.ToUpper();
+            user.Email = model.Email;
+            user.EmailConfirmed = model.EmailConfirmed;
+            user.PhoneNumber = model.PhoneNumber;
+            user.PhoneNumberConfirmed = model.PhoneNumberConfirmed;
+            user.ReferenceId = model.ReferenceId;
+            user.UserType = model.UserType;
+
             var result = await _userManager.UpdateAsync(user);
             if (result.Succeeded)
             {
@@ -167,7 +167,8 @@ namespace SMS.App.Controllers
         public IActionResult Login(string ReturnUrl = null)
         {
             TempData["ReturnUrl"] = ReturnUrl;
-            return View();
+            LoginVm model = new();
+            return View(model);
         }
 
         [HttpPost, AllowAnonymous]
@@ -179,14 +180,14 @@ namespace SMS.App.Controllers
                 {
                     //Checking the user is entering user/mobile/email/roll
                     //01. If student enter with the currnet roll number
-                    var result = await _signInManager.PasswordSignInAsync(model.AppUser, model.Password, model.RememberMe,false);
+                    var result = await _signInManager.PasswordSignInAsync(model.AppUser, model.Password, model.RememberMe, false);
                     if (!result.Succeeded)
                     {
-                        if(model.AppUser.Length == 7)
+                        if (model.AppUser.Length == 7)
                         {
                             //search student with the roll number
                             Student existingStudent = await _studentManager.GetStudentByClassRollAsync(Convert.ToInt32(model.AppUser));
-                            if(existingStudent != null)
+                            if (existingStudent != null)
                             {
                                 result = await _signInManager.PasswordSignInAsync(existingStudent.UniqueId, model.Password, model.RememberMe, false);
                             }
@@ -216,17 +217,19 @@ namespace SMS.App.Controllers
                 catch (Exception e)
                 {
                     ModelState.AddModelError("exception", e.Message);
+                    model.Error = e.Message;
                 }
-                
+
             }
-            return View();
+            return View(model);
         }
 
-        [HttpPost][AllowAnonymous]
+        [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> LogOut()
         {
             await _signInManager.SignOutAsync();
-            return RedirectToAction("Login","Accounts");
+            return RedirectToAction("Login", "Accounts");
         }
 
 
@@ -248,7 +251,7 @@ namespace SMS.App.Controllers
         [Authorize(Roles = "SuperAdmin")]
 
         [Authorize(Policy = "DeleteUserAccountsPolicy")]
-        public async Task<IActionResult> ConfirmDelete(string id,ApplicationUser model)
+        public async Task<IActionResult> ConfirmDelete(string id, ApplicationUser model)
         {
             if (id != model.Id)
             {
@@ -281,13 +284,14 @@ namespace SMS.App.Controllers
         }
 
         [AllowAnonymous]
-        public IActionResult ForgotPassword() 
+        public IActionResult ForgotPassword()
         {
             return View();
         }
 
-        [AllowAnonymous][HttpPost]        
-        public async Task<IActionResult> ForgotPassword(ForgotPasswordVM model) 
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordVM model)
         {
             if (ModelState.IsValid)
             {
@@ -298,7 +302,7 @@ namespace SMS.App.Controllers
                     return View(model);
                 }
                 string name = "";
-                if (user.UserType=='e')
+                if (user.UserType == 'e')
                 {
                     var emp = await _employeeManager.GetByIdAsync(user.ReferenceId);
                     name = emp.EmployeeName;
@@ -323,9 +327,9 @@ namespace SMS.App.Controllers
                     int randomNumber = rnd.Next(100000, 999999);
                     HttpContext.Session.SetString("randomNumber", randomNumber.ToString());
                     var instituteInfo = await _instituteManager.GetAllAsync();
-                    string text = "Your OTP is:" + randomNumber + " -"+instituteInfo.FirstOrDefault().Name;
+                    string text = "Your OTP is:" + randomNumber + " -" + instituteInfo.FirstOrDefault().Name;
 
-                    if (model.verificationBy=="SMS")
+                    if (model.verificationBy == "SMS")
                     {
                         bool smsSend = await MobileSMS.SendSMS(user.PhoneNumber, text);
                         if (smsSend == false)
@@ -335,7 +339,8 @@ namespace SMS.App.Controllers
                         }
                         else if (smsSend == true)
                         {
-                            PhoneSMS phoneSMS = new() {
+                            PhoneSMS phoneSMS = new()
+                            {
                                 Text = text,
                                 CreatedAt = DateTime.Now,
                                 CreatedBy = model.Email,
@@ -353,18 +358,18 @@ namespace SMS.App.Controllers
                                 throw;
                             }
                         }
-                        
+
                         return RedirectToAction("OTPGenerate");
                     }
-                    else if(model.verificationBy == "Email")
+                    else if (model.verificationBy == "Email")
                     {
-                        bool isSend = EmailService.SendEmail(model.Email,"OTP for Password reset", text);
+                        bool isSend = EmailService.SendEmail(model.Email, "OTP for Password reset", text);
                         if (isSend)
                         {
                             return RedirectToAction("OTPGenerate");
                         }
                     }
-                    
+
                     ViewBag.link = passwordResetLink;
                 }
                 return View();
@@ -386,7 +391,7 @@ namespace SMS.App.Controllers
             if (ModelState.IsValid)
             {
                 var token = HttpContext.Session.GetString("token");
-                
+
                 if (model.OTP.ToString() == HttpContext.Session.GetString("randomNumber"))
                 {
                     ResetPasswordVM resetPasswordVM = new ResetPasswordVM();
@@ -418,7 +423,7 @@ namespace SMS.App.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByEmailAsync(model.Email);
-                if (user!=null)
+                if (user != null)
                 {
                     var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
                     if (result.Succeeded)
@@ -435,26 +440,26 @@ namespace SMS.App.Controllers
                 {
                     TempData["msg"] = "User doesn't found";
                     return RedirectToAction("ForgotPassword");
-                }                
+                }
             }
             return View(model);
         }
 
-        [Authorize(Roles ="SuperAdmin")]
+        [Authorize(Roles = "SuperAdmin")]
         [Authorize(Policy = "ViewRolesAccountsPolicy")]
         public async Task<IActionResult> RoleList()
         {
             List<RoleListWIthUserVM> roleListWIthUserVMs = new List<RoleListWIthUserVM>();
-            var allUser = _userManager.Users.Where(s => s.UserType=='e');
+            var allUser = _userManager.Users.Where(s => s.UserType == 'e');
             var roleList = _roleManager.Roles;
             foreach (var role in roleList)
             {
                 RoleListWIthUserVM roleListWIthUserVM = new RoleListWIthUserVM();
                 roleListWIthUserVM.IdentityRole = role;
-                var selectedUer =new List<ApplicationUser>();
+                var selectedUer = new List<ApplicationUser>();
                 foreach (var user in allUser)
                 {
-                    if (await _userManager.IsInRoleAsync(user,role.Name))
+                    if (await _userManager.IsInRoleAsync(user, role.Name))
                     {
                         selectedUer.Add(user);
                     }
@@ -479,7 +484,7 @@ namespace SMS.App.Controllers
             {
                 IdentityRole identityRole = new IdentityRole
                 {
-                    Name = model.RoleName                    
+                    Name = model.RoleName
                 };
                 IdentityResult result = await _roleManager.CreateAsync(identityRole);
                 if (result.Succeeded)
@@ -490,7 +495,7 @@ namespace SMS.App.Controllers
             return View();
         }
 
-        [HttpGet]        
+        [HttpGet]
         [Authorize(Policy = "EditRoleAccountsPolicy")]
         public async Task<IActionResult> EditRole(string id)
         {
@@ -501,7 +506,8 @@ namespace SMS.App.Controllers
                 ViewBag.ErrorMessage = $"Role with Id = {id} cannot be found";
                 return View("Not Found");
             }
-            EditRoleVM editRoleVM = new() {
+            EditRoleVM editRoleVM = new()
+            {
                 Id = role.Id,
                 RoleName = role.Name,
                 ApplicationUsers = new List<string>()
@@ -532,7 +538,7 @@ namespace SMS.App.Controllers
             var result = await _roleManager.UpdateAsync(role);
             if (result.Succeeded)
             {
-                return RedirectToAction("EditRole",new {id=model.Id });
+                return RedirectToAction("EditRole", new { id = model.Id });
             }
             foreach (var error in result.Errors)
             {
@@ -554,10 +560,10 @@ namespace SMS.App.Controllers
             ViewBag.RoleId = id;
             ViewBag.RoleName = existRole.Name;
             var model = new List<UserRoleVM>();
-            foreach (var user in _userManager.Users.Where(u => u.UserType=='e'))
+            foreach (var user in _userManager.Users.Where(u => u.UserType == 'e'))
             {
                 var userRoleVm = new UserRoleVM
-                { 
+                {
                     UserId = user.Id,
                     UserName = user.UserName,
                     UserType = user.UserType
@@ -577,7 +583,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [Authorize(Policy = "AddOrRemoveUserAccountsPolicy")]
-        public async Task<IActionResult> AddOrRemoveUser(List<UserRoleVM> model,string roleId)
+        public async Task<IActionResult> AddOrRemoveUser(List<UserRoleVM> model, string roleId)
         {
             var role = await _roleManager.FindByIdAsync(roleId);
             if (role == null)
@@ -590,11 +596,11 @@ namespace SMS.App.Controllers
             {
                 var user = await _userManager.FindByIdAsync(model[i].UserId);
                 IdentityResult result = null;
-                if (model[i].IsSelected && !(await _userManager.IsInRoleAsync(user,role.Name)))
+                if (model[i].IsSelected && !(await _userManager.IsInRoleAsync(user, role.Name)))
                 {
                     result = await _userManager.AddToRoleAsync(user, role.Name);
                 }
-                else if(!model[i].IsSelected && (await _userManager.IsInRoleAsync(user,role.Name)))
+                else if (!model[i].IsSelected && (await _userManager.IsInRoleAsync(user, role.Name)))
                 {
                     result = await _userManager.RemoveFromRoleAsync(user, role.Name);
                 }
@@ -604,13 +610,13 @@ namespace SMS.App.Controllers
                 }
                 if (result.Succeeded)
                 {
-                    if (i<(model.Count-1))
+                    if (i < (model.Count - 1))
                     {
                         continue;
                     }
                 }
             }
-            return RedirectToAction("EditRole",new { id = roleId});
+            return RedirectToAction("EditRole", new { id = roleId });
         }
 
         [AllowAnonymous]
@@ -622,11 +628,11 @@ namespace SMS.App.Controllers
         [AllowAnonymous]
         public async Task<JsonResult> GetUserByUserType(char id)
         {
-            if (id=='e')
+            if (id == 'e')
             {
                 var empList = await _employeeManager.GetAllAsync();
                 var eList = from e in empList
-                          select new {userType = 'e', name = e.EmployeeName, value = e.Id, image = e.Image, phone = e.Phone };
+                            select new { userType = 'e', name = e.EmployeeName, value = e.Id, image = e.Image, phone = e.Phone };
                 return Json(eList);
             }
             else
@@ -643,16 +649,16 @@ namespace SMS.App.Controllers
         [HttpPost]
         public async Task<JsonResult> GetUserById(int id, string type)
         {
-            
-            if (type=="e")
+
+            if (type == "e")
             {
                 Employee employee = await _employeeManager.GetByIdAsync(id);
                 return Json(new { email = employee.Email, phone = employee.Phone });
             }
-            else if (type =="s")
+            else if (type == "s")
             {
                 Student student = await _studentManager.GetByIdAsync(id);
-                return Json(new {email = student.Email, phone=student.PhoneNo});
+                return Json(new { email = student.Email, phone = student.PhoneNo });
             }
             return Json("");
         }
@@ -676,7 +682,7 @@ namespace SMS.App.Controllers
             {
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var passwordResetLink = Url.Action("ResetPassword", "Accounts", new { email = email, token = token }, Request.Scheme);
-                return Json(new {token = token, link = passwordResetLink, phone = phoneNumber });                
+                return Json(new { token = token, link = passwordResetLink, phone = phoneNumber });
             }
             return Json("");
         }

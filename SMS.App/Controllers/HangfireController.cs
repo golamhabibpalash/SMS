@@ -148,8 +148,12 @@ namespace SMS.App.Controllers
                     };
                     var dailyCollectionSummmeryNotificationTime = await _paramBusConfigManager.GetByParamSL(9);
                     var smsTimeHr = "18";
-                    var notificationTimeHr = dailyCollectionSummmeryNotificationTime?.ParamValue.Substring(0, dailyCollectionSummmeryNotificationTime.ParamValue.IndexOf(':')) ?? smsTimeHr.ToString();
-                    var cron = $"1 {notificationTimeHr} * * 0-4,6";
+                    var smsTimeMn = "1";
+                    string[] timeParts = dailyCollectionSummmeryNotificationTime?.ParamValue.Split(':');
+                    var notificationTimeHr = timeParts[0] ?? smsTimeHr.ToString();
+                    var notifucationTimeMn = timeParts[1] ?? smsTimeMn.ToString();
+
+                    var cron = $"{notifucationTimeMn} {notificationTimeHr} * * 0-4,6";
                     RecurringJob.AddOrUpdate(recurringJobId, () => SendDailyCollectionSMS(), cron, options);
                     //At 6:00 pm, saturday through Thursday
                     //0 18 ? *SUN,MON,TUE,WED,THU,SAT *

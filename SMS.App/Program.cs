@@ -95,9 +95,16 @@ var options = new DashboardOptions
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseHangfireDashboard("/hangfire", options);
-app.MapControllerRoute(
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "areas",
+        pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+        );
+    endpoints.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+});
 
 app.MapRazorPages();
 app.Run();

@@ -291,6 +291,7 @@ namespace SMS.App.Controllers
             Student student = await _studentManager.GetByIdAsync(paymentObject.StudentPayment.StudentId);
             return RedirectToAction("Payment", new { stRoll = student.ClassRoll });
         }
+
         // GET: StudentPayments/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -501,7 +502,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [Authorize(Policy = "DuePaymentStudentPaymentsPolicy")]
-        public async Task<IActionResult> DuePayment(int? aSessionId, int? AcademicClassId, int? AcademicSectionId, int studentId, int dueType)
+        public async Task<IActionResult> DuePayment(int? aSessionId, int? AcademicClassId, int? AcademicSectionId, int studentId, int dueType, string? isResidential, string status)
         {
             GlobalUI.PageTitle = "Due Payment List";
             if (string.IsNullOrEmpty(aSessionId.ToString()))
@@ -519,6 +520,30 @@ namespace SMS.App.Controllers
                 AcademicClassId = 0;
             }
             students = await _studentManager.GetStudentsByClassSessionSectionAsync((int)aSessionId, (int)AcademicClassId, (int)AcademicSectionId);
+            if (!string.IsNullOrEmpty(isResidential))
+            {
+                if (isResidential == "residential")
+                {
+                    students = students.Where(s => s.IsResidential == true).ToList();
+                }
+                if (isResidential == "nonResidentail")
+                {
+
+                    students = students.Where(s => s.IsResidential == false).ToList();
+                }
+            }
+            if (!string.IsNullOrEmpty(status))
+            {
+                if (status == "active")
+                {
+                    students = students.Where(s => s.Status == true).ToList();
+                }
+
+                if (status == "inActive")
+                {
+                    students = students.Where(s => s.Status == false).ToList();
+                }
+            }
 
             DuePaymentVM duePaymentVM = new DuePaymentVM();
             duePaymentVM.AcademicClassList = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", AcademicClassId).ToList();
@@ -543,6 +568,18 @@ namespace SMS.App.Controllers
             duePaymentVM.GrandTotal = duePaymentDetailsVMs.Sum(d => d.TotalDue);
             ViewBag.isFromPost = true;
             return View(duePaymentVM);
+        }
+
+
+        [HttpGet]
+        [Authorize(Policy = "PreviousDuePaymentStudentPaymentsPolicy")]
+        public async Task<IActionResult> DuePaymentPrevious()
+        {
+            GlobalUI.PageTitle = "Previous Due Payment List";
+            DuePaymentVM previousDuePaymentVM = new DuePaymentVM();
+            previousDuePaymentVM.AcademicClassList = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name").ToList();
+            ViewBag.isFromPost = false;
+            return View(previousDuePaymentVM);
         }
 
         private bool StudentPaymentExists(int id)

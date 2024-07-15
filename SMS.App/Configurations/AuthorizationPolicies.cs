@@ -305,6 +305,7 @@ namespace SMS.App.Configurations
             options.AddPolicy("DeleteStudentPaymentsPolicy", policy => policy.RequireClaim("Delete Student Payment"));
             options.AddPolicy("DuePaymentStudentPaymentsPolicy", policy => policy.RequireClaim("Student Due Payment"));
             options.AddPolicy("DueAmountStudentsPolicy", policy => policy.RequireClaim("View Due Amount"));
+            options.AddPolicy("PreviousDuePaymentStudentPaymentsPolicy", policy => policy.RequireClaim("View Previous Due Amount"));
 
             //Students
             options.AddPolicy("IndexStudentsPolicy", policy => policy.RequireClaim("View Student List"));

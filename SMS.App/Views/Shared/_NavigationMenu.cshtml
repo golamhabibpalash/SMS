@@ -171,16 +171,19 @@
                     <a class="nav-link" asp-action="Index" asp-controller="StudentPayments"> Fees Collection </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" asp-action="DuePayment" asp-controller="StudentPayments"> Due Payments </a>
+                    <a class="nav-link" asp-action="DuePayment" asp-controller="StudentPayments"> Due Payments (current)</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="DuePaymentPrevious" asp-controller="StudentPayments"> Due Payments (previous)</a>
                 </li>
             </ul>
         </li>
     </ul>
-    <ul class="nav-group-items">
+    @*<ul class="nav-group-items">
         <li class="nav-item">
             <a class="nav-link nav-group-toggle"> Fee concession and scholarship management </a>
         </li>
-    </ul>
+    </ul>*@
 
     <ul class="nav-group-items">
         <li class="nav-item">

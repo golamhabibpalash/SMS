@@ -14,5 +14,7 @@ namespace SMS.App.ViewModels.PaymentVM
         public List<SelectListItem> AcademicSectionList { get; set; }
         public Institute Institute { get; set; }
         public double GrandTotal { get; set; }
+        public string IsResidential { get; set; }
+        public string Status { get; set; }
     }
 }

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using SMS.Entities;
 using System;
 using SMS.App.Utilities.MACIPServices;
+using System.Linq;
 
 namespace SMS.App.Controllers
 {

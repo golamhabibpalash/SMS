@@ -212,6 +212,30 @@
             });
         });
 
+
+        $('#SFAllocation_StudentId').change(function () {
+            let studentId = $('#SFAllocation_StudentId option:selected').val();
+            alert(studentId);
+            //$.ajax({
+            //    url: '/api/Students/getbyclasswithsessionId',
+            //    data: { academicSessionId: null, academicClassId: classId },
+            //    cache: false,
+            //    type: 'POST',
+            //    dataType: 'json',
+            //    success: function (data) {
+            //        $('#SFAllocation_StudentId').empty();
+            //        $.each(data, function (i, obj) {
+            //            var op = '<option value="' + obj.id + '">' + obj.classRoll + '-' + obj.name + '</option>';
+            //            $('#SFAllocation_StudentId').append(op);
+            //        });
+
+            //    },
+            //    error: function (err) {
+            //        console.log(err);
+            //    }
+            //});
+        });
+
         $(document).ready(function () {
             // Add a click event listener to the button
             $(".updateBtn").click(function () {

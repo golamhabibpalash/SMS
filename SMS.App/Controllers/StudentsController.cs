@@ -877,5 +877,18 @@ namespace SchoolManagementSystem.Controllers
             return Json(studets.OrderBy(s => s.ClassRoll));
         }
         #endregion APIs
+
+        [HttpGet]
+        [Route("api/Students/GetUniqueIdByStudentId")]
+        public async Task<JsonResult> GetUniqueIdByStudentId(string id)
+        {
+            int stuId = Convert.ToInt32(id);
+            var student = await _studentManager.GetByIdAsync(stuId);
+            if (student != null)
+            {
+                return Json(student.UniqueId);
+            }
+            return null;
+        }
     }
 }

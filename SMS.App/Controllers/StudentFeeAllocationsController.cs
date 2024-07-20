@@ -1,15 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using SMS.App.Utilities.MACIPServices;
 using SMS.App.ViewModels.Students;
 using SMS.BLL.Contracts;
-using System.Data;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using SMS.Entities;
 using System;
-using SMS.App.Utilities.MACIPServices;
+using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
 {
@@ -31,11 +31,12 @@ namespace SMS.App.Controllers
         [Authorize(Policy = "IndexStudentFeeAllocationsPolicy")]
         public async Task<ActionResult> Index()
         {
-            StudentFeeAllocationVM studentFeeAllocationVM = new StudentFeeAllocationVM();            
+            StudentFeeAllocationVM studentFeeAllocationVM = new StudentFeeAllocationVM();
             studentFeeAllocationVM.StudentFeeAllocations = (System.Collections.Generic.List<Entities.StudentFeeAllocation>)await _studentFeeAllocationManager.GetAllAsync();
-            studentFeeAllocationVM.FeeList = new SelectList(await _studentFeeHeadManager.GetAllAsync(), "Id", "Name");
-            studentFeeAllocationVM.AcademicClassList = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name");
-            
+            //studentFeeAllocationVM.FeeList = new SelectList(await _studentFeeHeadManager.GetAllAsync(), "Id", "Name");
+            var allClasses = await _academicClassManager.GetAllAsync();
+            studentFeeAllocationVM.AcademicClassList = new SelectList(allClasses.Where(s => s.Status == true), "Id", "Name");
+
             return View(studentFeeAllocationVM);
         }
 
@@ -63,8 +64,16 @@ namespace SMS.App.Controllers
             studentFeeAllocation = studentFeeAllocationVM.SFAllocation;
             if (ModelState.IsValid)
             {
+                var appUer = HttpContext.Session.GetString("UserId");
+                if (appUer == null)
+                {
+                    TempData["error"] = "User Not found";
+                    return RedirectToAction("Index");
+                }
                 studentFeeAllocation.CreatedAt = DateTime.Now;
                 studentFeeAllocation.CreatedBy = HttpContext.Session.GetString("UserId");
+                studentFeeAllocation.EditedAt = DateTime.Now;
+                studentFeeAllocation.EditedBy = HttpContext.Session.GetString("UserId");
                 studentFeeAllocation.MACAddress = MACService.GetMAC();
                 try
                 {
@@ -79,8 +88,8 @@ namespace SMS.App.Controllers
                     throw;
                 }
             }
-         return RedirectToAction("Index");
-           
+            return RedirectToAction("Index");
+
         }
 
         // GET: StudentFeeAllocationsController/Edit/5
@@ -106,14 +115,14 @@ namespace SMS.App.Controllers
                         TempData["error"] = "Data is miss matched";
                         return RedirectToAction("Index");
                     }
-                    if (existingAllocation.StudentId == studentFeeAllocationVM.SFAllocation.StudentId && existingAllocation.IsActive == studentFeeAllocationVM.SFAllocation.IsActive && existingAllocation.AllocatedAmount == studentFeeAllocationVM.SFAllocation.AllocatedAmount && existingAllocation.StudentFeeHeadId == studentFeeAllocationVM.SFAllocation.StudentFeeHeadId )
+                    if (existingAllocation.StudentId == studentFeeAllocationVM.SFAllocation.StudentId && existingAllocation.IsActive == studentFeeAllocationVM.SFAllocation.IsActive && existingAllocation.AllocatedAmount == studentFeeAllocationVM.SFAllocation.AllocatedAmount && existingAllocation.StudentFeeHeadId == studentFeeAllocationVM.SFAllocation.StudentFeeHeadId)
                     {
                         TempData["error"] = "Nothing Change";
                     }
                     else
                     {
                         existingAllocation.EditedAt = DateTime.Now;
-                        existingAllocation.EditedBy =  HttpContext.Session.GetString("UserId");
+                        existingAllocation.EditedBy = HttpContext.Session.GetString("UserId");
                         existingAllocation.MACAddress = MACService.GetMAC();
                         existingAllocation.StudentId = studentFeeAllocationVM.SFAllocation.StudentId;
                         existingAllocation.IsActive = studentFeeAllocationVM.SFAllocation.IsActive;

@@ -1,5 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SMS.DAL.Contracts;
 using SMS.DAL.Repositories.Base;
 using SMS.DB;
@@ -8,7 +7,6 @@ using SMS.Entities.AdditionalModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SMS.DAL.Repositories
@@ -18,7 +16,7 @@ namespace SMS.DAL.Repositories
         private readonly new ApplicationDbContext _context;
         public StudentPaymentRepository(ApplicationDbContext db) : base(db)
         {
-            _context=db;
+            _context = db;
         }
         public override async Task<IReadOnlyCollection<StudentPayment>> GetAllAsync()
         {
@@ -36,7 +34,7 @@ namespace SMS.DAL.Repositories
 
                 throw;
             }
-            
+
             return payments;
         }
         public async Task<IReadOnlyCollection<StudentPayment>> GetAllByStudentIdAsync(int id)
@@ -71,8 +69,8 @@ namespace SMS.DAL.Repositories
 
                 throw;
             }
-            
-           
+
+
             return payments;
         }
         public async Task<List<StudentPaymentSummerySMS_VM>> GetStudentPaymentSummerySMS_VMsAsync(DateTime date)
@@ -104,7 +102,7 @@ namespace SMS.DAL.Repositories
 
                 throw;
             }
-            
+
             return payments;
         }
         public override async Task<StudentPayment> GetByIdAsync(int id)
@@ -112,7 +110,7 @@ namespace SMS.DAL.Repositories
             StudentPayment existingStudentPayment = await _context.StudentPayment
                 .Include(s => s.Student)
                     .ThenInclude(s => s.AcademicClass)
-                .Include(s =>s.Student.AcademicSession)
+                .Include(s => s.Student.AcademicSession)
                 .Include(s => s.StudentPaymentDetails)
                     .ThenInclude(d => d.StudentFeeHead)
                 .Where(s => s.Id == id).FirstOrDefaultAsync();
@@ -121,16 +119,29 @@ namespace SMS.DAL.Repositories
         }
         public async Task<List<StudentPaymentScheduleVM>> GetStudentPaymentSchedule(int studId)
         {
-            List<StudentPaymentScheduleVM> studentPaymentSchedules = new List<StudentPaymentScheduleVM>();
+            //List<StudentPaymentScheduleVM> studentPaymentSchedules = new List<StudentPaymentScheduleVM>();
+            List<StudentPaymentScheduleVM> finalPaymentScheduleVMs = new List<StudentPaymentScheduleVM>();
             try
             {
-                studentPaymentSchedules = await _context.StudentPaymentScheduleVMs.FromSqlInterpolated($"sp_get_payment_schedule_by_stuId {studId}").ToListAsync();
+                var studentPaymentSchedules = await _context.StudentPaymentScheduleVMs.FromSqlInterpolated($"sp_get_payment_schedule_by_stuId {studId}").ToListAsync();
+                var student = await _context.Student.FirstOrDefaultAsync(s => s.Id == studId);
+                var existingFeeAllocations = await _context.StudentFeeAllocations.Where(s => s.UniqueId == student.UniqueId).ToListAsync();
+                foreach (var item in studentPaymentSchedules)
+                {
+                    var feeAllocation = existingFeeAllocations.FirstOrDefault(s => s.StudentFeeHeadId == item.FeeHeadId);
+                    if (feeAllocation != null)
+                    {
+                        item.Amount = feeAllocation.AllocatedAmount;
+                    }
+                    finalPaymentScheduleVMs.Add(item);
+                }
             }
             catch (Exception)
             {
                 throw;
             }
-            return studentPaymentSchedules;
+
+            return finalPaymentScheduleVMs;
         }
         public async Task<List<StudentPaymentSchedulePaidVM>> GetStudentPaymentSchedulePaid(int studId)
         {

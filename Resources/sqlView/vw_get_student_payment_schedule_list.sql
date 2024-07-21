@@ -1,12 +1,14 @@
 USE [SMSDB]
 GO
 
-/****** Object:  View [dbo].[vw_get_student_payment_schedule_list]    Script Date: 30-Mar-24 10:39:25 AM ******/
+/****** Object:  View [dbo].[vw_get_student_payment_schedule_list]    Script Date: 21-Jul-24 4:41:34 PM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 
 
 ALTER   VIEW [dbo].[vw_get_student_payment_schedule_list] 
@@ -15,6 +17,7 @@ select
 c.Id[ClassId],
 c.Name[ClassName],
 sFee.Name[PaymentType],
+sFee.Id[FeeHeadId],
 cFee.Amount,
 sFee.Repeatedly,
 sFee.YearlyFrequency,

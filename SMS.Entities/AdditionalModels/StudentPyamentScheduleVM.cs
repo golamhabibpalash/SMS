@@ -13,5 +13,6 @@ namespace SMS.Entities.AdditionalModels
         public int yearlyFrequency { get; set; } = 0;
         public bool IsResidential { get; set; }
         public int SL { get; set; }
+        public int FeeHeadId { get; set; }
     }
 }

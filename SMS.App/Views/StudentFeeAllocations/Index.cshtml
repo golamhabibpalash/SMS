@@ -36,7 +36,7 @@
                         <tr>
                             <td>@(++sl)</td>
                             <td>@item.Student.ClassRoll</td>
-                            <td>@item.Student.Name</td>
+                            <td>@item.Student.Name.ToUpperInvariant()</td>
                             <td>@item.StudentFeeHead.Name</td>
                             <td class="text-right">@item.AllocatedAmount</td>
                             <td class="text-center">
@@ -61,7 +61,7 @@
                             </td>
                             <td class="text-center">
                                 <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-                                    <button type="button" class="btn btn-warning updateBtn" data-id="@item.Id" data-studentId="@item.StudentId" data-classId="@item.Student.AcademicClassId" data-amount="@item.AllocatedAmount" data-feeType="@item.StudentFeeHeadId" data-isActive="@item.IsActive" data-refDoc="@item.FeeAllocationApplication"><i class="fas fa-edit"></i> </button>
+                                    <button type="button" class="btn btn-warning updateBtn" data-id="@item.Id" data-studentId="@item.StudentId" data-classId="@item.Student.AcademicClassId" data-amount="@item.AllocatedAmount" data-feeType="@item.StudentFeeHeadId" data-isActive="@item.IsActive" data-refDoc="@item.FeeAllocationApplication" ><i class="fas fa-edit"></i> </button>
 
                                     <button id="deleteBtnId" type="submit" class="btn btn-danger deleteBtn" data-studentName="@item.Student.Name" data-classRoll="@item.Student.ClassRoll" data-feeTypeName="@item.StudentFeeHead.Name" data-item="@item" data-id="@item.Id" data-studentId="@item.StudentId" data-classId="@item.Student.AcademicClassId" data-amount="@item.AllocatedAmount" data-feeType="@item.StudentFeeHeadId" data-isActive="@item.IsActive" data-refDoc="@item.FeeAllocationApplication" data-toggle="modal" data-target="#deleteModal">
                                         <i class="fas fa-times"></i>
@@ -77,7 +77,7 @@
                                     }
                                 }
                                 @lastEditedUser <br />
-                                @item.EditedAt
+                                @item.EditedAt.ToString("dd MMM yyyy hh:mm tt")
                             </td>
                         </tr>
                     }
@@ -113,7 +113,7 @@
                         <select class="form-control" asp-for="SFAllocation.StudentId">
                             <option selected disabled>-Select student-</option>
                         </select>
-                        <input type="hidden" id="studentUniqueId" />
+                        <input type="hidden" asp-for="SFAllocation.UniqueId" />
                     </div>
                 </div>
                 <div class="form-group row">
@@ -165,32 +165,32 @@
                 <table class="table card">
 
                     <tr>
-                        <td>Student</td>
-                        <td>:</td>
-                        <td width="90%" id="deleteStudentName"></td>
+                        <td  width="20%" >Student</td>
+                        <td width="10%">:</td>
+                        <td width="70%" id="deleteStudentName" class="font-weight-bold"></td>
                     </tr>
                     <tr>
-                        <td>Class Roll :</td>
+                        <td>Class Roll </td>
                         <td>:</td>
-                        <td id="deleteClassRoll"></td>
+                        <td id="deleteClassRoll" class="font-weight-bold"></td>
                     </tr>
                     <tr>
                         <td>Payment Type</td>
                         <td>:</td>
-                        <td id="deletePaymentType"></td>
+                        <td id="deletePaymentType" class="font-weight-bold"></td>
                     </tr>
                     <tr>
-                        <td>Amount :</td>
+                        <td>Amount </td>
                         <td>:</td>
-                        <td id="deleteAmount"></td>
+                        <td id="deleteAmount" class="font-weight-bold"></td>
                     </tr>
                 </table>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-secondary col-form-label" data-dismiss="modal">Cancel</button>
                 <form asp-action="delete" method="post">
                     <input type="hidden" name="StudentFeeAllocationId" id="StudentFeeAllocationId" />
-                    <button type="submit" class="btn btn-danger">Delete Confirm</button>
+                    <button type="submit" class="btn btn-danger col-form-label">Delete Confirm</button>
                 </form>
             </div>
         </div>
@@ -203,11 +203,6 @@
     <script src="~/js/DataTable/dataTable.js"></script>
 
     <script>
-        ////let deleted = '@TempData["deleted"]';
-        ////let created = '@TempData["created"]';
-        let updated = '@TempData["updated"]';
-        let failed = '@TempData["error"]';
-
 
         $('#academicClassListId').change(function () {
             let classId = $('#academicClassListId option:selected').val();
@@ -223,7 +218,7 @@
                         var op = '<option value="' + obj.id + '">' + obj.classRoll + '-' + obj.name + '</option>';
                         $('#SFAllocation_StudentId').append(op);
                     });
-
+                    $("#SFAllocation_StudentId").trigger('change');
                 },
                 error: function (err) {
                     console.log(err);
@@ -241,8 +236,8 @@
                 type: 'GET',
                 dataType: 'JSON',
                 success: function (data) {
-                    $("#studentUniqueId").val(data);
-                    let uniqueId = $("#studentUniqueId").val();
+                    $("#SFAllocation_UniqueId").val(data);
+                    let uniqueId = $("#SFAllocation_UniqueId").val();
                     $.ajax({
                         url: 'ClassFeeLists/GetClassListByUniqueId',
                         data: { uniqueId: uniqueId },

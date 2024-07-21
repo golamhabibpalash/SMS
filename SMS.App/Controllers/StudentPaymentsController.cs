@@ -33,9 +33,10 @@ namespace SMS.App.Controllers
         private readonly IInstituteManager _instituteManager;
         private readonly IAcademicSessionManager _academicSessionManager;
         private readonly IAcademicSectionManager _academicSectionManager;
+        private readonly IStudentFeeAllocationManager _studentFeeAllocationManager;
         private readonly HttpClient _httpClient;
 
-        public StudentPaymentsController(IStudentPaymentManager studentPaymentManager, IStudentManager studentManager, IClassFeeListManager classFeeListManager, IAcademicClassManager academicClassManager, IStudentFeeHeadManager studentFeeHeadManager, IStudentPaymentDetailsManager studentPaymentDetailsManager, ISetupMobileSMSManager setupMobileSMSManager, IPhoneSMSManager phoneSMSManager, IInstituteManager instituteManager, IAcademicSessionManager academicSessionManager, IAcademicSectionManager academicSectionManager, HttpClient httpClient)
+        public StudentPaymentsController(IStudentPaymentManager studentPaymentManager, IStudentManager studentManager, IClassFeeListManager classFeeListManager, IAcademicClassManager academicClassManager, IStudentFeeHeadManager studentFeeHeadManager, IStudentPaymentDetailsManager studentPaymentDetailsManager, ISetupMobileSMSManager setupMobileSMSManager, IPhoneSMSManager phoneSMSManager, IInstituteManager instituteManager, IAcademicSessionManager academicSessionManager, IAcademicSectionManager academicSectionManager, IStudentFeeAllocationManager studentFeeAllocationManager, HttpClient httpClient)
         {
             _studentPaymentManager = studentPaymentManager;
             _studentManager = studentManager;
@@ -48,6 +49,7 @@ namespace SMS.App.Controllers
             _instituteManager = instituteManager;
             _academicSessionManager = academicSessionManager;
             _academicSectionManager = academicSectionManager;
+            _studentFeeAllocationManager = studentFeeAllocationManager;
             _httpClient = httpClient;
         }
 
@@ -144,7 +146,16 @@ namespace SMS.App.Controllers
                     {
                         PaymentItemVM paymentItemVM = new PaymentItemVM();
                         paymentItemVM.ClassFeeListName = item.StudentFeeHead.Name;
-                        paymentItemVM.Amount = item.Amount;
+
+                        var feeAllocation = await _studentFeeAllocationManager.GetStudentFeeAllocationByUniqueIdFeeHeadId(student.UniqueId, item.StudentFeeHeadId);
+                        if (feeAllocation != null)
+                        {
+                            paymentItemVM.Amount = feeAllocation.AllocatedAmount;
+                        }
+                        else
+                        {
+                            paymentItemVM.Amount = item.Amount;
+                        }
 
                         double tBal = 0;
                         foreach (var pay in studentPayments)
@@ -168,8 +179,8 @@ namespace SMS.App.Controllers
                                 }
                             }
                         }
-                        paymentItemVM.Balance = item.Amount - tBal;
-                        if (item.Amount <= tBal)
+                        paymentItemVM.Balance = paymentItemVM.Amount - tBal;
+                        if (paymentItemVM.Amount <= tBal)
                         {
                             paymentItemVM.Status = "Paid";
                         }
@@ -502,7 +513,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [Authorize(Policy = "DuePaymentStudentPaymentsPolicy")]
-        public async Task<IActionResult> DuePayment(int? aSessionId, int? AcademicClassId, int? AcademicSectionId, int studentId, int dueType, string? isResidential, string status)
+        public async Task<IActionResult> DuePayment(int? aSessionId, int? AcademicClassId, int? AcademicSectionId, int studentId, int dueType, string isResidential, string status)
         {
             GlobalUI.PageTitle = "Due Payment List";
             if (string.IsNullOrEmpty(aSessionId.ToString()))

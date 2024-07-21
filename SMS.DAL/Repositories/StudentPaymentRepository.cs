@@ -133,6 +133,11 @@ namespace SMS.DAL.Repositories
                     {
                         item.Amount = feeAllocation.AllocatedAmount;
                     }
+                    var admissionOrSession = student.AdmissionDate.Year < DateTime.Now.Year ? 13 : 0;
+                    if ((admissionOrSession == 13 && item.SL == 0) || (admissionOrSession == 0 && item.SL == 13))
+                    {
+                        continue;
+                    }
                     finalPaymentScheduleVMs.Add(item);
                 }
             }
@@ -157,5 +162,83 @@ namespace SMS.DAL.Repositories
             return studentPaymentSchedules;
         }
 
+        public async Task<double> GetStudentCurrentDue(int stuId)
+        {
+            double currentDue = 0.00;
+            int currentMonth = DateTime.Now.Month;
+            double totalCurrentPayable = 0;
+            double totalCurrentPaid = 0;
+            double admissionOrSessionFee = 0;
+            int feeHeadValue = 0;
+            double cMonthlyFee = 0;
+            double othersFee = 0;
+            var student = await _context.Student.FirstOrDefaultAsync(s => s.Id == stuId);
+            var classFees = await _context.ClassFeeList.Include(s => s.StudentFeeHead).Where(c => c.AcademicClassId == student.AcademicClassId && c.AcademicSessionId == student.AcademicSessionId && c.StudentFeeHead.IsResidential == student.IsResidential).ToListAsync();
+            var feeHeads = await _context.StudentFeeHead.Where(s => s.IsResidential == student.IsResidential).ToListAsync();
+            var feeAllocations = await _context.StudentFeeAllocations.Where(s => s.UniqueId == student.UniqueId).ToListAsync();
+
+            //0     = admission fee
+            //1-12  = monthly fee
+            //13    = session fee
+            //14> =  other's fee
+
+            //admission or session fee calculation
+            var feeHeadSL = student.AdmissionDate.Year < DateTime.Now.Year ? 13 : 0;
+            var feeHeadId = feeHeads.FirstOrDefault(s => s.SL == feeHeadSL).Id;
+            admissionOrSessionFee = classFees.FirstOrDefault(s => s.SL == feeHeadSL).Amount;
+            var admissionOrSessionFeeAllocation = feeAllocations.FirstOrDefault(a => a.StudentFeeHeadId == feeHeadId);
+            if (admissionOrSessionFeeAllocation != null)
+            {
+                admissionOrSessionFee = admissionOrSessionFeeAllocation.AllocatedAmount;
+            }
+
+            //monthly Fee Calculations
+            int startingMonth = 1;
+            if (student.AdmissionDate.Year == DateTime.Now.Year)
+            {
+                startingMonth = student.AdmissionDate.Month;
+            }
+            for (int i = startingMonth; i <= DateTime.Now.Month; i++)
+            {
+                feeHeadId = feeHeads.FirstOrDefault(s => s.SL == i).Id;
+                var monthlyFeeAllocation = feeAllocations.FirstOrDefault(a => a.StudentFeeHeadId == feeHeadId);
+                if (monthlyFeeAllocation != null)
+                {
+                    cMonthlyFee += monthlyFeeAllocation.AllocatedAmount;
+                }
+                else
+                {
+                    var cFees = classFees.FirstOrDefault(s => s.SL == i);
+                    if (cFees != null)
+                    {
+                        cMonthlyFee += cFees.Amount;
+
+                    }
+                }
+            }
+
+            //Others Fee Calculations
+            foreach (var item in classFees)
+            {
+                if (item.SL >= 14)
+                {
+                    var fHead = feeHeads.FirstOrDefault(s => s.SL == item.SL);
+                    if (fHead != null)
+                    {
+                        feeHeadId = fHead.Id;
+                        var othersFeeAllocation = feeAllocations.FirstOrDefault(a => a.StudentFeeHeadId == feeHeadId);
+                        othersFee += othersFeeAllocation != null ? othersFeeAllocation.AllocatedAmount : item.Amount;
+                    }
+                }
+            }
+
+            totalCurrentPayable = admissionOrSessionFee + cMonthlyFee + othersFee;
+
+            var allPayments = await _context.StudentPayment.Where(s => s.StudentId == student.Id).ToListAsync();
+            totalCurrentPaid = allPayments.Sum(m => m.TotalPayment);
+
+            currentDue = totalCurrentPayable - totalCurrentPaid;
+            return currentDue;
+        }
     }
 }

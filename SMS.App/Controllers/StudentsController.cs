@@ -51,10 +51,11 @@ namespace SchoolManagementSystem.Controllers
         private readonly IInstituteManager _instituteManager;
         private readonly IStudentActivateHistManager _studentActivateHistManager;
         private readonly IOffDayManager _offDayManager;
+        private readonly IStudentFeeAllocationManager _studentFeeAllocationManager;
         #endregion
 
         #region Constructor
-        public StudentsController(IStudentManager studentManager, IAcademicClassManager academicClassManager, IWebHostEnvironment host, IMapper mapper, IAcademicSessionManager academicSessionManager, IStudentPaymentManager studentPaymentManager, IDistrictManager districtManager, IUpazilaManager upazilaManager, IAcademicSectionManager academicSectionManager, IBloodGroupManager bloodGroupManager, IDivisionManager divisionManager, INationalityManager nationalityManager, IGenderManager genderManager, IReligionManager religionManager, IStudentFeeHeadManager studentFeeHeadManager, IClassFeeListManager classFeeListManager, UserManager<ApplicationUser> userManager, IPhoneSMSManager phoneSMSManager, IAttendanceMachineManager attendanceMachineManager, IInstituteManager instituteManager, IStudentActivateHistManager studentActivateHistManager, IOffDayManager offDayManager)
+        public StudentsController(IStudentManager studentManager, IAcademicClassManager academicClassManager, IWebHostEnvironment host, IMapper mapper, IAcademicSessionManager academicSessionManager, IStudentPaymentManager studentPaymentManager, IDistrictManager districtManager, IUpazilaManager upazilaManager, IAcademicSectionManager academicSectionManager, IBloodGroupManager bloodGroupManager, IDivisionManager divisionManager, INationalityManager nationalityManager, IGenderManager genderManager, IReligionManager religionManager, IStudentFeeHeadManager studentFeeHeadManager, IClassFeeListManager classFeeListManager, UserManager<ApplicationUser> userManager, IPhoneSMSManager phoneSMSManager, IAttendanceMachineManager attendanceMachineManager, IInstituteManager instituteManager, IStudentActivateHistManager studentActivateHistManager, IOffDayManager offDayManager, IStudentFeeAllocationManager studentFeeAllocationManager)
         {
             _academicClassManager = academicClassManager;
             _host = host;
@@ -78,6 +79,7 @@ namespace SchoolManagementSystem.Controllers
             _instituteManager = instituteManager;
             _studentActivateHistManager = studentActivateHistManager;
             _offDayManager = offDayManager;
+            _studentFeeAllocationManager = studentFeeAllocationManager;
         }
         #endregion
 
@@ -214,14 +216,8 @@ namespace SchoolManagementSystem.Controllers
             var stuPayments = await _studentPaymentManager.GetAllByStudentIdAsync((int)id);
 
             List<StudentPaymentScheduleVM> paymentSchedule = await _studentPaymentManager.GetStudentPaymentSchedule(student.Id);
-            if (student.IsResidential)
-            {
-                paymentSchedule = paymentSchedule.Where(s => s.IsResidential == true).ToList();
-            }
-            else
-            {
-                paymentSchedule = paymentSchedule.Where(s => s.IsResidential == false).ToList();
-            }
+
+            paymentSchedule = paymentSchedule.Where(s => s.IsResidential == student.IsResidential).ToList();
             List<StudentPaymentSchedulePaidVM> studentPaymentSchedulePaidVMs = await _studentPaymentManager.GetStudentPaymentSchedulePaid(student.Id);
             StudentDetailsVM sd = new();
             sd.StudentPayments = stuPayments;
@@ -231,7 +227,7 @@ namespace SchoolManagementSystem.Controllers
             sd.StudentPaymentSchedulePaidVMs = studentPaymentSchedulePaidVMs;
 
             sd.TotalDue = await GetTotalDue(student.Id);
-            sd.CurrentDue = await GetCurrntDue(student.Id);
+            sd.CurrentDue = await _studentPaymentManager.GetStudentCurrentDue(student.Id);
             #endregion Payment============================================================================
             #region Attendance =============================================================================
             try
@@ -783,14 +779,30 @@ namespace SchoolManagementSystem.Controllers
 
                 //admission or session fee calculation
                 feeHeadValue = st.AdmissionDate.Year < DateTime.Now.Year ? 13 : 0;
+                var admissionOrSessionFeeFromAllocation = await _studentFeeAllocationManager.GetStudentFeeAllocationByUniqueIdFeeHeadId(st.UniqueId, feeHeadValue);
                 admissionOrSessionFee = await _classFeeListManager.GetFeeAmountByFeeListSlAsync(st.UniqueId, feeHeadValue);
+                if (admissionOrSessionFeeFromAllocation != null)
+                {
+                    admissionOrSessionFee = admissionOrSessionFeeFromAllocation.AllocatedAmount;
+                }
 
                 //monthly fee calculation
+
+                var feeHeads = await _studentFeeHeadManager.GetAllAsync();
                 for (
                     int i = st.AdmissionDate.Month; i <= DateTime.Now.Month; i++)
                 {
                     feeHeadValue = i;
-                    cMonthlyFee += await _classFeeListManager.GetFeeAmountByFeeListSlAsync(st.UniqueId, feeHeadValue);
+                    var feeHead = feeHeads.FirstOrDefault(s => s.SL == feeHeadValue);
+                    var monthlyFeeAllocation = await _studentFeeAllocationManager.GetStudentFeeAllocationByUniqueIdFeeHeadId(st.UniqueId, feeHead.Id);
+                    if (monthlyFeeAllocation != null)
+                    {
+                        cMonthlyFee += monthlyFeeAllocation.AllocatedAmount;
+                    }
+                    else
+                    {
+                        cMonthlyFee += await _classFeeListManager.GetFeeAmountByFeeListSlAsync(st.UniqueId, feeHeadValue);
+                    }
                 }
                 //others fee calculation
                 var othersFeeList = await _classFeeListManager.GetByClassIdSessionIdStudentIdAsync(st.AcademicClassId, st.AcademicSessionId, st.Id);
@@ -800,7 +812,15 @@ namespace SchoolManagementSystem.Controllers
                     {
                         if (item.SL > 13)
                         {
-                            othersFee += item.Amount;
+                            var othersFeeFromAllocation = await _studentFeeAllocationManager.GetStudentFeeAllocationByUniqueIdFeeHeadId(st.UniqueId, item.StudentFeeHeadId);
+                            if (othersFeeFromAllocation != null)
+                            {
+                                othersFee += othersFeeFromAllocation.AllocatedAmount;
+                            }
+                            else
+                            {
+                                othersFee += item.Amount;
+                            }
                         }
                     }
                 }

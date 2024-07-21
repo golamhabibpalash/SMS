@@ -571,7 +571,7 @@ namespace SMS.App.Controllers
                     DuePaymentDetailsVM duePaymentDetailsVM = new DuePaymentDetailsVM();
                     duePaymentDetailsVM.StudentId = item.Id;
                     duePaymentDetailsVM.Student = item;
-                    duePaymentDetailsVM.TotalDue = await GetCurrentDue(item.Id);
+                    duePaymentDetailsVM.TotalDue = await _studentPaymentManager.GetStudentCurrentDue(item.Id);
                     duePaymentDetailsVMs.Add(duePaymentDetailsVM);
                 }
             }
@@ -680,7 +680,6 @@ namespace SMS.App.Controllers
             }
             catch (Exception)
             {
-
                 throw;
             }
             return currentDue;

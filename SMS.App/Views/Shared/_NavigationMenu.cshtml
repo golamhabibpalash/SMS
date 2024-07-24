@@ -121,7 +121,7 @@
             <a class="nav-link" asp-action="Index" asp-controller="attendancemachines" asp-route-attendanceFor="employees" asp-route-dateTime="@DateTime.Today.ToString("yyyy-MM-dd")"> Employees Attendance</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">Leavs</a>
+            <a class="nav-link" asp-controller="employees" asp-action="Leaves" >Leaves</a>
         </li>
 
         <li class="nav-item nav-group">

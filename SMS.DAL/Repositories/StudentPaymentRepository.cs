@@ -185,7 +185,7 @@ namespace SMS.DAL.Repositories
             //admission or session fee calculation
             var feeHeadSL = student.AdmissionDate.Year < DateTime.Now.Year ? 13 : 0;
             var feeHeadId = feeHeads.FirstOrDefault(s => s.SL == feeHeadSL).Id;
-            admissionOrSessionFee = classFees.FirstOrDefault(s => s.SL == feeHeadSL).Amount;
+            admissionOrSessionFee = classFees.FirstOrDefault(s => s.SL == feeHeadSL)?.Amount ?? 0;
             var admissionOrSessionFeeAllocation = feeAllocations.FirstOrDefault(a => a.StudentFeeHeadId == feeHeadId);
             if (admissionOrSessionFeeAllocation != null)
             {

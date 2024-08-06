@@ -71,6 +71,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Areas\SMSAPP\Data\" />
+    <Folder Include="Areas\SMSAPP\Models\" />
+    <Folder Include="Areas\SMSAPP\Views\" />
     <Folder Include="Areas\Student\Data\" />
     <Folder Include="Areas\Student\Models\" />
     <Folder Include="Areas\Student\Views\" />

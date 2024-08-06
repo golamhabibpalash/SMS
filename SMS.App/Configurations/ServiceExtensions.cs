@@ -29,6 +29,7 @@ namespace SMS.App.Configurations
                 options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
                 options.SlidingExpiration = true;
             });
+
         }
     }
 }

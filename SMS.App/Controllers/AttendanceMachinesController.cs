@@ -101,7 +101,7 @@ namespace SMS.App.Controllers
                 try
                 {
                     string cardNo = model.CardNo;
-                    model.CardNo = cardNo.PadLeft(8, '0');
+                    //model.CardNo = cardNo.PadLeft(8, '0');
                     bool isSaved =await _attendanceMachineManager.AddAsync(model);
                     if (isSaved)
                     {

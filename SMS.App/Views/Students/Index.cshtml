@@ -20,19 +20,7 @@
     <form asp-action="Index" asp-controller="Students">
         <div class="alert mb-0 alert-info">
             <div class="form-group row mb-0">
-                <div class="text-md-left col-md-10">
-                    @*<div class="col-md-2">
-
-            <select class="form-control" id="aAcademicClassId" name="academicClassId" asp-items="ViewBag.academicClassId">
-                <option selected disabled>Select Class</option>
-            </select>
-
-        </div>
-        <div class="col-md-2">
-            <select class="form-control" id="aAcademicSectionId" name="academicSectionId" asp-items="ViewBag.academicSectionId">
-                <option selected disabled>Select Section</option>
-            </select>
-        </div>*@
+                <div class="text-md-left col-md-10">                
                     <div class="col-md-6">
                         <input class="form-control" type="text" name="searchString" value="@ViewData["CurrentFilter"]" placeholder="Find by Roll/Name/Phone" />
                     </div>
@@ -66,9 +54,7 @@
                     </div>
                 </div>
             </div>
-
         </div>
-
         <input type="hidden" name="sortOrder" value="@ViewData["rollSortParam"]" />
         <input type="hidden" name="searchString" value="@ViewData["CurrentFilter"]" />
     </form>

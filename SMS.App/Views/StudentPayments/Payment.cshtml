@@ -26,7 +26,6 @@
     {
         GlobalUI.PageTitle = "Student Payment";
     }
-    int sl = 0;
     int detailSl = 0;
     string studentPhoto = !string.IsNullOrEmpty(Model.StudentPayment.Student.Photo) ? Model.StudentPayment.Student.Photo : "noimage.jpg";
     string createdBy = string.Empty;
@@ -75,7 +74,6 @@
             padding: 4px 20px 3px 20px;
         }
 
-
         .mt-100
         {
             margin-top: 100px
@@ -88,9 +86,6 @@
         }
 
         /*Collaps Panel Code*/
-
-
-
         .panel-heading
         {
             padding: 0;
@@ -124,12 +119,16 @@
             -moz-transform: rotate(180deg);
             transform: rotate(180deg);
         }
-        .panelPointer{
-            cursor:pointer;
+
+        .panelPointer
+        {
+            cursor: pointer;
         }
-        .panelPointer:hover{
-            background-color:antiquewhite;
-        }
+
+            .panelPointer:hover
+            {
+                background-color: antiquewhite;
+            }
     </style>
 }
 <div class="row">
@@ -280,7 +279,7 @@
             <div class="panel panel-info border border-info">
                 <div class="panel-heading text-center">
                     <span class="h3">
-                        Payment Status and Details
+                        Current Payment Status and Details (2023-2024)
                     </span>
                 </div>
                 <div class="panel-body">
@@ -304,15 +303,6 @@
                         <div class="card mb-2">
                             <div id="heading_@collapsCount" class="@(item.PaymentItemDetailVMs.Count>0?"card-header panelPointer":"card-header") p-0" data-toggle="collapse" data-target="#collapse_@collapsCount" aria-expanded="true" aria-controls="collapse_@collapsCount">
                                 <table class="table table-borderless p-0 m-0">
-                                    @*<thead>
-                                        <tr>
-                                            <td style="width:5%"></td>
-                                            <td style="width:35%"></td>
-                                            <td style="width:10%"></td>
-                                            <td style="width:10%"></td>
-                                            <td style="width:10%"></td>
-                                        </tr>
-                                    </thead>*@
                                     <tbody>
                                         <tr>
                                             <td class=" " style="width:5%">@collapsCount</td>
@@ -366,7 +356,7 @@
                                                     <td>Received by</td>
                                                     <td>Remarks</td>
                                                     <td class="text-right">Amount</td>
-                                                    <td >Action</td>
+                                                    <td>Action</td>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -376,9 +366,6 @@
                                                     createdBy = payDetail.ReceivedBy != null ? aUser.UserName : "Not Found";
 
                                                     <tr>
-                                                        @*<td class="" style="transform: rotateX(180deg)">
-                                                <i class="fas fa-share fa-2x text-secondary"></i>
-                                            </td>*@
                                                         <td>
                                                             @(++detailSl)
                                                         </td>
@@ -434,23 +421,70 @@
                             <tr>
                                 <td class="text-right"></td>
                                 <td class="text-right"></td>
-                                <td class="text-right h4"> Final Balance</td>
+                                <td class="text-right h4"> Current Balance</td>
                                 <td class="text-right h4 @(finalBalance>0?"text-danger":"")">@finalBalance</td>
                                 <td></td>
                             </tr>
-
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
+    <div class="row p-3">
+        <div class="text-center">
+            <h3>Previous Payment History</h3>
+        </div>
+        <div class="accordion border border-dark" id="accordionExample">
+            <div class="card">
+                <div class="card-header" id="headingOne">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            Academic Session 2022-2023
+                        </button>
+                    </h5>
+                </div>
 
-
+                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                    <div class="card-body">
+                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingTwo">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            Academic Session 2021-2022
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                    <div class="card-body">
+                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingThree">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            Academic Session 2020-2021
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+                    <div class="card-body">
+                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 }
 
-<!-- Modal -->
 
+<!-- Modal -->
 <div style="color:black;font-weight:100" class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg pb-0" role="document">
         <div class="modal-content p-3" style="width:24cm">
@@ -478,8 +512,6 @@
     </div>
 </div>
 
-
-
 <!-- Student Select Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -506,7 +538,6 @@
                         </div>
                     </div>
                 </form>
-
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -514,8 +545,6 @@
         </div>
     </div>
 </div>
-
-
 
 @section Scripts{
 
@@ -550,6 +579,8 @@
             }
         });
     </script>
-    <script src="~/js/StudentPayments/Payment.js"></script>
+    <script src="~/js/StudentPayments/Payment.js">
+
+    </script>
 
 }

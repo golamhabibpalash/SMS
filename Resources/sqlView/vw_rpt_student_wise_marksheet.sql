@@ -1,7 +1,7 @@
 USE [SMSDB]
 GO
 
-/****** Object:  View [dbo].[vw_rpt_student_wise_marksheet]    Script Date: 30-Sep-23 6:45:41 AM ******/
+/****** Object:  View [dbo].[vw_rpt_student_wise_marksheet]    Script Date: 01-Apr-24 6:58:53 AM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -9,11 +9,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
-
-
-
-CREATE OR ALTER         VIEW [dbo].[vw_rpt_student_wise_marksheet] 
+ALTER           VIEW [dbo].[vw_rpt_student_wise_marksheet] 
 AS
 select 
 gr.ExamGroupName,
@@ -30,7 +26,9 @@ d.TotalMark,
 d.ObtainMark,
 d.GPA,
 d.Grade,
-(select max(erd.obtainMark) from ExamResultDetails erd where erd.AcademicSubjectId = sub.Id and erd.ExamResultId=r.Id group by erd.ObtainMark)[MaxNumber],
+(select MAX(sg_ERD.ObtainMark) from ExamResultDetails sg_ERD
+	  left join ExamResults sg_ER on sg_ERD.ExamResultId = sg_ER.Id
+	  where sg_ERD.AcademicSubjectId = sub.Id and sg_ER.AcademicExamGroupId = gr.Id and sg_ER.AcademicClassId = c.Id)[MaxNumber],
 r.CGPA[FinalGPA],
 r.FinalGrade,
 r.AttendancePercentage,

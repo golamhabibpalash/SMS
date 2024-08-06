@@ -89,9 +89,18 @@ namespace SchoolManagementSystem.Controllers
             ViewData["rollSortParam"] = String.IsNullOrEmpty(sortOrder) ? "roll_desc" : "";
             ViewData["academicClassSortParam"] = sortOrder == "academicClass" ? "class_desc" : "academicClass";
             ViewData["CurrentFilter"] = searchString;
-            ViewData["academicClassId"] = academicClassId;
+            ViewData["academicClassId"] = academicClassId != null ? academicClassId : "";
 
-            var students = await _studentManager.GetCurrentStudentListAsync(academicClassId, academicSectionId);
+            var students = new List<SMS.Entities.AdditionalModels.StudentListVM>();
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                students = await _studentManager.GetStudentsBySearch(searchString);
+            }
+            else
+            {
+                students = await _studentManager.GetCurrentStudentListAsync(null, null);
+            }
             if (!string.IsNullOrEmpty(aCategory))
             {
                 if (aCategory == "residential")
@@ -102,13 +111,6 @@ namespace SchoolManagementSystem.Controllers
                 {
                     students = students.Where(s => s.IsResidential == false).ToList();
                 }
-            }
-
-            if (!String.IsNullOrEmpty(searchString))
-            {
-                students = students.Where(s => s.StudentName.ToLower().Contains(searchString.ToLower()) ||
-                s.ClassRoll.ToString().Contains(searchString) ||
-                s.PhoneNo.Contains(searchString)).ToList();
             }
 
 
@@ -179,7 +181,7 @@ namespace SchoolManagementSystem.Controllers
             }
 
             ViewData["pageSize"] = pageSize > 0 ? pageSize : pSize;
-            return View(PaginatedList<SMS.Entities.AdditionalModels.StudentListVM>.Create(students, pageNumber ?? 1, pSize));
+            return View(PaginatedList<SMS.Entities.AdditionalModels.StudentListVM>.Create(students.OrderBy(s => s.ClassSerial).ThenBy(s => s.ClassRoll).ToList(), pageNumber ?? 1, pSize));
         }
         #endregion
 
@@ -208,9 +210,7 @@ namespace SchoolManagementSystem.Controllers
             {
                 return NotFound();
             }
-
-
-            #region Payment===========================================================================================================================
+            #region Payment==========================================================================================
             var stuPayments = await _studentPaymentManager.GetAllByStudentIdAsync((int)id);
 
             List<StudentPaymentScheduleVM> paymentSchedule = await _studentPaymentManager.GetStudentPaymentSchedule(student.Id);
@@ -232,10 +232,8 @@ namespace SchoolManagementSystem.Controllers
 
             sd.TotalDue = await GetTotalDue(student.Id);
             sd.CurrentDue = await GetCurrntDue(student.Id);
-            #endregion Payment=========================================================================================================================
-
-
-            #region Attendance ========================================================================================================================
+            #endregion Payment============================================================================
+            #region Attendance =============================================================================
             try
             {
                 int startingMonth = Convert.ToInt32(student.AdmissionDate.Date.ToString("MM"));
@@ -300,7 +298,7 @@ namespace SchoolManagementSystem.Controllers
             return View(student);
         }
 
-        [HttpPost,ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         [Authorize(Roles = "SuperAdmin, Admin")]
         [Authorize(Policy = "CreateStudentsPolicy")]
         public async Task<IActionResult> Create([Bind("Id,Name,NameBangla,ClassRoll,FatherName,MotherName,AdmissionDate,Email,PhoneNo,Photo,DOB,BirthCertificateNo,BirthCertificateImage,ReligionId,GenderId,BloodGroupId,NationalityId,PresentAddressArea,PresentAddressPO,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddressArea,PermanentAddressPO,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,AcademicSessionId,AcademicClassId,AcademicSectionId,AddressInfo,PreviousSchool,Status,CreatedBy,CreatedAt,EditedBy,EditedAt,GuardianPhone,MACAddress,IsResidential,SMSService, UniqueId")] StudentCreateVM newStudent, IFormFile sPhoto, IFormFile DOBFile)
@@ -341,7 +339,7 @@ namespace SchoolManagementSystem.Controllers
                             }
                             newStudent.BirthCertificateImage = fileName;
                         }
-                        if (HttpContext.Session.GetString("UserId")==null)
+                        if (HttpContext.Session.GetString("UserId") == null)
                         {
                             return RedirectToAction("Login", "Accounts");
                         }
@@ -351,12 +349,13 @@ namespace SchoolManagementSystem.Controllers
                         newStudent.EditedBy = HttpContext.Session.GetString("UserId");
 
                         var student = _mapper.Map<Student>(newStudent);
-                        student.UniqueId =await GenerateUniquId(student);
+                        student.UniqueId = await GenerateUniquId(student);
                         student.MACAddress = MACService.GetMAC();
                         bool saveStudent = await _studentManager.AddAsync(student);
                         if (saveStudent == true)
                         {
-                            StudentActivateHist studentActivateHist = new() {
+                            StudentActivateHist studentActivateHist = new()
+                            {
                                 StudentId = student.Id,
                                 IsActive = true,
                                 ActionDateTime = DateTime.Now,
@@ -368,7 +367,8 @@ namespace SchoolManagementSystem.Controllers
                             await _studentActivateHistManager.AddAsync(studentActivateHist);
 
                             TempData["create"] = "Created Successfully";
-                            ApplicationUser newStudentUser = new() {
+                            ApplicationUser newStudentUser = new()
+                            {
                                 UserName = student.UniqueId,
                                 Email = student.Email,
                                 EmailConfirmed = true,
@@ -390,11 +390,12 @@ namespace SchoolManagementSystem.Controllers
                                 if (roleAssignResult.Succeeded)
                                 {
                                     var instituteInfo = await _instituteManager.GetAllAsync();
-                                    string text = "Dear,\n" + student.Name + ",\nYour User: " + newStudentUser.UserName + "\nPassword:" + autoGeneratedPassword + "\n-"+ instituteInfo.FirstOrDefault().Name;
+                                    string text = "Dear,\n" + student.Name + ",\nYour User: " + newStudentUser.UserName + "\nPassword:" + autoGeneratedPassword + "\n-" + instituteInfo.FirstOrDefault().Name;
                                     bool smsSend = await MobileSMS.SendSMS(student.PhoneNo, text);
                                     if (smsSend == true)
                                     {
-                                        PhoneSMS phoneSMS = new() {
+                                        PhoneSMS phoneSMS = new()
+                                        {
                                             Text = text,
                                             CreatedAt = DateTime.Now,
                                             CreatedBy = "System",
@@ -415,7 +416,7 @@ namespace SchoolManagementSystem.Controllers
                             }
                             return RedirectToAction(nameof(Index));
                         }
-                     }
+                    }
                 }
                 catch (Exception)
                 {
@@ -441,7 +442,7 @@ namespace SchoolManagementSystem.Controllers
         #endregion
 
         #region Edit
-        [HttpGet, Authorize(Roles = "SuperAdmin, Admin",  Policy = "EditStudentsPolicy")]
+        [HttpGet, Authorize(Roles = "SuperAdmin, Admin", Policy = "EditStudentsPolicy")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -473,7 +474,7 @@ namespace SchoolManagementSystem.Controllers
         }
 
 
-        [HttpPost,ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         [Authorize(Roles = "SuperAdmin, Admin")]
         [Authorize(Policy = "EditStudentsPolicy")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,NameBangla,ClassRoll,FatherName,MotherName,AdmissionDate,Email,PhoneNo,Photo,DOB,BirthCertificateNo,BirthCertificateImage,ReligionId,GenderId,BloodGroupId,NationalityId,PresentAddressArea,PresentAddressPO,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddressArea,PermanentAddressPO,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,AcademicSessionId,AcademicClassId,AcademicSectionId,AddressInfo,PreviousSchool,CreatedBy,CreatedAt,EditedBy,EditedAt,GuardianPhone,Status,MACAddress,IsResidential,SMSService,UniqueId")] Student student, IFormFile sPhoto, IFormFile DOBFile)
@@ -533,7 +534,7 @@ namespace SchoolManagementSystem.Controllers
                     }
                     catch (DbUpdateConcurrencyException)
                     {
-                            throw;
+                        throw;
                     }
                 }
             }
@@ -755,60 +756,63 @@ namespace SchoolManagementSystem.Controllers
             return totalDue;
         }
 
-        private async Task<double> GetCurrntDue(int studId)
+        public async Task<double> GetCurrntDue(int studId)
         {
             double currentDue = 0.00;
-            double totalAmount = 0.00;
+            int currentMonth = DateTime.Now.Month;
+
             Student st = await _studentManager.GetByIdAsync(studId);
             try
             {
-                int admissionYear = st.AdmissionDate.Year;
-                int currentYear = DateTime.Now.Year;
-
-                int admissionMonth = admissionYear < currentYear ? 1 : st.AdmissionDate.Month;
-                List<ClassFeeList> feeLists = await _classFeeListManager.GetAllByClassIdAsync(st.AcademicClassId);
-                feeLists = feeLists
-                    .Where(s => s.AcademicSessionId == st.AcademicSessionId).ToList();
-                var res = from cFee in feeLists
-                          select (cFee.Amount * cFee.StudentFeeHead.YearlyFrequency);
-                var sdfsdf = feeLists.Select(s => s.Amount * s.StudentFeeHead.YearlyFrequency).Sum();
-
-                double monthlyFee = await GetFeeAsync(st.AcademicClassId, 1, st.AcademicSessionId); //1=monthlyfee, 2=admissionFee, 3=ExamFee, 4=SessionFee
-                double admissionFee = await GetFeeAsync(st.AcademicClassId, 2, st.AcademicSessionId); //1=monthlyfee, 2=admissionFee, 3=ExamFee, 4=SessionFee
-                double examFee = await GetFeeAsync(st.AcademicClassId, 3, st.AcademicSessionId); //1=monthlyfee, 2=admissionFee, 3=ExamFee, 4=SessionFee
-                double sessionFee = await GetFeeAsync(st.AcademicClassId, 4, st.AcademicSessionId); //1=monthlyfee, 2=admissionFee, 3=ExamFee, 4=SessionFee
-                if (st.AdmissionDate.ToString("dd-MM-yyyy") == "01-01-" + admissionYear)
+                if (st == null)
                 {
-                    totalAmount = ((DateTime.Now.Month - (admissionMonth - 1)) * monthlyFee) + sessionFee;
-                    if (Convert.ToInt32(DateTime.Today.ToString("MM")) >= 6 && Convert.ToInt32(DateTime.Today.ToString("MM")) < 11)
+                    return 0;
+                }
+                double totalCurrentPayable = 0;
+                double totalCurrentPaid = 0;
+                double admissionOrSessionFee = 0;
+                int feeHeadValue = 0;
+                double cMonthlyFee = 0;
+                double othersFee = 0;
+
+
+                //0     = admission fee
+                //1-12  = monthly fee
+                //13    = session fee
+                //14- >   other's fee
+
+                //admission or session fee calculation
+                feeHeadValue = st.AdmissionDate.Year < DateTime.Now.Year ? 13 : 0;
+                admissionOrSessionFee = await _classFeeListManager.GetFeeAmountByFeeListSlAsync(st.UniqueId, feeHeadValue);
+
+                //monthly fee calculation
+                for (
+                    int i = st.AdmissionDate.Month; i <= DateTime.Now.Month; i++)
+                {
+                    feeHeadValue = i;
+                    cMonthlyFee += await _classFeeListManager.GetFeeAmountByFeeListSlAsync(st.UniqueId, feeHeadValue);
+                }
+                //others fee calculation
+                var othersFeeList = await _classFeeListManager.GetByClassIdSessionIdStudentIdAsync(st.AcademicClassId, st.AcademicSessionId, st.Id);
+                if (othersFeeList != null)
+                {
+                    foreach (var item in othersFeeList)
                     {
-                        totalAmount = totalAmount + examFee;
-                    }
-                    if (Convert.ToInt32(DateTime.Today.ToString("MM")) > 11)
-                    {
-                        totalAmount = totalAmount + (2 * examFee);
+                        if (item.SL > 13)
+                        {
+                            othersFee += item.Amount;
+                        }
                     }
                 }
-                else
-                {
-                    totalAmount = ((DateTime.Now.Month - (admissionMonth - 1)) * monthlyFee) + admissionFee;
-                    if (Convert.ToInt32(DateTime.Today.ToString("MM")) >= 6 && Convert.ToInt32(DateTime.Today.ToString("MM")) < 11)
-                    {
-                        totalAmount = totalAmount + examFee;
-                    }
-                    if (Convert.ToInt32(DateTime.Today.ToString("MM")) > 11)
-                    {
-                        totalAmount = totalAmount + (2 * examFee);
-                    }
-                }
-                double totalPaid = await GetTotalPaid(st.Id);
-                currentDue = totalAmount - totalPaid;
+                totalCurrentPayable = admissionOrSessionFee + cMonthlyFee + othersFee;
+                totalCurrentPaid = await GetTotalPaid(studId);
+                currentDue = totalCurrentPayable - totalCurrentPaid;
             }
             catch (Exception)
             {
-
                 throw;
             }
+
             return currentDue;
         }
         private async Task<double> GetCurrentDue(int stuId)
@@ -841,12 +845,12 @@ namespace SchoolManagementSystem.Controllers
             double paidAmount = studentPayments.Sum(s => s.TotalPayment);
             return paidAmount;
         }
-       
+
         private async Task<string> GenerateUniquId(Student student)
         {
             string uniqueId = string.Empty;
             uniqueId = student.DOB.ToString("yyMMdd");
-            AcademicSession academicSession =await _academicSessionManager.GetByIdAsync(student.AcademicSessionId);
+            AcademicSession academicSession = await _academicSessionManager.GetByIdAsync(student.AcademicSessionId);
             uniqueId += academicSession.Name.Substring(academicSession.Name.Length - 1, 1);
             uniqueId += student.ClassRoll.ToString().Substring(student.ClassRoll.ToString().Length - 2, 2);
             return uniqueId;
@@ -880,11 +884,11 @@ namespace SchoolManagementSystem.Controllers
                 AcademicSession currentSession = await _academicSessionManager.GetCurrentAcademicSession();
                 academicSessionId = currentSession.Id;
             }
-            if (academicSectionId == null || academicSectionId<=0)
+            if (academicSectionId == null || academicSectionId <= 0)
             {
                 academicSectionId = 0;
             }
-            var studets  = await _studentManager.GetStudentsByClassSessionSectionAsync((int)academicSessionId,academicClassId,(int)academicSectionId);
+            var studets = await _studentManager.GetStudentsByClassSessionSectionAsync((int)academicSessionId, academicClassId, (int)academicSectionId);
             return Json(studets.OrderBy(s => s.ClassRoll));
         }
         #endregion APIs

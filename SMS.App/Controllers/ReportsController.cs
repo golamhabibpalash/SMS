@@ -44,10 +44,12 @@ namespace SMS.App.Controllers
         private readonly IAcademicExamManager _academicExamManager;
         private readonly IGradingTableManager _gradingTableManager;
         private readonly IAcademicExamGroupManager _academicExamGroupManager;
+        private readonly IStudentFeeHeadManager _studentFeeHeadManager;
+
         #endregion properties
 
         #region Constructor
-        public ReportsController(IWebHostEnvironment host, IStudentManager studentManager, IReportManager reportManager, IAcademicClassManager academicClassManager, IAttendanceMachineManager attendanceMachineManager, IOffDayManager dayManager, IAcademicSessionManager academicSessionManager, IAcademicSectionManager academicSectionManager, IInstituteManager instituteManager, IAcademicExamDetailsManager academicExamDetailsManager, IAcademicExamManager academicExamManager, IGradingTableManager gradingTableManager, IAcademicExamGroupManager academicExamGroupManager)
+        public ReportsController(IWebHostEnvironment host, IStudentManager studentManager, IReportManager reportManager, IAcademicClassManager academicClassManager, IAttendanceMachineManager attendanceMachineManager, IOffDayManager dayManager, IAcademicSessionManager academicSessionManager, IAcademicSectionManager academicSectionManager, IInstituteManager instituteManager, IAcademicExamDetailsManager academicExamDetailsManager, IAcademicExamManager academicExamManager, IGradingTableManager gradingTableManager, IAcademicExamGroupManager academicExamGroupManager, IStudentFeeHeadManager studentFeeHeadManager)
         {
             _host = host;
             _studentManager = studentManager;
@@ -62,6 +64,7 @@ namespace SMS.App.Controllers
             _academicExamManager = academicExamManager;
             _gradingTableManager = gradingTableManager;
             _academicExamGroupManager = academicExamGroupManager;
+            _studentFeeHeadManager = studentFeeHeadManager;
         }
         #endregion Constructor
 
@@ -175,6 +178,7 @@ namespace SMS.App.Controllers
             AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSession();
 
             List<RptDailyAttendaceVM> studentDailyAttendance = await _reportManager.GetDailyAttendanceReport(fromDate, academicClassId, academicSectionId, attendanceType, academicSession.Id.ToString(), attendanceFor);
+            string totalStudents = studentDailyAttendance.Count.ToString();
             using var report = new Microsoft.Reporting.NETCore.LocalReport();
             report.DataSources.Add(new ReportDataSource("AttendanceReportDS", studentDailyAttendance));
             var parameters = new[] {
@@ -184,7 +188,8 @@ namespace SMS.App.Controllers
                 new ReportParameter("Logo", imageParam),
                 new ReportParameter("ReportName", "Daily Attendance Report"),
                 new ReportParameter("AttendanceDate", fromDate),
-                new ReportParameter("ReportDate", DateTime.Today.ToString("dd MMM yyyy"))
+                new ReportParameter("ReportDate", DateTime.Today.ToString("dd MMM yyyy")),
+                new ReportParameter("TotalStudent",totalStudents)
             };
             report.ReportPath = path;
             report.SetParameters(parameters);
@@ -276,7 +281,7 @@ namespace SMS.App.Controllers
             ViewBag.monthlyHolidays = monthlyHolidays;
             foreach (Student student in studentList.Where(s => s.Status == true))
             {
-                var myAttendances = attendanceList.Where(t => t.CardNo == student.ClassRoll.ToString().PadLeft(8, '0')).ToList();
+                var myAttendances = attendanceList.Where(t => t.CardNo == student.UniqueId.Trim()).ToList();
 
                 IDictionary<int, bool> daysPresents = new Dictionary<int, bool>();
                 MonthlyAttendanceFullClassDetails monthlyAttendanceFullClassDetails = new()
@@ -631,23 +636,22 @@ namespace SMS.App.Controllers
         {
             ViewData["AcademicClass"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name").ToList();
             
-            //var items = new List<SelectListItem>
-            //{
-            //    new SelectListItem { Text = "all", Value = "all" },
-            //    new SelectListItem { Text = "residential", Value = "residential" },
-            //    new SelectListItem { Text = "nonResidential", Value = "nonResidential" }
-            //};
-
-            //// Create a SelectList from the list
-            //ViewBag["paymentCategory"] = new SelectList(items, "Value", "Text");
             return View();
         }
 
         [Authorize(Policy = "StudentPaymentReportsPolicy")]
-        public async Task<IActionResult> StudentPaymentReportExport(string reportType, string fileName, string fromDate, string toDate, string academicClassId, string academicSectionId, string paymentCategory)
+        public async Task<IActionResult> StudentPaymentReportExport(string reportType, string fileName, string fromDate, string toDate, string academicClassId, string academicSectionId, string paymentCategory, int? paymentType)
         {
             string reportName = "Payments Report";
             var sPayment = await _reportManager.GetStudentPayment(fromDate, toDate, academicClassId, academicSectionId);
+            if (paymentType != null)
+            {
+                var feeHead = await _studentFeeHeadManager.GetByIdAsync((int)paymentType);
+                if (feeHead != null)
+                {
+                    sPayment = sPayment.Where(s => s.PaymentType == feeHead.Name).ToList();
+                }
+            }
             if (paymentCategory == "residential")
             {
                 sPayment = sPayment.Where(s => s.IsResidential).ToList();
@@ -873,5 +877,7 @@ namespace SMS.App.Controllers
             var pdf = localSubReport.Render("pdf");
             return File(pdf, "application/pdf");
         }
+
+
     }
 }

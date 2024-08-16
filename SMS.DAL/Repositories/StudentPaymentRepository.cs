@@ -169,7 +169,6 @@ namespace SMS.DAL.Repositories
             double totalCurrentPayable = 0;
             double totalCurrentPaid = 0;
             double admissionOrSessionFee = 0;
-            int feeHeadValue = 0;
             double cMonthlyFee = 0;
             double othersFee = 0;
             var student = await _context.Student.FirstOrDefaultAsync(s => s.Id == stuId);
@@ -222,7 +221,7 @@ namespace SMS.DAL.Repositories
             {
                 if (item.SL >= 14)
                 {
-                    var fHead = feeHeads.FirstOrDefault(s => s.SL == item.SL);
+                    var fHead = feeHeads.FirstOrDefault(s => s.SL == item.StudentFeeHead.SL);
                     if (fHead != null)
                     {
                         feeHeadId = fHead.Id;

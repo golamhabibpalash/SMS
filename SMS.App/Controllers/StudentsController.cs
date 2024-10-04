@@ -81,37 +81,68 @@ namespace SchoolManagementSystem.Controllers
             _offDayManager = offDayManager;
             _studentFeeAllocationManager = studentFeeAllocationManager;
         }
-        #endregion
+        #endregion Constructor
 
         #region Index
         [Authorize(Roles = "SuperAdmin, Admin,Teacher")]
         [Authorize(Policy = "IndexStudentsPolicy")]
-        public async Task<IActionResult> Index(int? academicClassId, int? academicSectionId, string aStatus, string sortOrder, string searchString, int? pageNumber, int? pageSize, string aCategory)
+        public async Task<IActionResult> Index(int? academicSessionId, int? academicClassId, int? academicSectionId, string aStatus, string sortOrder, string searchString, int? pageNumber, int? pageSize, string aCategory)
         {
-            ViewData["rollSortParam"] = String.IsNullOrEmpty(sortOrder) ? "roll_desc" : "";
-            ViewData["academicClassSortParam"] = sortOrder == "academicClass" ? "class_desc" : "academicClass";
-            ViewData["CurrentFilter"] = searchString;
-            ViewData["academicClassId"] = academicClassId != null ? academicClassId : "";
+            ViewData["searchString"] = searchString;
+            ViewData["selectedAcademicClassId"] = academicClassId != null ? academicClassId.ToString() : "";
+            ViewData["selectedAcademicSectionId"] = academicSectionId;
+            ViewData["selectedAcademicSessionId"] = academicSessionId;
+            ViewData["categoryId"] = aCategory;
+            ViewData["statusId"] = aStatus;
+            ViewData["pageRowCount"] = pageSize;
+
+
 
             var students = new List<SMS.Entities.AdditionalModels.StudentListVM>();
-
-            if (!String.IsNullOrEmpty(searchString))
+            var allStudent = await _studentManager.GetAllAsync();
+            var currentSession = await _academicSessionManager.GetCurrentAcademicSession();
+            if (academicSessionId != null)
             {
-                students = await _studentManager.GetStudentsBySearch(searchString);
+                allStudent = allStudent.Where(s => s.AcademicSessionId == academicSessionId).ToList();
             }
             else
             {
-                students = await _studentManager.GetCurrentStudentListAsync(null, null);
+                allStudent = allStudent.Where(s => s.AcademicSessionId == currentSession.Id).ToList();
+                academicSessionId = currentSession.Id;
+            }
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                allStudent = allStudent.Where(s => s.Name.Contains(searchString)
+                || s.ClassRoll.ToString().Contains(searchString)
+                || s.UniqueId.ToString().Contains(searchString)
+                || (s.PhoneNo?.Contains(searchString) ?? false)
+                || (s.GuardianPhone?.Contains(searchString) ?? false))
+                    .ToList();
+            }
+            if (academicClassId != null)
+            {
+                allStudent = allStudent.Where(s => s.AcademicClassId == Convert.ToInt32(academicClassId)).ToList();
+                var sections = await _academicSectionManager.GetAllByClassWithSessionId(Convert.ToInt32(academicClassId), currentSession.Id);
+                ViewBag.SectionList = new SelectList(sections, "Id", "Name", academicSectionId);
+                ViewBag.selectedClassId = academicClassId;
+            }
+            else
+            {
+                ViewBag.selectedClassId = "";
+            }
+            if (academicSectionId != null)
+            {
+                allStudent = allStudent.Where(s => s.AcademicSectionId == Convert.ToInt32(academicSectionId)).ToList();
             }
             if (!string.IsNullOrEmpty(aCategory))
             {
                 if (aCategory == "residential")
                 {
-                    students = students.Where(s => s.IsResidential).ToList();
+                    allStudent = allStudent.Where(s => s.IsResidential).ToList();
                 }
                 else if (aCategory == "nonResidential")
                 {
-                    students = students.Where(s => s.IsResidential == false).ToList();
+                    allStudent = allStudent.Where(s => s.IsResidential == false).ToList();
                 }
             }
 
@@ -119,8 +150,28 @@ namespace SchoolManagementSystem.Controllers
             if (aStatus == "0" || aStatus == "1")
             {
                 bool isActive = aStatus == "1" ? true : false;
-                students = students.Where(s => s.Status == isActive).ToList();
+                allStudent = allStudent.Where(s => s.Status == isActive).ToList();
             }
+            students = allStudent.Select(s => new SMS.Entities.AdditionalModels.StudentListVM()
+            {
+                Id = s.Id,
+                ClassRoll = s.ClassRoll,
+                Photo = s.Photo,
+                StudentName = s.Name,
+                NameBangla = s.NameBangla,
+                ClassName = s.AcademicClass.Name,
+                SectionName = s.AcademicSection?.Name,
+                PhoneNo = s.PhoneNo,
+                GuardianPhone = s.GuardianPhone,
+                SessionName = s.AcademicSession?.Name,
+                Gender = s.Gender.Name,
+                Status = s.Status,
+                ClassSerial = s.AcademicClass?.ClassSerial,
+                IsResidential = s.IsResidential,
+                UniqueId = s.UniqueId
+            }).ToList();
+
+
             int totalFound = ViewBag.totalFound = students.Count();
 
             List<IsActiveVM> isActiveVMs = new List<IsActiveVM>();
@@ -155,12 +206,20 @@ namespace SchoolManagementSystem.Controllers
                     break;
             }
 
-            var sectionList = await _academicSectionManager.GetAllAsync();
+            ViewBag.academicSessionId = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name", academicSessionId);
             ViewBag.academicClassId = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", academicClassId);
 
-            ViewBag.academicSectionId = new SelectList(sectionList.Where(s => s.AcademicClassId == academicClassId), "Id", "Name", academicSectionId);
             ViewBag.aStatus = new SelectList(isActiveVMs.ToList(), "Id", "sName", aStatus);
-
+            if (pageSize == null)
+            {
+                pageSize = 20;
+            }
+            ViewBag.rowsCount = new List<SelectListItem>()
+            {
+            new SelectListItem { Value = "20", Text = "20", Selected=pageSize==20 },
+            new SelectListItem { Value = "50", Text = "50", Selected=pageSize==50  },
+            new SelectListItem { Value = "100", Text = "100", Selected=pageSize==100  }
+            };
             var studentCategory = new List<SelectListItem>
             {
                 new SelectListItem { Text = "all", Value = "all" },
@@ -169,23 +228,13 @@ namespace SchoolManagementSystem.Controllers
             };
             ViewBag.aCategory = new SelectList(studentCategory.ToList(), "Value", "Text", aCategory);
 
-            int pSize = 30;
-            if (pageSize != null)
-            {
-                if (pageSize > 0)
-                {
-                    pSize = (int)pageSize;
-                }
-                else
-                {
-                    pSize = totalFound;
-                }
-            }
 
-            ViewData["pageSize"] = pageSize > 0 ? pageSize : pSize;
-            return View(PaginatedList<SMS.Entities.AdditionalModels.StudentListVM>.Create(students.OrderBy(s => s.ClassSerial).ThenBy(s => s.ClassRoll).ToList(), pageNumber ?? 1, pSize));
+            ViewData["pageSize"] = pageSize;
+
+            return View(PaginatedList<SMS.Entities.AdditionalModels.StudentListVM>.Create(students.OrderBy(s => s.ClassSerial).ThenBy(s => s.ClassRoll).ToList(), pageNumber ?? 1, (int)pageSize));
         }
-        #endregion
+
+        #endregion Index
 
         #region Details
         // GET: Students/Details/5
@@ -435,7 +484,7 @@ namespace SchoolManagementSystem.Controllers
 
             return View(newStudent);
         }
-        #endregion
+        #endregion Create
 
         #region Edit
         [HttpGet, Authorize(Roles = "SuperAdmin, Admin", Policy = "EditStudentsPolicy")]
@@ -456,7 +505,7 @@ namespace SchoolManagementSystem.Controllers
             newStudent.AcademicSessionList = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name", newStudent.AcademicSessionId).ToList();
             newStudent.AcademicClassList = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", newStudent.AcademicClassId).ToList();
 
-            newStudent.AcademicSectionList = new SelectList(academicSections.Where(m => m.AcademicClassId == student.AcademicClassId), "Id", "Name", newStudent.AcademicSectionId).ToList();
+            newStudent.AcademicSectionList = new SelectList(academicSections.Where(m => m.AcademicClassId == student.AcademicClassId && m.AcademicSessionId == student.AcademicSessionId), "Id", "Name", newStudent.AcademicSectionId).ToList();
             newStudent.BloodGroupList = new SelectList(await _bloodGroupManager.GetAllAsync(), "Id", "Name", newStudent.BloodGroupId).ToList();
             newStudent.GenderList = new SelectList(await _genderManager.GetAllAsync(), "Id", "Name", newStudent.GenderId).ToList();
             newStudent.NationalityList = new SelectList(await _nationalityManager.GetAllAsync(), "Id", "Name", newStudent.NationalityId).ToList();
@@ -552,7 +601,7 @@ namespace SchoolManagementSystem.Controllers
 
             return View(exitStudent);
         }
-        #endregion
+        #endregion Edit
 
         #region Delete
         [Authorize(Roles = "SuperAdmin")]
@@ -641,7 +690,7 @@ namespace SchoolManagementSystem.Controllers
         }
         #endregion
 
-
+        #region Other's
         [Authorize(Policy = "DueAmountStudentsPolicy")]
         public async Task<double> DueAmount(int id)
         {
@@ -910,5 +959,69 @@ namespace SchoolManagementSystem.Controllers
             }
             return null;
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ExportToCsv(int? academicSessionId, int? academicClassId, int? academicSectionId, string aStatus, string searchString, string aCategory)
+        {
+            var students = await _studentManager.GetAllAsync();
+            if (academicSessionId != null)
+            {
+                students = students.Where(s => s.AcademicSessionId == academicSessionId).ToList();
+            }
+            if (academicClassId != null)
+            {
+                students = students.Where(s => s.AcademicClassId == academicClassId).ToList();
+            }
+            if (academicSectionId != null)
+            {
+                students = students.Where(s => s.AcademicSectionId == academicSectionId).ToList();
+            }
+
+            if (aStatus == "0" || aStatus == "1")
+            {
+                bool isActive = aStatus == "1" ? true : false;
+                students = students.Where(s => s.Status == isActive).ToList();
+            }
+            if (!string.IsNullOrEmpty(aCategory))
+            {
+                if (aCategory == "residential")
+                {
+                    students = students.Where(s => s.IsResidential).ToList();
+                }
+                else if (aCategory == "nonResidential")
+                {
+                    students = students.Where(s => s.IsResidential == false).ToList();
+                }
+            }
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                students = students.Where(s => s.Name.Contains(searchString)
+                || s.ClassRoll.ToString().Contains(searchString)
+                || s.UniqueId.ToString().Contains(searchString)
+                || (s.PhoneNo?.Contains(searchString) ?? false)
+                || (s.GuardianPhone?.Contains(searchString) ?? false))
+                    .ToList();
+            }
+
+            var builder = new StringBuilder();
+            builder.AppendLine("Unique Id, ClassRoll, Student Name,  Class,  Phone No,Guardian Phone, Gender, Status, Section , IsResidential");
+
+            foreach (var student in students)
+            {
+                builder.AppendLine($"{student.UniqueId}," +
+                        $"{student.ClassRoll},{student.Name}," +
+                        $"{student.AcademicClass?.Name ?? "N/A"}," +
+                        $"{student.PhoneNo.PadLeft(11, '0')}," +
+                        $"{student.GuardianPhone?.PadLeft(11, '0') ?? "N/A"}," +
+                        $"{student.Gender.Name}," +
+                        $"{(student.Status ? "Active" : "Inactive")}," +
+                        $"{student.AcademicSection?.Name ?? "N/A"}," +
+                        $"{(student.IsResidential ? "Residential" : "Non Residential")},");
+            }
+
+            DateTime today = DateTime.Today;
+            return File(Encoding.UTF8.GetBytes(builder.ToString()), "text/csv", today.ToString("yyMMdd") + "Student List_.csv");
+        }
+        #endregion Other's
     }
 }

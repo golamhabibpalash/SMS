@@ -1,23 +1,19 @@
 ﻿using BLL.Managers.Base;
-using Microsoft.EntityFrameworkCore;
 using SMS.BLL.Contracts;
-using SMS.BLL.Contracts.Base;
 using SMS.DAL.Contracts;
 using SMS.Entities;
 using SMS.Entities.AdditionalModels;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SMS.BLL.Managers
 {
-    public class StudentManager :Manager<Student>, IStudentManager
+    public class StudentManager : Manager<Student>, IStudentManager
     {
         private readonly IStudentRepository studentRepository;
 
-        public StudentManager(IStudentRepository studentRepository):base(studentRepository)
+        public StudentManager(IStudentRepository studentRepository) : base(studentRepository)
         {
             this.studentRepository = studentRepository;
         }
@@ -69,13 +65,14 @@ namespace SMS.BLL.Managers
                     (s.AcademicClass?.Name?.ToLower().Contains(search) ?? false) ||
                     (s.ClassRoll.ToString().Contains(search)) ||
                     (s.AcademicSection?.Name?.ToLower().Contains(search) ?? false) ||
-                    (s.PhoneNo?.Contains(search) ?? false))
+                    (s.PhoneNo?.Contains(search) ?? false) ||
+                    (s.GuardianPhone?.Contains(search) ?? false))
                 .ToList();
 
 
             List<StudentListVM> studentListVMs = new();
 
-            studentListVMs= students.Select(student => new StudentListVM
+            studentListVMs = students.Select(student => new StudentListVM
             {
                 Id = student.Id,
                 ClassRoll = student.ClassRoll,
@@ -91,6 +88,7 @@ namespace SMS.BLL.Managers
                 ClassSerial = student.AcademicClass?.ClassSerial,
                 IsResidential = student.IsResidential,
                 UniqueId = student.UniqueId,
+                GuardianPhone = student.GuardianPhone
             }).ToList();
             return studentListVMs;
         }

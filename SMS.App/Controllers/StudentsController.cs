@@ -174,6 +174,10 @@ namespace SchoolManagementSystem.Controllers
                 {
                     pSize = (int)pageSize;
                 }
+                else if (pageSize==0)
+                {
+                    pSize = students.Count();
+               }
                 else
                 {
                     pSize = totalFound;

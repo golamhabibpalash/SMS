@@ -501,7 +501,7 @@ namespace SMS.App.Controllers
 
         [HttpPost]
         [Authorize(Policy = "DuePaymentStudentPaymentsPolicy")]
-        public async Task<IActionResult> DuePayment(int? aSessionId, int? AcademicClassId, int? AcademicSectionId, int studentId, int dueType)
+        public async Task<IActionResult> DuePayment(int? aSessionId, int? AcademicClassId, int? AcademicSectionId, int studentId, int dueType, int? ResidentialStatus, int? StudentStatus)
         {
             GlobalUI.PageTitle = "Due Payment List";
             if (string.IsNullOrEmpty(aSessionId.ToString()))
@@ -519,8 +519,35 @@ namespace SMS.App.Controllers
                 AcademicClassId = 0;
             }
             students = await _studentManager.GetStudentsByClassSessionSectionAsync((int)aSessionId, (int)AcademicClassId, (int)AcademicSectionId);
-
+            if (ResidentialStatus!=null)
+            {
+                //0=NonResidential, 1=Residential, 2=all;
+                if (ResidentialStatus==0)
+                {
+                    students = students.Where(s => s.IsResidential==false).ToList();
+                }
+                if (ResidentialStatus == 1)
+                {
+                    students = students.Where(s => s.IsResidential ==true).ToList();
+                }
+            
+        }
+            if (StudentStatus!=null)
+            {
+                if (StudentStatus ==0)
+                {
+                    students = students.Where(s => s.Status == false).ToList();
+                }
+                if(StudentStatus == 1)
+                {
+                    students = students.Where( s=> s.Status == true).ToList();
+                }
+            }
             DuePaymentVM duePaymentVM = new DuePaymentVM();
+            if (students!=null)
+            {
+                duePaymentVM.ShowCount = students.Count;
+            }
             duePaymentVM.AcademicClassList = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", AcademicClassId).ToList();
             duePaymentVM.AcademicSectionList = new SelectList(await _academicSectionManager.GetAllByClassWithSessionId((int)AcademicClassId, (int)aSessionId), "Id", "Name", duePaymentVM.AcademicSectionId).ToList();
             duePaymentVM.AcademicClassId = (int)AcademicClassId;

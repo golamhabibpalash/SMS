@@ -14,5 +14,8 @@ namespace SMS.App.ViewModels.PaymentVM
         public List<SelectListItem> AcademicSectionList { get; set; }
         public Institute Institute { get; set; }
         public double GrandTotal { get; set; }
+        public int StudentStatus { get; set; } = 1; //0=inactive, 1=active, 2=all;
+        public int ResidentialStatus { get; set; } = 2; //0=NonResidential, 1=Residential, 2=all;
+        public int? ShowCount { get; set; }
     }
 }

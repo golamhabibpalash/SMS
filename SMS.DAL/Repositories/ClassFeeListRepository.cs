@@ -4,13 +4,10 @@ using SMS.DAL.Contracts;
 using SMS.DAL.Repositories.Base;
 using SMS.DB;
 using SMS.Entities;
-using SMS.Entities.AdditionalModels;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SMS.DAL.Repositories
@@ -87,18 +84,28 @@ namespace SMS.DAL.Repositories
             List<ClassFeeList> results = new();
             try
             {
-                results =await (from t in _context.ClassFeeList
-                          join h in _context.StudentFeeHead on t.StudentFeeHeadId equals h.Id into joinFeedHead
-                          from h in joinFeedHead.DefaultIfEmpty()
-                          join s in _context.Student on t.AcademicClassId equals s.AcademicClassId
-                          where s.Id == studentId && h.IsResidential == s.IsResidential && t.AcademicSessionId == s.AcademicSessionId
-                          select t).ToListAsync();                          
+                results = await (from t in _context.ClassFeeList
+                                 join h in _context.StudentFeeHead on t.StudentFeeHeadId equals h.Id into joinFeedHead
+                                 from h in joinFeedHead.DefaultIfEmpty()
+                                 join s in _context.Student on t.AcademicClassId equals s.AcademicClassId
+                                 where s.Id == studentId && h.IsResidential == s.IsResidential && t.AcademicSessionId == s.AcademicSessionId
+                                 select t).ToListAsync();
             }
             catch (Exception)
             {
                 throw;
             }
             return results;
+        }
+
+        public async Task<List<ClassFeeList>> GetAllByUniqueId(string uniqueId)
+        {
+            var student = await _context.Student.FirstOrDefaultAsync(s => s.UniqueId == uniqueId);
+            var currentSession = await _context.AcademicSession.FirstOrDefaultAsync(s => s.CurrentSession == true);
+            return await _context
+                .ClassFeeList.Include(m => m.StudentFeeHead).
+                Where(f => f.AcademicClassId == student.AcademicClassId && f.StudentFeeHead.IsResidential == student.IsResidential && f.AcademicSessionId == currentSession.Id)
+                .ToListAsync();
         }
     }
 }

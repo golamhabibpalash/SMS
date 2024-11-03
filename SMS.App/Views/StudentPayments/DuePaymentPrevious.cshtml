@@ -28,7 +28,7 @@
                     <legend class="w-auto text-primary">Select Criteria</legend>
                     <form id="studentInfoForm" asp-action="DuePayment">
                         <div class="form-group row">
-                            <label asp-for="AcademicClassId" class="col-md-4 col-form-label text-md-right">Academic Class :</label>
+                            <label asp-for="AcademicClassId" class="col-md-4 col-form-label"></label>
                             <div class="col-md-8">
                                 <select class="form-control" asp-for="AcademicClassId" asp-items="Model.AcademicClassList">
                                     <option selected disabled value="">Select Academic Class</option>
@@ -38,7 +38,7 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label asp-for="AcademicSectionId" class="col-md-4 col-form-label text-md-right">Academic Section :</label>
+                            <label asp-for="AcademicSectionId" class="col-md-4 col-form-label">Academic Section :</label>
                             <div class="col-md-8">
                                 <select class="form-control" asp-for="AcademicSectionId" asp-items="Model.AcademicSectionList">
                                     <option selected disabled value="">Select Academic Section</option>
@@ -46,34 +46,8 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label asp-for="IsResidential" class="col-md-4 col-form-label text-md-right">Is Residential :</label>
-                            <div class="col-md-8">
-                                <select class="form-control" asp-for="IsResidential">
-                                    <option selected value=""> All </option>
-                                    <option value="residential"> Residential </option>
-                                    <option  value="nonResidential"> Non-Residential </option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label asp-for="Status" class="col-md-4 col-form-label text-md-right">Status :</label>
-                            <div class="col-md-8">
-                                <select class="form-control" asp-for="Status" >
-                                    <option selected  value=""> All </option>
-                                    <option value="active"> Active </option>
-                                    <option value="inActive"> Inactive </option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group row">
                             <div class="col-md-3 offset-md-9 text-right">
                                 <button type="submit" id="LoadButton" class="btn btn-sm btn-info">Get List</button>
-                                @{
-                                    if (Model.ShowCount != null)
-                                    {
-                                        <span>Total Found @Model.ShowCount</span>
-                                    }
-                                }
                             </div>
                         </div>
                     </form>

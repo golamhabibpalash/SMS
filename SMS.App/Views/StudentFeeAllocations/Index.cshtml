@@ -1,8 +1,11 @@
 ﻿@model SMS.App.ViewModels.Students.StudentFeeAllocationVM
 
+@inject UserManager<ApplicationUser> _userManager;
+
 @{
     GlobalUI.PageTitle = "Student Fee Allocation";
     int sl = 0;
+    string lastEditedUser = string.Empty;
 }
 
 @section Styles{
@@ -24,15 +27,22 @@
                         <td width="5%" class="text-center">Documents</td>
                         <td width="3%" class="text-center">Status</td>
                         <td width="5%" class="text-center">Action</td>
+                        <td>Student</td>
+                        <td>Fee Type</td>
+                        <td class="text-right">Amount</td>
+                        <td class="text-center">Documents</td>
+                        <td class="text-center">Status</td>
+                        <td class="text-center">Action</td>
+                        <td class="text-center">Last updated</td>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model.StudentFeeAllocations)
+                    @foreach (var item in Model.StudentFeeAllocations.OrderBy(s => s.Student.AcademicClassId).ThenBy(s => s.Student.ClassRoll))
                     {
                         <tr>
                             <td>@(++sl)</td>
                             <td>@item.Student.ClassRoll</td>
-                            <td>@item.Student.Name</td>
+                            <td>@item.Student.Name.ToUpperInvariant()</td>
                             <td>@item.StudentFeeHead.Name</td>
                             <td class="text-right">@item.AllocatedAmount</td>
                             <td class="text-center">
@@ -57,10 +67,23 @@
                             </td>
                             <td class="text-center">
                                 <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-                                    <button type="button" class="btn btn-warning updateBtn" data-id="@item.Id" data-studentId="@item.StudentId" data-classId="@item.Student.AcademicClassId" data-amount="@item.AllocatedAmount" data-feeType="@item.StudentFeeHeadId" data-isActive="@item.IsActive" data-refDoc="@item.FeeAllocationApplication"><i class="fas fa-edit"></i> </button>
-                                    <button id="deleteBtnId" type="submit" class="btn btn-danger" data-item="@item" data-id="@item.Id" data-studentId="@item.StudentId" data-classId="@item.Student.AcademicClassId" data-amount="@item.AllocatedAmount" data-feeType="@item.StudentFeeHeadId" data-isActive="@item.IsActive" data-refDoc="@item.FeeAllocationApplication" data-toggle="modal" data-target="#deleteModal"><i class="fas fa-times"></i>
+                                    <button type="button" class="btn btn-warning updateBtn" data-id="@item.Id" data-studentId="@item.StudentId" data-classId="@item.Student.AcademicClassId" data-amount="@item.AllocatedAmount" data-feeType="@item.StudentFeeHeadId" data-isActive="@item.IsActive" data-refDoc="@item.FeeAllocationApplication" ><i class="fas fa-edit"></i> </button>
+
+                                    <button id="deleteBtnId" type="submit" class="btn btn-danger deleteBtn" data-studentName="@item.Student.Name" data-classRoll="@item.Student.ClassRoll" data-feeTypeName="@item.StudentFeeHead.Name" data-item="@item" data-id="@item.Id" data-studentId="@item.StudentId" data-classId="@item.Student.AcademicClassId" data-amount="@item.AllocatedAmount" data-feeType="@item.StudentFeeHeadId" data-isActive="@item.IsActive" data-refDoc="@item.FeeAllocationApplication" data-toggle="modal" data-target="#deleteModal">
+                                        <i class="fas fa-times"></i>
                                     </button>
                                 </div>
+                            </td>
+                            <td>
+                                @{
+                                    ApplicationUser aUser = await _userManager.FindByIdAsync(item.EditedBy);
+                                    if (aUser != null)
+                                    {
+                                        lastEditedUser = aUser.UserName;
+                                    }
+                                }
+                                @lastEditedUser <br />
+                                @item.EditedAt.ToString("dd MMM yyyy hh:mm tt")
                             </td>
                         </tr>
                     }
@@ -96,6 +119,7 @@
                         <select class="form-control" asp-for="SFAllocation.StudentId">
                             <option selected disabled>-Select student-</option>
                         </select>
+                        <input type="hidden" asp-for="SFAllocation.UniqueId" />
                     </div>
                 </div>
                 <div class="form-group row">
@@ -119,9 +143,9 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-md-4 col-form-label">Is Active</label>
-                    <div class="col-md-1 text-left">
-                        <input  asp-for="SFAllocation.IsActive" />
+                    <label class="col-md-4 col-form-label" asp-for="SFAllocation.IsActive">Is Active</label>
+                    <div class="col-md-2 text-left">
+                        <input class="" asp-for="SFAllocation.IsActive" />
                     </div>
                     <div class="offset-md-4 col-md-2">
                         <input id="submitId" type="submit" value="Submit" class="btn btn-info btn-sm" />
@@ -145,34 +169,34 @@
             </div>
             <div class="modal-body">
                 <table class="table card">
-                    
+
                     <tr>
-                        <td>Student</td>
-                        <td>:</td>
-                        <td width="60%">This is Name</td>
+                        <td  width="20%" >Student</td>
+                        <td width="10%">:</td>
+                        <td width="70%" id="deleteStudentName" class="font-weight-bold"></td>
                     </tr>
                     <tr>
-                        <td>Class Roll :</td>
+                        <td>Class Roll </td>
                         <td>:</td>
-                        <td>230564</td>
+                        <td id="deleteClassRoll" class="font-weight-bold"></td>
                     </tr>
                     <tr>
                         <td>Payment Type</td>
                         <td>:</td>
-                        <td>Type Name</td>
+                        <td id="deletePaymentType" class="font-weight-bold"></td>
                     </tr>
                     <tr>
-                        <td>Amount :</td>
+                        <td>Amount </td>
                         <td>:</td>
-                        <td>520</td>
+                        <td id="deleteAmount" class="font-weight-bold"></td>
                     </tr>
                 </table>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-secondary col-form-label" data-dismiss="modal">Cancel</button>
                 <form asp-action="delete" method="post">
-                    <input type="hidden" name="StudentFeeAllocationId" id="StudentFeeAllocationId"/>
-                    <button type="submit" class="btn btn-danger">Delete Confirm</button>
+                    <input type="hidden" name="StudentFeeAllocationId" id="StudentFeeAllocationId" />
+                    <button type="submit" class="btn btn-danger col-form-label">Delete Confirm</button>
                 </form>
             </div>
         </div>
@@ -182,14 +206,10 @@
 
 @section Scripts{
     <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
+    <script src="~/js/DataTable/dataTable.js"></script>
 
     <script>
-        let deleted = '@TempData["deleted"]';
-        let created = '@TempData["created"]';
-        let updated = '@TempData["updated"]';
-        let failed = '@TempData["error"]';
 
-        //Code for student dropdown 
         $('#academicClassListId').change(function () {
             let classId = $('#academicClassListId option:selected').val();
             $.ajax({
@@ -204,12 +224,45 @@
                         var op = '<option value="' + obj.id + '">' + obj.classRoll + '-' + obj.name + '</option>';
                         $('#SFAllocation_StudentId').append(op);
                     });
-
+                    $("#SFAllocation_StudentId").trigger('change');
                 },
                 error: function (err) {
                     console.log(err);
                 }
             });
+        });
+
+
+        $('#SFAllocation_StudentId').change(function () {
+            let studentId = $('#SFAllocation_StudentId option:selected').val();
+            $.ajax({
+                url: '/api/Students/GetUniqueIdByStudentId',
+                data: { id: studentId },
+                cache: false,
+                type: 'GET',
+                dataType: 'JSON',
+                success: function (data) {
+                    $("#SFAllocation_UniqueId").val(data);
+                    let uniqueId = $("#SFAllocation_UniqueId").val();
+                    $.ajax({
+                        url: 'ClassFeeLists/GetClassListByUniqueId',
+                        data: { uniqueId: uniqueId },
+                        caches: false,
+                        type: 'GET',
+                        dataType: 'JSON',
+                        success: function (feeData) {
+                            $('#SFAllocation_StudentFeeHeadId').empty();
+                            $.each(feeData, function (i, obj) {
+                                var op = '<option value="' + obj.studentFeeHead.id + '">' + obj.studentFeeHead.name + '</option>';
+                                $('#SFAllocation_StudentFeeHeadId').append(op);
+                            })
+                            console.log(feeData);
+                        }
+                    })
+
+
+                }
+            })
         });
 
         $(document).ready(function () {
@@ -219,7 +272,7 @@
             $(".updateBtn").click(function () {
                 let form = document.getElementById('createUpdateForm');
                 form.action = "/StudentFeeAllocations/Edit";
-                document.getElementById('studentFeeAllocationCreatePortion').style.backgroundColor = '#2A3F54'; /*'#f7cc93';*/
+                document.getElementById('studentFeeAllocationCreatePortion').style.backgroundColor = '#2A3F54';
 
                 var fieldSet = document.getElementById('createFieldSetId');
                 fieldSet.classList.remove('border-primary');
@@ -258,7 +311,10 @@
                 var studentId = $(this).data("studentid");
                 $("#SFAllocation_StudentId option[value='" + studentId + "']").prop("selected", true);
             });
-            $('#deleteBtnId').click(function () {
+            $('.deleteBtn').click(function () {
+                var stName = $(this).data('studentname');
+                var stClassRoll = $(this).data('classroll');
+                var feeTypeName = $(this).data('feetypename');
                 var studentId = $(this).data("studentid");
                 var classId = $(this).data("classid");
                 var feeType = $(this).data("feetype");
@@ -266,8 +322,13 @@
                 var refDoc = $(this).data("refdoc");
                 var isActive = $(this).data("isactive");
                 var id = $(this).data("id");
-                var item = $(this).data('item');
+
                 $('#StudentFeeAllocationId').val(id);
+                $('#deleteStudentName').html(stName);
+                $('#deleteClassRoll').html(stClassRoll);
+                $('#deletePaymentType').html(feeTypeName);
+                $('#deleteAmount').html(amount);
+
             });
         });
     </script>

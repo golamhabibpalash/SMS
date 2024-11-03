@@ -1,13 +1,11 @@
 ﻿using BLL.Managers.Base;
 using SMS.BLL.Contracts;
 using SMS.DAL.Contracts;
-using SMS.DAL.Repositories;
 using SMS.Entities;
 using SMS.Entities.AdditionalModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SMS.BLL.Managers
@@ -16,8 +14,8 @@ namespace SMS.BLL.Managers
     {
         private readonly IStudentPaymentRepository _studentPaymentRepository;
         private readonly IStudentRepository _studentRepository;
-       
-        public StudentPaymentManager(IStudentPaymentRepository studentPaymentRepository,IStudentRepository studentRepository) : base(studentPaymentRepository)
+
+        public StudentPaymentManager(IStudentPaymentRepository studentPaymentRepository, IStudentRepository studentRepository) : base(studentPaymentRepository)
         {
             _studentPaymentRepository = studentPaymentRepository;
             _studentRepository = studentRepository;
@@ -32,10 +30,10 @@ namespace SMS.BLL.Managers
             Student student = await _studentRepository.GetByIdAsync(studentId);
             var allPayments = await _studentPaymentRepository.GetAllAsync();
             var sl = ((from p in allPayments
-                      where p.PaidDate.ToString("yyMM") == DateTime.Today.ToString("yyMM")
-                      select p).Count()+1).ToString().PadLeft(3,'0');
-            receiptsNo = student.AcademicClassId.ToString()+feeHeadId.ToString()+DateTime.Now.ToString("yyMM")+sl;
-            
+                       where p.PaidDate.ToString("yyMM") == DateTime.Today.ToString("yyMM")
+                       select p).Count() + 1).ToString().PadLeft(3, '0');
+            receiptsNo = student.AcademicClassId.ToString() + feeHeadId.ToString() + DateTime.Now.ToString("yyMM") + sl;
+
             return receiptsNo;
         }
         public async Task<IReadOnlyCollection<StudentPaymentSummeryVM>> GetPaymentSummeryByDate(string date)
@@ -88,6 +86,10 @@ namespace SMS.BLL.Managers
                 throw;
             }
             return paymentSummery;
+        }
+        public async Task<double> GetStudentCurrentDue(int stuId)
+        {
+            return await _studentPaymentRepository.GetStudentCurrentDue(stuId);
         }
     }
 }

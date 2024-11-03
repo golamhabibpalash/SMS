@@ -36,6 +36,7 @@
     DateTime todate = new DateTime(DateTime.Now.Year, 1, 1);
     string fileName = Model.Student.ClassRoll + "_Payment_Report_" + DateTime.Now.ToString("dd-MM-yyyy");
     //int attSl = 0;
+    string studentStatus = string.Empty;
 }
 @section Styles{
     <style>
@@ -128,6 +129,11 @@
                     <dd class="col-sm-8 col-8 border-bottom">
                         @Model.Student.AdmissionDate.ToString("dd MMM yyyy")
                     </dd>
+                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">Status : </dt>
+                    @{ 
+                        studentStatus = Model.Student.Status ? "Active" : "Inactive";
+                    }
+                    <dd class="col-sm-8 col-8 border-bottom">@studentStatus</dd>
                 </dl>
             </div>
         </div>
@@ -444,7 +450,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach (var item in Model.StudentPaymentSchedulePaidVMs.OrderBy(s => s.PaymentType))
+                                                    @foreach (var item in Model.StudentPaymentSchedulePaidVMs.OrderBy(s => s.FeeHeadSL))
                                                     {
                                                     <tr>
                                                         <td>@(paymentSchedulePaidSL++)</td>

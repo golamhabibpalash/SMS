@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SMS.App.Utilities.MACIPServices;
 using SMS.BLL.Contracts;
-using SMS.DB;
 using SMS.Entities;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
 {
@@ -35,7 +33,7 @@ namespace SMS.App.Controllers
         public async Task<IActionResult> Index()
         {
             string msg = "";
-            if (TempData["success"]!=null)
+            if (TempData["success"] != null)
             {
                 msg = TempData["success"].ToString();
                 ViewBag.msg = msg;
@@ -43,7 +41,7 @@ namespace SMS.App.Controllers
             AcademicSession currentSession = await academicSessionManager.GetCurrentAcademicSession();
             ViewBag.currentSessionId = currentSession.Id;
             var result = await _classFeeListManager.GetAllAsync();
-            
+
             return View(result);
         }
 
@@ -71,7 +69,7 @@ namespace SMS.App.Controllers
         {
             var feeHeads = await _studentFeeHeadManager.GetAllAsync();
             ViewData["StudentFeeHeadId"] = new SelectList(feeHeads.OrderBy(s => s.SL), "Id", "Name");
-            ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync() , "Id", "Name");
+            ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name");
             ViewData["AcademicSessionId"] = new SelectList(await academicSessionManager.GetAllAsync(), "Id", "Name");
             return View();
         }
@@ -83,9 +81,9 @@ namespace SMS.App.Controllers
         {
             string msg = "";
 
-            var feeListExist = await _classFeeListManager.GetClassFeeListByClassIdFeeHeadIdSessionIdAsync(classFeeList.AcademicClassId, classFeeList.StudentFeeHeadId,classFeeList.AcademicSessionId);
+            var feeListExist = await _classFeeListManager.GetClassFeeListByClassIdFeeHeadIdSessionIdAsync(classFeeList.AcademicClassId, classFeeList.StudentFeeHeadId, classFeeList.AcademicSessionId);
 
-            if (feeListExist!=null && feeListExist.Count>0)
+            if (feeListExist != null && feeListExist.Count > 0)
             {
                 msg = "Fee list for this class is already exists.";
                 TempData["crateFail"] = msg;
@@ -111,7 +109,7 @@ namespace SMS.App.Controllers
             }
             var feeHeads = await _studentFeeHeadManager.GetAllAsync();
             ViewData["AcademicSessionId"] = new SelectList(await academicSessionManager.GetAllAsync(), "Id", "Name", classFeeList.AcademicSessionId);
-            ViewData["StudentFeeHeadId"] = new SelectList(feeHeads.OrderBy(s => s.SL), "Id", "Name",classFeeList.StudentFeeHeadId);
+            ViewData["StudentFeeHeadId"] = new SelectList(feeHeads.OrderBy(s => s.SL), "Id", "Name", classFeeList.StudentFeeHeadId);
             ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", classFeeList.AcademicClassId);
 
             return View(classFeeList);
@@ -162,13 +160,13 @@ namespace SMS.App.Controllers
                     var feeList = classFeeLists.FirstOrDefault(s => s.Id != classFeeList.Id && (s.AcademicClassId == classFeeList.AcademicClassId && s.AcademicSessionId == classFeeList.AcademicSessionId && s.StudentFeeHeadId == classFeeList.StudentFeeHeadId));
 
                     var existingData = await _classFeeListManager.GetClassFeeListByClassIdFeeHeadIdSessionIdAsync(classFeeList.AcademicClassId, classFeeList.StudentFeeHeadId, classFeeList.AcademicSessionId);
-                    if (existingData!=null)
+                    if (existingData != null)
                     {
                         var existingSingleData = existingData.FirstOrDefault();
-                        if (existingSingleData.Id!=id)
+                        if (existingSingleData.Id != id)
                         {
                             TempData["failed"] = "This data is exist";
-                            return RedirectToAction(nameof(Edit), new {id = classFeeList.Id});
+                            return RedirectToAction(nameof(Edit), new { id = classFeeList.Id });
                         }
                     }
 
@@ -176,7 +174,7 @@ namespace SMS.App.Controllers
                     classFeeList.EditedBy = HttpContext.Session.GetString("UserId");
                     classFeeList.MACAddress = MACService.GetMAC();
                     bool isUpdated = await _classFeeListManager.UpdateAsync(classFeeList);
-                    if (isUpdated==true)
+                    if (isUpdated == true)
                     {
                         TempData["edit"] = "Updated Successfully";
                         return RedirectToAction(nameof(Index));
@@ -196,7 +194,7 @@ namespace SMS.App.Controllers
                 TempData["failed"] = "Fail to Update";
                 return View(classFeeList);
             }
-           
+
             return View(classFeeList);
         }
 
@@ -226,24 +224,31 @@ namespace SMS.App.Controllers
         {
             var classFeeList = await _classFeeListManager.GetByIdAsync(id);
             bool isDeleted = await _classFeeListManager.RemoveAsync(classFeeList);
-            
+
             if (isDeleted)
             {
                 TempData["delete"] = "Successfully Deleted";
                 return RedirectToAction(nameof(Index));
             }
             return View();
-            
+
         }
 
         private bool StudentFeeListExists(int id)
         {
-            var classFeeList =  _classFeeListManager.GetByIdAsync(id);
-            if (classFeeList!=null)
+            var classFeeList = _classFeeListManager.GetByIdAsync(id);
+            if (classFeeList != null)
             {
                 return true;
             }
             return false;
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetClassListByUniqueId(string uniqueId)
+        {
+            var result = await _classFeeListManager.GetClassFeeByUniquId(uniqueId);
+            return new JsonResult(result.OrderBy(s => s.SL));
         }
     }
 }

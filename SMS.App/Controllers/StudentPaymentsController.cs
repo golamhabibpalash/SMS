@@ -530,7 +530,16 @@ namespace SMS.App.Controllers
             {
                 AcademicClassId = 0;
             }
+
             students = await _studentManager.GetStudentsByClassSessionSectionAsync((int)aSessionId, (int)AcademicClassId, (int)AcademicSectionId);
+            if (!string.IsNullOrEmpty(isResidential))
+            {
+                if (isResidential == "residential")
+                {
+                    students = students.Where(s => s.IsResidential == true).ToList();
+                }
+                if (isResidential == "nonResidentail")
+                {
 
                     students = students.Where(s => s.IsResidential == false).ToList();
                 }
@@ -549,7 +558,7 @@ namespace SMS.App.Controllers
             }
 
             DuePaymentVM duePaymentVM = new DuePaymentVM();
-            if (students!=null)
+            if (students != null)
             {
                 duePaymentVM.ShowCount = students.Count;
             }

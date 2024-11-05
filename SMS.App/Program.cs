@@ -12,9 +12,17 @@ using SMS.App.Utilities.Automation.Hangfire;
 using SMS.DB;
 using SMS.Entities;
 using System;
+using GHPEncryptDecript;
+using System.Security.Cryptography;
+using System.Text;
+
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+// Generate secure key and IV
+byte[] key=Encoding.UTF8.GetBytes("1234567890123456");
+byte[] iv = Encoding.UTF8.GetBytes("1234567890123456");
+var dData = AesEncryptionHelper.Encrypt("Server=130.51.120.11\\MSSQLSERVER2022; Database=SMSDB; User= ghp; Password=A4$AjUPzp$Wt174~;MultipleActiveResultSets=true;TrustServerCertificate=True",key,iv);
+var connectionString = AesEncryptionHelper.Decrypt(builder.Configuration.GetConnectionString("DefaultConnection"), key, iv) ;
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {

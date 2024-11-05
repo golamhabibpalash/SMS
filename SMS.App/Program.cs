@@ -18,10 +18,10 @@ using System.Text;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
 // Generate secure key and IV
 byte[] key=Encoding.UTF8.GetBytes("1234567890123456");
 byte[] iv = Encoding.UTF8.GetBytes("1234567890123456");
-var dData = AesEncryptionHelper.Encrypt("Server=130.51.120.11\\MSSQLSERVER2022; Database=SMSDB; User= ghp; Password=A4$AjUPzp$Wt174~;MultipleActiveResultSets=true;TrustServerCertificate=True",key,iv);
 var connectionString = AesEncryptionHelper.Decrypt(builder.Configuration.GetConnectionString("DefaultConnection"), key, iv) ;
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -106,16 +106,17 @@ app.UseHangfireDashboard("/hangfire", options);
 
 app.UseEndpoints(endpoints =>
 {
-    // Area routes
+    // Area routes (more specific)
     endpoints.MapControllerRoute(
-      name: "areas",
-      pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+        name: "areas",
+        pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
     );
 
     // Default routes
     endpoints.MapControllerRoute(
-      name: "default",
-      pattern: "{controller=Home}/{action=Index}/{id?}");
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}"
+    );
 });
 
 app.MapRazorPages();

@@ -38,7 +38,7 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label asp-for="AcademicSectionId" class="col-md-4 col-form-label text-md-right">Academic Section :</label>
+                            <label asp-for="AcademicSectionId" class="col-md-4 col-form-label">Academic Section</label>
                             <div class="col-md-8">
                                 <select class="form-control" asp-for="AcademicSectionId" asp-items="Model.AcademicSectionList">
                                     <option selected disabled value="">Select Academic Section</option>
@@ -46,28 +46,36 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label asp-for="IsResidential" class="col-md-4 col-form-label text-md-right">Is Residential :</label>
+                            <label asp-for="ResidentialStatus" class="col-md-4 col-form-label">Residential/Non-Residential</label>
                             <div class="col-md-8">
-                                <select class="form-control" asp-for="IsResidential">
-                                    <option selected value=""> All </option>
-                                    <option value="residential"> Residential </option>
-                                    <option  value="nonResidential"> Non-Residential </option>
+                                <select class="form-control" asp-for="ResidentialStatus">
+                                    <option selected disabled value="">Select Residential Status</option>
+                                    <option value="1">Residential</option>
+                                    <option value="0">Non Residential</option>
+                                    <option value="2">All</option>
                                 </select>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label asp-for="Status" class="col-md-4 col-form-label text-md-right">Status :</label>
+                            <label asp-for="StudentStatus" class="col-md-4 col-form-label">Active/Inactive</label>
                             <div class="col-md-8">
-                                <select class="form-control" asp-for="Status" >
-                                    <option selected  value=""> All </option>
-                                    <option value="active"> Active </option>
-                                    <option value="inActive"> Inactive </option>
+                                <select class="form-control" asp-for="StudentStatus">
+                                    <option selected disabled value="">Select Student Status</option>
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
+                                    <option value="2">All</option>
                                 </select>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <div class="col-md-3 offset-md-9 text-right">
+                            <div class="col-md-6 offset-md-6 text-right">
                                 <button type="submit" id="LoadButton" class="btn btn-sm btn-info">Get List</button>
+                                @{
+                                    if (Model.ShowCount != null)
+                                    {
+                                        <span>Total Found @Model.ShowCount</span>
+                                    }
+                                }
                             </div>
                         </div>
                     </form>

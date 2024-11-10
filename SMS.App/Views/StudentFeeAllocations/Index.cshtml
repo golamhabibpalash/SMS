@@ -27,12 +27,6 @@
                         <td width="5%" class="text-center">Documents</td>
                         <td width="3%" class="text-center">Status</td>
                         <td width="5%" class="text-center">Action</td>
-                        <td>Student</td>
-                        <td>Fee Type</td>
-                        <td class="text-right">Amount</td>
-                        <td class="text-center">Documents</td>
-                        <td class="text-center">Status</td>
-                        <td class="text-center">Action</td>
                         <td class="text-center">Last updated</td>
                     </tr>
                 </thead>
@@ -108,7 +102,7 @@
                 <div class="form-group row">
                     <label class="col-md-4 col-form-label">Academic Class</label>
                     <div class="col-md-8">
-                        <select class="form-control" asp-items="Model.AcademicClassList" id="academicClassListId">
+                        <select class="form-control" asp-items="Model.AcademicClassList" id="academicClassListId" onchange="academicClassIdChange()">
                             <option selected disabled>-Select Class-</option>
                         </select>
                     </div>
@@ -116,7 +110,7 @@
                 <div class="form-group row">
                     <label class="col-md-4 col-form-label">Student</label>
                     <div class="col-md-8">
-                        <select class="form-control" asp-for="SFAllocation.StudentId">
+                        <select class="form-control" asp-for="SFAllocation.StudentId" onchange="handleStudentIdChange()">
                             <option selected disabled>-Select student-</option>
                         </select>
                         <input type="hidden" asp-for="SFAllocation.UniqueId" />
@@ -209,107 +203,86 @@
     <script src="~/js/DataTable/dataTable.js"></script>
 
     <script>
-
-        $('#academicClassListId').change(function () {
-            let classId = $('#academicClassListId option:selected').val();
-            $.ajax({
-                url: '/api/Students/getbyclasswithsessionId',
-                data: { academicSessionId: null, academicClassId: classId },
-                cache: false,
-                type: 'POST',
-                dataType: 'json',
-                success: function (data) {
-                    $('#SFAllocation_StudentId').empty();
-                    $.each(data, function (i, obj) {
-                        var op = '<option value="' + obj.id + '">' + obj.classRoll + '-' + obj.name + '</option>';
-                        $('#SFAllocation_StudentId').append(op);
-                    });
-                    $("#SFAllocation_StudentId").trigger('change');
-                },
-                error: function (err) {
-                    console.log(err);
-                }
+        async function academicClassIdChange() {
+            return new Promise((resolve, reject) => {
+                let classId = $('#academicClassListId option:selected').val();
+                $.ajax({
+                    url: '/api/Students/getbyclasswithsessionId',
+                    data: { academicSessionId: null, academicClassId: classId },
+                    cache: false,
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function (data) {
+                        $('#SFAllocation_StudentId').empty();
+                        var op1 = '<option value="" selected disabled> -Select Student - </option>';
+                        $('#SFAllocation_StudentId').append(op1);
+                        $.each(data, function (i, obj) {
+                            var op = '<option value="' + obj.id + '">' + obj.classRoll + '-' + obj.name + '</option>';
+                            $('#SFAllocation_StudentId').append(op);
+                        });
+                        $("#SFAllocation_StudentId").trigger('change');
+                        resolve(); // Resolve the promise when the AJAX call is successful
+                    },
+                    error: function (err) {
+                        console.log(err);
+                        reject(err); // Reject the promise if there is an error
+                    }
+                });
             });
-        });
+        }
+
+        function formUIChange() {
+            let form = document.getElementById('createUpdateForm');
+            form.action = "/StudentFeeAllocations/Edit";
+            document.getElementById('studentFeeAllocationCreatePortion').style.backgroundColor = '#2A3F54';
+
+            var fieldSet = document.getElementById('createFieldSetId');
+            fieldSet.classList.remove('border-primary');
 
 
-        $('#SFAllocation_StudentId').change(function () {
-            let studentId = $('#SFAllocation_StudentId option:selected').val();
-            $.ajax({
-                url: '/api/Students/GetUniqueIdByStudentId',
-                data: { id: studentId },
-                cache: false,
-                type: 'GET',
-                dataType: 'JSON',
-                success: function (data) {
-                    $("#SFAllocation_UniqueId").val(data);
-                    let uniqueId = $("#SFAllocation_UniqueId").val();
-                    $.ajax({
-                        url: 'ClassFeeLists/GetClassListByUniqueId',
-                        data: { uniqueId: uniqueId },
-                        caches: false,
-                        type: 'GET',
-                        dataType: 'JSON',
-                        success: function (feeData) {
-                            $('#SFAllocation_StudentFeeHeadId').empty();
-                            $.each(feeData, function (i, obj) {
-                                var op = '<option value="' + obj.studentFeeHead.id + '">' + obj.studentFeeHead.name + '</option>';
-                                $('#SFAllocation_StudentFeeHeadId').append(op);
-                            })
-                            console.log(feeData);
-                        }
-                    })
+            var legendData = document.getElementById('create_update_title_id');
+            legendData.innerText = "Update Student Allocation";
+            legendData.classList.remove('text-primary');
 
+            document.getElementById('create_update_title_id').style.color = "#fff";
+            document.getElementById('studentFeeAllocationCreatePortion').style.color = '#fff';
+            document.getElementById('submitId').value = 'Update';
 
-                }
-            })
-        });
-
+            let rDoc = document.getElementById('SFAllocation_FeeAllocationApplication');
+        }
         $(document).ready(function () {
 
             $('#myTable').DataTable();
             // Add a click event listener to the button
-            $(".updateBtn").click(function () {
-                let form = document.getElementById('createUpdateForm');
-                form.action = "/StudentFeeAllocations/Edit";
-                document.getElementById('studentFeeAllocationCreatePortion').style.backgroundColor = '#2A3F54';
-
-                var fieldSet = document.getElementById('createFieldSetId');
-                fieldSet.classList.remove('border-primary');
-
-
-                var legendData = document.getElementById('create_update_title_id');
-                legendData.innerText = "Update Student Allocation";
-                legendData.classList.remove('text-primary');
-
-                document.getElementById('create_update_title_id').style.color = "#fff";
-                document.getElementById('studentFeeAllocationCreatePortion').style.color='#fff';
-                document.getElementById('submitId').value = 'Update';
-
-                let rDoc = document.getElementById('SFAllocation_FeeAllocationApplication');
-
+            $(".updateBtn").click(async function () {
+                formUIChange();
                 var classId = $(this).data("classid");
+                var studentId = $(this).data("studentid");
                 var feeType = $(this).data("feetype");
                 var amount = $(this).data("amount");
                 var refDoc = $(this).data("refdoc");
                 var isActive = $(this).data("isactive");
                 var id = $(this).data("id");
 
-                $("#academicClassListId").val(classId).trigger('change');
-                // $("#SFAllocation_StudentId").trigger('change');
+                $("#academicClassListId").val(classId);
 
-                $("#SFAllocation_StudentFeeHeadId").val(feeType).trigger('change');
+                try {
+                    await academicClassIdChange(); // Wait for the dropdown to be populated
+                    $("#SFAllocation_StudentId").val(studentId); // Set the selected student
+                    await handleStudentIdChange();
+                    $("#SFAllocation_StudentFeeHeadId").val(feeType);
+                } catch (error) {
+                    console.error("An error occurred:", error);
+                }
+
                 $('#SFAllocation_AllocatedAmount').val(amount);
                 $('#SFAllocation_Id').val(id);
-                //$('#SFAllocation_FeeAllocationApplication').val('C:\\fakepath\\'+refDoc);
+
                 if (isActive == "True") {
                     $('#SFAllocation_IsActive').prop('checked', true);
-                }
-                else {
+                } else {
                     $('#SFAllocation_IsActive').prop('checked', false);
                 }
-                var studentId = $(this).data("studentid");
-                $("#SFAllocation_StudentId option[value='" + studentId + "']").prop("selected", true);
             });
             $('.deleteBtn').click(function () {
                 var stName = $(this).data('studentname');
@@ -330,6 +303,78 @@
                 $('#deleteAmount').html(amount);
 
             });
+
+            //$('#SFAllocation_StudentId').change(async function () {
+            //    let studentId = $('#SFAllocation_StudentId option:selected').val();
+
+            //    try {
+            //        // Get Unique ID by Student ID
+            //        let uniqueId = await getUniqueIdByStudentId(studentId);
+
+            //        // Set the unique ID to the input field
+            //        $('#SFAllocation_UniqueId').val(uniqueId);
+
+            //        // Get and populate fee heads based on unique ID
+            //        let feeData = await getClassListByUniqueId(uniqueId);
+            //        populateStudentFeeHeadDropdown(feeData);
+            //    } catch (error) {
+            //        console.error("An error occurred:", error);
+            //    }
+            //});
         });
+        async function handleStudentIdChange() {
+            let studentId = $('#SFAllocation_StudentId option:selected').val();
+
+            try {
+                // Get Unique ID by Student ID
+                let uniqueId = await getUniqueIdByStudentId(studentId);
+
+                // Set the unique ID to the input field
+                $('#SFAllocation_UniqueId').val(uniqueId);
+
+                // Get and populate fee heads based on unique ID
+                let feeData = await getClassListByUniqueId(uniqueId);
+                populateStudentFeeHeadDropdown(feeData);
+            } catch (error) {
+                console.error("An error occurred:", error);
+            }
+        }
+
+        // Function to get Unique ID by Student ID
+        function getUniqueIdByStudentId(studentId) {
+            return $.ajax({
+                url: '/api/Students/GetUniqueIdByStudentId',
+                data: { id: studentId },
+                cache: false,
+                type: 'GET',
+                dataType: 'JSON',
+            });
+        }
+
+        // Function to get class list by unique ID
+        function getClassListByUniqueId(uniqueId) {
+            return $.ajax({
+                url: 'ClassFeeLists/GetClassListByUniqueId',
+                data: { uniqueId: uniqueId },
+                cache: false,
+                type: 'GET',
+                dataType: 'JSON',
+            });
+        }
+
+        // Function to populate the Student Fee Head dropdown
+        function populateStudentFeeHeadDropdown(feeData) {
+            const $feeHeadDropdown = $('#SFAllocation_StudentFeeHeadId');
+            $feeHeadDropdown.empty();
+
+            // Add default option
+            $feeHeadDropdown.append('<option value="" selected disabled> -Select type - </option>');
+
+            // Append options from feeData
+            $.each(feeData, function (i, obj) {
+                $feeHeadDropdown.append(`<option value="${obj.studentFeeHead.id}">${obj.studentFeeHead.name}</option>`);
+            });
+        }
+
     </script>
 }

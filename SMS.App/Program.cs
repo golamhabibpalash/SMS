@@ -1,4 +1,5 @@
-﻿using Hangfire;
+﻿using GHPEncryptDecript;
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -12,17 +13,14 @@ using SMS.App.Utilities.Automation.Hangfire;
 using SMS.DB;
 using SMS.Entities;
 using System;
-using GHPEncryptDecript;
-using System.Security.Cryptography;
 using System.Text;
 
 
 var builder = WebApplication.CreateBuilder(args);
-
 // Generate secure key and IV
-byte[] key=Encoding.UTF8.GetBytes("1234567890123456");
+byte[] key = Encoding.UTF8.GetBytes("1234567890123456");
 byte[] iv = Encoding.UTF8.GetBytes("1234567890123456");
-var connectionString = AesEncryptionHelper.Decrypt(builder.Configuration.GetConnectionString("DefaultConnection"), key, iv) ;
+var connectionString = AesEncryptionHelper.Decrypt(builder.Configuration.GetConnectionString("DefaultConnection"), key, iv);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {

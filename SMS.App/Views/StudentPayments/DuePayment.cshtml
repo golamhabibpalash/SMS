@@ -48,7 +48,7 @@
                         <div class="form-group row">
                             <label asp-for="ResidentialStatus" class="col-md-4 col-form-label text-md-right">Is Residential :</label>
                             <div class="col-md-8">
-                                <select class="form-control" asp-for="ResidentialStatus">
+                                <select class="form-control" name="isResidential">
                                     <option selected value=""> All </option>
                                     <option value="residential"> Residential </option>
                                     <option  value="nonResidential"> Non-Residential </option>
@@ -58,7 +58,7 @@
                         <div class="form-group row">
                             <label asp-for="StudentStatus" class="col-md-4 col-form-label text-md-right">Status :</label>
                             <div class="col-md-8">
-                                <select class="form-control" asp-for="StudentStatus">
+                                <select class="form-control" name="status" >
                                     <option selected  value=""> All </option>
                                     <option value="active"> Active </option>
                                     <option value="inActive"> Inactive </option>

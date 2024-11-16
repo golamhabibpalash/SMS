@@ -160,6 +160,9 @@
                     <li class="nav-item bg-navy-blue border">
                         <a class="nav-link text-warning" role="tab" aria-controls="documents" aria-selected="true" href="#documents">Documents</a>
                     </li>
+                    <li class="nav-item bg-navy-blue border">
+                        <a class="nav-link text-warning" role="tab" aria-controls="activities" aria-selected="true" href="#activities">Activities</a>
+                    </li>
                 </ul>
             </div>
             <div class="card-body">
@@ -560,6 +563,7 @@
                             </div>
                         </div>
                     </div>
+                    
                     <div id="attendance" class="tab-pane">
                         @foreach (var item in Model.AttendanceDetails)
                         {
@@ -591,17 +595,26 @@
 
 
                     </div>
+                   
                     <div id="results" class="tab-pane">
                         <div class="text-center">
                             <h4 class="text-danger">This page is under construction</h4>
                         </div>
                         
                     </div>
+                   
                     <div id="documents" class="tab-pane">
                         <div class="text-center">
                             <h4 class="text-danger">This page is under construction</h4>
                         </div>
                         All Documents will go here
+                    </div>
+                  
+                    <div id="activities" class="tab-pane">
+                        <div class="text-center">
+                            <h4 class="text-danger">This page is under construction</h4>
+                        </div>
+                        All activities will go here
                     </div>
                 </div>
             </div>

@@ -3,6 +3,7 @@
     int sl = 0;
     string sectionName = string.Empty;
     ViewBag.ClassName = string.Empty;
+    string activeInactiveClass = string.Empty;
 }
 @section Styles{
     <link href="~/lib/DataTable/css/cdn.datatables.net_buttons_2.0.0_css_buttons.dataTables.min.css" rel="stylesheet" />
@@ -17,6 +18,16 @@
         .dt-buttons
         {
             float: right;
+        }
+
+        .inActiveStudent
+        {
+            color: red;
+        }
+
+        .activeStudent
+        {
+            color: #000;
         }
     </style>
 }
@@ -48,26 +59,20 @@
                         <div class="form-group row">
                             <label asp-for="ResidentialStatus" class="col-md-4 col-form-label text-md-right">Is Residential :</label>
                             <div class="col-md-8">
-                                <select class="form-control" name="isResidential">
-                                    <option selected value=""> All </option>
-                                    <option value="residential"> Residential </option>
-                                    <option  value="nonResidential"> Non-Residential </option>
+                                <select class="form-control" name="isResidential" asp-items="@Model.StudentCategorySelectList">
                                 </select>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label asp-for="StudentStatus" class="col-md-4 col-form-label text-md-right">Status :</label>
                             <div class="col-md-8">
-                                <select class="form-control" name="status" >
-                                    <option selected  value=""> All </option>
-                                    <option value="active"> Active </option>
-                                    <option value="inActive"> Inactive </option>
+                                <select class="form-control" name="status" asp-items="@Model.StudentStatusSelectList">
                                 </select>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <div class="col-md-3 offset-md-9 text-right">
-                                <button type="submit" id="LoadButton" class="btn btn-sm btn-info">Get List</button>
+                            <div class="col-md-4 offset-md-8 text-right">
+                                <button type="submit" id="LoadButton" class="btn btn-sm btn-info">Get List</button><br />
                                 @{
                                     if (Model.ShowCount != null)
                                     {
@@ -143,10 +148,33 @@
                 <tbody>
                     @foreach (var item in Model.DuePayments.OrderBy(s => s.Student.ClassRoll))
                     {
+                        activeInactiveClass = item.Student.Status ? "activeStudent" : "inActiveStudent";
                         <tr>
                             <td>@(++sl)</td>
                             <td>@item.Student.ClassRoll</td>
-                            <td>@item.Student.Name</td>
+
+
+                            @if (item.Student.Status == true)
+                            {
+                                <td>@item.Student.Name <span>
+    @if (item.Student.IsResidential)
+    {
+        <span class="badge badge-info"><i class="fas fa-home"></i></span>
+    }
+</span></td>
+                            }
+                            else
+                            {
+                        <td class="" style="color:red">
+                            @item.Student.Name
+                            @if (item.Student.IsResidential)
+                            {
+                                <span class="badge badge-info"><i class="fas fa-home"></i></span>
+                            }
+
+                        </td>
+                            }
+
                             @if (item.Student.AcademicSection == null)
                             {
                                 <td>N/A</td>

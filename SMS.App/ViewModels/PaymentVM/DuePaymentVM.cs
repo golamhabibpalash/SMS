@@ -12,6 +12,8 @@ namespace SMS.App.ViewModels.PaymentVM
         public List<DuePaymentDetailsVM> DuePayments { get; set; }
         public List<SelectListItem> AcademicClassList { get; set; }
         public List<SelectListItem> AcademicSectionList { get; set; }
+        public List<SelectListItem> StudentStatusSelectList { get; set; }
+        public List<SelectListItem> StudentCategorySelectList { get; set; }
         public Institute Institute { get; set; }
         public double GrandTotal { get; set; }
         public int StudentStatus { get; set; } = 1; //0=inactive, 1=active, 2=all;

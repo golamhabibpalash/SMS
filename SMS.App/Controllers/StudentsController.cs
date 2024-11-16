@@ -207,7 +207,8 @@ namespace SchoolManagementSystem.Controllers
             }
 
             ViewBag.academicSessionId = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name", academicSessionId);
-            ViewBag.academicClassId = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", academicClassId);
+            var classes = await _academicClassManager.GetAllAsync();
+            ViewBag.academicClassId = new SelectList(classes.Where(s => s.Status == true), "Id", "Name", academicClassId).ToList();
 
             ViewBag.aStatus = new SelectList(isActiveVMs.ToList(), "Id", "sName", aStatus);
             if (pageSize == null)
@@ -218,7 +219,8 @@ namespace SchoolManagementSystem.Controllers
             {
             new SelectListItem { Value = "20", Text = "20", Selected=pageSize==20 },
             new SelectListItem { Value = "50", Text = "50", Selected=pageSize==50  },
-            new SelectListItem { Value = "100", Text = "100", Selected=pageSize==100  }
+            new SelectListItem { Value = "100", Text = "100", Selected=pageSize==100  },
+            new SelectListItem { Value = "0", Text = "All", Selected=pageSize==0  }
             };
             var studentCategory = new List<SelectListItem>
             {
@@ -235,10 +237,10 @@ namespace SchoolManagementSystem.Controllers
                 {
                     pSize = (int)pageSize;
                 }
-                else if (pageSize==0)
+                else if (pageSize == 0)
                 {
                     pSize = students.Count();
-               }
+                }
                 else
                 {
                     pSize = totalFound;
@@ -247,7 +249,7 @@ namespace SchoolManagementSystem.Controllers
 
             ViewData["pageSize"] = pageSize;
 
-            return View(PaginatedList<SMS.Entities.AdditionalModels.StudentListVM>.Create(students.OrderBy(s => s.ClassSerial).ThenBy(s => s.ClassRoll).ToList(), pageNumber ?? 1, (int)pageSize));
+            return View(PaginatedList<SMS.Entities.AdditionalModels.StudentListVM>.Create(students.OrderBy(s => s.ClassSerial).ThenBy(s => s.ClassRoll).ToList(), pageNumber ?? 1, (int)pSize));
         }
 
         #endregion Index

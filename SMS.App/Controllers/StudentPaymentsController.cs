@@ -506,8 +506,18 @@ namespace SMS.App.Controllers
             GlobalUI.PageTitle = "Due Payment List";
 
             DuePaymentVM duePaymentVM = new DuePaymentVM();
-            duePaymentVM.AcademicClassList = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name").ToList();
+            var classes = await _academicClassManager.GetAllAsync();
+            duePaymentVM.AcademicClassList = new SelectList(classes.Where(s => s.Status == true), "Id", "Name").ToList();
+            duePaymentVM.StudentStatusSelectList = new SelectList(GetActiveInActiveList(), "Id", "sName").ToList();
+            var studentCategory = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "all", Value = "all" },
+                new SelectListItem { Text = "residential", Value = "residential" },
+                new SelectListItem { Text = "nonResidential", Value = "nonResidential" }
+            };
+            duePaymentVM.StudentCategorySelectList = new SelectList(studentCategory.ToList(), "Value", "Text").ToList();
             ViewBag.isFromPost = false;
+
             return View(duePaymentVM);
         }
 
@@ -538,7 +548,7 @@ namespace SMS.App.Controllers
                 {
                     students = students.Where(s => s.IsResidential == true).ToList();
                 }
-                if (isResidential == "nonResidentail")
+                if (isResidential == "nonResidential")
                 {
 
                     students = students.Where(s => s.IsResidential == false).ToList();
@@ -546,12 +556,12 @@ namespace SMS.App.Controllers
             }
             if (!string.IsNullOrEmpty(status))
             {
-                if (status == "active")
+                if (status == "1")
                 {
                     students = students.Where(s => s.Status == true).ToList();
                 }
 
-                if (status == "inActive")
+                if (status == "0")
                 {
                     students = students.Where(s => s.Status == false).ToList();
                 }
@@ -562,8 +572,16 @@ namespace SMS.App.Controllers
             {
                 duePaymentVM.ShowCount = students.Count;
             }
-            duePaymentVM.AcademicClassList = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", AcademicClassId).ToList();
-            duePaymentVM.AcademicSectionList = new SelectList(await _academicSectionManager.GetAllByClassWithSessionId((int)AcademicClassId, (int)aSessionId), "Id", "Name", duePaymentVM.AcademicSectionId).ToList();
+            var classes = await _academicClassManager.GetAllAsync();
+            duePaymentVM.AcademicClassList = new SelectList(classes.Where(s => s.Status == true), "Id", "Name", AcademicClassId).ToList();
+            duePaymentVM.AcademicSectionList = new SelectList(await _academicSectionManager.GetAllByClassWithSessionId((int)AcademicClassId, (int)aSessionId), "Id", "Name", duePaymentVM.AcademicSectionId).ToList(); duePaymentVM.StudentStatusSelectList = new SelectList(GetActiveInActiveList(), "Id", "sName", status).ToList();
+            var studentCategory = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "all", Value = "all" },
+                new SelectListItem { Text = "residential", Value = "residential" },
+                new SelectListItem { Text = "nonResidential", Value = "nonResidential" }
+            };
+            duePaymentVM.StudentCategorySelectList = new SelectList(studentCategory.ToList(), "Value", "Text", isResidential).ToList();
             duePaymentVM.AcademicClassId = (int)AcademicClassId;
             duePaymentVM.AcademicClass = await _academicClassManager.GetByIdAsync((int)AcademicClassId);
             duePaymentVM.Institute = await _instituteManager.GetFirstOrDefaultAsync();
@@ -699,13 +717,13 @@ namespace SMS.App.Controllers
             }
             return 0;
         }
+
         private async Task<double> GetTotalPaid(int stuId)
         {
             List<StudentPayment> studentPayments = (List<StudentPayment>)await _studentPaymentManager.GetAllByStudentIdAsync(stuId);
             double paidAmount = studentPayments.Sum(s => s.TotalPayment);
             return paidAmount;
         }
-
 
         public async Task<string> GetReceiptNo(int studentId, int feeHeadId)
         {
@@ -739,6 +757,27 @@ namespace SMS.App.Controllers
         {
             string amountText = NumberToWords.ConvertAmount(Convert.ToDouble(amount));
             return Json("Taka " + amountText);
+        }
+
+        private List<IsActiveVM> GetActiveInActiveList()
+        {
+            List<IsActiveVM> isActiveVMs = new List<IsActiveVM>();
+
+            IsActiveVM status3 = new IsActiveVM();
+            status3.Id = 2;
+            status3.sName = "All";
+            isActiveVMs.Add(status3);
+
+            IsActiveVM status1 = new IsActiveVM();
+            status1.Id = 0;
+            status1.sName = "Inactive";
+            isActiveVMs.Add(status1);
+
+            IsActiveVM status2 = new IsActiveVM();
+            status2.Id = 1;
+            status2.sName = "Active";
+            isActiveVMs.Add(status2);
+            return isActiveVMs;
         }
     }
 }

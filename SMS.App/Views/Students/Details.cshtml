@@ -274,6 +274,7 @@
                             <tfoot></tfoot>
                         </table>
                     </div>
+                    
                     <div id="academic" class="tab-pane" role="tabpanel">
                         <div>
                             <table class="table table-responsive">
@@ -612,9 +613,31 @@
                   
                     <div id="activities" class="tab-pane">
                         <div class="text-center">
-                            <h4 class="text-danger">This page is under construction</h4>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <td>#</td>
+                                        <td>Activity Date</td>
+                                        <td>Activity Status</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.StatusActivity!=null)
+                                    {
+                                        int slSL = 1;
+                                        foreach (var item in Model.StatusActivity)
+                                        {
+                                            <tr>
+                                                <td>@slSL</td>
+                                                <td>@item.ActionDateTime</td>
+                                                <td>@item.IsActive</td>
+                                            </tr>
+                                        }
+                                        slSL++;
+                                    }
+                                </tbody>
+                            </table>
                         </div>
-                        All activities will go here
                     </div>
                 </div>
             </div>

@@ -340,6 +340,19 @@ namespace SchoolManagementSystem.Controllers
             {
                 ViewBag.tabName = tabName;
             }
+            var activityHist = await _studentActivateHistManager.GetActivityListByUniqueId(student.UniqueId);
+            List<StudentActivateHistModel> activ = new List<StudentActivateHistModel>();
+            foreach (var item in activityHist)
+            {
+                var a = new StudentActivateHistModel()
+                {
+                    StudentId = item.StudentId,
+                    IsActive = item.IsActive,
+                    ActionDateTime = item.ActionDateTime,
+                };
+                activ.Add(a);
+            }
+            sd.StatusActivity = activ;
             return View(sd);
         }
         #endregion

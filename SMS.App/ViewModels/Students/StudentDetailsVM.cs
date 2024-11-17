@@ -1,9 +1,6 @@
 ﻿using SMS.Entities;
 using SMS.Entities.AdditionalModels;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SMS.App.ViewModels.Students
 {
@@ -16,6 +13,7 @@ namespace SMS.App.ViewModels.Students
         public List<StudentPaymentScheduleVM> StudentPaymentSchedules { get; set; } = new List<StudentPaymentScheduleVM>();
         public List<StudentPaymentSchedulePaidVM> StudentPaymentSchedulePaidVMs { get; set; } = new List<StudentPaymentSchedulePaidVM>();
         public List<AttendanceIndivisualVM> AttendanceDetails { get; set; }
+        public List<StudentActivateHistModel> StatusActivity { get; set; }
     }
 
     public class AttendanceIndivisualVM

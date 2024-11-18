@@ -613,30 +613,34 @@
                   
                     <div id="activities" class="tab-pane">
                         <div class="text-center">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <td>#</td>
-                                        <td>Activity Date</td>
-                                        <td>Activity Status</td>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if (Model.StatusActivity!=null)
-                                    {
-                                        int slSL = 1;
-                                        foreach (var item in Model.StatusActivity)
+                            <div class="col-md-6">
+                                <table class="table table-bordered table-striped">
+                                    <thead class="bg-navy-blue">
+                                        <tr>
+                                            <td>#</td>
+                                            <td>Activity Date</td>
+                                            <td>Activity Status</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.StatusActivity != null)
                                         {
-                                            <tr>
-                                                <td>@slSL</td>
-                                                <td>@item.ActionDateTime</td>
-                                                <td>@item.IsActive</td>
-                                            </tr>
+                                            int slSL = 1;
+                                            foreach (var item in Model.StatusActivity)
+                                            {
+                                                <tr>
+                                                    <td>@slSL</td>
+                                                    <td>@item.ActionDateTime</td>
+                                                    <td><span>@(item.IsActive ? "Active" : "InActive")</span></td>
+  
+                                                  </tr>
+                                                  slSL++;
+                                            }
                                         }
-                                        slSL++;
-                                    }
-                                </tbody>
-                            </table>
+                                    </tbody>
+                                </table>
+
+                            </div>
                         </div>
                     </div>
                 </div>

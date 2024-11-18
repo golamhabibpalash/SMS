@@ -1069,5 +1069,17 @@ namespace SchoolManagementSystem.Controllers
             return File(Encoding.UTF8.GetBytes(builder.ToString()), "text/csv", today.ToString("yyMMdd") + "Student List_.csv");
         }
         #endregion Other's
+        #region Application 
+        public IActionResult Application()
+        {
+
+            return View();
+        }
+        [HttpPost]
+        public IActionResult Application(StudentApplicationVM application)
+        {
+            return View();
+        }
+        #endregion Application 
     }
 }

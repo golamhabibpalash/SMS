@@ -31,6 +31,7 @@ namespace SMS.DB
         public DbSet<AcademicExamDetail> AcademicExamDetails { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<ApplicationSettings> ApplicationSettings { get; set; }
+        public DbSet<AppliedStudent> AppliedStudent { get; set; }
         public DbSet<AttachDoc> AttachDocs { get; set; }
         public DbSet<Attendance> Attendances { get; set; }
         #endregion

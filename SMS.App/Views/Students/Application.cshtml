@@ -1,0 +1,75 @@
+﻿@model SMS.App.ViewModels.Students.StudentApplicationVM
+
+@{
+    ViewData["Title"] = "Application Form";
+    GlobalUI.PageTitle = ViewBag.Title;
+}
+<div>
+    <form action="/" method="post">
+        <table>
+            <thead>
+                <tr>
+                    <td>Admission Application Form</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="form-group row">
+                            <label asp-for="NameBangla" class="col-form-label"></label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group row">
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" placeholder="Name in Bangla">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group row">
+                            <label asp-for="Name" class="col-form-label"></label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group row">
+                            <div class="col-sm-10">
+                                <input asp-for="Name"  class="form-control" placeholder="Name in English">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group row">
+                            <label asp-for="DOB" class="col-form-label"></label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group row">
+                            <div class="col-sm-10">
+                                <input asp-for="DOB"  class="form-control">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group row">
+                            <label asp-for="FatherName" class="col-form-label"></label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group row">
+                            <div class="col-sm-10">
+                                <input asp-for="FatherName"  class="form-control" placeholder="Name in Bangla">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>

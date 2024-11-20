@@ -1070,13 +1070,15 @@ namespace SchoolManagementSystem.Controllers
         }
         #endregion Other's
         #region Application 
+        [AllowAnonymous]
         public IActionResult Application()
         {
 
             return View();
         }
-        [HttpPost]
-        public IActionResult Application(StudentApplicationVM application)
+        [HttpPost, ValidateAntiForgeryToken]
+        [AllowAnonymous]
+        public IActionResult Application(StudentApplicationVM application, IFormFile Photo)
         {
             return View();
         }

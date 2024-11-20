@@ -6,19 +6,22 @@ namespace SMS.App.ViewModels.Students
 {
     public class StudentApplicationVM
     {
-        [Display(Name = "Student Name")]
+        [Display(Name = "Student Name (En) *")]
+        [Required(ErrorMessage = "This field is required.")]
         public string Name { get; set; }
 
-        [Display(Name = "Student Name (বাংলা)")]
+        [Display(Name = "Student Name (Bn) *")]
+        [Required(ErrorMessage = "This field is required.")]
         public string NameBangla { get; set; }
 
-        [Display(Name = "Date of Birth")]
+        [Display(Name = "Date of Birth"), DataType(DataType.Date)]
         public DateTime DOB { get; set; }
 
-        [Display(Name = "Father's Name")]
+        [Display(Name = "Father's Name (En)*")]
+        [Required(ErrorMessage = "This field is required.")]
         public string FatherName { get; set; }
 
-        [Display(Name = "Father's Name (বাংলা)")]
+        [Display(Name = "Father's Name (Bn)")]
         public string FatherNameBangla { get; set; }
 
         [Display(Name = "Father's NID")]
@@ -30,13 +33,15 @@ namespace SMS.App.ViewModels.Students
         [Display(Name = "Monthly Income")]
         public string FatherMonthlyIncome { get; set; }
 
-        [Display(Name = "Phone No"), StringLength(11)]
+        [Display(Name = "Phone No *"), StringLength(11)]
+        [Required(ErrorMessage = "This field is required.")]
         public string FatherPhoneNo { get; set; }
 
-        [Display(Name = "Mother's Name")]
+        [Display(Name = "Mother's Name (En)*")]
+        [Required(ErrorMessage = "This field is required.")]
         public string MotherName { get; set; }
 
-        [Display(Name = "Mother's Name (বাংলা)")]
+        [Display(Name = "Mother's Name (Bn)")]
         public string MotherNameBangla { get; set; }
 
         [Display(Name = "Mother's NID")]
@@ -48,7 +53,8 @@ namespace SMS.App.ViewModels.Students
         [Display(Name = "Monthly Income")]
         public string MotherMonthlyIncome { get; set; }
 
-        [Display(Name = "Phone No"), StringLength(11)]
+        [Display(Name = "Phone No *"), StringLength(11)]
+        [Required(ErrorMessage = "This field is required.")]
         public string MotherPhoneNo { get; set; }
 
         public string Email { get; set; }
@@ -109,6 +115,7 @@ namespace SMS.App.ViewModels.Students
         [Display(Name = "Previous School")]
         public string PreviousSchool { get; set; }
         public int PreviousSchoolClassId { get; set; }
+        [Required]
         public int InterestedAppliedClassId { get; set; }
         public string AimInLife { get; set; }
         public bool Status { get; set; } = true;

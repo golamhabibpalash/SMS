@@ -1,75 +1,75 @@
-﻿@model SMS.App.ViewModels.Students.StudentApplicationVM
+﻿@{
+Layout = "~/Views/Shared/_LayoutEmpty.cshtml";
 
-@{
-    ViewData["Title"] = "Application Form";
-    GlobalUI.PageTitle = ViewBag.Title;
+    ViewData["Title"] = "Countdown Timer";
 }
-<div>
-    <form action="/" method="post">
-        <table>
-            <thead>
-                <tr>
-                    <td>Admission Application Form</td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <div class="form-group row">
-                            <label asp-for="NameBangla" class="col-form-label"></label>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="form-group row">
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control" placeholder="Name in Bangla">
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="form-group row">
-                            <label asp-for="Name" class="col-form-label"></label>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="form-group row">
-                            <div class="col-sm-10">
-                                <input asp-for="Name"  class="form-control" placeholder="Name in English">
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="form-group row">
-                            <label asp-for="DOB" class="col-form-label"></label>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="form-group row">
-                            <div class="col-sm-10">
-                                <input asp-for="DOB"  class="form-control">
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="form-group row">
-                            <label asp-for="FatherName" class="col-form-label"></label>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="form-group row">
-                            <div class="col-sm-10">
-                                <input asp-for="FatherName"  class="form-control" placeholder="Name in Bangla">
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </form>
-</div>
+
+<h2>Prepare for Online Admission, Starting On:</h2>
+<div id="countdown"></div>
+<p class="text-center mt-4">For any queries, please contact:</p> <div class="contact-info text-center"> <p>Email: <a href="mailto:sss139157@gmail.com">sss139157@gmail.com</a></p> <p>Phone: <a href="tel:+8801743922314">+8801743922314</a></p> </div>
+@section Styles{
+    <style>
+        .container
+        {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh; /* Full viewport height */
+            text-align: center;
+        }
+
+        #countdown
+        {
+            font-size: 60px;
+            color: #ff0000;
+            margin-top: 20px;
+        }
+
+        @@media (max-width: 768px)
+        {
+            #countdown
+            {
+                font-size: 1.5em;
+            }
+        }
+
+        @@media (max-width: 480px)
+        {
+            #countdown
+            {
+                font-size: 1em;
+            }
+        }
+    </style>
+
+
+}
+@section Scripts {
+    <script>
+        // Set the date and time for the countdown
+        var countDownDate = new Date("Nov 22, 2024 23:59:00").getTime();
+
+        // Update the countdown every 1 second
+        var countdownfunction = setInterval(function() {
+            var now = new Date().getTime();
+            var distance = countDownDate - now;
+
+            // Time calculations for days, hours, minutes and seconds
+            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Display the result in the element with id="countdown"
+            document.getElementById("countdown").innerHTML = days + "d " + hours + "h " +
+                minutes + "m " + seconds + "s ";
+
+            // If the countdown is finished, display a message
+            if (distance < 0) {
+                clearInterval(countdownfunction);
+                document.getElementById("countdown").innerHTML = "Online admission has started!";
+            }
+        }, 1000);
+    </script>
+}

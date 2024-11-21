@@ -1,13 +1,13 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Repositories;
-using SMS.BLL.Contracts.Reports;
 using SMS.BLL.Contracts;
-using SMS.BLL.Managers.Reports;
+using SMS.BLL.Contracts.Reports;
 using SMS.BLL.Managers;
-using SMS.DAL.Contracts.Reports;
+using SMS.BLL.Managers.Reports;
 using SMS.DAL.Contracts;
-using SMS.DAL.Repositories.Reports;
+using SMS.DAL.Contracts.Reports;
 using SMS.DAL.Repositories;
+using SMS.DAL.Repositories.Reports;
 
 namespace SMS.App.Configurations
 {
@@ -158,6 +158,10 @@ namespace SMS.App.Configurations
 
             services.AddScoped<IParamBusConfigManager, ParamBusConfigManager>();
             services.AddScoped<IParamBusConfigRepository, ParamBusConfigRepository>();
+
+            services.AddScoped<IAppliedStudentManager, AppliedStudentManager>();
+            services.AddScoped<IAppliedStudentRepository, AppliedStudentRepository>();
+
 
             //Reporing part start here===================================
             services.AddScoped<IReportManager, ReportManager>();

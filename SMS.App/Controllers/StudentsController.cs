@@ -52,10 +52,11 @@ namespace SchoolManagementSystem.Controllers
         private readonly IStudentActivateHistManager _studentActivateHistManager;
         private readonly IOffDayManager _offDayManager;
         private readonly IStudentFeeAllocationManager _studentFeeAllocationManager;
+        private readonly IAppliedStudentManager _appliedStudentManager;
         #endregion
 
         #region Constructor
-        public StudentsController(IStudentManager studentManager, IAcademicClassManager academicClassManager, IWebHostEnvironment host, IMapper mapper, IAcademicSessionManager academicSessionManager, IStudentPaymentManager studentPaymentManager, IDistrictManager districtManager, IUpazilaManager upazilaManager, IAcademicSectionManager academicSectionManager, IBloodGroupManager bloodGroupManager, IDivisionManager divisionManager, INationalityManager nationalityManager, IGenderManager genderManager, IReligionManager religionManager, IStudentFeeHeadManager studentFeeHeadManager, IClassFeeListManager classFeeListManager, UserManager<ApplicationUser> userManager, IPhoneSMSManager phoneSMSManager, IAttendanceMachineManager attendanceMachineManager, IInstituteManager instituteManager, IStudentActivateHistManager studentActivateHistManager, IOffDayManager offDayManager, IStudentFeeAllocationManager studentFeeAllocationManager)
+        public StudentsController(IStudentManager studentManager, IAcademicClassManager academicClassManager, IWebHostEnvironment host, IMapper mapper, IAcademicSessionManager academicSessionManager, IStudentPaymentManager studentPaymentManager, IDistrictManager districtManager, IUpazilaManager upazilaManager, IAcademicSectionManager academicSectionManager, IBloodGroupManager bloodGroupManager, IDivisionManager divisionManager, INationalityManager nationalityManager, IGenderManager genderManager, IReligionManager religionManager, IStudentFeeHeadManager studentFeeHeadManager, IClassFeeListManager classFeeListManager, UserManager<ApplicationUser> userManager, IPhoneSMSManager phoneSMSManager, IAttendanceMachineManager attendanceMachineManager, IInstituteManager instituteManager, IStudentActivateHistManager studentActivateHistManager, IOffDayManager offDayManager, IStudentFeeAllocationManager studentFeeAllocationManager, IAppliedStudentManager appliedStudentManager)
         {
             _academicClassManager = academicClassManager;
             _host = host;
@@ -80,6 +81,7 @@ namespace SchoolManagementSystem.Controllers
             _studentActivateHistManager = studentActivateHistManager;
             _offDayManager = offDayManager;
             _studentFeeAllocationManager = studentFeeAllocationManager;
+            _appliedStudentManager = appliedStudentManager;
         }
         #endregion Constructor
 
@@ -1069,18 +1071,65 @@ namespace SchoolManagementSystem.Controllers
             return File(Encoding.UTF8.GetBytes(builder.ToString()), "text/csv", today.ToString("yyMMdd") + "Student List_.csv");
         }
         #endregion Other's
-        #region Application 
+        #region Application
+        public async Task<IActionResult> ApplicationList()
+        {
+            var appliedStudents = await _appliedStudentManager.GetAllAsync();
+            return View(appliedStudents);
+        }
+
+        [HttpPost]
+        public IActionResult ApplicationList(int pageSize, int pageCout)
+        {
+            return Json("");
+        }
+
         [AllowAnonymous]
         public IActionResult Application()
         {
-
             return View();
         }
+
         [HttpPost, ValidateAntiForgeryToken]
         [AllowAnonymous]
-        public IActionResult Application(StudentApplicationVM application, IFormFile Photo)
+        public IActionResult Application(AppliedStudentVM application, IFormFile Photo)
         {
             return View();
+        }
+
+        [AllowAnonymous]
+        public IActionResult ApplicationUpsert(int? id = 0)
+        {
+            var student = new AppliedStudentVM();
+            if (id > 0)
+            {
+                var existStudent = _appliedStudentManager.GetByIdAsync((int)id);
+                if (existStudent != null)
+                {
+                    student = _mapper.Map<AppliedStudentVM>(existStudent);
+                }
+            }
+            return View(student);
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public IActionResult ApplicationUpsert(AppliedStudentVM application, IFormFile Photo)
+        {
+            var student = _mapper.Map<AppliedStudent>(application);
+            if (application.Id == 0)
+            {
+                if (ModelState.IsValid)
+                {
+                    student.CreatedAt = DateTime.Now;
+                    student.CreatedBy = "Created User";
+                    var created = _appliedStudentManager.AddAsync(student);
+                }
+            }
+            student.EditedAt = DateTime.Now;
+            student.EditedBy = "Edited User";
+            _appliedStudentManager.UpdateAsync(student);
+            return RedirectToAction(nameof(ApplicationList));
         }
         #endregion Application 
     }

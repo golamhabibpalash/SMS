@@ -4,8 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SMS.App.ViewModels.Students
 {
-    public class StudentApplicationVM
+    public class AppliedStudentVM
     {
+        public int Id { get; set; }
         [Display(Name = "Student Name (En) *")]
         [Required(ErrorMessage = "This field is required.")]
         public string Name { get; set; }
@@ -15,7 +16,7 @@ namespace SMS.App.ViewModels.Students
         public string NameBangla { get; set; }
 
         [Display(Name = "Date of Birth"), DataType(DataType.Date)]
-        public DateTime DOB { get; set; }
+        public DateTime? DOB { get; set; }
 
         [Display(Name = "Father's Name (En)*")]
         [Required(ErrorMessage = "This field is required.")]

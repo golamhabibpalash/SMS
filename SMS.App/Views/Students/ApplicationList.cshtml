@@ -1,0 +1,46 @@
+﻿@model IEnumerable<AppliedStudent>
+@{ 
+    int sl = 1;
+}
+<div class="panel-group">
+    <div class="panel">
+        <div class="panel-title">
+            Filter Title
+        </div>
+        <div class="panel-body">
+            Filter Body
+        </div>
+        <div class="panel-footer">Filter Footer</div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-title">students data title</div>
+        <div class="panel-body">
+            <table>
+                <thead>
+                    <tr>
+                        <td>#</td>
+                        <td>Students Name</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@sl</td>
+                                <td>@item.Name</td>
+                            </tr>
+
+                            sl++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="panel-footer">
+            student data table footer
+        </div>
+    </div>
+</div>

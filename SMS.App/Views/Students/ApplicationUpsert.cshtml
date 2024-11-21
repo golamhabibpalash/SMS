@@ -1,4 +1,4 @@
-﻿@model SMS.App.ViewModels.Students.StudentApplicationVM
+﻿@model SMS.App.ViewModels.Students.AppliedStudentVM
 
 @{
     Layout = "~/Views/Shared/_LayoutEmpty.cshtml";
@@ -8,11 +8,18 @@
     GlobalUI.PageTitle = ViewBag.Title;
 
 }
+
+@{
+    string dobMin = DateTime.Now.AddYears(-20).ToString("yyyy-MM-dd");
+    string dobMax = DateTime.Now.AddYears(-10).ToString("yyyy-MM-dd");
+    string dobVal =Model.DOB?.ToString("yyyy-MM-dd");
+}
 <div>
-    <form action="/" method="post">
+    <form asp-action="ApplicationUpsert" enctype="multipart/form-data" method="post" class="shadow-lg p-3 mb-5 rounded bg-blue-sky bg-info">
+        <input type="hidden" asp-for="Id" />
         <div class="row">
             <div class="col-md-12 text-center">
-                <h6 class="alert alert-heading alert-info">Application Form</h6>
+                <h5 class="alert alert-heading alert-info">Noble Residential High School <br /><span class="h6">Application Form</span></h5>
             </div>
         </div>
         <div class="row">
@@ -34,7 +41,7 @@
                 <div class="form-group row">
                     <label asp-for="DOB" class="control-label col-form-label text-md-right col-md-3"></label>
                     <div class="col-md-9">
-                        <input asp-for="DOB" class="form-control" placeholder="Name in English">
+                        <input asp-for="DOB" class="form-control" min="@dobMin" max="@dobMax" value="@dobVal" />
                     </div>
                 </div>
             </div>
@@ -223,9 +230,22 @@
                 <span asp-validation-for="PreviousSchoolClassId" class="text-danger"></span>
             </div>
         </div>
+        <div class="form-group row">
+            <div class="col-md-12 text-center">
+                <input type="submit"   value="Submit" class="btn btn-success" />
+            </div>
+        </div>
     </form>
 </div>
 
+@section Styles{
+    <style>
+        .form
+        {
+            background-color: lightcyan;
+        }
+    </style>
+}
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

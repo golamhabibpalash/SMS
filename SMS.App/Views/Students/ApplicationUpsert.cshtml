@@ -15,11 +15,23 @@
     string dobVal =Model.DOB?.ToString("yyyy-MM-dd");
 }
 <div>
-    <form asp-action="ApplicationUpsert" enctype="multipart/form-data" method="post" class="shadow-lg p-3 mb-5 rounded bg-blue-sky bg-info">
+    <form asp-action="ApplicationUpsert" enctype="multipart/form-data" method="post" class="shadow-lg p-3 mb-5 rounded ">
         <input type="hidden" asp-for="Id" />
         <div class="row">
             <div class="col-md-12 text-center">
                 <h5 class="alert alert-heading alert-info">Noble Residential High School <br /><span class="h6">Application Form</span></h5>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label asp-for="AcademicSessionId" class="control-label col-form-label text-md-right col-md-2"></label>
+            <div class="col-md-4">
+                <select asp-for="AcademicSessionId" class="form-control" asp-items="Model.AcademicSessionList"></select>
+                <span asp-validation-for="AcademicSessionId" class="text-danger"></span>
+            </div>
+            <label asp-for="InterestedAppliedClassId" class="control-label col-form-label text-md-right col-md-2"></label>
+            <div class="col-md-4">
+                <select asp-for="InterestedAppliedClassId" class="form-control" asp-items="Model.InterestedAcademicClassList"></select>
+                <span asp-validation-for="InterestedAppliedClassId" class="text-danger"></span>
             </div>
         </div>
         <div class="row">
@@ -40,8 +52,13 @@
                 </div>
                 <div class="form-group row">
                     <label asp-for="DOB" class="control-label col-form-label text-md-right col-md-3"></label>
-                    <div class="col-md-9">
+                    <div class="col-md-3">
                         <input asp-for="DOB" class="form-control" min="@dobMin" max="@dobMax" value="@dobVal" />
+                    </div>
+                    <label asp-for="GenderId" class="control-label col-form-label text-md-right col-md-3"></label>
+                    <div class="col-md-3">
+                        <select asp-for="GenderId" class="form-control" asp-items="Model.GenderList"></select>
+                        <span asp-validation-for="GenderId" class="text-danger"></span>
                     </div>
                 </div>
             </div>
@@ -53,7 +70,7 @@
                 </div>
                 <div class="row">
                     <div class="text-center">
-                        <input type="file" name="Photo" class="form-control-plaintext" id="imgInp" />
+                        <input type="file" name="Photo" class="form-control-sm" id="imgInp" />
                     </div>
                 </div>
             </div>
@@ -84,7 +101,7 @@
         <div class="form-group row">
             <label asp-for="FatherOccupation" class="control-label col-form-label text-md-right col-md-2"></label>
             <div class="col-md-2">
-                <input asp-for="FatherOccupation" class="form-control" placeholder="Father's Occupation">
+                <select asp-for="FatherOccupation" class="form-control" asp-items="Model.FOccupationList"></select>
                 <span asp-validation-for="FatherOccupation" class="text-danger"></span>
             </div>
             <label asp-for="FatherMonthlyIncome" class="control-label col-form-label text-md-right col-md-2"></label>
@@ -122,13 +139,12 @@
         <div class="form-group row">
             <label asp-for="MotherOccupation" class="control-label col-form-label text-md-right col-md-2"></label>
             <div class="col-md-2">
-                <input asp-for="MotherOccupation" class="form-control" placeholder="Mother's Occupation">
+                <select asp-for="MotherOccupation" class="form-control" asp-items="Model.MOccupationList"></select>
                 <span asp-validation-for="MotherOccupation" class="text-danger"></span>
             </div>
             <label asp-for="MotherMonthlyIncome" class="control-label col-form-label text-md-right col-md-2"></label>
             <div class="col-md-2">
-                <input asp-for="MotherMonthlyIncome" class="form-control" placeholder="Mother's Income">
-                <span asp-validation-for="MotherMonthlyIncome" class="text-danger"></span>
+                <input asp-for="MotherMonthlyIncome" class="form-control" placeholder="Mother's Income"/>
             </div>
             <label asp-for="MotherPhoneNo" class="control-label col-form-label text-md-right col-md-2"></label>
             <div class="col-md-2">
@@ -156,12 +172,12 @@
         <div class="form-group row">
             <label asp-for="PresentUpazilaId" class="control-label col-form-label text-md-right col-md-2"></label>
             <div class="col-md-4">
-                <input asp-for="PresentUpazilaId" class="form-control" placeholder="Upazila/Thana" />
+                <select asp-for="PresentUpazilaId" class="form-control" asp-items="Model.PresentUpazilaList"></select>
                 <span asp-validation-for="PresentUpazilaId" class="text-danger"></span>
             </div>
             <label asp-for="PresentDistrictId" class="control-label col-form-label text-md-right col-md-2"></label>
             <div class="col-md-4">
-                <input asp-for="PresentDistrictId" class="form-control" placeholder="District" />
+                <select asp-for="PresentDistrictId" class="form-control" asp-items="Model.PresentDistrictList"></select>
                 <span asp-validation-for="PresentDistrictId" class="text-danger"></span>
             </div>
         </div>
@@ -173,25 +189,21 @@
         <div class="form-group row">
             <label asp-for="PermanentAddressArea" class="control-label col-form-label text-md-right col-md-2"></label>
             <div class="col-md-4">
-                <input asp-for="PermanentAddressArea" class="form-control" placeholder="Village" />
-                <span asp-validation-for="PermanentAddressArea" class="text-danger"></span>
+                <input asp-for="PermanentAddressArea" class="form-control-plaintext" placeholder="Village" readonly/>
             </div>
             <label asp-for="PermanentAddressPO" class="control-label col-form-label text-md-right col-md-2"></label>
             <div class="col-md-4">
-                <input asp-for="PermanentAddressPO" class="form-control" placeholder="Post office" />
-                <span asp-validation-for="PermanentAddressPO" class="text-danger"></span>
+                <input asp-for="PermanentAddressPO" class="form-control-plaintext" placeholder="Post office" readonly/>
             </div>
         </div>
         <div class="form-group row">
             <label asp-for="PermanentUpazilaId" class="control-label col-form-label text-md-right col-md-2"></label>
             <div class="col-md-4">
-                <input asp-for="PermanentUpazilaId" class="form-control" placeholder="Upazila/Thana" />
-                <span asp-validation-for="PermanentUpazilaId" class="text-danger"></span>
+                <select asp-for="PermanentUpazilaId" class="form-control" asp-items="Model.PermanentUpazilaList"></select>
             </div>
             <label asp-for="PermanentDistrictId" class="control-label col-form-label text-md-right col-md-2"></label>
             <div class="col-md-4">
-                <input asp-for="PermanentDistrictId" class="form-control" placeholder="District" />
-                <span asp-validation-for="PermanentDistrictId" class="text-danger"></span>
+                <select asp-for="PermanentDistrictId" class="form-control" asp-items="Model.PermanentDistrictList" onchange="districtChanged(this.value, 'PermanentUpazilaId')"></select>
             </div>
         </div>
         <div class="row">
@@ -202,12 +214,12 @@
         <div class="form-group row">
             <label asp-for="NationalityId" class="control-label col-form-label text-md-right col-md-2"></label>
             <div class="col-md-4">
-                <input asp-for="NationalityId" class="form-control" placeholder="Nationality" />
+                <select asp-for="NationalityId" class="form-control" asp-items="Model.NationalityList"></select>
                 <span asp-validation-for="NationalityId" class="text-danger"></span>
             </div>
             <label asp-for="ReligionId" class="control-label col-form-label text-md-right col-md-2"></label>
             <div class="col-md-4">
-                <input asp-for="ReligionId" class="form-control" placeholder="Religion" />
+                <select asp-for="ReligionId" class="form-control" asp-items="Model.ReligionList"></select>
                 <span asp-validation-for="ReligionId" class="text-danger"></span>
             </div>
         </div>
@@ -226,13 +238,14 @@
             </div>
             <label asp-for="PreviousSchoolClassId" class="control-label col-form-label text-md-right col-md-2"></label>
             <div class="col-md-2">
-                <input asp-for="PreviousSchoolClassId" class="form-control" />
+                <select asp-for="PreviousSchoolClassId" class="form-control" asp-items="Model.PreviousAcademicClassList"></select>
                 <span asp-validation-for="PreviousSchoolClassId" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group row">
             <div class="col-md-12 text-center">
-                <input type="submit"   value="Submit" class="btn btn-success" />
+                <a class="btn  btn-info btn-sm" asp-action="Application"><i class="fa fa-home"></i> </a>
+                <input type="submit" value="Submit" class="btn-sm btn btn-success" />
             </div>
         </div>
     </form>
@@ -250,5 +263,32 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script src="~/js/Student/Create.js"></script>
+<script>
+    function districtChanged(val,id) {
+        let disId = val;
+        let upName = '#'+id;
+        GetUpazilaByDistrictId(disId, upName);
+    }
+
+    function GetUpazilaByDistrictId(disId, upName) {
+        $.ajax({
+            url: "/api/upazilas/byDistrict?id=" + disId,
+            dataType: 'JSON',
+            cache: false,
+            success: function (data) {
+                $(upName).empty();
+                var option = '<option disabled selected>Select Upazila Name</option>';
+                $(upName).append(option);
+                $.each(data, function (i, obj) {
+                    var ob = '<option value="' + obj.id + '">' + obj.name + '</option>';
+                    $(upName).append(ob);
+                });
+            },
+            error: function (err) {
+
+            }
+        });
+    }
+</script>
 
 }

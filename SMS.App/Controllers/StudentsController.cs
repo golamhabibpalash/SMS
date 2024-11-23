@@ -15,6 +15,7 @@ using SMS.App.ViewModels.Students;
 using SMS.BLL.Contracts;
 using SMS.Entities;
 using SMS.Entities.AdditionalModels;
+using SMS.Entities.Enums;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -1071,11 +1072,28 @@ namespace SchoolManagementSystem.Controllers
             return File(Encoding.UTF8.GetBytes(builder.ToString()), "text/csv", today.ToString("yyMMdd") + "Student List_.csv");
         }
         #endregion Other's
+
         #region Application
         public async Task<IActionResult> ApplicationList()
         {
             var appliedStudents = await _appliedStudentManager.GetAllAsync();
-            return View(appliedStudents);
+            List<AppliedStudentVM> students = new List<AppliedStudentVM>();
+            foreach (var student in appliedStudents)
+            {
+                var aStud = new AppliedStudentVM()
+                {
+                    Id = student.Id,
+                    Name = student.Name,
+                    NameBangla = student.NameBangla,
+                    FatherName = student.FatherName,
+                    MotherName = student.MotherName,
+                    FatherPhoneNo = student.FatherPhoneNo,
+                    MotherPhoneNo = student.MotherPhoneNo,
+                    InterestedClass = await _academicClassManager.GetByIdAsync(student.InterestedAppliedClassId)
+                };
+                students.Add(aStud);
+            }
+            return View(students);
         }
 
         [HttpPost]
@@ -1085,36 +1103,92 @@ namespace SchoolManagementSystem.Controllers
         }
 
         [AllowAnonymous]
-        public IActionResult Application()
+        public async Task<IActionResult> Application()
         {
-            return View();
+            var instituteInfo = await _instituteManager.GetFirstOrDefaultAsync();
+            OnlineAdmissionVM onlineAdmissionVM = new OnlineAdmissionVM();
+            onlineAdmissionVM.InstituteName = instituteInfo.Name;
+            ViewBag.applicationFrom = "get";
+            return View(onlineAdmissionVM);
         }
 
         [HttpPost, ValidateAntiForgeryToken]
         [AllowAnonymous]
-        public IActionResult Application(AppliedStudentVM application, IFormFile Photo)
+        public async Task<IActionResult> Application(OnlineAdmissionVM application)
         {
-            return View();
+            List<AppliedStudentVM> vmStudents = new List<AppliedStudentVM>();
+            if (!string.IsNullOrEmpty(application.SearchText))
+            {
+                var students = await _appliedStudentManager.SearchBySearchText(application.SearchText);
+                if (students != null)
+                {
+                    foreach (var item in students)
+                    {
+                        AppliedStudentVM studentVM = new AppliedStudentVM()
+                        {
+                            Id = item.Id,
+                            Name = item.Name,
+                            FatherName = item.FatherName,
+                            MotherName = item.MotherName,
+                            FatherPhoneNo = item.FatherPhoneNo,
+                            MotherPhoneNo = item.MotherPhoneNo,
+                        };
+                        vmStudents.Add(studentVM);
+                    }
+                }
+            }
+            var instituteInfo = await _instituteManager.GetFirstOrDefaultAsync();
+            application.InstituteName = instituteInfo.Name;
+            application.SearchApplications = vmStudents;
+            ViewBag.applicationFrom = "post";
+            return View(application);
         }
 
         [AllowAnonymous]
-        public IActionResult ApplicationUpsert(int? id = 0)
+        public async Task<IActionResult> ApplicationUpsert(int? id = 0)
         {
             var student = new AppliedStudentVM();
+            student.PresentUpazilaList.Add(new SelectListItem("Select District First", "", true));
+            student.PermanentUpazilaList.Add(new SelectListItem("Select District First", "", true));
             if (id > 0)
             {
-                var existStudent = _appliedStudentManager.GetByIdAsync((int)id);
+                var existStudent = await _appliedStudentManager.GetByIdAsync((int)id);
+
                 if (existStudent != null)
                 {
                     student = _mapper.Map<AppliedStudentVM>(existStudent);
+                    student.PresentUpazilaList = new SelectList(await _upazilaManager.GetAllAsync(), "Id", "Name", student.PresentUpazilaId).ToList();
+                    student.PermanentUpazilaList = new SelectList(await _upazilaManager.GetAllAsync(), "Id", "Name", student.PermanentUpazilaId).ToList();
                 }
             }
+            var allClasses = await _academicClassManager.GetAllAsync();
+
+            student.AcademicSessionList = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name", student.AcademicSessionId).ToList();
+            student.InterestedAcademicClassList = new SelectList(allClasses.Where(s => s.Status == true), "Id", "Name", student.InterestedAppliedClassId).ToList();
+            student.PreviousAcademicClassList = new SelectList(allClasses.Where(s => s.Status == true), "Id", "Name", student.PreviousSchoolClassId).ToList();
+            student.PreviousAcademicClassList.Add(new SelectListItem("Other", "0"));
+            student.BloodGroupList = new SelectList(await _bloodGroupManager.GetAllAsync(), "Id", "Name", student.BloodGroupId).ToList();
+            student.GenderList = new SelectList(await _genderManager.GetAllAsync(), "Id", "Name", student.GenderId).ToList();
+            student.NationalityList = new SelectList(await _nationalityManager.GetAllAsync(), "Id", "Name", student.NationalityId).ToList();
+            student.ReligionList = new SelectList(await _religionManager.GetAllAsync(), "Id", "Name", student.ReligionId).ToList();
+            student.PresentDistrictList = new SelectList(await _districtManager.GetAllAsync(), "Id", "Name", student.PresentDistrictId).ToList();
+            student.PermanentDistrictList = new SelectList(await _districtManager.GetAllAsync(), "Id", "Name", student.PermanentDistrictId).ToList();
+
+            var occupations = new List<SelectListItem> {
+                new("Select Occupation", "",true),
+                new("Service", "Service"),
+                new("Bussiness", "Bussiness"),
+                new("Other", "Other")
+            };
+            student.FOccupationList = new List<SelectListItem>(occupations);
+            student.MOccupationList = new List<SelectListItem>(occupations);
+            student.MOccupationList.Add(new SelectListItem("Housewife", "Housewife"));
             return View(student);
         }
 
         [AllowAnonymous]
         [HttpPost]
-        public IActionResult ApplicationUpsert(AppliedStudentVM application, IFormFile Photo)
+        public async Task<IActionResult> ApplicationUpsert(AppliedStudentVM application, IFormFile Photo)
         {
             var student = _mapper.Map<AppliedStudent>(application);
             if (application.Id == 0)
@@ -1123,13 +1197,38 @@ namespace SchoolManagementSystem.Controllers
                 {
                     student.CreatedAt = DateTime.Now;
                     student.CreatedBy = "Created User";
-                    var created = _appliedStudentManager.AddAsync(student);
+                    student.AppliedStudentStatus = AppliedStudentStatus.ApplicationSubmitted.ToString();
+                    var created = await _appliedStudentManager.AddAsync(student);
+                    if (created == true)
+                    {
+                        TempData["create"] = "Created Successfully";
+                    }
                 }
             }
             student.EditedAt = DateTime.Now;
             student.EditedBy = "Edited User";
-            _appliedStudentManager.UpdateAsync(student);
+            await _appliedStudentManager.UpdateAsync(student);
             return RedirectToAction(nameof(ApplicationList));
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> ApplicationDetails(int id)
+        {
+            AppliedStudentVM appliedStudentVM = new AppliedStudentVM();
+            var existingStudent = await _appliedStudentManager.GetByIdAsync(id);
+            if (existingStudent != null)
+            {
+                appliedStudentVM = _mapper.Map<AppliedStudentVM>(existingStudent);
+                var aSession = await _academicSessionManager.GetByIdAsync((int)existingStudent.AcademicSessionId);
+                if (aSession != null)
+                {
+                    appliedStudentVM.AcademicSession = aSession;
+                }
+                var aClass = await _academicClassManager.GetByIdAsync(existingStudent.InterestedAppliedClassId);
+                if (aClass != null) { appliedStudentVM.InterestedClass = aClass; }
+            };
+
+            return View(appliedStudentVM);
         }
         #endregion Application 
     }

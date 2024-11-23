@@ -1,75 +1,78 @@
-﻿@{
-Layout = "~/Views/Shared/_LayoutEmpty.cshtml";
+﻿@model SMS.App.ViewModels.Students.OnlineAdmissionVM
 
-    ViewData["Title"] = "Countdown Timer";
+@inject SignInManager<ApplicationUser> _signInManager;
+@inject UserManager<ApplicationUser> _userManager;
+
+@{
+    Layout = _signInManager.IsSignedIn(User) ? "~/Views/Shared/_Layout.cshtml" : "~/Views/Shared/_LayoutEmpty.cshtml";
+    ViewData["Title"] = "Online Admission";
 }
+<div class="d-flex flex-column align-items-center justify-content-center" style="height: 100vh;">
+    <div class="col-6 text-center">
+        <h1 class="mb-4 text-info"><u>Online Admission</u></h1>
+        <a class="btn  btn-info" asp-action="ApplicationUpsert">Application Form</a>
+        <h6 class="m-3">Already Applied?</h6>
+        <form asp-action="Application" method="post">
+            <div class="form-group  text-center">
+                <div class="">
+                    <div class="input-group">
+                        <input asp-for="SearchText" class="form-control form-control-sm" id="searchField" placeholder="Search by Name/Phone...">
+                        <div class="input-group-append"> <button class="btn btn-primary btn-sm" type="submit"> <i class="fa fa-search"></i> </button> </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="row">
+            @if (Model.SearchApplications != null && Model.SearchApplications.Count > 0)
+            {
+                <table class="table table-bordered table-sm shadow">
+                    <thead class="bg-info text-light">
+                        <tr>
+                            <td>Student Name</td>
+                            <td>Father Name</td>
+                            <td>Mother Name</td>
+                            <td>Status</td>
+                            <td>Action</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.SearchApplications)
+                        {
+                            <tr>
+                                <td>@item.Name</td>
+                                <td>@item.FatherName</td>
+                                <td>@item.MotherName</td>
+                                <td>@item.AppliedStudentStatus</td>
+                                <td>
+                                    <a class="btn  btn-info btn-sm" asp-action="ApplicationDetails" asp-route-id="@item.Id"><i class="fa fa-eye"></i> </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else if(ViewBag.applicationFrom!="get"&& Model.SearchApplications == null)
+            {
+                <div class="text-center">
+                    <span class="text-center">No Found. You may proceed to <a class="" asp-action="ApplicationUpsert">Online Admission</a></span>
+                </div>
+            }
+        </div>
 
-<h2>Prepare for Online Admission, Starting On:</h2>
-<div id="countdown"></div>
-<p class="text-center mt-4">For any queries, please contact:</p> <div class="contact-info text-center"> <p>Email: <a href="mailto:sss139157@gmail.com">sss139157@gmail.com</a></p> <p>Phone: <a href="tel:+8801743922314">+8801743922314</a></p> </div>
+    </div>
+
+</div>
+
+
+
 @section Styles{
     <style>
-        .container
-        {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh; /* Full viewport height */
-            text-align: center;
-        }
-
-        #countdown
-        {
-            font-size: 60px;
-            color: #ff0000;
-            margin-top: 20px;
-        }
-
-        @@media (max-width: 768px)
-        {
-            #countdown
-            {
-                font-size: 1.5em;
-            }
-        }
-
-        @@media (max-width: 480px)
-        {
-            #countdown
-            {
-                font-size: 1em;
-            }
-        }
     </style>
 
 
 }
 @section Scripts {
     <script>
-        // Set the date and time for the countdown
-        var countDownDate = new Date("Nov 22, 2024 23:59:00").getTime();
 
-        // Update the countdown every 1 second
-        var countdownfunction = setInterval(function() {
-            var now = new Date().getTime();
-            var distance = countDownDate - now;
-
-            // Time calculations for days, hours, minutes and seconds
-            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-            // Display the result in the element with id="countdown"
-            document.getElementById("countdown").innerHTML = days + "d " + hours + "h " +
-                minutes + "m " + seconds + "s ";
-
-            // If the countdown is finished, display a message
-            if (distance < 0) {
-                clearInterval(countdownfunction);
-                document.getElementById("countdown").innerHTML = "Online admission has started!";
-            }
-        }, 1000);
     </script>
 }

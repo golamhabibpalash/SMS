@@ -12,7 +12,7 @@ namespace SMS.Entities
         public string NameBangla { get; set; }
 
         [Display(Name = "Date of Birth")]
-        public DateTime DOB { get; set; }
+        public DateTime? DOB { get; set; }
 
         [Display(Name = "Father's Name")]
         public string FatherName { get; set; }
@@ -58,16 +58,16 @@ namespace SMS.Entities
         public string BirthCertificateNo { get; set; }
 
         [Display(Name = "Religion")]
-        public int ReligionId { get; set; }
+        public int? ReligionId { get; set; }
 
         [Display(Name = "Gender")]
-        public int GenderId { get; set; }
+        public int? GenderId { get; set; }
 
         [Display(Name = "Blood Group")]
         public int? BloodGroupId { get; set; }
 
         [Display(Name = "Nationality")]
-        public int NationalityId { get; set; }
+        public int? NationalityId { get; set; }
 
         [Display(Name = "Vill/Area")]
         public string PresentAddressArea { get; set; }
@@ -79,10 +79,10 @@ namespace SMS.Entities
         public string PresentAddressPO { get; set; }
 
         [Display(Name = "Upazila")]
-        public int PresentUpazilaId { get; set; }
+        public int? PresentUpazilaId { get; set; }
 
         [Display(Name = "District")]
-        public int PresentDistrictId { get; set; }
+        public int? PresentDistrictId { get; set; }
 
         [Display(Name = "Division")]
         public int? PresentDivisionId { get; set; }
@@ -94,36 +94,30 @@ namespace SMS.Entities
         public string PermanentAddressPO { get; set; }
 
         [Display(Name = "Upazila")]
-        public int PermanentUpazilaId { get; set; }
+        public int? PermanentUpazilaId { get; set; }
 
         [Display(Name = "District")]
-        public int PermanentDistrictId { get; set; }
+        public int? PermanentDistrictId { get; set; }
 
         [Display(Name = "Division")]
         public int? PermanentDivisionId { get; set; }
 
         [Display(Name = "Session")]
-        public int AcademicSessionId { get; set; }
+        public int? AcademicSessionId { get; set; }
+        public string AppliedStudentStatus { get; set; }
 
         [Display(Name = "Previous School")]
         public string PreviousSchool { get; set; }
-        public int PreviousSchoolClassId { get; set; }
+        public int? PreviousSchoolClassId { get; set; }
         public int InterestedAppliedClassId { get; set; }
         public string AimInLife { get; set; }
         public bool Status { get; set; } = true;
-
         public Division PresentDivision { get; set; }
-
         public District PresentDistrict { get; set; }
-
         public Upazila PresentUpazila { get; set; }
-
         public Division PermanentDivision { get; set; }
-
         public District PermanentDistrict { get; set; }
-
         public Upazila PermanentUpazila { get; set; }
-
         public AcademicSession AcademicSession { get; set; }
         public Nationality Nationality { get; set; }
         public BloodGroup BloodGroup { get; set; }

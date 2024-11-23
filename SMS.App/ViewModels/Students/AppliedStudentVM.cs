@@ -1,13 +1,34 @@
-﻿using SMS.Entities;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using SMS.Entities;
+using SMS.Entities.Enums;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace SMS.App.ViewModels.Students
 {
     public class AppliedStudentVM
     {
+        public AppliedStudentVM()
+        {
+            AcademicSessionList = new List<SelectListItem>();
+            InterestedAcademicClassList = new List<SelectListItem>();
+            PreviousAcademicClassList = new List<SelectListItem>();
+            BloodGroupList = new List<SelectListItem>();
+            GenderList = new List<SelectListItem>();
+            NationalityList = new List<SelectListItem>();
+            ReligionList = new List<SelectListItem>();
+
+            PresentDistrictList = new List<SelectListItem>();
+            PermanentDistrictList = new List<SelectListItem>();
+            PresentUpazilaList = new List<SelectListItem>();
+            PermanentUpazilaList = new List<SelectListItem>();
+
+            //FOccupationList = new List<SelectListItem>();
+            //MOccupationList = new List<SelectListItem>();
+        }
         public int Id { get; set; }
-        [Display(Name = "Student Name (En) *")]
+        [Display(Name = "Student Name *")]
         [Required(ErrorMessage = "This field is required.")]
         public string Name { get; set; }
 
@@ -18,7 +39,7 @@ namespace SMS.App.ViewModels.Students
         [Display(Name = "Date of Birth"), DataType(DataType.Date)]
         public DateTime? DOB { get; set; }
 
-        [Display(Name = "Father's Name (En)*")]
+        [Display(Name = "Father's Name *")]
         [Required(ErrorMessage = "This field is required.")]
         public string FatherName { get; set; }
 
@@ -38,7 +59,7 @@ namespace SMS.App.ViewModels.Students
         [Required(ErrorMessage = "This field is required.")]
         public string FatherPhoneNo { get; set; }
 
-        [Display(Name = "Mother's Name (En)*")]
+        [Display(Name = "Mother's Name *")]
         [Required(ErrorMessage = "This field is required.")]
         public string MotherName { get; set; }
 
@@ -87,10 +108,10 @@ namespace SMS.App.ViewModels.Students
         public string PresentAddressPO { get; set; }
 
         [Display(Name = "Upazila")]
-        public int PresentUpazilaId { get; set; }
+        public int? PresentUpazilaId { get; set; }
 
         [Display(Name = "District")]
-        public int PresentDistrictId { get; set; }
+        public int? PresentDistrictId { get; set; }
 
         [Display(Name = "Division")]
         public int? PresentDivisionId { get; set; }
@@ -102,10 +123,10 @@ namespace SMS.App.ViewModels.Students
         public string PermanentAddressPO { get; set; }
 
         [Display(Name = "Upazila")]
-        public int PermanentUpazilaId { get; set; }
+        public int? PermanentUpazilaId { get; set; }
 
         [Display(Name = "District")]
-        public int PermanentDistrictId { get; set; }
+        public int? PermanentDistrictId { get; set; }
 
         [Display(Name = "Division")]
         public int? PermanentDivisionId { get; set; }
@@ -115,9 +136,13 @@ namespace SMS.App.ViewModels.Students
 
         [Display(Name = "Previous School")]
         public string PreviousSchool { get; set; }
+        [Display(Name = "Previous Class")]
         public int PreviousSchoolClassId { get; set; }
+        public AcademicClass PreviousClass { get; set; }
         [Required]
+        [Display(Name = "Applied For")]
         public int InterestedAppliedClassId { get; set; }
+        public AcademicClass InterestedClass { get; set; }
         public string AimInLife { get; set; }
         public bool Status { get; set; } = true;
 
@@ -139,5 +164,20 @@ namespace SMS.App.ViewModels.Students
         public AcademicClass AcademicClass { get; set; }
         public Gender Gender { get; set; }
         public Religion Religion { get; set; }
+        public AppliedStudentStatus AppliedStudentStatus { get; set; }
+
+        public List<SelectListItem> FOccupationList { get; set; }
+        public List<SelectListItem> MOccupationList { get; set; }
+        public List<SelectListItem> BloodGroupList { get; set; }
+        public List<SelectListItem> PresentUpazilaList { get; set; }
+        public List<SelectListItem> PermanentUpazilaList { get; set; }
+        public List<SelectListItem> PresentDistrictList { get; set; }
+        public List<SelectListItem> PermanentDistrictList { get; set; }
+        public List<SelectListItem> NationalityList { get; set; }
+        public List<SelectListItem> ReligionList { get; set; }
+        public List<SelectListItem> InterestedAcademicClassList { get; set; }
+        public List<SelectListItem> PreviousAcademicClassList { get; set; }
+        public List<SelectListItem> AcademicSessionList { get; set; }
+        public List<SelectListItem> GenderList { get; set; }
     }
 }

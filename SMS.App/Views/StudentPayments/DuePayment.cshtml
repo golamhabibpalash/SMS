@@ -107,7 +107,7 @@
             <table class="table table-hover table-bordered table-striped display" id="myTable" style="width:100%;">
                 <thead>
                     <tr>
-                        <td colspan="6" class="text-center pb-0 mb-0">
+                        <td colspan="7" class="text-center pb-0 mb-0">
 
                             <div class="row">
                                 <div class="col-md-5 text-md-right">
@@ -141,6 +141,7 @@
                         <th>Class Roll</th>
                         <th>Student Name</th>
                         <th>Academic Section</th>
+                        <th>Phone No</th>
                         <th class="text-right">Due Amount</th>
                         <th class="text-center action no-sort" id="action">Action</th>
                     </tr>
@@ -183,6 +184,7 @@
                             {
                                 <td>@item.Student.AcademicSection.Name</td>
                             }
+                            <td>@item.Student.GuardianPhone?.PadLeft(11,'0')</td>
                             <td class="text-right">@item.TotalDue</td>
                             <td class="text-center action">
                                 <span class="btn-group-sm">
@@ -248,13 +250,13 @@
                     {
                         extend: 'excel',
                         exportOptions: {
-                            columns: ':not(.action)'
+                            columns: ':not(.action)' // Exclude columns with the 'noExport' class
                         }
                     },
                     {
                         extend: 'pdf',
                         exportOptions: {
-                            columns: ':not(.action)'
+                            columns: ':not(.action)' // Exclude columns with the 'noExport' class
                         }
                     },
                     {
@@ -267,29 +269,55 @@
             });
         });
 
-
-
         document.getElementById('exportExcelButton').addEventListener('click', function () {
             // Get the table element
             const table = document.getElementById('myTable');
 
+            // Clone the table to modify it without affecting the original table
+            const clonedTable = table.cloneNode(true);
+
             // Remove the 'action' column
             const columnToRemove = 'action';
-            const columnIndex = Array.from(table.querySelectorAll('th')).findIndex(th => th.id === columnToRemove);
-            const rows = Array.from(table.querySelectorAll('tr'));
+            const columnIndex = Array.from(clonedTable.querySelectorAll('th')).findIndex(th => th.id === columnToRemove);
+            const rows = Array.from(clonedTable.querySelectorAll('tr'));
             rows.forEach(row => {
-                const cells = Array.from(row.querySelectorAll('td'));
-                cells.splice(columnIndex, 1); // Remove the cell for the 'action' column
+                const cells = Array.from(row.querySelectorAll('td, th'));
+                if (columnIndex >= 0) {
+                    cells.splice(columnIndex, 1); // Remove the cell for the 'action' column
+                }
                 row.innerHTML = cells.map(cell => cell.outerHTML).join('');
             });
 
+            // Remove the <thead> element from the cloned table
+            const thead = clonedTable.querySelector('thead');
+            if (thead) {
+                thead.remove();
+            }
+            // Add a custom header row
+            const headerRow = document.createElement('tr');
+            const headers = ["SL", "Class Roll", "Student Name", "Class Section", "Phone", "Due Amount"];
+            headers.forEach(headerText => {
+                const th = document.createElement('th');
+                th.textContent = headerText;
+                headerRow.appendChild(th);
+            });
+
+            // Insert the header row at the top of the table body
+            const tbody = clonedTable.querySelector('tbody');
+            if (tbody) {
+                tbody.insertBefore(headerRow, tbody.firstChild);
+            } else {
+                const newTbody = document.createElement('tbody');
+                newTbody.appendChild(headerRow);
+                clonedTable.appendChild(newTbody);
+            }
+
             // Create the workbook from the modified table
-            const wb = XLSX.utils.table_to_book(table);
+            const wb = XLSX.utils.table_to_book(clonedTable);
 
             // Save the workbook as an Excel file
-            XLSX.writeFile(wb, 'Due Payment @DateTime.Now.ToString("dd-MM-yyyy")_@ViewBag.ClassName .xlsx');
+            XLSX.writeFile(wb, `Due Payment ${new Date().toLocaleDateString('en-GB').replace(/\//g, '-')}_ClassName.xlsx`);
         });
-
 
 
 

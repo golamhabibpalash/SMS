@@ -94,6 +94,7 @@ namespace SMS.App.Controllers
 
             List<StudentPayment> studentPayments = new();
             StudentPaymentVM spvm = new();
+            spvm.CurrentAcademicSession = await _academicSessionManager.GetCurrentAcademicSession();
             var inst = await _instituteManager.GetFirstOrDefaultAsync();
             ViewBag.InstituteName = inst.Name;
             var stu = await _studentManager.GetStudentByClassRollAsync((int)stRoll);
@@ -109,8 +110,8 @@ namespace SMS.App.Controllers
                     sp.StudentPaymentDetails = studentPaymentDetails;
                     sp.StudentPaymentDetails.Add(details);
                     spvm.StudentPayment = sp;
-                    studentPayments = (List<StudentPayment>)await _studentPaymentManager.GetAllByStudentIdAsync(student.Id);
-                    spvm.StudentPayments = studentPayments.OrderBy(p => p.PaidDate).ToList();
+                    spvm.StudentPreviousPayments = (List<StudentPayment>)await _studentPaymentManager.GetAllByStudentIdAsync(student.Id);
+                    spvm.StudentCurrentPayments = (List<StudentPayment>) await _studentPaymentManager.GetAllByStudentIdAsync(student.Id);
                     spvm.StudentId = student.Id;
                     List<ClassFeeList> feeList = new();
                     var classfeelist = await _classFeeListManager.GetAllByClassIdAsync(student.AcademicClassId);
@@ -213,6 +214,7 @@ namespace SMS.App.Controllers
         [Authorize(Policy = "PaymentStudentPaymentsPolicy")]
         public async Task<IActionResult> Payment(StudentPaymentVM paymentObject)
         {
+            paymentObject.CurrentAcademicSession = await _academicSessionManager.GetCurrentAcademicSession();
             try
             {
                 paymentObject.StudentPayment.ReceiptNo = await GetReceiptNo(paymentObject.StudentPayment.StudentId, paymentObject.ClassFeeHeadId);

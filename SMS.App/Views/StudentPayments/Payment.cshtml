@@ -26,8 +26,6 @@
     {
         GlobalUI.PageTitle = "Student Payment";
     }
-    int detailSl = 0;
-    string studentPhoto = !string.IsNullOrEmpty(Model.StudentPayment.Student.Photo) ? Model.StudentPayment.Student.Photo : "noimage.jpg";
     string createdBy = string.Empty;
     double finalBalance = 0.0;
     int collapsCount = 1;
@@ -166,48 +164,10 @@
 {
     <div class="row text-white pt-1 pb-1" id="paymentDiv">
         <div class="col-md-6 mh-100 ">
-            <div class="panel bg-navy-blue rounded rounded-2" style="min-height:232px;">
-                <div class="row p-4">
-                    <div class="col-md-4 text-center p-3">
-                        <img src="~/Images/Student/@studentPhoto" alt="Alternate Text" class="rounded-circle" style="width:50%;" />
-                    </div>
-
-                    <div class="col-md-8">
-                        <table class="table text-light">
-                            <tr>
-                                <td width="140px">Student Name</td>
-                                <td>:</td>
-                                <td>@Model.StudentPayment.Student.Name</td>
-                            </tr>
-                            <tr>
-                                <td>Academic Class</td>
-                                <td>:</td>
-                                <td>@Model.StudentPayment.Student.AcademicClass.Name</td>
-                            </tr>
-                            @if (Model.StudentPayment.Student.AcademicSection != null)
-                            {
-                                <tr>
-                                    <td>Academic Section</td>
-                                    <td>:</td>
-                                    <td>@Model.StudentPayment.Student.AcademicSection.Name</td>
-                                </tr>
-                            }
-                            <tr>
-                                <td>Class Roll</td>
-                                <td>:</td>
-                                <td>@Model.StudentPayment.Student.ClassRoll</td>
-                            </tr>
-                            <tr>
-                                <td>Academic Session</td>
-                                <td>:</td>
-                                <td>@Model.StudentPayment.Student.AcademicSession.Name</td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-            </div>
+            <partial name="_StudentInfoPortion" model="@Model" />
         </div>
         <div class="col-md-6 mh-100">
+
             <div class="panel bg-navy-blue rounded rounded-2 " id="inputPanel" style="min-height:232px;">
                 <div class="form-horizontal">
                     <form asp-action="payment" asp-controller="StudentPayments" method="post" id="studentPaymentFormId">
@@ -223,7 +183,13 @@
                                 <div class="form-group row pt-2">
                                     <label class="col-md-3 col-form-label text-md-right text-left">Date </label>
                                     <div class="col-md-3">
-                                        <input type="date" asp-for="StudentPayment.PaidDate" class="form-control form-control-sm" value="@DateTime.Today.ToString("yyyy-MM-dd")" min="2020-01-31" max="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" />
+                                        @*<input type="date" asp-for="StudentPayment.PaidDate" class="form-control form-control-sm" value="@DateTime.Today" min="2020-01-31" max="@DateTime.Today.AddDays(1).ToString(" yyyy-MM-dd")" />*@
+                                        <input type="date"
+                                               asp-for="StudentPayment.PaidDate"
+                                               class="form-control form-control-sm"
+                                               id="paidDate"
+                                               min="2020-01-31"/>
+
                                         <span asp-validation-for="StudentPayment.PaidDate" class="text-danger col-form-label"></span>
                                     </div>
 
@@ -240,6 +206,7 @@
                                     <div class="col-md-3">
                                         <input class="form-control form-control-sm text-dark font-weight-bolder text-right" placeholder="Amount" asp-for="StudentPayment.StudentPaymentDetails[0].PaidAmount" />
                                         <input type="hidden" id="academicClassId" value="@Model.StudentPayment.Student.AcademicClassId" />
+                                        <input type="hidden" asp-for="StudentPayment.StudentPaymentDetails[0].ClassFeeId" />
                                     </div>
                                     <label class="col-md-3 col-form-label text-md-right text-left">Total</label>
                                     <div class="col-md-3">
@@ -274,213 +241,20 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="accordion p-3" id="accordionExample">
-            <div class="panel panel-info border border-info">
-                <div class="panel-heading text-center">
-                    <span class="h3">
-                        Current Payment Status and Details (@Model.CurrentAcademicSession.Name)
-                    </span>
-                </div>
-                <div class="panel-body">
-                    <div class="pl-2 pr-2">
-                        <table class="table table-borderless">
-                            <thead class="table-info">
-                                <tr>
-                                    <td style="width:5%">#</td>
-                                    <td style="width:35%">Payment Name</td>
-                                    <td style="width:10%" class="text-right">Amount</td>
-                                    <td style="width:10%" class="text-right">Due/Balance</td>
-                                    <td style="width:10%" class="text-right">Status</td>
-                                </tr>
-                            </thead>
-                        </table>
-                    </div>
-
-                    @foreach (var item in Model.PaymentItemVMs)
-                    {
-                        detailSl = 0;
-                        <div class="card mb-2">
-                            <div id="heading_@collapsCount" class="@(item.PaymentItemDetailVMs.Count>0?"card-header panelPointer":"card-header") p-0" data-toggle="collapse" data-target="#collapse_@collapsCount" aria-expanded="true" aria-controls="collapse_@collapsCount">
-                                <table class="table table-borderless p-0 m-0">
-                                    <tbody>
-                                        <tr>
-                                            <td class=" " style="width:5%">@collapsCount</td>
-                                            <td class="text-left" style="width:35%">
-                                                @item.ClassFeeListName
-
-                                                @if (item.PaymentItemDetailVMs.Count > 0)
-                                                {
-                                                    <i class="fas fa-arrow-down"></i>
-                                                }
-                                            </td>
-                                            <td class="text-right" style="width:10%"> @item.Amount</td>
-                                            @if (item.Balance <= 0)
-                                            {
-                                                <td class="text-right" style="width:10%">@item.Balance</td>
-                                            }
-                                            else
-                                            {
-                                                <td class="text-danger text-right" style="width:10%">@item.Balance</td>
-                                            }
-                                            @if (item.Status == "Unpaid")
-                                            {
-                                                <td class="text-danger text-right" style="width:10%">@item.Status <i class="fas fa-thumbs-down"></i></td>
-                                            }
-                                            else if (item.Status == "Partial")
-                                            {
-                                                <td class="text-primary text-right" style="width:10%">@item.Status <i class="fas fa-thumbs-down"></i></td>
-                                            }
-                                            else
-                                            {
-                                                <td class="text-right text-success" style="width:10%">@item.Status <i class="fas fa-thumbs-up"></i></td>
-                                            }
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            @{
-                                finalBalance += item.Balance;
-                            }
-                            @if (item.PaymentItemDetailVMs.Count > 0)
-                            {
-                                <div id="collapse_@collapsCount" class="collapse" aria-labelledby="heading_@collapsCount" data-parent="#accordionExample">
-                                    <div class="">
-                                        <table class="table table-striped text-center table-bordered table-hover">
-                                            <thead class="bg-navy-blue">
-                                                <tr>
-                                                    <td>#</td>
-                                                    <td>Receipt No</td>
-                                                    <td>Paid date</td>
-                                                    <td>Pay mode</td>
-                                                    <td>Received by</td>
-                                                    <td>Remarks</td>
-                                                    <td class="text-right">Amount</td>
-                                                    <td>Action</td>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach (var payDetail in item.PaymentItemDetailVMs)
-                                                {
-                                                    ApplicationUser aUser = await _userManager.FindByIdAsync(payDetail.ReceivedBy);
-                                                    createdBy = payDetail.ReceivedBy != null ? aUser.UserName : "Not Found";
-
-                                                    <tr>
-                                                        <td>
-                                                            @(++detailSl)
-                                                        </td>
-                                                        <td class="text-center">@payDetail.Receipt</td>
-                                                        <td class="text-center">@payDetail.PaidDate</td>
-                                                        <td>Cash</td>
-                                                        <td>@createdBy</td>
-                                                        <td>@payDetail.PaymentRemarks</td>
-                                                        <td class="text-right">@payDetail.PaymentAmount</td>
-                                                        <td>
-                                                            <span class="btn-sm">
-                                                                <button data-paymentid="@payDetail.PaymentId" data-studentName="Student Name" data-academicClass="item.Student.AcademicClass.Name" data-classRoll="item.Student.ClassRoll" data-academicSession="item.Student.AcademicSession.Name" data-paidDate="item.PaidDate.ToString()" data-receipt="payDetail.StudentPayment.ReceiptNo" data-amount="000" data-paymentType="payDetail.StudentFeeHead.Name" type="button" class="btn btn-sm modalViewId shadow rounded" data-toggle="modal" data-target="#exampleModalCenter" id="modalViewId_">
-                                                                    <i class="fas fa-print text-secondary" style="font-size:12px;"></i>
-                                                                </button>
-                                                            </span>
-                                                            <span class="btn-sm">
-                                                                <button class="btn btn-sm editBtn shadow rounded" data-id="@payDetail.PaymentDetailId" data-receiptNo="@payDetail.Receipt" data-paidDate="@payDetail.PaidDate" data-studentFeeHeadId="@payDetail.StudentFeeHeadId" data-totalPayment="@item.Amount" data-remarks="@payDetail.PaymentRemarks" data-paymentId="@item.Id">
-                                                                    <i class="fas fa-edit text-secondary" style="font-size:12px;"></i>
-                                                                </button>
-                                                            </span>
-                                                            <span class="btn-sm">
-                                                                <button class="btn btn-sm shadow rounded">
-                                                                    <i class="fas fa-trash text-danger" style="font-size:12px;"></i>
-                                                                </button>
-                                                            </span>
-                                                        </td>
-                                                    </tr>
-                                                }
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                        collapsCount++;
-                    }
-                    <div class="card">
-
-                    </div>
-                </div>
-                <div class="panel-footer">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <td style="width:5%"></td>
-                                <td style="width:35%"></td>
-                                <td style="width:10%"></td>
-                                <td style="width:10%"></td>
-                                <td style="width:10%"></td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="text-right"></td>
-                                <td class="text-right"></td>
-                                <td class="text-right h4"> Current Balance</td>
-                                <td class="text-right h4 @(finalBalance>0?"text-danger":"")">@finalBalance</td>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+    foreach (var item in Model.PaymentVM.Payments.Where(s => s.SessionWisePaymentVMs.Count>0))
+    {
+        if (item.AcademicSession == "2024-2025")
+        {
+            <partial name="_SessionWisePayment" model="@item" />
+        }
+        else
+        {
+            <div class="col-md-6">
+                <partial name="_SessionWisePayment" model="@item" />
             </div>
-        </div>
-    </div>
-    <div class="row p-3">
-        <div class="text-center">
-            <h3>Previous Payment History</h3>
-        </div>
-        <div class="accordion border border-dark" id="accordionExample">
-            <div class="card">
-                <div class="card-header" id="headingOne">
-                    <h5 class="mb-0">
-                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            Academic Session 2022-2023
-                        </button>
-                    </h5>
-                </div>
+        }
+    }
 
-                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
-                    <div class="card-body">
-                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-header" id="headingTwo">
-                    <h5 class="mb-0">
-                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                            Academic Session 2021-2022
-                        </button>
-                    </h5>
-                </div>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-                    <div class="card-body">
-                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-header" id="headingThree">
-                    <h5 class="mb-0">
-                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                            Academic Session 2020-2021
-                        </button>
-                    </h5>
-                </div>
-                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
-                    <div class="card-body">
-                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 }
 
 
@@ -549,6 +323,23 @@
 @section Scripts{
 
     <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
+
+    <script>
+        // Get the current date
+        const today = new Date();
+
+        // Format the date as yyyy-MM-dd (required by <input type="date">)
+        const formattedDate = today.toISOString().split('T')[0];
+
+        // Set the value of the input element
+        document.getElementById('paidDate').value = formattedDate;
+
+        const dateInput = document.getElementById('paidDate');
+        dateInput.value = formattedDate;
+        dateInput.max = formattedDate;
+    </script>
+
+
     <script>
         let created = '@TempData["created"]';
 

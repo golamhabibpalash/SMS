@@ -239,5 +239,40 @@ namespace SMS.DAL.Repositories
             currentDue = totalCurrentPayable - totalCurrentPaid;
             return currentDue;
         }
+
+        public async Task<IEnumerable<StudentPayment>> GetAllByStudentUniqueIdAsync(string uniqueId)
+        {
+            List<StudentPayment> payments = new List<StudentPayment>();
+            try
+            {
+                payments = await _context.StudentPayment
+                .Include(sp => sp.StudentPaymentDetails)
+                    .ThenInclude(sp => sp.StudentFeeHead)
+                .Include(s => s.Student)
+                    .ThenInclude(ss => ss.AcademicClass)
+                .Include(s => s.Student.AcademicSession)
+                .Where(sp => sp.UniqueId == uniqueId).ToListAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return payments;
+        }
+        public async Task<List<PaidAmountResult>> GetPaidAmountByFeeHead(string uniqueId, int sessionId, int isResidential, int classId, int feeHeadId)
+        {
+            List<PaidAmountResult> result;
+            try
+            {
+                result = await _context.PaidAmountResults.FromSqlInterpolated($"EXEC sp_Get_PaidAmount {uniqueId}, {sessionId}, {isResidential}, {classId}, {feeHeadId}").ToListAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return result;
+        }
+
     }
 }

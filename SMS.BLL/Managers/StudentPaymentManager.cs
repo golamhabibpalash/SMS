@@ -91,5 +91,18 @@ namespace SMS.BLL.Managers
         {
             return await _studentPaymentRepository.GetStudentCurrentDue(stuId);
         }
+
+        public async Task<List<StudentPayment>> GetPaymentByStudentUniqueId(string uniqueId)
+        {
+            List<StudentPayment> sps = new List<StudentPayment>();
+            var paymens = await _studentPaymentRepository.GetAllAsync();
+            sps = paymens.Where(p => p.UniqueId == uniqueId).ToList();
+            return sps;
+        }
+        public async Task<List<PaidAmountResult>> GetPaidAmountByFeeHeadAsync(string uniqueId, int sessionId, int isResidential, int classId, int feeHeadId)
+        {
+            var result = await _studentPaymentRepository.GetPaidAmountByFeeHead(uniqueId, sessionId, isResidential, classId, feeHeadId);
+            return result;
+        }
     }
 }

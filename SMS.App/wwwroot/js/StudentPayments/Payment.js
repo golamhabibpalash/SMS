@@ -179,7 +179,7 @@ jQuery('#plusButton').click(function () {
         dataType: 'json',
         success: function (data) {
             existAmount = parseInt(existAmount) + parseInt(data.amount);
-            $('#FeeAmountId').val(existAmount);            
+            $('#FeeAmountId').val(existAmount);
         },
         error: function (err) {
             console.log(err);
@@ -187,23 +187,9 @@ jQuery('#plusButton').click(function () {
 
     });
 
-    
-});
-/////////////////////// 1st time(Previous) created code
-//Code for waiverFor div show and hide
-//jQuery('#waiverCheckId').click(function () {
-//    let isChecked = $('#waiverCheckId').is(':checked');
-//    if (isChecked == true) {
-//        $('#waiverDivId').show();
-//        $('#StudentPayment_WaiverAmount').attr('disabled', false);
-//    }
-//    else {
-//        $('#waiverDivId').hide();
-//        $('#StudentPayment_WaiverAmount').attr('disabled', true);
-//    }
-//});
 
-//Code for Attachement Enable or Disable
+});
+
 jQuery('#attachmentCheckId').click(function () {
     let isChecked = $('#attachmentCheckId').is(':checked');
     if (isChecked == true) {
@@ -242,36 +228,6 @@ let mkdate = function (dateObject) {
     var date = day + " " + monthName[month] + " " + year;
     return date;
 };
-
-//Modal Code for Payment Slip
-//jQuery('.modalViewId').click(function () {
-    
-//    let receiptNo = $(this).data('receipt');
-//    let getData = $(this).data('paiddate');
-//    let myDate = mkdate(getData);
-//    let academicClass = $(this).data('academicclass');
-//    let classRoll = $(this).data('classroll');
-//    let studentName = $(this).data('studentname');
-//    let academicSession = $(this).data('academicsession');
-//    let totalAmount = $(this).data('amount');
-//    let paymentType = $(this).data('paymenttype');
-//    let amountInWord = inWords($(this).data('amount'));
-
-//    $('#rctReciptNo').html(receiptNo);
-//    $('#rctPaymentDate').html(myDate);
-//    $('#rctAcademicClass').html(academicClass);
-//    $('#rctClassRoll').html(classRoll);
-//    $('#rctStudentName').html(studentName);
-//    $('#rctAcademicSession').html(academicSession);
-//    $('#rctAmount').html(totalAmount+'Tk');
-//    $('#rctPaymentType').html(paymentType);
-//    $('#rctAmountInWords').html('Taka ' + amountInWord + 'Only');
-//});
-
-//function GetTotalPayment(amount, howTimes) {
-//    var total = amount * howTimes;
-//    return total;
-//}
 
 var a = ['', 'one ', 'two ', 'three ', 'four ', 'five ', 'six ', 'seven ', 'eight ', 'nine ', 'ten ', 'eleven ', 'twelve ', 'thirteen ', 'fourteen ', 'fifteen ', 'sixteen ', 'seventeen ', 'eighteen ', 'nineteen '];
 var b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];

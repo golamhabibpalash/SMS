@@ -165,6 +165,8 @@ namespace SMS.DB
         public DbSet<SubjectWiseMarkSheetVM> SubjectWiseMarkSheetVMs { get; set; }
         [NotMapped]
         public DbSet<StudentWiseMarkSheetVM> StudentWiseMarkSheetVMs { get; set; }
+        [NotMapped]
+        public DbSet<PaidAmountResult> PaidAmountResults { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -212,6 +214,7 @@ namespace SMS.DB
             builder.Entity<StudentPaymentSchedulePaidVM>().ToView(nameof(StudentPaymentSchedulePaidVMs)).HasNoKey();
             builder.Entity<SubjectWiseMarkSheetVM>().ToView(nameof(SubjectWiseMarkSheetVMs)).HasNoKey();
             builder.Entity<StudentWiseMarkSheetVM>().ToView(nameof(StudentWiseMarkSheetVMs)).HasNoKey();
+            builder.Entity<PaidAmountResult>().ToView(nameof(PaidAmountResults)).HasNoKey();
 
         }
     }

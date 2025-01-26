@@ -156,6 +156,8 @@ namespace SMS.App.Controllers
                     ViewBag.roll = stRoll;
 
                     //spvm.PaymentVM.Payments = await GetSinglePaymentList(student.UniqueId);
+                    var existingAllPayments = _studentPaymentDetailsManager.GetAllByStudentUniqueId(student.UniqueId);
+
 
                     return View(spvm);
                 }

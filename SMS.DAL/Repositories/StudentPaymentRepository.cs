@@ -172,7 +172,10 @@ namespace SMS.DAL.Repositories
             double cMonthlyFee = 0;
             double othersFee = 0;
             var student = await _context.Student.FirstOrDefaultAsync(s => s.Id == stuId);
-            var classFees = await _context.ClassFeeList.Include(s => s.StudentFeeHead).Where(c => c.AcademicClassId == student.AcademicClassId && c.AcademicSessionId == student.AcademicSessionId && c.StudentFeeHead.IsResidential == student.IsResidential).ToListAsync();
+            var currentSession = await _context.AcademicSession.FirstOrDefaultAsync(s => s.CurrentSession == true);
+            //Get Current Session Class Fee
+            var classFees = await _context.ClassFeeList.Include(s => s.StudentFeeHead).Where(c => c.AcademicClassId == student.AcademicClassId && c.AcademicSessionId == currentSession.Id && c.StudentFeeHead.IsResidential == student.IsResidential).ToListAsync();
+
             var feeHeads = await _context.StudentFeeHead.Where(s => s.IsResidential == student.IsResidential).ToListAsync();
             var feeAllocations = await _context.StudentFeeAllocations.Where(s => s.UniqueId == student.UniqueId).ToListAsync();
 
@@ -211,7 +214,6 @@ namespace SMS.DAL.Repositories
                     if (cFees != null)
                     {
                         cMonthlyFee += cFees.Amount;
-
                     }
                 }
             }
@@ -233,7 +235,7 @@ namespace SMS.DAL.Repositories
 
             totalCurrentPayable = admissionOrSessionFee + cMonthlyFee + othersFee;
 
-            var allPayments = await _context.StudentPayment.Where(s => s.StudentId == student.Id).ToListAsync();
+            var allPayments = await _context.StudentPayment.Where(s => s.StudentId == student.Id && s.AcademicSessionId == currentSession.Id).ToListAsync();
             totalCurrentPaid = allPayments.Sum(m => m.TotalPayment);
 
             currentDue = totalCurrentPayable - totalCurrentPaid;

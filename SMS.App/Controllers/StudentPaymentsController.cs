@@ -156,8 +156,7 @@ namespace SMS.App.Controllers
                     ViewBag.roll = stRoll;
 
                     //spvm.PaymentVM.Payments = await GetSinglePaymentList(student.UniqueId);
-                    var existingAllPayments = _studentPaymentDetailsManager.GetAllByStudentUniqueId(student.UniqueId);
-
+                    var existingAllPayments = await _studentPaymentDetailsManager.GetAllByStudentUniqueId(student.UniqueId);
 
                     return View(spvm);
                 }
@@ -166,7 +165,6 @@ namespace SMS.App.Controllers
                     TempData["msg"] = "Student Not Found";
                     return RedirectToAction("Index");
                 }
-
             }
             catch (Exception)
             {
@@ -245,6 +243,8 @@ namespace SMS.App.Controllers
                 studentPaymentObject.TotalPayment = paymentObject.StudentPayment.TotalPayment;
                 studentPaymentObject.PaidDate = paymentObject.StudentPayment.PaidDate;
                 studentPaymentObject.Remarks = paymentObject.StudentPayment.Remarks;
+                studentPaymentObject.AcademicSessionId = paymentObject.CurrentAcademicSession.Id;
+                studentPaymentObject.AcademicSession = paymentObject.CurrentAcademicSession;
                 studentPaymentObject.UniqueId = await _studentManager.GetUniqueIdByStudentId(paymentObject.StudentPayment.StudentId);
                 var feeList = await _studentFeeHeadManager.GetAllAsync();
                 ViewData["FeeList"] = new SelectList(feeList.OrderBy(s => s.SL), "Id", "Name");
@@ -255,18 +255,13 @@ namespace SMS.App.Controllers
                     {
                         paymentDetails.CreatedAt = DateTime.Now;
                         paymentDetails.CreatedBy = HttpContext.Session.GetString("UserId");
-
-                        paymentDetails.EditedAt = DateTime.Now;
-                        paymentDetails.EditedBy = HttpContext.Session.GetString("UserId");
-
+                                               
                         paymentDetails.MACAddress = MACService.GetMAC();
                         studentPaymentDetailsObject.Add(paymentDetails);
                     }
                     studentPaymentObject.ReceiptNo = paymentObject.StudentPayment.ReceiptNo;
                     studentPaymentObject.CreatedAt = DateTime.Now;
                     studentPaymentObject.CreatedBy = HttpContext.Session.GetString("UserId");
-                    studentPaymentObject.EditedAt = DateTime.Now;
-                    studentPaymentObject.EditedBy = HttpContext.Session.GetString("UserId");
                     studentPaymentObject.MACAddress = MACService.GetMAC();
 
                     studentPaymentObject.StudentPaymentDetails = studentPaymentDetailsObject;

@@ -81,7 +81,7 @@
                         <div class="col-md-12">
                             <dl class="row p-2">
                                 <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
-                                    Employee ID :
+                                    ID :
                                 </dt>
                                 <dd class="col-sm-8 col-8 border-bottom">
                                     @Model.Employee.Id.ToString().PadLeft(5, '0')
@@ -94,7 +94,7 @@
                                 </dd>
 
                                 <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
-                                    নাম (বাংলা) :
+                                    নাম :
                                 </dt>
                                 <dd class="col-sm-8 col-8 border-bottom">
                                     @Html.DisplayFor(model => model.Employee.EmployeeNameBangla)
@@ -112,19 +112,19 @@
                                     @Model.Employee.JoiningDate.ToString("dd MMM yyyy")
                                 </dd>
                                 <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
-                                    Phone No :
+                                    Phone :
                                 </dt>
                                 <dd class="col-sm-8 col-8 border-bottom">
                                     @Model.Employee.Phone
                                 </dd>
                                 <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
-                                    Email Address :
+                                    Email :
                                 </dt>
                                 <dd class="col-sm-8 col-8 border-bottom">
                                     @Model.Employee.Email
                                 </dd>
                                 <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
-                                    Active Status :
+                                    Status :
                                 </dt>
                                 <dd class="col-sm-8 col-8 border-bottom">
                                     @if (Model.Employee.Status)
@@ -184,7 +184,7 @@
                                                             <div class="shadow">
                                                                 @foreach (var sModule in module.SubModuleList.OrderBy(s => s.SubModuleName))
                                                                 {
-                                                                    <div class="col-sm-6 col-md-4 col-lg-3 mb-3">
+                                                                    <div class="col-sm-6 col-md-4 col-lg-4 mb-3">
                                                                         <div class="card shadow">
                                                                             <div class="card-header">
                                                                                 <h5 class=" text-info">

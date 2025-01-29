@@ -311,8 +311,9 @@ namespace SchoolManagementSystem.Controllers
                 List<AttendanceIndivisualVM> attendanceIndivisualVMs = new List<AttendanceIndivisualVM>();
                 for (int i = startingMonth; i <= presentMonth; i++)
                 {
+                    var monthYear = i.ToString() + DateTime.Now.Year;
                     AttendanceIndivisualVM attendanceIndivisualVM = new AttendanceIndivisualVM();
-                    var monthlyAttendance = await _attendanceMachineManager.GetAttendanceByMonthSingleStudent(student.Id, i);
+                    var monthlyAttendance = await _attendanceMachineManager.GetAttendanceByMonthSingleStudent(student.Id, monthYear);
                     attendanceIndivisualVM.AttendanceCount = monthlyAttendance.Count;
                     var holidays = await _offDayManager.GetMonthlyHolidaysAsync(i.ToString().PadLeft(2, '0') + DateTime.Now.Year.ToString());
                     attendanceIndivisualVM.TotalDays = DateTime.DaysInMonth(DateTime.Now.Year, i) - holidays.Count;

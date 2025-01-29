@@ -33,7 +33,7 @@ namespace SMS.Entities
         [Required]
         public string UniqueId { get; set; }
         public int? AcademicSessionId { get; set; } = 0;
-        public AcademicSession AcademicSession { get; set; } = new AcademicSession();
+        //public virtual AcademicSession AcademicSession { get; set; }
 
         public List<StudentPaymentDetails> StudentPaymentDetails { get; set; } = new List<StudentPaymentDetails>();
 

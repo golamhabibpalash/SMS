@@ -244,7 +244,7 @@ namespace SMS.App.Controllers
                 studentPaymentObject.PaidDate = paymentObject.StudentPayment.PaidDate;
                 studentPaymentObject.Remarks = paymentObject.StudentPayment.Remarks;
                 studentPaymentObject.AcademicSessionId = paymentObject.CurrentAcademicSession.Id;
-                studentPaymentObject.AcademicSession = paymentObject.CurrentAcademicSession;
+                //studentPaymentObject.AcademicSession = paymentObject.CurrentAcademicSession;
                 studentPaymentObject.UniqueId = await _studentManager.GetUniqueIdByStudentId(paymentObject.StudentPayment.StudentId);
                 var feeList = await _studentFeeHeadManager.GetAllAsync();
                 ViewData["FeeList"] = new SelectList(feeList.OrderBy(s => s.SL), "Id", "Name");
@@ -255,7 +255,7 @@ namespace SMS.App.Controllers
                     {
                         paymentDetails.CreatedAt = DateTime.Now;
                         paymentDetails.CreatedBy = HttpContext.Session.GetString("UserId");
-                                               
+
                         paymentDetails.MACAddress = MACService.GetMAC();
                         studentPaymentDetailsObject.Add(paymentDetails);
                     }
@@ -801,4 +801,3 @@ namespace SMS.App.Controllers
         }
     }
 }
-

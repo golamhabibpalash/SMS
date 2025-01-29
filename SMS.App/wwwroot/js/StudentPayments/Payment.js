@@ -91,10 +91,12 @@ $('#StudentPayment_StudentPaymentDetails_0__StudentFeeHeadId').change(function (
         type: 'POST',
         dataType: 'json',
         success: function (d) {
-
+            console.log(d);
             $('#StudentPayment_StudentPaymentDetails_0__PaidAmount').val('');
+            $('#StudentPayment_StudentPaymentDetails_0__ClassFeeId').val(d.id);
             $('#StudentPayment_TotalPayment').val('');
             let pAmount = d.amount;
+
             //d.studentFeeHead.repeatedly == true ? $('#howManyTimes').show() : $('#howManyTimes').hide();
             $('#StudentPayment_StudentPaymentDetails_0__PaidAmount').val(pAmount);
             $('#StudentPayment_TotalPayment').val(pAmount);

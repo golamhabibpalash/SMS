@@ -151,6 +151,36 @@
             let fileName = 'MarkSheet_' + className + '_' + studentname;
             return fileName;
         }
+        $('#aAcademicSession').change(function () {
+            let id = $('#aAcademicSession option:selected').val();
+            $.ajax({
+                url: "/AcademicExamGroup/GetExamGroupsBySession?sessionId=" + id,
+                dataType: "JSON",
+                type: "POST",
+                cache: false,
+                success: function (data) {
+                    $('#aExamGroup').empty();
+                    if (data != null || data != '') {
+                        var o = '<option disabled selected value="">Select Exam Group</option>';
+                        $('#aExamGroup').append(o);
+                        $.each(data, function (i, obj) {
+                            console.log(obj);
+                            var op = '<option value="' + obj.id + '">' + obj.examGroupName + '</option>';
+                            $('#aExamGroup').append(op);
+                        });
+                    }
+                    else {
+                        var o = '<option disabled selected>Group Not Found</option>';
+                        $('#aExamGroup').append(o);
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+            let sectionId = $('#aAcademicSection option:selected').val();
+            //loadStudentListDropdown(sessionId, id, sectionId);
+        });
 
         $('#aAcademicClass').change(function () {
             let id = $('#aAcademicClass option:selected').val();

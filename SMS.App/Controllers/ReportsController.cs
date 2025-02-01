@@ -8,6 +8,7 @@ using SchoolManagementSystem;
 using SMS.App.Utilities.Others;
 using SMS.App.ViewModels.AttendanceVM;
 using SMS.App.ViewModels.ReportVM;
+using SMS.App.ViewModels.ReportVM.MarkSheet;
 using SMS.BLL.Contracts;
 using SMS.BLL.Contracts.Reports;
 using SMS.Entities;
@@ -45,11 +46,12 @@ namespace SMS.App.Controllers
         private readonly IGradingTableManager _gradingTableManager;
         private readonly IAcademicExamGroupManager _academicExamGroupManager;
         private readonly IStudentFeeHeadManager _studentFeeHeadManager;
+        private readonly IExamResultManager _examResultManager;
 
         #endregion properties
 
         #region Constructor
-        public ReportsController(IWebHostEnvironment host, IStudentManager studentManager, IReportManager reportManager, IAcademicClassManager academicClassManager, IAttendanceMachineManager attendanceMachineManager, IOffDayManager dayManager, IAcademicSessionManager academicSessionManager, IAcademicSectionManager academicSectionManager, IInstituteManager instituteManager, IAcademicExamDetailsManager academicExamDetailsManager, IAcademicExamManager academicExamManager, IGradingTableManager gradingTableManager, IAcademicExamGroupManager academicExamGroupManager, IStudentFeeHeadManager studentFeeHeadManager)
+        public ReportsController(IWebHostEnvironment host, IStudentManager studentManager, IReportManager reportManager, IAcademicClassManager academicClassManager, IAttendanceMachineManager attendanceMachineManager, IOffDayManager dayManager, IAcademicSessionManager academicSessionManager, IAcademicSectionManager academicSectionManager, IInstituteManager instituteManager, IAcademicExamDetailsManager academicExamDetailsManager, IAcademicExamManager academicExamManager, IGradingTableManager gradingTableManager, IAcademicExamGroupManager academicExamGroupManager, IStudentFeeHeadManager studentFeeHeadManager, IExamResultManager examResultManager)
         {
             _host = host;
             _studentManager = studentManager;
@@ -65,6 +67,7 @@ namespace SMS.App.Controllers
             _gradingTableManager = gradingTableManager;
             _academicExamGroupManager = academicExamGroupManager;
             _studentFeeHeadManager = studentFeeHeadManager;
+            _examResultManager = examResultManager;
         }
         #endregion Constructor
 
@@ -174,7 +177,7 @@ namespace SMS.App.Controllers
                 byte[] imageBytes = ms.ToArray();
                 imageParam = Convert.ToBase64String(imageBytes);
             }
-            attendanceFor = attendanceFor=="s"?"student":"employee";
+            attendanceFor = attendanceFor == "s" ? "student" : "employee";
             AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSession();
 
             List<RptDailyAttendaceVM> studentDailyAttendance = await _reportManager.GetDailyAttendanceReport(fromDate, academicClassId, academicSectionId, attendanceType, academicSession.Id.ToString(), attendanceFor);
@@ -318,7 +321,6 @@ namespace SMS.App.Controllers
         }
         #endregion Attendance Reports
 
-
         #region Result or MarkSheet
         [Authorize(Policy = "SubjectWiseMarkSheetReportsPolicy")]
         public async Task<IActionResult> SubjectWiseMarkSheet(string reportType, int examId, string fileName)
@@ -432,7 +434,6 @@ namespace SMS.App.Controllers
             }
             catch (Exception)
             {
-
                 throw;
             }
             var pdf = report.Render("pdf");
@@ -464,19 +465,19 @@ namespace SMS.App.Controllers
         }
 
         [Authorize(Policy = "StudentWiseMarkSheetReportsPolicy")]
-        public async Task<IActionResult> MarkSheetReportExport(string reportType, string fileName, int examGroupId, int academicClassId, int? sectionId, int sessionId,int studentId)
+        public async Task<IActionResult> MarkSheetReportExport(string reportType, string fileName, int examGroupId, int academicClassId, int? sectionId, int sessionId, int studentId)
         {
             var results = await _reportManager.GetStudentWiseMarkSheet(examGroupId, academicClassId);
-            if (results == null || results.Count<=0)
+            if (results == null || results.Count <= 0)
             {
                 return new JsonResult("Result not found");
             }
-            
-            if (sectionId!=null || sectionId>0)
+
+            if (sectionId != null || sectionId > 0)
             {
                 results = results.Where(s => s.AcademicSectionId == sectionId).ToList();
             }
-            if (studentId>0)
+            if (studentId > 0)
             {
                 results = results.Where(s => s.StudentId == studentId).ToList();
             }
@@ -487,7 +488,7 @@ namespace SMS.App.Controllers
             Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
 
             string imageParam = "";
-            var instituteLogoPath = _host.WebRootPath + "\\Images\\Institute\\"+ institute.Logo;
+            var instituteLogoPath = _host.WebRootPath + "\\Images\\Institute\\" + institute.Logo;
 
             Image image = Image.FromFile(instituteLogoPath);
             using (MemoryStream ms = new MemoryStream())
@@ -508,7 +509,7 @@ namespace SMS.App.Controllers
 
             string publicationDate = results.Select(r => r.CreatedAt).FirstOrDefault().ToString("dd MMM yyyy");
             try
-                {
+            {
                 var parameters = new[] {
                     new ReportParameter("InstituteName", institute.Name),
                     new ReportParameter("Address", institute.Address),
@@ -520,14 +521,19 @@ namespace SMS.App.Controllers
                 };
                 report.ReportPath = path;
                 report.SetParameters(parameters);
+
+                //For Sub Report
+                report.SubreportProcessing += new SubreportProcessingEventHandler(SubReportAnnualReportProcessingAsync);
+
+
+                TempData["gTables"] = await _gradingTableManager.GetAllAsync();
+                report.SubreportProcessing += new SubreportProcessingEventHandler(SubReportGraddingTableProcessingAsync);
             }
             catch (Exception ex)
             {
                 return new JsonResult(ex.InnerException.Message);
                 throw;
             }
-
-
 
             var pdf = report.Render("pdf");
 
@@ -546,13 +552,22 @@ namespace SMS.App.Controllers
             }
             return File(pdf, stringBuilderMediaType.ToString());
         }
-        void SubReportProcessingAsync(object sender, SubreportProcessingEventArgs e)
+        void SubReportGraddingTableProcessingAsync(object sender, SubreportProcessingEventArgs e)
         {
             var gTables = TempData["gTables"];
-            ReportDataSource reportDataSource = new ReportDataSource("",gTables);
+            ReportDataSource reportDataSource = new ReportDataSource("GradingTable_DataSet", gTables);
             e.DataSources.Add(reportDataSource);
         }
-
+        void SubReportAnnualReportProcessingAsync(object sender, SubreportProcessingEventArgs e)
+        {
+            if (e.ReportPath == "rptAnnualReport")
+            {
+                var stId = int.Parse(e.Parameters["StudentId"].Values[0]);
+                var data = GetAnnualReportData(stId).GetAwaiter().GetResult();
+                ReportDataSource reportDataSource = new ReportDataSource("AnnualReportDS", data);
+                e.DataSources.Add(reportDataSource);
+            }
+        }
         #endregion Result or MarkSheet
 
         #region Student Payment Reports
@@ -635,7 +650,7 @@ namespace SMS.App.Controllers
         public async Task<IActionResult> StudentPaymentReport()
         {
             ViewData["AcademicClass"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name").ToList();
-            
+
             return View();
         }
 
@@ -659,7 +674,7 @@ namespace SMS.App.Controllers
             }
             else if (paymentCategory == "nonResidential")
             {
-                sPayment = sPayment.Where(s => s.IsResidential==false).ToList();
+                sPayment = sPayment.Where(s => s.IsResidential == false).ToList();
                 reportName = "Payments Summary Report(Non Residential)";
             }
             else
@@ -843,7 +858,6 @@ namespace SMS.App.Controllers
         }
         #endregion Admit Card Reports
 
-
         #region Common Methods
         private static RenderType GetRenderType(string reportType)
         {
@@ -866,18 +880,85 @@ namespace SMS.App.Controllers
             };
             return outputFileName;
         }
+
+        private async Task<List<SubRerportAnnualReport>> GetAnnualReportData(int studentId)
+        {
+            var student = await _studentManager.GetByIdAsync(studentId);
+            var examGroups = await _academicExamGroupManager.GetBySession(student.AcademicSessionId);
+            List<SubRerportAnnualReport> filteredData = new List<SubRerportAnnualReport>();
+            if (examGroups != null)
+            {
+                foreach (var eGroup in examGroups)
+                {
+                    var examResults = await _examResultManager.GetExamResultsByExamGroupNClassId(eGroup.Id, student.AcademicClassId);
+                    foreach (var rItem in examResults.Where(s => s.StudentId == student.Id))
+                    {
+                        SubRerportAnnualReport subRerportAnnualReport = new SubRerportAnnualReport()
+                        {
+                            MonthSL = eGroup.ExamMonthId,
+                            AttendancePercent = rItem.AttendancePercentage.ToString(),
+                            MeritPosition = rItem.Rank,
+                            TotalStudent = examResults.Count()
+                        };
+                        filteredData.Add(subRerportAnnualReport);
+                    }
+                }
+            }
+            List<SubRerportAnnualReport> data = new List<SubRerportAnnualReport>();
+            DateTimeFormatInfo dateTimeFormat = CultureInfo.CurrentCulture.DateTimeFormat;
+            int monthSL = 1;
+            foreach (var monthName in dateTimeFormat.MonthNames)
+            {
+                var fData = filteredData.FirstOrDefault(s => s.MonthSL == monthSL);
+                if (!string.IsNullOrEmpty(monthName))
+                {
+                    data.Add(new SubRerportAnnualReport()
+                    {
+                        Month = monthName,
+                        MonthSL = monthSL,
+                        //AttendancePercent = "",
+                        //MeritPosition = 0,
+                        //TotalStudent = 90
+                        AttendancePercent = fData?.AttendancePercent,
+                        MeritPosition = fData?.MeritPosition,
+                        TotalStudent = fData?.TotalStudent
+                    });
+                    monthSL++;
+                }
+            }
+            return data;
+        }
         #endregion Common Methods
 
+        #region Gradingtable
         public async Task<IActionResult> GradingTable()
         {
             var gTables = await _gradingTableManager.GetAllAsync();
             LocalReport localSubReport = new LocalReport();
             localSubReport.ReportPath = _host.WebRootPath + "//Reports/Rpt_GradingTable.rdlc";
-            localSubReport.DataSources.Add(new ReportDataSource("GradingTable_DataSet",gTables));
+            localSubReport.DataSources.Add(new ReportDataSource("GradingTable_DataSet", gTables));
             var pdf = localSubReport.Render("pdf");
             return File(pdf, "application/pdf");
         }
+        #endregion GradingTable
+
+        #region Annual Report
+        public async Task<IActionResult> AnnualReport()
+        {
+            var data = await GetAnnualReportData(1920);
+            LocalReport localSubReport = new LocalReport();
+
+            var parameters = new[] {
+                new ReportParameter("StudentId", 1920.ToString()),
+            };
+            localSubReport.ReportPath = _host.WebRootPath + "//Reports/rptAnnualReport.rdlc";
+            localSubReport.SetParameters(parameters);
 
 
+            localSubReport.DataSources.Add(new ReportDataSource("AnnualReportDS", data));
+            var pdf = localSubReport.Render("pdf");
+            return File(pdf, "application/pdf");
+        }
+        #endregion Annual Report
     }
 }

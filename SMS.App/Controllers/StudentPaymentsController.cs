@@ -96,7 +96,13 @@ namespace SMS.App.Controllers
             {
                 return RedirectToAction("Index");
             }
-
+            var msg = "";
+            if (TempData["success"] != null)
+            {
+                msg = TempData["success"].ToString();
+                TempData["created"] = msg;
+            }
+            ViewBag.msg = msg;
             List<StudentPayment> studentPayments = new();
             StudentPaymentVM spvm = new();
             spvm.CurrentAcademicSession = await _academicSessionManager.GetCurrentAcademicSession();
@@ -269,7 +275,7 @@ namespace SMS.App.Controllers
                     bool isSaved = await _studentPaymentManager.AddAsync(studentPaymentObject);
                     if (isSaved)
                     {
-                        TempData["Saved"] = ViewBag.msg = "New payment added successfully!";
+                        TempData["success"] = ViewBag.msg = "New payment added successfully!";
                         if (paymentObject.IsSMSSend == true)
                         {
                             var smsSetup = await _setupMobileSMSManager.GetByIdAsync(1);

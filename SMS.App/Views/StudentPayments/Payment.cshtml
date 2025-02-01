@@ -341,8 +341,6 @@
 
 
     <script>
-        let created = '@TempData["created"]';
-
         //panel collaps decodeURI
         $('.panel-collapse').on('show.bs.collapse', function () {
             $(this).siblings('.panel-heading').addClass('active');
@@ -355,13 +353,9 @@
     </script>
     <script>
         $(function () {
-            let saved = '@TempData["saved"]';
             let deleted = '@TempData["deleted"]';
             let edited = '@TempData["updated"]';
 
-            if (saved != "") {
-                alertify.success("Saved Successfully");
-            }
             if (deleted != "") {
                 alertify.error("Deleted Successfully");
             }

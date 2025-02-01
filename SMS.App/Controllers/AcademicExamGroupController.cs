@@ -75,7 +75,7 @@ namespace SMS.App.Controllers
         [Authorize(Policy = "DetailsAcademicExamGroupPolicy")]
         public async Task<ActionResult> Details(int id)
         {
-            if (TempData["failed"]!=null)
+            if (TempData["failed"] != null)
             {
                 TempData["failed"] = TempData["failed"].ToString();
             }
@@ -127,7 +127,7 @@ namespace SMS.App.Controllers
                 if (string.IsNullOrEmpty(academicExamGroup.ExamGroupName))
                 {
                     TempData["error"] = "Group Name should not empty.";
-                    return RedirectToAction("index",academicExamGroup);
+                    return RedirectToAction("index", academicExamGroup);
                 }
                 academicExamGroup.CreatedAt = DateTime.Now;
                 academicExamGroup.CreatedBy = HttpContext.Session.GetString("UserId");
@@ -174,9 +174,9 @@ namespace SMS.App.Controllers
         [Authorize(Policy = "EditAcademicExamGroupPolicy")]
         public async Task<ActionResult> Edit(int id, AcademicExamGroup academicExamGroup)
         {
-            if (id!=academicExamGroup.Id)
+            if (id != academicExamGroup.Id)
             {
-                TempData["error"]="Data Not matched";
+                TempData["error"] = "Data Not matched";
                 return View(academicExamGroup);
             }
 
@@ -187,7 +187,7 @@ namespace SMS.App.Controllers
             ViewData["AcademicExamTypeList"] = new SelectList(await _academicExamTypeManager.GetAllAsync(), "Id", "ExamTypeName", academicExamGroup.academicExamTypeId);
             try
             {
-                if (existingExamGroup != null && id!=existingExamGroup.Id)
+                if (existingExamGroup != null && id != existingExamGroup.Id)
                 {
                     TempData["error"] = "This Exam Group is already exist.";
                     return RedirectToAction("index");
@@ -206,9 +206,9 @@ namespace SMS.App.Controllers
                     TempData["error"] = "Update failed. Something wrong";
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                TempData["error"] = "Exception: "+ex.Message;
+                TempData["error"] = "Exception: " + ex.Message;
                 return RedirectToAction("Index");
             }
             return RedirectToAction("index");
@@ -222,13 +222,13 @@ namespace SMS.App.Controllers
             AcademicExamGroup academicExamGroup = await _examGroupManager.GetByIdAsync(id);
             try
             {
-                if (academicExamGroup!=null)
+                if (academicExamGroup != null)
                 {
                     var examList = await _academicExamManager.GetAllAsync();
-                    if (examList!=null)
+                    if (examList != null)
                     {
                         AcademicExam existingExam = examList.FirstOrDefault(s => s.AcademicExamGroupId == id);
-                        if (existingExam!=null)
+                        if (existingExam != null)
                         {
                             TempData["error"] = "Existing Exam available in this group.";
                             return RedirectToAction("index");
@@ -237,7 +237,7 @@ namespace SMS.App.Controllers
                     bool isDeleted = await _examGroupManager.RemoveAsync(academicExamGroup);
                     if (isDeleted)
                     {
-                        TempData["created"]= "Deleted Successfully.";
+                        TempData["created"] = "Deleted Successfully.";
                     }
                     else
                     {
@@ -267,5 +267,20 @@ namespace SMS.App.Controllers
             }
             return Json(examGroup);
         }
+
+        public async Task<JsonResult> GetExamGroupsBySession(int sessionId)
+        {
+            var examGroup = new List<AcademicExamGroup>();
+            try
+            {
+                examGroup = (List<AcademicExamGroup>)await _examGroupManager.GetBySession(sessionId);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return Json(examGroup);
+        }
+
     }
 }

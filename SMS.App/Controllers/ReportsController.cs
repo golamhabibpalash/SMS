@@ -481,7 +481,10 @@ namespace SMS.App.Controllers
             {
                 results = results.Where(s => s.StudentId == studentId).ToList();
             }
-
+            if (results == null || results.Count <= 0)
+            {
+                return new JsonResult("Result not found");
+            }
             AcademicExamGroup academicExamGroup = await _academicExamGroupManager.GetByIdAsync(examGroupId);
             AcademicClass academicClass = await _academicClassManager.GetByIdAsync(academicClassId);
 

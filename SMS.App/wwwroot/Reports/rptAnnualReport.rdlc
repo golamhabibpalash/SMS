@@ -58,7 +58,7 @@
                 <TablixBody>
                   <TablixColumns>
                     <TablixColumn>
-                      <Width>2.12958cm</Width>
+                      <Width>1.91791cm</Width>
                     </TablixColumn>
                     <TablixColumn>
                       <Width>1.5475cm</Width>
@@ -67,7 +67,7 @@
                       <Width>1.44166cm</Width>
                     </TablixColumn>
                     <TablixColumn>
-                      <Width>1.17708cm</Width>
+                      <Width>1.23cm</Width>
                     </TablixColumn>
                   </TablixColumns>
                   <TablixRows>
@@ -86,6 +86,7 @@
                                       <Value>Month</Value>
                                       <Style>
                                         <FontFamily>Times New Roman</FontFamily>
+                                        <FontSize>11pt</FontSize>
                                         <FontWeight>Bold</FontWeight>
                                       </Style>
                                     </TextRun>
@@ -120,6 +121,7 @@
                                       <Value>Merit Position</Value>
                                       <Style>
                                         <FontFamily>Times New Roman</FontFamily>
+                                        <FontSize>11pt</FontSize>
                                         <FontWeight>Bold</FontWeight>
                                       </Style>
                                     </TextRun>
@@ -162,6 +164,7 @@
                                       <Value>Total Student</Value>
                                       <Style>
                                         <FontFamily>times New Roman</FontFamily>
+                                        <FontSize>11pt</FontSize>
                                         <FontWeight>Bold</FontWeight>
                                       </Style>
                                     </TextRun>
@@ -198,6 +201,7 @@
                                       <Value>Attend %</Value>
                                       <Style>
                                         <FontFamily>Times New Roman</FontFamily>
+                                        <FontSize>11pt</FontSize>
                                         <FontWeight>Bold</FontWeight>
                                       </Style>
                                     </TextRun>
@@ -239,6 +243,7 @@
                                       <Value>=Fields!Month.Value</Value>
                                       <Style>
                                         <FontFamily>times New Roman</FontFamily>
+                                        <FontSize>11pt</FontSize>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
@@ -281,6 +286,7 @@
                                       <Value>=Fields!MeritPosition.Value</Value>
                                       <Style>
                                         <FontFamily>Times New Roman</FontFamily>
+                                        <FontSize>11pt</FontSize>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
@@ -316,6 +322,7 @@
                                       <Value>=Fields!TotalStudent.Value</Value>
                                       <Style>
                                         <FontFamily>Times New Roman</FontFamily>
+                                        <FontSize>11pt</FontSize>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
@@ -351,6 +358,7 @@
                                       <Value>=Fields!AttendancePercent.Value</Value>
                                       <Style>
                                         <FontFamily>Times New Roman</FontFamily>
+                                        <FontSize>11pt</FontSize>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
@@ -410,7 +418,7 @@
                 <Top>0.61383cm</Top>
                 <Left>0cm</Left>
                 <Height>1.62333cm</Height>
-                <Width>6.29582cm</Width>
+                <Width>6.13707cm</Width>
                 <Style>
                   <Border>
                     <Style>None</Style>
@@ -449,6 +457,7 @@
                                       <Value>Month</Value>
                                       <Style>
                                         <FontFamily>times New Roman</FontFamily>
+                                        <FontSize>11pt</FontSize>
                                         <FontWeight>Bold</FontWeight>
                                       </Style>
                                     </TextRun>
@@ -483,6 +492,7 @@
                                       <Value>Merit Position</Value>
                                       <Style>
                                         <FontFamily>times New Roman</FontFamily>
+                                        <FontSize>11pt</FontSize>
                                         <FontWeight>Bold</FontWeight>
                                       </Style>
                                     </TextRun>
@@ -517,6 +527,7 @@
                                       <Value>Total Student</Value>
                                       <Style>
                                         <FontFamily>times New Roman</FontFamily>
+                                        <FontSize>11pt</FontSize>
                                         <FontWeight>Bold</FontWeight>
                                       </Style>
                                     </TextRun>
@@ -566,6 +577,7 @@
                                       <Value>Attend %</Value>
                                       <Style>
                                         <FontFamily>times New Roman</FontFamily>
+                                        <FontSize>11pt</FontSize>
                                         <FontWeight>Bold</FontWeight>
                                       </Style>
                                     </TextRun>
@@ -606,6 +618,7 @@
                                       <Value>=Fields!Month.Value</Value>
                                       <Style>
                                         <FontFamily>times New Roman</FontFamily>
+                                        <FontSize>11pt</FontSize>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
@@ -639,6 +652,7 @@
                                       <Value>=Fields!MeritPosition.Value</Value>
                                       <Style>
                                         <FontFamily>times New Roman</FontFamily>
+                                        <FontSize>11pt</FontSize>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
@@ -674,6 +688,7 @@
                                       <Value>=Fields!TotalStudent.Value</Value>
                                       <Style>
                                         <FontFamily>times New Roman</FontFamily>
+                                        <FontSize>11pt</FontSize>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
@@ -709,6 +724,7 @@
                                       <Value>=Fields!AttendancePercent.Value</Value>
                                       <Style>
                                         <FontFamily>times New Roman</FontFamily>
+                                        <FontSize>11pt</FontSize>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>

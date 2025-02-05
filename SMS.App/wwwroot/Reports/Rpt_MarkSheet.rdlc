@@ -144,7 +144,7 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>18.02191cm</Width>
+                  <Width>19.45063cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -337,22 +337,22 @@
                               <TablixBody>
                                 <TablixColumns>
                                   <TablixColumn>
-                                    <Width>3.66578cm</Width>
+                                    <Width>3.9092cm</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>0.59661cm</Width>
+                                    <Width>0.84003cm</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>4.2214cm</Width>
+                                    <Width>4.46482cm</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>3.05723cm</Width>
+                                    <Width>3.30065cm</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>0.59661cm</Width>
+                                    <Width>0.84003cm</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>5.59848cm</Width>
+                                    <Width>5.8419cm</Width>
                                   </TablixColumn>
                                 </TablixColumns>
                                 <TablixRows>
@@ -372,6 +372,7 @@
                                                     <Style>
                                                       <FontStyle>Italic</FontStyle>
                                                       <FontFamily>times New Roman</FontFamily>
+                                                      <FontSize>11pt</FontSize>
                                                       <FontWeight>Bold</FontWeight>
                                                     </Style>
                                                   </TextRun>
@@ -421,6 +422,7 @@
                                                     <Value>Name of the Student</Value>
                                                     <Style>
                                                       <FontFamily>times New Roman</FontFamily>
+                                                      <FontSize>11pt</FontSize>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
@@ -493,7 +495,8 @@
                                                     <Value>=Fields!StudentName.Value</Value>
                                                     <Style>
                                                       <FontStyle>Italic</FontStyle>
-                                                      <FontFamily>Arial Narrow</FontFamily>
+                                                      <FontFamily>times New Roman</FontFamily>
+                                                      <FontSize>11pt</FontSize>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
@@ -539,6 +542,7 @@
                                                     <Value>Class Roll</Value>
                                                     <Style>
                                                       <FontFamily>times New Roman</FontFamily>
+                                                      <FontSize>11pt</FontSize>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
@@ -611,7 +615,8 @@
                                                     <Value>=Fields!ClassRoll.Value</Value>
                                                     <Style>
                                                       <FontStyle>Italic</FontStyle>
-                                                      <FontFamily>Arial Narrow</FontFamily>
+                                                      <FontFamily>times New Roman</FontFamily>
+                                                      <FontSize>11pt</FontSize>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
@@ -648,7 +653,10 @@
                                                 <TextRuns>
                                                   <TextRun>
                                                     <Value>Section Name</Value>
-                                                    <Style />
+                                                    <Style>
+                                                      <FontFamily>times New Roman</FontFamily>
+                                                      <FontSize>11pt</FontSize>
+                                                    </Style>
                                                   </TextRun>
                                                 </TextRuns>
                                                 <Style />
@@ -682,7 +690,9 @@
                                                 <TextRuns>
                                                   <TextRun>
                                                     <Value>:</Value>
-                                                    <Style />
+                                                    <Style>
+                                                      <FontSize>11pt</FontSize>
+                                                    </Style>
                                                   </TextRun>
                                                 </TextRuns>
                                                 <Style>
@@ -720,7 +730,8 @@
                                                     <Value>=Fields!SectionName.Value</Value>
                                                     <Style>
                                                       <FontStyle>Italic</FontStyle>
-                                                      <FontFamily>Arial Narrow</FontFamily>
+                                                      <FontFamily>times New Roman</FontFamily>
+                                                      <FontSize>11pt</FontSize>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
@@ -762,6 +773,7 @@
                                                     <Value>Father's Name</Value>
                                                     <Style>
                                                       <FontFamily>times New Roman</FontFamily>
+                                                      <FontSize>11pt</FontSize>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
@@ -834,7 +846,8 @@
                                                     <Value>=Fields!FatherName.Value</Value>
                                                     <Style>
                                                       <FontStyle>Italic</FontStyle>
-                                                      <FontFamily>Arial Narrow</FontFamily>
+                                                      <FontFamily>times New Roman</FontFamily>
+                                                      <FontSize>11pt</FontSize>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
@@ -869,7 +882,10 @@
                                                 <TextRuns>
                                                   <TextRun>
                                                     <Value>Mother's Name</Value>
-                                                    <Style />
+                                                    <Style>
+                                                      <FontFamily>times New Roman</FontFamily>
+                                                      <FontSize>11pt</FontSize>
+                                                    </Style>
                                                   </TextRun>
                                                 </TextRuns>
                                                 <Style />
@@ -903,7 +919,9 @@
                                                 <TextRuns>
                                                   <TextRun>
                                                     <Value>:</Value>
-                                                    <Style />
+                                                    <Style>
+                                                      <FontSize>11pt</FontSize>
+                                                    </Style>
                                                   </TextRun>
                                                 </TextRuns>
                                                 <Style>
@@ -941,7 +959,8 @@
                                                     <Value>=Fields!MotherName.Value</Value>
                                                     <Style>
                                                       <FontStyle>Italic</FontStyle>
-                                                      <FontFamily>Arial Narrow</FontFamily>
+                                                      <FontFamily>times New Roman</FontFamily>
+                                                      <FontSize>11pt</FontSize>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
@@ -983,6 +1002,7 @@
                                                     <Value>Religion</Value>
                                                     <Style>
                                                       <FontFamily>times New Roman</FontFamily>
+                                                      <FontSize>11pt</FontSize>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
@@ -1055,7 +1075,8 @@
                                                     <Value>=Fields!ReligionName.Value</Value>
                                                     <Style>
                                                       <FontStyle>Italic</FontStyle>
-                                                      <FontFamily>Arial Narrow</FontFamily>
+                                                      <FontFamily>times New Roman</FontFamily>
+                                                      <FontSize>11pt</FontSize>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
@@ -1090,7 +1111,10 @@
                                                 <TextRuns>
                                                   <TextRun>
                                                     <Value>Date of Birth</Value>
-                                                    <Style />
+                                                    <Style>
+                                                      <FontFamily>times New Roman</FontFamily>
+                                                      <FontSize>11pt</FontSize>
+                                                    </Style>
                                                   </TextRun>
                                                 </TextRuns>
                                                 <Style />
@@ -1124,7 +1148,9 @@
                                                 <TextRuns>
                                                   <TextRun>
                                                     <Value>:</Value>
-                                                    <Style />
+                                                    <Style>
+                                                      <FontSize>11pt</FontSize>
+                                                    </Style>
                                                   </TextRun>
                                                 </TextRuns>
                                                 <Style>
@@ -1162,7 +1188,8 @@
                                                     <Value>=Format(CDate(Fields!DOB.Value), "dd MMM yyyy")</Value>
                                                     <Style>
                                                       <FontStyle>Italic</FontStyle>
-                                                      <FontFamily>Arial Narrow</FontFamily>
+                                                      <FontFamily>times New Roman</FontFamily>
+                                                      <FontSize>11pt</FontSize>
                                                       <Format>=Format(CDate(Fields!DOB.Value), "dd MMM yyyy")</Format>
                                                     </Style>
                                                   </TextRun>
@@ -1215,7 +1242,7 @@
                               <Top>4.69814cm</Top>
                               <Left>0.254cm</Left>
                               <Height>3cm</Height>
-                              <Width>17.73611cm</Width>
+                              <Width>19.19663cm</Width>
                               <ZIndex>5</ZIndex>
                               <Style>
                                 <Border>
@@ -1230,13 +1257,13 @@
                               <TablixBody>
                                 <TablixColumns>
                                   <TablixColumn>
-                                    <Width>12.56381cm</Width>
+                                    <Width>13.05064cm</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>2.4001cm</Width>
+                                    <Width>2.88693cm</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>2.77222cm</Width>
+                                    <Width>3.25905cm</Width>
                                   </TablixColumn>
                                 </TablixColumns>
                                 <TablixRows>
@@ -1256,6 +1283,7 @@
                                                     <Style>
                                                       <FontStyle>Italic</FontStyle>
                                                       <FontFamily>times New Roman</FontFamily>
+                                                      <FontSize>11pt</FontSize>
                                                       <FontWeight>Bold</FontWeight>
                                                     </Style>
                                                   </TextRun>
@@ -1324,6 +1352,7 @@
                                               <PaddingBottom>2pt</PaddingBottom>
                                             </Style>
                                           </Textbox>
+                                          <rd:Selected>true</rd:Selected>
                                         </CellContents>
                                       </TablixCell>
                                       <TablixCell>
@@ -1413,25 +1442,25 @@
                                             <TablixBody>
                                               <TablixColumns>
                                                 <TablixColumn>
-                                                  <Width>0.64575cm</Width>
+                                                  <Width>0.71529cm</Width>
                                                 </TablixColumn>
                                                 <TablixColumn>
-                                                  <Width>3.6256cm</Width>
+                                                  <Width>3.69514cm</Width>
                                                 </TablixColumn>
                                                 <TablixColumn>
-                                                  <Width>1.37933cm</Width>
+                                                  <Width>1.44887cm</Width>
                                                 </TablixColumn>
                                                 <TablixColumn>
-                                                  <Width>2.16726cm</Width>
+                                                  <Width>2.2368cm</Width>
                                                 </TablixColumn>
                                                 <TablixColumn>
-                                                  <Width>1.75123cm</Width>
+                                                  <Width>1.82077cm</Width>
                                                 </TablixColumn>
                                                 <TablixColumn>
-                                                  <Width>1.48438cm</Width>
+                                                  <Width>1.55392cm</Width>
                                                 </TablixColumn>
                                                 <TablixColumn>
-                                                  <Width>1.51029cm</Width>
+                                                  <Width>1.57983cm</Width>
                                                 </TablixColumn>
                                               </TablixColumns>
                                               <TablixRows>
@@ -1450,6 +1479,7 @@
                                                                   <Value>SL</Value>
                                                                   <Style>
                                                                     <FontFamily>times New Roman</FontFamily>
+                                                                    <FontSize>11pt</FontSize>
                                                                     <FontWeight>Bold</FontWeight>
                                                                   </Style>
                                                                 </TextRun>
@@ -1486,6 +1516,7 @@
                                                                   <Value>Name of the Subject</Value>
                                                                   <Style>
                                                                     <FontFamily>times New Roman</FontFamily>
+                                                                    <FontSize>11pt</FontSize>
                                                                     <FontWeight>Bold</FontWeight>
                                                                   </Style>
                                                                 </TextRun>
@@ -1522,6 +1553,7 @@
                                                                   <Value>Marks</Value>
                                                                   <Style>
                                                                     <FontFamily>times New Roman</FontFamily>
+                                                                    <FontSize>11pt</FontSize>
                                                                     <FontWeight>Bold</FontWeight>
                                                                   </Style>
                                                                 </TextRun>
@@ -1558,6 +1590,7 @@
                                                                   <Value>Obtain Mark</Value>
                                                                   <Style>
                                                                     <FontFamily>times New Roman</FontFamily>
+                                                                    <FontSize>11pt</FontSize>
                                                                     <FontWeight>Bold</FontWeight>
                                                                   </Style>
                                                                 </TextRun>
@@ -1594,6 +1627,7 @@
                                                                   <Value>GPA</Value>
                                                                   <Style>
                                                                     <FontFamily>times New Roman</FontFamily>
+                                                                    <FontSize>11pt</FontSize>
                                                                     <FontWeight>Bold</FontWeight>
                                                                   </Style>
                                                                 </TextRun>
@@ -1630,6 +1664,7 @@
                                                                   <Value>Grade</Value>
                                                                   <Style>
                                                                     <FontFamily>times New Roman</FontFamily>
+                                                                    <FontSize>11pt</FontSize>
                                                                     <FontWeight>Bold</FontWeight>
                                                                   </Style>
                                                                 </TextRun>
@@ -1666,6 +1701,7 @@
                                                                   <Value>Max</Value>
                                                                   <Style>
                                                                     <FontFamily>times New Roman</FontFamily>
+                                                                    <FontSize>11pt</FontSize>
                                                                     <FontWeight>Bold</FontWeight>
                                                                   </Style>
                                                                 </TextRun>
@@ -1707,6 +1743,7 @@
                                                                   <Value>=RunningValue(Fields!SubjectName.Value, CountDistinct, "ResultDetails")</Value>
                                                                   <Style>
                                                                     <FontFamily>times New Roman</FontFamily>
+                                                                    <FontSize>11pt</FontSize>
                                                                   </Style>
                                                                 </TextRun>
                                                               </TextRuns>
@@ -1745,6 +1782,7 @@
                                                                   <Value>=Fields!SubjectName.Value</Value>
                                                                   <Style>
                                                                     <FontFamily>times New Roman</FontFamily>
+                                                                    <FontSize>11pt</FontSize>
                                                                   </Style>
                                                                 </TextRun>
                                                               </TextRuns>
@@ -1781,6 +1819,7 @@
                                                                   <Value>=Fields!TotalMark.Value</Value>
                                                                   <Style>
                                                                     <FontFamily>times New Roman</FontFamily>
+                                                                    <FontSize>11pt</FontSize>
                                                                   </Style>
                                                                 </TextRun>
                                                               </TextRuns>
@@ -1816,6 +1855,7 @@
                                                                   <Value>=Fields!ObtainMark.Value</Value>
                                                                   <Style>
                                                                     <FontFamily>times New Roman</FontFamily>
+                                                                    <FontSize>11pt</FontSize>
                                                                   </Style>
                                                                 </TextRun>
                                                               </TextRuns>
@@ -1854,6 +1894,7 @@
                                                                   <Value>=Fields!GPA.Value</Value>
                                                                   <Style>
                                                                     <FontFamily>times New Roman</FontFamily>
+                                                                    <FontSize>11pt</FontSize>
                                                                   </Style>
                                                                 </TextRun>
                                                               </TextRuns>
@@ -1895,6 +1936,7 @@
                                                                   <Value>=Fields!Grade.Value</Value>
                                                                   <Style>
                                                                     <FontFamily>times New Roman</FontFamily>
+                                                                    <FontSize>11pt</FontSize>
                                                                   </Style>
                                                                 </TextRun>
                                                               </TextRuns>
@@ -1930,6 +1972,7 @@
                                                                   <Value>=Fields!MaxNumber.Value</Value>
                                                                   <Style>
                                                                     <FontFamily>times New Roman</FontFamily>
+                                                                    <FontSize>11pt</FontSize>
                                                                   </Style>
                                                                 </TextRun>
                                                               </TextRuns>
@@ -2105,7 +2148,7 @@
                               <Top>7.92456cm</Top>
                               <Left>0.254cm</Left>
                               <Height>2.50556cm</Height>
-                              <Width>17.73613cm</Width>
+                              <Width>19.19663cm</Width>
                               <ZIndex>6</ZIndex>
                               <Style>
                                 <Border>
@@ -2177,7 +2220,7 @@
                             <Subreport Name="SubreportGradingTable">
                               <ReportName>Rpt_GradingTable</ReportName>
                               <Top>0.99168cm</Top>
-                              <Left>13.62271cm</Left>
+                              <Left>15.08321cm</Left>
                               <Height>3.48003cm</Height>
                               <Width>4.36742cm</Width>
                               <ZIndex>9</ZIndex>
@@ -2193,10 +2236,10 @@
                                   <TablixBody>
                                     <TablixColumns>
                                       <TablixColumn>
-                                        <Width>0.78984in</Width>
+                                        <Width>1.01216in</Width>
                                       </TablixColumn>
                                       <TablixColumn>
-                                        <Width>1.07591in</Width>
+                                        <Width>1.29823in</Width>
                                       </TablixColumn>
                                     </TablixColumns>
                                     <TablixRows>
@@ -2249,7 +2292,7 @@
                                                 <TablixBody>
                                                   <TablixColumns>
                                                     <TablixColumn>
-                                                      <Width>1.07591in</Width>
+                                                      <Width>1.29823in</Width>
                                                     </TablixColumn>
                                                   </TablixColumns>
                                                   <TablixRows>
@@ -2556,7 +2599,7 @@
                                   </TablixRowHierarchy>
                                   <DataSetName>DataSet1</DataSetName>
                                   <Height>1.46713in</Height>
-                                  <Width>1.86575in</Width>
+                                  <Width>2.31039in</Width>
                                   <Style>
                                     <Border>
                                       <Style>None</Style>
@@ -2567,10 +2610,10 @@
                                   <TablixBody>
                                     <TablixColumns>
                                       <TablixColumn>
-                                        <Width>0.78984in</Width>
+                                        <Width>1.01216in</Width>
                                       </TablixColumn>
                                       <TablixColumn>
-                                        <Width>1.07591in</Width>
+                                        <Width>1.29823in</Width>
                                       </TablixColumn>
                                     </TablixColumns>
                                     <TablixRows>
@@ -2668,7 +2711,7 @@
                                   </TablixRowHierarchy>
                                   <Top>1.58748in</Top>
                                   <Height>0.39167in</Height>
-                                  <Width>1.86575in</Width>
+                                  <Width>2.31039in</Width>
                                   <ZIndex>1</ZIndex>
                                   <Style>
                                     <Border>
@@ -2681,7 +2724,7 @@
                               <Top>10.70778cm</Top>
                               <Left>0.254cm</Left>
                               <Height>5.02704cm</Height>
-                              <Width>4.739cm</Width>
+                              <Width>5.86838cm</Width>
                               <ZIndex>10</ZIndex>
                               <Style>
                                 <Border>
@@ -2697,7 +2740,7 @@
                                 </Parameter>
                               </Parameters>
                               <Top>10.70778cm</Top>
-                              <Left>5.31638cm</Left>
+                              <Left>6.74513cm</Left>
                               <Height>5.2365cm</Height>
                               <Width>12.67375cm</Width>
                               <ZIndex>11</ZIndex>
@@ -2744,7 +2787,7 @@
             <Top>0cm</Top>
             <Left>0cm</Left>
             <Height>17.057cm</Height>
-            <Width>18.02191cm</Width>
+            <Width>19.45063cm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2759,7 +2802,7 @@
           </Border>
         </Style>
       </Body>
-      <Width>7.09524in</Width>
+      <Width>7.65773in</Width>
       <Page>
         <PageFooter>
           <Height>0.99101in</Height>
@@ -2778,6 +2821,24 @@
                         <FontStyle>Normal</FontStyle>
                         <FontFamily>Times New Roman</FontFamily>
                         <FontSize>12pt</FontSize>
+                        <FontWeight>Normal</FontWeight>
+                        <TextDecoration>None</TextDecoration>
+                        <Color>#000000</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                  </Style>
+                </Paragraph>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>(Contact the group teacher before sign here)</Value>
+                      <Style>
+                        <FontStyle>Italic</FontStyle>
+                        <FontFamily>Times New Roman</FontFamily>
+                        <FontSize>9pt</FontSize>
                         <FontWeight>Normal</FontWeight>
                         <TextDecoration>None</TextDecoration>
                         <Color>#000000</Color>
@@ -2819,9 +2880,9 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox191</rd:DefaultName>
-              <Top>1.246cm</Top>
+              <Top>0.9285cm</Top>
               <Left>0cm</Left>
-              <Height>1.23941cm</Height>
+              <Height>1.55691cm</Height>
               <Width>6.72728cm</Width>
               <Style>
                 <Border>
@@ -2880,7 +2941,7 @@
               </Paragraphs>
               <rd:DefaultName>Textbox191</rd:DefaultName>
               <Top>1.246cm</Top>
-              <Left>13.01548cm</Left>
+              <Left>14.28548cm</Left>
               <Height>1.23941cm</Height>
               <Width>4.63601cm</Width>
               <ZIndex>1</ZIndex>
@@ -2903,7 +2964,7 @@
               <Value>controllersignature</Value>
               <Sizing>FitProportional</Sizing>
               <Top>0cm</Top>
-              <Left>14.12673cm</Left>
+              <Left>15.39673cm</Left>
               <Height>1.1825cm</Height>
               <Width>3.46241cm</Width>
               <ZIndex>2</ZIndex>
@@ -2923,9 +2984,9 @@
         </PageFooter>
         <PageHeight>11.69in</PageHeight>
         <PageWidth>8.27in</PageWidth>
-        <LeftMargin>0.5in</LeftMargin>
-        <RightMargin>0.5in</RightMargin>
-        <TopMargin>0.5in</TopMargin>
+        <LeftMargin>0.25in</LeftMargin>
+        <RightMargin>0.25in</RightMargin>
+        <TopMargin>0.25in</TopMargin>
         <BottomMargin>0.25in</BottomMargin>
         <Style>
           <Border>

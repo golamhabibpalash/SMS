@@ -20,10 +20,12 @@ namespace SMS.BLL.Managers
             _studentPaymentRepository = studentPaymentRepository;
             _studentRepository = studentRepository;
         }
+
         public async Task<IReadOnlyCollection<StudentPayment>> GetAllByStudentIdAsync(int id)
         {
             return await _studentPaymentRepository.GetAllByStudentIdAsync(id);
         }
+
         public async Task<string> GetNewReceipt(int studentId, int feeHeadId)
         {
             string receiptsNo = string.Empty;
@@ -36,6 +38,7 @@ namespace SMS.BLL.Managers
 
             return receiptsNo;
         }
+
         public async Task<IReadOnlyCollection<StudentPaymentSummeryVM>> GetPaymentSummeryByDate(string date)
         {
             List<StudentPaymentSummeryVM> paymentSummery = new List<StudentPaymentSummeryVM>();
@@ -50,6 +53,7 @@ namespace SMS.BLL.Managers
             }
             return paymentSummery;
         }
+
         public async Task<IReadOnlyCollection<StudentPaymentSummeryVM>> GetPaymentSummeryByMonthYear(string monthYear)
         {
             List<StudentPaymentSummeryVM> paymentSummery = new List<StudentPaymentSummeryVM>();
@@ -64,10 +68,12 @@ namespace SMS.BLL.Managers
             }
             return paymentSummery;
         }
+
         public async Task<List<StudentPaymentScheduleVM>> GetStudentPaymentSchedule(int studId)
         {
             return await _studentPaymentRepository.GetStudentPaymentSchedule(studId);
         }
+
         public async Task<List<StudentPaymentSchedulePaidVM>> GetStudentPaymentSchedulePaid(int studId)
         {
             return await _studentPaymentRepository.GetStudentPaymentSchedulePaid(studId);
@@ -87,6 +93,7 @@ namespace SMS.BLL.Managers
             }
             return paymentSummery;
         }
+
         public async Task<double> GetStudentCurrentDue(int stuId)
         {
             return await _studentPaymentRepository.GetStudentCurrentDue(stuId);
@@ -99,6 +106,7 @@ namespace SMS.BLL.Managers
             sps = paymens.Where(p => p.UniqueId == uniqueId).ToList();
             return sps;
         }
+
         public async Task<List<PaidAmountResult>> GetPaidAmountByFeeHeadAsync(string uniqueId, int sessionId, int isResidential, int classId, int feeHeadId)
         {
             var result = await _studentPaymentRepository.GetPaidAmountByFeeHead(uniqueId, sessionId, isResidential, classId, feeHeadId);

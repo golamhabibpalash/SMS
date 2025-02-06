@@ -188,7 +188,7 @@
                                                asp-for="StudentPayment.PaidDate"
                                                class="form-control form-control-sm"
                                                id="paidDate"
-                                               min="2020-01-31"/>
+                                               min="2020-01-31" />
 
                                         <span asp-validation-for="StudentPayment.PaidDate" class="text-danger col-form-label"></span>
                                     </div>
@@ -241,9 +241,13 @@
             </div>
         </div>
     </div>
-    foreach (var item in Model.PaymentVM.Payments.Where(s => s.SessionWisePaymentVMs.Count>0))
+
+    foreach (var item in Model.PaymentVM.Payments)
     {
-        if (item.AcademicSession == "2024-2025")
+    <div class="col-md-6">
+        <partial name="_PaymentsDetails" model="@item" />
+    </div>
+        @*if (item.AcademicSession == "2024-2025")
         {
             <partial name="_SessionWisePayment" model="@item" />
         }
@@ -252,7 +256,7 @@
             <div class="col-md-6">
                 <partial name="_SessionWisePayment" model="@item" />
             </div>
-        }
+        }*@
     }
 
 }

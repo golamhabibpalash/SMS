@@ -1,5 +1,6 @@
 ﻿using SMS.App.ViewModels.PaymentVM;
 using SMS.Entities;
+using SMS.Entities.AdditionalModels;
 using System.Collections.Generic;
 
 namespace SMS.App.ViewModels
@@ -17,6 +18,6 @@ namespace SMS.App.ViewModels
         public List<PaymentItemVM> PaymentItemVMs { get; set; } = new List<PaymentItemVM>();
         public AcademicSession CurrentAcademicSession { get; set; }
 
-        public SMS.App.ViewModels.PaymentVM.PaymentVM PaymentVM { get; set; } = new PaymentVM.PaymentVM();
+        public StudentPaymentDetailVM PaymentVM { get; set; } = new StudentPaymentDetailVM();
     }
 }

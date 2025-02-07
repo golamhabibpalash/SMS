@@ -14,11 +14,19 @@ namespace SMS.BLL.Managers
     {
         private readonly IStudentPaymentRepository _studentPaymentRepository;
         private readonly IStudentRepository _studentRepository;
+        private readonly IClassFeeListRepository _classFeeListRepository;
+        private readonly IAcademicSessionRepository _academicSessionRepository;
+        private readonly IStudentFeeHeadRepository _studentFeeHeadRepository;
+        private readonly IStudentPaymentDetailsRepository _studentPaymentDetailsRepository;
 
-        public StudentPaymentManager(IStudentPaymentRepository studentPaymentRepository, IStudentRepository studentRepository) : base(studentPaymentRepository)
+        public StudentPaymentManager(IStudentPaymentRepository studentPaymentRepository, IStudentRepository studentRepository, IClassFeeListRepository classFeeListRepository, IAcademicSessionRepository academicSessionRepository, IStudentFeeHeadRepository studentFeeHeadRepository, IStudentPaymentDetailsRepository studentPaymentDetailsRepository) : base(studentPaymentRepository)
         {
             _studentPaymentRepository = studentPaymentRepository;
             _studentRepository = studentRepository;
+            _classFeeListRepository = classFeeListRepository;
+            _academicSessionRepository = academicSessionRepository;
+            _studentFeeHeadRepository = studentFeeHeadRepository;
+            _studentPaymentDetailsRepository = studentPaymentDetailsRepository;
         }
 
         public async Task<IReadOnlyCollection<StudentPayment>> GetAllByStudentIdAsync(int id)
@@ -111,6 +119,117 @@ namespace SMS.BLL.Managers
         {
             var result = await _studentPaymentRepository.GetPaidAmountByFeeHead(uniqueId, sessionId, isResidential, classId, feeHeadId);
             return result;
+        }
+
+        public async Task<StudentPaymentDetailVM> GetAllDetailPaymentByUniqueId(string studentUniqueId)
+        {
+            var student = await _studentRepository.GetStudentByUniqueIdAsync(studentUniqueId);
+            if (student != null)
+            {
+                var studentPayments = await _studentPaymentRepository.GetAllByStudentUniqueIdAsync(studentUniqueId);
+                StudentPaymentDetailVM studentPaymentDetailVM = new StudentPaymentDetailVM();
+                var allSessions = await _academicSessionRepository.GetAllAsync();
+                foreach (var session in allSessions.OrderByDescending(s => s.Name))
+                {
+                    var isPayment = studentPayments.Any(s => s.AcademicSessionId == session.Id);
+                    //if (!isPayment)
+                    //{
+                    //    continue;
+                    //}
+                    var tAmount = await GetStudentTotalPaybleAmountBySessionAsync(session.Id, student.UniqueId);
+                    var pAmount = await GetStudentTotalPaidAmountBySession(session.Id, student.UniqueId);
+                    SinglePaymentVM singlePaymentVM = new SinglePaymentVM()
+                    {
+                        PaymentsTitle = "Detail Payments ",
+                        AcademicSession = session.Name,
+                        TotalAmount = tAmount,
+                        TotalPaidAmount = pAmount,
+                        TotalDueAmount = tAmount - pAmount,
+                        SessionWisePaymentVMs = await GetSessionWisePaymentVMs(session.Id, studentUniqueId)
+                    };
+                    studentPaymentDetailVM.Payments.Add(singlePaymentVM);
+                }
+                return studentPaymentDetailVM;
+            }
+            return null;
+        }
+        private async Task<List<SessionWisePaymentVM>> GetSessionWisePaymentVMs(int sessionId, string uniqueId)
+        {
+            var student = await _studentRepository.GetStudentByUniqueIdAsync(uniqueId);
+            List<SessionWisePaymentVM> sessionWisePaymentVMs = new List<SessionWisePaymentVM>();
+            var allClassFees = await _classFeeListRepository.GetAllBySessionIdClassIdAsync(sessionId, student.AcademicClassId);
+            allClassFees = allClassFees.Where(s => s.StudentFeeHead.IsResidential == student.IsResidential).ToList();
+            var allPaymentDetailsByStudent = await _studentPaymentDetailsRepository.GetAllByStudentAsync(uniqueId);
+            if (allClassFees != null)
+            {
+                foreach (var classFee in allClassFees.OrderBy(s => s.SL))
+                {
+                    var classFeeList = await _classFeeListRepository.GetClassFeeListByClassIdFeeHeadIdSessionIdAsync(student.AcademicClassId, classFee.StudentFeeHeadId, sessionId);
+                    var totalAmount = classFeeList.Select(s => s.Amount).FirstOrDefault();
+                    var paidAmount = allPaymentDetailsByStudent.Where(d => d.ClassFeeId == classFeeList.Select(c => c.Id).FirstOrDefault() && d.StudentFeeHeadId == classFee.StudentFeeHeadId).Select(s => s.PaidAmount).Sum();
+
+                    SessionWisePaymentVM sessionWisePaymentVM = new SessionWisePaymentVM()
+                    {
+                        FeeHeadName = classFee.StudentFeeHead.Name,
+                        Amount = totalAmount,
+                        PaidAmount = paidAmount,
+                        Balance = totalAmount - paidAmount,
+                        Status = GetPaymentStatus(totalAmount, paidAmount),
+                        SessionWisePaymentDetails = GetSessionWisePaymentDetails(classFee.StudentFeeHeadId, uniqueId)
+                    };
+                    sessionWisePaymentVMs.Add(sessionWisePaymentVM);
+                }
+                return sessionWisePaymentVMs;
+            }
+            return null;
+        }
+
+        private List<SessionWisePaymentDetails> GetSessionWisePaymentDetails(int feeHeadId, string uniqueId)
+        {
+            return new List<SessionWisePaymentDetails>();
+        }
+
+        private string GetPaymentStatus(double amount, double paidAmount)
+        {
+            var status = string.Empty;
+            if (paidAmount == 0 && (amount > paidAmount))
+            {
+                status = "Unpaid";
+            }
+            else if (amount > paidAmount)
+            {
+                status = "Partially Paid";
+            }
+            else if (amount == paidAmount)
+            {
+                status = "Paid";
+            }
+            return status;
+        }
+        public async Task<double> GetStudentTotalPaybleAmountBySessionAsync(int sessionId, string studentUniqueId)
+        {
+            var totalFees = 0.00;
+            var student = await _studentRepository.GetStudentByUniqueIdAsync(studentUniqueId);
+            var allClassFeeBySessionId = await _classFeeListRepository.GetAllBySessionIdClassIdAsync(sessionId, student.AcademicClassId);
+            if (allClassFeeBySessionId != null)
+            {
+                var allFeeHead = await _studentFeeHeadRepository.GetAllAsync();
+                totalFees = allClassFeeBySessionId.Where(c => c.StudentFeeHead.IsResidential == student.IsResidential).Select(s => s.Amount).Sum();
+            }
+            return totalFees;
+        }
+        public async Task<double> GetStudentTotalPaidAmountBySession(int sessionId, string studentUniqueId)
+        {
+            var student = await _studentRepository.GetStudentByUniqueIdAsync(studentUniqueId);
+            var allPayments = await GetPaymentByStudentUniqueId(studentUniqueId);
+            var amount = allPayments.Where(s => s.AcademicSessionId == sessionId).Select(s => s.TotalPayment).Sum();
+            return amount;
+        }
+        public async Task<double> GetStudentTotalDueAmountBySession(int sessionId, string studentUniqueId)
+        {
+            var student = await _studentRepository.GetStudentByUniqueIdAsync(studentUniqueId);
+            var currentDues = await GetStudentCurrentDue(student.Id);
+            return currentDues;
         }
     }
 }

@@ -1,15 +1,13 @@
-﻿using SMS.DB;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using SMS.DAL.Contracts.Base;
+﻿using Microsoft.EntityFrameworkCore;
+using SMS.DB;
 using System;
-using SMS.Entities;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace SMS.DAL.Repositories.Base
 {
-    public abstract class Repository<T> : Contracts.Base.IRepository<T> where T:class
+    public abstract class Repository<T> : Contracts.Base.IRepository<T> where T : class
     {
         protected readonly ApplicationDbContext _context;
         //private DbSet<T> _entities;
@@ -17,9 +15,9 @@ namespace SMS.DAL.Repositories.Base
         {
             _context = context;
         }
-        public DbSet<T> Entity 
+        public DbSet<T> Entity
         {
-            get { return _context.Set<T>(); } 
+            get { return _context.Set<T>(); }
         }
 
         public virtual async Task<T> GetByIdAsync(int id)
@@ -34,26 +32,50 @@ namespace SMS.DAL.Repositories.Base
 
         public virtual async Task<bool> AddAsync(T entity)
         {
-            await Entity.AddAsync(entity);
-            return await _context.SaveChangesAsync() > 0;
-        }       
+            try
+            {
+                await Entity.AddAsync(entity);
+                return await _context.SaveChangesAsync() > 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in AddAsync: {ex.Message}");
+                return false;
+            }
+        }
 
         public virtual async Task<bool> UpdateAsync(T entity)
         {
-            _context.Entry(entity).State = EntityState.Modified;
-            return await _context.SaveChangesAsync() > 0;
+            try
+            {
+                _context.Entry(entity).State = EntityState.Modified;
+                return await _context.SaveChangesAsync() > 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in AddAsync: {ex.Message}");
+                return false;
+            }
         }
 
         public virtual async Task<bool> RemoveAsync(T entity)
         {
-            Entity.Remove(entity);
-            return await _context.SaveChangesAsync() > 0;
+            try
+            {
+                Entity.Remove(entity);
+                return await _context.SaveChangesAsync() > 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in AddAsync: {ex.Message}");
+                return false;
+            }
         }
 
         public virtual async Task<bool> IsExistByIdAsync(int id)
         {
             var result = await Entity.FindAsync(id);
-            if (result!=null)
+            if (result != null)
             {
                 return true;
             }

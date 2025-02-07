@@ -70,7 +70,7 @@ namespace SMS.BLL.Managers
         }
         public async Task<List<ClassFeeList>> GetClassFeeByUniquId(string uniquId)
         {
-            var result = await _classFeeListRepository.GetAllByUniqueId(uniquId);
+            var result = await _classFeeListRepository.GetCurrentAllByUniqueId(uniquId);
             return result;
         }
         

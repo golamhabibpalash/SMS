@@ -11,11 +11,15 @@ using SMS.App.ViewModels;
 using SMS.App.ViewModels.PaymentVM;
 using SMS.BLL.Contracts;
 using SMS.Entities;
+using SMS.Entities.AdditionalModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using SessionWisePaymentDetails = SMS.Entities.AdditionalModels.SessionWisePaymentDetails;
+using SessionWisePaymentVM = SMS.Entities.AdditionalModels.SessionWisePaymentVM;
+using SinglePaymentVM = SMS.Entities.AdditionalModels.SinglePaymentVM;
 
 namespace SMS.App.Controllers
 {
@@ -160,6 +164,8 @@ namespace SMS.App.Controllers
                     }
                     spvm.ClassFeeLists = feeList;
                     ViewBag.roll = stRoll;
+
+                    StudentPaymentDetailVM studentPaymentDetailVM = await _studentPaymentManager.GetAllDetailPaymentByUniqueId(student.UniqueId);
                     List<SinglePaymentVM> singlePaymentVMs = new List<SinglePaymentVM>();
 
                     SinglePaymentVM singlePaymentVM = new SinglePaymentVM();
@@ -183,61 +189,78 @@ namespace SMS.App.Controllers
                         }
                     }
 
-                    SessionWisePaymentVM sessionWisePaymentVM1 = new SessionWisePaymentVM();
-                    sessionWisePaymentVM1.FeeHeadName = "January Monthly Fee";
-                    sessionWisePaymentVM1.Amount = 1600;
-                    sessionWisePaymentVM1.PaidAmount = 1600;
-                    sessionWisePaymentVM1.Balance = 0;
-                    sessionWisePaymentVM1.Status = "Paid";
-                    SessionWisePaymentDetails sessionWisePaymentDetails1a = new SessionWisePaymentDetails();
-                    sessionWisePaymentDetails1a.PaidDate = new DateTime(2025, 1, 05).ToString("dd MMM yyyy");
-                    sessionWisePaymentDetails1a.ReceiptNo = "5624178";
-                    sessionWisePaymentDetails1a.PaidAmount = "600";
-                    sessionWisePaymentDetails1a.DueAmount = "1000";
-                    sessionWisePaymentDetails1a.Status = "Partial";
+                    SessionWisePaymentVM sessionWisePaymentVM1 = new SessionWisePaymentVM()
+                    {
+                        FeeHeadName = "January Monthly Fee",
+                        Amount = 1600,
+                        PaidAmount = 1600,
+                        Balance = 0,
+                        Status = "Paid"
+                    };
+
+                    SessionWisePaymentDetails sessionWisePaymentDetails1a = new SessionWisePaymentDetails()
+                    {
+                        PaidDate = new DateTime(2025, 1, 05).ToString("dd MMM yyyy"),
+                        ReceiptNo = "5624178",
+                        PaidAmount = "600",
+                        DueAmount = "1000",
+                        Status = "Partial"
+                    };
                     sessionWisePaymentVM1.SessionWisePaymentDetails.Add(sessionWisePaymentDetails1a);
 
-                    SessionWisePaymentDetails sessionWisePaymentDetails1b = new SessionWisePaymentDetails();
-                    sessionWisePaymentDetails1b.PaidDate = new DateTime(2025, 1, 10).ToString("dd MMM yyyy");
-                    sessionWisePaymentDetails1b.ReceiptNo = "5624199";
-                    sessionWisePaymentDetails1b.PaidAmount = "1000";
-                    sessionWisePaymentDetails1b.DueAmount = "600";
-                    sessionWisePaymentDetails1b.Status = "Partial";
+                    SessionWisePaymentDetails sessionWisePaymentDetails1b = new SessionWisePaymentDetails()
+                    {
+                        PaidDate = new DateTime(2025, 1, 10).ToString("dd MMM yyyy"),
+                        ReceiptNo = "5624199",
+                        PaidAmount = "1000",
+                        DueAmount = "600",
+                        Status = "Partial"
+                    };
                     sessionWisePaymentVM1.SessionWisePaymentDetails.Add(sessionWisePaymentDetails1b);
                     singlePaymentVM.SessionWisePaymentVMs.Add(sessionWisePaymentVM1);
 
-                    SessionWisePaymentVM sessionWisePaymentVM2 = new SessionWisePaymentVM();
-                    sessionWisePaymentVM2.FeeHeadName = "Februery Monthly Fee";
-                    sessionWisePaymentVM2.Amount = 1600;
-                    sessionWisePaymentVM2.PaidAmount = 1200;
-                    sessionWisePaymentVM2.Balance = 400;
-                    sessionWisePaymentVM2.Status = "Partial Paid";
-                    SessionWisePaymentDetails sessionWisePaymentDetails2a = new SessionWisePaymentDetails();
-                    sessionWisePaymentDetails2a.PaidDate = new DateTime(2025, 2, 04).ToString("dd MMM yyyy");
-                    sessionWisePaymentDetails2a.ReceiptNo = "5625034";
-                    sessionWisePaymentDetails2a.PaidAmount = "1000";
-                    sessionWisePaymentDetails2a.DueAmount = "600";
-                    sessionWisePaymentDetails2a.Status = "Partial";
+                    SessionWisePaymentVM sessionWisePaymentVM2 = new SessionWisePaymentVM()
+                    {
+                        FeeHeadName = "Februery Monthly Fee",
+                        Amount = 1600,
+                        PaidAmount = 1200,
+                        Balance = 400,
+                        Status = "Partial Paid"
+                    };
+
+                    SessionWisePaymentDetails sessionWisePaymentDetails2a = new SessionWisePaymentDetails()
+                    {
+                        PaidDate = new DateTime(2025, 2, 04).ToString("dd MMM yyyy"),
+                        ReceiptNo = "5625034",
+                        PaidAmount = "1000",
+                        DueAmount = "600",
+                        Status = "Partial"
+                    };
                     sessionWisePaymentVM2.SessionWisePaymentDetails.Add(sessionWisePaymentDetails2a);
-                    SessionWisePaymentDetails sessionWisePaymentDetails2b = new SessionWisePaymentDetails();
-                    sessionWisePaymentDetails2b.PaidDate = new DateTime(2025, 2, 05).ToString("dd MMM yyyy");
-                    sessionWisePaymentDetails2b.ReceiptNo = "5625055";
-                    sessionWisePaymentDetails2b.PaidAmount = "200";
-                    sessionWisePaymentDetails2b.DueAmount = "400";
-                    sessionWisePaymentDetails2b.Status = "Partial";
+
+                    SessionWisePaymentDetails sessionWisePaymentDetails2b = new SessionWisePaymentDetails()
+                    {
+                        PaidDate = new DateTime(2025, 2, 05).ToString("dd MMM yyyy"),
+                        ReceiptNo = "5625055",
+                        PaidAmount = "200",
+                        DueAmount = "400",
+                        Status = "Partial"
+                    };
                     sessionWisePaymentVM2.SessionWisePaymentDetails.Add(sessionWisePaymentDetails2b);
                     singlePaymentVM.SessionWisePaymentVMs.Add(sessionWisePaymentVM2);
 
-                    SessionWisePaymentVM sessionWisePaymentVM3 = new SessionWisePaymentVM();
-                    sessionWisePaymentVM3.FeeHeadName = "March Monthly Fee";
-                    sessionWisePaymentVM3.Amount = 1600;
-                    sessionWisePaymentVM3.PaidAmount = 0;
-                    sessionWisePaymentVM3.Balance = 1600;
-                    sessionWisePaymentVM3.Status = "Not Paid";
+                    SessionWisePaymentVM sessionWisePaymentVM3 = new SessionWisePaymentVM()
+                    {
+                        FeeHeadName = "March Monthly Fee",
+                        Amount = 1600,
+                        PaidAmount = 0,
+                        Balance = 1600,
+                        Status = "Not Paid"
+                    };
                     singlePaymentVM.SessionWisePaymentVMs.Add(sessionWisePaymentVM3);
-
                     singlePaymentVMs.Add(singlePaymentVM);
-                    spvm.PaymentVM.Payments = singlePaymentVMs;
+                    //studentPaymentDetailVM.Payments = singlePaymentVMs;
+                    spvm.PaymentVM = studentPaymentDetailVM??new StudentPaymentDetailVM();
                     //var existingAllPayments = await _studentPaymentDetailsManager.GetAllByStudentUniqueId(student.UniqueId);
 
                     return View(spvm);

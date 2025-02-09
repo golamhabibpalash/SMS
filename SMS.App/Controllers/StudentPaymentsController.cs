@@ -167,7 +167,7 @@ namespace SMS.App.Controllers
 
                     StudentPaymentDetailVM studentPaymentDetailVM = await _studentPaymentManager.GetAllDetailPaymentByUniqueId(student.UniqueId);
                     List<SinglePaymentVM> singlePaymentVMs = new List<SinglePaymentVM>();
-
+                    #region dummy data
                     SinglePaymentVM singlePaymentVM = new SinglePaymentVM();
                     singlePaymentVM.AcademicSession = "2024-2025";
                     singlePaymentVM.TotalAmount = 4800;
@@ -202,8 +202,9 @@ namespace SMS.App.Controllers
                     {
                         PaidDate = new DateTime(2025, 1, 05).ToString("dd MMM yyyy"),
                         ReceiptNo = "5624178",
-                        PaidAmount = "600",
-                        DueAmount = "1000",
+                        PayableAmount = 1600,
+                        PaidAmount = 600,
+                        DueAmount = 1000,
                         Status = "Partial"
                     };
                     sessionWisePaymentVM1.SessionWisePaymentDetails.Add(sessionWisePaymentDetails1a);
@@ -212,8 +213,9 @@ namespace SMS.App.Controllers
                     {
                         PaidDate = new DateTime(2025, 1, 10).ToString("dd MMM yyyy"),
                         ReceiptNo = "5624199",
-                        PaidAmount = "1000",
-                        DueAmount = "600",
+                        PayableAmount = 1600,
+                        PaidAmount = 1000,
+                        DueAmount = 600,
                         Status = "Partial"
                     };
                     sessionWisePaymentVM1.SessionWisePaymentDetails.Add(sessionWisePaymentDetails1b);
@@ -232,8 +234,9 @@ namespace SMS.App.Controllers
                     {
                         PaidDate = new DateTime(2025, 2, 04).ToString("dd MMM yyyy"),
                         ReceiptNo = "5625034",
-                        PaidAmount = "1000",
-                        DueAmount = "600",
+                        PayableAmount = 1600,
+                        PaidAmount = 1000,
+                        DueAmount = 600,
                         Status = "Partial"
                     };
                     sessionWisePaymentVM2.SessionWisePaymentDetails.Add(sessionWisePaymentDetails2a);
@@ -242,8 +245,9 @@ namespace SMS.App.Controllers
                     {
                         PaidDate = new DateTime(2025, 2, 05).ToString("dd MMM yyyy"),
                         ReceiptNo = "5625055",
-                        PaidAmount = "200",
-                        DueAmount = "400",
+                        PayableAmount = 600,
+                        PaidAmount = 200,
+                        DueAmount = 400,
                         Status = "Partial"
                     };
                     sessionWisePaymentVM2.SessionWisePaymentDetails.Add(sessionWisePaymentDetails2b);
@@ -259,8 +263,9 @@ namespace SMS.App.Controllers
                     };
                     singlePaymentVM.SessionWisePaymentVMs.Add(sessionWisePaymentVM3);
                     singlePaymentVMs.Add(singlePaymentVM);
+                    #endregion dummy data
                     //studentPaymentDetailVM.Payments = singlePaymentVMs;
-                    spvm.PaymentVM = studentPaymentDetailVM??new StudentPaymentDetailVM();
+                    spvm.PaymentVM = studentPaymentDetailVM ?? new StudentPaymentDetailVM();
                     //var existingAllPayments = await _studentPaymentDetailsManager.GetAllByStudentUniqueId(student.UniqueId);
 
                     return View(spvm);

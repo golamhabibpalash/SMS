@@ -2,16 +2,19 @@
 @{
     int trCount = 1;
     var dueAmountClass = "";
+    var collapsedShow = "";
+    collapsedShow = Model.AcademicSession == Model.CurrentSession?"show":"";
     if (Model.TotalDueAmount > 0)
     {
         dueAmountClass = "text-danger bg-light";
     }
+
 }
     <div class="card border-dark">
-        <div class="card-header text-center" data-toggle="collapse" data-target="">
-            <p class="card-title h5">Payments For @Model.AcademicSession</p>
+        <div class="card-header text-center bg-gradient btn" data-toggle="collapse" data-target=".collapsedTable_@Model.AcademicSession" id="accordionCard" area-control="collapse_full">
+            <p class="card-title h5">Payments For @Model.AcademicSession <i class="fa fa-chevron-down"></i> </p>
         </div>
-        <table class="table table-bordered" id="accordion">
+        <table class="table table-bordered collapsedTable_@Model.AcademicSession collapse @collapsedShow" id="accordion" data-parent="#accordionCard">
             <thead class="thead-dark">
                 <tr>
                     <th width="5">#</th>
@@ -28,13 +31,28 @@
                 {
                     foreach (var item in Model.SessionWisePaymentVMs)
                     {
-                        <tr class="card-header table-active" data-toggle="collapse" data-target=".tr_@trCount" area-control="collapse_@trCount">
+                        <tr class="card-header table-active font-weight-bold" data-toggle="collapse" data-target=".tr_@trCount" area-control="collapse_@trCount">
                             <td>@trCount</td>
                             <td>@item.FeeHeadName <span class="badge badge-info">@item.SessionWisePaymentDetails.Count</span></td>
                             <td class="text-right">@item.Amount</td>
                             <td class="text-right">@item.PaidAmount</td>
                             <td class="text-right">@item.Balance</td>
-                            <td>@item.Status</td>
+                            @{
+                                var iStatusClass = "";
+                                if (item.Status == "Paid")
+                                {
+                                    iStatusClass = "text-success";
+                                }
+                                else if (item.Status == "Unpaid")
+                                {
+                                    iStatusClass = "text-danger";
+                                }
+                                else if (item.Status == "Partial Paid")
+                                {
+                                    iStatusClass = "text-warning";
+                                }
+                            }
+                            <td class="@iStatusClass">@item.Status</td>
                             <td>
                                 <button class="btn btn-sm btn-info toggle-icon" data-target=".tr_@trCount">
                                     <i class="fa fa-chevron-down"></i>
@@ -44,20 +62,50 @@
                         </tr>
                         @if (item.SessionWisePaymentDetails.Count > 0)
                         {
+                            <tr class="collapse tr_@trCount border card-body" data-parent="#accordion">
+                                <td colspan="7" class="text-center">
+                                    <span class="font-weight-bold">Breakdowns</span>
+                                </td>
+                            </tr>
                             foreach (var dItem in item.SessionWisePaymentDetails)
                             {
                                 <tr class="collapse tr_@trCount border card-body" data-parent="#accordion">
-                                    <td colspan="3" class="text-right">
+                                    <td colspan="2">
+                                        <span class="alert">#@dItem.ReceiptNo</span>
                                         <span class="alert">Paid Date: @dItem.PaidDate</span>
-                                        <span class="alert">Payment Receipt: @dItem.ReceiptNo</span>
                                     </td>
+                                    <td class="text-right">@dItem.PayableAmount</td>
                                     <td class="text-right">@dItem.PaidAmount</td>
                                     <td class="text-right">@dItem.DueAmount</td>
-                                    <td>@dItem.Status</td>
+                                    @{ 
+                                        var statusClass = "";
+                                        if (dItem.Status == "Paid")
+                                        {
+                                            statusClass = "text-success";
+                                        }
+                                        else if(dItem.Status == "Unpaid")
+                                        {
+                                            statusClass = "text-danger";
+                                        }
+                                        else if(dItem.Status == "Partial Paid")
+                                        {
+                                            statusClass = "text-warning";
+                                        }
+                                    }
+                                    <td class="@statusClass">@dItem.Status</td>
                                     <td>
+                                        <button class="btn btn-sm btn-warning">
+                                            <i class="fa fa-edit"></i>
+                                        </button>
                                         <span class="btn btn-sm btn-success">Receipt <i class="fa fa-print"></i></span>
                                     </td>
                                 </tr>
+                                if (!string.IsNullOrEmpty(dItem.Remarks))
+                                {
+                                    <tr class="collapse tr_@trCount border card-body" data-parent="#accordion">
+                                        <td class="p-0" colspan="7">Remarks:<span class="font-italic"> @dItem.Remarks</span></td>
+                                    </tr>
+                                }
                             }
                         }
                         trCount++;

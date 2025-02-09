@@ -123,7 +123,8 @@ namespace SMS.BLL.Managers
 
         public async Task<StudentPaymentDetailVM> GetAllDetailPaymentByUniqueId(string studentUniqueId)
         {
-            var student = await _studentRepository.GetStudentByUniqueIdAsync(studentUniqueId);
+            var student = await _studentRepository.GetStudentByUniqueIdAsync(studentUniqueId.Trim());
+            var currentSession = await _academicSessionRepository.GetCurrentAcademicSession();
             if (student != null)
             {
                 var studentPayments = await _studentPaymentRepository.GetAllByStudentUniqueIdAsync(studentUniqueId);
@@ -132,16 +133,13 @@ namespace SMS.BLL.Managers
                 foreach (var session in allSessions.OrderByDescending(s => s.Name))
                 {
                     var isPayment = studentPayments.Any(s => s.AcademicSessionId == session.Id);
-                    //if (!isPayment)
-                    //{
-                    //    continue;
-                    //}
                     var tAmount = await GetStudentTotalPaybleAmountBySessionAsync(session.Id, student.UniqueId);
                     var pAmount = await GetStudentTotalPaidAmountBySession(session.Id, student.UniqueId);
                     SinglePaymentVM singlePaymentVM = new SinglePaymentVM()
                     {
                         PaymentsTitle = "Detail Payments ",
                         AcademicSession = session.Name,
+                        CurrentSession = currentSession.Name,
                         TotalAmount = tAmount,
                         TotalPaidAmount = pAmount,
                         TotalDueAmount = tAmount - pAmount,
@@ -175,7 +173,7 @@ namespace SMS.BLL.Managers
                         PaidAmount = paidAmount,
                         Balance = totalAmount - paidAmount,
                         Status = GetPaymentStatus(totalAmount, paidAmount),
-                        SessionWisePaymentDetails = GetSessionWisePaymentDetails(classFee.StudentFeeHeadId, uniqueId)
+                        SessionWisePaymentDetails = await GetSessionWisePaymentDetails(classFee.StudentFeeHeadId, uniqueId, sessionId, totalAmount)
                     };
                     sessionWisePaymentVMs.Add(sessionWisePaymentVM);
                 }
@@ -184,9 +182,35 @@ namespace SMS.BLL.Managers
             return null;
         }
 
-        private List<SessionWisePaymentDetails> GetSessionWisePaymentDetails(int feeHeadId, string uniqueId)
+        private async Task<List<SessionWisePaymentDetails>> GetSessionWisePaymentDetails(int feeHeadId, string uniqueId, int sessionId, double totalAmount)
         {
-            return new List<SessionWisePaymentDetails>();
+            var sPaymentDetails = await _studentPaymentDetailsRepository.GetAllByStudentAsync(uniqueId);
+            sPaymentDetails = sPaymentDetails.Where(p => p.StudentPayment.AcademicSessionId == sessionId && p.StudentFeeHeadId == feeHeadId).ToList();
+            var paymentDetails = new List<SessionWisePaymentDetails>();
+            if (sPaymentDetails != null)
+            {
+                var totalPaid = 0.0;
+                var paybleAmont = 0.0;
+                foreach (var item in sPaymentDetails)
+                {
+                    paybleAmont = totalAmount - totalPaid;
+                    totalPaid += item.PaidAmount;
+                    var pAmount = item.PaidAmount;
+                    var restAmount = totalAmount - totalPaid;
+                    SessionWisePaymentDetails sessionWisePaymentDetails = new SessionWisePaymentDetails()
+                    {
+                        PaidDate = item.CreatedAt.ToString("dd MMM yyyy"),
+                        ReceiptNo = item.StudentPayment.ReceiptNo,
+                        PayableAmount = paybleAmont,
+                        PaidAmount = item.PaidAmount,
+                        DueAmount = restAmount,
+                        Remarks = item.StudentPayment.Remarks,
+                        Status = GetPaymentStatus(paybleAmont, pAmount)
+                    };
+                    paymentDetails.Add(sessionWisePaymentDetails);
+                };
+            }
+            return paymentDetails;
         }
 
         private string GetPaymentStatus(double amount, double paidAmount)
@@ -200,7 +224,7 @@ namespace SMS.BLL.Managers
             {
                 status = "Partially Paid";
             }
-            else if (amount == paidAmount)
+            else if (amount == paidAmount || amount < paidAmount)
             {
                 status = "Paid";
             }

@@ -84,7 +84,7 @@ namespace SMS.DAL.Repositories
                 .Include(s => s.AcademicClass)
                 .Include(s => s.AcademicSession)
                 .Include(s => s.AcademicSection)
-                .FirstOrDefaultAsync(s => Convert.ToInt32(s.UniqueId.Trim()).ToString() == uniqueId.Trim());
+                .FirstOrDefaultAsync(s => Convert.ToInt32(s.UniqueId.Trim()).ToString() == (Convert.ToInt32(uniqueId).ToString()).Trim());
             return student;
         }
 

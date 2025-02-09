@@ -9,6 +9,7 @@ namespace SMS.Entities.AdditionalModels
 
     public class SinglePaymentVM
     {
+        public string CurrentSession { get; set; }
         public string PaymentsTitle { get; set; }
         public string AcademicSession { get; set; }
         public double TotalAmount { get; set; }
@@ -31,8 +32,10 @@ namespace SMS.Entities.AdditionalModels
     {
         public string PaidDate { get; set; }
         public string ReceiptNo { get; set; }
-        public string PaidAmount { get; set; }
-        public string DueAmount { get; set; }
+        public double PayableAmount { get; set; }
+        public double PaidAmount { get; set; }
+        public double DueAmount { get; set; }
         public string Status { get; set; }
+        public string Remarks { get; set; }
     }
 }

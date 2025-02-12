@@ -17,13 +17,14 @@
         <table class="table table-bordered collapsedTable_@Model.AcademicSession collapse @collapsedShow" id="accordion" data-parent="#accordionCard">
             <thead class="thead-dark">
                 <tr>
-                    <th width="5">#</th>
-                    <th>Payment type</th>
-                    <th width="50" class="text-right">Amount</th>
-                    <th width="40" class="text-right">Paid</th>
-                    <th width="40" class="text-right">Due</th>
-                    <th>Status</th>
-                    <th>Action</th>
+                    <th style="width:5%">#</th>
+                    <th style="width:40%">Payment type</th>
+                    <th style="width:10%" class="text-right">Amount</th>
+                    <th style="width:10%" class="text-right">Paid</th>
+                    <th style="width:10%" class="text-right">Due</th>
+                    <th style="width:10%">Status</th>
+                    <th style="width:15%">Action</th>    
+                    
                 </tr>
             </thead>
             <tbody>
@@ -31,7 +32,7 @@
                 {
                     foreach (var item in Model.SessionWisePaymentVMs)
                     {
-                        <tr class="card-header table-active font-weight-bold" data-toggle="collapse" data-target=".tr_@trCount" area-control="collapse_@trCount">
+                        <tr class="card-header table-active font-weight-bold" data-toggle="collapse" data-target=".tr_@trCount" area-control="collapse_@trCount" aria-expanded="false">
                             <td>@trCount</td>
                             <td>@item.FeeHeadName <span class="badge badge-info">@item.SessionWisePaymentDetails.Count</span></td>
                             <td class="text-right">@item.Amount</td>
@@ -53,11 +54,13 @@
                                 }
                             }
                             <td class="@iStatusClass">@item.Status</td>
-                            <td>
-                                <button class="btn btn-sm btn-info toggle-icon" data-target=".tr_@trCount">
-                                    <i class="fa fa-chevron-down"></i>
-                                </button>
-                                <span class="btn btn-sm btn-success"><i class="fa fa-print"></i></span>
+                            <td class="p-0">
+                                @if (item.Status == "Paid" || item.Status == "Partial Paid")
+                                {
+                                    <span class="btn btn-sm btn-info toggle-icon m-2" data-target=".tr_@trCount">
+                                        <i class="fa fa-chevron-down"></i>
+                                    </span>
+                                }                                                        
                             </td>
                         </tr>
                         @if (item.SessionWisePaymentDetails.Count > 0)
@@ -69,7 +72,7 @@
                             </tr>
                             foreach (var dItem in item.SessionWisePaymentDetails)
                             {
-                                <tr class="collapse tr_@trCount border card-body" data-parent="#accordion">
+                                <tr class="collapse tr_@trCount border card-body  multi-collapse" data-parent="#accordion">
                                     <td colspan="2">
                                         <span class="alert">#@dItem.ReceiptNo</span>
                                         <span class="alert">Paid Date: @dItem.PaidDate</span>
@@ -93,11 +96,14 @@
                                         }
                                     }
                                     <td class="@statusClass">@dItem.Status</td>
-                                    <td>
+                                    <td class="p-0">
                                         <button class="btn btn-sm btn-warning">
                                             <i class="fa fa-edit"></i>
                                         </button>
-                                        <span class="btn btn-sm btn-success">Receipt <i class="fa fa-print"></i></span>
+                                        @if (item.Status == "Paid" || item.Status == "Partial Paid")
+                                        {
+                                            <span class="m-0 btn btn-sm btn-success modalViewId" data-paymentid="@dItem.PaymentId" data-target="#exampleModalCenter" data-toggle="modal">Receipt <i class="fa fa-print"></i></span>
+                                        }
                                     </td>
                                 </tr>
                                 if (!string.IsNullOrEmpty(dItem.Remarks))
@@ -132,3 +138,21 @@
         </table>
     </div>
 
+@section Scripts{ 
+<script>
+    function openReport(paymentId) {
+    var iframe = document.getElementById('myIframe');
+    iframe.src = '/Reports/ReceiptPaymentView?paymentId=' + paymentId;
+
+    // Set hidden input field value for exporting
+    document.getElementById('paymentIdExport').value = paymentId;
+
+    // Show export options
+    document.getElementById('exportOptions').style.display = 'flex';
+
+    // Open the modal
+    $('#exampleModalCenter').modal('show');
+}
+
+</script>
+}

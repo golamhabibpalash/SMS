@@ -165,7 +165,6 @@ namespace SMS.BLL.Managers
                     var classFeeList = await _classFeeListRepository.GetClassFeeListByClassIdFeeHeadIdSessionIdAsync(student.AcademicClassId, classFee.StudentFeeHeadId, sessionId);
                     var totalAmount = classFeeList.Select(s => s.Amount).FirstOrDefault();
                     var paidAmount = allPaymentDetailsByStudent.Where(d => d.ClassFeeId == classFeeList.Select(c => c.Id).FirstOrDefault() && d.StudentFeeHeadId == classFee.StudentFeeHeadId).Select(s => s.PaidAmount).Sum();
-
                     SessionWisePaymentVM sessionWisePaymentVM = new SessionWisePaymentVM()
                     {
                         FeeHeadName = classFee.StudentFeeHead.Name,
@@ -205,7 +204,8 @@ namespace SMS.BLL.Managers
                         PaidAmount = item.PaidAmount,
                         DueAmount = restAmount,
                         Remarks = item.StudentPayment.Remarks,
-                        Status = GetPaymentStatus(paybleAmont, pAmount)
+                        Status = GetPaymentStatus(paybleAmont, pAmount),
+                        PaymentId = item.StudentPayment.Id
                     };
                     paymentDetails.Add(sessionWisePaymentDetails);
                 };

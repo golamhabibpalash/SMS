@@ -20,6 +20,7 @@ namespace SMS.Entities.AdditionalModels
 
     public class SessionWisePaymentVM
     {
+        public int PaymentId { get; set; }
         public string FeeHeadName { get; set; }
         public double Amount { get; set; }
         public double PaidAmount { get; set; }
@@ -37,5 +38,6 @@ namespace SMS.Entities.AdditionalModels
         public double DueAmount { get; set; }
         public string Status { get; set; }
         public string Remarks { get; set; }
+        public int PaymentId { get; set; }
     }
 }

@@ -559,6 +559,7 @@ namespace SMS.App.Controllers
                     existingStudentPayment.PaidDate = studentPayment.PaidDate;
                     existingStudentPayment.MACAddress = MACService.GetMAC();
                     existingStudentPayment.Student = studentPayment.Student = await _studentManager.GetByIdAsync(studentPayment.StudentId);
+                    existingStudentPayment.Remarks = studentPayment.Remarks;
                     bool isUpdated = await _studentPaymentManager.UpdateAsync(existingStudentPayment);
                     if (isUpdated)
                     {

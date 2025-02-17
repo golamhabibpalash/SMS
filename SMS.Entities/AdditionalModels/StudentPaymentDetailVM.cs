@@ -31,6 +31,7 @@ namespace SMS.Entities.AdditionalModels
 
     public class SessionWisePaymentDetails
     {
+        public int PaymentDetailId { get; set; }
         public string PaidDate { get; set; }
         public string ReceiptNo { get; set; }
         public double PayableAmount { get; set; }

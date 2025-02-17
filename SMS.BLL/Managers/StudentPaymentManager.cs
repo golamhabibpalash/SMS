@@ -3,6 +3,7 @@ using SMS.BLL.Contracts;
 using SMS.DAL.Contracts;
 using SMS.Entities;
 using SMS.Entities.AdditionalModels;
+using SMS.Entities.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -158,6 +159,7 @@ namespace SMS.BLL.Managers
             var allClassFees = await _classFeeListRepository.GetAllBySessionIdClassIdAsync(sessionId, student.AcademicClassId);
             allClassFees = allClassFees.Where(s => s.StudentFeeHead.IsResidential == student.IsResidential).ToList();
             var allPaymentDetailsByStudent = await _studentPaymentDetailsRepository.GetAllByStudentAsync(uniqueId);
+
             if (allClassFees != null)
             {
                 foreach (var classFee in allClassFees.OrderBy(s => s.SL))
@@ -165,6 +167,7 @@ namespace SMS.BLL.Managers
                     var classFeeList = await _classFeeListRepository.GetClassFeeListByClassIdFeeHeadIdSessionIdAsync(student.AcademicClassId, classFee.StudentFeeHeadId, sessionId);
                     var totalAmount = classFeeList.Select(s => s.Amount).FirstOrDefault();
                     var paidAmount = allPaymentDetailsByStudent.Where(d => d.ClassFeeId == classFeeList.Select(c => c.Id).FirstOrDefault() && d.StudentFeeHeadId == classFee.StudentFeeHeadId).Select(s => s.PaidAmount).Sum();
+
                     SessionWisePaymentVM sessionWisePaymentVM = new SessionWisePaymentVM()
                     {
                         FeeHeadName = classFee.StudentFeeHead.Name,
@@ -198,6 +201,7 @@ namespace SMS.BLL.Managers
                     var restAmount = totalAmount - totalPaid;
                     SessionWisePaymentDetails sessionWisePaymentDetails = new SessionWisePaymentDetails()
                     {
+                        PaymentDetailId = item.Id,
                         PaidDate = item.CreatedAt.ToString("dd MMM yyyy"),
                         ReceiptNo = item.StudentPayment.ReceiptNo,
                         PayableAmount = paybleAmont,
@@ -218,15 +222,15 @@ namespace SMS.BLL.Managers
             var status = string.Empty;
             if (paidAmount == 0 && (amount > paidAmount))
             {
-                status = "Unpaid";
+                status = StudentPaymentStatus.Unpaid.ToString();
             }
             else if (amount > paidAmount)
             {
-                status = "Partially Paid";
+                status = StudentPaymentStatus.Partial.ToString();
             }
             else if (amount == paidAmount || amount < paidAmount)
             {
-                status = "Paid";
+                status = StudentPaymentStatus.Paid.ToString();
             }
             return status;
         }

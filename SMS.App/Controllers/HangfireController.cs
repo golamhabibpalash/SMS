@@ -515,12 +515,12 @@ namespace SMS.App.Controllers
                         {
                             continue;
                         }
-                        Student student = await _studentManager.GetStudentByClassRollAsync(Convert.ToInt32(attendance.CardNo.Trim()));
+                        Student student = await _studentManager.GetStudentByUniqueIdAsync(attendance.CardNo.Trim());
                         if (student == null)
                         {
                             continue;
                         }
-                        if (student.GenderId == 2 || student.GenderId == 3 || student.Status == false)
+                        if (student.GenderId != 1 || student.Status == false)
                         {
                             continue;
                         }

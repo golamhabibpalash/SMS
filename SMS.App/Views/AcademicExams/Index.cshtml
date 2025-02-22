@@ -72,8 +72,8 @@
                 {
                     foreach (var item1 in Model.AcademicExams.OrderByDescending(g => g.AcademicExamGroup.AcademicSessionId).ThenByDescending(m => m.AcademicExamGroup.ExamMonthId).GroupBy(s => s.AcademicExamGroup.ExamGroupName))
                     {
-                        <tr class="bg-navy-blue">
-                            <td colspan="9"><span class="font-weight-bolder h6">@item1.Key - (Total @item1.Count() Exam/s)</span> </td>
+                        <tr class="bg-navy-blue text-light">
+                            <td colspan="9"><span class="font-weight-bolder h6 text-light">@item1.Key - (Total @item1.Count() Exam/s)</span> </td>
                         </tr>
                         foreach (var item2 in item1.GroupBy(s => s.AcademicClass.Name).OrderBy(s => s.Min(m => m.AcademicClassId)))
                         {

@@ -588,7 +588,9 @@ namespace SMS.App.Controllers
             {
                 return new JsonResult("Sorry! Student Data Not Found");
             }
-            var studentPayments = await _reportManager.GetStudentPaymentsByRoll(classRoll, fromDate, toDate);
+            DateTime fdate = DateTime.ParseExact(fromDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+            DateTime tdate = DateTime.ParseExact(toDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+            var studentPayments = await _reportManager.GetStudentPaymentsByRoll(classRoll, fdate.ToString("yyyy-MM-dd"), tdate.ToString("yyyy-MM-dd"));
             if (studentPayments.Count == 0)
             {
                 return new JsonResult("Sorry! Any Payment Data Not Found");

@@ -165,6 +165,25 @@ namespace SMS.BLL.Managers
                 foreach (var classFee in allClassFees.OrderBy(s => s.SL))
                 {
                     var classFeeList = await _classFeeListRepository.GetClassFeeListByClassIdFeeHeadIdSessionIdAsync(student.AcademicClassId, classFee.StudentFeeHeadId, sessionId);
+                    //Admin or Session
+                    DateTime addmissionYear = student.AdmissionDate;
+                    AcademicSession academicSession = await _academicSessionRepository.GetByIdAsync(sessionId);
+                    if (addmissionYear.Year == Convert.ToInt32(academicSession.Name.Substring((academicSession.Name.Length - 4), 4)))
+                    {
+                        if (classFee.StudentFeeHead.Name == "Session Fee")
+                        {
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        if (classFee.StudentFeeHead.Name == "Admission Fee")
+                        {
+                            continue;
+                        }
+                    }
+
+
                     var totalAmount = classFeeList.Select(s => s.Amount).FirstOrDefault();
                     var paidAmount = allPaymentDetailsByStudent.Where(d => d.ClassFeeId == classFeeList.Select(c => c.Id).FirstOrDefault() && d.StudentFeeHeadId == classFee.StudentFeeHeadId).Select(s => s.PaidAmount).Sum();
 
@@ -238,11 +257,45 @@ namespace SMS.BLL.Managers
         {
             var totalFees = 0.00;
             var student = await _studentRepository.GetStudentByUniqueIdAsync(studentUniqueId);
-            var allClassFeeBySessionId = await _classFeeListRepository.GetAllBySessionIdClassIdAsync(sessionId, student.AcademicClassId);
+            var allClassFeeBySessionId = await _classFeeListRepository
+                .GetAllBySessionIdClassIdAsync(sessionId, student.AcademicClassId, student.IsResidential);
+
+            List<ClassFeeList> classFeeLists = new List<ClassFeeList>();
+
+
+            //Admin or Session
+            DateTime addmissionYear = student.AdmissionDate;
+            AcademicSession academicSession = await _academicSessionRepository.GetByIdAsync(sessionId);
+
             if (allClassFeeBySessionId != null)
             {
-                var allFeeHead = await _studentFeeHeadRepository.GetAllAsync();
-                totalFees = allClassFeeBySessionId.Where(c => c.StudentFeeHead.IsResidential == student.IsResidential).Select(s => s.Amount).Sum();
+                foreach (var cFee in allClassFeeBySessionId)
+                {
+
+                    if (addmissionYear.Year == Convert.ToInt32(academicSession.Name.Substring((academicSession.Name.Length - 4), 4)))
+                    {
+                        if (cFee.StudentFeeHead.Name == "Session Fee")
+                        {
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        if (cFee.StudentFeeHead.Name == "Admission Fee")
+                        {
+                            continue;
+                        }
+                    }
+                    classFeeLists.Add(cFee);
+                }
+
+                if (classFeeLists.Count > 0)
+                {
+                    totalFees = classFeeLists
+                        .Where(c => c.StudentFeeHead.IsResidential == student.IsResidential)
+                        .Select(s => s.Amount)
+                        .Sum();
+                }
             }
             return totalFees;
         }

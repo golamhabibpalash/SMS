@@ -14,5 +14,6 @@ namespace SMS.App.ViewModels.ExamVM
         public double NewObtainMark { get; set; }
         public string NewRemarks { get; set; }
         public List<SelectListItem> StudentList { get; set; }
+        public List<SelectListItem> MissingStudentList { get; set; }
     }
 }

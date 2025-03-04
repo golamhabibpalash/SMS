@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-//using IdentityServer4.EntityFramework.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -114,6 +113,20 @@ namespace SMS.App.Controllers
                 Value = s.Id.ToString(),
                 Text = s.Name + "-(" + s.ClassRoll + ")"
             }).ToList();
+
+            var selectedStudent = (from s in allStudents.Where(m => m.Status == true)
+                                   join d in exam.AcademicExamDetails
+                                   on s.Id equals d.StudentId into temp
+                                   from d in temp.DefaultIfEmpty() // Left join
+                                   where d == null // Select students without a match
+                                   select s).ToList();
+
+            academicExamDetailVM.MissingStudentList = selectedStudent.OrderBy(s => s.ClassRoll).Select(s => new SelectListItem
+            {
+                Value = s.Id.ToString(),
+                Text = s.Name + "-(" + s.ClassRoll + ")"
+            }).ToList();
+
             var user = await _userManager.GetUserAsync(User);
             var roles = await _userManager.GetRolesAsync(user);
             bool isAdminUser = false;
@@ -227,6 +240,34 @@ namespace SMS.App.Controllers
             return RedirectToAction("index");
         }
 
+        [HttpPost]
+        public async Task<ActionResult> AddStudentToExistingExam(IndividualStudentExamGroup model)
+        {
+            var existingExam = await _examManager.GetByIdAsync(model.AcademicExamId);
+            if (existingExam != null)
+            {
+                AcademicExamDetail newDetail = new AcademicExamDetail()
+                {
+                    AcademicExamId = existingExam.Id,
+                    ObtainMark = model.ObtainMarks,
+                    StudentId = model.StudentId,
+                    Remarks = model.Remarks,
+                    Status = true,
+                    CreatedAt = DateTime.Now,
+                    CreatedBy = HttpContext.Session.GetString("UserId"),
+                    EditedBy = HttpContext.Session.GetString("UserId")
+                };
+                var ss = await _academicExamDetailsManager.AddAsync(newDetail);
+                if (ss)
+                {
+                    TempData["success"] = "Student Added in Exam";
+                }
+                existingExam.EditedAt = DateTime.Now;
+                existingExam.EditedBy = HttpContext.Session.GetString("UserId");
+                await _examManager.UpdateAsync(existingExam);
+            }
+            return RedirectToAction("Details", new { id = model.AcademicExamId });
+        }
 
         // POST: AcademicExamsController/Edit/5
         [HttpPost]

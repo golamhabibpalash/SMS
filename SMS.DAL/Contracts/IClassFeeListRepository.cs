@@ -12,6 +12,7 @@ namespace SMS.DAL.Contracts
         Task<List<ClassFeeList>> GetClassFeeListByClassIdFeeHeadIdSessionIdAsync(int classId, int feeHeadId, int sessionId);
         Task<List<ClassFeeList>> GetByClassIdSessionIdStudentIdAsync(int classId, int sessionId, int studentId);
         Task<List<ClassFeeList>> GetAllBySessionIdClassIdAsync(int sessionId, int classId);
+        Task<List<ClassFeeList>> GetAllBySessionIdClassIdAsync(int sessionId, int classId, bool isResidential);
         Task<double> GetFeeAmountByFeeListSL(string uniquId, int sl);
         Task<List<ClassFeeList>> GetCurrentAllByUniqueId(string uniqueId);
     }

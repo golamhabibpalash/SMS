@@ -8,7 +8,7 @@
     int i = 0;
     int detailId = 0;
     string examLocked = Model.Status == true ? "(Exam is Locked)" : string.Empty;
-    int tabIndex = 1; 
+    int tabIndex = 1;
     string updatedBy = string.Empty;
 }
 @section Styles{
@@ -17,7 +17,7 @@
         .error
         {
             border: 1px solid red !important;
-            color:red;
+            color: red;
         }
     </style>
 }
@@ -84,57 +84,6 @@
             <span class="wall text-center">
                 <button class="btn btn-block btn-info" data-toggle="modal" data-target=".addStudentModal">Add Student</button>
             </span>
-
-
-            <div class="modal fade addStudentModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-                <div class="modal-dialog ">
-                    <div class="modal-content">
-                        <div class="card">
-                            <div class="card-header text-center">
-                                <span class="card-title">Add Student in the existing exam</span>
-                            </div>
-                            <div class="card-body">
-                                <form>
-                                    <div class="form-group row">
-                                        <label for="" class="col-sm-3 col-form-label text-right">Student</label>
-                                        <div class="col-sm-9">
-                                            <select class="form-control select2">
-                                                <option value="">-Select Student-</option>
-                                                @if (Model.StudentList?.Count>0)
-                                                {
-                                                    foreach (var item in Model.StudentList)
-                                                    {
-                                                        <option value="@item.Value">@item.Text</option>
-                                                    }
-                                                }
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-sm-3 text-right">Marks</label>
-                                        <div class="col-sm-9">
-                                            <input type="number" class="form-control"/>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-sm-3 text-right">Remarks</label>
-                                        <div class="col-sm-9">
-                                            <input type="text" class="form-control"/>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <div class="col-sm-12 text-right">
-                                            <button type="submit" class="btn btn-primary">Submit</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
         </div>
         <div class="row">
             <div class="col-md-12 text-center">
@@ -175,7 +124,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model.AcademicExamDetails.Where(s =>s.Student.Status==true))
+                    @foreach (var item in Model.AcademicExamDetails.Where(s => s.Student.Status == true))
                     {
                         if (item.EditedBy != null)
                         {
@@ -193,7 +142,7 @@
                                 }
                                 else
                                 {
-                                    <input class="markInput" tabindex="@tabIndex" asp-for="AcademicExamDetails[detailId].ObtainMark" max="@Model.TotalMarks" inputmode="numeric" pattern="[0-9]*" placeholder="0" style="width:60px;height:35px;text-align:center;border:none" onchange="handleInputChange(this)" data-academicExamId="@item.AcademicExamId" data-Id="@item.Id" data-StudentId="@item.StudentId"/>
+                                    <input class="markInput" tabindex="@tabIndex" asp-for="AcademicExamDetails[detailId].ObtainMark" max="@Model.TotalMarks" inputmode="numeric" pattern="[0-9]*" placeholder="0" style="width:60px;height:35px;text-align:center;border:none" onchange="handleInputChange(this)" data-academicExamId="@item.AcademicExamId" data-Id="@item.Id" data-StudentId="@item.StudentId" />
                                 }
                             </td>
                             <td class="flex-wrap justify-content-center">
@@ -243,6 +192,58 @@
         </form>
     </div>
 </div>
+
+
+<div class="modal fade addStudentModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="card">
+                <div class="card-header text-center">
+                    <span class="card-title">Add Student in the <span class="h6"> @Model.AcademicSubject.SubjectName (@Model.AcademicSubject.SubjectCode)</span></span>
+                </div>
+                <div class="card-body">
+                    <form  asp-action="AddStudentToExistingExam" asp-controller="AcademicExams" method="post">
+                        <input type="hidden" name="AcademicExamId" value="@Model.Id" />
+                        <div class="form-group row">
+                            <label for="" class="col-sm-3 col-form-label text-right">Student</label>
+                            <div class="col-sm-9">
+                                <select class="form-control select2" name="StudentId">
+                                    <option value="">-Select Student-</option>
+                                    @if (Model.StudentList?.Count > 0)
+                                    {
+                                        foreach (var item in Model.MissingStudentList)
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-form-label col-sm-3 text-right">Marks</label>
+                            <div class="col-sm-9">
+                                <input type="number" class="form-control"  name="ObtainMarks" max="@Model.TotalMarks" inputmode="numeric" pattern="[0-9]*" placeholder="0"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-form-label col-sm-3 text-right">Remarks</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="Remarks"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-12 text-right">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 @section Scripts{
     <script>
         $(document).ready(function () {
@@ -255,6 +256,7 @@
                 }
             }
         });
+
         function handleInputChange(inputElement) {
             var maxAttributeValue = inputElement.getAttribute("max");
             var academicexamid = inputElement.getAttribute("data-academicexamid");
@@ -293,7 +295,6 @@
                 });
             }
         }
-
 
         function submitForm() {
             var inputFields = document.getElementsByClassName("markInput");

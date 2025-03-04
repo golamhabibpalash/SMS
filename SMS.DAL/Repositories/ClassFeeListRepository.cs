@@ -100,6 +100,22 @@ namespace SMS.DAL.Repositories
             }
             return results;
         }
+        public async Task<List<ClassFeeList>> GetAllBySessionIdClassIdAsync(int sessionId, int classId, bool isResidential)
+        {
+            List<ClassFeeList> results = new();
+            try
+            {
+                results = await _context.ClassFeeList
+                    .Where(s => s.AcademicSessionId == sessionId && s.AcademicClassId == classId && s.StudentFeeHead.IsResidential == isResidential)
+                    .Include(c => c.StudentFeeHead)
+                    .ToListAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return results;
+        }
         public async Task<List<ClassFeeList>> GetCurrentAllByUniqueId(string uniqueId)
         {
             var student = await _context.Student.FirstOrDefaultAsync(s => s.UniqueId == uniqueId);

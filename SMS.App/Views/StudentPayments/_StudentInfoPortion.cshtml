@@ -2,7 +2,7 @@
 @{ 
     string studentPhoto = !string.IsNullOrEmpty(Model.StudentPayment.Student.Photo) ? Model.StudentPayment.Student.Photo : "noimage.jpg";
 }
-<div class="panel bg-navy-blue rounded rounded-2" style="min-height:232px;">
+<div class="panel bg-navy-blue rounded rounded-2" style="min-height:270px;">
     <div class="row p-4">
         <div class="col-md-4 text-center p-3">
             <img src="~/Images/Student/@studentPhoto" alt="Alternate Text" class="rounded-circle" style="width:50%;" />
@@ -37,6 +37,11 @@
                     <td>Academic Session</td>
                     <td>:</td>
                     <td>@Model.StudentPayment.Student.AcademicSession.Name</td>
+                </tr>
+                <tr>
+                    <td>Admission Date</td>
+                    <td>:</td>
+                    <td>@Model.StudentPayment.Student.AdmissionDate.ToString("dd MMM yyyy")</td>
                 </tr>
             </table>
         </div>

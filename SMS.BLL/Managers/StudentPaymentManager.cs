@@ -166,9 +166,9 @@ namespace SMS.BLL.Managers
                 {
                     var classFeeList = await _classFeeListRepository.GetClassFeeListByClassIdFeeHeadIdSessionIdAsync(student.AcademicClassId, classFee.StudentFeeHeadId, sessionId);
                     //Admin or Session
-                    DateTime addmissionYear = student.AdmissionDate;
-                    AcademicSession academicSession = await _academicSessionRepository.GetByIdAsync(sessionId);
-                    if (addmissionYear.Year == Convert.ToInt32(academicSession.Name.Substring((academicSession.Name.Length - 4), 4)))
+                    var isAdmittedByThisSession = allPaymentDetailsByStudent.Any(s => s.StudentFeeHeadId == 2 || s.StudentFeeHeadId == 6);
+
+                    if (isAdmittedByThisSession)
                     {
                         if (classFee.StudentFeeHead.Name == "Session Fee")
                         {
@@ -182,7 +182,6 @@ namespace SMS.BLL.Managers
                             continue;
                         }
                     }
-
 
                     var totalAmount = classFeeList.Select(s => s.Amount).FirstOrDefault();
                     var paidAmount = allPaymentDetailsByStudent.Where(d => d.ClassFeeId == classFeeList.Select(c => c.Id).FirstOrDefault() && d.StudentFeeHeadId == classFee.StudentFeeHeadId).Select(s => s.PaidAmount).Sum();
@@ -231,7 +230,8 @@ namespace SMS.BLL.Managers
                         PaymentId = item.StudentPayment.Id
                     };
                     paymentDetails.Add(sessionWisePaymentDetails);
-                };
+                }
+                ;
             }
             return paymentDetails;
         }
@@ -253,6 +253,7 @@ namespace SMS.BLL.Managers
             }
             return status;
         }
+
         public async Task<double> GetStudentTotalPaybleAmountBySessionAsync(int sessionId, string studentUniqueId)
         {
             var totalFees = 0.00;
@@ -299,6 +300,7 @@ namespace SMS.BLL.Managers
             }
             return totalFees;
         }
+
         public async Task<double> GetStudentTotalPaidAmountBySession(int sessionId, string studentUniqueId)
         {
             var student = await _studentRepository.GetStudentByUniqueIdAsync(studentUniqueId);
@@ -306,6 +308,7 @@ namespace SMS.BLL.Managers
             var amount = allPayments.Where(s => s.AcademicSessionId == sessionId).Select(s => s.TotalPayment).Sum();
             return amount;
         }
+
         public async Task<double> GetStudentTotalDueAmountBySession(int sessionId, string studentUniqueId)
         {
             var student = await _studentRepository.GetStudentByUniqueIdAsync(studentUniqueId);

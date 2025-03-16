@@ -183,6 +183,18 @@ namespace SMS.App.Controllers
             List<RptDailyAttendaceVM> studentDailyAttendance = await _reportManager.GetDailyAttendanceReport(fromDate, academicClassId, academicSectionId, attendanceType, academicSession.Id.ToString(), attendanceFor);
             string totalStudents = studentDailyAttendance.Count.ToString();
             using var report = new Microsoft.Reporting.NETCore.LocalReport();
+            if (studentDailyAttendance.Count > 0)
+            {
+                var allActiveStudents = await _studentManager.GetCurrentStudentListAsync(null, null);
+                foreach (var item in studentDailyAttendance)
+                {
+                    var isResidential = allActiveStudents.FirstOrDefault(s => s.ClassRoll.ToString() == item.CardNo.Trim())?.IsResidential;
+                    if (isResidential == true)
+                    {
+                        item.Name = item.Name + " " + "(R)";
+                    }
+                }
+            }
             report.DataSources.Add(new ReportDataSource("AttendanceReportDS", studentDailyAttendance));
             var parameters = new[] {
                 new ReportParameter("InstituteName", institute.Name),

@@ -168,8 +168,8 @@
         </div>
         <div class="col-md-6 mh-100">
 
-            <div class="panel bg-navy-blue rounded rounded-2 " id="inputPanel" style="min-height:232px;">
-                <div class="form-horizontal">
+            <div class="panel bg-navy-blue rounded rounded-2 " id="inputPanel" style="min-height:270px;">
+                <div class="form-horizontal pt-3">
                     <form asp-action="payment" asp-controller="StudentPayments" method="post" id="studentPaymentFormId">
                         <input type="hidden" id="academicSessionId" value="@Model.StudentPayment.Student.AcademicSessionId" />
                         <input type="hidden" asp-for="StudentPayment.StudentId" value="@Model.StudentId" />

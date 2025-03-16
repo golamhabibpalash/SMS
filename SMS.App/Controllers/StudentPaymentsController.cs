@@ -17,15 +17,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using SessionWisePaymentDetails = SMS.Entities.AdditionalModels.SessionWisePaymentDetails;
 using SessionWisePaymentVM = SMS.Entities.AdditionalModels.SessionWisePaymentVM;
-using SinglePaymentVM = SMS.Entities.AdditionalModels.SinglePaymentVM;
 
 namespace SMS.App.Controllers
 {
     [Authorize(Roles = "SuperAdmin, Admin")]
     public class StudentPaymentsController : Controller
     {
+        #region Fields
         private readonly IStudentPaymentManager _studentPaymentManager;
         private readonly IStudentManager _studentManager;
         private readonly IClassFeeListManager _classFeeListManager;
@@ -40,6 +39,9 @@ namespace SMS.App.Controllers
         private readonly IStudentFeeAllocationManager _studentFeeAllocationManager;
         private readonly HttpClient _httpClient;
 
+        #endregion Fields
+
+        #region ctor
         public StudentPaymentsController(IStudentPaymentManager studentPaymentManager, IStudentManager studentManager, IClassFeeListManager classFeeListManager, IAcademicClassManager academicClassManager, IStudentFeeHeadManager studentFeeHeadManager, IStudentPaymentDetailsManager studentPaymentDetailsManager, ISetupMobileSMSManager setupMobileSMSManager, IPhoneSMSManager phoneSMSManager, IInstituteManager instituteManager, IAcademicSessionManager academicSessionManager, IAcademicSectionManager academicSectionManager, IStudentFeeAllocationManager studentFeeAllocationManager, HttpClient httpClient)
         {
             _studentPaymentManager = studentPaymentManager;
@@ -57,29 +59,17 @@ namespace SMS.App.Controllers
             _httpClient = httpClient;
         }
 
-        // GET: StudentPayments
+        #endregion ctor
+
+        #region Action Methods
+
         [HttpGet]
         [Authorize(Policy = "IndexStudentPaymentsPolicy")]
         public async Task<IActionResult> Index()
         {
             try
             {
-                var msg = "";
-                if (TempData["success"] != null)
-                {
-                    msg = TempData["success"].ToString();
-                    TempData["created"] = msg;
-                }
-                if (TempData["msg"] != null)
-                {
-                    msg = TempData["msg"].ToString();
-                }
-                if (TempData["studentNotFound"] != null)
-                {
-                    msg = TempData["studentNotFound"].ToString();
-                    TempData["failed"] = msg;
-                }
-                ViewBag.msg = msg;
+                SetTempDataMessages();
                 ViewData["AcademicClassList"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name");
             }
             catch (Exception)
@@ -91,253 +81,33 @@ namespace SMS.App.Controllers
             return View();
         }
 
+
         [HttpGet]
         [Authorize(Policy = "PaymentStudentPaymentsPolicy")]
         public async Task<IActionResult> Payment(int? stRoll)
         {
-            ViewData["AcademicClassList"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name");
-            if (stRoll < 0 || stRoll == 0 || stRoll == null)
+            if (!IsValidRoll(stRoll))
             {
                 return RedirectToAction("Index");
             }
-            var msg = "";
-            if (TempData["success"] != null)
-            {
-                msg = TempData["success"].ToString();
-                TempData["created"] = msg;
-            }
-            ViewBag.msg = msg;
-            List<StudentPayment> studentPayments = new();
-            StudentPaymentVM spvm = new();
-            spvm.CurrentAcademicSession = await _academicSessionManager.GetCurrentAcademicSession();
-            var inst = await _instituteManager.GetFirstOrDefaultAsync();
-            ViewBag.InstituteName = inst.Name;
-            var stu = await _studentManager.GetStudentByClassRollAsync((int)stRoll);
-            if (stu == null)
+            ViewData["AcademicClassList"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name");
+
+            SetTempDataMessages();
+
+            var student = await _studentManager.GetStudentByClassRollAsync((int)stRoll);
+            if (student == null)
             {
                 TempData["studentNotFound"] = "Student Not Found";
                 return RedirectToAction("Index");
             }
-            try
-            {
-                var student = await _studentManager.GetStudentByUniqueIdAsync(Convert.ToInt32(stu.UniqueId).ToString());
-                if (student != null)
-                {
-                    StudentPayment sp = new();
-                    StudentPaymentDetails details = new();
-                    sp.Student = student;
-                    List<StudentPaymentDetails> studentPaymentDetails = new();
-                    sp.StudentPaymentDetails = studentPaymentDetails;
-                    sp.StudentPaymentDetails.Add(details);
-                    spvm.StudentPayment = sp;
-                    spvm.StudentPreviousPayments = (List<StudentPayment>)await _studentPaymentManager.GetAllByStudentIdAsync(student.Id);
-                    spvm.StudentCurrentPayments = (List<StudentPayment>)await _studentPaymentManager.GetAllByStudentIdAsync(student.Id);
-                    spvm.StudentId = student.Id;
-                    List<ClassFeeList> feeList = new();
-                    var classfeelist = await _classFeeListManager.GetAllByClassIdAsync(student.AcademicClassId);
-                    classfeelist = classfeelist.Where(s => s.AcademicSessionId == student.AcademicSessionId).ToList();
+            var spvm = await CreateStudentPaymentVM(student);
 
-                    List<StudentFeeHead> feeHeadList = (List<StudentFeeHead>)await _studentFeeHeadManager.GetAllAsync();
-                    AcademicSession currentSession = spvm.CurrentAcademicSession;
+            ViewBag.roll = stRoll;
 
-                    feeHeadList = (from f in feeHeadList
-                                   join t in classfeelist on f.Id equals t.StudentFeeHeadId
-                                   where t.AcademicSessionId == student.AcademicSessionId
-                                   select f).ToList();
-                    if (student.IsResidential)
-                    {
-                        feeHeadList = feeHeadList.Where(s => s.IsResidential).ToList();
-                    }
-                    else
-                    {
-                        feeHeadList = feeHeadList.Where(s => s.IsResidential == false).ToList();
-                    }
+            return View(spvm);
 
-                    ViewData["FeeList"] = new SelectList(feeHeadList.OrderBy(s => s.SL), "Id", "Name");
-                    AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSession();
-                    foreach (var item in classfeelist.Where(s => s.AcademicSessionId == currentSession.Id))
-                    {
-                        if (item.AcademicSessionId == academicSession.Id)
-                        {
-                            feeList.Add(item);
-                        }
-                    }
-                    spvm.ClassFeeLists = feeList;
-                    ViewBag.roll = stRoll;
-
-                    StudentPaymentDetailVM studentPaymentDetailVM = await _studentPaymentManager.GetAllDetailPaymentByUniqueId(student.UniqueId);
-                    List<SinglePaymentVM> singlePaymentVMs = new List<SinglePaymentVM>();
-                    #region dummy data
-                    SinglePaymentVM singlePaymentVM = new SinglePaymentVM();
-                    singlePaymentVM.AcademicSession = "2024-2025";
-                    singlePaymentVM.TotalAmount = 4800;
-                    singlePaymentVM.TotalPaidAmount = 2800;
-                    singlePaymentVM.TotalDueAmount = 2000;
-                    if (feeHeadList.Count > 0)
-                    {
-                        foreach (var fHeadItem in feeHeadList.OrderBy(s => s.SL))
-                        {
-                            SessionWisePaymentVM sessionWisePaymentVM = new SessionWisePaymentVM()
-                            {
-                                FeeHeadName = fHeadItem.Name,
-                                Amount = 0,
-                                PaidAmount = 0,
-                                Balance = 0,
-                                Status = "Null"
-                            };
-                            singlePaymentVM.SessionWisePaymentVMs.Add(sessionWisePaymentVM);
-                        }
-                    }
-
-                    SessionWisePaymentVM sessionWisePaymentVM1 = new SessionWisePaymentVM()
-                    {
-                        FeeHeadName = "January Monthly Fee",
-                        Amount = 1600,
-                        PaidAmount = 1600,
-                        Balance = 0,
-                        Status = "Paid"
-                    };
-
-                    SessionWisePaymentDetails sessionWisePaymentDetails1a = new SessionWisePaymentDetails()
-                    {
-                        PaidDate = new DateTime(2025, 1, 05).ToString("dd MMM yyyy"),
-                        ReceiptNo = "5624178",
-                        PayableAmount = 1600,
-                        PaidAmount = 600,
-                        DueAmount = 1000,
-                        Status = "Partial"
-                    };
-                    sessionWisePaymentVM1.SessionWisePaymentDetails.Add(sessionWisePaymentDetails1a);
-
-                    SessionWisePaymentDetails sessionWisePaymentDetails1b = new SessionWisePaymentDetails()
-                    {
-                        PaidDate = new DateTime(2025, 1, 10).ToString("dd MMM yyyy"),
-                        ReceiptNo = "5624199",
-                        PayableAmount = 1600,
-                        PaidAmount = 1000,
-                        DueAmount = 600,
-                        Status = "Partial"
-                    };
-                    sessionWisePaymentVM1.SessionWisePaymentDetails.Add(sessionWisePaymentDetails1b);
-                    singlePaymentVM.SessionWisePaymentVMs.Add(sessionWisePaymentVM1);
-
-                    SessionWisePaymentVM sessionWisePaymentVM2 = new SessionWisePaymentVM()
-                    {
-                        FeeHeadName = "Februery Monthly Fee",
-                        Amount = 1600,
-                        PaidAmount = 1200,
-                        Balance = 400,
-                        Status = "Partial Paid"
-                    };
-
-                    SessionWisePaymentDetails sessionWisePaymentDetails2a = new SessionWisePaymentDetails()
-                    {
-                        PaidDate = new DateTime(2025, 2, 04).ToString("dd MMM yyyy"),
-                        ReceiptNo = "5625034",
-                        PayableAmount = 1600,
-                        PaidAmount = 1000,
-                        DueAmount = 600,
-                        Status = "Partial"
-                    };
-                    sessionWisePaymentVM2.SessionWisePaymentDetails.Add(sessionWisePaymentDetails2a);
-
-                    SessionWisePaymentDetails sessionWisePaymentDetails2b = new SessionWisePaymentDetails()
-                    {
-                        PaidDate = new DateTime(2025, 2, 05).ToString("dd MMM yyyy"),
-                        ReceiptNo = "5625055",
-                        PayableAmount = 600,
-                        PaidAmount = 200,
-                        DueAmount = 400,
-                        Status = "Partial"
-                    };
-                    sessionWisePaymentVM2.SessionWisePaymentDetails.Add(sessionWisePaymentDetails2b);
-                    singlePaymentVM.SessionWisePaymentVMs.Add(sessionWisePaymentVM2);
-
-                    SessionWisePaymentVM sessionWisePaymentVM3 = new SessionWisePaymentVM()
-                    {
-                        FeeHeadName = "March Monthly Fee",
-                        Amount = 1600,
-                        PaidAmount = 0,
-                        Balance = 1600,
-                        Status = "Not Paid"
-                    };
-                    singlePaymentVM.SessionWisePaymentVMs.Add(sessionWisePaymentVM3);
-                    singlePaymentVMs.Add(singlePaymentVM);
-                    #endregion dummy data
-                    //studentPaymentDetailVM.Payments = singlePaymentVMs;
-                    spvm.PaymentVM = studentPaymentDetailVM ?? new StudentPaymentDetailVM();
-                    //var existingAllPayments = await _studentPaymentDetailsManager.GetAllByStudentUniqueId(student.UniqueId);
-
-                    return View(spvm);
-                }
-                else
-                {
-                    TempData["msg"] = "Student Not Found";
-                    return RedirectToAction("Index");
-                }
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-        private async Task<List<SinglePaymentVM>> GetSinglePaymentList(string studentUniqueId)
-        {
-            List<SinglePaymentVM> singlePaymentVMs = new List<SinglePaymentVM>();
-            var allSession = await _academicSessionManager.GetAllAsync();
-            var allFeeHead = await _studentFeeHeadManager.GetAllAsync();
-            if (allSession != null && allSession.Count > 0)
-            {
-                foreach (var session in allSession.OrderByDescending(s => s.Name))
-                {
-                    var singlePayment = new SinglePaymentVM
-                    {
-                        AcademicSession = session.Name,
-                        PaymentsTitle = "Payment status and details",
-                        SessionWisePaymentVMs = await GetSessionWisePaymentVMs(session.Id, studentUniqueId),
-                    };
-                    singlePaymentVMs.Add(singlePayment);
-                }
-            }
-            return singlePaymentVMs;
-        }
-        private async Task<List<SessionWisePaymentVM>> GetSessionWisePaymentVMs(int academicSessionId, string studentUniqueId)
-        {
-            List<SessionWisePaymentVM> sessionWisePaymentVMs = new();
-            var student = await _studentManager.GetStudentByUniqueIdAsync(studentUniqueId);
-            var classFees = await _classFeeListManager.GetAllByClassIdAsync(student.AcademicClassId);
-            classFees = classFees.Where(s => s.AcademicSessionId == academicSessionId && s.StudentFeeHead.IsResidential == student.IsResidential).ToList();
-            if (classFees != null)
-            {
-                foreach (var item in classFees.OrderBy(s => s.StudentFeeHead.SL))
-                {
-                    var pAmount = await GetPaidAmount(studentUniqueId, academicSessionId, item.StudentFeeHeadId);
-                    SessionWisePaymentVM sessionWisePaymentVM = new()
-                    {
-                        FeeHeadName = item.StudentFeeHead.Name,
-                        Amount = item.Amount,
-                        PaidAmount = pAmount,
-                        Balance = pAmount - item.Amount,
-                        Status = pAmount == item.Amount ? "Paid" : pAmount < item.Amount ? "Patial Paid" : "Unpaid",
-                    };
-                    sessionWisePaymentVMs.Add(sessionWisePaymentVM);
-                }
-            }
-            return sessionWisePaymentVMs;
         }
 
-        private async Task<double> GetPaidAmount(string studentUniqueId, int aSessionId, int feeHeadId)
-        {
-            var paidAmount = 0.0;
-            var student = await _studentManager.GetStudentByUniqueIdAsync(studentUniqueId);
-            int isResidential = student.IsResidential ? 1 : 0;
-            var result = await _studentPaymentManager.GetPaidAmountByFeeHeadAsync(studentUniqueId, aSessionId, isResidential, student.AcademicClassId, feeHeadId);
-            if (result.Count > 0)
-            {
-                paidAmount = Convert.ToDouble(result.FirstOrDefault().PaidAmount);
-            }
-            return paidAmount;
-        }
 
         [HttpPost]
         [Authorize(Policy = "PaymentStudentPaymentsPolicy")]
@@ -346,88 +116,15 @@ namespace SMS.App.Controllers
             paymentObject.CurrentAcademicSession = await _academicSessionManager.GetCurrentAcademicSession();
             try
             {
-                paymentObject.StudentPayment.ReceiptNo = await GetReceiptNo(paymentObject.StudentPayment.StudentId, paymentObject.ClassFeeHeadId);
-                StudentPayment studentPaymentObject = new StudentPayment();
-                List<StudentPaymentDetails> studentPaymentDetailsObject = new List<StudentPaymentDetails>();
-                studentPaymentObject.StudentId = paymentObject.StudentPayment.StudentId;
-                studentPaymentObject.TotalPayment = paymentObject.StudentPayment.TotalPayment;
-                studentPaymentObject.PaidDate = paymentObject.StudentPayment.PaidDate;
-                studentPaymentObject.Remarks = paymentObject.StudentPayment.Remarks;
-                studentPaymentObject.AcademicSessionId = paymentObject.CurrentAcademicSession.Id;
-                //studentPaymentObject.AcademicSession = paymentObject.CurrentAcademicSession;
-                studentPaymentObject.UniqueId = await _studentManager.GetUniqueIdByStudentId(paymentObject.StudentPayment.StudentId);
-                var feeList = await _studentFeeHeadManager.GetAllAsync();
-                ViewData["FeeList"] = new SelectList(feeList.OrderBy(s => s.SL), "Id", "Name");
-
-                if (paymentObject.StudentPayment.StudentPaymentDetails != null)
-                {
-                    foreach (var paymentDetails in paymentObject.StudentPayment.StudentPaymentDetails)
-                    {
-                        paymentDetails.CreatedAt = DateTime.Now;
-                        paymentDetails.CreatedBy = HttpContext.Session.GetString("UserId");
-
-                        paymentDetails.MACAddress = MACService.GetMAC();
-                        studentPaymentDetailsObject.Add(paymentDetails);
-                    }
-                    studentPaymentObject.ReceiptNo = paymentObject.StudentPayment.ReceiptNo;
-                    studentPaymentObject.CreatedAt = DateTime.Now;
-                    studentPaymentObject.CreatedBy = HttpContext.Session.GetString("UserId");
-                    studentPaymentObject.MACAddress = MACService.GetMAC();
-
-                    studentPaymentObject.StudentPaymentDetails = studentPaymentDetailsObject;
-
-                    bool isSaved = await _studentPaymentManager.AddAsync(studentPaymentObject);
-                    if (isSaved)
-                    {
-                        TempData["success"] = ViewBag.msg = "New payment added successfully!";
-                        if (paymentObject.IsSMSSend == true)
-                        {
-                            var smsSetup = await _setupMobileSMSManager.GetByIdAsync(1);
-                            if (smsSetup.SMSService == true)
-                            {
-                                Student studentObject = await _studentManager.GetByIdAsync(paymentObject.StudentPayment.StudentId);
-                                foreach (var item in studentPaymentDetailsObject)
-                                {
-                                    if (item.PaidAmount <= 0)
-                                    {
-                                        item.PaidAmount = paymentObject.StudentPayment.TotalPayment;
-                                    }
-                                    StudentFeeHead feeHead = await _studentFeeHeadManager.GetByIdAsync(item.StudentFeeHeadId);
-                                    var instituteInfo = await _instituteManager.GetAllAsync();
-
-                                    string smsText = studentObject.Name + " has Paid " + item.PaidAmount + "Tk as " + feeHead.Name + " -" + instituteInfo.FirstOrDefault().Name;
-                                    string phoneNo = studentObject.GuardianPhone;
-                                    bool isSend = await MobileSMS.SendSMS(phoneNo, smsText);
-                                    if (isSend)
-                                    {
-                                        PhoneSMS sms = new PhoneSMS();
-                                        sms.SMSType = "payment";
-                                        sms.MACAddress = MACService.GetMAC();
-                                        sms.Text = smsText;
-                                        sms.MobileNumber = phoneNo;
-                                        sms.CreatedAt = DateTime.Now;
-                                        sms.CreatedBy = HttpContext.Session.GetString("UserId");
-                                        sms.EditedAt = DateTime.Now;
-                                        sms.EditedBy = HttpContext.Session.GetString("UserId");
-
-                                        await _phoneSMSManager.AddAsync(sms);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        TempData["fail"] = ViewBag.msg = "Failed to payment";
-                    }
-                }
-
+                await ProcessPayment(paymentObject);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                // Log the exception
                 throw;
             }
-            Student student = await _studentManager.GetByIdAsync(paymentObject.StudentPayment.StudentId);
+
+            var student = await _studentManager.GetByIdAsync(paymentObject.StudentPayment.StudentId);
             return RedirectToAction("Payment", new { stRoll = student.ClassRoll });
         }
 
@@ -747,115 +444,6 @@ namespace SMS.App.Controllers
             return View(previousDuePaymentVM);
         }
 
-        private bool StudentPaymentExists(int id)
-        {
-            var r = _studentPaymentManager.GetById(id);
-            if (r != null)
-            {
-                return true;
-            }
-            return false;
-
-        }
-        public async Task<double> GetTotalPayment(int stuRoll)
-        {
-            Student student = await _studentManager.GetStudentByClassRollAsync(stuRoll);
-            var session = student.AcademicSession.Name.Trim().Split('-', 4);
-            int sessionYear = Convert.ToInt32(session);
-
-            DateTime startingDate = new(sessionYear, 01, 01);
-            DateTime finalDate = new(sessionYear, 12, 31);
-            return 0.0;
-        }
-        //public async Task<double> GetCurrentDue(int stuRoll)
-        //{
-        //    Student student = await _studentManager.GetStudentByClassRollAsync(stuRoll);
-
-        //    var session = student.AcademicSession.Name.Trim().Split('-', 4);
-        //    int sessionYear = Convert.ToInt32(session);
-
-        //    DateTime startingDate = new DateTime(sessionYear,01,01);
-        //    DateTime finalDate = new DateTime(sessionYear, 12, 31);
-
-        //    return 0.0;
-        //}
-
-        private async Task<double> GetCurrentDue(int studId)
-        {
-            double currentDue = 0.00;
-            try
-            {
-
-                Student st = await _studentManager.GetByIdAsync(studId);
-                if (st == null)
-                {
-                    return 0;
-                }
-
-                double totalCurrentPayable = 0;
-                double totalCurrentPaid = 0;
-                double admissionOrSessionFee = 0;
-                int feeHeadValue = 0;
-                double cMonthlyFee = 0;
-                double othersFee = 0;
-
-
-                //0     = admission fee
-                //1-12  = monthly fee
-                //13    = session fee
-                //14- >   other's fee
-
-                //admission or session fee calculation
-                feeHeadValue = st.AdmissionDate.Year < DateTime.Now.Year ? 13 : 0;
-                admissionOrSessionFee = await _classFeeListManager.GetFeeAmountByFeeListSlAsync(st.UniqueId, feeHeadValue);
-
-                //monthly fee calculation
-                for (
-                    int i = st.AdmissionDate.Month; i <= DateTime.Now.Month; i++)
-                {
-                    feeHeadValue = i;
-                    cMonthlyFee += await _classFeeListManager.GetFeeAmountByFeeListSlAsync(st.UniqueId, feeHeadValue);
-                }
-                //others fee calculation
-                var othersFeeList = await _classFeeListManager.GetByClassIdSessionIdStudentIdAsync(st.AcademicClassId, st.AcademicSessionId, st.Id);
-                if (othersFeeList != null)
-                {
-                    foreach (var item in othersFeeList)
-                    {
-                        if (item.SL > 13)
-                        {
-                            othersFee += item.Amount;
-                        }
-                    }
-                }
-                totalCurrentPayable = admissionOrSessionFee + cMonthlyFee + othersFee;
-                totalCurrentPaid = await GetTotalPaid(studId);
-                currentDue = totalCurrentPayable - totalCurrentPaid;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            return currentDue;
-        }
-
-        private async Task<double> GetFeeAsync(int aClassId, int feeHeadId, int sessionId)
-        {
-            ClassFeeList classFeeList = await _classFeeListManager.GetByClassIdAndFeeHeadIdAsync(aClassId, feeHeadId, sessionId);
-            if (classFeeList != null)
-            {
-                return classFeeList.Amount;
-            }
-            return 0;
-        }
-
-        private async Task<double> GetTotalPaid(int stuId)
-        {
-            List<StudentPayment> studentPayments = (List<StudentPayment>)await _studentPaymentManager.GetAllByStudentIdAsync(stuId);
-            double paidAmount = studentPayments.Sum(s => s.TotalPayment);
-            return paidAmount;
-        }
-
         public async Task<string> GetReceiptNo(int studentId, int feeHeadId)
         {
             if (studentId >= 0)
@@ -889,6 +477,56 @@ namespace SMS.App.Controllers
             string amountText = NumberToWords.ConvertAmount(Convert.ToDouble(amount));
             return Json("Taka " + amountText);
         }
+        #endregion Action Methods
+
+        #region Local Methods
+        private async Task<List<SessionWisePaymentVM>> GetSessionWisePaymentVMs(int academicSessionId, string studentUniqueId)
+        {
+            List<SessionWisePaymentVM> sessionWisePaymentVMs = new();
+            var student = await _studentManager.GetStudentByUniqueIdAsync(studentUniqueId);
+            var classFees = await _classFeeListManager.GetAllByClassIdAsync(student.AcademicClassId);
+            classFees = classFees.Where(s => s.AcademicSessionId == academicSessionId && s.StudentFeeHead.IsResidential == student.IsResidential).ToList();
+            if (classFees != null)
+            {
+                foreach (var item in classFees.OrderBy(s => s.StudentFeeHead.SL))
+                {
+                    var pAmount = await GetPaidAmount(studentUniqueId, academicSessionId, item.StudentFeeHeadId);
+                    SessionWisePaymentVM sessionWisePaymentVM = new()
+                    {
+                        FeeHeadName = item.StudentFeeHead.Name,
+                        Amount = item.Amount,
+                        PaidAmount = pAmount,
+                        Balance = pAmount - item.Amount,
+                        Status = pAmount == item.Amount ? "Paid" : pAmount < item.Amount ? "Patial Paid" : "Unpaid",
+                    };
+                    sessionWisePaymentVMs.Add(sessionWisePaymentVM);
+                }
+            }
+            return sessionWisePaymentVMs;
+        }
+
+        private async Task<double> GetPaidAmount(string studentUniqueId, int aSessionId, int feeHeadId)
+        {
+            var paidAmount = 0.0;
+            var student = await _studentManager.GetStudentByUniqueIdAsync(studentUniqueId);
+            int isResidential = student.IsResidential ? 1 : 0;
+            var result = await _studentPaymentManager.GetPaidAmountByFeeHeadAsync(studentUniqueId, aSessionId, isResidential, student.AcademicClassId, feeHeadId);
+            if (result.Count > 0)
+            {
+                paidAmount = Convert.ToDouble(result.FirstOrDefault().PaidAmount);
+            }
+            return paidAmount;
+        }
+
+        private bool StudentPaymentExists(int id)
+        {
+            var r = _studentPaymentManager.GetById(id);
+            if (r != null)
+            {
+                return true;
+            }
+            return false;
+        }
 
         private List<IsActiveVM> GetActiveInActiveList()
         {
@@ -910,5 +548,176 @@ namespace SMS.App.Controllers
             isActiveVMs.Add(status2);
             return isActiveVMs;
         }
+
+        private void SetTempDataMessages()
+        {
+            var msg = "";
+            if (TempData["success"] != null)
+            {
+                msg = TempData["success"].ToString();
+                TempData["created"] = msg;
+            }
+            if (TempData["msg"] != null)
+            {
+                msg = TempData["msg"].ToString();
+            }
+            if (TempData["studentNotFound"] != null)
+            {
+                msg = TempData["studentNotFound"].ToString();
+                TempData["failed"] = msg;
+            }
+            ViewBag.msg = msg;
+        }
+
+        private bool IsValidRoll(int? stRoll)
+        {
+            return stRoll > 0;
+        }
+
+        private async Task<StudentPaymentVM> CreateStudentPaymentVM(Student student)
+        {
+            var spvm = new StudentPaymentVM
+            {
+                CurrentAcademicSession = await _academicSessionManager.GetCurrentAcademicSession(),
+                StudentPayment = new StudentPayment
+                {
+                    Student = student,
+                    StudentPaymentDetails = new List<StudentPaymentDetails> { new StudentPaymentDetails() }
+                },
+                StudentPreviousPayments = (List<StudentPayment>)await _studentPaymentManager.GetAllByStudentIdAsync(student.Id),
+                StudentCurrentPayments = (List<StudentPayment>)await _studentPaymentManager.GetAllByStudentIdAsync(student.Id),
+                StudentId = student.Id,
+                ClassFeeLists = await GetClassFeeList(student)
+            };
+
+            var feeHeadList = await GetFeeHeadList(student);
+            ViewData["FeeList"] = new SelectList(feeHeadList.OrderBy(s => s.SL), "Id", "Name");
+
+            var studentPaymentDetailVM = await _studentPaymentManager.GetAllDetailPaymentByUniqueId(student.UniqueId);
+            spvm.PaymentVM = studentPaymentDetailVM ?? new StudentPaymentDetailVM();
+
+            return spvm;
+        }
+
+        private async Task<List<ClassFeeList>> GetClassFeeList(Student student)
+        {
+            var classfeelist = await _classFeeListManager.GetAllByClassIdAsync(student.AcademicClassId);
+            return classfeelist.Where(s => s.AcademicSessionId == student.AcademicSessionId).ToList();
+        }
+
+        private async Task<List<StudentFeeHead>> GetFeeHeadList(Student student)
+        {
+            var feeHeadList = (List<StudentFeeHead>)await _studentFeeHeadManager.GetAllAsync();
+            var classfeelist = await GetClassFeeList(student);
+
+            feeHeadList = (from f in feeHeadList
+                           join t in classfeelist on f.Id equals t.StudentFeeHeadId
+                           where t.AcademicSessionId == student.AcademicSessionId
+                           select f).ToList();
+
+            if (student.IsResidential)
+            {
+                feeHeadList = feeHeadList.Where(s => s.IsResidential).ToList();
+            }
+            else
+            {
+                feeHeadList = feeHeadList.Where(s => s.IsResidential == false).ToList();
+            }
+
+            return feeHeadList;
+        }
+
+        private async Task ProcessPayment(StudentPaymentVM paymentObject)
+        {
+            paymentObject.StudentPayment.ReceiptNo = await GetReceiptNo(paymentObject.StudentPayment.StudentId, paymentObject.ClassFeeHeadId);
+            var studentPaymentObject = CreateStudentPaymentObject(paymentObject);
+
+            if (paymentObject.StudentPayment.StudentPaymentDetails != null)
+            {
+                foreach (var paymentDetails in paymentObject.StudentPayment.StudentPaymentDetails)
+                {
+                    paymentDetails.CreatedAt = DateTime.Now;
+                    paymentDetails.CreatedBy = HttpContext.Session.GetString("UserId");
+                    paymentDetails.MACAddress = MACService.GetMAC();
+                    studentPaymentObject.StudentPaymentDetails.Add(paymentDetails);
+                }
+
+                bool isSaved = await _studentPaymentManager.AddAsync(studentPaymentObject);
+                if (isSaved)
+                {
+                    TempData["success"] = ViewBag.msg = "New payment added successfully!";
+                    if (paymentObject.IsSMSSend)
+                    {
+                        await SendPaymentSMS(paymentObject, studentPaymentObject);
+                    }
+                }
+                else
+                {
+                    TempData["fail"] = ViewBag.msg = "Failed to payment";
+                }
+            }
+        }
+
+        private StudentPayment CreateStudentPaymentObject(StudentPaymentVM paymentObject)
+        {
+            return new StudentPayment
+            {
+                StudentId = paymentObject.StudentPayment.StudentId,
+                TotalPayment = paymentObject.StudentPayment.TotalPayment,
+                PaidDate = paymentObject.StudentPayment.PaidDate,
+                Remarks = paymentObject.StudentPayment.Remarks,
+                AcademicSessionId = paymentObject.CurrentAcademicSession.Id,
+                UniqueId = _studentManager.GetUniqueIdByStudentId(paymentObject.StudentPayment.StudentId).Result,
+                ReceiptNo = paymentObject.StudentPayment.ReceiptNo,
+                CreatedAt = DateTime.Now,
+                CreatedBy = HttpContext.Session.GetString("UserId"),
+                MACAddress = MACService.GetMAC(),
+                StudentPaymentDetails = new List<StudentPaymentDetails>()
+            };
+        }
+
+        private async Task SendPaymentSMS(StudentPaymentVM paymentObject, StudentPayment studentPaymentObject)
+        {
+            var smsSetup = await _setupMobileSMSManager.GetByIdAsync(1);
+            if (smsSetup.SMSService)
+            {
+                var studentObject = await _studentManager.GetByIdAsync(paymentObject.StudentPayment.StudentId);
+                foreach (var item in studentPaymentObject.StudentPaymentDetails)
+                {
+                    if (item.PaidAmount <= 0)
+                    {
+                        item.PaidAmount = paymentObject.StudentPayment.TotalPayment;
+                    }
+                    var feeHead = await _studentFeeHeadManager.GetByIdAsync(item.StudentFeeHeadId);
+                    var instituteInfo = await _instituteManager.GetAllAsync();
+
+                    string smsText = $"{studentObject.Name} has Paid {item.PaidAmount}Tk as {feeHead.Name} - {instituteInfo.FirstOrDefault().Name}";
+                    string phoneNo = studentObject.GuardianPhone;
+                    bool isSend = await MobileSMS.SendSMS(phoneNo, smsText);
+                    if (isSend)
+                    {
+                        await SaveSMSToDatabase(smsText, phoneNo);
+                    }
+                }
+            }
+        }
+
+        private async Task SaveSMSToDatabase(string smsText, string phoneNo)
+        {
+            var sms = new PhoneSMS
+            {
+                SMSType = "payment",
+                MACAddress = MACService.GetMAC(),
+                Text = smsText,
+                MobileNumber = phoneNo,
+                CreatedAt = DateTime.Now,
+                CreatedBy = HttpContext.Session.GetString("UserId"),
+                EditedAt = DateTime.Now,
+                EditedBy = HttpContext.Session.GetString("UserId")
+            };
+
+            await _phoneSMSManager.AddAsync(sms);
+        }
+        #endregion Local Methods
     }
 }

@@ -296,7 +296,7 @@ namespace SMS.App.Controllers
             ViewBag.monthlyHolidays = monthlyHolidays;
             foreach (Student student in studentList.Where(s => s.Status == true))
             {
-                var myAttendances = attendanceList.Where(t => t.CardNo == student.UniqueId.Trim()).ToList();
+                var myAttendances = attendanceList.Where(t => Convert.ToInt32(t.CardNo) == Convert.ToInt32(student.UniqueId.Trim())).ToList();
 
                 IDictionary<int, bool> daysPresents = new Dictionary<int, bool>();
                 MonthlyAttendanceFullClassDetails monthlyAttendanceFullClassDetails = new()

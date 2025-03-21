@@ -148,14 +148,17 @@ namespace SMS.App.Controllers
                     }
                 }
             }
-            ViewModels.AcademicVM.AcademicExamVM academicExamVM = new ViewModels.AcademicVM.AcademicExamVM();
-            academicExamVM.AcademicExamGroup = exam.AcademicExamGroup;
-            academicExamVM.AcademicExamDetails = exam.AcademicExamDetails;
-            academicExamVM.AcademicClass = exam.AcademicClass;
-            academicExamVM.AcademicSection = exam.AcademicSection;
-            academicExamVM.AcademicSubject = exam.AcademicSubject;
-            academicExamVM.Employee = exam.Employee;
-            academicExamVM.TotalMarks = exam.TotalMarks;
+            var academicExamVM = new ViewModels.AcademicVM.AcademicExamVM
+            {
+                AcademicExamGroup = exam.AcademicExamGroup,
+                AcademicExamDetails = exam.AcademicExamDetails,
+                AcademicClass = exam.AcademicClass,
+                AcademicSection = exam.AcademicSection,
+                AcademicSubject = exam.AcademicSubject,
+                Employee = exam.Employee,
+                TotalMarks = exam.TotalMarks
+            };
+
 
             return View(academicExamDetailVM);
         }

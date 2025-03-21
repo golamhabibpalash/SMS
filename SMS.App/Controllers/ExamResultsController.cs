@@ -466,8 +466,8 @@ namespace SMS.App.Controllers
                 examResults = examResults.Where(s => s.AcademicExamGroupId == groupId && s.AcademicClassId == classId).ToList();
 
                 var rankedResults = examResults
-                .OrderByDescending(result => result.CGPA)
-                .ThenBy(result => result.TotalFails)
+                .OrderBy(result => result.TotalFails)
+                .ThenByDescending(result => result.CGPA)
                 .ThenByDescending(result => result.TotalObtainMarks)
                 .ThenByDescending(result => result.AttendancePercentage)
                 .Select((result, index) => new ExaminationResultVM
@@ -650,8 +650,9 @@ namespace SMS.App.Controllers
         {
             int totalFail = 0;
             var eDetails = await _academicExamDetailsManager.GetAllByExamGroupAndStudentId(examGroupId, studentId);
+
             double obtainPercentageMark = 0.00;
-            if (eDetails != null)
+            if (eDetails != null && eDetails.Count > 0)
             {
                 foreach (var e in eDetails)
                 {
@@ -663,6 +664,12 @@ namespace SMS.App.Controllers
                         continue;
                     }
                 }
+            }
+            else
+            {
+                var student = await _studentManager.GetByIdAsync(studentId);
+                var exams = await _academicExamManager.GetByClassIdExamGroupId(examGroupId, student.AcademicClassId);
+                totalFail = exams.Count;
             }
             return totalFail;
         }

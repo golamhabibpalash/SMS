@@ -1352,7 +1352,6 @@
                                               <PaddingBottom>2pt</PaddingBottom>
                                             </Style>
                                           </Textbox>
-                                          <rd:Selected>true</rd:Selected>
                                         </CellContents>
                                       </TablixCell>
                                       <TablixCell>
@@ -2148,7 +2147,7 @@
                               <Top>7.92456cm</Top>
                               <Left>0.254cm</Left>
                               <Height>2.50556cm</Height>
-                              <Width>19.19663cm</Width>
+                              <Width>19.19662cm</Width>
                               <ZIndex>6</ZIndex>
                               <Style>
                                 <Border>
@@ -2724,7 +2723,7 @@
                               <Top>10.70778cm</Top>
                               <Left>0.254cm</Left>
                               <Height>5.02704cm</Height>
-                              <Width>5.86838cm</Width>
+                              <Width>5.86839cm</Width>
                               <ZIndex>10</ZIndex>
                               <Style>
                                 <Border>
@@ -2740,9 +2739,9 @@
                                 </Parameter>
                               </Parameters>
                               <Top>10.70778cm</Top>
-                              <Left>6.74513cm</Left>
+                              <Left>6.48055cm</Left>
                               <Height>5.2365cm</Height>
-                              <Width>12.67375cm</Width>
+                              <Width>12.93833cm</Width>
                               <ZIndex>11</ZIndex>
                               <Style>
                                 <Border>

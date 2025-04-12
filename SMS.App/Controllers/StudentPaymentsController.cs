@@ -576,9 +576,10 @@ namespace SMS.App.Controllers
 
         private async Task<StudentPaymentVM> CreateStudentPaymentVM(Student student)
         {
+            var currentAcademicSession = await _academicSessionManager.GetCurrentAcademicSession();
             var spvm = new StudentPaymentVM
             {
-                CurrentAcademicSession = await _academicSessionManager.GetCurrentAcademicSession(),
+                CurrentAcademicSession = currentAcademicSession,
                 StudentPayment = new StudentPayment
                 {
                     Student = student,
@@ -591,6 +592,35 @@ namespace SMS.App.Controllers
             };
 
             var feeHeadList = await GetFeeHeadList(student);
+            //check admission fee or session fee
+            StudentFeeHead removeStudentFeeHead;
+            var sessionYear = currentAcademicSession.Name.Substring(currentAcademicSession.Name.Length-4,4).ToString();
+            var admissionYear = student.AdmissionDate.Year.ToString();
+
+            if (student.IsResidential)
+            {
+                if (admissionYear == sessionYear) {
+                    removeStudentFeeHead = await _studentFeeHeadManager.GetByNameAsync("Session Fee Residential");
+                }
+                else
+                {
+                    removeStudentFeeHead = await _studentFeeHeadManager.GetByNameAsync("Admission Fee Residential");
+                }
+            }
+            else {
+
+                if (admissionYear == sessionYear)
+                {
+                    removeStudentFeeHead = await _studentFeeHeadManager.GetByNameAsync("Session Fee");
+                }
+                else
+                {
+                    removeStudentFeeHead = await _studentFeeHeadManager.GetByNameAsync("Admission Fee");
+                }
+            }
+
+            feeHeadList.RemoveAll(s => s.Name == removeStudentFeeHead.Name);
+
             ViewData["FeeList"] = new SelectList(feeHeadList.OrderBy(s => s.SL), "Id", "Name");
 
             var studentPaymentDetailVM = await _studentPaymentManager.GetAllDetailPaymentByUniqueId(student.UniqueId);

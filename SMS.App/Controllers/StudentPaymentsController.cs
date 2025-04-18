@@ -594,12 +594,13 @@ namespace SMS.App.Controllers
             var feeHeadList = await GetFeeHeadList(student);
             //check admission fee or session fee
             StudentFeeHead removeStudentFeeHead;
-            var sessionYear = currentAcademicSession.Name.Substring(currentAcademicSession.Name.Length-4,4).ToString();
+            var sessionYear = currentAcademicSession.Name.Substring(currentAcademicSession.Name.Length - 4, 4).ToString();
             var admissionYear = student.AdmissionDate.Year.ToString();
 
             if (student.IsResidential)
             {
-                if (admissionYear == sessionYear) {
+                if (admissionYear == sessionYear)
+                {
                     removeStudentFeeHead = await _studentFeeHeadManager.GetByNameAsync("Session Fee Residential");
                 }
                 else
@@ -607,7 +608,8 @@ namespace SMS.App.Controllers
                     removeStudentFeeHead = await _studentFeeHeadManager.GetByNameAsync("Admission Fee Residential");
                 }
             }
-            else {
+            else
+            {
 
                 if (admissionYear == sessionYear)
                 {
@@ -618,8 +620,10 @@ namespace SMS.App.Controllers
                     removeStudentFeeHead = await _studentFeeHeadManager.GetByNameAsync("Admission Fee");
                 }
             }
-
-            feeHeadList.RemoveAll(s => s.Name == removeStudentFeeHead.Name);
+            if (removeStudentFeeHead != null)
+            {
+                feeHeadList.RemoveAll(s => s.Name == removeStudentFeeHead.Name);
+            }
 
             ViewData["FeeList"] = new SelectList(feeHeadList.OrderBy(s => s.SL), "Id", "Name");
 

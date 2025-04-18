@@ -16,18 +16,27 @@ namespace SMS.App.Controllers
     [Authorize(Roles = "SuperAdmin, Admin")]
     public class StudentFeeAllocationsController : Controller
     {
+        #region Fields
         private readonly IStudentFeeAllocationManager _studentFeeAllocationManager;
         private readonly IStudentFeeHeadManager _studentFeeHeadManager;
         private readonly IAcademicClassManager _academicClassManager;
         private readonly IStudentManager _student;
-        public StudentFeeAllocationsController(IStudentFeeAllocationManager studentFeeAllocationManager, IStudentFeeHeadManager studentFeeHeadManager, IAcademicClassManager academicClassManager, IStudentManager student)
+        private readonly IClassFeeListManager _classFeeListManager;
+        #endregion Fields
+
+        #region Constructor
+        public StudentFeeAllocationsController(IStudentFeeAllocationManager studentFeeAllocationManager, IStudentFeeHeadManager studentFeeHeadManager, IAcademicClassManager academicClassManager, IStudentManager student, IClassFeeListManager classFeeListManager)
         {
             _studentFeeAllocationManager = studentFeeAllocationManager;
             _studentFeeHeadManager = studentFeeHeadManager;
             _academicClassManager = academicClassManager;
             _student = student;
+            _classFeeListManager = classFeeListManager;
 
         }
+        #endregion Constructor
+
+        #region Methods
         // GET: StudentFeeAllocationsController
 
         [Authorize(Policy = "IndexStudentFeeAllocationsPolicy")]
@@ -70,12 +79,19 @@ namespace SMS.App.Controllers
                 var existingFeeAllocation = await _studentFeeAllocationManager.GetStudentFeeAllocationByUniqueIdFeeHeadId(studentFeeAllocation.UniqueId, studentFeeAllocation.StudentFeeHeadId);
                 if (existingFeeAllocation != null)
                 {
-                    var student = await _student.GetStudentByUniqueIdAsync(existingFeeAllocation.UniqueId);
+                    var exStudent = await _student.GetStudentByUniqueIdAsync(existingFeeAllocation.UniqueId);
+
                     var feeHead = await _studentFeeHeadManager.GetByIdAsync(existingFeeAllocation.StudentFeeHeadId);
-                    TempData["failed"] = student.Name + " is already allocated for " + feeHead.Name;
+                    TempData["failed"] = exStudent.Name + " is already allocated for " + feeHead.Name;
                     return RedirectToAction("Index");
                 }
 
+                var student = await _student.GetStudentByUniqueIdAsync(studentFeeAllocation.UniqueId);
+                var classFeeList = await _classFeeListManager.GetByClassIdAndFeeHeadIdAsync(student.AcademicClassId, studentFeeAllocation.StudentFeeHeadId, student.AcademicSessionId);
+                if (classFeeList != null)
+                {
+                    studentFeeAllocation.ClassFeeListId = classFeeList.Id;
+                }
                 var appUer = HttpContext.Session.GetString("UserId");
                 if (appUer == null)
                 {
@@ -190,5 +206,7 @@ namespace SMS.App.Controllers
                 return RedirectToAction("Index");
             }
         }
+
+        #endregion Methods
     }
 }

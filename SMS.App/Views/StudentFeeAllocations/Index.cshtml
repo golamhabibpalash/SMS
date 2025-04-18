@@ -119,9 +119,10 @@
                 <div class="form-group row">
                     <label class="col-md-4 col-form-label">Fee Name</label>
                     <div class="col-md-8">
-                        <select class="form-control" asp-for="SFAllocation.StudentFeeHeadId" asp-items="Model.FeeList">
+                        <select class="form-control" asp-for="SFAllocation.StudentFeeHeadId" asp-items="Model.FeeList" onchange="handleFeeHeadIdChange()">
                             <option selected disabled>-Select type-</option>
                         </select>
+                        <input type="hidden" asp-for="SFAllocation.ClassFeeListId"  />
                     </div>
                 </div>
                 <div class="form-group row">
@@ -322,6 +323,13 @@
             //    }
             //});
         });
+        async function handleFeeHeadIdChange() {
+            let feeheadId = $('#SFAllocation_StudentFeeHeadId option:selected').val();
+            let studentId = $('#SFAllocation_StudentId option:selected').val();
+            let classId = $('#academicClassListId option:selected').val();
+            console.log(classId);
+
+        }
         async function handleStudentIdChange() {
             let studentId = $('#SFAllocation_StudentId option:selected').val();
 

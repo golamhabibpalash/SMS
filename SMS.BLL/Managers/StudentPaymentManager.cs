@@ -167,7 +167,17 @@ namespace SMS.BLL.Managers
             var allClassFees = await _classFeeListRepository.GetAllBySessionIdClassIdAsync(sessionId, classId);
             allClassFees = allClassFees.Where(s => s.StudentFeeHead.IsResidential == student.IsResidential).ToList();
             var allPaymentDetailsByStudent = await _studentPaymentDetailsRepository.GetAllByStudentAsync(uniqueId);
+            var admissionYear = student.AdmissionDate.Year.ToString();
+            var nowSession = await _academicSessionRepository.GetByIdAsync(sessionId);
+            var sessionYear = nowSession.Name.Substring(nowSession.Name.Length - 4, 4);
+            if (admissionYear == sessionYear)
+            {
 
+            }
+            else
+            {
+
+            }
             if (allClassFees != null)
             {
                 foreach (var classFee in allClassFees.OrderBy(s => s.SL))
@@ -322,6 +332,21 @@ namespace SMS.BLL.Managers
             var student = await _studentRepository.GetStudentByUniqueIdAsync(studentUniqueId);
             var currentDues = await GetStudentCurrentDue(student.Id);
             return currentDues;
+        }
+        private List<ClassFeeList> FilterWithAdmissionSessionFee(string admissionYear, string sessionYear, List<ClassFeeList> classFeeLists)
+        {
+            if (admissionYear == sessionYear)
+            {
+
+                //Remove Session Fee
+                classFeeLists = classFeeLists.Where(c => !c.StudentFeeHead.Name.Contains("Session Fee")).ToList();
+            }
+            else
+            {
+                //Remove Admission Fee
+
+            }
+            return classFeeLists;
         }
     }
 }

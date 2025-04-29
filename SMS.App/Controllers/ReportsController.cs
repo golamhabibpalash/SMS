@@ -331,6 +331,11 @@ namespace SMS.App.Controllers
             ViewBag.studentList = studentList;
             return View(monthlyAttendanceFullClass);
         }
+
+        public IActionResult MonthlyAttendanceReport()
+        {
+            return View();
+        }
         #endregion Attendance Reports
 
         #region Result or MarkSheet

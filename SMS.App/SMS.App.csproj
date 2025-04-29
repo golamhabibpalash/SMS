@@ -33,6 +33,10 @@
 
 	<ItemGroup>
 		<Content Remove="Views\AcademicExamType\Delete.cshtml" />
+		<Content Remove="wwwroot\Reports\ReportData\MonthAttendanceDataset.Designer.cs" />
+		<Content Remove="wwwroot\Reports\ReportData\MonthAttendanceDataset.xsc" />
+		<Content Remove="wwwroot\Reports\ReportData\MonthAttendanceDataset.xsd" />
+		<Content Remove="wwwroot\Reports\ReportData\MonthAttendanceDataset.xss" />
 		<Content Remove="wwwroot\Reports\rptAnnualReport.rdlc" />
 		<Content Remove="wwwroot\Reports\rptStudent1.rdlc" />
 		<Content Remove="wwwroot\Reports\rptStudentPaymentFullInfo.rdlc" />
@@ -41,6 +45,7 @@
 		<Content Remove="wwwroot\Reports\Rpt_GradingTable.rdlc" />
 		<Content Remove="wwwroot\Reports\Rpt_MarkSheet.rdlc" />
 		<Content Remove="wwwroot\Reports\Rpt_MonthlyAttendance.rdlc" />
+		<Content Remove="wwwroot\Reports\Rpt_Monthly_Attendance_Report.rdlc" />
 		<Content Remove="wwwroot\Reports\Rpt_Payment_Receipt.rdlc" />
 		<Content Remove="wwwroot\Reports\Rpt_Student_Payment.rdlc" />
 		<Content Remove="wwwroot\Reports\Rpt_Student_Wise_MarkSheet.rdlc" />
@@ -101,6 +106,13 @@
 		<None Include="wwwroot\lib\MultiSelect\js\jquery-2.1.3.min.js" />
 		<None Include="wwwroot\lib\MultiSelect\js\prettify.min.js" />
 		<None Include="wwwroot\lib\MultiSelect\js\require-2.3.5.min.js" />
+		<None Include="wwwroot\Reports\ReportData\MonthAttendanceDataset.xsc" />
+		<None Include="wwwroot\Reports\ReportData\MonthAttendanceDataset.xsd">
+		  <SubType>Designer</SubType>
+		  <LastGenOutput>MonthAttendanceDataset.Designer.cs</LastGenOutput>
+		  <Generator>MSDataSetGenerator</Generator>
+		</None>
+		<None Include="wwwroot\Reports\ReportData\MonthAttendanceDataset.xss" />
 		<None Include="wwwroot\Reports\rptAnnualReport.rdlc" />
 		<None Include="wwwroot\Reports\rptStudentPaymentFullInfo.rdlc" />
 		<None Include="wwwroot\Reports\Rpt_AdmitCard.rdlc" />
@@ -108,6 +120,7 @@
 		<None Include="wwwroot\Reports\Rpt_Daily_Attendance.rdlc" />
 		<None Include="wwwroot\Reports\Rpt_GradingTable.rdlc" />
 		<None Include="wwwroot\Reports\Rpt_MarkSheet.rdlc" />
+		<None Include="wwwroot\Reports\Rpt_Monthly_Attendance_Report.rdlc" />
 		<None Include="wwwroot\Reports\Rpt_Payment_Receipt.rdlc" />
 		<None Include="wwwroot\Reports\Rpt_Student_Payment.rdlc" />
 		<None Include="wwwroot\Reports\Rpt_Student_Wise_MarkSheet.rdlc" />
@@ -131,6 +144,14 @@
 
 	<ItemGroup>
 		<AdditionalDesignTimeBuildInput Remove="FakesAssemblies\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Include="wwwroot\Reports\ReportData\MonthAttendanceDataset.Designer.cs">
+	    <DependentUpon>MonthAttendanceDataset.xsd</DependentUpon>
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	  </Compile>
 	</ItemGroup>
 
 </Project>

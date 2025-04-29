@@ -24,7 +24,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SchoolManagementSystem.Controllers
+namespace SMS.App.Controllers
 {
     [Authorize]
     public class StudentsController : Controller
@@ -115,7 +115,7 @@ namespace SchoolManagementSystem.Controllers
             }
             if (!String.IsNullOrEmpty(searchString))
             {
-                allStudent = allStudent.Where(s => s.Name.Contains(searchString)
+                allStudent = allStudent.Where(s => s.Name.ToLower().Contains(searchString.ToLower())
                 || s.ClassRoll.ToString().Contains(searchString)
                 || s.UniqueId.ToString().Contains(searchString)
                 || (s.PhoneNo?.Contains(searchString) ?? false)
@@ -1227,7 +1227,8 @@ namespace SchoolManagementSystem.Controllers
                 }
                 var aClass = await _academicClassManager.GetByIdAsync(existingStudent.InterestedAppliedClassId);
                 if (aClass != null) { appliedStudentVM.InterestedClass = aClass; }
-            };
+            }
+            ;
 
             return View(appliedStudentVM);
         }

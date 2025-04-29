@@ -336,6 +336,108 @@ namespace SMS.App.Controllers
         {
             return View();
         }
+
+        public async Task<IActionResult> MonthlyAttendanceReportExport()
+        {
+            Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
+            if (institute == null)
+            {
+                return new JsonResult("Institute Information not found!");
+            }
+
+            var students = await _studentManager.GetStudentsByClassIdAndSessionIdAsync(5, 1);
+            string mediaType = "application/pdf";
+            var path = _host.WebRootPath + "\\Reports\\Rpt_Monthly_Attendance_Report.rdlc";
+
+            using var report = new LocalReport();
+            string imageParam = "";
+            var imagePath = _host.WebRootPath + "\\Images\\Institute\\" + institute.Logo;
+
+            Image image = Image.FromFile(imagePath);
+            using (MemoryStream ms = new MemoryStream())
+            {
+                image.Save(ms, image.RawFormat);
+                byte[] imageBytes = ms.ToArray();
+                imageParam = Convert.ToBase64String(imageBytes);
+            }
+            int monthId = 1;
+
+            DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
+            var monthName = dfi.MonthNames[monthId - 1];
+
+            DateTime firstDateOfMonth = new(DateTime.Now.Year, monthId, 1);
+
+            // Get the last day of the month by adding one month to the first day and subtracting one day
+            DateTime lastDateOfMonth = firstDateOfMonth.AddMonths(1).AddDays(-1);
+            var StartDate = firstDateOfMonth.ToString("yyyy-MM-dd");
+            var EndDate = lastDateOfMonth.ToString("yyyy-MM-dd");
+
+            var attendanceList = await _attendanceMachineManager.GetAttendanceByDateRangeAsync(StartDate, EndDate);
+            List<RptMonthlyAttendanceVM> monthlyAttendance = new List<RptMonthlyAttendanceVM>();
+            foreach (var student in students)
+            {
+                RptMonthlyAttendanceVM monthlyAttendanceVM = new RptMonthlyAttendanceVM
+                {
+                    ClassRoll = student.ClassRoll.ToString(),
+                    StudentName = student.Name,
+                    Day1 = attendanceList.Any(s => s.CardNo == student.UniqueId && s.PunchDatetime.ToString("dd") == "01") ? "P" : ".",
+                    Day2 = attendanceList.Any(s => s.CardNo == student.UniqueId && s.PunchDatetime.ToString("dd") == "02") ? "P" : ".",
+                    Day3 = attendanceList.Any(s => s.CardNo == student.UniqueId && s.PunchDatetime.ToString("dd") == "03") ? "P" : ".",
+                    Day4 = attendanceList.Any(s => s.CardNo == student.UniqueId && s.PunchDatetime.ToString("dd") == "04") ? "P" : ".",
+                    Day5 = attendanceList.Any(s => s.CardNo == student.UniqueId && s.PunchDatetime.ToString("dd") == "05") ? "P" : ".",
+                    Day6 = attendanceList.Any(s => s.CardNo == student.UniqueId && s.PunchDatetime.ToString("dd") == "06") ? "P" : ".",
+                    Day7 = attendanceList.Any(s => s.CardNo == student.UniqueId && s.PunchDatetime.ToString("dd") == "07") ? "P" : ".",
+                    Day8 = attendanceList.Any(s => s.CardNo == student.UniqueId && s.PunchDatetime.ToString("dd") == "08") ? "P" : ".",
+                    Day9 = attendanceList.Any(s => s.CardNo == student.UniqueId && s.PunchDatetime.ToString("dd") == "09") ? "P" : ".",
+                    Day10 = attendanceList.Any(s => s.CardNo == student.UniqueId && s.PunchDatetime.ToString("dd") == "10") ? "P" : ".",
+                    Day11 = attendanceList.Any(s => s.CardNo == student.UniqueId && s.PunchDatetime.ToString("dd") == "11") ? "P" : ".",
+                    Day12 = attendanceList.Any(s => s.CardNo == student.UniqueId && s.PunchDatetime.ToString("dd") == "12") ? "P" : ".",
+                    Day13 = attendanceList.Any(s => s.CardNo == student.UniqueId && s.PunchDatetime.ToString("dd") == "13") ? "P" : ".",
+                    Day14 = attendanceList.Any(s => s.CardNo == student.UniqueId && s.PunchDatetime.ToString("dd") == "14") ? "P" : ".",
+                    Day15 = attendanceList.Any(s => s.CardNo == student.UniqueId && s.PunchDatetime.ToString("dd") == "15") ? "P" : ".",
+                    Day16 = attendanceList.Any(s => s.CardNo == student.UniqueId && s.PunchDatetime.ToString("dd") == "16") ? "P" : ".",
+                    Day17 = attendanceList.Any(s => s.CardNo == student.UniqueId && s.PunchDatetime.ToString("dd") == "17") ? "P" : ".",
+                    Day18 = attendanceList.Any(s => s.CardNo == student.UniqueId && s.PunchDatetime.ToString("dd") == "18") ? "P" : ".",
+                    Day19 = attendanceList.Any(s => s.CardNo == student.UniqueId && s.PunchDatetime.ToString("dd") == "19") ? "P" : ".",
+                    Day20 = attendanceList.Any(s => s.CardNo == student.UniqueId && s.PunchDatetime.ToString("dd") == "20") ? "P" : ".",
+                    Day21 = attendanceList.Any(s => s.CardNo == student.UniqueId && s.PunchDatetime.ToString("dd") == "21") ? "P" : ".",
+                    Day22 = attendanceList.Any(s => s.CardNo == student.UniqueId && s.PunchDatetime.ToString("dd") == "22") ? "P" : ".",
+                    Day23 = attendanceList.Any(s => s.CardNo == student.UniqueId && s.PunchDatetime.ToString("dd") == "23") ? "P" : ".",
+                    Day24 = attendanceList.Any(s => s.CardNo == student.UniqueId && s.PunchDatetime.ToString("dd") == "24") ? "P" : ".",
+                    Day25 = attendanceList.Any(s => s.CardNo == student.UniqueId && s.PunchDatetime.ToString("dd") == "25") ? "P" : ".",
+                    Day26 = attendanceList.Any(s => s.CardNo == student.UniqueId && s.PunchDatetime.ToString("dd") == "26") ? "P" : ".",
+                    Day27 = attendanceList.Any(s => s.CardNo == student.UniqueId && s.PunchDatetime.ToString("dd") == "27") ? "P" : ".",
+                    Day28 = attendanceList.Any(s => s.CardNo == student.UniqueId && s.PunchDatetime.ToString("dd") == "28") ? "P" : ".",
+                    Day29 = attendanceList.Any(s => s.CardNo == student.UniqueId && s.PunchDatetime.ToString("dd") == "29") ? "P" : ".",
+                    Day30 = attendanceList.Any(s => s.CardNo == student.UniqueId && s.PunchDatetime.ToString("dd") == "30") ? "P" : ".",
+                    Day31 = attendanceList.Any(s => s.CardNo == student.UniqueId && s.PunchDatetime.ToString("dd") == "31") ? "P" : ".",
+
+                };
+                monthlyAttendance.Add(monthlyAttendanceVM);
+            }
+            report.DataSources.Add(new ReportDataSource("DataSet1", monthlyAttendance));
+            var parameters = new[] {
+                new ReportParameter("InstituteName", institute.Name),
+                new ReportParameter("Location", institute.Address),
+                new ReportParameter("EIINNo", institute.EIIN),
+                new ReportParameter("Logo", imageParam),
+                new ReportParameter("ReportName", "Monthly Attendance Report"),
+                new ReportParameter("MonthName",monthName),
+                new ReportParameter("ClassName", "Class 6(Six)"),
+                //new ReportParameter("ReportDate", DateTime.Today.ToString("dd MMM yyyy")),
+                new ReportParameter("TotalDays",lastDateOfMonth.ToString("dd"))
+            };
+            report.ReportPath = path;
+            report.SetParameters(parameters);
+            var pdf = report.Render("pdf");
+            report.ReportPath = path;
+            var reportType = "pdf";
+            //if (!string.IsNullOrEmpty("fileName"))
+            //{
+            //    return File(pdf, MediaTypeNames.Application.Octet, GetReportName("fileName", reportType));
+            //}
+            return File(pdf, mediaType);
+        }
         #endregion Attendance Reports
 
         #region Result or MarkSheet

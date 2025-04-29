@@ -114,12 +114,18 @@ namespace SMS.App.Controllers
                 Text = s.Name + "-(" + s.ClassRoll + ")"
             }).ToList();
 
-            var selectedStudent = (from s in allStudents.Where(m => m.Status == true)
-                                   join d in exam.AcademicExamDetails
-                                   on s.Id equals d.StudentId into temp
-                                   from d in temp.DefaultIfEmpty() // Left join
-                                   where d == null // Select students without a match
-                                   select s).ToList();
+
+            var selectedStudent = new List<Student>();
+
+            // Create a HashSet of student IDs from AcademicExamDetails for quick lookup
+            var existingStudentIds = new HashSet<int>(
+                academicExamDetailVM.AcademicExamDetails.Select(detail => detail.Student.Id)
+            );
+
+            // Filter students who are not in the existingStudentIds
+            selectedStudent.AddRange(
+                allStudents.Where(student => !existingStudentIds.Contains(student.Id))
+            );
 
             academicExamDetailVM.MissingStudentList = selectedStudent.OrderBy(s => s.ClassRoll).Select(s => new SelectListItem
             {

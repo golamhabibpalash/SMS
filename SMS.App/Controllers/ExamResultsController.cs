@@ -434,7 +434,7 @@ namespace SMS.App.Controllers
                         int totalActiveDay = DateTime.DaysInMonth(DateTime.Now.Year, examGroup.ExamMonthId) - holidays.Count;
                         if (totalActiveDay > 22)
                         {
-                            string fff = "No";
+                            //string fff = "No";
                         }
                         examResult.AttendancePercentage = (monthlyAttendance.Count * 100) / totalActiveDay;
                     }

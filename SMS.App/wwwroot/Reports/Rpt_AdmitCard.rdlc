@@ -1945,7 +1945,6 @@
                                                   </TablixMembers>
                                                 </TablixRowHierarchy>
                                                 <DataSetName>DSAdmitCard</DataSetName>
-                                                <Top>0in</Top>
                                                 <Left>0.0125in</Left>
                                                 <Height>0.34in</Height>
                                                 <Width>1.86in</Width>
@@ -2494,7 +2493,6 @@
                                                   </TablixMembers>
                                                 </TablixRowHierarchy>
                                                 <DataSetName>DSAdmitCard</DataSetName>
-                                                <Top>0in</Top>
                                                 <Left>0.0125in</Left>
                                                 <Height>0.34in</Height>
                                                 <Width>1.86in</Width>
@@ -3198,42 +3196,6 @@
                 </Border>
               </Style>
             </Image>
-            <Textbox Name="Textbox54">
-              <CanGrow>true</CanGrow>
-              <KeepTogether>true</KeepTogether>
-              <Paragraphs>
-                <Paragraph>
-                  <TextRuns>
-                    <TextRun>
-                      <Value>Code and Subejcts</Value>
-                      <Style>
-                        <FontFamily>Arial Narrow</FontFamily>
-                        <FontSize>11pt</FontSize>
-                      </Style>
-                    </TextRun>
-                  </TextRuns>
-                  <Style />
-                </Paragraph>
-              </Paragraphs>
-              <rd:DefaultName>Textbox54</rd:DefaultName>
-              <Top>0.7175in</Top>
-              <Left>1.94499in</Left>
-              <Height>0.25in</Height>
-              <Width>1.4768in</Width>
-              <ZIndex>5</ZIndex>
-              <Style>
-                <Border>
-                  <Style>None</Style>
-                </Border>
-                <BottomBorder>
-                  <Style>Solid</Style>
-                </BottomBorder>
-                <PaddingLeft>2pt</PaddingLeft>
-                <PaddingRight>2pt</PaddingRight>
-                <PaddingTop>2pt</PaddingTop>
-                <PaddingBottom>2pt</PaddingBottom>
-              </Style>
-            </Textbox>
           </ReportItems>
           <Style>
             <Border>

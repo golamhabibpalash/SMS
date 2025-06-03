@@ -4,6 +4,7 @@ using SMS.DAL.Repositories.Base;
 using SMS.DB;
 using SMS.Entities;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SMS.DAL.Repositories
@@ -31,6 +32,12 @@ namespace SMS.DAL.Repositories
         {
             var result = await _context.StudentFeeAllocations.FirstOrDefaultAsync(s => s.UniqueId == uniqueId && s.StudentFeeHeadId == feeHeadId);
             return result;
+        }
+
+        public async Task<List<StudentFeeAllocation>> GetStudentFeeAllocationByUniqueIdSessionId(string uniqueId, int sessionId)
+        {
+            var results = await _context.StudentFeeAllocations.Where(s => s.UniqueId == uniqueId && s.ClassFeeList.AcademicSessionId == sessionId).ToListAsync();
+            return results;
         }
     }
 }

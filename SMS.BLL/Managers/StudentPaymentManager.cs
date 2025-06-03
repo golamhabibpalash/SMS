@@ -19,8 +19,9 @@ namespace SMS.BLL.Managers
         private readonly IAcademicSessionRepository _academicSessionRepository;
         private readonly IStudentFeeHeadRepository _studentFeeHeadRepository;
         private readonly IStudentPaymentDetailsRepository _studentPaymentDetailsRepository;
+        private readonly IStudentFeeAllocationRepository _studentFeeAllocationRepository;
 
-        public StudentPaymentManager(IStudentPaymentRepository studentPaymentRepository, IStudentRepository studentRepository, IClassFeeListRepository classFeeListRepository, IAcademicSessionRepository academicSessionRepository, IStudentFeeHeadRepository studentFeeHeadRepository, IStudentPaymentDetailsRepository studentPaymentDetailsRepository) : base(studentPaymentRepository)
+        public StudentPaymentManager(IStudentPaymentRepository studentPaymentRepository, IStudentRepository studentRepository, IClassFeeListRepository classFeeListRepository, IAcademicSessionRepository academicSessionRepository, IStudentFeeHeadRepository studentFeeHeadRepository, IStudentPaymentDetailsRepository studentPaymentDetailsRepository, IStudentFeeAllocationRepository studentFeeAllocationRepository) : base(studentPaymentRepository)
         {
             _studentPaymentRepository = studentPaymentRepository;
             _studentRepository = studentRepository;
@@ -28,6 +29,7 @@ namespace SMS.BLL.Managers
             _academicSessionRepository = academicSessionRepository;
             _studentFeeHeadRepository = studentFeeHeadRepository;
             _studentPaymentDetailsRepository = studentPaymentDetailsRepository;
+            _studentFeeAllocationRepository = studentFeeAllocationRepository;
         }
 
         public async Task<IReadOnlyCollection<StudentPayment>> GetAllByStudentIdAsync(int id)
@@ -202,6 +204,11 @@ namespace SMS.BLL.Managers
                     }
 
                     var totalAmount = classFeeList.Select(s => s.Amount).FirstOrDefault();
+                    var allocations = await _studentFeeAllocationRepository.GetStudentFeeAllocationByUniqueIdFeeHeadId(uniqueId,classFeeList.Select(s => s.StudentFeeHeadId).FirstOrDefault());
+                    if (allocations != null)
+                    {
+                        totalAmount = allocations.AllocatedAmount;
+                    }
                     var paidAmount = allPaymentDetailsByStudent.Where(d => d.ClassFeeId == classFeeList.Select(c => c.Id).FirstOrDefault() && d.StudentFeeHeadId == classFee.StudentFeeHeadId).Select(s => s.PaidAmount).Sum();
 
                     SessionWisePaymentVM sessionWisePaymentVM = new SessionWisePaymentVM()
@@ -286,6 +293,7 @@ namespace SMS.BLL.Managers
             DateTime addmissionYear = student.AdmissionDate;
             AcademicSession academicSession = await _academicSessionRepository.GetByIdAsync(sessionId);
 
+            var studentAllAllocations = await _studentFeeAllocationRepository.GetStudentFeeAllocationByUniqueIdSessionId(studentUniqueId, sessionId);
             if (allClassFeeBySessionId != null)
             {
                 foreach (var cFee in allClassFeeBySessionId)
@@ -304,6 +312,11 @@ namespace SMS.BLL.Managers
                         {
                             continue;
                         }
+                    }
+                    var allocation =studentAllAllocations.FirstOrDefault(s => s.StudentFeeHeadId == cFee.StudentFeeHeadId);
+                    if (allocation!=null)
+                    {
+                        cFee.Amount = allocation.AllocatedAmount;
                     }
                     classFeeLists.Add(cFee);
                 }
@@ -324,6 +337,7 @@ namespace SMS.BLL.Managers
             var student = await _studentRepository.GetStudentByUniqueIdAsync(studentUniqueId);
             var allPayments = await GetPaymentByStudentUniqueId(studentUniqueId);
             var amount = allPayments.Where(s => s.AcademicSessionId == sessionId).Select(s => s.TotalPayment).Sum();
+            
             return amount;
         }
 

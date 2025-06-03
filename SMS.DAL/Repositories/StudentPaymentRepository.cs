@@ -128,7 +128,7 @@ namespace SMS.DAL.Repositories
                 var existingFeeAllocations = await _context.StudentFeeAllocations.Where(s => s.UniqueId == student.UniqueId).ToListAsync();
                 foreach (var item in studentPaymentSchedules)
                 {
-                    var feeAllocation = existingFeeAllocations.FirstOrDefault(s => s.StudentFeeHeadId == item.FeeHeadId);
+                    var feeAllocation = existingFeeAllocations.FirstOrDefault(s => s.StudentFeeHeadId == item.FeeHeadId && s.ClassFeeListId == item.ClassFeeId);
                     if (feeAllocation != null)
                     {
                         item.Amount = feeAllocation.AllocatedAmount;

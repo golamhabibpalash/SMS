@@ -1,15 +1,12 @@
 USE [SMSDB]
 GO
 
-/****** Object:  View [dbo].[vw_get_student_payment_schedule_list]    Script Date: 21-Jul-24 4:41:34 PM ******/
+/****** Object:  View [dbo].[vw_get_student_payment_schedule_list]    Script Date: 6/3/2025 10:39:17 AM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
 
 ALTER   VIEW [dbo].[vw_get_student_payment_schedule_list] 
 AS
@@ -23,7 +20,8 @@ sFee.Repeatedly,
 sFee.YearlyFrequency,
 aSession.Id[SessionId],
 sFee.IsResidential,
-sFee.SL
+sFee.SL,
+cFee.Id[ClassFeeId]
 from ClassFeeList cFee
 left join StudentFeeHead sFee on cFee.StudentFeeHeadId = sFee.Id
 left join AcademicClass c on cFee.AcademicClassId=c.Id

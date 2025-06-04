@@ -28,6 +28,11 @@ namespace SMS.DAL.Repositories
             return result;
         }
 
+        public async Task<StudentFeeAllocation> GetStudentFeeAllocationByUniqueIdClassFeeId(string uniqueId, int classfeeId)
+        {
+            return await _context.StudentFeeAllocations.FirstOrDefaultAsync(f => f.UniqueId == uniqueId && f.ClassFeeListId == classfeeId);
+        }
+
         public async Task<StudentFeeAllocation> GetStudentFeeAllocationByUniqueIdFeeHeadId(string uniqueId, int feeHeadId)
         {
             var result = await _context.StudentFeeAllocations.FirstOrDefaultAsync(s => s.UniqueId == uniqueId && s.StudentFeeHeadId == feeHeadId);

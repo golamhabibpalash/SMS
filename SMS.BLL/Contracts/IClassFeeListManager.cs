@@ -15,5 +15,7 @@ namespace SMS.BLL.Contracts
         Task<List<ClassFeeList>> GetByClassIdSessionIdStudentIdAsync(int classId, int sessionId, int studentId);
         Task<List<ClassFeeList>> GetClassFeeByUniquId(string uniquId);
         Task<List<ClassFeeList>>GetAllByStudentId(int stuId);
+        Task<List<ClassFeeList>>GetAllBySessionClassTypeAsync(int sessionId, int classId, bool isResidential); //type = residential or Nonresidential >> bool
+        
     }
 }

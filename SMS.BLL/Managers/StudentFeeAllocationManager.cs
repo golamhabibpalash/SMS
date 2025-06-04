@@ -14,6 +14,11 @@ namespace SMS.BLL.Managers
             _repository = repository;
         }
 
+        public Task<StudentFeeAllocation> GetStudentFeeAllocationByUniqueIdClassFeeId(string uniqueId, int classfeeId)
+        {
+            return _repository.GetStudentFeeAllocationByUniqueIdClassFeeId(uniqueId, classfeeId);
+        }
+
         public async Task<StudentFeeAllocation> GetStudentFeeAllocationByUniqueIdFeeHeadId(string uniqueId, int feeHeadId)
         {
             return await _repository.GetStudentFeeAllocationByUniqueIdFeeHeadId(uniqueId, feeHeadId);

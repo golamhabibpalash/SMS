@@ -1233,5 +1233,15 @@ namespace SMS.App.Controllers
             return View(appliedStudentVM);
         }
         #endregion Application 
+
+        #region API
+        [HttpGet]
+        public async Task<JsonResult> GetAllStudentBySectionId(int academicSectionId)
+        {
+            var allStudents = await _studentManager.GetAllAsync();
+            var result = allStudents.Where(s => s.AcademicSectionId == academicSectionId);
+            return new JsonResult(result.OrderBy(s => s.ClassRoll));
+        }
+        #endregion API
     }
 }

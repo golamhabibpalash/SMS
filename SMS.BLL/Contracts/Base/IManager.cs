@@ -13,6 +13,7 @@ namespace SMS.BLL.Contracts.Base
 
         Task<IReadOnlyCollection<T>> GetAllAsync();
 
+        Task<bool> AddRangeAsync(IReadOnlyCollection<T> entities);
         Task<bool> AddAsync(T entity);
 
         Task<bool> UpdateAsync(T entity);

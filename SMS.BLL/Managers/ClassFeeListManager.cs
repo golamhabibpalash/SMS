@@ -62,7 +62,6 @@ namespace SMS.BLL.Managers
             List<ClassFeeList> result = await _classFeeListRepository.GetClassFeeListByClassIdFeeHeadIdSessionIdAsync(classId, feeHeadId, sessionId);
             return result;
         }
-
         public async Task<double> GetFeeAmountByFeeListSlAsync(string uniquId, int sl)
         {
             var result = await _classFeeListRepository.GetFeeAmountByFeeListSL(uniquId, sl);
@@ -73,6 +72,12 @@ namespace SMS.BLL.Managers
             var result = await _classFeeListRepository.GetCurrentAllByUniqueId(uniquId);
             return result;
         }
-        
+
+        public async Task<List<ClassFeeList>> GetAllBySessionClassTypeAsync(int sessionId, int classId, bool isResidential)
+        {
+            var allListByClass = await _classFeeListRepository.GetAllBySessionIdClassIdAsync(sessionId, classId);
+            var result = allListByClass.Where(s => s.StudentFeeHead.IsResidential == isResidential).ToList();
+            return result;
+        }
     }
 }

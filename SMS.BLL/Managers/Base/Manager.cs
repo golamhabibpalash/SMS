@@ -19,6 +19,15 @@ namespace BLL.Managers.Base
             return await _repository.AddAsync(entity);
         }
 
+        public virtual async Task<bool> AddRangeAsync(IReadOnlyCollection<T> entities)
+        {
+            foreach (var entity in entities)
+            {
+                await _repository.AddAsync(entity);
+            }
+            return await _repository.SaveAfterAddAsync();
+        }
+
         public virtual async Task<IReadOnlyCollection<T>> GetAllAsync()
         {
             return await _repository.GetAllAsync();

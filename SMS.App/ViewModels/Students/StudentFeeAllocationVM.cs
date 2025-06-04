@@ -10,5 +10,6 @@ namespace SMS.App.ViewModels.Students
         public StudentFeeAllocation SFAllocation { get; set; } = new StudentFeeAllocation();
         public SelectList FeeList { get; set; }
         public SelectList AcademicClassList { get; set; }
+        public SelectList AcademicSectionList { get; set; }
     }
 }

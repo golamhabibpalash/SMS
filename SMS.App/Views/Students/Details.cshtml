@@ -408,7 +408,7 @@
                                                 <thead class="table-info">
                                                     <tr>
                                                         <td>#</td>
-                                                        <td>Payment Type</td>
+                                                        <td class="text-left">Payment Type</td>
                                                         <td>Amount</td>
                                                         <td class="text-right">Total</td>
                                                     </tr>
@@ -419,7 +419,7 @@
                                                         <tr>
                                                             <td>@(paymentScheduleSL++)</td>
                                                             <td class="text-left">@item.PaymentType</td>
-                                                            <td>@item.Amount <span class="badge badge-pill badge-warning">@item.yearlyFrequency</span></td>
+                                                            <td class="text-right">@item.Amount <span class="badge badge-pill badge-warning">@item.yearlyFrequency</span></td>
                                                             <td class="text-right">@(item.Amount * item.yearlyFrequency)</td>
                                                         </tr>
 
@@ -449,7 +449,7 @@
                                                 <thead class="table-info">
                                                     <tr>
                                                         <td>#</td>
-                                                        <td>Payment Type</td>
+                                                        <td class="text-left">Payment Type</td>
                                                         <td class="text-right">Amount</td>
                                                     </tr>
                                                 </thead>
@@ -458,7 +458,7 @@
                                                     {
                                                     <tr>
                                                         <td>@(paymentSchedulePaidSL++)</td>
-                                                        <td>@item.PaymentType</td>
+                                                        <td class="text-left">@item.PaymentType</td>
                                                         <td class="text-right">@item.PaidAmount</td>
                                                     </tr>
                                                         paidScheduleTotal += item.PaidAmount;

@@ -121,6 +121,44 @@
     <link href="~/css/userProfileOverLay.css" rel="stylesheet" />
     <!--Custom Css-->
     <link href="~/css/custom.css" rel="stylesheet" />
+    <style>
+        .ui-blur {
+            filter: blur(4px);
+            pointer-events: none;
+            user-select: none;
+        }
+
+        #loaderOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .spinner {
+            width: 3rem;
+            height: 3rem;
+            border: 5px solid #ccc;
+            border-top-color: #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @@keyframes spin {
+            to
+
+        {
+            transform: rotate(360deg);
+        }
+
+        }
+    </style>
 
 </head>
 <body>
@@ -226,7 +264,10 @@
                 </div>
             </div>
         </header>
-        <div class="body flex-grow-1 px-3 mb-5">
+        <div id="loaderOverlay">
+            <div class="spinner"></div>
+        </div>
+        <div class="body flex-grow-1 px-3 mb-5" id="mainContent">
             <div class="container">
                 @RenderBody()
             </div>
@@ -349,6 +390,38 @@
             }
         });
     </script>
+
+    @* THis is for loader portion *@
+    <script>
+        function showLoader() {
+            document.getElementById('loaderOverlay').style.display = 'flex';
+            document.getElementById('mainContent').classList.add('ui-blur');
+        }
+
+        function hideLoader() {
+            document.getElementById('loaderOverlay').style.display = 'none';
+            document.getElementById('mainContent').classList.remove('ui-blur');
+        }
+
+        // Optional: auto-hide loader on page load
+        window.addEventListener('load', hideLoader);
+
+
+        function onSubmitAction() {
+            showLoader();
+
+            setTimeout(() => {
+                const form = document.getElementById('myForm');
+                if (form) {
+                    form.submit();
+                } else {
+                    console.warn("Form with id 'myForm' not found.");
+                }
+            }, 1000);
+        }
+    </script>
+
+
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

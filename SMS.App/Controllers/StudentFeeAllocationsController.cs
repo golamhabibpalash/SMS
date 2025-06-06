@@ -54,6 +54,7 @@ namespace SMS.App.Controllers
             return View(studentFeeAllocationVM);
         }
 
+        [Authorize(Policy = "GroupStudentFeeAllocationsPolicy")]
         public async Task<ActionResult> FeeAllocationByGroup()
         {
             StudentFeeAllocationGroupVM studentFeeAllocationGroupVM = new StudentFeeAllocationGroupVM();
@@ -66,9 +67,14 @@ namespace SMS.App.Controllers
             return View(studentFeeAllocationGroupVM);
         }
 
+        [Authorize(Policy = "GroupStudentFeeAllocationsPolicy")]
         [HttpPost]
         public async Task<ActionResult> FeeAllocationByGroup(StudentFeeAllocationGroupVM studentFeeAllocationGroupVM)
         {
+            var notifications = string.Empty;
+            int updated = 0;
+            int inserted = 0;
+            int inactive = 0;
             var classFeeList = await _classFeeListManager.GetClassFeeListByClassIdFeeHeadIdSessionIdAsync(studentFeeAllocationGroupVM.AcademicClassId, studentFeeAllocationGroupVM.FeeHeadId, studentFeeAllocationGroupVM.AcademicSessionId);
             if (studentFeeAllocationGroupVM.Students.Count>0)
             {
@@ -83,8 +89,10 @@ namespace SMS.App.Controllers
                             existingAllocation.AllocatedAmount = studentFeeAllocationGroupVM.AllocationAmount;
                             existingAllocation.EditedAt = DateTime.Now;
                             existingAllocation.EditedBy = HttpContext.Session.GetString("UserId");
+                            existingAllocation.IsActive = true;
                             existingAllocation.MACAddress = MACService.GetMAC();
                             await _studentFeeAllocationManager.UpdateAsync(existingAllocation);
+                            updated++;
                         }
                         else
                         {
@@ -101,6 +109,7 @@ namespace SMS.App.Controllers
                                 MACAddress = MACService.GetMAC()
                             };
                             studentFeeAllocations.Add(studentFeeAllocation);
+                            inserted++;
                         }
                     }
                     else
@@ -110,6 +119,7 @@ namespace SMS.App.Controllers
                             existingAllocation.AllocatedAmount = studentFeeAllocationGroupVM.AllocationAmount;
                             existingAllocation.IsActive = false;
                             await _studentFeeAllocationManager.UpdateAsync(existingAllocation);
+                            inactive++;
                         }
                     }
                 }
@@ -117,6 +127,8 @@ namespace SMS.App.Controllers
             }
 
             var students = await _academicSessionManager.GetAllAsync();
+            notifications = $"Total Added {inserted}; update {updated} and disabled {inactive}";
+            TempData["notifications"] = notifications;
             return RedirectToAction("FeeAllocationByGroup");
         }
 

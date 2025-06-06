@@ -102,20 +102,16 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseHangfireDashboard("/hangfire", options);
 
-app.UseEndpoints(endpoints =>
-{
-    // Area routes (more specific)
-    endpoints.MapControllerRoute(
-        name: "areas",
-        pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
-    );
+// Area routes (more specific)
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
-    // Default routes
-    endpoints.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Home}/{action=Index}/{id?}"
-    );
-});
+// Default routes
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+
 
 app.MapRazorPages();
 app.Run();

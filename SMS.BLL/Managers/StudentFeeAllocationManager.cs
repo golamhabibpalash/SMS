@@ -8,20 +8,20 @@ namespace SMS.BLL.Managers
 {
     public class StudentFeeAllocationManager : Manager<StudentFeeAllocation>, IStudentFeeAllocationManager
     {
-        private readonly IStudentFeeAllocationRepository _repository;
+        private readonly IStudentFeeAllocationRepository _feeAllocationRepository;
         public StudentFeeAllocationManager(IStudentFeeAllocationRepository repository) : base(repository)
         {
-            _repository = repository;
+            _feeAllocationRepository = repository;
         }
 
         public Task<StudentFeeAllocation> GetStudentFeeAllocationByUniqueIdClassFeeId(string uniqueId, int classfeeId)
         {
-            return _repository.GetStudentFeeAllocationByUniqueIdClassFeeId(uniqueId, classfeeId);
+            return _feeAllocationRepository.GetStudentFeeAllocationByUniqueIdClassFeeId(uniqueId, classfeeId);
         }
 
         public async Task<StudentFeeAllocation> GetStudentFeeAllocationByUniqueIdFeeHeadId(string uniqueId, int feeHeadId)
         {
-            return await _repository.GetStudentFeeAllocationByUniqueIdFeeHeadId(uniqueId, feeHeadId);
+            return await _feeAllocationRepository.GetStudentFeeAllocationByUniqueIdFeeHeadId(uniqueId, feeHeadId);
         }
     }
 }

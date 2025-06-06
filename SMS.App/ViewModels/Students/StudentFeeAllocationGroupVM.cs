@@ -7,6 +7,7 @@ namespace SMS.App.ViewModels.Students;
 
 public class StudentFeeAllocationGroupVM
 {
+    
     public int FeeHeadId { get; set; }
     public List<StudentRow> Students { get; set; }
     public double AllocationAmount { get; set; }

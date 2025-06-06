@@ -17,12 +17,14 @@ namespace SMS.App.Controllers
         private readonly IStudentFeeHeadManager _studentFeeHeadManager;
         private readonly IClassFeeListManager _classFeeListManager;
         private readonly IAcademicSessionManager _academicSessionManager;
+        private readonly IStudentFeeAllocationManager _feeAllocationManager;
 
-        public StudentFeeHeadsController(IStudentFeeHeadManager studentFeeHeadManager, IClassFeeListManager classFeeListManager, IAcademicSessionManager academicSessionManager)
+        public StudentFeeHeadsController(IStudentFeeHeadManager studentFeeHeadManager, IClassFeeListManager classFeeListManager, IAcademicSessionManager academicSessionManager, IStudentFeeAllocationManager feeAllocationManager)
         {
             _studentFeeHeadManager = studentFeeHeadManager;
             _classFeeListManager = classFeeListManager;
             _academicSessionManager = academicSessionManager;
+            _feeAllocationManager = feeAllocationManager;
         }
 
         // GET: StudentFeeHeads
@@ -225,7 +227,7 @@ namespace SMS.App.Controllers
             await _studentFeeHeadManager.RemoveAsync(studentFeeHead);
             return RedirectToAction(nameof(Index));
         }
-        public async Task<JsonResult> GetById(int id, int classId, int? sessionId)
+        public async Task<JsonResult> GetById(int id, int classId, int? sessionId, string uniqueId)
         {
             if (sessionId == null)
             {
@@ -234,6 +236,11 @@ namespace SMS.App.Controllers
             }
             var feeHead = await _studentFeeHeadManager.GetByIdAsync(id);
             var classFeeList = await _classFeeListManager.GetByClassIdAndFeeHeadIdAsync(classId, id, (int)sessionId);
+            var existingFeeAllocation =await _feeAllocationManager.GetStudentFeeAllocationByUniqueIdClassFeeId(uniqueId,classFeeList.Id);
+            if (existingFeeAllocation!=null)
+            {
+                classFeeList.Amount = existingFeeAllocation.AllocatedAmount;
+            }
             return Json(classFeeList);
         }
         public async Task<JsonResult> GetFeeHeads(string isResidential)

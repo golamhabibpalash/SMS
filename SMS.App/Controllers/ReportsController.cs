@@ -25,6 +25,8 @@ using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 using LocalReport = Microsoft.Reporting.NETCore.LocalReport;
+using SixLabors.ImageSharp;
+using Image = System.Drawing.Image;
 
 namespace SMS.App.Controllers
 {
@@ -431,7 +433,6 @@ namespace SMS.App.Controllers
             report.SetParameters(parameters);
             var pdf = report.Render("pdf");
             report.ReportPath = path;
-            var reportType = "pdf";
             //if (!string.IsNullOrEmpty("fileName"))
             //{
             //    return File(pdf, MediaTypeNames.Application.Octet, GetReportName("fileName", reportType));

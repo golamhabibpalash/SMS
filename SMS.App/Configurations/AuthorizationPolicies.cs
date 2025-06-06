@@ -282,6 +282,7 @@ namespace SMS.App.Configurations
             options.AddPolicy("CreateStudentFeeAllocationsPolicy", policy => policy.RequireClaim("Create Student Fee Allocations"));
             options.AddPolicy("EditStudentFeeAllocationsPolicy", policy => policy.RequireClaim("Edit Student Fee Allocations"));
             options.AddPolicy("DeleteStudentFeeAllocationsPolicy", policy => policy.RequireClaim("Delete Student Fee Allocations"));
+            options.AddPolicy("GroupStudentFeeAllocationsPolicy", policy => policy.RequireClaim("Add Student Fee Allocations Group"));
 
             //Student Fee Head
             options.AddPolicy("IndexStudentFeeHeadsPolicy", policy => policy.RequireClaim("View Student Fee Heads"));

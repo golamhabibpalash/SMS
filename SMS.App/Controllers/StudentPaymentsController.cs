@@ -121,7 +121,7 @@ namespace SMS.App.Controllers
             catch (Exception ex)
             {
                 // Log the exception
-                throw;
+                throw ex.InnerException;
             }
 
             var student = await _studentManager.GetByIdAsync(paymentObject.StudentPayment.StudentId);
@@ -582,12 +582,13 @@ namespace SMS.App.Controllers
                 CurrentAcademicSession = currentAcademicSession,
                 StudentPayment = new StudentPayment
                 {
+                    UniqueId = student.UniqueId,
                     Student = student,
                     StudentPaymentDetails = new List<StudentPaymentDetails> { new StudentPaymentDetails() }
                 },
                 StudentPreviousPayments = (List<StudentPayment>)await _studentPaymentManager.GetAllByStudentIdAsync(student.Id),
                 StudentCurrentPayments = (List<StudentPayment>)await _studentPaymentManager.GetAllByStudentIdAsync(student.Id),
-                StudentId = student.Id,
+                StudentId = student.Id,                
                 ClassFeeLists = await GetClassFeeList(student)
             };
 

@@ -483,7 +483,7 @@
                                 <div class="">
                                     <div class="col-md-6 text-left">
                                         <h5 class="h5 text-light">Current Due Amount : <span class="text-warning font-weight-bolder">@Model.CurrentDue tk</span></h5>
-                                        <h5 class="h5 text-light">Total Due Amount : <span class="text-warning font-weight-bolder">@Model.TotalDue tk</span></h5>
+                                        @* <h5 class="h5 text-light">Total Due Amount : <span class="text-warning font-weight-bolder">@Model.TotalDue tk</span></h5> *@
                                     </div>
                                     <div class="col-md-6 text-right">
                                         <a asp-action="Payment" asp-controller="StudentPayments" asp-route-stRoll="@Model.Student.ClassRoll" class="btn btn-warning text-primary font-weight-bolder">Make Payment</a>
@@ -557,7 +557,7 @@
                             </div>
                             <div class="col-md-2" style="display:flex;flex-direction:column;justify-content:center">
                                 <div>
-                                    <a class="btn btn-warning p-4 font-weight-bolder btn-outline-info" asp-action="StudentPaymentInfoExport" asp-controller="Reports" asp-route-reportType="pdf" asp-route-fileName="@fileName" asp-route-classRoll="@Model.Student.ClassRoll" asp-route-fromDate="@todate.ToString("dd-MM-yyyy")" asp-route-toDate="@DateTime.Today.ToString("dd-MM-yyyy")" target="_blank">
+                                    <a class="btn btn-warning p-4 font-weight-bolder btn-outline-info" asp-action="StudentPaymentInfoExport" asp-controller="Reports" asp-route-reportType="pdf" asp-route-fileName="@fileName" asp-route-classRoll="@Model.Student.ClassRoll" asp-route-fromDate="@todate.ToString("yyyy-MM-dd")" asp-route-toDate="@DateTime.Today.ToString("yyyy-MM-dd")" target="_blank">
                                         <span class="fa fa-file"></span> Get Report
                                     </a>
                                 </div>

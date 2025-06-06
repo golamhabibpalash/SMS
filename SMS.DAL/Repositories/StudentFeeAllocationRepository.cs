@@ -41,7 +41,7 @@ namespace SMS.DAL.Repositories
 
         public async Task<List<StudentFeeAllocation>> GetStudentFeeAllocationByUniqueIdSessionId(string uniqueId, int sessionId)
         {
-            var results = await _context.StudentFeeAllocations.Where(s => s.UniqueId == uniqueId && s.ClassFeeList.AcademicSessionId == sessionId).ToListAsync();
+            var results = await _context.StudentFeeAllocations.Include(s => s.StudentFeeHead).Where(s => s.UniqueId == uniqueId && s.ClassFeeList.AcademicSessionId == sessionId).ToListAsync();
             return results;
         }
     }

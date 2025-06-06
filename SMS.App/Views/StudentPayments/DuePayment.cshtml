@@ -72,7 +72,7 @@
                         </div>
                         <div class="form-group row">
                             <div class="col-md-4 offset-md-8 text-right">
-                                <button type="submit" id="LoadButton" class="btn btn-sm btn-info">Get List</button><br />
+                                <button type="submit" id="LoadButton" class="btn btn-sm btn-info" onclick="onSubmitAction()">Get List</button><br />
                                 @{
                                     if (Model.ShowCount != null)
                                     {
@@ -188,8 +188,8 @@
                             <td class="text-right">@item.TotalDue</td>
                             <td class="text-center action">
                                 <span class="btn-group-sm">
-                                    <a class="btn-sm btn-group-sm btn-info " asp-action="StudentPaymentInfoExport" asp-controller="Reports" asp-route-reportType="pdf" asp-route-fileName="payment_report_@item.Student.ClassRoll" asp-route-classRoll="@item.Student.ClassRoll" asp-route-fromDate="@item.Student.AdmissionDate.ToString("dd-MM-yyyy")" asp-route-toDate="@DateTime.Today.ToString("dd-MM-yyyy")" target="_blank">
-                                        <span class="fa fa-file"></span> View
+                                    <a class="btn-sm btn-group-sm btn-info" asp-action="StudentPaymentInfoExport" asp-controller="Reports" asp-route-reportType="pdf" asp-route-fileName="payment_report_@item.Student.ClassRoll" asp-route-classRoll="@item.Student.ClassRoll" asp-route-fromDate="@item.Student.AdmissionDate.ToString("yyyy-MM-dd")" asp-route-toDate="@DateTime.Today.ToString("yyyy-MM-dd")" target="_blank">
+                                        <span class="fa fa-file"></span> Pay Slip
                                     </a>
                                     <a class="btn-sm btn-group-sm btn-primary" asp-action="Details" asp-controller="Students" asp-fragment="financials" asp-route-tabName="financials" asp-route-id="@item.Student.Id">details</a>
                                     <a class="btn-sm btn-group-sm btn-success" asp-action="Payment" asp-controller="StudentPayments" asp-route-stRoll="@item.Student.ClassRoll">Pay</a>

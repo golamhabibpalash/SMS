@@ -84,14 +84,14 @@ $('#StudentPayment_StudentPaymentDetails_0__StudentFeeHeadId').change(function (
     let id = $('#StudentPayment_StudentPaymentDetails_0__StudentFeeHeadId option:selected').val();
     let classId = $('#academicClassId').val();
     let sessionId = $('#academicSessionId').val();
+    let uniqueId = $('#StudentPayment_UniqueId').val();
     $.ajax({
         url: '/StudentFeeHeads/GetById',
-        data: { id: id, classId: classId, sessionId: sessionId },
+        data: { id: id, classId: classId, sessionId: sessionId, uniqueId: uniqueId },
         cache: false,
         type: 'POST',
         dataType: 'json',
         success: function (d) {
-            console.log(d);
             $('#StudentPayment_StudentPaymentDetails_0__PaidAmount').val('');
             $('#StudentPayment_StudentPaymentDetails_0__ClassFeeId').val(d.id);
             $('#StudentPayment_TotalPayment').val('');

@@ -46,7 +46,7 @@ namespace SMS.App.Controllers
         public async Task<ActionResult> Index()
         {
             StudentFeeAllocationVM studentFeeAllocationVM = new StudentFeeAllocationVM();
-            studentFeeAllocationVM.StudentFeeAllocations = (System.Collections.Generic.List<Entities.StudentFeeAllocation>)await _studentFeeAllocationManager.GetAllAsync();
+            studentFeeAllocationVM.StudentFeeAllocations = (List<StudentFeeAllocation>)await _studentFeeAllocationManager.GetAllAsync();
             //studentFeeAllocationVM.FeeList = new SelectList(await _studentFeeHeadManager.GetAllAsync(), "Id", "Name");
             var allClasses = await _academicClassManager.GetAllAsync();
             studentFeeAllocationVM.AcademicClassList = new SelectList(allClasses.Where(s => s.Status == true), "Id", "Name");

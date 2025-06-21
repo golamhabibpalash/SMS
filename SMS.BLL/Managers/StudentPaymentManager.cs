@@ -104,41 +104,104 @@ namespace SMS.BLL.Managers
             }
             return paymentSummery;
         }
-
         public async Task<double> GetStudentCurrentDue(int stuId)
         {
             var student = await _studentRepository.GetByIdAsync(stuId);
-            var currentMonth = DateTime.Now.Month;
-            double currentDue = 0.00;
-
             var currentSession = await _academicSessionRepository.GetCurrentAcademicSession();
-            var classFees = await _classFeeListRepository.GetAllBySessionIdClassIdAsync(student.AcademicSessionId, student.AcademicClassId);
-            classFees = classFees.Where(s => s.StudentFeeHead.IsResidential == student.IsResidential).ToList();
-            var allAllocations = await _studentFeeAllocationRepository.GetStudentFeeAllocationByUniqueIdSessionId(student.UniqueId, student.AcademicSessionId);
-            allAllocations = allAllocations.Where(s => s.IsActive == true).ToList();
-            //Admission or Session Fee
+
+            var classFees = (await _classFeeListRepository
+                .GetAllBySessionIdClassIdAsync(student.AcademicSessionId, student.AcademicClassId))
+                .Where(f => f.StudentFeeHead.IsResidential == student.IsResidential)
+                .ToList();
+
+            var allAllocations = (await _studentFeeAllocationRepository
+                .GetStudentFeeAllocationByUniqueIdSessionId(student.UniqueId, student.AcademicSessionId))
+                .Where(a => a.IsActive)
+                .ToList();
+
+            // Determine Admission or Session Fee
             bool isAdmissionFee = student.AdmissionDate.Year.ToString() == currentSession.Name[^4..];
             int feeHeadSl = isAdmissionFee ? 0 : 13;
-            var AdmissionOrSessionClassFee = classFees.FirstOrDefault(s => s.StudentFeeHead.SL == feeHeadSl);
-            var admissionOrSessionAllocation = allAllocations.FirstOrDefault(s => s.UniqueId == student.UniqueId && s.ClassFeeListId == AdmissionOrSessionClassFee.Id);             
-            var admissionOrSessionSheduledFee = GetAdmissionOrSessionScheduleFee(student.AcademicSessionId, student.AcademicClassId, student.UniqueId, AdmissionOrSessionClassFee ,admissionOrSessionAllocation);
 
-            //monthly fee
-            var monthlyAllocations = allAllocations.Where(s => s.StudentFeeHead.SL>=1 && s.StudentFeeHead.SL<=12).ToList();
-            var monthlyClassFees = classFees.Where(s => s.StudentFeeHead.SL >= 1 && s.StudentFeeHead.SL <= 12).ToList();
-            var monthlyScheduledFee = GetMonthlyScheduledFee(student.AcademicClassId, student.AcademicSessionId, student.UniqueId, monthlyClassFees, monthlyAllocations);
+            var admissionOrSessionClassFee = classFees.FirstOrDefault(f => f.StudentFeeHead.SL == feeHeadSl);
+            var admissionOrSessionAllocation = allAllocations
+                .FirstOrDefault(a => a.ClassFeeListId == admissionOrSessionClassFee?.Id);
 
-            //others fee
-            var othersAllocation = allAllocations.Where(s => s.StudentFeeHead.SL >= 13).ToList();
-            var otherClassFees = classFees.Where(s => s.StudentFeeHead.SL >= 13).ToList();
-            var othersScheduleFee = GetOtherScheduledFee(student.AcademicClassId, student.AcademicSessionId, student.UniqueId, otherClassFees, othersAllocation);
+            var admissionOrSessionScheduledFee = GetAdmissionOrSessionScheduleFee(
+                student.AcademicSessionId,
+                student.AcademicClassId,
+                student.UniqueId,
+                admissionOrSessionClassFee,
+                admissionOrSessionAllocation
+            );
 
-            var totalScheduledFees = admissionOrSessionSheduledFee + monthlyScheduledFee + othersScheduleFee;
-            var totalPaidFees =await GetStudentTotalPaidAmountBySession(student.AcademicSessionId, student.UniqueId);
-            currentDue = totalScheduledFees - totalPaidFees;
+            // Monthly Fees (SL: 1-12)
+            var monthlyClassFees = classFees.Where(f => f.StudentFeeHead.SL is >= 1 and <= 12).ToList();
+            var monthlyAllocations = allAllocations.Where(a => a.StudentFeeHead.SL is >= 1 and <= 12).ToList();
 
-            return currentDue;
+            var monthlyScheduledFee = GetMonthlyScheduledFee(
+                student.AcademicClassId,
+                student.AcademicSessionId,
+                student.UniqueId,
+                monthlyClassFees,
+                monthlyAllocations
+            );
+
+            // Other Fees (SL: > 13)
+            var otherClassFees = classFees.Where(f => f.StudentFeeHead.SL > 13).ToList();
+            var otherAllocations = allAllocations.Where(a => a.StudentFeeHead.SL > 13).ToList();
+
+            var otherScheduledFee = GetOtherScheduledFee(
+                student.AcademicClassId,
+                student.AcademicSessionId,
+                student.UniqueId,
+                otherClassFees,
+                otherAllocations
+            );
+
+            // Calculate due
+            var totalScheduledFees = admissionOrSessionScheduledFee + monthlyScheduledFee + otherScheduledFee;
+            var totalPaidFees = await GetStudentTotalPaidAmountBySession(student.AcademicSessionId, student.UniqueId);
+
+            return totalScheduledFees - totalPaidFees;
         }
+        #region old Code
+
+        //public async Task<double> GetStudentCurrentDue(int stuId)
+        //{
+        //    var student = await _studentRepository.GetByIdAsync(stuId);
+        //    var currentMonth = DateTime.Now.Month;
+        //    double currentDue = 0.00;
+
+        //    var currentSession = await _academicSessionRepository.GetCurrentAcademicSession();
+        //    var classFees = await _classFeeListRepository.GetAllBySessionIdClassIdAsync(student.AcademicSessionId, student.AcademicClassId);
+        //    classFees = classFees.Where(s => s.StudentFeeHead.IsResidential == student.IsResidential).ToList();
+        //    var allAllocations = await _studentFeeAllocationRepository.GetStudentFeeAllocationByUniqueIdSessionId(student.UniqueId, student.AcademicSessionId);
+        //    allAllocations = allAllocations.Where(s => s.IsActive == true).ToList();
+        //    //Admission or Session Fee
+        //    bool isAdmissionFee = student.AdmissionDate.Year.ToString() == currentSession.Name[^4..];
+        //    int feeHeadSl = isAdmissionFee ? 0 : 13;
+        //    var AdmissionOrSessionClassFee = classFees.FirstOrDefault(s => s.StudentFeeHead.SL == feeHeadSl);
+        //    var admissionOrSessionAllocation = allAllocations.FirstOrDefault(s => s.UniqueId == student.UniqueId && s.ClassFeeListId == AdmissionOrSessionClassFee.Id);             
+        //    var admissionOrSessionSheduledFee = GetAdmissionOrSessionScheduleFee(student.AcademicSessionId, student.AcademicClassId, student.UniqueId, AdmissionOrSessionClassFee ,admissionOrSessionAllocation);
+
+        //    //monthly fee
+        //    var monthlyAllocations = allAllocations.Where(s => s.StudentFeeHead.SL>=1 && s.StudentFeeHead.SL<=12).ToList();
+        //    var monthlyClassFees = classFees.Where(s => s.StudentFeeHead.SL >= 1 && s.StudentFeeHead.SL <= 12).ToList();
+        //    var monthlyScheduledFee = GetMonthlyScheduledFee(student.AcademicClassId, student.AcademicSessionId, student.UniqueId, monthlyClassFees, monthlyAllocations);
+
+        //    //others fee
+        //    var othersAllocation = allAllocations.Where(s => s.StudentFeeHead.SL > 13).ToList();
+        //    var otherClassFees = classFees.Where(s => s.StudentFeeHead.SL > 13).ToList();
+        //    var othersScheduleFee = GetOtherScheduledFee(student.AcademicClassId, student.AcademicSessionId, student.UniqueId, otherClassFees, othersAllocation);
+
+        //    var totalScheduledFees = admissionOrSessionSheduledFee + monthlyScheduledFee + othersScheduleFee;
+        //    var totalPaidFees =await GetStudentTotalPaidAmountBySession(student.AcademicSessionId, student.UniqueId);
+        //    currentDue = totalScheduledFees - totalPaidFees;
+
+        //    return currentDue;
+        //}
+        #endregion old Code
         private double GetAdmissionOrSessionScheduleFee(int sessionId, int classId, string uniqueId, ClassFeeList AdmissionOrSessionClassFee, StudentFeeAllocation allocation)
         {
             //admission/session fee

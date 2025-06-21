@@ -24,7 +24,7 @@ public static class ServiceExtensions
             options.AccessDeniedPath = new PathString("/Accounts/AccessDenied");
             options.Cookie.Name = "Cookie";
             options.Cookie.HttpOnly = true;
-            options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+            options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
             options.LoginPath = new PathString("/Accounts/Login");
             options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
             options.SlidingExpiration = true;

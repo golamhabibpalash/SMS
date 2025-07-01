@@ -171,6 +171,7 @@ namespace SMS.App.Controllers
 
             string imageParam = "";
             var imagePath = _host.WebRootPath + "\\Images\\Institute\\" + institute.Logo;
+            var reportName = "Students Daily Attendance Report";
 
             Image image = Image.FromFile(imagePath);
             using (MemoryStream ms = new MemoryStream())
@@ -179,11 +180,16 @@ namespace SMS.App.Controllers
                 byte[] imageBytes = ms.ToArray();
                 imageParam = Convert.ToBase64String(imageBytes);
             }
-            attendanceFor = attendanceFor == "s" ? "student" : "employee";
+            attendanceFor = attendanceFor == "s" ? "student" : "employees";
             AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSession();
 
             List<RptDailyAttendaceVM> studentDailyAttendance = await _reportManager.GetDailyAttendanceReport(fromDate, academicClassId, academicSectionId, attendanceType, academicSession.Id.ToString(), attendanceFor);
             string totalStudents = studentDailyAttendance.Count.ToString();
+            if (attendanceFor=="employees")
+            {
+                path = _host.WebRootPath + "\\Reports\\Rpt_Daily_Attendance_Employee.rdlc";
+                reportName = "Employees Daily Attendance Report";
+            }
             using var report = new Microsoft.Reporting.NETCore.LocalReport();
             if (studentDailyAttendance.Count > 0)
             {
@@ -203,7 +209,7 @@ namespace SMS.App.Controllers
                 new ReportParameter("Location", institute.Address),
                 new ReportParameter("EIINNo", institute.EIIN),
                 new ReportParameter("Logo", imageParam),
-                new ReportParameter("ReportName", "Daily Attendance Report"),
+                new ReportParameter("ReportName", reportName),
                 new ReportParameter("AttendanceDate", fromDate),
                 new ReportParameter("ReportDate", DateTime.Today.ToString("dd MMM yyyy")),
                 new ReportParameter("TotalStudent",totalStudents)

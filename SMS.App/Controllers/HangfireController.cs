@@ -752,9 +752,13 @@ namespace SMS.App.Controllers
 
                         totalStudent = totalBoysStudent + totalGirlsStudent;
 
-                        totalEmployee = (from a in allCheckInAttendance
-                                         join e in employees on a.CardNo.Trim() equals e.Id.ToString().Trim()
-                                         select a).Count();
+                        var paddedEmployeeIds = employees
+                            .Select(e => e.Id.ToString().PadLeft(8, '0'))
+                            .ToHashSet();
+
+                        totalEmployee = allCheckInAttendance
+                            .Count(a => paddedEmployeeIds.Contains(a.CardNo.Trim()));
+
                         string msgText = string.Empty;
                         var instituteInfo = await _instituteManager.GetAllAsync();
                         msgText = $"Attendance Summary ({DateTime.Today.ToString("dd MMM yyyy")}):\n" +

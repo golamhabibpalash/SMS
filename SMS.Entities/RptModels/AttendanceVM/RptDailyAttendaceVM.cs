@@ -14,5 +14,6 @@ namespace SMS.Entities.RptModels.AttendanceVM
         public string Phone { get; set; }
         public string GuardianPhone { get; set; }
         public string PunchTime { get; set; }
+        public string SortingOrder { get; set; }
     }
 }

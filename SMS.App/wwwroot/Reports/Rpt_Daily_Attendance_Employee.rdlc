@@ -41,6 +41,10 @@
           <DataField>GuardianPhone</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="SortingOrder">
+          <DataField>SortingOrder</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>SMSDBDataSet</rd:DataSetName>
@@ -465,6 +469,14 @@
                                   </TablixMember>
                                   <TablixMember>
                                     <Group Name="Details1" />
+                                    <SortExpressions>
+                                      <SortExpression>
+                                        <Value>=Fields!PunchTime.Value</Value>
+                                      </SortExpression>
+                                      <SortExpression>
+                                        <Value>=Fields!CardNo.Value</Value>
+                                      </SortExpression>
+                                    </SortExpressions>
                                   </TablixMember>
                                 </TablixMembers>
                               </TablixRowHierarchy>
@@ -520,6 +532,7 @@
                             </Border>
                           </Style>
                         </Rectangle>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -539,15 +552,15 @@
                       <GroupExpression>=Fields!Class_Designation.Value</GroupExpression>
                     </GroupExpressions>
                   </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Fields!SortingOrder.Value</Value>
+                    </SortExpression>
+                  </SortExpressions>
                 </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>AttendanceReportDS</DataSetName>
-            <SortExpressions>
-              <SortExpression>
-                <Value>=Fields!CardNo.Value</Value>
-              </SortExpression>
-            </SortExpressions>
             <Top>0.0382in</Top>
             <Left>0.03633in</Left>
             <Height>0.68485in</Height>

@@ -66,7 +66,7 @@ namespace SMS.App.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "CreateDesignationsPolicy")]
-        public async Task<IActionResult> Create([Bind("Id,DesignationName,DesignationTypeId,EmpTypeId,CreatedBy,CreatedAt,EditedBy,EditedAt")] Designation designation)
+        public async Task<IActionResult> Create([Bind("Id,DesignationName,DesignationTypeId,EmpTypeId,CreatedBy,CreatedAt,EditedBy,EditedAt,SortingOrder")] Designation designation)
         {
             
             if (ModelState.IsValid)
@@ -106,7 +106,7 @@ namespace SMS.App.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "EditDesignationsPolicy")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,DesignationName,DesignationTypeId,EmpTypeId,CreatedBy,CreatedAt,EditedBy,EditedAt")] Designation designation)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,DesignationName,DesignationTypeId,EmpTypeId,CreatedBy,CreatedAt,EditedBy,EditedAt,SortingOrder")] Designation designation)
         {
             if (id != designation.Id)
             {

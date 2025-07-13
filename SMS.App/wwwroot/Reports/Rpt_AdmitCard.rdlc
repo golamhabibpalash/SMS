@@ -113,7 +113,7 @@
               </TablixColumns>
               <TablixRows>
                 <TablixRow>
-                  <Height>2.37575in</Height>
+                  <Height>1.70277in</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -243,9 +243,7 @@
                                             <rd:DefaultName>ClassRoll</rd:DefaultName>
                                             <Style>
                                               <Border>
-                                                <Color>LightGrey</Color>
-                                                <Style>Solid</Style>
-                                                <Width>0.25pt</Width>
+                                                <Style>None</Style>
                                               </Border>
                                               <PaddingLeft>2pt</PaddingLeft>
                                               <PaddingRight>2pt</PaddingRight>
@@ -1323,109 +1321,151 @@
                                 </BottomBorder>
                               </Style>
                             </Tablix>
-                            <Tablix Name="Tablix19">
+                            <Tablix Name="Tablix5">
                               <TablixBody>
                                 <TablixColumns>
                                   <TablixColumn>
-                                    <Width>1.88612in</Width>
+                                    <Width>0.29049in</Width>
+                                  </TablixColumn>
+                                  <TablixColumn>
+                                    <Width>1.60299in</Width>
                                   </TablixColumn>
                                 </TablixColumns>
                                 <TablixRows>
                                   <TablixRow>
-                                    <Height>0.37917in</Height>
+                                    <Height>0.25in</Height>
                                     <TablixCells>
                                       <TablixCell>
                                         <CellContents>
-                                          <Rectangle Name="Rectangle13">
-                                            <ReportItems>
-                                              <Tablix Name="Tablix20">
-                                                <TablixBody>
-                                                  <TablixColumns>
-                                                    <TablixColumn>
-                                                      <Width>0.4in</Width>
-                                                    </TablixColumn>
-                                                    <TablixColumn>
-                                                      <Width>1.46in</Width>
-                                                    </TablixColumn>
-                                                  </TablixColumns>
-                                                  <TablixRows>
-                                                    <TablixRow>
-                                                      <Height>0.34in</Height>
-                                                      <TablixCells>
-                                                        <TablixCell>
-                                                          <CellContents>
-                                                            <Textbox Name="SubjectCode">
-                                                              <KeepTogether>true</KeepTogether>
-                                                              <Paragraphs>
-                                                                <Paragraph>
-                                                                  <TextRuns>
-                                                                    <TextRun>
-                                                                      <Value>=Fields!SubjectCode.Value &amp;" : " &amp; Fields!SubjectName.Value</Value>
-                                                                      <Style>
-                                                                        <FontFamily>Arial Narrow</FontFamily>
-                                                                        <FontSize>=IIF(Len(Fields!SubjectName.Value) &gt; 20, "9pt", "11pt")</FontSize>
-                                                                      </Style>
-                                                                    </TextRun>
-                                                                  </TextRuns>
-                                                                  <Style>
-                                                                    <LineHeight>12pt</LineHeight>
-                                                                  </Style>
-                                                                </Paragraph>
-                                                              </Paragraphs>
-                                                              <rd:DefaultName>SubjectCode</rd:DefaultName>
-                                                              <Style>
-                                                                <Border>
-                                                                  <Style>None</Style>
-                                                                </Border>
-                                                                <PaddingLeft>2pt</PaddingLeft>
-                                                                <PaddingRight>2pt</PaddingRight>
-                                                                <PaddingTop>2pt</PaddingTop>
-                                                                <PaddingBottom>2pt</PaddingBottom>
-                                                              </Style>
-                                                            </Textbox>
-                                                            <ColSpan>2</ColSpan>
-                                                          </CellContents>
-                                                        </TablixCell>
-                                                        <TablixCell />
-                                                      </TablixCells>
-                                                    </TablixRow>
-                                                  </TablixRows>
-                                                </TablixBody>
-                                                <TablixColumnHierarchy>
-                                                  <TablixMembers>
-                                                    <TablixMember />
-                                                    <TablixMember />
-                                                  </TablixMembers>
-                                                </TablixColumnHierarchy>
-                                                <TablixRowHierarchy>
-                                                  <TablixMembers>
-                                                    <TablixMember>
-                                                      <Group Name="Details2" />
-                                                    </TablixMember>
-                                                  </TablixMembers>
-                                                </TablixRowHierarchy>
-                                                <DataSetName>DSAdmitCard</DataSetName>
-                                                <Top>0.0125in</Top>
-                                                <Left>0.0125in</Left>
-                                                <Height>0.34in</Height>
-                                                <Width>1.86in</Width>
-                                                <Style>
-                                                  <Border>
-                                                    <Style>None</Style>
-                                                  </Border>
-                                                </Style>
-                                              </Tablix>
-                                            </ReportItems>
+                                          <Textbox Name="Textbox47">
+                                            <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
-                                            <Visibility>
-                                              <Hidden>=IIF(RowNumber("Details")=1,False,True)</Hidden>
-                                            </Visibility>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value>SL</Value>
+                                                    <Style>
+                                                      <FontWeight>Bold</FontWeight>
+                                                    </Style>
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style>
+                                                  <TextAlign>Center</TextAlign>
+                                                </Style>
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>Textbox47</rd:DefaultName>
                                             <Style>
                                               <Border>
-                                                <Style>None</Style>
+                                                <Color>LightGrey</Color>
+                                                <Style>Solid</Style>
                                               </Border>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
                                             </Style>
-                                          </Rectangle>
+                                          </Textbox>
+                                        </CellContents>
+                                      </TablixCell>
+                                      <TablixCell>
+                                        <CellContents>
+                                          <Textbox Name="Textbox19">
+                                            <CanGrow>true</CanGrow>
+                                            <KeepTogether>true</KeepTogether>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value>Subject Name</Value>
+                                                    <Style>
+                                                      <FontWeight>Bold</FontWeight>
+                                                    </Style>
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style />
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>Textbox19</rd:DefaultName>
+                                            <Style>
+                                              <Border>
+                                                <Color>LightGrey</Color>
+                                                <Style>Solid</Style>
+                                              </Border>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
+                                            </Style>
+                                          </Textbox>
+                                        </CellContents>
+                                      </TablixCell>
+                                    </TablixCells>
+                                  </TablixRow>
+                                  <TablixRow>
+                                    <Height>0.25in</Height>
+                                    <TablixCells>
+                                      <TablixCell>
+                                        <CellContents>
+                                          <Textbox Name="Textbox48">
+                                            <CanGrow>true</CanGrow>
+                                            <KeepTogether>true</KeepTogether>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value>=RowNumber("Details")</Value>
+                                                    <Style />
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style>
+                                                  <TextAlign>Center</TextAlign>
+                                                </Style>
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>Textbox48</rd:DefaultName>
+                                            <Style>
+                                              <Border>
+                                                <Color>LightGrey</Color>
+                                                <Style>Solid</Style>
+                                              </Border>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
+                                            </Style>
+                                          </Textbox>
+                                        </CellContents>
+                                      </TablixCell>
+                                      <TablixCell>
+                                        <CellContents>
+                                          <Textbox Name="SubjectName">
+                                            <CanGrow>true</CanGrow>
+                                            <KeepTogether>true</KeepTogether>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value>=Fields!SubjectName.Value &amp; " (" &amp; CStr(Fields!SubjectCode.Value) &amp; ")"</Value>
+                                                    <Style />
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style />
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>SubjectName</rd:DefaultName>
+                                            <Style>
+                                              <Border>
+                                                <Color>LightGrey</Color>
+                                                <Style>Solid</Style>
+                                              </Border>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
+                                            </Style>
+                                          </Textbox>
                                         </CellContents>
                                       </TablixCell>
                                     </TablixCells>
@@ -1435,24 +1475,27 @@
                               <TablixColumnHierarchy>
                                 <TablixMembers>
                                   <TablixMember />
+                                  <TablixMember />
                                 </TablixMembers>
                               </TablixColumnHierarchy>
                               <TablixRowHierarchy>
                                 <TablixMembers>
                                   <TablixMember>
-                                    <Group Name="Table_1">
-                                      <GroupExpressions>
-                                        <GroupExpression>=Fields!SubjectCode.Value</GroupExpression>
-                                      </GroupExpressions>
-                                    </Group>
+                                    <KeepWithGroup>After</KeepWithGroup>
+                                  </TablixMember>
+                                  <TablixMember>
+                                    <Group Name="Details2" />
+                                    <Visibility>
+                                      <Hidden>=IIf(RowNumber("Details") Mod 4 = 1, False, True)</Hidden>
+                                    </Visibility>
                                   </TablixMember>
                                 </TablixMembers>
                               </TablixRowHierarchy>
                               <DataSetName>DSAdmitCard</DataSetName>
-                              <Top>1.18616in</Top>
-                              <Left>0.26069in</Left>
-                              <Height>0.37917in</Height>
-                              <Width>1.88612in</Width>
+                              <Top>1.20277in</Top>
+                              <Left>0.09274in</Left>
+                              <Height>0.5in</Height>
+                              <Width>1.89349in</Width>
                               <ZIndex>1</ZIndex>
                               <Style>
                                 <Border>
@@ -1460,108 +1503,151 @@
                                 </Border>
                               </Style>
                             </Tablix>
-                            <Tablix Name="Tablix21">
+                            <Tablix Name="Tablix6">
                               <TablixBody>
                                 <TablixColumns>
                                   <TablixColumn>
-                                    <Width>1.88612in</Width>
+                                    <Width>0.29049in</Width>
+                                  </TablixColumn>
+                                  <TablixColumn>
+                                    <Width>1.60299in</Width>
                                   </TablixColumn>
                                 </TablixColumns>
                                 <TablixRows>
                                   <TablixRow>
-                                    <Height>0.36945in</Height>
+                                    <Height>0.25in</Height>
                                     <TablixCells>
                                       <TablixCell>
                                         <CellContents>
-                                          <Rectangle Name="Rectangle14">
-                                            <ReportItems>
-                                              <Tablix Name="Tablix22">
-                                                <TablixBody>
-                                                  <TablixColumns>
-                                                    <TablixColumn>
-                                                      <Width>0.425in</Width>
-                                                    </TablixColumn>
-                                                    <TablixColumn>
-                                                      <Width>1.435in</Width>
-                                                    </TablixColumn>
-                                                  </TablixColumns>
-                                                  <TablixRows>
-                                                    <TablixRow>
-                                                      <Height>0.34in</Height>
-                                                      <TablixCells>
-                                                        <TablixCell>
-                                                          <CellContents>
-                                                            <Textbox Name="SubjectCode2">
-                                                              <Paragraphs>
-                                                                <Paragraph>
-                                                                  <TextRuns>
-                                                                    <TextRun>
-                                                                      <Value>=Fields!SubjectCode.Value &amp;" : " &amp; Fields!SubjectName.Value</Value>
-                                                                      <Style>
-                                                                        <FontFamily>Arial Narrow</FontFamily>
-                                                                        <FontSize>=IIF(Len(Fields!SubjectName.Value) &gt; 20, "9pt", "11pt")</FontSize>
-                                                                      </Style>
-                                                                    </TextRun>
-                                                                  </TextRuns>
-                                                                  <Style>
-                                                                    <LineHeight>10pt</LineHeight>
-                                                                  </Style>
-                                                                </Paragraph>
-                                                              </Paragraphs>
-                                                              <rd:DefaultName>SubjectCode</rd:DefaultName>
-                                                              <Style>
-                                                                <Border>
-                                                                  <Style>None</Style>
-                                                                </Border>
-                                                                <PaddingLeft>2pt</PaddingLeft>
-                                                                <PaddingRight>2pt</PaddingRight>
-                                                                <PaddingTop>2pt</PaddingTop>
-                                                                <PaddingBottom>2pt</PaddingBottom>
-                                                              </Style>
-                                                            </Textbox>
-                                                            <ColSpan>2</ColSpan>
-                                                          </CellContents>
-                                                        </TablixCell>
-                                                        <TablixCell />
-                                                      </TablixCells>
-                                                    </TablixRow>
-                                                  </TablixRows>
-                                                </TablixBody>
-                                                <TablixColumnHierarchy>
-                                                  <TablixMembers>
-                                                    <TablixMember />
-                                                    <TablixMember />
-                                                  </TablixMembers>
-                                                </TablixColumnHierarchy>
-                                                <TablixRowHierarchy>
-                                                  <TablixMembers>
-                                                    <TablixMember>
-                                                      <Group Name="Details3" />
-                                                    </TablixMember>
-                                                  </TablixMembers>
-                                                </TablixRowHierarchy>
-                                                <DataSetName>DSAdmitCard</DataSetName>
-                                                <Top>0.0125in</Top>
-                                                <Left>0.0125in</Left>
-                                                <Height>0.34in</Height>
-                                                <Width>1.86in</Width>
-                                                <Style>
-                                                  <Border>
-                                                    <Style>None</Style>
-                                                  </Border>
-                                                </Style>
-                                              </Tablix>
-                                            </ReportItems>
+                                          <Textbox Name="Textbox49">
+                                            <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
-                                            <Visibility>
-                                              <Hidden>=IIF(RowNumber("Details") = 3, False, True)</Hidden>
-                                            </Visibility>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value>SL</Value>
+                                                    <Style>
+                                                      <FontWeight>Bold</FontWeight>
+                                                    </Style>
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style>
+                                                  <TextAlign>Center</TextAlign>
+                                                </Style>
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>Textbox47</rd:DefaultName>
                                             <Style>
                                               <Border>
-                                                <Style>None</Style>
+                                                <Color>LightGrey</Color>
+                                                <Style>Solid</Style>
                                               </Border>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
                                             </Style>
-                                          </Rectangle>
+                                          </Textbox>
+                                        </CellContents>
+                                      </TablixCell>
+                                      <TablixCell>
+                                        <CellContents>
+                                          <Textbox Name="Textbox20">
+                                            <CanGrow>true</CanGrow>
+                                            <KeepTogether>true</KeepTogether>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value>Subject Name</Value>
+                                                    <Style>
+                                                      <FontWeight>Bold</FontWeight>
+                                                    </Style>
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style />
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>Textbox19</rd:DefaultName>
+                                            <Style>
+                                              <Border>
+                                                <Color>LightGrey</Color>
+                                                <Style>Solid</Style>
+                                              </Border>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
+                                            </Style>
+                                          </Textbox>
+                                        </CellContents>
+                                      </TablixCell>
+                                    </TablixCells>
+                                  </TablixRow>
+                                  <TablixRow>
+                                    <Height>0.25in</Height>
+                                    <TablixCells>
+                                      <TablixCell>
+                                        <CellContents>
+                                          <Textbox Name="Textbox50">
+                                            <CanGrow>true</CanGrow>
+                                            <KeepTogether>true</KeepTogether>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value>=RowNumber("Details")</Value>
+                                                    <Style />
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style>
+                                                  <TextAlign>Center</TextAlign>
+                                                </Style>
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>Textbox48</rd:DefaultName>
+                                            <Style>
+                                              <Border>
+                                                <Color>LightGrey</Color>
+                                                <Style>Solid</Style>
+                                              </Border>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
+                                            </Style>
+                                          </Textbox>
+                                        </CellContents>
+                                      </TablixCell>
+                                      <TablixCell>
+                                        <CellContents>
+                                          <Textbox Name="SubjectName2">
+                                            <CanGrow>true</CanGrow>
+                                            <KeepTogether>true</KeepTogether>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value>=Fields!SubjectName.Value &amp; " (" &amp; CStr(Fields!SubjectCode.Value) &amp; ")"</Value>
+                                                    <Style />
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style />
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>SubjectName</rd:DefaultName>
+                                            <Style>
+                                              <Border>
+                                                <Color>LightGrey</Color>
+                                                <Style>Solid</Style>
+                                              </Border>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
+                                            </Style>
+                                          </Textbox>
                                         </CellContents>
                                       </TablixCell>
                                     </TablixCells>
@@ -1571,24 +1657,27 @@
                               <TablixColumnHierarchy>
                                 <TablixMembers>
                                   <TablixMember />
+                                  <TablixMember />
                                 </TablixMembers>
                               </TablixColumnHierarchy>
                               <TablixRowHierarchy>
                                 <TablixMembers>
                                   <TablixMember>
-                                    <Group Name="Table_2">
-                                      <GroupExpressions>
-                                        <GroupExpression>=Fields!SubjectCode.Value</GroupExpression>
-                                      </GroupExpressions>
-                                    </Group>
+                                    <KeepWithGroup>After</KeepWithGroup>
+                                  </TablixMember>
+                                  <TablixMember>
+                                    <Group Name="Details3" />
+                                    <Visibility>
+                                      <Hidden>=IIf(RowNumber("Details") Mod 4 = 2, False, True)</Hidden>
+                                    </Visibility>
                                   </TablixMember>
                                 </TablixMembers>
                               </TablixRowHierarchy>
                               <DataSetName>DSAdmitCard</DataSetName>
-                              <Top>1.18616in</Top>
-                              <Left>2.1843in</Left>
-                              <Height>0.36945in</Height>
-                              <Width>1.88612in</Width>
+                              <Top>1.19443in</Top>
+                              <Left>2.04179in</Left>
+                              <Height>0.5in</Height>
+                              <Width>1.89348in</Width>
                               <ZIndex>2</ZIndex>
                               <Style>
                                 <Border>
@@ -1596,107 +1685,151 @@
                                 </Border>
                               </Style>
                             </Tablix>
-                            <Tablix Name="Tablix23">
+                            <Tablix Name="Tablix7">
                               <TablixBody>
                                 <TablixColumns>
                                   <TablixColumn>
-                                    <Width>1.885in</Width>
+                                    <Width>0.29049in</Width>
+                                  </TablixColumn>
+                                  <TablixColumn>
+                                    <Width>1.60299in</Width>
                                   </TablixColumn>
                                 </TablixColumns>
                                 <TablixRows>
                                   <TablixRow>
-                                    <Height>0.36945in</Height>
+                                    <Height>0.25in</Height>
                                     <TablixCells>
                                       <TablixCell>
                                         <CellContents>
-                                          <Rectangle Name="Rectangle15">
-                                            <ReportItems>
-                                              <Tablix Name="Tablix24">
-                                                <TablixBody>
-                                                  <TablixColumns>
-                                                    <TablixColumn>
-                                                      <Width>0.4in</Width>
-                                                    </TablixColumn>
-                                                    <TablixColumn>
-                                                      <Width>1.46in</Width>
-                                                    </TablixColumn>
-                                                  </TablixColumns>
-                                                  <TablixRows>
-                                                    <TablixRow>
-                                                      <Height>0.34in</Height>
-                                                      <TablixCells>
-                                                        <TablixCell>
-                                                          <CellContents>
-                                                            <Textbox Name="SubjectCode3">
-                                                              <KeepTogether>true</KeepTogether>
-                                                              <Paragraphs>
-                                                                <Paragraph>
-                                                                  <TextRuns>
-                                                                    <TextRun>
-                                                                      <Value>=Fields!SubjectCode.Value &amp;" : " &amp; Fields!SubjectName.Value</Value>
-                                                                      <Style>
-                                                                        <FontFamily>Arial Narrow</FontFamily>
-                                                                        <FontSize>=IIF(Len(Fields!SubjectName.Value) &gt; 20, "9pt", "11pt")</FontSize>
-                                                                      </Style>
-                                                                    </TextRun>
-                                                                  </TextRuns>
-                                                                  <Style />
-                                                                </Paragraph>
-                                                              </Paragraphs>
-                                                              <rd:DefaultName>SubjectCode</rd:DefaultName>
-                                                              <Style>
-                                                                <Border>
-                                                                  <Style>None</Style>
-                                                                </Border>
-                                                                <PaddingLeft>2pt</PaddingLeft>
-                                                                <PaddingRight>2pt</PaddingRight>
-                                                                <PaddingTop>2pt</PaddingTop>
-                                                                <PaddingBottom>2pt</PaddingBottom>
-                                                              </Style>
-                                                            </Textbox>
-                                                            <ColSpan>2</ColSpan>
-                                                          </CellContents>
-                                                        </TablixCell>
-                                                        <TablixCell />
-                                                      </TablixCells>
-                                                    </TablixRow>
-                                                  </TablixRows>
-                                                </TablixBody>
-                                                <TablixColumnHierarchy>
-                                                  <TablixMembers>
-                                                    <TablixMember />
-                                                    <TablixMember />
-                                                  </TablixMembers>
-                                                </TablixColumnHierarchy>
-                                                <TablixRowHierarchy>
-                                                  <TablixMembers>
-                                                    <TablixMember>
-                                                      <Group Name="Details4" />
-                                                    </TablixMember>
-                                                  </TablixMembers>
-                                                </TablixRowHierarchy>
-                                                <DataSetName>DSAdmitCard</DataSetName>
-                                                <Top>0.0125in</Top>
-                                                <Left>0.0125in</Left>
-                                                <Height>0.34in</Height>
-                                                <Width>1.86in</Width>
-                                                <Style>
-                                                  <Border>
-                                                    <Style>None</Style>
-                                                  </Border>
-                                                </Style>
-                                              </Tablix>
-                                            </ReportItems>
+                                          <Textbox Name="Textbox51">
+                                            <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
-                                            <Visibility>
-                                              <Hidden>=IIF(RowNumber("Details") = 5, False, True)</Hidden>
-                                            </Visibility>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value>SL</Value>
+                                                    <Style>
+                                                      <FontWeight>Bold</FontWeight>
+                                                    </Style>
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style>
+                                                  <TextAlign>Center</TextAlign>
+                                                </Style>
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>Textbox47</rd:DefaultName>
                                             <Style>
                                               <Border>
-                                                <Style>None</Style>
+                                                <Color>LightGrey</Color>
+                                                <Style>Solid</Style>
                                               </Border>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
                                             </Style>
-                                          </Rectangle>
+                                          </Textbox>
+                                        </CellContents>
+                                      </TablixCell>
+                                      <TablixCell>
+                                        <CellContents>
+                                          <Textbox Name="Textbox23">
+                                            <CanGrow>true</CanGrow>
+                                            <KeepTogether>true</KeepTogether>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value>Subject Name</Value>
+                                                    <Style>
+                                                      <FontWeight>Bold</FontWeight>
+                                                    </Style>
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style />
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>Textbox19</rd:DefaultName>
+                                            <Style>
+                                              <Border>
+                                                <Color>LightGrey</Color>
+                                                <Style>Solid</Style>
+                                              </Border>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
+                                            </Style>
+                                          </Textbox>
+                                        </CellContents>
+                                      </TablixCell>
+                                    </TablixCells>
+                                  </TablixRow>
+                                  <TablixRow>
+                                    <Height>0.25in</Height>
+                                    <TablixCells>
+                                      <TablixCell>
+                                        <CellContents>
+                                          <Textbox Name="Textbox54">
+                                            <CanGrow>true</CanGrow>
+                                            <KeepTogether>true</KeepTogether>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value>=RowNumber("Details")</Value>
+                                                    <Style />
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style>
+                                                  <TextAlign>Center</TextAlign>
+                                                </Style>
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>Textbox48</rd:DefaultName>
+                                            <Style>
+                                              <Border>
+                                                <Color>LightGrey</Color>
+                                                <Style>Solid</Style>
+                                              </Border>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
+                                            </Style>
+                                          </Textbox>
+                                        </CellContents>
+                                      </TablixCell>
+                                      <TablixCell>
+                                        <CellContents>
+                                          <Textbox Name="SubjectName3">
+                                            <CanGrow>true</CanGrow>
+                                            <KeepTogether>true</KeepTogether>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value>=Fields!SubjectName.Value &amp; " (" &amp; CStr(Fields!SubjectCode.Value) &amp; ")"</Value>
+                                                    <Style />
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style />
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>SubjectName</rd:DefaultName>
+                                            <Style>
+                                              <Border>
+                                                <Color>LightGrey</Color>
+                                                <Style>Solid</Style>
+                                              </Border>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
+                                            </Style>
+                                          </Textbox>
                                         </CellContents>
                                       </TablixCell>
                                     </TablixCells>
@@ -1706,24 +1839,27 @@
                               <TablixColumnHierarchy>
                                 <TablixMembers>
                                   <TablixMember />
+                                  <TablixMember />
                                 </TablixMembers>
                               </TablixColumnHierarchy>
                               <TablixRowHierarchy>
                                 <TablixMembers>
                                   <TablixMember>
-                                    <Group Name="Table_3">
-                                      <GroupExpressions>
-                                        <GroupExpression>=Fields!SubjectCode.Value</GroupExpression>
-                                      </GroupExpressions>
-                                    </Group>
+                                    <KeepWithGroup>After</KeepWithGroup>
+                                  </TablixMember>
+                                  <TablixMember>
+                                    <Group Name="Details4" />
+                                    <Visibility>
+                                      <Hidden>=IIf(RowNumber("Details") Mod 4 = 3, False, True)</Hidden>
+                                    </Visibility>
                                   </TablixMember>
                                 </TablixMembers>
                               </TablixRowHierarchy>
                               <DataSetName>DSAdmitCard</DataSetName>
-                              <Top>1.18616in</Top>
-                              <Left>4.11486in</Left>
-                              <Height>0.36945in</Height>
-                              <Width>1.885in</Width>
+                              <Top>1.19443in</Top>
+                              <Left>3.94915in</Left>
+                              <Height>0.5in</Height>
+                              <Width>1.89348in</Width>
                               <ZIndex>3</ZIndex>
                               <Style>
                                 <Border>
@@ -1731,107 +1867,151 @@
                                 </Border>
                               </Style>
                             </Tablix>
-                            <Tablix Name="Tablix25">
+                            <Tablix Name="Tablix8">
                               <TablixBody>
                                 <TablixColumns>
                                   <TablixColumn>
-                                    <Width>1.88403in</Width>
+                                    <Width>0.29049in</Width>
+                                  </TablixColumn>
+                                  <TablixColumn>
+                                    <Width>1.60299in</Width>
                                   </TablixColumn>
                                 </TablixColumns>
                                 <TablixRows>
                                   <TablixRow>
-                                    <Height>0.37917in</Height>
+                                    <Height>0.25in</Height>
                                     <TablixCells>
                                       <TablixCell>
                                         <CellContents>
-                                          <Rectangle Name="Rectangle16">
-                                            <ReportItems>
-                                              <Tablix Name="Tablix26">
-                                                <TablixBody>
-                                                  <TablixColumns>
-                                                    <TablixColumn>
-                                                      <Width>0.4in</Width>
-                                                    </TablixColumn>
-                                                    <TablixColumn>
-                                                      <Width>1.46in</Width>
-                                                    </TablixColumn>
-                                                  </TablixColumns>
-                                                  <TablixRows>
-                                                    <TablixRow>
-                                                      <Height>0.34in</Height>
-                                                      <TablixCells>
-                                                        <TablixCell>
-                                                          <CellContents>
-                                                            <Textbox Name="SubjectCode4">
-                                                              <KeepTogether>true</KeepTogether>
-                                                              <Paragraphs>
-                                                                <Paragraph>
-                                                                  <TextRuns>
-                                                                    <TextRun>
-                                                                      <Value>=Fields!SubjectCode.Value &amp;" : " &amp; Fields!SubjectName.Value</Value>
-                                                                      <Style>
-                                                                        <FontFamily>Arial Narrow</FontFamily>
-                                                                        <FontSize>=IIF(Len(Fields!SubjectName.Value) &gt; 20, "9pt", "11pt")</FontSize>
-                                                                      </Style>
-                                                                    </TextRun>
-                                                                  </TextRuns>
-                                                                  <Style />
-                                                                </Paragraph>
-                                                              </Paragraphs>
-                                                              <rd:DefaultName>SubjectCode</rd:DefaultName>
-                                                              <Style>
-                                                                <Border>
-                                                                  <Style>None</Style>
-                                                                </Border>
-                                                                <PaddingLeft>2pt</PaddingLeft>
-                                                                <PaddingRight>2pt</PaddingRight>
-                                                                <PaddingTop>2pt</PaddingTop>
-                                                                <PaddingBottom>2pt</PaddingBottom>
-                                                              </Style>
-                                                            </Textbox>
-                                                            <ColSpan>2</ColSpan>
-                                                          </CellContents>
-                                                        </TablixCell>
-                                                        <TablixCell />
-                                                      </TablixCells>
-                                                    </TablixRow>
-                                                  </TablixRows>
-                                                </TablixBody>
-                                                <TablixColumnHierarchy>
-                                                  <TablixMembers>
-                                                    <TablixMember />
-                                                    <TablixMember />
-                                                  </TablixMembers>
-                                                </TablixColumnHierarchy>
-                                                <TablixRowHierarchy>
-                                                  <TablixMembers>
-                                                    <TablixMember>
-                                                      <Group Name="Details5" />
-                                                    </TablixMember>
-                                                  </TablixMembers>
-                                                </TablixRowHierarchy>
-                                                <DataSetName>DSAdmitCard</DataSetName>
-                                                <Top>0.0125in</Top>
-                                                <Left>0.0125in</Left>
-                                                <Height>0.34in</Height>
-                                                <Width>1.86in</Width>
-                                                <Style>
-                                                  <Border>
-                                                    <Style>None</Style>
-                                                  </Border>
-                                                </Style>
-                                              </Tablix>
-                                            </ReportItems>
+                                          <Textbox Name="Textbox55">
+                                            <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
-                                            <Visibility>
-                                              <Hidden>=IIF(RowNumber("Details") = 7, False, True)</Hidden>
-                                            </Visibility>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value>SL</Value>
+                                                    <Style>
+                                                      <FontWeight>Bold</FontWeight>
+                                                    </Style>
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style>
+                                                  <TextAlign>Center</TextAlign>
+                                                </Style>
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>Textbox47</rd:DefaultName>
                                             <Style>
                                               <Border>
-                                                <Style>None</Style>
+                                                <Color>LightGrey</Color>
+                                                <Style>Solid</Style>
                                               </Border>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
                                             </Style>
-                                          </Rectangle>
+                                          </Textbox>
+                                        </CellContents>
+                                      </TablixCell>
+                                      <TablixCell>
+                                        <CellContents>
+                                          <Textbox Name="Textbox24">
+                                            <CanGrow>true</CanGrow>
+                                            <KeepTogether>true</KeepTogether>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value>Subject Name</Value>
+                                                    <Style>
+                                                      <FontWeight>Bold</FontWeight>
+                                                    </Style>
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style />
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>Textbox19</rd:DefaultName>
+                                            <Style>
+                                              <Border>
+                                                <Color>LightGrey</Color>
+                                                <Style>Solid</Style>
+                                              </Border>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
+                                            </Style>
+                                          </Textbox>
+                                        </CellContents>
+                                      </TablixCell>
+                                    </TablixCells>
+                                  </TablixRow>
+                                  <TablixRow>
+                                    <Height>0.25in</Height>
+                                    <TablixCells>
+                                      <TablixCell>
+                                        <CellContents>
+                                          <Textbox Name="Textbox56">
+                                            <CanGrow>true</CanGrow>
+                                            <KeepTogether>true</KeepTogether>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value>=RowNumber("Details")</Value>
+                                                    <Style />
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style>
+                                                  <TextAlign>Center</TextAlign>
+                                                </Style>
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>Textbox48</rd:DefaultName>
+                                            <Style>
+                                              <Border>
+                                                <Color>LightGrey</Color>
+                                                <Style>Solid</Style>
+                                              </Border>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
+                                            </Style>
+                                          </Textbox>
+                                        </CellContents>
+                                      </TablixCell>
+                                      <TablixCell>
+                                        <CellContents>
+                                          <Textbox Name="SubjectName4">
+                                            <CanGrow>true</CanGrow>
+                                            <KeepTogether>true</KeepTogether>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value>=Fields!SubjectName.Value &amp; " (" &amp; CStr(Fields!SubjectCode.Value) &amp; ")"</Value>
+                                                    <Style />
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style />
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>SubjectName</rd:DefaultName>
+                                            <Style>
+                                              <Border>
+                                                <Color>LightGrey</Color>
+                                                <Style>Solid</Style>
+                                              </Border>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
+                                            </Style>
+                                          </Textbox>
                                         </CellContents>
                                       </TablixCell>
                                     </TablixCells>
@@ -1841,1112 +2021,28 @@
                               <TablixColumnHierarchy>
                                 <TablixMembers>
                                   <TablixMember />
+                                  <TablixMember />
                                 </TablixMembers>
                               </TablixColumnHierarchy>
                               <TablixRowHierarchy>
                                 <TablixMembers>
                                   <TablixMember>
-                                    <Group Name="Table_4">
-                                      <GroupExpressions>
-                                        <GroupExpression>=Fields!SubjectCode.Value</GroupExpression>
-                                      </GroupExpressions>
-                                    </Group>
+                                    <KeepWithGroup>After</KeepWithGroup>
+                                  </TablixMember>
+                                  <TablixMember>
+                                    <Group Name="Details5" />
+                                    <Visibility>
+                                      <Hidden>=IIf(RowNumber("Details") Mod 4 = 0, False, True)</Hidden>
+                                    </Visibility>
                                   </TablixMember>
                                 </TablixMembers>
                               </TablixRowHierarchy>
                               <DataSetName>DSAdmitCard</DataSetName>
-                              <Top>1.18616in</Top>
-                              <Left>6.01139in</Left>
-                              <Height>0.37917in</Height>
-                              <Width>1.88403in</Width>
+                              <Top>1.18888in</Top>
+                              <Left>5.91208in</Left>
+                              <Height>0.5in</Height>
+                              <Width>1.89348in</Width>
                               <ZIndex>4</ZIndex>
-                              <Style>
-                                <Border>
-                                  <Style>None</Style>
-                                </Border>
-                              </Style>
-                            </Tablix>
-                            <Tablix Name="Tablix27">
-                              <TablixBody>
-                                <TablixColumns>
-                                  <TablixColumn>
-                                    <Width>1.87708in</Width>
-                                  </TablixColumn>
-                                </TablixColumns>
-                                <TablixRows>
-                                  <TablixRow>
-                                    <Height>0.34in</Height>
-                                    <TablixCells>
-                                      <TablixCell>
-                                        <CellContents>
-                                          <Rectangle Name="Rectangle17">
-                                            <ReportItems>
-                                              <Tablix Name="Tablix28">
-                                                <TablixBody>
-                                                  <TablixColumns>
-                                                    <TablixColumn>
-                                                      <Width>0.3875in</Width>
-                                                    </TablixColumn>
-                                                    <TablixColumn>
-                                                      <Width>1.4725in</Width>
-                                                    </TablixColumn>
-                                                  </TablixColumns>
-                                                  <TablixRows>
-                                                    <TablixRow>
-                                                      <Height>0.34in</Height>
-                                                      <TablixCells>
-                                                        <TablixCell>
-                                                          <CellContents>
-                                                            <Textbox Name="SubjectCode5">
-                                                              <KeepTogether>true</KeepTogether>
-                                                              <Paragraphs>
-                                                                <Paragraph>
-                                                                  <TextRuns>
-                                                                    <TextRun>
-                                                                      <Value>=Fields!SubjectCode.Value &amp;" : " &amp; Fields!SubjectName.Value</Value>
-                                                                      <Style>
-                                                                        <FontFamily>Arial Narrow</FontFamily>
-                                                                        <FontSize>=IIF(Len(Fields!SubjectName.Value) &gt; 20, "9pt", "11pt")</FontSize>
-                                                                      </Style>
-                                                                    </TextRun>
-                                                                  </TextRuns>
-                                                                  <Style />
-                                                                </Paragraph>
-                                                              </Paragraphs>
-                                                              <rd:DefaultName>SubjectCode</rd:DefaultName>
-                                                              <Style>
-                                                                <Border>
-                                                                  <Style>None</Style>
-                                                                </Border>
-                                                                <PaddingLeft>2pt</PaddingLeft>
-                                                                <PaddingTop>2pt</PaddingTop>
-                                                                <PaddingBottom>2pt</PaddingBottom>
-                                                              </Style>
-                                                            </Textbox>
-                                                            <ColSpan>2</ColSpan>
-                                                          </CellContents>
-                                                        </TablixCell>
-                                                        <TablixCell />
-                                                      </TablixCells>
-                                                    </TablixRow>
-                                                  </TablixRows>
-                                                </TablixBody>
-                                                <TablixColumnHierarchy>
-                                                  <TablixMembers>
-                                                    <TablixMember />
-                                                    <TablixMember />
-                                                  </TablixMembers>
-                                                </TablixColumnHierarchy>
-                                                <TablixRowHierarchy>
-                                                  <TablixMembers>
-                                                    <TablixMember>
-                                                      <Group Name="Details6" />
-                                                    </TablixMember>
-                                                  </TablixMembers>
-                                                </TablixRowHierarchy>
-                                                <DataSetName>DSAdmitCard</DataSetName>
-                                                <Left>0.0125in</Left>
-                                                <Height>0.34in</Height>
-                                                <Width>1.86in</Width>
-                                                <Style>
-                                                  <Border>
-                                                    <Style>None</Style>
-                                                  </Border>
-                                                </Style>
-                                              </Tablix>
-                                            </ReportItems>
-                                            <KeepTogether>true</KeepTogether>
-                                            <Visibility>
-                                              <Hidden>=IIF(RowNumber("Details") = 2, False, True)</Hidden>
-                                            </Visibility>
-                                            <Style>
-                                              <Border>
-                                                <Style>None</Style>
-                                              </Border>
-                                            </Style>
-                                          </Rectangle>
-                                        </CellContents>
-                                      </TablixCell>
-                                    </TablixCells>
-                                  </TablixRow>
-                                </TablixRows>
-                              </TablixBody>
-                              <TablixColumnHierarchy>
-                                <TablixMembers>
-                                  <TablixMember />
-                                </TablixMembers>
-                              </TablixColumnHierarchy>
-                              <TablixRowHierarchy>
-                                <TablixMembers>
-                                  <TablixMember>
-                                    <Group Name="Table_5">
-                                      <GroupExpressions>
-                                        <GroupExpression>=Fields!SubjectCode.Value</GroupExpression>
-                                      </GroupExpressions>
-                                    </Group>
-                                  </TablixMember>
-                                </TablixMembers>
-                              </TablixRowHierarchy>
-                              <DataSetName>DSAdmitCard</DataSetName>
-                              <Top>1.54935in</Top>
-                              <Left>0.26069in</Left>
-                              <Height>0.34in</Height>
-                              <Width>1.87708in</Width>
-                              <ZIndex>5</ZIndex>
-                              <Style>
-                                <Border>
-                                  <Style>None</Style>
-                                </Border>
-                              </Style>
-                            </Tablix>
-                            <Tablix Name="Tablix29">
-                              <TablixBody>
-                                <TablixColumns>
-                                  <TablixColumn>
-                                    <Width>1.88403in</Width>
-                                  </TablixColumn>
-                                </TablixColumns>
-                                <TablixRows>
-                                  <TablixRow>
-                                    <Height>0.36945in</Height>
-                                    <TablixCells>
-                                      <TablixCell>
-                                        <CellContents>
-                                          <Rectangle Name="Rectangle18">
-                                            <ReportItems>
-                                              <Tablix Name="Tablix30">
-                                                <TablixBody>
-                                                  <TablixColumns>
-                                                    <TablixColumn>
-                                                      <Width>0.4in</Width>
-                                                    </TablixColumn>
-                                                    <TablixColumn>
-                                                      <Width>1.46in</Width>
-                                                    </TablixColumn>
-                                                  </TablixColumns>
-                                                  <TablixRows>
-                                                    <TablixRow>
-                                                      <Height>0.34in</Height>
-                                                      <TablixCells>
-                                                        <TablixCell>
-                                                          <CellContents>
-                                                            <Textbox Name="SubjectCode6">
-                                                              <KeepTogether>true</KeepTogether>
-                                                              <Paragraphs>
-                                                                <Paragraph>
-                                                                  <TextRuns>
-                                                                    <TextRun>
-                                                                      <Value>=Fields!SubjectCode.Value &amp;" : " &amp; Fields!SubjectName.Value</Value>
-                                                                      <Style>
-                                                                        <FontFamily>Arial Narrow</FontFamily>
-                                                                        <FontSize>=IIF(Len(Fields!SubjectName.Value) &gt; 20, "9pt", "11pt")</FontSize>
-                                                                      </Style>
-                                                                    </TextRun>
-                                                                  </TextRuns>
-                                                                  <Style />
-                                                                </Paragraph>
-                                                              </Paragraphs>
-                                                              <rd:DefaultName>SubjectCode</rd:DefaultName>
-                                                              <Style>
-                                                                <Border>
-                                                                  <Style>None</Style>
-                                                                </Border>
-                                                                <PaddingLeft>2pt</PaddingLeft>
-                                                                <PaddingRight>2pt</PaddingRight>
-                                                                <PaddingTop>2pt</PaddingTop>
-                                                                <PaddingBottom>2pt</PaddingBottom>
-                                                              </Style>
-                                                            </Textbox>
-                                                            <ColSpan>2</ColSpan>
-                                                          </CellContents>
-                                                        </TablixCell>
-                                                        <TablixCell />
-                                                      </TablixCells>
-                                                    </TablixRow>
-                                                  </TablixRows>
-                                                </TablixBody>
-                                                <TablixColumnHierarchy>
-                                                  <TablixMembers>
-                                                    <TablixMember />
-                                                    <TablixMember />
-                                                  </TablixMembers>
-                                                </TablixColumnHierarchy>
-                                                <TablixRowHierarchy>
-                                                  <TablixMembers>
-                                                    <TablixMember>
-                                                      <Group Name="Details7" />
-                                                    </TablixMember>
-                                                  </TablixMembers>
-                                                </TablixRowHierarchy>
-                                                <DataSetName>DSAdmitCard</DataSetName>
-                                                <Top>0.0125in</Top>
-                                                <Left>0.0125in</Left>
-                                                <Height>0.34in</Height>
-                                                <Width>1.86in</Width>
-                                                <Style>
-                                                  <Border>
-                                                    <Style>None</Style>
-                                                  </Border>
-                                                </Style>
-                                              </Tablix>
-                                            </ReportItems>
-                                            <KeepTogether>true</KeepTogether>
-                                            <Visibility>
-                                              <Hidden>=IIF(RowNumber("Details") = 4, False, True)</Hidden>
-                                            </Visibility>
-                                            <Style>
-                                              <Border>
-                                                <Style>None</Style>
-                                              </Border>
-                                            </Style>
-                                          </Rectangle>
-                                        </CellContents>
-                                      </TablixCell>
-                                    </TablixCells>
-                                  </TablixRow>
-                                </TablixRows>
-                              </TablixBody>
-                              <TablixColumnHierarchy>
-                                <TablixMembers>
-                                  <TablixMember />
-                                </TablixMembers>
-                              </TablixColumnHierarchy>
-                              <TablixRowHierarchy>
-                                <TablixMembers>
-                                  <TablixMember>
-                                    <Group Name="Table_6">
-                                      <GroupExpressions>
-                                        <GroupExpression>=Fields!SubjectCode.Value</GroupExpression>
-                                      </GroupExpressions>
-                                    </Group>
-                                  </TablixMember>
-                                </TablixMembers>
-                              </TablixRowHierarchy>
-                              <DataSetName>DSAdmitCard</DataSetName>
-                              <Top>1.54935in</Top>
-                              <Left>2.1843in</Left>
-                              <Height>0.36945in</Height>
-                              <Width>1.88403in</Width>
-                              <ZIndex>6</ZIndex>
-                              <Style>
-                                <Border>
-                                  <Style>None</Style>
-                                </Border>
-                              </Style>
-                            </Tablix>
-                            <Tablix Name="Tablix31">
-                              <TablixBody>
-                                <TablixColumns>
-                                  <TablixColumn>
-                                    <Width>1.88403in</Width>
-                                  </TablixColumn>
-                                </TablixColumns>
-                                <TablixRows>
-                                  <TablixRow>
-                                    <Height>0.36945in</Height>
-                                    <TablixCells>
-                                      <TablixCell>
-                                        <CellContents>
-                                          <Rectangle Name="Rectangle19">
-                                            <ReportItems>
-                                              <Tablix Name="Tablix32">
-                                                <TablixBody>
-                                                  <TablixColumns>
-                                                    <TablixColumn>
-                                                      <Width>0.4in</Width>
-                                                    </TablixColumn>
-                                                    <TablixColumn>
-                                                      <Width>1.46in</Width>
-                                                    </TablixColumn>
-                                                  </TablixColumns>
-                                                  <TablixRows>
-                                                    <TablixRow>
-                                                      <Height>0.34in</Height>
-                                                      <TablixCells>
-                                                        <TablixCell>
-                                                          <CellContents>
-                                                            <Textbox Name="SubjectCode7">
-                                                              <KeepTogether>true</KeepTogether>
-                                                              <Paragraphs>
-                                                                <Paragraph>
-                                                                  <TextRuns>
-                                                                    <TextRun>
-                                                                      <Value>=Fields!SubjectCode.Value &amp;" : " &amp; Fields!SubjectName.Value</Value>
-                                                                      <Style>
-                                                                        <FontFamily>Arial Narrow</FontFamily>
-                                                                        <FontSize>=IIF(Len(Fields!SubjectName.Value) &gt; 20, "9pt", "11pt")</FontSize>
-                                                                      </Style>
-                                                                    </TextRun>
-                                                                  </TextRuns>
-                                                                  <Style />
-                                                                </Paragraph>
-                                                              </Paragraphs>
-                                                              <rd:DefaultName>SubjectCode</rd:DefaultName>
-                                                              <Style>
-                                                                <Border>
-                                                                  <Style>None</Style>
-                                                                </Border>
-                                                                <PaddingLeft>2pt</PaddingLeft>
-                                                                <PaddingRight>2pt</PaddingRight>
-                                                                <PaddingTop>2pt</PaddingTop>
-                                                                <PaddingBottom>2pt</PaddingBottom>
-                                                              </Style>
-                                                            </Textbox>
-                                                            <ColSpan>2</ColSpan>
-                                                          </CellContents>
-                                                        </TablixCell>
-                                                        <TablixCell />
-                                                      </TablixCells>
-                                                    </TablixRow>
-                                                  </TablixRows>
-                                                </TablixBody>
-                                                <TablixColumnHierarchy>
-                                                  <TablixMembers>
-                                                    <TablixMember />
-                                                    <TablixMember />
-                                                  </TablixMembers>
-                                                </TablixColumnHierarchy>
-                                                <TablixRowHierarchy>
-                                                  <TablixMembers>
-                                                    <TablixMember>
-                                                      <Group Name="Details8" />
-                                                    </TablixMember>
-                                                  </TablixMembers>
-                                                </TablixRowHierarchy>
-                                                <DataSetName>DSAdmitCard</DataSetName>
-                                                <Top>0.0125in</Top>
-                                                <Left>0.0125in</Left>
-                                                <Height>0.34in</Height>
-                                                <Width>1.86in</Width>
-                                                <Style>
-                                                  <Border>
-                                                    <Style>None</Style>
-                                                  </Border>
-                                                </Style>
-                                              </Tablix>
-                                            </ReportItems>
-                                            <KeepTogether>true</KeepTogether>
-                                            <Visibility>
-                                              <Hidden>=IIF(RowNumber("Details") = 6, False, True)</Hidden>
-                                            </Visibility>
-                                            <Style>
-                                              <Border>
-                                                <Style>None</Style>
-                                              </Border>
-                                            </Style>
-                                          </Rectangle>
-                                        </CellContents>
-                                      </TablixCell>
-                                    </TablixCells>
-                                  </TablixRow>
-                                </TablixRows>
-                              </TablixBody>
-                              <TablixColumnHierarchy>
-                                <TablixMembers>
-                                  <TablixMember />
-                                </TablixMembers>
-                              </TablixColumnHierarchy>
-                              <TablixRowHierarchy>
-                                <TablixMembers>
-                                  <TablixMember>
-                                    <Group Name="Table_7">
-                                      <GroupExpressions>
-                                        <GroupExpression>=Fields!SubjectCode.Value</GroupExpression>
-                                      </GroupExpressions>
-                                    </Group>
-                                  </TablixMember>
-                                </TablixMembers>
-                              </TablixRowHierarchy>
-                              <DataSetName>DSAdmitCard</DataSetName>
-                              <Top>1.54935in</Top>
-                              <Left>4.11486in</Left>
-                              <Height>0.36945in</Height>
-                              <Width>1.88403in</Width>
-                              <ZIndex>7</ZIndex>
-                              <Style>
-                                <Border>
-                                  <Style>None</Style>
-                                </Border>
-                              </Style>
-                            </Tablix>
-                            <Tablix Name="Tablix33">
-                              <TablixBody>
-                                <TablixColumns>
-                                  <TablixColumn>
-                                    <Width>1.88403in</Width>
-                                  </TablixColumn>
-                                </TablixColumns>
-                                <TablixRows>
-                                  <TablixRow>
-                                    <Height>0.36945in</Height>
-                                    <TablixCells>
-                                      <TablixCell>
-                                        <CellContents>
-                                          <Rectangle Name="Rectangle20">
-                                            <ReportItems>
-                                              <Tablix Name="Tablix34">
-                                                <TablixBody>
-                                                  <TablixColumns>
-                                                    <TablixColumn>
-                                                      <Width>0.38502in</Width>
-                                                    </TablixColumn>
-                                                    <TablixColumn>
-                                                      <Width>1.47498in</Width>
-                                                    </TablixColumn>
-                                                  </TablixColumns>
-                                                  <TablixRows>
-                                                    <TablixRow>
-                                                      <Height>0.34in</Height>
-                                                      <TablixCells>
-                                                        <TablixCell>
-                                                          <CellContents>
-                                                            <Textbox Name="SubjectCode8">
-                                                              <KeepTogether>true</KeepTogether>
-                                                              <Paragraphs>
-                                                                <Paragraph>
-                                                                  <TextRuns>
-                                                                    <TextRun>
-                                                                      <Value>=Fields!SubjectCode.Value &amp;" : " &amp; Fields!SubjectName.Value</Value>
-                                                                      <Style>
-                                                                        <FontFamily>Arial Narrow</FontFamily>
-                                                                        <FontSize>9pt</FontSize>
-                                                                      </Style>
-                                                                    </TextRun>
-                                                                  </TextRuns>
-                                                                  <Style />
-                                                                </Paragraph>
-                                                              </Paragraphs>
-                                                              <rd:DefaultName>SubjectCode</rd:DefaultName>
-                                                              <Style>
-                                                                <Border>
-                                                                  <Style>None</Style>
-                                                                </Border>
-                                                                <PaddingLeft>2pt</PaddingLeft>
-                                                                <PaddingRight>2pt</PaddingRight>
-                                                                <PaddingTop>2pt</PaddingTop>
-                                                                <PaddingBottom>2pt</PaddingBottom>
-                                                              </Style>
-                                                            </Textbox>
-                                                            <ColSpan>2</ColSpan>
-                                                          </CellContents>
-                                                        </TablixCell>
-                                                        <TablixCell />
-                                                      </TablixCells>
-                                                    </TablixRow>
-                                                  </TablixRows>
-                                                </TablixBody>
-                                                <TablixColumnHierarchy>
-                                                  <TablixMembers>
-                                                    <TablixMember />
-                                                    <TablixMember />
-                                                  </TablixMembers>
-                                                </TablixColumnHierarchy>
-                                                <TablixRowHierarchy>
-                                                  <TablixMembers>
-                                                    <TablixMember>
-                                                      <Group Name="Details9" />
-                                                    </TablixMember>
-                                                  </TablixMembers>
-                                                </TablixRowHierarchy>
-                                                <DataSetName>DSAdmitCard</DataSetName>
-                                                <Top>0.0125in</Top>
-                                                <Left>0.0125in</Left>
-                                                <Height>0.34in</Height>
-                                                <Width>1.86in</Width>
-                                                <Style>
-                                                  <Border>
-                                                    <Style>None</Style>
-                                                  </Border>
-                                                  <TopBorder>
-                                                    <Style>None</Style>
-                                                  </TopBorder>
-                                                  <LeftBorder>
-                                                    <Style>None</Style>
-                                                  </LeftBorder>
-                                                  <RightBorder>
-                                                    <Style>None</Style>
-                                                  </RightBorder>
-                                                </Style>
-                                              </Tablix>
-                                            </ReportItems>
-                                            <KeepTogether>true</KeepTogether>
-                                            <Visibility>
-                                              <Hidden>=IIF(RowNumber("Details") = 8, False, True)</Hidden>
-                                            </Visibility>
-                                            <Style>
-                                              <Border>
-                                                <Style>None</Style>
-                                              </Border>
-                                            </Style>
-                                          </Rectangle>
-                                        </CellContents>
-                                      </TablixCell>
-                                    </TablixCells>
-                                  </TablixRow>
-                                </TablixRows>
-                              </TablixBody>
-                              <TablixColumnHierarchy>
-                                <TablixMembers>
-                                  <TablixMember />
-                                </TablixMembers>
-                              </TablixColumnHierarchy>
-                              <TablixRowHierarchy>
-                                <TablixMembers>
-                                  <TablixMember>
-                                    <Group Name="Table_8">
-                                      <GroupExpressions>
-                                        <GroupExpression>=Fields!SubjectCode.Value</GroupExpression>
-                                      </GroupExpressions>
-                                    </Group>
-                                  </TablixMember>
-                                </TablixMembers>
-                              </TablixRowHierarchy>
-                              <DataSetName>DSAdmitCard</DataSetName>
-                              <Top>1.54935in</Top>
-                              <Left>6.01139in</Left>
-                              <Height>0.36945in</Height>
-                              <Width>1.88403in</Width>
-                              <ZIndex>8</ZIndex>
-                              <Style>
-                                <Border>
-                                  <Style>None</Style>
-                                </Border>
-                              </Style>
-                            </Tablix>
-                            <Tablix Name="Tablix35">
-                              <TablixBody>
-                                <TablixColumns>
-                                  <TablixColumn>
-                                    <Width>1.87708in</Width>
-                                  </TablixColumn>
-                                </TablixColumns>
-                                <TablixRows>
-                                  <TablixRow>
-                                    <Height>0.34in</Height>
-                                    <TablixCells>
-                                      <TablixCell>
-                                        <CellContents>
-                                          <Rectangle Name="Rectangle21">
-                                            <ReportItems>
-                                              <Tablix Name="Tablix36">
-                                                <TablixBody>
-                                                  <TablixColumns>
-                                                    <TablixColumn>
-                                                      <Width>0.38502in</Width>
-                                                    </TablixColumn>
-                                                    <TablixColumn>
-                                                      <Width>1.47498in</Width>
-                                                    </TablixColumn>
-                                                  </TablixColumns>
-                                                  <TablixRows>
-                                                    <TablixRow>
-                                                      <Height>0.34in</Height>
-                                                      <TablixCells>
-                                                        <TablixCell>
-                                                          <CellContents>
-                                                            <Textbox Name="SubjectCode9">
-                                                              <KeepTogether>true</KeepTogether>
-                                                              <Paragraphs>
-                                                                <Paragraph>
-                                                                  <TextRuns>
-                                                                    <TextRun>
-                                                                      <Value>=Fields!SubjectCode.Value &amp;" : " &amp; Fields!SubjectName.Value</Value>
-                                                                      <Style>
-                                                                        <FontFamily>Arial Narrow</FontFamily>
-                                                                        <FontSize>=IIF(Len(Fields!SubjectName.Value) &gt; 20, "9pt", "11pt")</FontSize>
-                                                                      </Style>
-                                                                    </TextRun>
-                                                                  </TextRuns>
-                                                                  <Style />
-                                                                </Paragraph>
-                                                              </Paragraphs>
-                                                              <rd:DefaultName>SubjectCode</rd:DefaultName>
-                                                              <Style>
-                                                                <Border>
-                                                                  <Style>None</Style>
-                                                                </Border>
-                                                                <PaddingLeft>2pt</PaddingLeft>
-                                                                <PaddingRight>2pt</PaddingRight>
-                                                                <PaddingTop>2pt</PaddingTop>
-                                                                <PaddingBottom>2pt</PaddingBottom>
-                                                              </Style>
-                                                            </Textbox>
-                                                            <ColSpan>2</ColSpan>
-                                                          </CellContents>
-                                                        </TablixCell>
-                                                        <TablixCell />
-                                                      </TablixCells>
-                                                    </TablixRow>
-                                                  </TablixRows>
-                                                </TablixBody>
-                                                <TablixColumnHierarchy>
-                                                  <TablixMembers>
-                                                    <TablixMember />
-                                                    <TablixMember />
-                                                  </TablixMembers>
-                                                </TablixColumnHierarchy>
-                                                <TablixRowHierarchy>
-                                                  <TablixMembers>
-                                                    <TablixMember>
-                                                      <Group Name="Details10" />
-                                                    </TablixMember>
-                                                  </TablixMembers>
-                                                </TablixRowHierarchy>
-                                                <DataSetName>DSAdmitCard</DataSetName>
-                                                <Left>0.0125in</Left>
-                                                <Height>0.34in</Height>
-                                                <Width>1.86in</Width>
-                                                <Style>
-                                                  <Border>
-                                                    <Style>None</Style>
-                                                  </Border>
-                                                </Style>
-                                              </Tablix>
-                                            </ReportItems>
-                                            <KeepTogether>true</KeepTogether>
-                                            <Visibility>
-                                              <Hidden>=IIF(RowNumber("Details") = 9, False, True)</Hidden>
-                                            </Visibility>
-                                            <Style>
-                                              <Border>
-                                                <Style>None</Style>
-                                              </Border>
-                                            </Style>
-                                          </Rectangle>
-                                        </CellContents>
-                                      </TablixCell>
-                                    </TablixCells>
-                                  </TablixRow>
-                                </TablixRows>
-                              </TablixBody>
-                              <TablixColumnHierarchy>
-                                <TablixMembers>
-                                  <TablixMember />
-                                </TablixMembers>
-                              </TablixColumnHierarchy>
-                              <TablixRowHierarchy>
-                                <TablixMembers>
-                                  <TablixMember>
-                                    <Group Name="Table_9">
-                                      <GroupExpressions>
-                                        <GroupExpression>=Fields!SubjectCode.Value</GroupExpression>
-                                      </GroupExpressions>
-                                    </Group>
-                                  </TablixMember>
-                                </TablixMembers>
-                              </TablixRowHierarchy>
-                              <DataSetName>DSAdmitCard</DataSetName>
-                              <Top>1.90324in</Top>
-                              <Left>0.26069in</Left>
-                              <Height>0.34in</Height>
-                              <Width>1.87708in</Width>
-                              <ZIndex>9</ZIndex>
-                              <Style>
-                                <Border>
-                                  <Style>None</Style>
-                                </Border>
-                              </Style>
-                            </Tablix>
-                            <Tablix Name="Tablix37">
-                              <TablixBody>
-                                <TablixColumns>
-                                  <TablixColumn>
-                                    <Width>1.88403in</Width>
-                                  </TablixColumn>
-                                </TablixColumns>
-                                <TablixRows>
-                                  <TablixRow>
-                                    <Height>0.36945in</Height>
-                                    <TablixCells>
-                                      <TablixCell>
-                                        <CellContents>
-                                          <Rectangle Name="Rectangle22">
-                                            <ReportItems>
-                                              <Tablix Name="Tablix38">
-                                                <TablixBody>
-                                                  <TablixColumns>
-                                                    <TablixColumn>
-                                                      <Width>0.4in</Width>
-                                                    </TablixColumn>
-                                                    <TablixColumn>
-                                                      <Width>1.46in</Width>
-                                                    </TablixColumn>
-                                                  </TablixColumns>
-                                                  <TablixRows>
-                                                    <TablixRow>
-                                                      <Height>0.34in</Height>
-                                                      <TablixCells>
-                                                        <TablixCell>
-                                                          <CellContents>
-                                                            <Textbox Name="SubjectCode10">
-                                                              <KeepTogether>true</KeepTogether>
-                                                              <Paragraphs>
-                                                                <Paragraph>
-                                                                  <TextRuns>
-                                                                    <TextRun>
-                                                                      <Value>=Fields!SubjectCode.Value &amp;" : " &amp; Fields!SubjectName.Value</Value>
-                                                                      <Style>
-                                                                        <FontFamily>Arial Narrow</FontFamily>
-                                                                        <FontSize>=IIF(Len(Fields!SubjectName.Value) &gt; 20, "9pt", "11pt")</FontSize>
-                                                                      </Style>
-                                                                    </TextRun>
-                                                                  </TextRuns>
-                                                                  <Style />
-                                                                </Paragraph>
-                                                              </Paragraphs>
-                                                              <rd:DefaultName>SubjectCode</rd:DefaultName>
-                                                              <Style>
-                                                                <Border>
-                                                                  <Style>None</Style>
-                                                                </Border>
-                                                                <PaddingLeft>2pt</PaddingLeft>
-                                                                <PaddingRight>2pt</PaddingRight>
-                                                                <PaddingTop>2pt</PaddingTop>
-                                                                <PaddingBottom>2pt</PaddingBottom>
-                                                              </Style>
-                                                            </Textbox>
-                                                            <ColSpan>2</ColSpan>
-                                                          </CellContents>
-                                                        </TablixCell>
-                                                        <TablixCell />
-                                                      </TablixCells>
-                                                    </TablixRow>
-                                                  </TablixRows>
-                                                </TablixBody>
-                                                <TablixColumnHierarchy>
-                                                  <TablixMembers>
-                                                    <TablixMember />
-                                                    <TablixMember />
-                                                  </TablixMembers>
-                                                </TablixColumnHierarchy>
-                                                <TablixRowHierarchy>
-                                                  <TablixMembers>
-                                                    <TablixMember>
-                                                      <Group Name="Details11" />
-                                                    </TablixMember>
-                                                  </TablixMembers>
-                                                </TablixRowHierarchy>
-                                                <DataSetName>DSAdmitCard</DataSetName>
-                                                <Top>0.0125in</Top>
-                                                <Left>0.0125in</Left>
-                                                <Height>0.34in</Height>
-                                                <Width>1.86in</Width>
-                                                <Style>
-                                                  <Border>
-                                                    <Style>None</Style>
-                                                  </Border>
-                                                </Style>
-                                              </Tablix>
-                                            </ReportItems>
-                                            <KeepTogether>true</KeepTogether>
-                                            <Visibility>
-                                              <Hidden>=IIF(RowNumber("Details") = 10, False, True)</Hidden>
-                                            </Visibility>
-                                            <Style>
-                                              <Border>
-                                                <Style>None</Style>
-                                              </Border>
-                                            </Style>
-                                          </Rectangle>
-                                        </CellContents>
-                                      </TablixCell>
-                                    </TablixCells>
-                                  </TablixRow>
-                                </TablixRows>
-                              </TablixBody>
-                              <TablixColumnHierarchy>
-                                <TablixMembers>
-                                  <TablixMember />
-                                </TablixMembers>
-                              </TablixColumnHierarchy>
-                              <TablixRowHierarchy>
-                                <TablixMembers>
-                                  <TablixMember>
-                                    <Group Name="Table_10">
-                                      <GroupExpressions>
-                                        <GroupExpression>=Fields!SubjectCode.Value</GroupExpression>
-                                      </GroupExpressions>
-                                    </Group>
-                                  </TablixMember>
-                                </TablixMembers>
-                              </TablixRowHierarchy>
-                              <DataSetName>DSAdmitCard</DataSetName>
-                              <Top>1.91255in</Top>
-                              <Left>2.1843in</Left>
-                              <Height>0.36945in</Height>
-                              <Width>1.88403in</Width>
-                              <ZIndex>10</ZIndex>
-                              <Style>
-                                <Border>
-                                  <Style>None</Style>
-                                </Border>
-                              </Style>
-                            </Tablix>
-                            <Tablix Name="Tablix39">
-                              <TablixBody>
-                                <TablixColumns>
-                                  <TablixColumn>
-                                    <Width>1.88403in</Width>
-                                  </TablixColumn>
-                                </TablixColumns>
-                                <TablixRows>
-                                  <TablixRow>
-                                    <Height>0.36945in</Height>
-                                    <TablixCells>
-                                      <TablixCell>
-                                        <CellContents>
-                                          <Rectangle Name="Rectangle23">
-                                            <ReportItems>
-                                              <Tablix Name="Tablix40">
-                                                <TablixBody>
-                                                  <TablixColumns>
-                                                    <TablixColumn>
-                                                      <Width>0.4in</Width>
-                                                    </TablixColumn>
-                                                    <TablixColumn>
-                                                      <Width>1.46in</Width>
-                                                    </TablixColumn>
-                                                  </TablixColumns>
-                                                  <TablixRows>
-                                                    <TablixRow>
-                                                      <Height>0.34in</Height>
-                                                      <TablixCells>
-                                                        <TablixCell>
-                                                          <CellContents>
-                                                            <Textbox Name="SubjectCode11">
-                                                              <KeepTogether>true</KeepTogether>
-                                                              <Paragraphs>
-                                                                <Paragraph>
-                                                                  <TextRuns>
-                                                                    <TextRun>
-                                                                      <Value>=Fields!SubjectCode.Value &amp;" : " &amp; Fields!SubjectName.Value</Value>
-                                                                      <Style>
-                                                                        <FontFamily>Arial Narrow</FontFamily>
-                                                                        <FontSize>=IIF(Len(Fields!SubjectName.Value) &gt; 20, "9pt", "11pt")</FontSize>
-                                                                      </Style>
-                                                                    </TextRun>
-                                                                  </TextRuns>
-                                                                  <Style />
-                                                                </Paragraph>
-                                                              </Paragraphs>
-                                                              <rd:DefaultName>SubjectCode</rd:DefaultName>
-                                                              <Style>
-                                                                <Border>
-                                                                  <Style>None</Style>
-                                                                </Border>
-                                                                <PaddingLeft>2pt</PaddingLeft>
-                                                                <PaddingRight>2pt</PaddingRight>
-                                                                <PaddingTop>2pt</PaddingTop>
-                                                                <PaddingBottom>2pt</PaddingBottom>
-                                                              </Style>
-                                                            </Textbox>
-                                                            <ColSpan>2</ColSpan>
-                                                          </CellContents>
-                                                        </TablixCell>
-                                                        <TablixCell />
-                                                      </TablixCells>
-                                                    </TablixRow>
-                                                  </TablixRows>
-                                                </TablixBody>
-                                                <TablixColumnHierarchy>
-                                                  <TablixMembers>
-                                                    <TablixMember />
-                                                    <TablixMember />
-                                                  </TablixMembers>
-                                                </TablixColumnHierarchy>
-                                                <TablixRowHierarchy>
-                                                  <TablixMembers>
-                                                    <TablixMember>
-                                                      <Group Name="Details12" />
-                                                    </TablixMember>
-                                                  </TablixMembers>
-                                                </TablixRowHierarchy>
-                                                <DataSetName>DSAdmitCard</DataSetName>
-                                                <Top>0.0125in</Top>
-                                                <Left>0.0125in</Left>
-                                                <Height>0.34in</Height>
-                                                <Width>1.86in</Width>
-                                                <Style>
-                                                  <Border>
-                                                    <Style>None</Style>
-                                                  </Border>
-                                                </Style>
-                                              </Tablix>
-                                            </ReportItems>
-                                            <KeepTogether>true</KeepTogether>
-                                            <Visibility>
-                                              <Hidden>=IIF(RowNumber("Details") = 11, False, True)</Hidden>
-                                            </Visibility>
-                                            <Style>
-                                              <Border>
-                                                <Style>None</Style>
-                                              </Border>
-                                            </Style>
-                                          </Rectangle>
-                                        </CellContents>
-                                      </TablixCell>
-                                    </TablixCells>
-                                  </TablixRow>
-                                </TablixRows>
-                              </TablixBody>
-                              <TablixColumnHierarchy>
-                                <TablixMembers>
-                                  <TablixMember />
-                                </TablixMembers>
-                              </TablixColumnHierarchy>
-                              <TablixRowHierarchy>
-                                <TablixMembers>
-                                  <TablixMember>
-                                    <Group Name="Table_11">
-                                      <GroupExpressions>
-                                        <GroupExpression>=Fields!SubjectCode.Value</GroupExpression>
-                                      </GroupExpressions>
-                                    </Group>
-                                  </TablixMember>
-                                </TablixMembers>
-                              </TablixRowHierarchy>
-                              <DataSetName>DSAdmitCard</DataSetName>
-                              <Top>1.91255in</Top>
-                              <Left>4.11486in</Left>
-                              <Height>0.36945in</Height>
-                              <Width>1.88403in</Width>
-                              <ZIndex>11</ZIndex>
-                              <Style>
-                                <Border>
-                                  <Style>None</Style>
-                                </Border>
-                              </Style>
-                            </Tablix>
-                            <Tablix Name="Tablix41">
-                              <TablixBody>
-                                <TablixColumns>
-                                  <TablixColumn>
-                                    <Width>1.88403in</Width>
-                                  </TablixColumn>
-                                </TablixColumns>
-                                <TablixRows>
-                                  <TablixRow>
-                                    <Height>0.36945in</Height>
-                                    <TablixCells>
-                                      <TablixCell>
-                                        <CellContents>
-                                          <Rectangle Name="Rectangle24">
-                                            <ReportItems>
-                                              <Tablix Name="Tablix42">
-                                                <TablixBody>
-                                                  <TablixColumns>
-                                                    <TablixColumn>
-                                                      <Width>0.38502in</Width>
-                                                    </TablixColumn>
-                                                    <TablixColumn>
-                                                      <Width>1.47498in</Width>
-                                                    </TablixColumn>
-                                                  </TablixColumns>
-                                                  <TablixRows>
-                                                    <TablixRow>
-                                                      <Height>0.34in</Height>
-                                                      <TablixCells>
-                                                        <TablixCell>
-                                                          <CellContents>
-                                                            <Textbox Name="SubjectCode12">
-                                                              <CanGrow>true</CanGrow>
-                                                              <KeepTogether>true</KeepTogether>
-                                                              <Paragraphs>
-                                                                <Paragraph>
-                                                                  <TextRuns>
-                                                                    <TextRun>
-                                                                      <Value>=Fields!SubjectCode.Value &amp;" : " &amp; Fields!SubjectName.Value</Value>
-                                                                      <Style>
-                                                                        <FontFamily>Arial Narrow</FontFamily>
-                                                                        <FontSize>=IIF(Len(Fields!SubjectName.Value) &gt; 20, "9pt", "11pt")</FontSize>
-                                                                      </Style>
-                                                                    </TextRun>
-                                                                  </TextRuns>
-                                                                  <Style />
-                                                                </Paragraph>
-                                                              </Paragraphs>
-                                                              <rd:DefaultName>SubjectCode</rd:DefaultName>
-                                                              <Style>
-                                                                <Border>
-                                                                  <Style>None</Style>
-                                                                </Border>
-                                                                <PaddingLeft>2pt</PaddingLeft>
-                                                                <PaddingRight>2pt</PaddingRight>
-                                                                <PaddingTop>2pt</PaddingTop>
-                                                                <PaddingBottom>2pt</PaddingBottom>
-                                                              </Style>
-                                                            </Textbox>
-                                                            <ColSpan>2</ColSpan>
-                                                          </CellContents>
-                                                        </TablixCell>
-                                                        <TablixCell />
-                                                      </TablixCells>
-                                                    </TablixRow>
-                                                  </TablixRows>
-                                                </TablixBody>
-                                                <TablixColumnHierarchy>
-                                                  <TablixMembers>
-                                                    <TablixMember />
-                                                    <TablixMember />
-                                                  </TablixMembers>
-                                                </TablixColumnHierarchy>
-                                                <TablixRowHierarchy>
-                                                  <TablixMembers>
-                                                    <TablixMember>
-                                                      <Group Name="Details13" />
-                                                    </TablixMember>
-                                                  </TablixMembers>
-                                                </TablixRowHierarchy>
-                                                <DataSetName>DSAdmitCard</DataSetName>
-                                                <Top>0.0125in</Top>
-                                                <Left>0.0125in</Left>
-                                                <Height>0.34in</Height>
-                                                <Width>1.86in</Width>
-                                                <Style>
-                                                  <Border>
-                                                    <Style>None</Style>
-                                                  </Border>
-                                                </Style>
-                                              </Tablix>
-                                            </ReportItems>
-                                            <KeepTogether>true</KeepTogether>
-                                            <Visibility>
-                                              <Hidden>=IIF(RowNumber("Details") = 12, False, True)</Hidden>
-                                            </Visibility>
-                                            <Style>
-                                              <Border>
-                                                <Style>None</Style>
-                                              </Border>
-                                            </Style>
-                                          </Rectangle>
-                                        </CellContents>
-                                      </TablixCell>
-                                    </TablixCells>
-                                  </TablixRow>
-                                </TablixRows>
-                              </TablixBody>
-                              <TablixColumnHierarchy>
-                                <TablixMembers>
-                                  <TablixMember />
-                                </TablixMembers>
-                              </TablixColumnHierarchy>
-                              <TablixRowHierarchy>
-                                <TablixMembers>
-                                  <TablixMember>
-                                    <Group Name="Table_12">
-                                      <GroupExpressions>
-                                        <GroupExpression>=Fields!SubjectCode.Value</GroupExpression>
-                                      </GroupExpressions>
-                                    </Group>
-                                  </TablixMember>
-                                </TablixMembers>
-                              </TablixRowHierarchy>
-                              <DataSetName>DSAdmitCard</DataSetName>
-                              <Top>1.91255in</Top>
-                              <Left>6.01139in</Left>
-                              <Height>0.36945in</Height>
-                              <Width>1.88403in</Width>
-                              <ZIndex>12</ZIndex>
                               <Style>
                                 <Border>
                                   <Style>None</Style>
@@ -2997,7 +2093,7 @@
             </TablixRowHierarchy>
             <DataSetName>DSAdmitCard</DataSetName>
             <Left>0.19349in</Left>
-            <Height>2.37575in</Height>
+            <Height>1.70277in</Height>
             <Width>7.90446in</Width>
             <Style>
               <Border>
@@ -3006,7 +2102,7 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>2.5361in</Height>
+        <Height>1.70277in</Height>
         <Style />
       </Body>
       <Width>8.18128in</Width>
@@ -3117,20 +2213,18 @@
                   <TextRuns>
                     <TextRun>
                       <Value>=Parameters!EIINNo.Value</Value>
-                      <Style>
-                        <FontSize>12pt</FontSize>
-                      </Style>
+                      <Style />
                     </TextRun>
                   </TextRuns>
                   <Style>
-                    <TextAlign>Left</TextAlign>
+                    <TextAlign>Center</TextAlign>
                   </Style>
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>EIIN</rd:DefaultName>
-              <Top>0.72723in</Top>
-              <Left>6.98635in</Left>
-              <Height>0.25in</Height>
+              <Top>0.68973in</Top>
+              <Left>0.70742in</Left>
+              <Height>0.16666in</Height>
               <Width>1.1116in</Width>
               <ZIndex>2</ZIndex>
               <Style>

@@ -492,7 +492,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-10">
+                            <div class="col-md-12">
                                 <div class="card">
                                     <div class="card-header">
                                         <div class="text-center">
@@ -515,7 +515,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach (var payment in Model.StudentPayments.OrderBy(d => d.PaidDate))
+                                                @foreach (var payment in Model.StudentPayments.OrderByDescending(d => d.PaidDate))
                                                 {
                                                     foreach (var pDetails in payment.StudentPaymentDetails)
                                                     {
@@ -527,7 +527,7 @@
                                                         <tr>
                                                             <td>@(++paySL)</td>
                                                             <td>@payment.ReceiptNo</td>
-                                                            <td>@pDetails.StudentFeeHead.Name</td>
+                                                            <td class="text-left">@pDetails.StudentFeeHead.Name</td>
                                                             <td>@payment.PaidDate.ToString("dd MMM yyyy")</td>
                                                             <td class="text-right">@payment.TotalPayment</td>
                                                             <td>@payment.Remarks</td>
@@ -555,9 +555,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-2" style="display:flex;flex-direction:column;justify-content:center">
+                            <div class="col-md-12" style="display:flex;flex-direction:column;justify-content:center">
                                 <div>
-                                    <a class="btn btn-warning p-4 font-weight-bolder btn-outline-info" asp-action="StudentPaymentInfoExport" asp-controller="Reports" asp-route-reportType="pdf" asp-route-fileName="@fileName" asp-route-classRoll="@Model.Student.ClassRoll" asp-route-fromDate="@todate.ToString("yyyy-MM-dd")" asp-route-toDate="@DateTime.Today.ToString("yyyy-MM-dd")" target="_blank">
+                                    <a class="btn btn-warning font-weight-bolder btn-outline-info" asp-action="StudentPaymentInfoExport" asp-controller="Reports" asp-route-reportType="pdf" asp-route-fileName="@fileName" asp-route-classRoll="@Model.Student.ClassRoll" asp-route-fromDate="@todate.ToString("yyyy-MM-dd")" asp-route-toDate="@DateTime.Today.ToString("yyyy-MM-dd")" target="_blank">
                                         <span class="fa fa-file"></span> Get Report
                                     </a>
                                 </div>

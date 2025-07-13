@@ -259,7 +259,10 @@ namespace SMS.App.Controllers
         public async Task<ActionResult> ClassWiseResultAfterProcess()
         {
             GlobalUI.PageTitle = GlobalUI.SiteTitle = "Class-Wise Result";
-            ViewData["ExamGroupList"] = new SelectList(await _academicExamGroupManager.GetAllAsync(), "Id", "ExamGroupName");
+            var currentSession = await _sessionManager.GetCurrentAcademicSession();
+            var allExamGroups =await _academicExamGroupManager.GetAllAsync();
+            allExamGroups = allExamGroups.Where(s => s.AcademicSessionId == currentSession.Id).ToList();
+            ViewData["ExamGroupList"] = new SelectList(allExamGroups, "Id", "ExamGroupName");
             ViewData["AcademicClassList"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name");
 
             ViewBag.IsLoading = false;

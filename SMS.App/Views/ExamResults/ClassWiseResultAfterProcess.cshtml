@@ -111,6 +111,7 @@
                     <th rowspan="2">Rank</th>
                     <th rowspan="2">Previous Rank</th>
                     <th rowspan="2">Gender</th>
+                    <th rowspan="2">Section</th>
                     <th class="no-sort" rowspan="2">Phone 1</th>
                     <th class="no-sort" rowspan="2">Phone 2</th>
                 </tr>
@@ -163,6 +164,7 @@
                     <td>@(exam.Rank)</td>
                     <td></td>
                     <td>@exam.Student.Gender.Name</td>
+                    <td>@exam.Student.AcademicSection?.Name</td>
                     <td>
                         @(exam.Student.GuardianPhone != null && exam.Student.GuardianPhone.Trim() != string.Empty
     ? exam.Student.GuardianPhone.ToString().PadLeft(11, '0')

@@ -79,7 +79,10 @@ namespace SMS.DAL.Repositories
                                  from h in joinFeedHead.DefaultIfEmpty()
                                  join s in _context.Student on t.AcademicClassId equals s.AcademicClassId
                                  where s.Id == studentId && h.IsResidential == s.IsResidential && t.AcademicSessionId == s.AcademicSessionId
-                                 select t).ToListAsync();
+                                 select t)
+                                 .Include(s => s.StudentFeeHead)
+                                 .Include(s => s.AcademicSession)
+                                 .ToListAsync();
             }
             catch (Exception)
             {
@@ -92,7 +95,7 @@ namespace SMS.DAL.Repositories
             List<ClassFeeList> results = new();
             try
             {
-                results = await _context.ClassFeeList.Where(s => s.AcademicSessionId == sessionId && s.AcademicClassId == classId).Include(c => c.StudentFeeHead).ToListAsync();
+                results = await _context.ClassFeeList.Where(s => s.AcademicSessionId == sessionId && s.AcademicClassId == classId).Include(c => c.StudentFeeHead).Include(c => c.AcademicSession).ToListAsync();
             }
             catch (Exception)
             {
@@ -108,6 +111,7 @@ namespace SMS.DAL.Repositories
                 results = await _context.ClassFeeList
                     .Where(s => s.AcademicSessionId == sessionId && s.AcademicClassId == classId && s.StudentFeeHead.IsResidential == isResidential)
                     .Include(c => c.StudentFeeHead)
+                    .Include(c => c.AcademicSession)
                     .ToListAsync();
             }
             catch (Exception)

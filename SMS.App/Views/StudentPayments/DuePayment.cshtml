@@ -71,26 +71,29 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <div class="col-md-4 offset-md-8 text-right">
+                            <div class="col-md-6 offset-md-6 text-right">
                                 <button type="submit" id="LoadButton" class="btn btn-sm btn-info" onclick="onSubmitAction()">Get List</button><br />
                                 @{
                                     if (Model.ShowCount != null)
                                     {
-                                        <span>Total Found @Model.ShowCount</span>
+                                        <span>Total Found @Model.ShowCount</span><br/>
+                                        @if (ViewBag.totalExecuteTime!=null)
+                                        {
+                                            <span>@ViewBag.totalExecuteTime</span>
+                                        }
                                     }
                                 }
                             </div>
                         </div>
                     </form>
                 </fieldset><br />
-                <div class="row" id="exportPortion" style="visibility:hidden">
+                <div class="row m-2" id="exportPortion" style="visibility:hidden">
                     <div class="col-md-3 offset-md-9 text-md-right">
                         <!-- Add a button to trigger the export -->
                         @*<button id="exportPdfButton">Export to PDF</button>*@
 
                         <!-- Add a button to trigger the export -->
                         <button class=" btn btn-sm btn-success" id="exportExcelButton">Export <i class="fas fa-file-excel"></i></button>
-
                     </div>
                 </div>
             </div>

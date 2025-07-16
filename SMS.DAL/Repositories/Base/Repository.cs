@@ -3,6 +3,7 @@ using SMS.DB;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace SMS.DAL.Repositories.Base
@@ -24,12 +25,10 @@ namespace SMS.DAL.Repositories.Base
         {
             return await Entity.FindAsync(id);
         }
-
         public virtual async Task<IReadOnlyCollection<T>> GetAllAsync()
         {
             return await Entity.ToListAsync();
         }
-
         public virtual async Task<bool> AddAsync(T entity)
         {
             try
@@ -43,7 +42,6 @@ namespace SMS.DAL.Repositories.Base
                 return false;
             }
         }
-
         public virtual async Task<bool> UpdateAsync(T entity)
         {
             try
@@ -57,7 +55,6 @@ namespace SMS.DAL.Repositories.Base
                 return false;
             }
         }
-
         public virtual async Task<bool> RemoveAsync(T entity)
         {
             try
@@ -71,7 +68,6 @@ namespace SMS.DAL.Repositories.Base
                 return false;
             }
         }
-
         public virtual async Task<bool> IsExistByIdAsync(int id)
         {
             var result = await Entity.FindAsync(id);
@@ -84,18 +80,15 @@ namespace SMS.DAL.Repositories.Base
                 return false;
             }
         }
-
         public virtual async Task<bool> IsExistAsync(T entity)
         {
             await Entity.FindAsync(entity);
             return true;
         }
-
         public T GetById(int id)
         {
             return Entity.Find(id);
         }
-
         public async Task<bool> SaveAfterAddAsync()
         {
             try
@@ -112,7 +105,6 @@ namespace SMS.DAL.Repositories.Base
             }
             return false;
         }
-
         public bool AddWithoutSave(T entity)
         {
             try
@@ -126,5 +118,13 @@ namespace SMS.DAL.Repositories.Base
             }
         }
         public virtual IQueryable<T> Table => Entity;
+        public virtual async Task<T> FindAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await Entity.FirstOrDefaultAsync(predicate);
+        }
+        public virtual async Task<List<T>> FindAllAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await Entity.Where(predicate).ToListAsync();
+        }
     }
 }

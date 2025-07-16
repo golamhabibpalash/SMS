@@ -124,11 +124,23 @@ namespace SMS.DAL.Repositories
             try
             {
                 var studentPaymentSchedules = await _context.StudentPaymentScheduleVMs.FromSqlInterpolated($"sp_get_payment_schedule_by_stuId {studId}").ToListAsync();
+
                 var student = await _context.Student.FirstOrDefaultAsync(s => s.Id == studId);
+                var admissionMonth = student.AdmissionDate.Date.Month;
+
+
+
                 var existingFeeAllocations = await _context.StudentFeeAllocations.Where(s => s.UniqueId == student.UniqueId).ToListAsync();
                 existingFeeAllocations = existingFeeAllocations.Where(s => s.IsActive == true).ToList();
                 foreach (var item in studentPaymentSchedules)
                 {
+                    if (item.SL>=1 && item.SL<=12)
+                    {
+                        if (item.SL<admissionMonth)
+                        {
+                            continue;
+                        }
+                    }
                     var feeAllocation = existingFeeAllocations.FirstOrDefault(s => s.StudentFeeHeadId == item.FeeHeadId && s.ClassFeeListId == item.ClassFeeId);
                     if (feeAllocation != null)
                     {

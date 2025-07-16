@@ -287,7 +287,7 @@ namespace SMS.App.Controllers
 
             List<StudentPaymentScheduleVM> paymentSchedule = await _studentPaymentManager.GetStudentPaymentSchedule(student.Id);
 
-            paymentSchedule = paymentSchedule.Where(s => s.IsResidential == student.IsResidential).ToList();
+            paymentSchedule = paymentSchedule.Where(s => s.IsResidential == student.IsResidential && s.Amount>0).ToList();
             List<StudentPaymentSchedulePaidVM> studentPaymentSchedulePaidVMs = await _studentPaymentManager.GetStudentPaymentSchedulePaid(student.Id);
             StudentDetailsVM sd = new();
             sd.StudentPayments = stuPayments;
@@ -296,7 +296,7 @@ namespace SMS.App.Controllers
             sd.StudentPaymentSchedules = paymentSchedule;
             sd.StudentPaymentSchedulePaidVMs = studentPaymentSchedulePaidVMs;
 
-            sd.TotalDue = await GetTotalDue(student.Id);
+            sd.TotalDue = await _studentPaymentManager.GetStudentCurrentDue(student.Id); /* await GetTotalDue(student.Id);*/
             sd.CurrentDue = await _studentPaymentManager.GetStudentCurrentDue(student.Id);
             #endregion Payment============================================================================
             #region Attendance =============================================================================
@@ -833,6 +833,7 @@ namespace SMS.App.Controllers
             double totalPaid = await GetTotalPaid(st.Id);
             double totalDue = totalAmount - totalPaid;
             totalDue = totalDue >= 0 ? totalDue : 0;
+
             return totalDue;
         }
 

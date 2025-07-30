@@ -92,7 +92,6 @@ public class StudentPaymentsController : Controller
             return RedirectToAction("Index");
         }
         ViewData["AcademicClassList"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name");
-
         SetTempDataMessages();
 
         var student = await _studentManager.GetStudentByClassRollAsync((int)stRoll);
@@ -695,19 +694,8 @@ public class StudentPaymentsController : Controller
     {
         var allFees = await _classFeeListManager.GetAllByClassIdAsync(student.AcademicClassId);
         allFees = allFees.Where(s => s.AcademicSessionId == student.AcademicSessionId).ToList();
-        // Filter safely using LINQ
-        var filteredFees = new List<ClassFeeList>();
-        foreach (var item in allFees)
-        {
-            if (item.StudentFeeHead.SL>=1 && item.StudentFeeHead.SL<=12)
-            {
-                if (item.StudentFeeHead.SL> student.AdmissionDate.Month)
-                {
-                    filteredFees.Add(item);
-                }
-            }
-        }
-        return filteredFees;
+        
+        return allFees;
     }
 
     private async Task<List<StudentFeeHead>> GetFeeHeadList(Student student)

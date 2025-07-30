@@ -35,6 +35,10 @@
                 {
                     foreach (var item in Model.SessionWisePaymentVMs)
                     {
+                        if (item.Amount==0)
+                    {
+                        continue;
+                    }
                         <tr class="card-header table-active font-weight-bold" data-toggle="collapse" data-target=".tr_@trCount" area-control="collapse_@trCount" aria-expanded="false">
                             <td>@trCount</td>
                             <td>@item.FeeHeadName <span class="badge badge-info">@item.SessionWisePaymentDetails.Count</span></td>

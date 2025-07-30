@@ -236,7 +236,7 @@ public class StudentPaymentManager : Manager<StudentPayment>, IStudentPaymentMan
     private double CalculateMonthlyFee(Student student, List<ClassFeeList> classFees, List<StudentFeeAllocation> allocations)
     {
         var monthlyFees = classFees
-            .Where(c => c.Amount > 0 && c.StudentFeeHead.SL is >= 1 and <= 12 && ShouldIncludeFeeForMonth(c, student.AdmissionDate))
+            .Where(c => c.StudentFeeHead.SL is >= 1 and <= 12 && ShouldIncludeFeeForMonth(c, student.AdmissionDate))
             .ToList();
         var monthlyAllocations = allocations.Where(a => a.StudentFeeHead.SL is >= 1 and <= 12).ToList();
 
@@ -268,7 +268,7 @@ public class StudentPaymentManager : Manager<StudentPayment>, IStudentPaymentMan
         var admissionFeeName = student.IsResidential ? allParamConfig.FirstOrDefault(s => s.ParamSL == 15)?.ParamValue : allParamConfig.FirstOrDefault(s => s.ParamSL == 14)?.ParamValue;
 
         var classFees = await _classFeeListRepository.GetAllBySessionIdClassIdAsync(sessionId, classId);
-        classFees = classFees.Where(s => s.StudentFeeHead.IsResidential == student.IsResidential && s.Amount > 0).ToList();
+        classFees = classFees.Where(s => s.StudentFeeHead.IsResidential == student.IsResidential).ToList();
         var allAllocations = await _studentFeeAllocationRepository.GetStudentFeeAllocationByUniqueIdSessionId(uniqueId, sessionId);
         var paymentDetails = await _studentPaymentDetailsRepository.GetAllByStudentAsync(uniqueId);
 
@@ -352,7 +352,7 @@ public class StudentPaymentManager : Manager<StudentPayment>, IStudentPaymentMan
     private List<ClassFeeList> FilterFeesByAdmissionAndSession(List<ClassFeeList> classFees, string admissionYear, string sessionYear, List<StudentFeeAllocation> allocations, bool isResidential, int admissionMonth)
     {
         var filteredFees = new List<ClassFeeList>();
-        foreach (var fee in classFees.Where(f => f.Amount > 0 && f.StudentFeeHead.IsResidential == isResidential))
+        foreach (var fee in classFees.Where(f => f.StudentFeeHead.IsResidential == isResidential))
         {
             bool isAdmissionYear = admissionYear == sessionYear;
             if (isAdmissionYear && fee.SL is >= 1 and <= 12 && fee.SL < admissionMonth) continue;

@@ -1,15 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
-using System.Collections.Generic;
+﻿namespace SMS.App.ViewModels.AttendanceVM;
 
-namespace SMS.App.ViewModels.AttendanceVM
+public class DailyCheckoutReportVM
 {
-    public class DailyCheckoutReportVM
-    {
-        public string ReportFor { get; set; } //student or staff
-        public DateTime ReportDate { get; set; }
-        public int? ClassId { get; set; }
-        public int? SectionId { get; set; }
-        public List<SelectListItem> AcademicClassList { get; set; }
-    }
+    public string ClassOrDesignationName { get; set; }
+    public string RollOrCard { get; set; }
+    public string Name { get; set; }
+    public string Phone { get; set; }
+    public string AlternativePhone { get; set; }
+    public string CheckOut { get; set; }
+    public bool SMSSent { get; set; } = false;
 }

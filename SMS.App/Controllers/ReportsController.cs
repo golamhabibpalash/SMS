@@ -185,7 +185,7 @@ public class ReportsController : Controller
 
         List<RptDailyAttendaceVM> studentDailyAttendance = await _reportManager.GetDailyAttendanceReport(fromDate, academicClassId, academicSectionId, attendanceType, academicSession.Id.ToString(), attendanceFor);
         string totalStudents = studentDailyAttendance.Count.ToString();
-        if (attendanceFor=="employees")
+        if (attendanceFor == "employees")
         {
             path = _host.WebRootPath + "\\Reports\\Rpt_Daily_Attendance_Employee.rdlc";
             reportName = "Employees Daily Attendance Report";
@@ -448,15 +448,16 @@ public class ReportsController : Controller
 
     public IActionResult DailyCheckoutReport()
     {
-        DailyCheckoutReportVM report = new DailyCheckoutReportVM();
+        DailyCheckoutReportSearchVM report = new DailyCheckoutReportSearchVM();
 
-        return View();
+        return View(report);
     }
 
     [HttpPost]
-    public async Task<IActionResult> DailyCheckoutReport(DailyCheckoutReportVM dailyCheckoutReportVM)
+    public async Task<IActionResult> DailyCheckoutReport(DailyCheckoutReportSearchVM dailyCheckoutReportVM)
     {
-        return View();
+        var reports = new List<DailyCheckoutReportVM>();
+        return View(dailyCheckoutReportVM);
     }
     #endregion Attendance Reports
 

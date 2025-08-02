@@ -1,8 +1,10 @@
 ﻿using Hangfire;
 using Hangfire.Storage;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using SMS.App.Utilities.EmailServices;
+using SMS.App.Utilities.EmailServices.EmailVM;
 using SMS.App.Utilities.MACIPServices;
 using SMS.App.Utilities.ShortMessageService;
 using SMS.BLL.Contracts;
@@ -10,6 +12,7 @@ using SMS.Entities;
 using SMS.Entities.AdditionalModels;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -29,9 +32,10 @@ public class HangfireController : ControllerBase
     private readonly IInstituteManager _instituteManager;
     private readonly IStudentPaymentManager _studentPaymentManager;
     private readonly IParamBusConfigManager _paramBusConfigManager;
+    private readonly IWebHostEnvironment _webHostEnvironment;
 
     #region Constructor Start =================================================
-    public HangfireController(IStudentManager studentManager, IAttendanceMachineManager attendanceMachineManager, IEmployeeManager employeeManager, IPhoneSMSManager phoneSMSManager, ISetupMobileSMSManager setupMobileSMSManager, IOffDayManager offDayManager, IInstituteManager instituteManager, IStudentPaymentManager studentPaymentManager, IParamBusConfigManager paramBusConfigManager)
+    public HangfireController(IStudentManager studentManager, IAttendanceMachineManager attendanceMachineManager, IEmployeeManager employeeManager, IPhoneSMSManager phoneSMSManager, ISetupMobileSMSManager setupMobileSMSManager, IOffDayManager offDayManager, IInstituteManager instituteManager, IStudentPaymentManager studentPaymentManager, IParamBusConfigManager paramBusConfigManager, IWebHostEnvironment webHostEnvironment)
     {
         _studentManager = studentManager;
         _attendanceMachineManager = attendanceMachineManager;
@@ -42,6 +46,7 @@ public class HangfireController : ControllerBase
         _instituteManager = instituteManager;
         _studentPaymentManager = studentPaymentManager;
         _paramBusConfigManager = paramBusConfigManager;
+        _webHostEnvironment = webHostEnvironment;
     }
     #endregion Constructor Finished xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxX
 
@@ -779,9 +784,21 @@ public class HangfireController : ControllerBase
                         string emailSubject = "Todays attended report summary";
                         string mailBody = msgText;
                         int i = 0;
+
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Images","Institute");
+                        var attendanceSummary = new AttendanceSummary()
+                        {                            
+                            BackgroundImageUrl = Path.Combine(filePath, instituteInfo.FirstOrDefault().Logo),
+                            InstituteName = instituteInfo.FirstOrDefault().Name,
+                            AttendanceDate = DateTime.Now.Date.ToString("dd MMM yyyy"),
+                            BoysCount = totalBoysStudent.ToString(),
+                            GirlsCount = totalGirlsStudent.ToString(),
+                            TotalCount = (totalBoysStudent+totalGirlsStudent).ToString(),
+                            EmployeesCount = totalEmployee.ToString(),
+                        };
                         foreach (var item in toEmail)
                         {
-                            EmailService.SendEmail(toEmail[i], emailSubject, mailBody);
+                            var isSendEmail = EmailService.SendAttendanceEmail(toEmail[i], $"Todays({DateTime.Today.ToString("dd MMM yyyy")}) attended report summary",attendanceSummary);
                             i++;
                         }
                     }

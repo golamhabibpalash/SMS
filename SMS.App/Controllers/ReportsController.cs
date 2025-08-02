@@ -445,6 +445,19 @@ public class ReportsController : Controller
         //}
         return File(pdf, mediaType);
     }
+
+    public IActionResult DailyCheckoutReport()
+    {
+        DailyCheckoutReportVM report = new DailyCheckoutReportVM();
+
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> DailyCheckoutReport(DailyCheckoutReportVM dailyCheckoutReportVM)
+    {
+        return View();
+    }
     #endregion Attendance Reports
 
     #region Result or MarkSheet

@@ -11,5 +11,7 @@ public class DailyCheckoutReportSearchVM
     public int? ClassId { get; set; }
     public int? SectionId { get; set; }
     public bool IsCheckedOut { get; set; }
+    public string fileName { get; set; }
+    public string ReportType { get; set; }
     public List<SelectListItem> AcademicClassList { get; set; }
 }

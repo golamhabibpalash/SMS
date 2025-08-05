@@ -454,10 +454,50 @@ public class ReportsController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> DailyCheckoutReport(DailyCheckoutReportSearchVM dailyCheckoutReportVM)
+    public async Task<IActionResult> DailyCheckoutReportExport(DailyCheckoutReportSearchVM dailyCheckoutReportVM)
     {
-        var reports = new List<DailyCheckoutReportVM>();
-        return View(dailyCheckoutReportVM);
+
+        Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
+        if (institute == null)
+        {
+            return new JsonResult("Institute Information not found!");
+        }
+
+        string mediaType = "application/pdf";
+        var path = _host.WebRootPath + "\\Reports\\Rpt_Daily_CheckOut.rdlc";
+
+        string imageParam = "";
+        var imagePath = _host.WebRootPath + "\\Images\\Institute\\" + institute.Logo;
+        var reportName = "Students Daily Attendance Report";
+
+        Image image = Image.FromFile(imagePath);
+        using (MemoryStream ms = new MemoryStream())
+        {
+            image.Save(ms, image.RawFormat);
+            byte[] imageBytes = ms.ToArray();
+            imageParam = Convert.ToBase64String(imageBytes);
+        }
+        using var report = new Microsoft.Reporting.NETCore.LocalReport();
+
+        report.DataSources.Add(new ReportDataSource("AttendanceReportDS", studentDailyAttendance));
+        var parameters = new[] {
+            new ReportParameter("InstituteName", institute.Name),
+            new ReportParameter("Location", institute.Address),
+            new ReportParameter("EIINNo", institute.EIIN),
+            new ReportParameter("Logo", imageParam),
+            new ReportParameter("ReportName", reportName),
+            new ReportParameter("AttendanceDate", dailyCheckoutReportVM.ReportDate.ToString("dd MMM yyyy")),
+            new ReportParameter("ReportDate", DateTime.Today.ToString("dd MMM yyyy")),
+            new ReportParameter("TotalStudent",totalStudents)
+        };
+        report.ReportPath = path;
+        report.SetParameters(parameters);
+        var pdf = report.Render("pdf");
+        if (!string.IsNullOrEmpty(dailyCheckoutReportVM.fileName))
+        {
+            return File(pdf, MediaTypeNames.Application.Octet, GetReportName(dailyCheckoutReportVM.fileName, dailyCheckoutReportVM.ReportType));
+        }
+        return File(pdf, mediaType);
     }
     #endregion Attendance Reports
 

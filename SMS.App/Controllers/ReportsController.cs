@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Reporting.NETCore;
+using Microsoft.ReportingServices.Interfaces;
 using SchoolManagementSystem;
 using SixLabors.ImageSharp;
 using SMS.App.Utilities.Others;
@@ -145,6 +146,54 @@ public class ReportsController : Controller
             return File(pdf, MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
         }
         return File(pdf, mediaType);
+    }
+
+    public IActionResult StudentDynamicReport()
+    {
+        var columnMap = new Dictionary<string, string>
+        {
+            { "Name", "Student Name" },
+            { "NameBangla", "Name (Bangla)" },
+            { "ClassRoll", "Roll" },
+            { "AcademicClass", "Class" },
+            { "AcademicSection", "Section" },
+            { "FatherName", "Father's Name" },
+            { "MotherName", "Mother's Name" },
+            { "AdmissionDate", "Admission Date" },
+            { "Email", "Email" },
+            { "Gender", "Gender" },
+            { "PhoneNo", "Phone" },
+            { "GuardianPhone", "Guardian Phone" },
+            { "Address", "Address" }
+        };
+
+        var reportModel = new RptStudentDynamicReportVM
+        {
+            AcademicClassList = new SelectList(_academicClassManager.GetAllAsync().Result, "Id", "Name").ToList(),
+            AcademicSessionList = new SelectList(_academicSessionManager.GetAllAsync().Result, "Id", "Name").ToList(),
+
+            // Set the ColumnMap dictionary
+            ColumnMap = columnMap
+        };
+
+        return View(reportModel);
+    }
+
+    public IActionResult StudentDynamicReportExport(string reportType, int academicClassId, int academicSectionId, [FromQuery(Name = "columns")] List<string> columns)
+    {
+        if (columns == null || !columns.Any())
+        {
+            return BadRequest("No columns selected.");
+        }
+        string mimeType = "application/pdf";
+        // Use academicClassId, academicSectionId, and columns to filter student data
+        // Then use LocalReport and columns to dynamically build the RDLC table
+        // (like add only those columns as ReportParameters or loop through fields in DataTable)
+
+        // ...
+        using var report = new Microsoft.Reporting.NETCore.LocalReport();
+        var pdf = report.Render("pdf");
+        return File(pdf, mimeType);
     }
     #endregion Student List Report
 

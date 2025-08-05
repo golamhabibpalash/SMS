@@ -4,17 +4,18 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SMS.App.ViewModels.ReportVM;
 
-public class Rpt_Student_VM
+public class RptStudentDynamicReportVM
 {
     public string ReportType { get; set; }
-    [Display(Name="Academic Session")]
+    [Display(Name = "Academic Session")]
     public int AcademicSessionId { get; set; }
 
-    [Display(Name = "Academic Class"), Required] 
+    [Display(Name = "Academic Class"), Required]
     public int AcademicClassId { get; set; }
 
-    [Display(Name = "Academic Section")] 
+    [Display(Name = "Academic Section")]
     public int AcademicSectionId { get; set; }
+    public Dictionary<string, string> ColumnMap { get; set; } = new();
 
     public List<SelectListItem> AcademicSessionList { get; set; }
     public List<SelectListItem> AcademicClassList { get; set; }

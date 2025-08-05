@@ -33,10 +33,13 @@
 
 	<ItemGroup>
 		<Content Remove="Views\AcademicExamType\Delete.cshtml" />
+		<Content Remove="wwwroot\Reports\ReportData\MonthAttendanceDataset - Copy.xsc" />
+		<Content Remove="wwwroot\Reports\ReportData\MonthAttendanceDataset - Copy.xss" />
 		<Content Remove="wwwroot\Reports\ReportData\MonthAttendanceDataset.Designer.cs" />
 		<Content Remove="wwwroot\Reports\ReportData\MonthAttendanceDataset.xsc" />
 		<Content Remove="wwwroot\Reports\ReportData\MonthAttendanceDataset.xsd" />
 		<Content Remove="wwwroot\Reports\ReportData\MonthAttendanceDataset.xss" />
+		<Content Remove="wwwroot\Reports\ReportData\rptDynamicStudentDS.xsd" />
 		<Content Remove="wwwroot\Reports\rptAnnualReport.rdlc" />
 		<Content Remove="wwwroot\Reports\rptStudent1.rdlc" />
 		<Content Remove="wwwroot\Reports\rptStudentPaymentFullInfo.rdlc" />
@@ -115,6 +118,13 @@
 		<None Include="wwwroot\lib\MultiSelect\js\jquery-2.1.3.min.js" />
 		<None Include="wwwroot\lib\MultiSelect\js\prettify.min.js" />
 		<None Include="wwwroot\lib\MultiSelect\js\require-2.3.5.min.js" />
+		<None Include="wwwroot\Reports\ReportData\rptDynamicStudentDS.xsc" />
+		<None Include="wwwroot\Reports\ReportData\rptDynamicStudentDS.xsd">
+		  <SubType>Designer</SubType>
+		  <LastGenOutput>rptDynamicStudentDS.Designer.cs</LastGenOutput>
+		  <Generator>MSDataSetGenerator</Generator>
+		</None>
+		<None Include="wwwroot\Reports\ReportData\rptDynamicStudentDS.xss" />
 		<None Include="wwwroot\Reports\ReportData\MonthAttendanceDataset.xsc" />
 		<None Include="wwwroot\Reports\ReportData\MonthAttendanceDataset.xsd">
 		  <SubType>Designer</SubType>
@@ -156,11 +166,19 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Include="wwwroot\Reports\ReportData\MonthAttendanceDataset.Designer.cs">
-	    <DependentUpon>MonthAttendanceDataset.xsd</DependentUpon>
+	  <Compile Include="wwwroot\Reports\ReportData\rptDynamicStudentDS.Designer.cs">
+	    <DependentUpon>rptDynamicStudentDS.xsd</DependentUpon>
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
 	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Update="wwwroot\Reports\ReportData\rptDynamicStudentDS.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>rptDynamicStudentDS.xsd</DependentUpon>
+	  </Content>
 	</ItemGroup>
 
 </Project>

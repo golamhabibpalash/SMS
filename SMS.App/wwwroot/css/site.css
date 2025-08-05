@@ -48,6 +48,16 @@ html {
     font-size: 16px;
   }
 }
+body
+{
+    font-family: 'Roboto', sans-serif;
+}
+
+/* You can also set the font for specific elements */
+h1, h2, h3, h4, h5, h6
+{
+    font-family: 'Roboto', sans-serif;
+}
 
 .border-top {
   border-top: 1px solid #e5e5e5;

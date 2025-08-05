@@ -1,4 +1,5 @@
-﻿using Hangfire;
+﻿using GHPEncryptDecript;
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -12,9 +13,14 @@ using SMS.App.Utilities.Automation.Hangfire;
 using SMS.DB;
 using SMS.Entities;
 using System;
+using System.Text;
+
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+// Generate secure key and IV
+byte[] key = Encoding.UTF8.GetBytes("1234567890123456");
+byte[] iv = Encoding.UTF8.GetBytes("1234567890123456");
+var connectionString = AesEncryptionHelper.Decrypt(builder.Configuration.GetConnectionString("DefaultConnection"), key, iv);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
@@ -22,6 +28,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         sqlServerOptionsAction: sqlOptions =>
         {
             sqlOptions.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
+            sqlOptions.CommandTimeout(120); // Set command timeout to 120 seconds
         });
     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 });
@@ -95,16 +102,17 @@ var options = new DashboardOptions
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseHangfireDashboard("/hangfire", options);
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllerRoute(
-        name: "areas",
-        pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
-        );
-    endpoints.MapControllerRoute(
+
+// Area routes (more specific)
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+// Default routes
+app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-});
+
 
 app.MapRazorPages();
 app.Run();

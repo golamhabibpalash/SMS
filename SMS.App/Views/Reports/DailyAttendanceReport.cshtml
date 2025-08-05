@@ -12,7 +12,7 @@
                     <fieldset class="border border-info p-2">
                         <legend class="w-auto text-primary">Daily Attendance Info</legend>
 
-                        <input type="hidden" id="attendancForId"  value="s" />
+                        <input type="hidden" id="attendancForId" />
                         <div class="form-group row">
                             <label class="col-sm-3 col-form-label">Attendance Date</label>
                             <div class="col-sm-9">
@@ -20,6 +20,16 @@
                             </div>
                         </div>
                         <div class="form-group row">
+                            <label for="classId" class="col-sm-3 col-form-label">Attendnace For</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" onchange="attendanceForChange()">
+                                    <option disabled selected value="">-Select Attendance For-</option>
+                                    <option value="s">Student</option>
+                                    <option value="e">Employee</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row academicClassPortion">
                             <label for="classId" class="col-sm-3 col-form-label">Academic Class</label>
                             <div class="col-sm-9">
                                 <select id="AcademicClassId" class="form-control" asp-items="ViewBag.AcademicClass">
@@ -28,7 +38,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="form-group row">
+                        <div class="form-group row academicSectionPortion">
                             <label for="classId" class="col-sm-3 col-form-label">Academic Section</label>
                             <div class="col-sm-9">
                                 <select id="AcademicSectionId" class="form-control">
@@ -171,9 +181,33 @@
                         console.log(err);
                     }
                 });
-            });
-
+            });            
         });
+        function attendanceForChange(){
+
+            var attendanceForSelect = document.querySelector('select[onchange="attendanceForChange()"]');
+            var selectedValue = attendanceForSelect.value;
+
+            var academicClassPortion = document.querySelector('.academicClassPortion');
+            var academicSectionPortion = document.querySelector('.academicSectionPortion');
+            var attendaceFor = document.getElementById('attendancForId');
+
+            if (selectedValue === 'e') { // 'e' stands for Employee
+                academicClassPortion.style.display = 'none';
+                academicSectionPortion.style.display = 'none';
+                var attendaceForHiddenInput = document.getElementById('attendancForId');
+                if (attendaceForHiddenInput) {
+                    attendaceForHiddenInput.value = 'e';
+                }
+            } else { // 's' for Student, or the default/unselected option
+                academicClassPortion.style.display = 'flex'; // Or 'block' depending on your CSS framework/needs
+                academicSectionPortion.style.display = 'flex'; // Or 'block'
+                var attendaceForHiddenInput = document.getElementById('attendancForId');
+                if (attendaceForHiddenInput) {
+                    attendaceForHiddenInput.value = 's';
+                }
+            }
+        }
 
     </script>
 }

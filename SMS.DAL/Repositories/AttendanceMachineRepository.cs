@@ -34,23 +34,23 @@ namespace SMS.DAL.Repositories
             var pAttendanceFor = new SqlParameter("attendanceFor", attendanceFor);
             var pDate = new SqlParameter("date", date);
             var pAttendanceType = new SqlParameter("attendanceType", attendanceType);
-            var pASessionId = aSessionId!=null ? new SqlParameter("aSessionId", aSessionId) : null;
-            var pClassId = aClassId!=null ? new SqlParameter("aClassId", aClassId) : null;
+            var pASessionId = aSessionId != null ? new SqlParameter("aSessionId", aSessionId) : null;
+            var pClassId = aClassId != null ? new SqlParameter("aClassId", aClassId) : null;
             var result = await _context.AttendanceVMs.FromSqlInterpolated($"sp_get_attendance_by_date {pAttendanceFor},{pDate},{pAttendanceType},{pASessionId},{pClassId}").ToArrayAsync();
-            return result;            
+            return result;
         }
 
         public async Task<List<Tran_MachineRawPunch>> GetAttendanceByDateRangeAsync(string StartDate, string EndDate)
         {
-            string sql = @"select t.* from Tran_MachineRawPunch t where Format(t.PunchDatetime,'yyyy-MM-dd') between convert(datetime,'"+StartDate+"') and convert(datetime,'"+EndDate+"')";
+            string sql = @"select t.* from Tran_MachineRawPunch t where Format(t.PunchDatetime,'yyyy-MM-dd') between convert(datetime,'" + StartDate + "') and convert(datetime,'" + EndDate + "')";
             var attendanceList = await _context.Tran_MachineRawPunch.FromSqlRaw(sql).ToListAsync();
             return attendanceList;
         }
 
-        public async Task<List<Tran_MachineRawPunch>> GetAttendanceByMonthSingleStudent(int studentId, int monthId)
+        public async Task<List<Tran_MachineRawPunch>> GetAttendanceByMonthSingleStudent(int studentId, string monthYear)
         {
             var stuId = new SqlParameter("studentId", studentId);
-            var mId = new SqlParameter("monthId", monthId);
+            var mId = new SqlParameter("monthYear", monthYear);
             List<Tran_MachineRawPunch> allAttendance = await _context.Tran_MachineRawPunch.FromSqlInterpolated($"sp_get_Attendance_by_Month_SingleStudent {stuId},{mId}").ToListAsync();
             return allAttendance;
         }
@@ -132,7 +132,6 @@ namespace SMS.DAL.Repositories
 
             return existAttendance;
         }
-
 
     }
 }

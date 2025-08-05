@@ -363,7 +363,7 @@ namespace SMS.App.Controllers
                     }
                     else if (model.verificationBy == "Email")
                     {
-                        bool isSend = EmailService.SendEmail(model.Email, "OTP for Password reset", text);
+                        bool isSend = EmailService.SendOTP(model.Email,"One time password",DateTime.Now,randomNumber.ToString());
                         if (isSend)
                         {
                             return RedirectToAction("OTPGenerate");

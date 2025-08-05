@@ -31,6 +31,7 @@ namespace SMS.DAL.Repositories
                     .Include(s => s.Student)
                         .ThenInclude(s => s.AcademicClass)
                      .Include(s => s.Student.Gender)
+                     .Include(s => s.Student.AcademicSection)
                     .Where(s => s.AcademicExamGroupId == examGroupId && s.AcademicClassId == classId)
                     .ToListAsync();
             }

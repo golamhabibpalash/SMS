@@ -212,7 +212,9 @@ namespace SMS.App.Controllers
                     sessionId = currentAcademicSession.Id;
                 }
             }
-            return await _academicSectionManager.GetAllByClassWithSessionId(classId, sessionId);
+            
+            var Result = await _academicSectionManager.GetAllByClassWithSessionId(classId, sessionId);
+            return Result;
         }
     }
 }

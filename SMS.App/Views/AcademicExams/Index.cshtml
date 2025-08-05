@@ -72,8 +72,8 @@
                 {
                     foreach (var item1 in Model.AcademicExams.OrderByDescending(g => g.AcademicExamGroup.AcademicSessionId).ThenByDescending(m => m.AcademicExamGroup.ExamMonthId).GroupBy(s => s.AcademicExamGroup.ExamGroupName))
                     {
-                        <tr class="bg-navy-blue">
-                            <td colspan="9"><span class="font-weight-bolder h6">@item1.Key - (Total @item1.Count() Exam/s)</span> </td>
+                        <tr class="bg-navy-blue text-light">
+                            <td colspan="9"><span class="font-weight-bolder h6 text-light">@item1.Key - (Total @item1.Count() Exam/s)</span> </td>
                         </tr>
                         foreach (var item2 in item1.GroupBy(s => s.AcademicClass.Name).OrderBy(s => s.Min(m => m.AcademicClassId)))
                         {
@@ -207,7 +207,7 @@
                     <div class="form-group row">
                         <label class="col-md-2 col-form-label text-md-right" asp-for="Status"></label>
                         <div class="col-md-1">
-                            <input asp-for="Status" class="form-control" />
+                            <input asp-for="Status" class="" />
                         </div>
                         <div class="offset-md-3 col-md-9 text-md-right">
                             <button type="button" class="btn-sm btn-secondary" data-dismiss="modal">Close</button>

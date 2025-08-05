@@ -3,6 +3,7 @@
     int sl = 0;
     string sectionName = string.Empty;
     ViewBag.ClassName = string.Empty;
+    string activeInactiveClass = string.Empty;
 }
 @section Styles{
     <link href="~/lib/DataTable/css/cdn.datatables.net_buttons_2.0.0_css_buttons.dataTables.min.css" rel="stylesheet" />
@@ -18,10 +19,20 @@
         {
             float: right;
         }
+
+        .inActiveStudent
+        {
+            color: red;
+        }
+
+        .activeStudent
+        {
+            color: #000;
+        }
     </style>
 }
 <div class="row">
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="row">
             <div class="col-md-12">
                 <fieldset class="border-primary p-2 border">
@@ -38,7 +49,7 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label asp-for="AcademicSectionId" class="col-md-4 col-form-label">Academic Section</label>
+                            <label asp-for="AcademicSectionId" class="col-md-4 col-form-label text-md-right">Section :</label>
                             <div class="col-md-8">
                                 <select class="form-control" asp-for="AcademicSectionId" asp-items="Model.AcademicSectionList">
                                     <option selected disabled value="">Select Academic Section</option>
@@ -46,48 +57,43 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label asp-for="ResidentialStatus" class="col-md-4 col-form-label">Residential/Non-Residential</label>
+                            <label asp-for="ResidentialStatus" class="col-md-4 col-form-label text-md-right">Is Residential :</label>
                             <div class="col-md-8">
-                                <select class="form-control" asp-for="ResidentialStatus">
-                                    <option selected disabled value="">Select Residential Status</option>
-                                    <option value="1">Residential</option>
-                                    <option value="0">Non Residential</option>
-                                    <option value="2">All</option>
+                                <select class="form-control" name="isResidential" asp-items="@Model.StudentCategorySelectList">
                                 </select>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label asp-for="StudentStatus" class="col-md-4 col-form-label">Active/Inactive</label>
+                            <label asp-for="StudentStatus" class="col-md-4 col-form-label text-md-right">Status :</label>
                             <div class="col-md-8">
-                                <select class="form-control" asp-for="StudentStatus">
-                                    <option selected disabled value="">Select Student Status</option>
-                                    <option value="1">Active</option>
-                                    <option value="0">Inactive</option>
-                                    <option value="2">All</option>
+                                <select class="form-control" name="status" asp-items="@Model.StudentStatusSelectList">
                                 </select>
                             </div>
                         </div>
                         <div class="form-group row">
                             <div class="col-md-6 offset-md-6 text-right">
-                                <button type="submit" id="LoadButton" class="btn btn-sm btn-info">Get List</button>
+                                <button type="submit" id="LoadButton" class="btn btn-sm btn-info" onclick="onSubmitAction()">Get List</button><br />
                                 @{
                                     if (Model.ShowCount != null)
                                     {
-                                        <span>Total Found @Model.ShowCount</span>
+                                        <span>Total Found @Model.ShowCount</span><br/>
+                                        @if (ViewBag.totalExecuteTime!=null)
+                                        {
+                                            <span>@ViewBag.totalExecuteTime</span>
+                                        }
                                     }
                                 }
                             </div>
                         </div>
                     </form>
                 </fieldset><br />
-                <div class="row" id="exportPortion" style="visibility:hidden">
+                <div class="row m-2" id="exportPortion" style="visibility:hidden">
                     <div class="col-md-3 offset-md-9 text-md-right">
                         <!-- Add a button to trigger the export -->
                         @*<button id="exportPdfButton">Export to PDF</button>*@
 
                         <!-- Add a button to trigger the export -->
                         <button class=" btn btn-sm btn-success" id="exportExcelButton">Export <i class="fas fa-file-excel"></i></button>
-
                     </div>
                 </div>
             </div>
@@ -98,13 +104,13 @@
             </div>
         </div>
     </div>
-    <div class="col-md-9" id="iframe-container" style="overflow:scroll;height:800px">
+    <div class="col-md-8" id="iframe-container" style="overflow:scroll;height:800px">
         @if (Model.DuePayments != null && Model.DuePayments.Count() > 0)
         {
             <table class="table table-hover table-bordered table-striped display" id="myTable" style="width:100%;">
                 <thead>
                     <tr>
-                        <td colspan="6" class="text-center pb-0 mb-0">
+                        <td colspan="7" class="text-center pb-0 mb-0">
 
                             <div class="row">
                                 <div class="col-md-5 text-md-right">
@@ -138,6 +144,7 @@
                         <th>Class Roll</th>
                         <th>Student Name</th>
                         <th>Academic Section</th>
+                        <th>Phone No</th>
                         <th class="text-right">Due Amount</th>
                         <th class="text-center action no-sort" id="action">Action</th>
                     </tr>
@@ -145,10 +152,33 @@
                 <tbody>
                     @foreach (var item in Model.DuePayments.OrderBy(s => s.Student.ClassRoll))
                     {
+                        activeInactiveClass = item.Student.Status ? "activeStudent" : "inActiveStudent";
                         <tr>
                             <td>@(++sl)</td>
                             <td>@item.Student.ClassRoll</td>
-                            <td>@item.Student.Name</td>
+
+
+                            @if (item.Student.Status == true)
+                            {
+                                <td>@item.Student.Name <span>
+    @if (item.Student.IsResidential)
+    {
+        <span class="badge badge-info"><i class="fas fa-home"></i></span>
+    }
+</span></td>
+                            }
+                            else
+                            {
+                        <td class="" style="color:red">
+                            @item.Student.Name
+                            @if (item.Student.IsResidential)
+                            {
+                                <span class="badge badge-info"><i class="fas fa-home"></i></span>
+                            }
+
+                        </td>
+                            }
+
                             @if (item.Student.AcademicSection == null)
                             {
                                 <td>N/A</td>
@@ -157,11 +187,12 @@
                             {
                                 <td>@item.Student.AcademicSection.Name</td>
                             }
+                            <td>@item.Student.GuardianPhone?.PadLeft(11,'0')</td>
                             <td class="text-right">@item.TotalDue</td>
                             <td class="text-center action">
                                 <span class="btn-group-sm">
-                                    <a class="btn-sm btn-group-sm btn-info " asp-action="StudentPaymentInfoExport" asp-controller="Reports" asp-route-reportType="pdf" asp-route-fileName="payment_report_@item.Student.ClassRoll" asp-route-classRoll="@item.Student.ClassRoll" asp-route-fromDate="@item.Student.AdmissionDate.ToString("dd-MM-yyyy")" asp-route-toDate="@DateTime.Today.ToString("dd-MM-yyyy")" target="_blank">
-                                        <span class="fa fa-file"></span> View
+                                    <a class="btn-sm btn-group-sm btn-info" asp-action="StudentPaymentInfoExport" asp-controller="Reports" asp-route-reportType="pdf" asp-route-fileName="payment_report_@item.Student.ClassRoll" asp-route-classRoll="@item.Student.ClassRoll" asp-route-fromDate="@item.Student.AdmissionDate.ToString("yyyy-MM-dd")" asp-route-toDate="@DateTime.Today.ToString("yyyy-MM-dd")" target="_blank">
+                                        <span class="fa fa-file"></span> Pay Slip
                                     </a>
                                     <a class="btn-sm btn-group-sm btn-primary" asp-action="Details" asp-controller="Students" asp-fragment="financials" asp-route-tabName="financials" asp-route-id="@item.Student.Id">details</a>
                                     <a class="btn-sm btn-group-sm btn-success" asp-action="Payment" asp-controller="StudentPayments" asp-route-stRoll="@item.Student.ClassRoll">Pay</a>
@@ -222,13 +253,13 @@
                     {
                         extend: 'excel',
                         exportOptions: {
-                            columns: ':not(.action)'
+                            columns: ':not(.action)' // Exclude columns with the 'noExport' class
                         }
                     },
                     {
                         extend: 'pdf',
                         exportOptions: {
-                            columns: ':not(.action)'
+                            columns: ':not(.action)' // Exclude columns with the 'noExport' class
                         }
                     },
                     {
@@ -241,29 +272,55 @@
             });
         });
 
-
-
         document.getElementById('exportExcelButton').addEventListener('click', function () {
             // Get the table element
             const table = document.getElementById('myTable');
 
+            // Clone the table to modify it without affecting the original table
+            const clonedTable = table.cloneNode(true);
+
             // Remove the 'action' column
             const columnToRemove = 'action';
-            const columnIndex = Array.from(table.querySelectorAll('th')).findIndex(th => th.id === columnToRemove);
-            const rows = Array.from(table.querySelectorAll('tr'));
+            const columnIndex = Array.from(clonedTable.querySelectorAll('th')).findIndex(th => th.id === columnToRemove);
+            const rows = Array.from(clonedTable.querySelectorAll('tr'));
             rows.forEach(row => {
-                const cells = Array.from(row.querySelectorAll('td'));
-                cells.splice(columnIndex, 1); // Remove the cell for the 'action' column
+                const cells = Array.from(row.querySelectorAll('td, th'));
+                if (columnIndex >= 0) {
+                    cells.splice(columnIndex, 1); // Remove the cell for the 'action' column
+                }
                 row.innerHTML = cells.map(cell => cell.outerHTML).join('');
             });
 
+            // Remove the <thead> element from the cloned table
+            const thead = clonedTable.querySelector('thead');
+            if (thead) {
+                thead.remove();
+            }
+            // Add a custom header row
+            const headerRow = document.createElement('tr');
+            const headers = ["SL", "Class Roll", "Student Name", "Class Section", "Phone", "Due Amount"];
+            headers.forEach(headerText => {
+                const th = document.createElement('th');
+                th.textContent = headerText;
+                headerRow.appendChild(th);
+            });
+
+            // Insert the header row at the top of the table body
+            const tbody = clonedTable.querySelector('tbody');
+            if (tbody) {
+                tbody.insertBefore(headerRow, tbody.firstChild);
+            } else {
+                const newTbody = document.createElement('tbody');
+                newTbody.appendChild(headerRow);
+                clonedTable.appendChild(newTbody);
+            }
+
             // Create the workbook from the modified table
-            const wb = XLSX.utils.table_to_book(table);
+            const wb = XLSX.utils.table_to_book(clonedTable);
 
             // Save the workbook as an Excel file
-            XLSX.writeFile(wb, 'Due Payment @DateTime.Now.ToString("dd-MM-yyyy")_@ViewBag.ClassName .xlsx');
+            XLSX.writeFile(wb, `Due Payment ${new Date().toLocaleDateString('en-GB').replace(/\//g, '-')}_ClassName.xlsx`);
         });
-
 
 
 

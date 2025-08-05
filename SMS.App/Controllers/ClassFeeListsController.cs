@@ -250,5 +250,12 @@ namespace SMS.App.Controllers
             var result = await _classFeeListManager.GetClassFeeByUniquId(uniqueId);
             return new JsonResult(result.OrderBy(s => s.SL));
         }
+
+        [HttpGet]
+        public async Task<JsonResult> GetClassListBySessionClassType(int academicSessionId, int academicClassId, bool isResidential)
+        {
+            var result = await _classFeeListManager.GetAllBySessionClassTypeAsync(academicSessionId, academicClassId, isResidential);
+            return new JsonResult(result.OrderBy(s => s.SL));
+        }
     }
 }

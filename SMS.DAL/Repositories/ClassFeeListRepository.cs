@@ -46,21 +46,11 @@ namespace SMS.DAL.Repositories
         }
         public async Task<List<ClassFeeList>> GetClassFeeListByClassIdFeeHeadIdSessionIdAsync(int classId, int feeHeadId, int sessionId)
         {
-            List<ClassFeeList> results = new List<ClassFeeList>();
-            try
-            {
-                results = await _context.ClassFeeList
-                .Where(s => s.AcademicClassId == classId &&
-                s.AcademicSessionId == sessionId &&
-                s.StudentFeeHeadId == feeHeadId)
-                .ToListAsync();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-
-            return results;
+            return await _context.ClassFeeList
+            .Where(s => s.AcademicClassId == classId &&
+            s.AcademicSessionId == sessionId &&
+            s.StudentFeeHeadId == feeHeadId)
+            .ToListAsync();
         }
         public async Task<double> GetFeeAmountByFeeListSL(string uniquId, int sl)
         {
@@ -84,12 +74,15 @@ namespace SMS.DAL.Repositories
             List<ClassFeeList> results = new();
             try
             {
-                results = await (from t in _context.ClassFeeList
+                results = await (from t in _context.ClassFeeList.Where(s => s.AcademicSessionId == sessionId)
                                  join h in _context.StudentFeeHead on t.StudentFeeHeadId equals h.Id into joinFeedHead
                                  from h in joinFeedHead.DefaultIfEmpty()
                                  join s in _context.Student on t.AcademicClassId equals s.AcademicClassId
                                  where s.Id == studentId && h.IsResidential == s.IsResidential && t.AcademicSessionId == s.AcademicSessionId
-                                 select t).ToListAsync();
+                                 select t)
+                                 .Include(s => s.StudentFeeHead)
+                                 .Include(s => s.AcademicSession)
+                                 .ToListAsync();
             }
             catch (Exception)
             {
@@ -97,8 +90,37 @@ namespace SMS.DAL.Repositories
             }
             return results;
         }
-
-        public async Task<List<ClassFeeList>> GetAllByUniqueId(string uniqueId)
+        public async Task<List<ClassFeeList>> GetAllBySessionIdClassIdAsync(int sessionId, int classId)
+        {
+            List<ClassFeeList> results = new();
+            try
+            {
+                results = await _context.ClassFeeList.Where(s => s.AcademicSessionId == sessionId && s.AcademicClassId == classId).Include(c => c.StudentFeeHead).Include(c => c.AcademicSession).ToListAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return results;
+        }
+        public async Task<List<ClassFeeList>> GetAllBySessionIdClassIdAsync(int sessionId, int classId, bool isResidential)
+        {
+            List<ClassFeeList> results = new();
+            try
+            {
+                results = await _context.ClassFeeList
+                    .Where(s => s.AcademicSessionId == sessionId && s.AcademicClassId == classId && s.StudentFeeHead.IsResidential == isResidential)
+                    .Include(c => c.StudentFeeHead)
+                    .Include(c => c.AcademicSession)
+                    .ToListAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return results;
+        }
+        public async Task<List<ClassFeeList>> GetCurrentAllByUniqueId(string uniqueId)
         {
             var student = await _context.Student.FirstOrDefaultAsync(s => s.UniqueId == uniqueId);
             var currentSession = await _context.AcademicSession.FirstOrDefaultAsync(s => s.CurrentSession == true);

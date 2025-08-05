@@ -17,5 +17,8 @@ namespace SMS.BLL.Contracts
         Task<List<StudentPaymentSchedulePaidVM>> GetStudentPaymentSchedulePaid(int studId);
         Task<List<StudentPaymentSummerySMS_VM>> GetStudentPaymentSummerySMS_VMsAsync(DateTime date);
         Task<double> GetStudentCurrentDue(int stuId);
+        Task<List<StudentPayment>> GetPaymentByStudentUniqueId(string uniqueId);
+        Task<List<PaidAmountResult>> GetPaidAmountByFeeHeadAsync(string uniqueId, int sessionId, int isResidential, int classId, int feeHeadId);
+        Task<StudentPaymentDetailVM> GetAllDetailPaymentByUniqueId(string studentUniqueId);
     }
 }

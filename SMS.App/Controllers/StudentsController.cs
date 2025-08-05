@@ -15,6 +15,7 @@ using SMS.App.ViewModels.Students;
 using SMS.BLL.Contracts;
 using SMS.Entities;
 using SMS.Entities.AdditionalModels;
+using SMS.Entities.Enums;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -23,7 +24,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SchoolManagementSystem.Controllers
+namespace SMS.App.Controllers
 {
     [Authorize]
     public class StudentsController : Controller
@@ -52,10 +53,11 @@ namespace SchoolManagementSystem.Controllers
         private readonly IStudentActivateHistManager _studentActivateHistManager;
         private readonly IOffDayManager _offDayManager;
         private readonly IStudentFeeAllocationManager _studentFeeAllocationManager;
+        private readonly IAppliedStudentManager _appliedStudentManager;
         #endregion
 
         #region Constructor
-        public StudentsController(IStudentManager studentManager, IAcademicClassManager academicClassManager, IWebHostEnvironment host, IMapper mapper, IAcademicSessionManager academicSessionManager, IStudentPaymentManager studentPaymentManager, IDistrictManager districtManager, IUpazilaManager upazilaManager, IAcademicSectionManager academicSectionManager, IBloodGroupManager bloodGroupManager, IDivisionManager divisionManager, INationalityManager nationalityManager, IGenderManager genderManager, IReligionManager religionManager, IStudentFeeHeadManager studentFeeHeadManager, IClassFeeListManager classFeeListManager, UserManager<ApplicationUser> userManager, IPhoneSMSManager phoneSMSManager, IAttendanceMachineManager attendanceMachineManager, IInstituteManager instituteManager, IStudentActivateHistManager studentActivateHistManager, IOffDayManager offDayManager, IStudentFeeAllocationManager studentFeeAllocationManager)
+        public StudentsController(IStudentManager studentManager, IAcademicClassManager academicClassManager, IWebHostEnvironment host, IMapper mapper, IAcademicSessionManager academicSessionManager, IStudentPaymentManager studentPaymentManager, IDistrictManager districtManager, IUpazilaManager upazilaManager, IAcademicSectionManager academicSectionManager, IBloodGroupManager bloodGroupManager, IDivisionManager divisionManager, INationalityManager nationalityManager, IGenderManager genderManager, IReligionManager religionManager, IStudentFeeHeadManager studentFeeHeadManager, IClassFeeListManager classFeeListManager, UserManager<ApplicationUser> userManager, IPhoneSMSManager phoneSMSManager, IAttendanceMachineManager attendanceMachineManager, IInstituteManager instituteManager, IStudentActivateHistManager studentActivateHistManager, IOffDayManager offDayManager, IStudentFeeAllocationManager studentFeeAllocationManager, IAppliedStudentManager appliedStudentManager)
         {
             _academicClassManager = academicClassManager;
             _host = host;
@@ -80,6 +82,7 @@ namespace SchoolManagementSystem.Controllers
             _studentActivateHistManager = studentActivateHistManager;
             _offDayManager = offDayManager;
             _studentFeeAllocationManager = studentFeeAllocationManager;
+            _appliedStudentManager = appliedStudentManager;
         }
         #endregion Constructor
 
@@ -112,7 +115,7 @@ namespace SchoolManagementSystem.Controllers
             }
             if (!String.IsNullOrEmpty(searchString))
             {
-                allStudent = allStudent.Where(s => s.Name.Contains(searchString)
+                allStudent = allStudent.Where(s => s.Name.ToLower().Contains(searchString.ToLower())
                 || s.ClassRoll.ToString().Contains(searchString)
                 || s.UniqueId.ToString().Contains(searchString)
                 || (s.PhoneNo?.Contains(searchString) ?? false)
@@ -207,7 +210,8 @@ namespace SchoolManagementSystem.Controllers
             }
 
             ViewBag.academicSessionId = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name", academicSessionId);
-            ViewBag.academicClassId = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", academicClassId);
+            var classes = await _academicClassManager.GetAllAsync();
+            ViewBag.academicClassId = new SelectList(classes.Where(s => s.Status == true), "Id", "Name", academicClassId).ToList();
 
             ViewBag.aStatus = new SelectList(isActiveVMs.ToList(), "Id", "sName", aStatus);
             if (pageSize == null)
@@ -218,7 +222,8 @@ namespace SchoolManagementSystem.Controllers
             {
             new SelectListItem { Value = "20", Text = "20", Selected=pageSize==20 },
             new SelectListItem { Value = "50", Text = "50", Selected=pageSize==50  },
-            new SelectListItem { Value = "100", Text = "100", Selected=pageSize==100  }
+            new SelectListItem { Value = "100", Text = "100", Selected=pageSize==100  },
+            new SelectListItem { Value = "0", Text = "All", Selected=pageSize==0  }
             };
             var studentCategory = new List<SelectListItem>
             {
@@ -228,10 +233,26 @@ namespace SchoolManagementSystem.Controllers
             };
             ViewBag.aCategory = new SelectList(studentCategory.ToList(), "Value", "Text", aCategory);
 
+            int pSize = 30;
+            if (pageSize != null)
+            {
+                if (pageSize > 0)
+                {
+                    pSize = (int)pageSize;
+                }
+                else if (pageSize == 0)
+                {
+                    pSize = students.Count();
+                }
+                else
+                {
+                    pSize = totalFound;
+                }
+            }
 
             ViewData["pageSize"] = pageSize;
 
-            return View(PaginatedList<SMS.Entities.AdditionalModels.StudentListVM>.Create(students.OrderBy(s => s.ClassSerial).ThenBy(s => s.ClassRoll).ToList(), pageNumber ?? 1, (int)pageSize));
+            return View(PaginatedList<SMS.Entities.AdditionalModels.StudentListVM>.Create(students.OrderBy(s => s.ClassSerial).ThenBy(s => s.ClassRoll).ToList(), pageNumber ?? 1, (int)pSize));
         }
 
         #endregion Index
@@ -266,7 +287,7 @@ namespace SchoolManagementSystem.Controllers
 
             List<StudentPaymentScheduleVM> paymentSchedule = await _studentPaymentManager.GetStudentPaymentSchedule(student.Id);
 
-            paymentSchedule = paymentSchedule.Where(s => s.IsResidential == student.IsResidential).ToList();
+            paymentSchedule = paymentSchedule.Where(s => s.IsResidential == student.IsResidential && s.Amount>0).ToList();
             List<StudentPaymentSchedulePaidVM> studentPaymentSchedulePaidVMs = await _studentPaymentManager.GetStudentPaymentSchedulePaid(student.Id);
             StudentDetailsVM sd = new();
             sd.StudentPayments = stuPayments;
@@ -275,7 +296,7 @@ namespace SchoolManagementSystem.Controllers
             sd.StudentPaymentSchedules = paymentSchedule;
             sd.StudentPaymentSchedulePaidVMs = studentPaymentSchedulePaidVMs;
 
-            sd.TotalDue = await GetTotalDue(student.Id);
+            sd.TotalDue = await _studentPaymentManager.GetStudentCurrentDue(student.Id); /* await GetTotalDue(student.Id);*/
             sd.CurrentDue = await _studentPaymentManager.GetStudentCurrentDue(student.Id);
             #endregion Payment============================================================================
             #region Attendance =============================================================================
@@ -290,8 +311,9 @@ namespace SchoolManagementSystem.Controllers
                 List<AttendanceIndivisualVM> attendanceIndivisualVMs = new List<AttendanceIndivisualVM>();
                 for (int i = startingMonth; i <= presentMonth; i++)
                 {
+                    var monthYear = i.ToString() + DateTime.Now.Year;
                     AttendanceIndivisualVM attendanceIndivisualVM = new AttendanceIndivisualVM();
-                    var monthlyAttendance = await _attendanceMachineManager.GetAttendanceByMonthSingleStudent(student.Id, i);
+                    var monthlyAttendance = await _attendanceMachineManager.GetAttendanceByMonthSingleStudent(student.Id, monthYear);
                     attendanceIndivisualVM.AttendanceCount = monthlyAttendance.Count;
                     var holidays = await _offDayManager.GetMonthlyHolidaysAsync(i.ToString().PadLeft(2, '0') + DateTime.Now.Year.ToString());
                     attendanceIndivisualVM.TotalDays = DateTime.DaysInMonth(DateTime.Now.Year, i) - holidays.Count;
@@ -322,6 +344,19 @@ namespace SchoolManagementSystem.Controllers
             {
                 ViewBag.tabName = tabName;
             }
+            var activityHist = await _studentActivateHistManager.GetActivityListByUniqueId(student.UniqueId);
+            List<StudentActivateHistModel> activ = new List<StudentActivateHistModel>();
+            foreach (var item in activityHist)
+            {
+                var a = new StudentActivateHistModel()
+                {
+                    StudentId = item.StudentId,
+                    IsActive = item.IsActive,
+                    ActionDateTime = item.ActionDateTime,
+                };
+                activ.Add(a);
+            }
+            sd.StatusActivity = activ;
             return View(sd);
         }
         #endregion
@@ -798,6 +833,7 @@ namespace SchoolManagementSystem.Controllers
             double totalPaid = await GetTotalPaid(st.Id);
             double totalDue = totalAmount - totalPaid;
             totalDue = totalDue >= 0 ? totalDue : 0;
+
             return totalDue;
         }
 
@@ -1038,5 +1074,175 @@ namespace SchoolManagementSystem.Controllers
             return File(Encoding.UTF8.GetBytes(builder.ToString()), "text/csv", today.ToString("yyMMdd") + "Student List_.csv");
         }
         #endregion Other's
+
+        #region Application
+        public async Task<IActionResult> ApplicationList()
+        {
+            var appliedStudents = await _appliedStudentManager.GetAllAsync();
+            List<AppliedStudentVM> students = new List<AppliedStudentVM>();
+            foreach (var student in appliedStudents)
+            {
+                var aStud = new AppliedStudentVM()
+                {
+                    Id = student.Id,
+                    Name = student.Name,
+                    NameBangla = student.NameBangla,
+                    FatherName = student.FatherName,
+                    MotherName = student.MotherName,
+                    FatherPhoneNo = student.FatherPhoneNo,
+                    MotherPhoneNo = student.MotherPhoneNo,
+                    InterestedClass = await _academicClassManager.GetByIdAsync(student.InterestedAppliedClassId)
+                };
+                students.Add(aStud);
+            }
+            return View(students);
+        }
+
+        [HttpPost]
+        public IActionResult ApplicationList(int pageSize, int pageCout)
+        {
+            return Json("");
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> Application()
+        {
+            var instituteInfo = await _instituteManager.GetFirstOrDefaultAsync();
+            OnlineAdmissionVM onlineAdmissionVM = new OnlineAdmissionVM();
+            onlineAdmissionVM.InstituteName = instituteInfo.Name;
+            ViewBag.applicationFrom = "get";
+            return View(onlineAdmissionVM);
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        [AllowAnonymous]
+        public async Task<IActionResult> Application(OnlineAdmissionVM application)
+        {
+            List<AppliedStudentVM> vmStudents = new List<AppliedStudentVM>();
+            if (!string.IsNullOrEmpty(application.SearchText))
+            {
+                var students = await _appliedStudentManager.SearchBySearchText(application.SearchText);
+                if (students != null)
+                {
+                    foreach (var item in students)
+                    {
+                        AppliedStudentVM studentVM = new AppliedStudentVM()
+                        {
+                            Id = item.Id,
+                            Name = item.Name,
+                            FatherName = item.FatherName,
+                            MotherName = item.MotherName,
+                            FatherPhoneNo = item.FatherPhoneNo,
+                            MotherPhoneNo = item.MotherPhoneNo,
+                        };
+                        vmStudents.Add(studentVM);
+                    }
+                }
+            }
+            var instituteInfo = await _instituteManager.GetFirstOrDefaultAsync();
+            application.InstituteName = instituteInfo.Name;
+            application.SearchApplications = vmStudents;
+            ViewBag.applicationFrom = "post";
+            return View(application);
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> ApplicationUpsert(int? id = 0)
+        {
+            var student = new AppliedStudentVM();
+            student.PresentUpazilaList.Add(new SelectListItem("Select District First", "", true));
+            student.PermanentUpazilaList.Add(new SelectListItem("Select District First", "", true));
+            if (id > 0)
+            {
+                var existStudent = await _appliedStudentManager.GetByIdAsync((int)id);
+
+                if (existStudent != null)
+                {
+                    student = _mapper.Map<AppliedStudentVM>(existStudent);
+                    student.PresentUpazilaList = new SelectList(await _upazilaManager.GetAllAsync(), "Id", "Name", student.PresentUpazilaId).ToList();
+                    student.PermanentUpazilaList = new SelectList(await _upazilaManager.GetAllAsync(), "Id", "Name", student.PermanentUpazilaId).ToList();
+                }
+            }
+            var allClasses = await _academicClassManager.GetAllAsync();
+
+            student.AcademicSessionList = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name", student.AcademicSessionId).ToList();
+            student.InterestedAcademicClassList = new SelectList(allClasses.Where(s => s.Status == true), "Id", "Name", student.InterestedAppliedClassId).ToList();
+            student.PreviousAcademicClassList = new SelectList(allClasses.Where(s => s.Status == true), "Id", "Name", student.PreviousSchoolClassId).ToList();
+            student.PreviousAcademicClassList.Add(new SelectListItem("Other", "0"));
+            student.BloodGroupList = new SelectList(await _bloodGroupManager.GetAllAsync(), "Id", "Name", student.BloodGroupId).ToList();
+            student.GenderList = new SelectList(await _genderManager.GetAllAsync(), "Id", "Name", student.GenderId).ToList();
+            student.NationalityList = new SelectList(await _nationalityManager.GetAllAsync(), "Id", "Name", student.NationalityId).ToList();
+            student.ReligionList = new SelectList(await _religionManager.GetAllAsync(), "Id", "Name", student.ReligionId).ToList();
+            student.PresentDistrictList = new SelectList(await _districtManager.GetAllAsync(), "Id", "Name", student.PresentDistrictId).ToList();
+            student.PermanentDistrictList = new SelectList(await _districtManager.GetAllAsync(), "Id", "Name", student.PermanentDistrictId).ToList();
+
+            var occupations = new List<SelectListItem> {
+                new("Select Occupation", "",true),
+                new("Service", "Service"),
+                new("Bussiness", "Bussiness"),
+                new("Other", "Other")
+            };
+            student.FOccupationList = new List<SelectListItem>(occupations);
+            student.MOccupationList = new List<SelectListItem>(occupations);
+            student.MOccupationList.Add(new SelectListItem("Housewife", "Housewife"));
+            return View(student);
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> ApplicationUpsert(AppliedStudentVM application, IFormFile Photo)
+        {
+            var student = _mapper.Map<AppliedStudent>(application);
+            if (application.Id == 0)
+            {
+                if (ModelState.IsValid)
+                {
+                    student.CreatedAt = DateTime.Now;
+                    student.CreatedBy = "Created User";
+                    student.AppliedStudentStatus = AppliedStudentStatus.ApplicationSubmitted.ToString();
+                    var created = await _appliedStudentManager.AddAsync(student);
+                    if (created == true)
+                    {
+                        TempData["create"] = "Created Successfully";
+                    }
+                }
+            }
+            student.EditedAt = DateTime.Now;
+            student.EditedBy = "Edited User";
+            await _appliedStudentManager.UpdateAsync(student);
+            return RedirectToAction(nameof(ApplicationList));
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> ApplicationDetails(int id)
+        {
+            AppliedStudentVM appliedStudentVM = new AppliedStudentVM();
+            var existingStudent = await _appliedStudentManager.GetByIdAsync(id);
+            if (existingStudent != null)
+            {
+                appliedStudentVM = _mapper.Map<AppliedStudentVM>(existingStudent);
+                var aSession = await _academicSessionManager.GetByIdAsync((int)existingStudent.AcademicSessionId);
+                if (aSession != null)
+                {
+                    appliedStudentVM.AcademicSession = aSession;
+                }
+                var aClass = await _academicClassManager.GetByIdAsync(existingStudent.InterestedAppliedClassId);
+                if (aClass != null) { appliedStudentVM.InterestedClass = aClass; }
+            }
+            ;
+
+            return View(appliedStudentVM);
+        }
+        #endregion Application 
+
+        #region API
+        [HttpGet]
+        public async Task<JsonResult> GetAllStudentBySectionId(int academicSectionId)
+        {
+            var allStudents = await _studentManager.GetAllAsync();
+            var result = allStudents.Where(s => s.AcademicSectionId == academicSectionId);
+            return new JsonResult(result.OrderBy(s => s.ClassRoll));
+        }
+        #endregion API
     }
 }

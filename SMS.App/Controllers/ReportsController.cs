@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Reporting.NETCore;
-using Microsoft.ReportingServices.Interfaces;
 using SchoolManagementSystem;
 using SixLabors.ImageSharp;
 using SMS.App.Utilities.Others;
@@ -152,9 +151,7 @@ public class ReportsController : Controller
     {
         var columnMap = new Dictionary<string, string>
         {
-            { "Name", "Student Name" },
             { "NameBangla", "Name (Bangla)" },
-            { "ClassRoll", "Roll" },
             { "AcademicClass", "Class" },
             { "AcademicSection", "Section" },
             { "FatherName", "Father's Name" },
@@ -164,7 +161,16 @@ public class ReportsController : Controller
             { "Gender", "Gender" },
             { "PhoneNo", "Phone" },
             { "GuardianPhone", "Guardian Phone" },
-            { "Address", "Address" }
+            { "DOB", "Date of Birth" },
+            { "Religion", "Religion" },
+            { "BloodGroup", "Blood Group" },
+            { "PresentAddress", "Present Address" },
+            { "PermanentAddress", "Permanent Address" },
+            { "AcademicSession", "Session" },
+            { "PreviousSchool", "Previous School" },
+            { "IsResidential", "Is Residential" },
+            { "SMSService", "SMS Service?" },
+            { "Status", "Current Status" },
         };
 
         var reportModel = new RptStudentDynamicReportVM
@@ -179,22 +185,135 @@ public class ReportsController : Controller
         return View(reportModel);
     }
 
-    public IActionResult StudentDynamicReportExport(string reportType, int academicClassId, int academicSectionId, [FromQuery(Name = "columns")] List<string> columns)
+    public async Task<IActionResult> StudentDynamicReportExport(string reportType, int acaedmicSessionId, int academicClassId, int academicSectionId, [FromQuery(Name = "columns")] List<string> columns)
     {
         if (columns == null || !columns.Any())
-        {
             return BadRequest("No columns selected.");
-        }
-        string mimeType = "application/pdf";
-        // Use academicClassId, academicSectionId, and columns to filter student data
-        // Then use LocalReport and columns to dynamically build the RDLC table
-        // (like add only those columns as ReportParameters or loop through fields in DataTable)
 
-        // ...
-        using var report = new Microsoft.Reporting.NETCore.LocalReport();
-        var pdf = report.Render("pdf");
-        return File(pdf, mimeType);
+        string mimeType = "application/pdf";
+
+        // 1. Get Students
+        var students = await _studentManager.GetStudentsByClassSessionSectionAsync(acaedmicSessionId, academicClassId, academicSectionId);
+        if (students == null || students.Count == 0)
+            return new JsonResult("Sorry! Students Not Found.");
+
+        // 2. Get Institute Info
+        Institute institute = await _instituteManager.GetByIdAsync(1);
+        if (institute == null)
+            return new JsonResult("Sorry! Institute Information Not Found");
+
+        // 3. Column Mapping Logic
+        var columnMappings = new Dictionary<string, Func<Student, object>>
+    {
+        { "NameBangla", s => s.NameBangla },
+        { "AcademicClass", s => s.AcademicClass?.Name },
+        { "AcademicSection", s => s.AcademicSection?.Name },
+        { "FatherName", s => s.FatherName },
+        { "MotherName", s => s.MotherName },
+        { "AdmissionDate", s => s.AdmissionDate.ToString("dd-MM-yyyy") },
+        { "Email", s => s.Email },
+        { "Gender", s => s.Gender.Name },
+        { "PhoneNo", s => s.PhoneNo },
+        { "GuardianPhone", s => s.GuardianPhone },
+        { "DOB", s => s.DOB },
+        { "Religion", s => s.Religion.Name },
+        { "BloodGroup", s => s.BloodGroup.Name },
+        { "PresentAddress", s => s.PresentAddressArea+", "+s.PresentAddressPO+", "+s.PresentUpazila.Name+", "+s.PresentDistrict.Name+", "+s.PresentDivision.Name},
+        { "PermanentAddress", s => s.PermanentAddressArea+", "+s.PermanentAddressPO+", "+s.PermanentUpazila.Name+", "+s.PermanentDistrict.Name+", "+s.PermanentDivision.Name},
+        { "AcademicSession", s => s.AcademicSession.Name},
+        { "PreviousSchool", s => s.PreviousSchool},
+        { "IsResidential", s => s.IsResidential==true?"Residential":"Non-Residential"},
+        { "SMSService", s => s.SMSService==true?"Yes":"No sms"},
+        { "Status", s => s.Status==true?"Active":"In-Active"},
+    };
+
+        // 4. Create Dynamic DataTable
+        var dataTable = new DataTable("StudentDynamicReportDataset");
+
+        foreach (var col in columns)
+        {
+            if (columnMappings.ContainsKey(col))
+                dataTable.Columns.Add(col);
+            dataTable.Columns.Add("Name");
+            dataTable.Columns.Add("ClassRoll");
+        }
+
+        foreach (var student in students)
+        {
+            var row = dataTable.NewRow();
+            row["ClassRoll"] = student.ClassRoll.ToString();
+            row["Name"] = student.Name;
+            foreach (var col in columns)
+            {
+                if (columnMappings.ContainsKey(col))
+                    row[col] = columnMappings[col](student) ?? "";
+            }
+            dataTable.Rows.Add(row);
+        }
+
+        // 5. Prepare RDLC
+        var path = Path.Combine(_host.WebRootPath, "Reports", "RptStudentDynamicReport.rdlc");
+
+        string imageParam = "";
+        var imagePath = Path.Combine(_host.WebRootPath, "Images", "Institute", institute.Logo);
+
+        if (System.IO.File.Exists(imagePath))
+        {
+            using (Image image = Image.FromFile(imagePath))
+            using (MemoryStream ms = new MemoryStream())
+            {
+                image.Save(ms, image.RawFormat);
+                byte[] imageBytes = ms.ToArray();
+                imageParam = Convert.ToBase64String(imageBytes);
+            }
+        }
+
+        using var report = new LocalReport();
+        report.ReportPath = path;
+        report.DataSources.Add(new ReportDataSource("StudentDynamicReportDataset", dataTable));
+
+        var parameters = new[]
+        {
+        new ReportParameter("InstituteName", institute.Name),
+        new ReportParameter("ReportName", "Student List"),
+        new ReportParameter("Address", institute.Address),
+        new ReportParameter("EIIN", institute.EIIN),
+        new ReportParameter("Logo", imageParam),
+        new ReportParameter("ShowNameBangla", columns.Contains("NameBangla").ToString()),
+        new ReportParameter("ShowAcademicSection", columns.Contains("AcademicSection").ToString()),
+        new ReportParameter("ShowFatherName", columns.Contains("FatherName").ToString()),
+        new ReportParameter("ShowMotherName", columns.Contains("MotherName").ToString()),
+        new ReportParameter("ShowAdmissionDate", columns.Contains("AdmissionDate").ToString()),
+        new ReportParameter("ShowEmail", columns.Contains("Email").ToString()),
+        new ReportParameter("ShowGender", columns.Contains("Gender").ToString()),
+        new ReportParameter("ShowPhoneNo", columns.Contains("PhoneNo").ToString()),
+        new ReportParameter("ShowGuardianPhone", columns.Contains("GuardianPhone").ToString()),
+        new ReportParameter("ShowDOB", columns.Contains("DOB").ToString()),
+        new ReportParameter("ShowReligion", columns.Contains("Religion").ToString()),
+        new ReportParameter("ShowBloodGroup", columns.Contains("BloodGroup").ToString()),
+        new ReportParameter("ShowPresentAddress", columns.Contains("PresentAddress").ToString()),
+        new ReportParameter("ShowPermanentAddress", columns.Contains("PermanentAddress").ToString()),
+        new ReportParameter("ShowAcademicSession", columns.Contains("AcademicSession").ToString()),
+        new ReportParameter("ShowPreviousSchool", columns.Contains("PreviousSchool").ToString()),
+        new ReportParameter("ShowIsResidential", columns.Contains("IsResidential").ToString()),
+        new ReportParameter("ShowSMSService", columns.Contains("SMSService").ToString()),
+        new ReportParameter("ShowStatus", columns.Contains("Status").ToString()),
+        };
+        report.SetParameters(parameters);
+
+        var result = report.Render(reportType ?? "pdf"); // default to pdf
+        return File(result, mimeType);
     }
+    private bool IsParameterTrueOrFalse(List<string> columns, string column)
+    {
+        if (columns.Contains(column))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     #endregion Student List Report
 
     #region Attendance Reports
@@ -528,19 +647,19 @@ public class ReportsController : Controller
         }
         using var report = new Microsoft.Reporting.NETCore.LocalReport();
 
-        report.DataSources.Add(new ReportDataSource("AttendanceReportDS", studentDailyAttendance));
-        var parameters = new[] {
-            new ReportParameter("InstituteName", institute.Name),
-            new ReportParameter("Location", institute.Address),
-            new ReportParameter("EIINNo", institute.EIIN),
-            new ReportParameter("Logo", imageParam),
-            new ReportParameter("ReportName", reportName),
-            new ReportParameter("AttendanceDate", dailyCheckoutReportVM.ReportDate.ToString("dd MMM yyyy")),
-            new ReportParameter("ReportDate", DateTime.Today.ToString("dd MMM yyyy")),
-            new ReportParameter("TotalStudent",totalStudents)
-        };
+        //report.DataSources.Add(new ReportDataSource("AttendanceReportDS", studentDailyAttendance));
+        //var parameters = new[] {
+        //    new ReportParameter("InstituteName", institute.Name),
+        //    new ReportParameter("Location", institute.Address),
+        //    new ReportParameter("EIINNo", institute.EIIN),
+        //    new ReportParameter("Logo", imageParam),
+        //    new ReportParameter("ReportName", reportName),
+        //    new ReportParameter("AttendanceDate", dailyCheckoutReportVM.ReportDate.ToString("dd MMM yyyy")),
+        //    new ReportParameter("ReportDate", DateTime.Today.ToString("dd MMM yyyy")),
+        //    new ReportParameter("TotalStudent",totalStudents)
+        //};
         report.ReportPath = path;
-        report.SetParameters(parameters);
+        //report.SetParameters(parameters);
         var pdf = report.Render("pdf");
         if (!string.IsNullOrEmpty(dailyCheckoutReportVM.fileName))
         {

@@ -42,6 +42,7 @@
 		<Content Remove="wwwroot\Reports\ReportData\rptDynamicStudentDS.xsd" />
 		<Content Remove="wwwroot\Reports\rptAnnualReport.rdlc" />
 		<Content Remove="wwwroot\Reports\rptStudent1.rdlc" />
+		<Content Remove="wwwroot\Reports\RptStudentDynamicReport.rdlc" />
 		<Content Remove="wwwroot\Reports\rptStudentPaymentFullInfo.rdlc" />
 		<Content Remove="wwwroot\Reports\Rpt_AdmitCard.rdlc" />
 		<Content Remove="wwwroot\Reports\Rpt_Daily_Attendance.rdlc" />
@@ -133,6 +134,7 @@
 		</None>
 		<None Include="wwwroot\Reports\ReportData\MonthAttendanceDataset.xss" />
 		<None Include="wwwroot\Reports\rptAnnualReport.rdlc" />
+		<None Include="wwwroot\Reports\RptStudentDynamicReport.rdlc" />
 		<None Include="wwwroot\Reports\rptStudentPaymentFullInfo.rdlc" />
 		<None Include="wwwroot\Reports\Rpt_AdmitCard.rdlc" />
 		<None Include="wwwroot\Reports\Rpt_MonthlyAttendance.rdlc" />

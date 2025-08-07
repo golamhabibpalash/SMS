@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Reporting.NETCore;
 using SchoolManagementSystem;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 using SMS.App.Utilities.Others;
 using SMS.App.ViewModels.AttendanceVM;
 using SMS.App.ViewModels.ReportVM;
@@ -18,7 +21,6 @@ using SMS.Entities.RptModels.StudentPayment;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -151,8 +153,9 @@ public class ReportsController : Controller
     {
         var columnMap = new Dictionary<string, string>
         {
+            { "Name", "Name" },
+            { "ClassRoll", "Class Roll" },
             { "NameBangla", "Name (Bangla)" },
-            { "AcademicClass", "Class" },
             { "AcademicSection", "Section" },
             { "FatherName", "Father's Name" },
             { "MotherName", "Mother's Name" },
@@ -203,50 +206,60 @@ public class ReportsController : Controller
             return new JsonResult("Sorry! Institute Information Not Found");
 
         // 3. Column Mapping Logic
-        var columnMappings = new Dictionary<string, Func<Student, object>>
-    {
-        { "NameBangla", s => s.NameBangla },
-        { "AcademicClass", s => s.AcademicClass?.Name },
-        { "AcademicSection", s => s.AcademicSection?.Name },
-        { "FatherName", s => s.FatherName },
-        { "MotherName", s => s.MotherName },
-        { "AdmissionDate", s => s.AdmissionDate.ToString("dd-MM-yyyy") },
-        { "Email", s => s.Email },
-        { "Gender", s => s.Gender.Name },
-        { "PhoneNo", s => s.PhoneNo },
-        { "GuardianPhone", s => s.GuardianPhone },
-        { "DOB", s => s.DOB },
-        { "Religion", s => s.Religion.Name },
-        { "BloodGroup", s => s.BloodGroup.Name },
-        { "PresentAddress", s => s.PresentAddressArea+", "+s.PresentAddressPO+", "+s.PresentUpazila.Name+", "+s.PresentDistrict.Name+", "+s.PresentDivision.Name},
-        { "PermanentAddress", s => s.PermanentAddressArea+", "+s.PermanentAddressPO+", "+s.PermanentUpazila.Name+", "+s.PermanentDistrict.Name+", "+s.PermanentDivision.Name},
-        { "AcademicSession", s => s.AcademicSession.Name},
-        { "PreviousSchool", s => s.PreviousSchool},
-        { "IsResidential", s => s.IsResidential==true?"Residential":"Non-Residential"},
-        { "SMSService", s => s.SMSService==true?"Yes":"No sms"},
-        { "Status", s => s.Status==true?"Active":"In-Active"},
-    };
-
+        var columnMappings = new Dictionary<string, (string Label, Func<Student, object> Selector)>
+        {
+            { "Name", ("Name", s => s.Name) },
+            { "ClassRoll", ("Class Roll", s => s.ClassRoll) },
+            { "NameBangla", ("Name (Bangla)", s => s.NameBangla) },
+            { "AcademicClass", ("Class", s => s.AcademicClass?.Name) },
+            { "AcademicSection", ("Section", s => s.AcademicSection?.Name) },
+            { "FatherName", ("Father's Name", s => s.FatherName) },
+            { "MotherName", ("Mother's Name", s => s.MotherName) },
+            { "AdmissionDate", ("Admission Date", s => s.AdmissionDate.ToString("dd-MM-yyyy")) },
+            { "Email", ("Email", s => s.Email) },
+            { "Gender", ("Gender", s => s.Gender?.Name) },
+            { "PhoneNo", ("Phone", s => s.PhoneNo) },
+            { "GuardianPhone", ("Guardian Phone", s => s.GuardianPhone) },
+            { "DOB", ("Date of Birth", s => s.DOB.ToString("dd-MM-yyyy")) },
+            { "Religion", ("Religion", s => s.Religion?.Name) },
+            { "BloodGroup", ("Blood Group", s => s.BloodGroup?.Name) },
+            { "PresentAddress", ("Present Address", s => s.PresentAddressArea + ", " + s.PresentAddressPO + ", " + s.PresentUpazila?.Name + ", " + s.PresentDistrict?.Name + ", " + s.PresentDivision?.Name) },
+            { "PermanentAddress", ("Permanent Address", s => s.PermanentAddressArea + ", " + s.PermanentAddressPO + ", " + s.PermanentUpazila?.Name + ", " + s.PermanentDistrict?.Name + ", " + s.PermanentDivision?.Name) },
+            { "AcademicSession", ("Session", s => s.AcademicSession?.Name) },
+            { "PreviousSchool", ("Previous School", s => s.PreviousSchool) },
+            { "IsResidential", ("Residential Type", s => s.IsResidential ? "Residential" : "Non-Residential") },
+            { "SMSService", ("SMS Service", s => s.SMSService ? "Yes" : "No SMS") },
+            { "Status", ("Status", s => s.Status ? "Active" : "Inactive") }
+        };
         // 4. Create Dynamic DataTable
         var dataTable = new DataTable("StudentDynamicReportDataset");
+        // Force these columns to be always included
+        var mandatoryColumns = new List<string> { "Name", "ClassRoll" };
+
+        // Add them to `columns` if not already there
+        foreach (var col in mandatoryColumns)
+        {
+            if (!columns.Contains(col))
+            {
+                columns.Insert(0, col); // add at the beginning
+            }                
+        }
 
         foreach (var col in columns)
         {
             if (columnMappings.ContainsKey(col))
                 dataTable.Columns.Add(col);
-            dataTable.Columns.Add("Name");
-            dataTable.Columns.Add("ClassRoll");
         }
 
         foreach (var student in students)
         {
             var row = dataTable.NewRow();
-            row["ClassRoll"] = student.ClassRoll.ToString();
-            row["Name"] = student.Name;
-            foreach (var col in columns)
+            foreach (var colKey in columns)
             {
-                if (columnMappings.ContainsKey(col))
-                    row[col] = columnMappings[col](student) ?? "";
+                if (columnMappings.TryGetValue(colKey, out var colInfo))
+                {
+                    row[colKey] = colInfo.Selector(student) ?? string.Empty;
+                }
             }
             dataTable.Rows.Add(row);
         }
@@ -1312,14 +1325,12 @@ public class ReportsController : Controller
         return File(pdf, "application/pdf");
     }
     #endregion Annual Report
+
     private string ConvertImageToBase64(string imagePath)
     {
-        if (!System.IO.File.Exists(imagePath))
-            return string.Empty;
-
-        using var image = new Bitmap(imagePath);
+        using var image = SixLabors.ImageSharp.Image.Load<Rgba32>(imagePath);
         using var ms = new MemoryStream();
-        image.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+        image.Save(ms, new PngEncoder());
         return Convert.ToBase64String(ms.ToArray());
     }
 }

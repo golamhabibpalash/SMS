@@ -8,7 +8,6 @@ using SchoolManagementSystem;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
 using SMS.App.Utilities.Others;
 using SMS.App.ViewModels.AttendanceVM;
 using SMS.App.ViewModels.ReportVM;
@@ -169,7 +168,6 @@ public class ReportsController : Controller
             { "BloodGroup", "Blood Group" },
             { "PresentAddress", "Present Address" },
             { "PermanentAddress", "Permanent Address" },
-            { "AcademicSession", "Session" },
             { "PreviousSchool", "Previous School" },
             { "IsResidential", "Is Residential" },
             { "SMSService", "SMS Service?" },
@@ -188,24 +186,19 @@ public class ReportsController : Controller
         return View(reportModel);
     }
 
-    public async Task<IActionResult> StudentDynamicReportExport(string reportType, int acaedmicSessionId, int academicClassId, int academicSectionId, [FromQuery(Name = "columns")] List<string> columns)
+    public async Task<IActionResult> StudentDynamicReportExport(string reportType, string fileName, int academicSessionId, int academicClassId, int academicSectionId, [FromQuery(Name = "columns")] List<string> columns)
     {
-        if (columns == null || !columns.Any())
+        if (columns == null || columns.Count == 0)
             return BadRequest("No columns selected.");
 
-        string mimeType = "application/pdf";
-
-        // 1. Get Students
-        var students = await _studentManager.GetStudentsByClassSessionSectionAsync(acaedmicSessionId, academicClassId, academicSectionId);
+        var students = await _studentManager.GetStudentsByClassSessionSectionAsync(academicSessionId, academicClassId, academicSectionId);
         if (students == null || students.Count == 0)
-            return new JsonResult("Sorry! Students Not Found.");
+            return Json("Sorry! Students Not Found.");
 
-        // 2. Get Institute Info
-        Institute institute = await _instituteManager.GetByIdAsync(1);
+        var institute = await _instituteManager.GetByIdAsync(1);
         if (institute == null)
-            return new JsonResult("Sorry! Institute Information Not Found");
+            return Json("Sorry! Institute Information Not Found");
 
-        // 3. Column Mapping Logic
         var columnMappings = new Dictionary<string, (string Label, Func<Student, object> Selector)>
         {
             { "Name", ("Name", s => s.Name) },
@@ -223,109 +216,122 @@ public class ReportsController : Controller
             { "DOB", ("Date of Birth", s => s.DOB.ToString("dd-MM-yyyy")) },
             { "Religion", ("Religion", s => s.Religion?.Name) },
             { "BloodGroup", ("Blood Group", s => s.BloodGroup?.Name) },
-            { "PresentAddress", ("Present Address", s => s.PresentAddressArea + ", " + s.PresentAddressPO + ", " + s.PresentUpazila?.Name + ", " + s.PresentDistrict?.Name + ", " + s.PresentDivision?.Name) },
-            { "PermanentAddress", ("Permanent Address", s => s.PermanentAddressArea + ", " + s.PermanentAddressPO + ", " + s.PermanentUpazila?.Name + ", " + s.PermanentDistrict?.Name + ", " + s.PermanentDivision?.Name) },
+            { "PresentAddress", ("Present Address", s => $"{s.PresentAddressArea}, {s.PresentAddressPO}, {s.PresentUpazila?.Name}, {s.PresentDistrict?.Name}, {s.PresentDivision?.Name}") },
+            { "PermanentAddress", ("Permanent Address", s => $"{s.PermanentAddressArea}, {s.PermanentAddressPO}, {s.PermanentUpazila?.Name}, {s.PermanentDistrict?.Name}, {s.PermanentDivision?.Name}") },
             { "AcademicSession", ("Session", s => s.AcademicSession?.Name) },
             { "PreviousSchool", ("Previous School", s => s.PreviousSchool) },
             { "IsResidential", ("Residential Type", s => s.IsResidential ? "Residential" : "Non-Residential") },
             { "SMSService", ("SMS Service", s => s.SMSService ? "Yes" : "No SMS") },
             { "Status", ("Status", s => s.Status ? "Active" : "Inactive") }
         };
-        // 4. Create Dynamic DataTable
-        var dataTable = new DataTable("StudentDynamicReportDataset");
-        // Force these columns to be always included
-        var mandatoryColumns = new List<string> { "Name", "ClassRoll" };
 
-        // Add them to `columns` if not already there
-        foreach (var col in mandatoryColumns)
+        var reportColumns = new List<string> { "ClassRoll", "Name", "Column3", "Column4", "Column5", "Column6", "Column7", "Column8", "Column9", "AcademicClass", "AcademicSession", "ColumnExtra3", "ColumnExtra4", "ColumnExtra5" };
+
+        // Create a mapping of fixed RDLC column names to selected dynamic columns
+        var dynamicColumnMap = new Dictionary<string, string>();
+
+        int dynamicStart = 2;
+        for (int i = dynamicStart; i < 9; i++)
         {
-            if (!columns.Contains(col))
+            string fixedColumn = "Column" + (i + 1);
+            if (columns.Count > i)
             {
-                columns.Insert(0, col); // add at the beginning
-            }                
+                dynamicColumnMap[fixedColumn] = columns[i];
+            }
+            else
+            {
+                dynamicColumnMap[fixedColumn] = fixedColumn;
+            }
         }
+        var mandatoryColumns = new List<string> { "Name", "ClassRoll", "AcademicClass", "AcademicSession" };
+        foreach (var col in mandatoryColumns)
+            if (!columns.Contains(col)) columns.Insert(0, col);
 
-        foreach (var col in columns)
-        {
-            if (columnMappings.ContainsKey(col))
-                dataTable.Columns.Add(col);
-        }
+        var dataTable = new DataTable("StudentDynamicReportDataset");
+        reportColumns.ForEach(c => dataTable.Columns.Add(c));
 
-        foreach (var student in students)
+        foreach (var student in students.OrderBy(s => s.AcademicClassId).ThenBy(s => s.ClassRoll))
         {
             var row = dataTable.NewRow();
-            foreach (var colKey in columns)
+
+
+            // Mandatory Fields
+            row["ClassRoll"] = student.ClassRoll;
+            row["Name"] = student.Name;
+            row["AcademicClass"] = student.AcademicClass?.Name ?? "";
+            row["AcademicSession"] = student.AcademicSession?.Name ?? "";
+
+            // Dynamic Mapped Columns
+            foreach (var map in dynamicColumnMap)
             {
-                if (columnMappings.TryGetValue(colKey, out var colInfo))
+                var fixedCol = map.Key;
+                var originalCol = map.Value;
+
+                if (columnMappings.TryGetValue(originalCol, out var colInfo))
                 {
-                    row[colKey] = colInfo.Selector(student) ?? string.Empty;
+                    if (fixedCol == "Name" || fixedCol == "ClassRoll")
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        row[fixedCol] = colInfo.Selector(student) ?? string.Empty;
+                    }
                 }
             }
+
             dataTable.Rows.Add(row);
         }
 
-        // 5. Prepare RDLC
-        var path = Path.Combine(_host.WebRootPath, "Reports", "RptStudentDynamicReport.rdlc");
-
-        string imageParam = "";
+        var reportPath = Path.Combine(_host.WebRootPath, "Reports", "RptStudentDynamicReport.rdlc");
         var imagePath = Path.Combine(_host.WebRootPath, "Images", "Institute", institute.Logo);
+        string imageParam = string.Empty;
 
         if (System.IO.File.Exists(imagePath))
         {
-            using (Image image = Image.FromFile(imagePath))
-            using (MemoryStream ms = new MemoryStream())
-            {
-                image.Save(ms, image.RawFormat);
-                byte[] imageBytes = ms.ToArray();
-                imageParam = Convert.ToBase64String(imageBytes);
-            }
+            using var image = Image.FromFile(imagePath);
+            using var ms = new MemoryStream();
+            image.Save(ms, image.RawFormat);
+            imageParam = Convert.ToBase64String(ms.ToArray());
         }
 
-        using var report = new LocalReport();
-        report.ReportPath = path;
+        using var report = new LocalReport { ReportPath = reportPath };
         report.DataSources.Add(new ReportDataSource("StudentDynamicReportDataset", dataTable));
+
+        var dynamicHeaderParams = dynamicColumnMap
+        .Select((map, index) => new ReportParameter(
+            $"Column{index + 3}Header",
+            columnMappings.TryGetValue(map.Value, out var val) ? val.Label : map.Value
+        ))
+        .ToArray();
 
         var parameters = new[]
         {
-        new ReportParameter("InstituteName", institute.Name),
-        new ReportParameter("ReportName", "Student List"),
-        new ReportParameter("Address", institute.Address),
-        new ReportParameter("EIIN", institute.EIIN),
-        new ReportParameter("Logo", imageParam),
-        new ReportParameter("ShowNameBangla", columns.Contains("NameBangla").ToString()),
-        new ReportParameter("ShowAcademicSection", columns.Contains("AcademicSection").ToString()),
-        new ReportParameter("ShowFatherName", columns.Contains("FatherName").ToString()),
-        new ReportParameter("ShowMotherName", columns.Contains("MotherName").ToString()),
-        new ReportParameter("ShowAdmissionDate", columns.Contains("AdmissionDate").ToString()),
-        new ReportParameter("ShowEmail", columns.Contains("Email").ToString()),
-        new ReportParameter("ShowGender", columns.Contains("Gender").ToString()),
-        new ReportParameter("ShowPhoneNo", columns.Contains("PhoneNo").ToString()),
-        new ReportParameter("ShowGuardianPhone", columns.Contains("GuardianPhone").ToString()),
-        new ReportParameter("ShowDOB", columns.Contains("DOB").ToString()),
-        new ReportParameter("ShowReligion", columns.Contains("Religion").ToString()),
-        new ReportParameter("ShowBloodGroup", columns.Contains("BloodGroup").ToString()),
-        new ReportParameter("ShowPresentAddress", columns.Contains("PresentAddress").ToString()),
-        new ReportParameter("ShowPermanentAddress", columns.Contains("PermanentAddress").ToString()),
-        new ReportParameter("ShowAcademicSession", columns.Contains("AcademicSession").ToString()),
-        new ReportParameter("ShowPreviousSchool", columns.Contains("PreviousSchool").ToString()),
-        new ReportParameter("ShowIsResidential", columns.Contains("IsResidential").ToString()),
-        new ReportParameter("ShowSMSService", columns.Contains("SMSService").ToString()),
-        new ReportParameter("ShowStatus", columns.Contains("Status").ToString()),
-        };
+            new ReportParameter("InstituteName", institute.Name),
+            new ReportParameter("ReportName", "Student List"),
+            new ReportParameter("Address", institute.Address),
+            new ReportParameter("EIIN", institute.EIIN),
+            new ReportParameter("Logo", imageParam)
+        }.Concat(dynamicHeaderParams).ToArray();
+
         report.SetParameters(parameters);
-
-        var result = report.Render(reportType ?? "pdf"); // default to pdf
-        return File(result, mimeType);
-    }
-    private bool IsParameterTrueOrFalse(List<string> columns, string column)
-    {
-        if (columns.Contains(column))
+        var result = report.Render(reportType ?? "pdf");
+        if (!string.IsNullOrEmpty(fileName))
         {
-            return true;
+            if (reportType == "xls")
+            {
+                result = report.Render("excel");
+            }
+            if (reportType == "word")
+            {
+                result = report.Render("word");
+            }
+            fileName = fileName + "_" + DateTime.Now.ToString("yyyyMMdd");
+            return File(result, MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
         }
-
-        return false;
+        return File(result, "application/pdf");
     }
+
 
     #endregion Student List Report
 

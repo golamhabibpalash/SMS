@@ -114,6 +114,15 @@ namespace SMS.DAL.Repositories
                 .Include(s => s.AcademicSection)
                 .Include(s => s.AcademicSession)
                 .Include(s => s.AcademicClass)
+                .Include(s => s.Gender)
+                .Include(s => s.PresentDivision)
+                .Include(s => s.PresentDistrict)
+                .Include(s => s.PresentUpazila)
+                .Include(s => s.PermanentDivision)
+                .Include(s => s.PermanentDistrict)
+                .Include(s => s.PermanentUpazila)
+                .Include(s => s.Religion)
+                .Include(s => s.BloodGroup)
                 .ToListAsync();
 
             if (classId != 0)

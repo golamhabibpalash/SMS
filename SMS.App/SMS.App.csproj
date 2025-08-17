@@ -35,7 +35,6 @@
 		<Content Remove="Views\AcademicExamType\Delete.cshtml" />
 		<Content Remove="wwwroot\Reports\ReportData\MonthAttendanceDataset - Copy.xsc" />
 		<Content Remove="wwwroot\Reports\ReportData\MonthAttendanceDataset - Copy.xss" />
-		<Content Remove="wwwroot\Reports\ReportData\MonthAttendanceDataset.Designer.cs" />
 		<Content Remove="wwwroot\Reports\ReportData\MonthAttendanceDataset.xsc" />
 		<Content Remove="wwwroot\Reports\ReportData\MonthAttendanceDataset.xsd" />
 		<Content Remove="wwwroot\Reports\ReportData\MonthAttendanceDataset.xss" />
@@ -176,6 +175,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Update="wwwroot\Reports\ReportData\MonthAttendanceDataset.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>MonthAttendanceDataset.xsd</DependentUpon>
+	  </Content>
 	  <Content Update="wwwroot\Reports\ReportData\rptDynamicStudentDS.Designer.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>

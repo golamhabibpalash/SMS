@@ -20,7 +20,7 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="classId" class="col-sm-3 col-form-label">Attendnace For</label>
+                            <label for="AttendanceFor" class="col-sm-3 col-form-label">Attendnace For</label>
                             <div class="col-sm-9">
                                 <select class="form-control" onchange="attendanceForChange()">
                                     <option disabled selected value="">-Select Attendance For-</option>
@@ -39,10 +39,19 @@
                             </div>
                         </div>
                         <div class="form-group row academicSectionPortion">
-                            <label for="classId" class="col-sm-3 col-form-label">Academic Section</label>
+                            <label for="AcademicSectionId" class="col-sm-3 col-form-label">Academic Section</label>
                             <div class="col-sm-9">
                                 <select id="AcademicSectionId" class="form-control">
                                     <option value="">Section</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row academicSectionPortion">
+                            <label for="AttendanceCategory" class="col-sm-3 col-form-label">Attendance Category</label>
+                            <div class="col-sm-9">
+                                <select id="AttendanceCategory" class="form-control">
+                                    <option value="In">Check In</option>
+                                    <option value="Out">Check Out</option>
                                 </select>
                             </div>
                         </div>
@@ -81,6 +90,7 @@
                     <input type="hidden" id="exportAcademicClassId" name="academicClassId" />
                     <input type="hidden" id="exportAcademicSectionId" name="academicSectionId" />
                     <input type="hidden" id="exportAttendanceType" name="attendanceType" />
+                    <input type="hidden" id="exportAttendanceCategory" name="attendanceCategory" />
                     <div class="btn-group btn-sm mr-2 " role="group" aria-label="First group">
                         <input type="hidden" name="fileName" value="Daily Attendance Report_@DateTime.Now.ToString("dd_MM_yyyy")" />
                         <button type="submit" name="reportType" value="pdf" class="btn-sm btn btn-danger" data-toggle="tooltip" title="Export PDF" data-placement="left"><i class="fas fa-file-pdf"></i></button>
@@ -113,12 +123,14 @@
                 let fromDate = '';
                 let attendanceType = 'all';
                 let attendanceFor = '';
+                let attendanceCategory = 'in';
 
                 fromDate = $('#sFromDate').val();
                 academicClassId = $('#AcademicClassId option:selected').val();
                 aSection = $('#AcademicSectionId option:selected').val();
                 attendanceType = $('#AttendanceType option:selected').val();
                 attendanceFor = $('#attendancForId').val();
+                attendanceCategory = $('#AttendanceCategory option:selected').val();
 
                 if (fromDate == '' || attendanceFor == '') {
                     $('#InvalidForm').show();
@@ -131,8 +143,9 @@
                     $('#exportAcademicSectionId').attr('value', aSection);
                     $('#exportFromDate').attr('value', fromDate);
                     $('#exportAttendanceType').attr('value', attendanceType);
+                    $('#exportAttendanceCategory').attr('value', attendanceCategory);
 
-                    $('#myIframe').attr('src', '/Reports/DailyAttendnaceReportExport?reportType=' + reportType + '&&fromDate=' + fromDate + '&&academicClassId=' + academicClassId + '&&academicSectionId=' + aSection + "&&attendanceType=" + attendanceType + "&&fileName=" + fileName + "&&attendanceFor=" + attendanceFor);
+                    $('#myIframe').attr('src', '/Reports/DailyAttendnaceReportExport?reportType=' + reportType + '&&fromDate=' + fromDate + '&&academicClassId=' + academicClassId + '&&academicSectionId=' + aSection + "&&attendanceType=" + attendanceType + "&&fileName=" + fileName + "&&attendanceFor=" + attendanceFor + "&&attendanceCategory=" + attendanceCategory;
 
                     var iframe = document.getElementById('myIframe');
                     $('#loading').show();

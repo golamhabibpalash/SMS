@@ -32,6 +32,11 @@ namespace SMS.BLL.Managers.Reports
             return await _reportRepository.GetDailyAttendanceReport(fromDate, academicClassId, academicSectionId, attendanceType, aSessionId, attendanceFor);
         }
 
+        public async Task<List<RptDailyAttendaceVM>> GetDailyAttendanceReportCheckOut(string fromDate, string academicClassId, string academicSectionId,string attendanceType, string aSessionId)
+        {
+            throw new Exception();
+        }
+
         public async Task<List<RptStudentsPaymentVM>> GetStudentPayment(string fromDate, string ToDate, string AcademicClassId, string AcademicSectionId)
         {
             return await _reportRepository.GetStudentPayment(fromDate,ToDate,AcademicClassId, AcademicSectionId);

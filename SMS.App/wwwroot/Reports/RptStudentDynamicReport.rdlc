@@ -1069,7 +1069,6 @@
                       <Value>="Date time : " &amp; Format(Now, "dd/MM/yyyy HH:mm:ss")</Value>
                       <Style>
                         <FontFamily>helvetica</FontFamily>
-                        <FontSize>11pt</FontSize>
                       </Style>
                     </TextRun>
                   </TextRuns>

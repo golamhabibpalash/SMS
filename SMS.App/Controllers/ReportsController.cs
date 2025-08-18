@@ -881,6 +881,7 @@ public class ReportsController : Controller
     public async Task<IActionResult> MarkSheetReportExport(string reportType, string fileName, int examGroupId, int academicClassId, int? sectionId, int sessionId, int studentId)
     {
         var results = await _reportManager.GetStudentWiseMarkSheet(examGroupId, academicClassId);
+        var highestMarks = results.Max(r => r.TotalObtainMarks).ToString();
         if (results == null || results.Count <= 0)
         {
             return new JsonResult("Result not found");
@@ -898,8 +899,6 @@ public class ReportsController : Controller
         {
             return new JsonResult("Result not found");
         }
-        AcademicExamGroup academicExamGroup = await _academicExamGroupManager.GetByIdAsync(examGroupId);
-        AcademicClass academicClass = await _academicClassManager.GetByIdAsync(academicClassId);
 
         Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
 
@@ -924,7 +923,6 @@ public class ReportsController : Controller
 
         using var report = new Microsoft.Reporting.NETCore.LocalReport();
         report.DataSources.Add(new ReportDataSource("DataSet1", results));
-        var highestMarks = results.Max(r => r.TotalObtainMarks).ToString();
 
         string publicationDate = results.Select(r => r.CreatedAt).FirstOrDefault().ToString("dd MMM yyyy");
         try
@@ -934,8 +932,8 @@ public class ReportsController : Controller
                 new ReportParameter("Address", institute.Address),
                 new ReportParameter("InstituteLogo", imageParam),
                 new ReportParameter("EIINNo", institute.EIIN),
-                new ReportParameter("ExamName", academicExamGroup.ExamGroupName),
-                new ReportParameter("ClassName", academicClass.Name),
+                new ReportParameter("ExamName", results.Select(s => s.ExamGroupName).FirstOrDefault()),
+                new ReportParameter("ClassName",results.Select(s=>s.ClassName).FirstOrDefault()),
                 new ReportParameter("PublicationDate",  publicationDate),
                 new ReportParameter("HighestMarks",  highestMarks),
             };

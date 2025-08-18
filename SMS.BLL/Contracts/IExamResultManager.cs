@@ -12,5 +12,6 @@ namespace SMS.BLL.Contracts
     {
         Task<List<ExamResult>> GetExamResultsByExamGroupNClassId(int examGroupId, int classId);
         bool IsResultProcessedAsync(int examGroupId, int classId);
+        Task<string> GetHighestMarksOfTheClassAsync(int examGroupId, int classId);
     }
 }

@@ -913,6 +913,8 @@ public class ReportsController : Controller
             byte[] imageBytes = ms.ToArray();
             imageParam = Convert.ToBase64String(imageBytes);
         }
+
+
         StringBuilder stringBuilderMediaType = new StringBuilder();
         stringBuilderMediaType.Append("application/pdf");
 
@@ -922,6 +924,7 @@ public class ReportsController : Controller
 
         using var report = new Microsoft.Reporting.NETCore.LocalReport();
         report.DataSources.Add(new ReportDataSource("DataSet1", results));
+        var highestMarks = results.Max(r => r.TotalObtainMarks).ToString();
 
         string publicationDate = results.Select(r => r.CreatedAt).FirstOrDefault().ToString("dd MMM yyyy");
         try
@@ -933,7 +936,8 @@ public class ReportsController : Controller
                 new ReportParameter("EIINNo", institute.EIIN),
                 new ReportParameter("ExamName", academicExamGroup.ExamGroupName),
                 new ReportParameter("ClassName", academicClass.Name),
-                new ReportParameter("PublicationDate",  publicationDate)
+                new ReportParameter("PublicationDate",  publicationDate),
+                new ReportParameter("HighestMarks",  highestMarks),
             };
             report.ReportPath = path;
             report.SetParameters(parameters);
@@ -968,6 +972,7 @@ public class ReportsController : Controller
         }
         return File(pdf, stringBuilderMediaType.ToString());
     }
+
     void SubReportGraddingTableProcessingAsync(object sender, SubreportProcessingEventArgs e)
     {
         var gTables = TempData["gTables"];

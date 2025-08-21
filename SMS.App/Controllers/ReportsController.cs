@@ -156,8 +156,8 @@ public class ReportsController : Controller
             { "ClassRoll", "Class Roll" },
             { "NameBangla", "Name (Bangla)" },
             { "AcademicSection", "Section" },
-            { "FatherName", "Father's Name" },
-            { "MotherName", "Mother's Name" },
+            { "Father", "Father's Name" },
+            { "Mother", "Mother's Name" },
             { "AdmissionDate", "Admission Date" },
             { "Email", "Email" },
             { "Gender", "Gender" },
@@ -194,54 +194,54 @@ public class ReportsController : Controller
     int academicSectionId,
     [FromQuery(Name = "columns")] List<string> columns)
     {
-        // 1️⃣ Validate input columns
+        // 1️ Validate input columns
         if (columns == null || !columns.Any())
             return BadRequest("No columns selected.");
 
-        // 2️⃣ Fetch students
+        // 2️ Fetch students
         var students = await _studentManager.GetStudentsByClassSessionSectionAsync(
             academicSessionId, academicClassId, academicSectionId);
         if (students == null || !students.Any())
             return Json("Sorry! Students Not Found.");
 
-        // 3️⃣ Fetch institute info
+        // 3️ Fetch institute info
         var institute = await _instituteManager.GetByIdAsync(1);
         if (institute == null)
             return Json("Sorry! Institute Information Not Found");
 
-        // 4️⃣ Define column mappings
+        // 4️ Define column mappings
         var columnMappings = GetColumnMappings();
 
-        // 5️⃣ Ensure mandatory columns are included
+        // 5️ Ensure mandatory columns are included
         var mandatoryColumns = new List<string> { "Name", "ClassRoll", "AcademicClass", "AcademicSession" };
         foreach (var col in mandatoryColumns)
             if (!columns.Contains(col)) columns.Insert(0, col);
 
-        // 6️⃣ Map dynamic columns to RDLC fixed columns
-        var dynamicColumnMap = MapDynamicColumns(columns);
+        // 6️ Map dynamic columns to RDLC fixed columns
+        var dynamicColumnMap = MapDynamicColumns(columns, mandatoryColumns);
 
-        // 7️⃣ Prepare DataTable
+        // 7️ Prepare DataTable
         var reportColumns = GetReportColumns();
         var dataTable = BuildDataTable(students, reportColumns, columnMappings, dynamicColumnMap);
 
-        // 8️⃣ Prepare report path
+        // 8️ Prepare report path
         var reportPath = Path.Combine(_host.WebRootPath, "Reports", "RptStudentDynamicReport.rdlc");
         if (!System.IO.File.Exists(reportPath))
             throw new FileNotFoundException("RDLC file not found at: " + reportPath);
 
-        // 9️⃣ Prepare institute logo
+        // 9️ Prepare institute logo
         string imageParam = GetBase64Logo(institute.Logo);
 
-        // 🔟 Configure LocalReport
+        // 10 Configure LocalReport
         using var report = new Microsoft.Reporting.NETCore.LocalReport();
         report.ReportPath = reportPath;
         report.DataSources.Add(new ReportDataSource("StudentDynamicReportDataset", dataTable));
 
-        // 1️⃣1️⃣ Set report parameters
+        // 11️ Set report parameters
         var parameters = GetReportParameters(institute, dynamicColumnMap, columnMappings);
         report.SetParameters(parameters);
 
-        // 1️⃣2️⃣ Determine render format
+        // 12 Determine render format
         string renderFormat = reportType?.ToUpper() switch
         {
             "EXCEL" => "EXCELOPENXML",
@@ -249,13 +249,16 @@ public class ReportsController : Controller
             _ => "PDF"
         };
 
-        // 1️⃣3️⃣ Render the report
+        // 1️3️ Render the report
         var finalReport = report.Render(renderFormat);
 
-        // 1️⃣4️⃣ Return file
-        fileName ??= "StudentReport";
-        fileName = fileName + "_" + DateTime.Now.ToString("yyMMddhhmm");
-        return File(finalReport, MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
+        // 1️4️ Return file
+        if (!string.IsNullOrEmpty(fileName))
+        {
+            fileName = fileName + "_" + DateTime.Now.ToString("yyMMddhhmm");
+            return File(finalReport, MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
+        }
+        return File(finalReport, "application/pdf");
     }
 
     // ==================== Helper Methods ====================
@@ -263,39 +266,39 @@ public class ReportsController : Controller
     private Dictionary<string, (string Label, Func<Student, object> Selector)> GetColumnMappings()
     {
         return new Dictionary<string, (string, Func<Student, object>)>
-    {
-        { "Name", ("Name", s => s.Name) },
-        { "ClassRoll", ("Class Roll", s => s.ClassRoll) },
-        { "NameBangla", ("Name (Bangla)", s => s.NameBangla) },
-        { "AcademicClass", ("Class", s => s.AcademicClass?.Name) },
-        { "AcademicSection", ("Section", s => s.AcademicSection?.Name) },
-        { "FatherName", ("Father's Name", s => s.FatherName) },
-        { "MotherName", ("Mother's Name", s => s.MotherName) },
-        { "AdmissionDate", ("Admission Date", s => s.AdmissionDate.ToString("dd-MM-yyyy")) },
-        { "Email", ("Email", s => s.Email) },
-        { "Gender", ("Gender", s => s.Gender?.Name) },
-        { "PhoneNo", ("Phone", s => s.PhoneNo) },
-        { "GuardianPhone", ("Guardian Phone", s => s.GuardianPhone) },
-        { "DOB", ("Date of Birth", s => s.DOB.ToString("dd-MM-yyyy")) },
-        { "Religion", ("Religion", s => s.Religion?.Name) },
-        { "BloodGroup", ("Blood Group", s => s.BloodGroup?.Name) },
-        { "PresentAddress", ("Present Address", s => $"{s.PresentAddressArea}, {s.PresentAddressPO}, {s.PresentUpazila?.Name}, {s.PresentDistrict?.Name}, {s.PresentDivision?.Name}") },
-        { "PermanentAddress", ("Permanent Address", s => $"{s.PermanentAddressArea}, {s.PermanentAddressPO}, {s.PermanentUpazila?.Name}, {s.PermanentDistrict?.Name}, {s.PermanentDivision?.Name}") },
-        { "AcademicSession", ("Session", s => s.AcademicSession?.Name) },
-        { "PreviousSchool", ("Previous School", s => s.PreviousSchool) },
-        { "IsResidential", ("Residential Type", s => s.IsResidential ? "Residential" : "Non-Residential") },
-        { "SMSService", ("SMS Service", s => s.SMSService ? "Yes" : "No SMS") },
-        { "Status", ("Status", s => s.Status ? "Active" : "Inactive") }
-    };
+        {
+            { "Name", ("Name", s => s.Name) },
+            { "ClassRoll", ("Class Roll", s => s.ClassRoll) },
+            { "NameBangla", ("Name (Bangla)", s => s.NameBangla) },
+            { "AcademicClass", ("Class", s => s.AcademicClass?.Name) },
+            { "AcademicSection", ("Section", s => s.AcademicSection?.Name) },
+            { "Father", ("Father's Name", s => s.FatherName) },
+            { "Mother", ("Mother's Name", s => s.MotherName) },
+            { "AdmissionDate", ("Admission Date", s => s.AdmissionDate.ToString("dd-MM-yyyy")) },
+            { "Email", ("Email", s => s.Email) },
+            { "Gender", ("Gender", s => s.Gender?.Name) },
+            { "PhoneNo", ("Phone", s => s.PhoneNo) },
+            { "GuardianPhone", ("Guardian Phone", s => s.GuardianPhone) },
+            { "DOB", ("Date of Birth", s => s.DOB.ToString("dd-MM-yyyy")) },
+            { "Religion", ("Religion", s => s.Religion?.Name) },
+            { "BloodGroup", ("Blood Group", s => s.BloodGroup?.Name) },
+            { "PresentAddress", ("Present Address", s => $"{s.PresentAddressArea}, {s.PresentAddressPO}, {s.PresentUpazila?.Name}, {s.PresentDistrict?.Name}, {s.PresentDivision?.Name}") },
+            { "PermanentAddress", ("Permanent Address", s => $"{s.PermanentAddressArea}, {s.PermanentAddressPO}, {s.PermanentUpazila?.Name}, {s.PermanentDistrict?.Name}, {s.PermanentDivision?.Name}") },
+            { "AcademicSession", ("Session", s => s.AcademicSession?.Name) },
+            { "PreviousSchool", ("Previous School", s => s.PreviousSchool) },
+            { "IsResidential", ("Residential Type", s => s.IsResidential ? "Residential" : "Non-Residential") },
+            { "SMSService", ("SMS Service", s => s.SMSService ? "Yes" : "No SMS") },
+            { "Status", ("Status", s => s.Status ? "Active" : "Inactive") }
+        };
     }
 
     private List<string> GetReportColumns()
     {
         return new List<string>
-    {
-        "ClassRoll","Name","Column3","Column4","Column5","Column6","Column7","Column8","Column9",
-        "AcademicClass","AcademicSession","ColumnExtra3","ColumnExtra4","ColumnExtra5"
-    };
+        {
+            "ClassRoll","Name","Column3","Column4","Column5","Column6","Column7","Column8","Column9",
+            "AcademicClass","AcademicSession","ColumnExtra3","ColumnExtra4","ColumnExtra5"
+        };
     }
 
     private Dictionary<string, string> MapDynamicColumns(List<string> columns)
@@ -331,7 +334,7 @@ public class ReportsController : Controller
             // Dynamic mapped fields
             foreach (var map in dynamicColumnMap)
             {
-                if (map.Key == "Name" || map.Key == "ClassRoll") continue;
+                if (map.Value == "Name" || map.Value == "ClassRoll") continue;
 
                 if (columnMappings.TryGetValue(map.Value, out var colInfo))
                     row[map.Key] = colInfo.Selector(student) ?? string.Empty;
@@ -376,7 +379,6 @@ public class ReportsController : Controller
 
         return parameters;
     }
-
 
     #endregion Student List Report
 
@@ -1296,6 +1298,7 @@ public class ReportsController : Controller
         {
             "XLS" => reportName + ".xls",
             "WORD" => reportName + ".doc",
+            "EXCEL" => reportName + ".xlsx",
             _ => reportName + ".pdf",
         };
         return outputFileName;

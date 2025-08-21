@@ -115,6 +115,17 @@ namespace SMS.DAL.Repositories.Reports
             var result = await _context.RptDailyAttendaceVMs.FromSqlInterpolated($"sp_get_attendance_by_date {pAttendanceFor},{pDate},{pAttendanceType},{pASessionId},{pClassId}").ToListAsync();
             return result;
         }
+
+        public async Task<List<RptDailyAttendaceVM>> GetDailyAttendanceReportCheckOut(string fromDate, string AcademicClassId, string AcademicSectionId, string attendanceType, string aSessionId, string attendanceFor)
+        {
+            var pAttendanceFor = new SqlParameter("attendanceFor", attendanceFor);
+            var pDate = new SqlParameter("date", fromDate);
+            var pAttendanceType = new SqlParameter("attendanceType", attendanceType);
+            var pASessionId = aSessionId != null ? new SqlParameter("aSessionId", aSessionId) : null;
+            var pClassId = AcademicClassId != null ? new SqlParameter("aClassId", AcademicClassId) : null;
+            var result = await _context.RptDailyAttendaceVMs.FromSqlInterpolated($"sp_get_attendance_by_date {pAttendanceFor},{pDate},{pAttendanceType},{pASessionId},{pClassId}").ToListAsync();
+            return result;
+        }
         public async Task<List<RptPaymentReceiptVM>> GetPaymentReceiptReport(int paymentId)
         {
             var p_paymentId = new SqlParameter("paymentId", paymentId);

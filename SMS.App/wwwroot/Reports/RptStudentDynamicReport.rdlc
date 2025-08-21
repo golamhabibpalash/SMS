@@ -815,21 +815,9 @@
                                 <TablixMembers>
                                   <TablixMember />
                                   <TablixMember />
-                                  <TablixMember>
-                                    <Visibility>
-                                      <Hidden>=IIF(Fields!Column3.Value = "", True, False)</Hidden>
-                                    </Visibility>
-                                  </TablixMember>
-                                  <TablixMember>
-                                    <Visibility>
-                                      <Hidden>=IIF(Fields!Column4.Value = "", True, False)</Hidden>
-                                    </Visibility>
-                                  </TablixMember>
-                                  <TablixMember>
-                                    <Visibility>
-                                      <Hidden>=IIF(Fields!Column5.Value = "", True, False)</Hidden>
-                                    </Visibility>
-                                  </TablixMember>
+                                  <TablixMember />
+                                  <TablixMember />
+                                  <TablixMember />
                                   <TablixMember>
                                     <Visibility>
                                       <Hidden>=IIF(Fields!Column6.Value = "", True, False)</Hidden>

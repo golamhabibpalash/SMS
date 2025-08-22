@@ -296,18 +296,19 @@ public class ReportsController : Controller
     {
         return new List<string>
         {
-            "ClassRoll","Name","Column3","Column4","Column5","Column6","Column7","Column8","Column9",
-            "AcademicClass","AcademicSession","ColumnExtra3","ColumnExtra4","ColumnExtra5"
+            "ClassRoll","Name","Column3","Column4","Column5","Column6","Column7","Column8","Column9","AcademicClass","AcademicSession","ColumnExtra3","ColumnExtra4","ColumnExtra5"
         };
     }
 
-    private Dictionary<string, string> MapDynamicColumns(List<string> columns)
+    private Dictionary<string, string> MapDynamicColumns(List<string> columns, List<string> mandatoryColumns)
     {
         var map = new Dictionary<string, string>();
-        for (int i = 2; i < 9; i++)
+        var dynammicColumns = columns.Except(mandatoryColumns).ToList();
+        for (int i = 1; i < 8; i++)
         {
-            string fixedCol = "Column" + (i + 1);
-            map[fixedCol] = columns.Count > i ? columns[i] : fixedCol;
+            string fixedCol = "Column" + (i+2);
+            map[fixedCol] =dynammicColumns.Count>=i?dynammicColumns[i-1]: fixedCol;
+            
         }
         return map;
     }
@@ -337,7 +338,16 @@ public class ReportsController : Controller
                 if (map.Value == "Name" || map.Value == "ClassRoll") continue;
 
                 if (columnMappings.TryGetValue(map.Value, out var colInfo))
-                    row[map.Key] = colInfo.Selector(student) ?? string.Empty;
+                {
+                    if (map.Value == map.Key)
+                    {
+                        row[map.Key] = "";
+                    }
+                    else
+                    {
+                        row[map.Key] = colInfo.Selector(student) ?? string.Empty;
+                    }
+                }                    
             }
 
             dt.Rows.Add(row);
@@ -362,11 +372,25 @@ public class ReportsController : Controller
         Dictionary<string, string> dynamicColumnMap,
         Dictionary<string, (string Label, Func<Student, object> Selector)> columnMappings)
     {
+
         var dynamicParams = dynamicColumnMap
             .Select((map, index) =>
-                new ReportParameter($"Column{index + 3}Header",
-                    columnMappings.TryGetValue(map.Value, out var val) ? val.Label : map.Value))
+                new ReportParameter(
+                    $"Column{index + 3}Header",
+                    map.Value == map.Key
+                        ? " "
+                        : (columnMappings.TryGetValue(map.Value, out var val) ? val.Label : map.Value)
+                )
+            )
             .ToArray();
+        //var dynamicParams = dynamicColumnMap
+        //    .Select((map, index) =>
+        //        new ReportParameter(
+        //            $"Column{index + 3}Header", columnMappings.TryGetValue(map.Value, out var val) ? val.Label : map.Value
+        //        )
+        //    )
+        //    .ToArray();
+
 
         var parameters = new[]
         {

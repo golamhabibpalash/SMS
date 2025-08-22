@@ -107,31 +107,31 @@
                               <TablixBody>
                                 <TablixColumns>
                                   <TablixColumn>
-                                    <Width>0.6639in</Width>
+                                    <Width>0.60873in</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>1.88473in</Width>
+                                    <Width>1.80873in</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>1.1889in</Width>
+                                    <Width>1.20763in</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>1.1889in</Width>
+                                    <Width>1.20763in</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>1.1889in</Width>
+                                    <Width>1.20763in</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>1.1889in</Width>
+                                    <Width>1.20763in</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>1.1889in</Width>
+                                    <Width>1.20763in</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>1.1889in</Width>
+                                    <Width>1.20763in</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>1.1889in</Width>
+                                    <Width>1.20763in</Width>
                                   </TablixColumn>
                                 </TablixColumns>
                                 <TablixRows>
@@ -147,11 +147,16 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>=Fields!AcademicClass.Value &amp; " - (" &amp; Fields!AcademicSession.Value &amp; ") [Total " &amp; CountRows("AcademicClassListGroup") &amp; "]"</Value>
+                                                    <Value>=Fields!AcademicClass.Value 
+ &amp; " - (" &amp; Fields!AcademicSession.Value 
+ &amp; ") [Total " &amp; CountRows("AcademicClassListGroup") 
+ &amp; " from " &amp; CountRows("StudentDynamicReportDataset") 
+ &amp; "]"</Value>
                                                     <Style>
                                                       <FontFamily>lucida Bright</FontFamily>
                                                       <FontSize>9pt</FontSize>
                                                       <FontWeight>Bold</FontWeight>
+                                                      <Color>MidnightBlue</Color>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
@@ -184,6 +189,7 @@
                                             </Style>
                                           </Textbox>
                                           <ColSpan>9</ColSpan>
+                                          <rd:Selected>true</rd:Selected>
                                         </CellContents>
                                       </TablixCell>
                                       <TablixCell />
@@ -815,27 +821,39 @@
                                 <TablixMembers>
                                   <TablixMember />
                                   <TablixMember />
-                                  <TablixMember />
-                                  <TablixMember />
-                                  <TablixMember />
                                   <TablixMember>
                                     <Visibility>
-                                      <Hidden>=IIF(Fields!Column6.Value = "", True, False)</Hidden>
+                                      <Hidden>=IIF(Parameters!Column3Header.Value = " ", True, False)</Hidden>
                                     </Visibility>
                                   </TablixMember>
                                   <TablixMember>
                                     <Visibility>
-                                      <Hidden>=IIF(Fields!Column7.Value = "", True, False)</Hidden>
+                                      <Hidden>=IIF(Parameters!Column4Header.Value = " ", True, False)</Hidden>
                                     </Visibility>
                                   </TablixMember>
                                   <TablixMember>
                                     <Visibility>
-                                      <Hidden>=IIF(Fields!Column8.Value = "", True, False)</Hidden>
+                                      <Hidden>=IIF(Parameters!Column5Header.Value = " ", True, False)</Hidden>
                                     </Visibility>
                                   </TablixMember>
                                   <TablixMember>
                                     <Visibility>
-                                      <Hidden>=IIF(Fields!Column9.Value = "", True, False)</Hidden>
+                                      <Hidden>=IIF(Parameters!Column6Header.Value = " ", True, False)</Hidden>
+                                    </Visibility>
+                                  </TablixMember>
+                                  <TablixMember>
+                                    <Visibility>
+                                      <Hidden>=IIF(Parameters!Column7Header.Value = " ", True, False)</Hidden>
+                                    </Visibility>
+                                  </TablixMember>
+                                  <TablixMember>
+                                    <Visibility>
+                                      <Hidden>=IIF(Parameters!Column8Header.Value = " ", True, False)</Hidden>
+                                    </Visibility>
+                                  </TablixMember>
+                                  <TablixMember>
+                                    <Visibility>
+                                      <Hidden>=IIF(Parameters!Column9Header.Value = " ", True, False)</Hidden>
                                     </Visibility>
                                   </TablixMember>
                                 </TablixMembers>
@@ -858,7 +876,7 @@
                               <DataSetName>StudentDynamicReportDataset</DataSetName>
                               <Top>0.02in</Top>
                               <Height>0.60417in</Height>
-                              <Width>10.87093in</Width>
+                              <Width>10.87087in</Width>
                               <Style>
                                 <Border>
                                   <Style>None</Style>

@@ -74,7 +74,7 @@
             <div class="form-row justify-content-center">
                 <div class="col-md-3 col-sm-4 text-right">
                     <button type="submit" class="btn btn-sm btn-block form-control btn-light col-md-6" id="findButton"><i class="fa fa-search"></i> Find</button>
-                    <a class="btn btn-sm  btn-warning form-control text-success col-md-5" asp-action="Index">Reset List</a>
+                    <a class="btn btn-sm  btn-warning form-control text-success col-md-5" asp-action="Index">Reset</a>
                 </div>
                 <div class="col-md-2 text-md-left col-form-label">
                     <span>(Showing @showingCount of @ViewBag.totalFound)</span>
@@ -457,6 +457,11 @@
 
 
         $('#searchParameter').html(classVal + ' ' + secVal + ' ' + catVal + ' ' + statusVal + ' '+searchVal);
+        
+        if(classVal=='' && secVal=='' && catVal=='' && statusVal=='' && searchVal=='')
+        {
+                $('#searchParameter').html('nothing');
+        }
 
         //Loading code here
         // Show loading spinner when form is submitted

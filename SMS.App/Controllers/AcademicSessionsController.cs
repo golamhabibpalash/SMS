@@ -61,7 +61,7 @@ namespace SMS.App.Controllers
         }
 
         [HttpPost, ValidateAntiForgeryToken, Authorize(Policy = "CreateAcademicSessionPolicy")]
-        public async Task<IActionResult> Create([Bind("Id,Name,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSession academicSession)
+        public async Task<IActionResult> Create([Bind("Id,Name,Status,CurrentSession,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSession academicSession)
         {
             string msg = "";
             if (academicSession.Name != null)
@@ -118,7 +118,7 @@ namespace SMS.App.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "EditAcademicSessionPolicy")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSession academicSession)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Status,CurrentSession,CreatedBy,CreatedAt,EditedBy,EditedAt")] AcademicSession academicSession)
         {
             string msg = "";
             if (id != academicSession.Id)

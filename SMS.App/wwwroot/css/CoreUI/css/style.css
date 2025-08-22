@@ -8471,7 +8471,7 @@ html:not([dir=rtl]) .sidebar-close {
 .sidebar-nav .nav-link.disabled:hover.nav-dropdown-toggle::after {
   background-image: var(--cui-sidebar-nav-group-indicator-hover);
 }
-@media (hover: hover), (-ms-high-contrast: none) {
+@media (hover: hover) {
   .sidebar-nav .nav-link:hover {
     color: var(--cui-sidebar-nav-link-hover-color);
     text-decoration: none;

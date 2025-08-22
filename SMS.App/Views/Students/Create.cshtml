@@ -26,23 +26,23 @@
                 <div class="col-md-4">
                     <div class="input-group mb-3">
                         <select asp-for="AcademicSessionId" class="form-control" asp-items="Model.AcademicSessionList">
-                            <option disabled selected>Select Academic Session</option>
+                            <option disabled selected value="">Select Academic Session</option>
                         </select>
                         <div class="input-group-append">
                             <a asp-controller="AcademicSessions" asp-action="Create" class="btn btn-outline-secondary btn-sm btn-md" title="Create New Session">
                                 <span class="fa fa-plus"></span>
                             </a>
                         </div>
+                        <span asp-validation-for="AcademicSessionId" class="text-danger"></span>
                     </div>
-                    <span asp-validation-for="AcademicSessionId" class="text-danger"></span>
                 </div>
                 
                 <label asp-for="AcademicClassId" class="col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
 
                     <div class="input-group mb-3">
-                        <select asp-for="AcademicClassId" class="form-control input-sm">
-                            <option disabled selected>Select Session First</option>
+                        <select asp-for="AcademicClassId" class="form-control input-sm" asp-items="Model.AcademicClassList">
+                            <option disabled selected value="">Select Academic Class</option>
                         </select>
                         <div class="input-group-append">
                             <a asp-controller="AcademicClasses" asp-action="Create" class="btn btn-outline-secondary btn-sm btn-md" title="Create New Class">
@@ -73,14 +73,14 @@
 
                 <label asp-for="ClassRoll" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
-                    <input asp-for="ClassRoll" placeholder="Input Class roll" class="form-control input-sm" required max="999" min="1" />
+                    <input asp-for="ClassRoll" placeholder="Input Class roll" class="form-control input-sm" required max="999" min="1" onchange="classRollChnaged()" />
                     <span asp-validation-for="ClassRoll" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
                 <label asp-for="AdmissionDate" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
-                    <input asp-for="AdmissionDate" class="form-control" value="@DateTime.Now.Date" />
+                    <input asp-for="AdmissionDate" class="form-control" value="@DateTime.Now.Date.ToString("yyyy-MM-dd")" />
                     <span asp-validation-for="AdmissionDate" class="text-danger"></span>
                 </div>
 

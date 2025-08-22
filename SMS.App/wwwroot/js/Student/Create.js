@@ -2,27 +2,27 @@
     $(".fadeOutMsg").fadeOut(10000);
 
 
-$('#AcademicSessionId').change(function () {
-    $.ajax({
-        url: "/academicClasses/getAll",
-        dataType: "JSON",
-        type: "POST",
-        cache: false,
-        success: function (data) {
-            $('#AcademicClassId').empty();
-            var o = '<option disabled selected>Select Class Name</option>';
-            $('#AcademicClassId').append(o);
-            $.each(data, function (i, obj) {
-                console.log(obj.name);
-                var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
-                $('#AcademicClassId').append(op);
-            });
-        },
-        error: function (err) {
-            console.log(err);
-        }
-    });
-});
+//$('#AcademicSessionId').change(function () {
+//    $.ajax({
+//        url: "/academicClasses/getAll",
+//        dataType: "JSON",
+//        type: "POST",
+//        cache: false,
+//        success: function (data) {
+//            $('#AcademicClassId').empty();
+//            var o = '<option disabled selected>Select Class Name</option>';
+//            $('#AcademicClassId').append(o);
+//            $.each(data, function (i, obj) {
+//                console.log(obj.name);
+//                var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
+//                $('#AcademicClassId').append(op);
+//            });
+//        },
+//        error: function (err) {
+//            console.log(err);
+//        }
+//    });
+//});
 
 $('#AcademicClassId').change(function () {
     let id = $('#AcademicClassId option:selected').val();
@@ -207,6 +207,41 @@ function GetUpazilaByDistrictId(disId, upName) {
         },
         error: function (err) {
 
+        }
+    });
+}
+
+function classRollChnaged() {
+    var roll = $("#ClassRoll").val();   
+    var sessionId = $('#AcademicSessionId option:selected').val();
+    var classId = $('#AcademicClassId option:selected').val();
+    if (!sessionId) {
+        alertify.warning('Please Select Session');
+        return;
+    }
+    if (!classId) {
+        alertify.warning('Please Select Class');
+        return;
+    }
+    console.log('@Url.Action("CheckRollExist", "Students")');
+    $.ajax({
+        url: '/Students/CheckRollExist', 
+        type: 'GET',
+        data: {
+            roll: roll,
+            sessionId: sessionId,
+            classId: classId
+        },
+        success: function (response) {
+            if (response === true) {
+                alertify.error('Sorry! This roll number is already exist');
+            } else {
+                alertify.success('Yes! This roll number is available');
+            }
+        },
+        error: function () {
+            console.error(error);
+            alertify.error('Something went wrong!');
         }
     });
 }

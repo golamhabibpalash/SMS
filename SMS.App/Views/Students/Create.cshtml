@@ -19,30 +19,55 @@
                 </div>
             </div>
 
+            
+
             <div class="form-group row">
                 <label asp-for="AcademicSessionId" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
-                    <select asp-for="AcademicSessionId" class="form-control input-sm" asp-items="Model.AcademicSessionList">
-                        <option disabled selected>Select Academic Session</option>
-                    </select>
+                    <div class="input-group mb-3">
+                        <select asp-for="AcademicSessionId" class="form-control" asp-items="Model.AcademicSessionList">
+                            <option disabled selected>Select Academic Session</option>
+                        </select>
+                        <div class="input-group-append">
+                            <a asp-controller="AcademicSessions" asp-action="Create" class="btn btn-outline-secondary btn-sm btn-md" title="Create New Session">
+                                <span class="fa fa-plus"></span>
+                            </a>
+                        </div>
+                    </div>
                     <span asp-validation-for="AcademicSessionId" class="text-danger"></span>
-
                 </div>
+                
                 <label asp-for="AcademicClassId" class="col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
-                    <select asp-for="AcademicClassId" class="form-control input-sm">
-                        <option disabled selected>Select Session First</option>
-                    </select>
+
+                    <div class="input-group mb-3">
+                        <select asp-for="AcademicClassId" class="form-control input-sm">
+                            <option disabled selected>Select Session First</option>
+                        </select>
+                        <div class="input-group-append">
+                            <a asp-controller="AcademicClasses" asp-action="Create" class="btn btn-outline-secondary btn-sm btn-md" title="Create New Class">
+                                <span class="fa fa-plus"></span>
+                            </a>
+                        </div>
+                    </div>
                     <span asp-validation-for="AcademicClassId" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
                 <label asp-for="AcademicSectionId" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
-                    <select asp-for="AcademicSectionId" class="form-control input-sm">
-                        <option disabled selected>Select Class First</option>
-                        <option value="">No Section</option>
-                    </select>
+
+                    <div class="input-group mb-3">
+                        <select asp-for="AcademicSectionId" class="form-control input-sm">
+                            <option disabled selected>Select Class First</option>
+                            <option value="">No Section</option>
+                        </select>
+                        <div class="input-group-append">
+                            <a asp-controller="AcademicSections" asp-action="Create" class="btn btn-outline-secondary btn-sm btn-md" title="Create New Section">
+                                <span class="fa fa-plus"></span>
+                            </a>
+                        </div>
+                    </div>
                     <span asp-validation-for="AcademicSectionId" class="text-danger"></span>
                 </div>
 

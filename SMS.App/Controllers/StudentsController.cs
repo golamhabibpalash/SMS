@@ -391,34 +391,6 @@ public class StudentsController : Controller
             {
                 if (ModelState.IsValid)
                 {
-                    if (sPhoto != null)
-                    {
-                        string fileExt = Path.GetExtension(sPhoto.FileName);
-                        string root = _host.WebRootPath;
-                        string folder = "Images/Student/";
-                        string sessionYear = (await _academicSessionManager.GetByIdAsync(newStudent.AcademicSessionId)).ToString();
-                        string year = sessionYear.Substring(0, 4);
-                        string fileName = "S_" + year + "_" + newStudent.ClassRoll + fileExt;
-                        string pathCombine = Path.Combine(root, folder, fileName);
-                        using (var stream = new FileStream(pathCombine, FileMode.Create))
-                        {
-                            await sPhoto.CopyToAsync(stream);
-                        }
-                        newStudent.Photo = fileName;
-                    }
-                    if (DOBFile != null)
-                    {
-                        string fileExt = Path.GetExtension(DOBFile.FileName);
-                        string root = _host.WebRootPath;
-                        string folder = "Images/Student/";
-                        string fileName = "S_" + newStudent.DOB.ToString("ddMMyyyy") + "_" + newStudent.ClassRoll + fileExt;
-                        string pathCombine = Path.Combine(root, folder, fileName);
-                        using (var stream = new FileStream(pathCombine, FileMode.Create))
-                        {
-                            await sPhoto.CopyToAsync(stream);
-                        }
-                        newStudent.BirthCertificateImage = fileName;
-                    }
                     if (HttpContext.Session.GetString("UserId") == null)
                     {
                         return RedirectToAction("Login", "Accounts");
@@ -430,6 +402,98 @@ public class StudentsController : Controller
 
                     var student = _mapper.Map<Student>(newStudent);
                     student.UniqueId = await GenerateUniquId(student);
+
+                    if (sPhoto != null && sPhoto.Length > 0)
+                    {
+                        // Allowed extensions
+                        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+
+                        // Get extension in lowercase
+                        string fileExt = Path.GetExtension(sPhoto.FileName).ToLowerInvariant();
+
+                        // Validate extension
+                        if (!allowedExtensions.Contains(fileExt))
+                        {
+                            throw new InvalidOperationException("Only .jpg, .jpeg, and .png files are allowed.");
+                        }
+
+                        // Validate size (1 MB = 1 * 1024 * 1024 bytes)
+                        const long maxFileSize = 1 * 1024 * 1024;
+                        if (sPhoto.Length > maxFileSize)
+                        {
+                            throw new InvalidOperationException("File size must not exceed 1 MB.");
+                        }
+
+                        // Prepare paths
+                        string root = _host.WebRootPath;
+                        string folder = Path.Combine("Images", "Student");
+
+                        // Ensure folder exists
+                        string fullFolderPath = Path.Combine(root, folder);
+                        if (!Directory.Exists(fullFolderPath))
+                        {
+                            Directory.CreateDirectory(fullFolderPath);
+                        }
+
+                        // Create file name
+                        var session = await _academicSessionManager.GetByIdAsync(newStudent.AcademicSessionId);
+                        string sessionYear = session.ToString();
+                        string year = sessionYear.Substring(0, 4);
+                        string fileName = $"S_{year}_{newStudent.UniqueId}{fileExt}";
+
+                        // Combine final path
+                        string filePath = Path.Combine(fullFolderPath, fileName);
+
+                        // Save file
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await sPhoto.CopyToAsync(stream);
+                        }
+
+                        // Save file name in DB
+                        newStudent.Photo = fileName;
+                    }
+
+                    if (DOBFile != null && DOBFile.Length > 0)
+                    {
+                        //Allowed extensions
+                        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png",".pdf" };
+
+                        //Get extension in lowercase
+                        string fileExt = Path.GetExtension(DOBFile.FileName).ToLowerInvariant();
+                        
+                        // Validate extension
+                        if (!allowedExtensions.Contains(fileExt))
+                        {
+                            throw new InvalidOperationException("Only .jpg, .jpeg, .png, .pdf files are allowed.");
+                        }
+
+                        // Validate size (1 MB = 1 * 1024 * 1024 bytes)
+                        const long maxFileSize = 1 * 1024 * 1024;
+                        if (sPhoto.Length > maxFileSize)
+                        {
+                            throw new InvalidOperationException("File size must not exceed 1 MB.");
+                        }
+
+                        string root = _host.WebRootPath;
+                        string folder = "Images/Student/";
+                        
+                        // Ensure folder exists
+                        string fullFolderPath = Path.Combine(root, folder);
+                        if (!Directory.Exists(fullFolderPath))
+                        {
+                            Directory.CreateDirectory(fullFolderPath);
+                        }
+
+                        string fileName = $"S_DOB_{newStudent.DOB.ToString("ddMMyyyy")}_{newStudent.UniqueId}{fileExt}";
+                        string pathCombine = Path.Combine(fullFolderPath, fileName);
+
+                        using (var stream = new FileStream(pathCombine, FileMode.Create))
+                        {
+                            await sPhoto.CopyToAsync(stream);
+                        }
+                        newStudent.BirthCertificateImage = fileName;
+                    }
                     student.MACAddress = MACService.GetMAC();
                     bool saveStudent = await _studentManager.AddAsync(student);
                     if (saveStudent == true)
@@ -572,19 +636,54 @@ public class StudentsController : Controller
                 bool isUpdated = false;
                 try
                 {
-                    if (sPhoto != null)
+                    if (sPhoto != null && sPhoto.Length > 0)
                     {
-                        string fileExt = Path.GetExtension(sPhoto.FileName);
+                        // Allowed extensions
+                        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+
+                        // Get extension in lowercase
+                        string fileExt = Path.GetExtension(sPhoto.FileName).ToLowerInvariant();
+
+                        // Validate extension
+                        if (!allowedExtensions.Contains(fileExt))
+                        {
+                            throw new InvalidOperationException("Only .jpg, .jpeg, and .png files are allowed.");
+                        }
+
+                        // Validate size (1 MB = 1 * 1024 * 1024 bytes)
+                        const long maxFileSize = 1 * 1024 * 1024;
+                        if (sPhoto.Length > maxFileSize)
+                        {
+                            throw new InvalidOperationException("File size must not exceed 1 MB.");
+                        }
+
+                        // Prepare paths
                         string root = _host.WebRootPath;
-                        string folder = "Images/Student/";
-                        string sessionYear = (await _academicSessionManager.GetByIdAsync(student.AcademicSessionId)).ToString();
+                        string folder = Path.Combine("Images", "Student");
+
+                        // Ensure folder exists
+                        string fullFolderPath = Path.Combine(root, folder);
+                        if (!Directory.Exists(fullFolderPath))
+                        {
+                            Directory.CreateDirectory(fullFolderPath);
+                        }
+
+                        // Create file name
+                        var session = await _academicSessionManager.GetByIdAsync(student.AcademicSessionId);
+                        string sessionYear = session.ToString();
                         string year = sessionYear.Substring(0, 4);
-                        string fileName = "S_" + year + "_" + student.ClassRoll + fileExt;
-                        string pathCombine = Path.Combine(root, folder, fileName);
-                        using (var stream = new FileStream(pathCombine, FileMode.Create))
+                        string fileName = $"S_{year}_{student.UniqueId}{fileExt}";
+
+                        // Combine final path
+                        string filePath = Path.Combine(fullFolderPath, fileName);
+
+                        // Save file
+                        using (var stream = new FileStream(filePath, FileMode.Create))
                         {
                             await sPhoto.CopyToAsync(stream);
                         }
+
+                        // Save file name in DB
                         student.Photo = fileName;
                     }
                     if (DOBFile != null)

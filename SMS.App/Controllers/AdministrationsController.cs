@@ -59,12 +59,13 @@ namespace SMS.App.Controllers
                     Employee employee = await _employeeManager.GetByIdAsync(aUser.ReferenceId);
                     userProfileVM.Employee = employee;
                     //userRoleClaimsVM.ApplicationRoles = new List<SelectListItem>();
-                    userRoleClaimsVM.ApplicationRoles = await _roleManager.Roles.Select(x => new SelectListItem()
+                    var allRoles = await _roleManager.Roles.ToListAsync();
+                    userRoleClaimsVM.ApplicationRoles = allRoles.Select(x => new SelectListItem()
                     {
                         Text = x.Name,
                         Value = x.Id,
-                        Selected = userIsInRole.Contains(x.Id)
-                    }).ToListAsync();
+                        Selected = userIsInRole.Any(s => s.Contains(x.Name))
+                    }).ToList();
 
                     userRoleClaimsVM.ApplicationUser = aUser;
                     var claimStore = await _claimStoreManager.GetAllAsync();
@@ -86,87 +87,7 @@ namespace SMS.App.Controllers
         }
         
         [HttpPost]
-        [Authorize(Policy = "EditUserProfileAdministrationsPolicy")]
-        //public async Task<IActionResult> UserProfile(UserProfileVM model)
-        //{
-        //    GlobalUI.PageTitle = "User Profile";
-        //    var allUser = _userManager.Users.Where(s => s.UserType == 'e');
-
-        //    ApplicationUser aUser = await _userManager.FindByIdAsync(model.UserRoleClaimsVM.ApplicationUser.Id);
-        //    ViewBag.UserList = model.UserList = new SelectList(allUser, "Id", "UserName",aUser.Id);
-
-        //    List<ProjectModule> modules = (List<ProjectModule>)await _projectModuleManager.GetAllAsync();
-        //    if (aUser != null)
-        //    {
-        //        try
-        //        {
-        //            var claimStore = await _claimStoreManager.GetAllAsync();
-
-        //            List<Claim> allClaim = new List<Claim>();
-        //            foreach (var item in claimStore)
-        //            {
-        //                allClaim.Add(new Claim(item.ClaimType, item.ClaimValue));
-        //            }
-        //            List<Claim> selectedClaim = new List<Claim>();
-
-        //            var selectedClaimValues = model.UserRoleClaimsVM.ApplicationClaims.Where(x => x.Selected);
-
-        //            selectedClaim = (from cs in allClaim
-        //                             from sV in selectedClaimValues
-        //                             where cs.Value == sV.Value
-        //                             select cs).ToList();
-
-        //            var alreadyExistClaims = await _userManager.GetClaimsAsync(aUser);
-
-        //            var toAddClaims = from s in selectedClaimValues
-        //                              from a in alreadyExistClaims
-        //                              where s.Value != a.Value
-        //                              select s;
-
-        //            var toRemoveClaims = from a in alreadyExistClaims
-        //                                 from s in selectedClaimValues
-        //                                 where a.Value != s.Value
-        //                                 select a;
-        //            foreach (var item in toRemoveClaims)
-        //            {
-        //                await _userManager.RemoveClaimAsync(aUser, item);
-        //            }
-        //            foreach (var item in selectedClaim)
-        //            {
-        //                await _userManager.AddClaimAsync(aUser, item);
-        //            }
-        //            ViewBag.UserName = aUser.UserName;
-        //            var userIsInRole = await _userManager.GetRolesAsync(aUser);
-        //            var userInClaims = await _userManager.GetClaimsAsync(aUser);
-        //            model.UserRoleClaimsVM.ApplicationUser = aUser;
-        //            Employee employee = await _employeeManager.GetByIdAsync(aUser.ReferenceId);
-        //            model.Employee = employee;
-
-        //            model.UserRoleClaimsVM.ApplicationRoles = await _roleManager.Roles.Select(x => new SelectListItem()
-        //            {
-        //                Text = x.Name,
-        //                Value = x.Id,
-        //                Selected = userIsInRole.Contains(x.Id)
-        //            }).ToListAsync();
-
-        //            model.UserRoleClaimsVM.ApplicationUser = aUser;
-        //            model.UserRoleClaimsVM.ApplicationClaims = claimStore.Select(s => new SelectListItem
-        //            {
-        //                Text = s.ClaimType,
-        //                Value = s.ClaimValue,
-        //                Selected = userInClaims.Any(c => c.Value == s.ClaimValue)
-        //            }).ToList();
-        //            TempData["created"] = "User Profile updated";
-        //        }
-        //        catch (Exception)
-        //        {
-        //            TempData["failed"] = "Exception! User Profile Update Failed";
-        //        }
-        //    }
-        //    model.Modules = modules;
-        //    return View(model);
-        //}
-
+        [Authorize(Policy = "EditUserProfileAdministrationsPolicy")]   
         public async Task<IActionResult> UserProfile(UserProfileVM model)
         {
             GlobalUI.PageTitle = "User Profile";

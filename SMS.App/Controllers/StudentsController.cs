@@ -436,10 +436,10 @@ public class StudentsController : Controller
                         }
 
                         // Create file name
-                        var session = await _academicSessionManager.GetByIdAsync(newStudent.AcademicSessionId);
-                        string sessionYear = session.ToString();
-                        string year = sessionYear.Substring(0, 4);
-                        string fileName = $"S_{year}_{newStudent.UniqueId}{fileExt}";
+                        var session = await _academicSessionManager.GetByIdAsync(student.AcademicSessionId);
+                        string sessionYear = session.Name.ToString();
+                        string year = sessionYear.Split('-').Last();
+                        string fileName = $"S_{year}_{student.UniqueId}{fileExt}";
 
                         // Combine final path
                         string filePath = Path.Combine(fullFolderPath, fileName);
@@ -670,8 +670,8 @@ public class StudentsController : Controller
 
                         // Create file name
                         var session = await _academicSessionManager.GetByIdAsync(student.AcademicSessionId);
-                        string sessionYear = session.ToString();
-                        string year = sessionYear.Substring(0, 4);
+                        string sessionYear = session.Name.ToString();
+                        string year = sessionYear.Split('-').Last();
                         string fileName = $"S_{year}_{student.UniqueId}{fileExt}";
 
                         // Combine final path

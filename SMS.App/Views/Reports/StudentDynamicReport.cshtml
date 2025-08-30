@@ -6,7 +6,23 @@
 }
 
 @section Styles {
+    <style>
 
+        @@keyframes blinkRedBorder {
+            0%, 100%
+            {
+                border: 2px solid transparent;
+            }
+
+            50% {
+                border: 2px solid red;
+            }
+        }
+
+        .blink-red {
+            animation: blinkRedBorder 0.8s ease-in-out 3; /* 0.5s duration, repeat 3 times */
+        }
+    </style>
 }
 
 <div class="row">
@@ -44,7 +60,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-form-label ">Columns : (Maximum 9 Info)</label>
+                            <label class="col-form-label ">Columns : (<span id="max9Info">Maximum 9 Info</span>)</label>
                             <div class="checkbox-container d-flex flex-wrap">
                                 @foreach (var col in Model.ColumnMap)
                                 {
@@ -112,52 +128,60 @@
     <script>
         $(document).ready(function () {
 
-        $('#LoadButton').click(function () {
-            const reportType = 'pdf';
-            const academicSessionId = $('#AcademicSessionId').val() || '0';
-            const academicClassId = $('#AcademicClassId').val() || '';
-            const academicSectionId = $('#AcademicSectionId').val() || '';
+            $('#LoadButton').click(function () {
+                const reportType = 'pdf';
+                const academicSessionId = $('#AcademicSessionId').val() || '0';
+                const academicClassId = $('#AcademicClassId').val() || '';
+                const academicSectionId = $('#AcademicSectionId').val() || '';
 
-            // Collect selected column names
-            const selectedColumns = [];
-            $('input[name="columns"]:checked').each(function () {
-                selectedColumns.push($(this).val());
-            });
+                // Collect selected column names
+                const selectedColumns = [];
+                $('input[name="columns"]:checked').each(function () {
+                    selectedColumns.push($(this).val());
+                });
 
-            // Optional: Check max allowed columns (e.g., max 6)
-            if (selectedColumns.length === 0) {
-                $('#iframe-container').hide();
-            }
+                // Optional: Check max allowed columns (e.g., max 6)
+                if (selectedColumns.length === 0) {
+                    $('#iframe-container').hide();
+                }
 
-            if (selectedColumns.length > 9) {
-                $('#invalidFormText').text('Please select maximum 9 column');
-                $('#InvalidForm').show();
-                return;
-            }
+                if (selectedColumns.length > 9) {
+                    $('#invalidFormText').text('Please select maximum 9 column');
+                    $('#InvalidForm').show();
+                    blinkField('max9Info');
+                    return;
+                }
+                if(academicSessionId=='0' || academicSessionId == null){
+                    $('#invalidFormText').text('Please select Session from dropdown list');
+                    $('#InvalidForm').show();
+                    blinkField('AcademicSessionId');
+                    return;
+                }
+                else{
+                    $('#InvalidForm').hide();
+                }
+                // Set export input values for form download (if needed)
+                $('#exportAcademicSessionId').val(academicSessionId);
+                $('#exportAcademicClassId').val(academicClassId);
+                $('#exportAcademicSectionId').val(academicSectionId);
 
-            // Set export input values for form download (if needed)
-            $('#exportAcademicSessionId').val(academicSessionId);
-            $('#exportAcademicClassId').val(academicClassId);
-            $('#exportAcademicSectionId').val(academicSectionId);
+                // Convert to query string, ensuring columns is formatted as columns=Name&columns=Age
+                const query = $.param({
+                    reportType: reportType,
+                    academicSessionId: academicSessionId,
+                    academicClassId: academicClassId,
+                    academicSectionId: academicSectionId
+                }) + '&' + selectedColumns.map(col => `columns=${encodeURIComponent(col)}`).join('&');
 
-            // Convert to query string, ensuring columns is formatted as columns=Name&columns=Age
-            const query = $.param({
-                reportType: reportType,
-                academicSessionId: academicSessionId,
-                academicClassId: academicClassId,
-                academicSectionId: academicSectionId
-            }) + '&' + selectedColumns.map(col => `columns=${encodeURIComponent(col)}`).join('&');
-
-            $('#myIframe').attr('src', '/Reports/StudentDynamicReportExport?' + query);
-            $('#iframe-container').show();
-            $('#loading').show();
-
-            $('#myIframe').on('load', function () {
-                $('#loading').hide();
+                $('#myIframe').attr('src', '/Reports/StudentDynamicReportExport?' + query);
                 $('#iframe-container').show();
-            });
-        });
+                $('#loading').show();
 
+                $('#myIframe').on('load', function () {
+                    $('#loading').hide();
+                    $('#iframe-container').show();
+                });
+            });
 
             $('#exportForm').on('submit', function (e) {
                 // Remove any previous column inputs
@@ -172,40 +196,51 @@
                     }).appendTo('#exportForm');
                 });
             });
-        });
 
+            $('#AcademicClassId').change(function () {
+                let id = $('#AcademicClassId option:selected').val();
+                const sessionId = $('#AcademicSessionId').val() || '0';
 
-        $('#AcademicClassId').change(function () {
-            let id = $('#AcademicClassId option:selected').val();
-            const sessionId = $('#AcademicSessionId').val() || '0';
+                $.ajax({
+                    url: "/api/academicsections/getbyclasswithsessionId?classId=" + id + "&sessionId=" + sessionId,
+                    dataType: "JSON",
+                    type: "POST",
+                    cache: false,
+                    success: function (data) {
+                        $('#AcademicSectionId').empty();
 
-            $.ajax({
-                url: "/api/academicsections/getbyclasswithsessionId?classId=" + id + "&sessionId=" + sessionId,
-                dataType: "JSON",
-                type: "POST",
-                cache: false,
-                success: function (data) {
-                    $('#AcademicSectionId').empty();
-
-                    if (data != null || data != '') {
-                        var o = '<option disabled selected value="">Select Section Name</option>';
-                        var o2 = '<option value="">All Section</option>';
-                        $('#AcademicSectionId').append(o);
-                        $('#AcademicSectionId').append(o2);
-                        $.each(data, function (i, obj) {
-                            var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
-                            $('#AcademicSectionId').append(op);
-                        });
+                        if (data != null || data != '') {
+                            var o = '<option disabled selected value="">Select Section Name</option>';
+                            var o2 = '<option value="">All Section</option>';
+                            $('#AcademicSectionId').append(o);
+                            $('#AcademicSectionId').append(o2);
+                            $.each(data, function (i, obj) {
+                                var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
+                                $('#AcademicSectionId').append(op);
+                            });
+                        }
+                        else {
+                            var o = '<option disabled selected>Section Not Found</option>';
+                            $('#AcademicSectionId').append(o);
+                        }
+                    },
+                    error: function (err) {
+                        console.log(err);
                     }
-                    else {
-                        var o = '<option disabled selected>Section Not Found</option>';
-                        $('#AcademicSectionId').append(o);
-                    }
-                },
-                error: function (err) {
-                    console.log(err);
-                }
+                });
             });
+
+            function blinkField(inputId) {
+                var field = document.getElementById(inputId);
+                if (!field) {
+                    console.warn("Element with id='" + inputId + "' not found.");
+                    return;
+                }
+                field.classList.remove("blink-red"); // reset if already applied
+                void field.offsetWidth; // reflow hack
+                field.classList.add("blink-red");
+            }
+
         });
 
     </script>

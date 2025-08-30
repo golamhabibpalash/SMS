@@ -22,14 +22,14 @@
                         <div class="form-group row">
                             <label for="AttendanceFor" class="col-sm-3 col-form-label">Attendnace For</label>
                             <div class="col-sm-9">
-                                <select class="form-control" onchange="attendanceForChange()">
+                                <select id="AttendanceFor" class="form-control" onchange="attendanceForChange()">
                                     <option disabled selected value="">-Select Attendance For-</option>
                                     <option value="s">Student</option>
                                     <option value="e">Employee</option>
                                 </select>
                             </div>
                         </div>
-                        <div class="form-group row academicClassPortion">
+                        <div class="form-group row academicClassPortion" id="academicClassPortion" style="display:none">
                             <label for="classId" class="col-sm-3 col-form-label">Academic Class</label>
                             <div class="col-sm-9">
                                 <select id="AcademicClassId" class="form-control" asp-items="ViewBag.AcademicClass">
@@ -38,7 +38,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="form-group row academicSectionPortion">
+                        <div class="form-group row academicSectionPortion" id="academicSectionPortion" style="display:none">
                             <label for="AcademicSectionId" class="col-sm-3 col-form-label">Academic Section</label>
                             <div class="col-sm-9">
                                 <select id="AcademicSectionId" class="form-control">
@@ -46,22 +46,32 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="form-group row academicSectionPortion">
+                        <div class="form-group row attendanceCategoryPortion" id="attendanceCategoryPortion">
                             <label for="AttendanceCategory" class="col-sm-3 col-form-label">Attendance Category</label>
                             <div class="col-sm-9">
-                                <select id="AttendanceCategory" class="form-control">
+                                <select id="AttendanceCategory" class="form-control" onchange="attendanceCatergoryChanged()">
                                     <option value="In">Check In</option>
                                     <option value="Out">Check Out</option>
                                 </select>
                             </div>
                         </div>
-                        <div class="form-group row">
+                        <div class="form-group row" id="attendanceTypeRow" style="display:none">
                             <label for="classId" class="col-sm-3 col-form-label">Attendancy Type</label>
                             <div class="col-sm-9">
                                 <select id="AttendanceType" class="form-control">
-                                    <option value="all" selected disabled>Select Attendace Type</option>
+                                    <option selected>Select Attendace Type</option>
                                     <option value="attended">attended</option>
                                     <option value="absent" >absent</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row" id="smsRow" style="display:none">
+                            <label for="sms" class="col-sm-3 col-form-label">SMS Sent</label>
+                            <div class="col-sm-9">
+                                <select id="sms" class="form-control">
+                                    <option selected >All</option>
+                                    <option value="sms">SMS Sent</option>
+                                    <option value="no" >SMS Not Sent</option>
                                 </select>
                             </div>
                         </div>
@@ -124,13 +134,15 @@
                 let attendanceType = 'all';
                 let attendanceFor = '';
                 let attendanceCategory = 'in';
+                let sms = '';
 
                 fromDate = $('#sFromDate').val();
                 academicClassId = $('#AcademicClassId option:selected').val();
                 aSection = $('#AcademicSectionId option:selected').val();
                 attendanceType = $('#AttendanceType option:selected').val();
-                attendanceFor = $('#attendancForId').val();
+                attendanceFor = $('#AttendanceFor option:selected').val();
                 attendanceCategory = $('#AttendanceCategory option:selected').val();
+                sms = $('#sms option:selected').val();
 
                 if (fromDate == '' || attendanceFor == '') {
                     $('#InvalidForm').show();
@@ -144,8 +156,9 @@
                     $('#exportFromDate').attr('value', fromDate);
                     $('#exportAttendanceType').attr('value', attendanceType);
                     $('#exportAttendanceCategory').attr('value', attendanceCategory);
+                    $('#exportSMS').attr('value', sms);
 
-                    $('#myIframe').attr('src', '/Reports/DailyAttendnaceReportExport?reportType=' + reportType + '&&fromDate=' + fromDate + '&&academicClassId=' + academicClassId + '&&academicSectionId=' + aSection + "&&attendanceType=" + attendanceType + "&&fileName=" + fileName + "&&attendanceFor=" + attendanceFor + "&&attendanceCategory=" + attendanceCategory);
+                    $('#myIframe').attr('src', '/Reports/DailyAttendaceReportExport?reportType=' + reportType + '&&fromDate=' + fromDate + '&&academicClassId=' + academicClassId + '&&academicSectionId=' + aSection + "&&attendanceType=" + attendanceType + "&&fileName=" + fileName + "&&attendanceFor=" + attendanceFor + "&&attendanceCategory=" + attendanceCategory+"&&sms="+sms);
 
                     var iframe = document.getElementById('myIframe');
                     $('#loading').show();
@@ -201,24 +214,41 @@
             var attendanceForSelect = document.querySelector('select[onchange="attendanceForChange()"]');
             var selectedValue = attendanceForSelect.value;
 
+            var smsRow = document.getElementById('smsRow');
+
             var academicClassPortion = document.querySelector('.academicClassPortion');
             var academicSectionPortion = document.querySelector('.academicSectionPortion');
             var attendaceFor = document.getElementById('attendancForId');
+            var attendanceTypeRow = document.getElementById('attendanceTypeRow');
 
             if (selectedValue === 'e') { // 'e' stands for Employee
                 academicClassPortion.style.display = 'none';
                 academicSectionPortion.style.display = 'none';
-                var attendaceForHiddenInput = document.getElementById('attendancForId');
+                attendanceTypeRow.style.display = 'flex';
+                smsRow.style.display = 'flex';
                 if (attendaceForHiddenInput) {
                     attendaceForHiddenInput.value = 'e';
                 }
             } else { // 's' for Student, or the default/unselected option
                 academicClassPortion.style.display = 'flex'; // Or 'block' depending on your CSS framework/needs
                 academicSectionPortion.style.display = 'flex'; // Or 'block'
+                attendanceTypeRow.style.display = 'flex';
+                smsRow.style.display = 'flex';
                 var attendaceForHiddenInput = document.getElementById('attendancForId');
                 if (attendaceForHiddenInput) {
                     attendaceForHiddenInput.value = 's';
                 }
+            }
+        }
+        function attendanceCatergoryChanged(){
+            var attedanceCategorySelect = document.getElementById('AttendanceCategory');
+            var attendanceTypeRow = document.getElementById('attendanceTypeRow');
+            if(attedanceCategorySelect.value=='Out')
+            {
+                $('#attendanceTypeRow').hide();
+            }
+            else{
+                $('#attendanceTypeRow').show();
             }
         }
 

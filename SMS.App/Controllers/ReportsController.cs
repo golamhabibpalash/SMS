@@ -107,7 +107,7 @@ public class ReportsController : Controller
         }
 
         string mediaType = "application/pdf";
-        var path = _host.WebRootPath + "\\Reports\\rptStudent.rdlc";
+        var path = _host.WebRootPath + "\\Reports\\Academic\\Students\\rptStudent.rdlc";
 
         string imageParam = "";
         var imagePath = _host.WebRootPath + "\\Images\\Institute\\" + institute.Logo;
@@ -225,7 +225,7 @@ public class ReportsController : Controller
         var dataTable = BuildDataTable(students, reportColumns, columnMappings, dynamicColumnMap);
 
         // 8️ Prepare report path
-        var reportPath = Path.Combine(_host.WebRootPath, "Reports", "RptStudentDynamicReport.rdlc");
+        var reportPath = Path.Combine(_host.WebRootPath, "Reports\\Academic\\Students", "RptStudentDynamicReport.rdlc");
         if (!System.IO.File.Exists(reportPath))
             throw new FileNotFoundException("RDLC file not found at: " + reportPath);
 
@@ -415,7 +415,7 @@ public class ReportsController : Controller
     }
 
     [Authorize(Policy = "DailyAttendanceReportsPolicy")]
-    public async Task<IActionResult> DailyAttendnaceReportExport(string reportType, string fromDate, string academicClassId, string academicSectionId, string attendanceType, string fileName, string attendanceFor, string attendanceCategory)
+    public async Task<IActionResult> DailyAttendaceReportExport(string reportType, string fromDate, string academicClassId, string academicSectionId, string attendanceType, string fileName, string attendanceFor, string attendanceCategory, string sms)
     {
 
         Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
@@ -425,13 +425,22 @@ public class ReportsController : Controller
         }
 
         string mediaType = "application/pdf";
-        var path = _host.WebRootPath + "\\Reports\\Rpt_Daily_Attendance.rdlc";
+        var path = _host.WebRootPath + "\\Reports\\Attendance\\Rpt_Daily_Attendance.rdlc";
 
         string imageParam = "";
         var imagePath = _host.WebRootPath + "\\Images\\Institute\\" + institute.Logo;
-        var reportName = attendanceCategory=="In"? "Students Daily Attendance Report (Check In)": "Students Daily Attendance Report (Check Out)";
+        var reportName = "Students Daily Attendance Report (Check In)";
+        if (attendanceCategory == "In")
+        {
+            reportName = "Students Daily Attendance Report (Check In)";
+        }
+        else
+        {
+            reportName = "Students Daily Attendance Report (Check Out)";
+            path = _host.WebRootPath + "\\Reports\\Attendance\\Rpt_Daily_Attendance_CheckOut.rdlc";
+        }
 
-        Image image = Image.FromFile(imagePath);
+            Image image = Image.FromFile(imagePath);
         using (MemoryStream ms = new MemoryStream())
         {
             image.Save(ms, image.RawFormat);
@@ -441,28 +450,43 @@ public class ReportsController : Controller
         attendanceFor = attendanceFor == "s" ? "student" : "employees";
         AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSession();
         var reportData = new List<RptDailyAttendaceVM>();
-        reportData = attendanceCategory == "In" ? await _reportManager.GetDailyAttendanceReport(fromDate, academicClassId, academicSectionId, attendanceType, academicSession.Id.ToString(), attendanceFor) : await _reportManager.GetDailyAttendanceReport(fromDate, academicClassId, academicSectionId, attendanceType, academicSession.Id.ToString(), attendanceFor);
-        List <RptDailyAttendaceVM> studentDailyAttendance = await _reportManager.GetDailyAttendanceReport(fromDate, academicClassId, academicSectionId, attendanceType, academicSession.Id.ToString(), attendanceFor);
-        string totalStudents = studentDailyAttendance.Count.ToString();
+        reportData = attendanceCategory == "In" ? await _reportManager.GetDailyAttendanceReport(fromDate, academicClassId, academicSectionId, attendanceType, academicSession.Id.ToString(), attendanceFor) : await _reportManager.GetDailyAttendanceReportCheckOut(fromDate, academicClassId,academicSectionId,attendanceFor);
+
         if (attendanceFor == "employees")
         {
-            path = _host.WebRootPath + "\\Reports\\Rpt_Daily_Attendance_Employee.rdlc";
+            path = _host.WebRootPath + "\\Reports\\Attendance\\Rpt_Daily_Attendance_Employee.rdlc";
             reportName = "Employees Daily Attendance Report";
         }
         using var report = new Microsoft.Reporting.NETCore.LocalReport();
-        if (studentDailyAttendance.Count > 0)
+        if (reportData.Count > 0)
         {
             var allActiveStudents = await _studentManager.GetCurrentStudentListAsync(null, null);
-            foreach (var item in studentDailyAttendance)
+            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+            foreach (var item in reportData)
             {
                 var isResidential = allActiveStudents.FirstOrDefault(s => s.ClassRoll.ToString() == item.CardNo.Trim())?.IsResidential;
                 if (isResidential == true)
                 {
                     item.Name = item.Name + " " + "(R)";
                 }
+                item.Name = textInfo.ToTitleCase(item.Name.ToLower());
+                item.Phone = item.Phone.PadLeft(11, '0');
+                item.GuardianPhone = item.GuardianPhone.PadLeft(11, '0');
             }
         }
-        report.DataSources.Add(new ReportDataSource("AttendanceReportDS", studentDailyAttendance));
+        if (!string.IsNullOrEmpty(sms))
+        {
+            if (sms=="sms")
+            {
+                reportData = reportData.Where(s => s.SMSSent != "Not Sent").ToList();
+            }
+            else if (sms=="no")
+            {
+                reportData = reportData.Where(s => s.SMSSent == "Not Sent").ToList();
+            }
+        }
+        string totalStudents = reportData.Count.ToString();
+        report.DataSources.Add(new ReportDataSource("AttendanceReportDS", reportData));
         var parameters = new[] {
             new ReportParameter("InstituteName", institute.Name),
             new ReportParameter("Location", institute.Address),
@@ -470,7 +494,7 @@ public class ReportsController : Controller
             new ReportParameter("Logo", imageParam),
             new ReportParameter("ReportName", reportName),
             new ReportParameter("AttendanceDate", fromDate),
-            new ReportParameter("ReportDate", DateTime.Today.ToString("dd MMM yyyy")),
+            new ReportParameter("ReportDate", DateTime.Now.ToString("dd MMM yyyy hh:mm tt")),
             new ReportParameter("TotalStudent",totalStudents)
         };
         report.ReportPath = path;
@@ -614,7 +638,7 @@ public class ReportsController : Controller
 
         var students = await _studentManager.GetStudentsByClassIdAndSessionIdAsync(5, 1);
         string mediaType = "application/pdf";
-        var path = _host.WebRootPath + "\\Reports\\Rpt_Monthly_Attendance_Report.rdlc";
+        var path = _host.WebRootPath + "\\Reports\\Attendance\\Rpt_Monthly_Attendance_Report.rdlc";
 
         using var report = new LocalReport();
         string imageParam = "";
@@ -705,60 +729,7 @@ public class ReportsController : Controller
         return File(pdf, mediaType);
     }
 
-    public IActionResult DailyCheckoutReport()
-    {
-        DailyCheckoutReportSearchVM report = new DailyCheckoutReportSearchVM();
-
-        return View(report);
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> DailyCheckoutReportExport(DailyCheckoutReportSearchVM dailyCheckoutReportVM)
-    {
-
-        Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
-        if (institute == null)
-        {
-            return new JsonResult("Institute Information not found!");
-        }
-
-        string mediaType = "application/pdf";
-        var path = _host.WebRootPath + "\\Reports\\Rpt_Daily_CheckOut.rdlc";
-
-        string imageParam = "";
-        var imagePath = _host.WebRootPath + "\\Images\\Institute\\" + institute.Logo;
-        var reportName = "Students Daily Attendance Report";
-
-        Image image = Image.FromFile(imagePath);
-        using (MemoryStream ms = new MemoryStream())
-        {
-            image.Save(ms, image.RawFormat);
-            byte[] imageBytes = ms.ToArray();
-            imageParam = Convert.ToBase64String(imageBytes);
-        }
-        using var report = new Microsoft.Reporting.NETCore.LocalReport();
-
-        //report.DataSources.Add(new ReportDataSource("AttendanceReportDS", studentDailyAttendance));
-        //var parameters = new[] {
-        //    new ReportParameter("InstituteName", institute.Name),
-        //    new ReportParameter("Location", institute.Address),
-        //    new ReportParameter("EIINNo", institute.EIIN),
-        //    new ReportParameter("Logo", imageParam),
-        //    new ReportParameter("ReportName", reportName),
-        //    new ReportParameter("AttendanceDate", dailyCheckoutReportVM.ReportDate.ToString("dd MMM yyyy")),
-        //    new ReportParameter("ReportDate", DateTime.Today.ToString("dd MMM yyyy")),
-        //    new ReportParameter("TotalStudent",totalStudents)
-        //};
-        report.ReportPath = path;
-        //report.SetParameters(parameters);
-        var pdf = report.Render("pdf");
-        if (!string.IsNullOrEmpty(dailyCheckoutReportVM.fileName))
-        {
-            return File(pdf, MediaTypeNames.Application.Octet, GetReportName(dailyCheckoutReportVM.fileName, dailyCheckoutReportVM.ReportType));
-        }
-        return File(pdf, mediaType);
-    }
-    #endregion Attendance Reports
+ #endregion Attendance Reports
 
     #region Result or MarkSheet
     [Authorize(Policy = "SubjectWiseMarkSheetReportsPolicy")]
@@ -767,7 +738,7 @@ public class ReportsController : Controller
         Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
 
         string mediaType = "application/pdf";
-        var reportPath = _host.WebRootPath + "\\Reports\\Rpt_Subject_Wise_MarkSheet.rdlc";
+        var reportPath = _host.WebRootPath + "\\Reports\\ExamResult\\Rpt_Subject_Wise_MarkSheet.rdlc";
 
         string imageParam = "";
         var instituteLogoPath = _host.WebRootPath + "\\Images\\Institute\\" + institute.Logo;
@@ -945,7 +916,7 @@ public class ReportsController : Controller
 
         RenderType renderType = RenderType.Pdf;
         renderType = !string.IsNullOrEmpty(reportType) ? GetRenderType(reportType) : renderType;
-        var path = _host.WebRootPath + "\\Reports\\Rpt_MarkSheet.rdlc";
+        var path = _host.WebRootPath + "\\Reports\\ExamResult\\Rpt_MarkSheet.rdlc";
 
         using var report = new Microsoft.Reporting.NETCore.LocalReport();
         report.DataSources.Add(new ReportDataSource("DataSet1", results));
@@ -1047,7 +1018,7 @@ public class ReportsController : Controller
         }
 
         string mediaType = "application/pdf";
-        var path = _host.WebRootPath + "\\Reports\\rptStudentPaymentFullInfo.rdlc";
+        var path = _host.WebRootPath + "\\Reports\\Accounts\\rptStudentPaymentFullInfo.rdlc";
 
         string imageParam = "";
         var imagePath = _host.WebRootPath + "\\Images\\Institute\\" + institute.Logo;
@@ -1140,7 +1111,7 @@ public class ReportsController : Controller
         }
         string imageParam = "";
         var imagePath = _host.WebRootPath + "\\Images\\Institute\\" + institute.Logo;
-        var reportPath = _host.WebRootPath + "\\Reports\\Rpt_Student_Payment.rdlc";
+        var reportPath = _host.WebRootPath + "\\Reports\\Accounts\\Rpt_Student_Payment.rdlc";
         byte[] pdf;
         string mediaType = "application/pdf";
         Image image = Image.FromFile(imagePath);
@@ -1201,7 +1172,7 @@ public class ReportsController : Controller
             return new JsonResult("Institute Information not found!");
         }
         string mediaType = "application/pdf";
-        var path = _host.WebRootPath + "\\Reports\\Rpt_Payment_Receipt.rdlc";
+        var path = _host.WebRootPath + "\\Reports\\Accounts\\Rpt_Payment_Receipt.rdlc";
 
         string imageParam = "";
         var imagePath = _host.WebRootPath + "\\Images\\Institute\\institute.jpeg";
@@ -1261,7 +1232,7 @@ public class ReportsController : Controller
         var renderType = string.IsNullOrEmpty(reportType) ? RenderType.Pdf : GetRenderType(reportType);
 
         // Step 4: Load the RDLC Report
-        var reportPath = Path.Combine(_host.WebRootPath, "Reports", "Rpt_AdmitCard.rdlc");
+        var reportPath = Path.Combine(_host.WebRootPath, "Reports\\ExamResult", "Rpt_AdmitCard.rdlc");
         using var localReport = new Microsoft.Reporting.NETCore.LocalReport
         {
             ReportPath = reportPath

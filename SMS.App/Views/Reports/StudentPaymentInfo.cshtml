@@ -87,7 +87,7 @@
                 toDate = $('#sToDate').val();
 
                 aClassRoll = $('#aClassRollId').val();
-                if (aClassRoll.length == 0 && fromDate == '' && toDate == '') {
+                if (aClassRoll.length == 0 || fromDate == '' || toDate == '') {
                     $('#InvalidForm').show();
                     $('#iframe-container').hide();
                     $('#loading').hide();

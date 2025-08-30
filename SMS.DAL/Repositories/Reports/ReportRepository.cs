@@ -9,6 +9,7 @@ using SMS.Entities.RptModels.Results;
 using SMS.Entities.RptModels.StudentPayment;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Diagnostics.Tracing;
 using System.Linq;
@@ -116,14 +117,13 @@ namespace SMS.DAL.Repositories.Reports
             return result;
         }
 
-        public async Task<List<RptDailyAttendaceVM>> GetDailyAttendanceReportCheckOut(string fromDate, string AcademicClassId, string AcademicSectionId, string attendanceType, string aSessionId, string attendanceFor)
+        public async Task<List<RptDailyAttendaceVM>> GetDailyAttendanceReportCheckOut(string fromDate, string AcademicClassId, string AcademicSectionId, string attendanceFor)
         {
-            var pAttendanceFor = new SqlParameter("attendanceFor", attendanceFor);
-            var pDate = new SqlParameter("date", fromDate);
-            var pAttendanceType = new SqlParameter("attendanceType", attendanceType);
-            var pASessionId = aSessionId != null ? new SqlParameter("aSessionId", aSessionId) : null;
-            var pClassId = AcademicClassId != null ? new SqlParameter("aClassId", AcademicClassId) : null;
-            var result = await _context.RptDailyAttendaceVMs.FromSqlInterpolated($"sp_get_attendance_by_date {pAttendanceFor},{pDate},{pAttendanceType},{pASessionId},{pClassId}").ToListAsync();
+            var reportDate = new SqlParameter("ReportDate", fromDate);
+            var sectionId = AcademicSectionId != null? new SqlParameter("SectionId", AcademicSectionId):null;
+            var classId = AcademicClassId != null ? new SqlParameter("ClassId", AcademicClassId) : null;
+            var For = new SqlParameter("attendanceFor", attendanceFor);
+            var result = await _context.RptDailyAttendaceVMs.FromSqlInterpolated($"sp_GetCheckOutReportData {For},{reportDate},{classId},{sectionId}").ToListAsync();
             return result;
         }
         public async Task<List<RptPaymentReceiptVM>> GetPaymentReceiptReport(int paymentId)

@@ -17,6 +17,10 @@
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
+        <Field Name="ClassRoll">
+          <DataField>ClassRoll</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="CardNo">
           <DataField>CardNo</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -41,6 +45,10 @@
           <DataField>GuardianPhone</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="SMSSent">
+          <DataField>SMSSent</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>SMSDBDataSet</rd:DataSetName>
@@ -60,7 +68,7 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>7.415in</Width>
+                  <Width>7.43207in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -107,19 +115,25 @@
                               <TablixBody>
                                 <TablixColumns>
                                   <TablixColumn>
-                                    <Width>0.80743in</Width>
+                                    <Width>0.7612in</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>2.85933in</Width>
+                                    <Width>0.92586in</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>1.3in</Width>
+                                    <Width>2.2in</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>1.30708in</Width>
+                                    <Width>1.02586in</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>0.99458in</Width>
+                                    <Width>1.01349in</Width>
+                                  </TablixColumn>
+                                  <TablixColumn>
+                                    <Width>0.63711in</Width>
+                                  </TablixColumn>
+                                  <TablixColumn>
+                                    <Width>0.73753in</Width>
                                   </TablixColumn>
                                 </TablixColumns>
                                 <TablixRows>
@@ -145,6 +159,38 @@
                                               </Paragraph>
                                             </Paragraphs>
                                             <rd:DefaultName>Textbox6</rd:DefaultName>
+                                            <Style>
+                                              <Border>
+                                                <Color>LightGrey</Color>
+                                                <Style>Solid</Style>
+                                              </Border>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
+                                            </Style>
+                                          </Textbox>
+                                        </CellContents>
+                                      </TablixCell>
+                                      <TablixCell>
+                                        <CellContents>
+                                          <Textbox Name="Textbox7">
+                                            <CanGrow>true</CanGrow>
+                                            <KeepTogether>true</KeepTogether>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value>UniqueId</Value>
+                                                    <Style>
+                                                      <FontWeight>Bold</FontWeight>
+                                                    </Style>
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style />
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>Textbox7</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Color>LightGrey</Color>
@@ -231,7 +277,7 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>Guardian Phone</Value>
+                                                    <Value>Guardian</Value>
                                                     <Style>
                                                       <FontWeight>Bold</FontWeight>
                                                     </Style>
@@ -263,7 +309,7 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>Punch Time</Value>
+                                                    <Value>Punch </Value>
                                                     <Style>
                                                       <FontWeight>Bold</FontWeight>
                                                     </Style>
@@ -288,6 +334,40 @@
                                           </Textbox>
                                         </CellContents>
                                       </TablixCell>
+                                      <TablixCell>
+                                        <CellContents>
+                                          <Textbox Name="Textbox5">
+                                            <CanGrow>true</CanGrow>
+                                            <KeepTogether>true</KeepTogether>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value>SMS Sent</Value>
+                                                    <Style>
+                                                      <FontWeight>Bold</FontWeight>
+                                                    </Style>
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style>
+                                                  <TextAlign>Right</TextAlign>
+                                                </Style>
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>Textbox5</rd:DefaultName>
+                                            <Style>
+                                              <Border>
+                                                <Color>LightGrey</Color>
+                                                <Style>Solid</Style>
+                                              </Border>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
+                                            </Style>
+                                          </Textbox>
+                                        </CellContents>
+                                      </TablixCell>
                                     </TablixCells>
                                   </TablixRow>
                                   <TablixRow>
@@ -295,7 +375,37 @@
                                     <TablixCells>
                                       <TablixCell>
                                         <CellContents>
-                                          <Textbox Name="CardNo">
+                                          <Textbox Name="ClassRoll">
+                                            <CanGrow>true</CanGrow>
+                                            <KeepTogether>true</KeepTogether>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value>=Fields!ClassRoll.Value</Value>
+                                                    <Style />
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style />
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>ClassRoll</rd:DefaultName>
+                                            <Style>
+                                              <Border>
+                                                <Color>LightGrey</Color>
+                                                <Style>Solid</Style>
+                                              </Border>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
+                                            </Style>
+                                          </Textbox>
+                                        </CellContents>
+                                      </TablixCell>
+                                      <TablixCell>
+                                        <CellContents>
+                                          <Textbox Name="CardNo1">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
@@ -309,7 +419,7 @@
                                                 <Style />
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>CardNo</rd:DefaultName>
+                                            <rd:DefaultName>CardNo1</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Color>LightGrey</Color>
@@ -351,7 +461,6 @@
                                               <PaddingBottom>2pt</PaddingBottom>
                                             </Style>
                                           </Textbox>
-                                          <rd:Selected>true</rd:Selected>
                                         </CellContents>
                                       </TablixCell>
                                       <TablixCell>
@@ -446,6 +555,38 @@
                                           </Textbox>
                                         </CellContents>
                                       </TablixCell>
+                                      <TablixCell>
+                                        <CellContents>
+                                          <Textbox Name="SMSSent">
+                                            <CanGrow>true</CanGrow>
+                                            <KeepTogether>true</KeepTogether>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value>=Fields!SMSSent.Value</Value>
+                                                    <Style />
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style>
+                                                  <TextAlign>Right</TextAlign>
+                                                </Style>
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>SMSSent</rd:DefaultName>
+                                            <Style>
+                                              <Border>
+                                                <Color>LightGrey</Color>
+                                                <Style>Solid</Style>
+                                              </Border>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
+                                            </Style>
+                                          </Textbox>
+                                        </CellContents>
+                                      </TablixCell>
                                     </TablixCells>
                                   </TablixRow>
                                 </TablixRows>
@@ -457,22 +598,26 @@
                                   <TablixMember />
                                   <TablixMember />
                                   <TablixMember />
+                                  <TablixMember />
+                                  <TablixMember />
                                 </TablixMembers>
                               </TablixColumnHierarchy>
                               <TablixRowHierarchy>
                                 <TablixMembers>
                                   <TablixMember>
                                     <KeepWithGroup>After</KeepWithGroup>
+                                    <RepeatOnNewPage>true</RepeatOnNewPage>
                                   </TablixMember>
                                   <TablixMember>
                                     <Group Name="Details1" />
                                   </TablixMember>
                                 </TablixMembers>
                               </TablixRowHierarchy>
+                              <RepeatColumnHeaders>true</RepeatColumnHeaders>
                               <DataSetName>AttendanceReportDS</DataSetName>
                               <Top>0.22235in</Top>
                               <Height>0.44444in</Height>
-                              <Width>7.26842in</Width>
+                              <Width>7.30105in</Width>
                               <ZIndex>1</ZIndex>
                               <Style>
                                 <Border>
@@ -552,7 +697,7 @@
             <Top>0.0382in</Top>
             <Left>0.03633in</Left>
             <Height>0.68485in</Height>
-            <Width>7.415in</Width>
+            <Width>7.43207in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -576,7 +721,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox2</rd:DefaultName>
-            <Top>0.75083in</Top>
+            <Top>0.76055in</Top>
             <Height>0.21181in</Height>
             <Width>7.26842in</Width>
             <ZIndex>1</ZIndex>
@@ -594,7 +739,7 @@
         <Height>1.0043in</Height>
         <Style />
       </Body>
-      <Width>7.45133in</Width>
+      <Width>7.4684in</Width>
       <Page>
         <PageHeader>
           <Height>1.1507in</Height>
@@ -741,9 +886,9 @@
               </Paragraphs>
               <rd:DefaultName>Textbox1</rd:DefaultName>
               <Top>0.54792in</Top>
-              <Left>5.52536in</Left>
+              <Left>4.94925in</Left>
               <Height>0.15in</Height>
-              <Width>1.77939in</Width>
+              <Width>2.3555in</Width>
               <ZIndex>3</ZIndex>
               <Style>
                 <Border>
@@ -788,6 +933,7 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>PageNumber</rd:DefaultName>
+              <Top>0in</Top>
               <Left>5.76842in</Left>
               <Height>0.3in</Height>
               <Width>1.53633in</Width>

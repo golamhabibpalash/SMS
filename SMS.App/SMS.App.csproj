@@ -16,35 +16,38 @@
 		<Compile Remove="FakesAssemblies\**" />
 		<Compile Remove="Views\Reports\RPT\**" />
 		<Compile Remove="wwwroot\FA\**" />
+		<Compile Remove="wwwroot\Reports\NewFolder\**" />
+		<Compile Remove="wwwroot\Reports\ReportData\**" />
 		<Compile Remove="wwwroot\Reports\Versioning\**" />
 		<Content Remove="FakesAssemblies\**" />
 		<Content Remove="Views\Reports\RPT\**" />
 		<Content Remove="wwwroot\FA\**" />
+		<Content Remove="wwwroot\Reports\NewFolder\**" />
+		<Content Remove="wwwroot\Reports\ReportData\**" />
 		<Content Remove="wwwroot\Reports\Versioning\**" />
 		<EmbeddedResource Remove="FakesAssemblies\**" />
 		<EmbeddedResource Remove="Views\Reports\RPT\**" />
 		<EmbeddedResource Remove="wwwroot\FA\**" />
+		<EmbeddedResource Remove="wwwroot\Reports\NewFolder\**" />
+		<EmbeddedResource Remove="wwwroot\Reports\ReportData\**" />
 		<EmbeddedResource Remove="wwwroot\Reports\Versioning\**" />
 		<None Remove="FakesAssemblies\**" />
 		<None Remove="Views\Reports\RPT\**" />
 		<None Remove="wwwroot\FA\**" />
+		<None Remove="wwwroot\Reports\NewFolder\**" />
+		<None Remove="wwwroot\Reports\ReportData\**" />
 		<None Remove="wwwroot\Reports\Versioning\**" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<Content Remove="Views\AcademicExamType\Delete.cshtml" />
-		<Content Remove="wwwroot\Reports\ReportData\MonthAttendanceDataset - Copy.xsc" />
-		<Content Remove="wwwroot\Reports\ReportData\MonthAttendanceDataset - Copy.xss" />
-		<Content Remove="wwwroot\Reports\ReportData\MonthAttendanceDataset.xsc" />
-		<Content Remove="wwwroot\Reports\ReportData\MonthAttendanceDataset.xsd" />
-		<Content Remove="wwwroot\Reports\ReportData\MonthAttendanceDataset.xss" />
-		<Content Remove="wwwroot\Reports\ReportData\rptDynamicStudentDS.xsd" />
 		<Content Remove="wwwroot\Reports\rptAnnualReport.rdlc" />
 		<Content Remove="wwwroot\Reports\rptStudent1.rdlc" />
 		<Content Remove="wwwroot\Reports\RptStudentDynamicReport.rdlc" />
 		<Content Remove="wwwroot\Reports\rptStudentPaymentFullInfo.rdlc" />
 		<Content Remove="wwwroot\Reports\Rpt_AdmitCard.rdlc" />
 		<Content Remove="wwwroot\Reports\Rpt_Daily_Attendance.rdlc" />
+		<Content Remove="wwwroot\Reports\Rpt_Daily_Attendance_CheckOut.rdlc" />
 		<Content Remove="wwwroot\Reports\Rpt_GradingTable.rdlc" />
 		<Content Remove="wwwroot\Reports\Rpt_MarkSheet.rdlc" />
 		<Content Remove="wwwroot\Reports\Rpt_MonthlyAttendance.rdlc" />
@@ -118,33 +121,6 @@
 		<None Include="wwwroot\lib\MultiSelect\js\jquery-2.1.3.min.js" />
 		<None Include="wwwroot\lib\MultiSelect\js\prettify.min.js" />
 		<None Include="wwwroot\lib\MultiSelect\js\require-2.3.5.min.js" />
-		<None Include="wwwroot\Reports\ReportData\rptDynamicStudentDS.xsc" />
-		<None Include="wwwroot\Reports\ReportData\rptDynamicStudentDS.xsd">
-		  <SubType>Designer</SubType>
-		  <LastGenOutput>rptDynamicStudentDS.Designer.cs</LastGenOutput>
-		  <Generator>MSDataSetGenerator</Generator>
-		</None>
-		<None Include="wwwroot\Reports\ReportData\rptDynamicStudentDS.xss" />
-		<None Include="wwwroot\Reports\ReportData\MonthAttendanceDataset.xsc" />
-		<None Include="wwwroot\Reports\ReportData\MonthAttendanceDataset.xsd">
-		  <SubType>Designer</SubType>
-		  <LastGenOutput>MonthAttendanceDataset.Designer.cs</LastGenOutput>
-		  <Generator>MSDataSetGenerator</Generator>
-		</None>
-		<None Include="wwwroot\Reports\ReportData\MonthAttendanceDataset.xss" />
-		<None Include="wwwroot\Reports\rptAnnualReport.rdlc" />
-		<None Include="wwwroot\Reports\RptStudentDynamicReport.rdlc" />
-		<None Include="wwwroot\Reports\rptStudentPaymentFullInfo.rdlc" />
-		<None Include="wwwroot\Reports\Rpt_AdmitCard.rdlc" />
-		<None Include="wwwroot\Reports\Rpt_MonthlyAttendance.rdlc" />
-		<None Include="wwwroot\Reports\Rpt_Daily_Attendance.rdlc" />
-		<None Include="wwwroot\Reports\Rpt_GradingTable.rdlc" />
-		<None Include="wwwroot\Reports\Rpt_MarkSheet.rdlc" />
-		<None Include="wwwroot\Reports\Rpt_Monthly_Attendance_Report.rdlc" />
-		<None Include="wwwroot\Reports\Rpt_Payment_Receipt.rdlc" />
-		<None Include="wwwroot\Reports\Rpt_Student_Payment.rdlc" />
-		<None Include="wwwroot\Reports\Rpt_Student_Wise_MarkSheet.rdlc" />
-		<None Include="wwwroot\Reports\Rpt_Subject_Wise_MarkSheet.rdlc" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -164,27 +140,6 @@
 
 	<ItemGroup>
 		<AdditionalDesignTimeBuildInput Remove="FakesAssemblies\**" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Compile Include="wwwroot\Reports\ReportData\rptDynamicStudentDS.Designer.cs">
-	    <DependentUpon>rptDynamicStudentDS.xsd</DependentUpon>
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	  </Compile>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Content Update="wwwroot\Reports\ReportData\MonthAttendanceDataset.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>MonthAttendanceDataset.xsd</DependentUpon>
-	  </Content>
-	  <Content Update="wwwroot\Reports\ReportData\rptDynamicStudentDS.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>rptDynamicStudentDS.xsd</DependentUpon>
-	  </Content>
 	</ItemGroup>
 
 </Project>

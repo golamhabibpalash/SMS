@@ -532,7 +532,6 @@
                             </Border>
                           </Style>
                         </Rectangle>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -753,9 +752,9 @@
               </Paragraphs>
               <rd:DefaultName>Textbox1</rd:DefaultName>
               <Top>0.54792in</Top>
-              <Left>5.52536in</Left>
+              <Left>5.00309in</Left>
               <Height>0.15in</Height>
-              <Width>1.77939in</Width>
+              <Width>2.30166in</Width>
               <ZIndex>3</ZIndex>
               <Style>
                 <Border>
@@ -800,6 +799,7 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>PageNumber</rd:DefaultName>
+              <Top>0in</Top>
               <Left>5.76842in</Left>
               <Height>0.3in</Height>
               <Width>1.53633in</Width>

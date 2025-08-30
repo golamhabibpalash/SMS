@@ -17,6 +17,10 @@
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
+        <Field Name="ClassSL">
+          <DataField>ClassSL</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
         <Field Name="CardNo">
           <DataField>CardNo</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -610,11 +614,27 @@
                                   </TablixMember>
                                   <TablixMember>
                                     <Group Name="Details1" />
+                                    <SortExpressions>
+                                      <SortExpression>
+                                        <Value>=Fields!ClassSL.Value</Value>
+                                      </SortExpression>
+                                      <SortExpression>
+                                        <Value>=Fields!ClassRoll.Value</Value>
+                                      </SortExpression>
+                                    </SortExpressions>
                                     <KeepTogether>true</KeepTogether>
                                   </TablixMember>
                                 </TablixMembers>
                               </TablixRowHierarchy>
                               <DataSetName>AttendanceReportDS</DataSetName>
+                              <SortExpressions>
+                                <SortExpression>
+                                  <Value>=Fields!ClassSL.Value</Value>
+                                </SortExpression>
+                                <SortExpression>
+                                  <Value>=Fields!ClassRoll.Value</Value>
+                                </SortExpression>
+                              </SortExpressions>
                               <Top>0.22235in</Top>
                               <Height>0.44444in</Height>
                               <Width>7.31134in</Width>
@@ -684,7 +704,15 @@
                     <GroupExpressions>
                       <GroupExpression>=Fields!Class_Designation.Value</GroupExpression>
                     </GroupExpressions>
+                    <PageBreak>
+                      <BreakLocation>Between</BreakLocation>
+                    </PageBreak>
                   </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=CInt(Fields!ClassSL.Value)</Value>
+                    </SortExpression>
+                  </SortExpressions>
                 </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
@@ -739,10 +767,10 @@
         <Height>1.0043in</Height>
         <Style />
       </Body>
-      <Width>7.49767in</Width>
+      <Width>7.36225in</Width>
       <Page>
         <PageHeader>
-          <Height>1.1507in</Height>
+          <Height>1.0257in</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>

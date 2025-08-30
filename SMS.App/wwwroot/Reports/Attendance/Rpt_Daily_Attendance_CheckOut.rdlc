@@ -21,6 +21,10 @@
           <DataField>ClassRoll</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="ClassSL">
+          <DataField>ClassSL</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="CardNo">
           <DataField>CardNo</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -685,6 +689,11 @@
                       <GroupExpression>=Fields!Class_Designation.Value</GroupExpression>
                     </GroupExpressions>
                   </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=CInt(Fields!ClassSL.Value)</Value>
+                    </SortExpression>
+                  </SortExpressions>
                 </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
@@ -933,7 +942,6 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>PageNumber</rd:DefaultName>
-              <Top>0in</Top>
               <Left>5.76842in</Left>
               <Height>0.3in</Height>
               <Width>1.53633in</Width>

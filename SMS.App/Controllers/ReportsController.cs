@@ -499,11 +499,12 @@ public class ReportsController : Controller
         };
         report.ReportPath = path;
         report.SetParameters(parameters);
-        var pdf = report.Render("pdf");
         if (!string.IsNullOrEmpty(fileName))
         {
-            return File(pdf, MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
+            var rendereFile = report.Render(reportType);
+            return File(rendereFile, MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
         }
+        var pdf = report.Render("pdf");
         return File(pdf, mediaType);
 
     }
@@ -1294,6 +1295,7 @@ public class ReportsController : Controller
             "XLS" => reportName + ".xls",
             "WORD" => reportName + ".doc",
             "EXCEL" => reportName + ".xlsx",
+            "EXCELOPENXML" => reportName + ".xlsx",
             _ => reportName + ".pdf",
         };
         return outputFileName;

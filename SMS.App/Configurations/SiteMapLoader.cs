@@ -17,10 +17,12 @@ public static class SiteMapLoader
                 SystemName = m.Attribute("systemName")?.Value,
                 DisplayName = m.Attribute("displayName")?.Value,
                 Permission = m.Attribute("Permission")?.Value,
+                Icon = m.Attribute("Icon")?.Value,
                 Submodules = m.Descendants("submodule").Select(s => new Submodule
                 {
                     SystemName = s.Attribute("systemName")?.Value,
                     DisplayName = s.Attribute("displayName")?.Value,
+                    Icon = s.Attribute("Icon")?.Value,
                     Items = s.Descendants("item").Select(i => new Item
                     {
                         SystemName = i.Attribute("systemName")?.Value,

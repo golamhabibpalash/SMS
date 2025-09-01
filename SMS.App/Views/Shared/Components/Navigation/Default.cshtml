@@ -13,16 +13,16 @@
 
         <li class="nav-group">
             <a class="nav-link nav-group-toggle" href="#" aria-expanded="false">
-                @module.Icon @module.DisplayName
+                <i class="nav-icon @module.Icon text-light"></i>  @module.DisplayName
             </a>
 
-            <ul class="nav-group-items" style="background:darkorchid">
+            <ul class="nav-group-items" style="background:#2F4361">
                 @foreach (var sub in module.Submodules)
                 {
                     <li class="nav-group">
-                        <a class="nav-link nav-group-toggle" href="#" aria-expanded="false"><i class="fa fa-router fa-1x"></i>  @sub.DisplayName</a>
+                        <a class="nav-link nav-group-toggle" href="#" aria-expanded="false" ><i class="nav-icon @sub.Icon fa-1x"></i>  @sub.DisplayName</a>
 
-                        <ul class="nav-group-items">
+                        <ul class="nav-group-items" >
                             @foreach (var item in sub.Items)
                             {
                                 var hasClaim = string.IsNullOrEmpty(item.Claim)
@@ -30,8 +30,8 @@
                                 if (!hasClaim) { continue; }
 
                                 <li class="nav-item">
-                                    <a class="nav-link" asp-controller="@item.Controller" asp-action="@item.Action">
-                                        - @item.DisplayName
+                                    <a class="nav-link" asp-controller="@item.Controller" asp-action="@item.Action" style="border-bottom:1px solid #29344C">
+                                        <i class="nav-icon fas fa-arrow-right"></i> @item.DisplayName
                                     </a>
                                 </li>
                             }

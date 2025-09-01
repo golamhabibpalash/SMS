@@ -200,7 +200,6 @@
             @await Component.InvokeAsync("Navigation", new { }) 
         </ul> *@
         <div class="sidebar sidebar-dark sidebar-fixed border-end" id="sidebar">
-            <div class="sidebar-header border-bottom">
             <div class="sidebar-brand d-none d-md-flex">
 
                 <span class="nav-item">
@@ -209,7 +208,6 @@
                     </a>
                 </span>
             </div>
-        </div>
 
             @await Component.InvokeAsync("Navigation")
         </div>
@@ -303,16 +301,19 @@
         <div class="body flex-grow-1 px-3 mb-5" id="mainContent">
             <div class="container">
                 @RenderBody()
+
+                <footer class="footer fixed-bottom">
+                    <div>
+                        <span>version : 1.32.16</span>
+                    </div>
+                    @{
+                        string shortName = string.Empty;
+                        shortName = info.FirstOrDefault().ShortName != null ? info.FirstOrDefault().ShortName : "GHP";
+                    }
+                    <div class="ms-auto">&copy; Powered By @shortName</div>
+                </footer>
             </div>
         </div>
-        <footer class="footer fixed-bottom">
-            <div></div>
-            @{
-                string shortName = string.Empty;
-                shortName = info.FirstOrDefault().ShortName != null ? info.FirstOrDefault().ShortName : "GHP";
-}
-            <div class="ms-auto">&copy; Powered By @shortName</div>
-        </footer>
     </div>
 
     <!-- jQuery -->

@@ -10,10 +10,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SMS.App.Configurations;
 using SMS.App.Utilities.Automation.Hangfire;
+using SMS.App.ViewModels.ModuleSubModuleVM;
 using SMS.DB;
 using SMS.Entities;
 using System;
+using System.IO;
 using System.Text;
+using System.Xml.Linq;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -82,6 +85,14 @@ builder.Services.AddAutoMapper(typeof(Program));
 //builder.Services.AddHostedService<ScopedBackgroundService>();
 
 builder.Services.Addservices();
+
+//Load Navigation Menu
+builder.Services.AddSingleton<SiteMap>(provider =>
+{
+    // keep it in config file path, better: appsettings.json
+    var filePath = Path.Combine(builder.Environment.ContentRootPath, "siteMap.config");
+    return SiteMapLoader.Load(filePath);
+});
 
 var app = builder.Build();
 

@@ -1,0 +1,46 @@
+﻿@using Microsoft.AspNetCore.Http
+@using SMS.App.ViewModels.ModuleSubModuleVM
+@model SiteMap
+@inject IHttpContextAccessor HttpContextAccessor
+
+<ul class="sidebar-nav list-unstyled" data-coreui="navigation" data-simplebar="">
+    @foreach (var module in Model.Modules)
+    {
+        var canAccessModule = string.IsNullOrEmpty(module.Permission)
+        || HttpContextAccessor.HttpContext.User.HasClaim("Permission", module.Permission);
+
+        if (!canAccessModule) { continue; }
+
+        <li class="nav-group">
+            <a class="nav-link nav-group-toggle" href="#" data-toggle="collapse" data-target="#module-@module.SystemName" aria-expanded="false">
+                <i class="nav-icon fas fa-folder fa-lg"></i> @module.DisplayName
+            </a>
+
+            <ul class="nav-group-items collapse" id="module-@module.SystemName">
+                @foreach (var sub in module.Submodules)
+                {
+                    <li class="nav-group">
+                        <a class="nav-link nav-group-toggle" href="#" data-toggle="collapse" data-target="#sub-@module.SystemName-@sub.SystemName" aria-expanded="false">
+                            @sub.DisplayName
+                        </a>
+
+                        <ul class="nav-group-items collapse" id="sub-@module.SystemName-@sub.SystemName">
+                            @foreach (var item in sub.Items)
+                            {
+                                var hasClaim = string.IsNullOrEmpty(item.Claim)
+                                || HttpContextAccessor.HttpContext.User.HasClaim("Permission", item.Claim);
+                                if (!hasClaim) { continue; }
+
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="@item.Controller" asp-action="@item.Action">
+                                        @item.DisplayName
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </li>
+                }
+            </ul>
+        </li>
+    }
+</ul>

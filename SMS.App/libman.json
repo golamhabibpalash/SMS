@@ -25,6 +25,10 @@
     {
       "library": "jquery@3.7.1",
       "destination": "wwwroot/lib/jquery/jquery3.7/jquery/"
+    },
+    {
+      "library": "fullcalendar@6.1.19",
+      "destination": "wwwroot/lib/fullcalendar/"
     }
   ]
 }

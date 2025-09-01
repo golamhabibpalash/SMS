@@ -109,8 +109,7 @@
     <link href="~/css/CoreUI/css/vendors/simplebar.css" rel="stylesheet" />
     <!-- Main styles for this application-->
     <link href="~/css/CoreUI/css/style.css" rel="stylesheet" />
-    <!-- We use those styles to show code examples, you should remove them in your application.-->
-    <link href="~/css/CoreUI/css/examples.css" rel="stylesheet" />
+
 
     <!-- Alertify -->
     <link href="~/lib/Alertify/css/alertify.min.css" rel="stylesheet" />
@@ -161,41 +160,21 @@
 
 
         /* Style for Navigation */
-        .sidebar-nav {
-            padding: 0;
+        /* Sidebar nav accordion behavior */
+        #appSidebar .nav-group-items {
+            display: none;
+            margin-left: .5rem;
         }
 
-        .nav-group-items {
-            list-style: none;
-            padding-left: 1rem; /* Indent submenus */
-            transition: all 0.3s ease;
-        }
-
-        .nav-group.show .nav-group-items {
-            display: block; /* Show when .show is applied */
-        }
-
-        .nav-group-toggle {
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-            .nav-group-toggle::after {
-                content: '\f078'; /* Font Awesome chevron-down */
-                font-family: 'Font Awesome 5 Free';
-                font-weight: 900;
-                transition: transform 0.3s;
+            #appSidebar .nav-group-items.show {
+                display: block;
             }
 
-        .nav-group.show .nav-group-toggle::after {
-            transform: rotate(180deg); /* Rotate icon when expanded */
+        #appSidebar .nav-link.nav-group-toggle {
+            cursor: pointer;
+            user-select: none;
         }
 
-        .nav-item .nav-link {
-            padding-left: 2rem; /* Extra indent for items */
-        }
 
     </style>
 
@@ -206,23 +185,37 @@
         <script>window.location.href = "/Accounts/Login";</script>
     }
     @await RenderSectionAsync("Styles", required: false)
-    <div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
-        <div class="sidebar-brand d-none d-md-flex">
+    @* <div class="sidebar sidebar-dark sidebar-fixed" id="sidebar"> *@
+        @* <div class="sidebar-brand d-none d-md-flex">
 
             <span class="nav-item">
                 <a asp-action="Index" asp-controller="Home" class="nav-link text-center">
                     <img class="img-circle img-fluid p-2" src="~/Images/Institute/@instituteLogo" alt="Logo" style="font-size: 20px; width:50%;" />
                 </a>
             </span>
+        </div> *@
+
+        @* <ul class="sidebar-nav" data-coreui="navigation" data-simplebar="">
+            @* @await Html.PartialAsync("_NavigationMenu") 
+            @await Component.InvokeAsync("Navigation", new { }) 
+        </ul> *@
+        <div class="sidebar sidebar-dark sidebar-fixed border-end" id="sidebar">
+            <div class="sidebar-header border-bottom">
+            <div class="sidebar-brand d-none d-md-flex">
+
+                <span class="nav-item">
+                    <a asp-action="Index" asp-controller="Home" class="nav-link text-center">
+                        <img class="img-circle img-fluid p-2" src="~/Images/Institute/@instituteLogo" alt="Logo" style="font-size: 20px; width:50%;" />
+                    </a>
+                </span>
+            </div>
         </div>
 
-        <ul class="sidebar-nav" data-coreui="navigation" data-simplebar="">
-            @* @await Html.PartialAsync("_NavigationMenu") *@
-            @await Component.InvokeAsync("Navigation", new { })
-        </ul>
+            @await Component.InvokeAsync("Navigation")
+        </div>
 
         <button class="sidebar-toggler" type="button" data-coreui-toggle="unfoldable"></button>
-    </div>
+    @* </div> *@
     <div class="wrapper d-flex flex-column min-vh-100 bg-light">
         <header class="header header-sticky mb-2" style="background-color:aliceblue">
             <div class="container d-flex justify-content-between">
@@ -386,17 +379,17 @@
             }
         });
 
-        function menuToggle() {
-            if ($('body').hasClass('nav-md')) {
-                $("#sidebar-menu").find('li.active ul').hide();
-                $("#sidebar-menu").find('li.active').addClass('active-sm').removeClass('active');
-            } else {
-                $("#sidebar-menu").find('li.active-sm ul').show();
-                $("#sidebar-menu").find('li.active-sm').addClass('active').removeClass('active-sm');
-            }
-            $('body').toggleClass('nav-md nav-sm');
-            setHeight();
-        }
+        // function menuToggle() {
+        //     if ($('body').hasClass('nav-md')) {
+        //         $("#sidebar-menu").find('li.active ul').hide();
+        //         $("#sidebar-menu").find('li.active').addClass('active-sm').removeClass('active');
+        //     } else {
+        //         $("#sidebar-menu").find('li.active-sm ul').show();
+        //         $("#sidebar-menu").find('li.active-sm').addClass('active').removeClass('active-sm');
+        //     }
+        //     $('body').toggleClass('nav-md nav-sm');
+        //     setHeight();
+        // }
 
         function setHeight() {
             $('.right_col').css('min-height', $(window).height());

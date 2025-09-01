@@ -3,7 +3,7 @@
 @model SiteMap
 @inject IHttpContextAccessor HttpContextAccessor
 
-<ul class="sidebar-nav list-unstyled" data-coreui="navigation" data-simplebar="">
+<ul class="sidebar-nav" id="appSidebar" data-simplebar>
     @foreach (var module in Model.Modules)
     {
         var canAccessModule = string.IsNullOrEmpty(module.Permission)
@@ -12,19 +12,17 @@
         if (!canAccessModule) { continue; }
 
         <li class="nav-group">
-            <a class="nav-link nav-group-toggle" href="#" data-toggle="collapse" data-target="#module-@module.SystemName" aria-expanded="false">
-                <i class="nav-icon fas fa-folder fa-lg"></i> @module.DisplayName
+            <a class="nav-link nav-group-toggle" href="#" aria-expanded="false">
+                @module.Icon @module.DisplayName
             </a>
 
-            <ul class="nav-group-items collapse" id="module-@module.SystemName">
+            <ul class="nav-group-items" style="background:darkorchid">
                 @foreach (var sub in module.Submodules)
                 {
                     <li class="nav-group">
-                        <a class="nav-link nav-group-toggle" href="#" data-toggle="collapse" data-target="#sub-@module.SystemName-@sub.SystemName" aria-expanded="false">
-                            @sub.DisplayName
-                        </a>
+                        <a class="nav-link nav-group-toggle" href="#" aria-expanded="false"><i class="fa fa-router fa-1x"></i>  @sub.DisplayName</a>
 
-                        <ul class="nav-group-items collapse" id="sub-@module.SystemName-@sub.SystemName">
+                        <ul class="nav-group-items">
                             @foreach (var item in sub.Items)
                             {
                                 var hasClaim = string.IsNullOrEmpty(item.Claim)
@@ -33,7 +31,7 @@
 
                                 <li class="nav-item">
                                     <a class="nav-link" asp-controller="@item.Controller" asp-action="@item.Action">
-                                        @item.DisplayName
+                                        - @item.DisplayName
                                     </a>
                                 </li>
                             }

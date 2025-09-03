@@ -2,12 +2,16 @@
 @using SMS.App.ViewModels.ModuleSubModuleVM
 @model SiteMap
 @inject IHttpContextAccessor HttpContextAccessor
+@inject IProjectModuleManager _moduleManager;
 
 <ul class="sidebar-nav" id="appSidebar" data-simplebar>
+    @{
+        var allModules = await _moduleManager.GetAllAsync();
+        var allActiveModules = allModules.ToList().Where(s => s.Status == true);
+    }
     @foreach (var module in Model.Modules)
     {
-        var canAccessModule = string.IsNullOrEmpty(module.Permission)
-        || HttpContextAccessor.HttpContext.User.HasClaim("Permission", module.Permission);
+        var canAccessModule = allActiveModules.ToList().Any(s => s.ModuleName == module.SystemName);
 
         if (!canAccessModule) { continue; }
 

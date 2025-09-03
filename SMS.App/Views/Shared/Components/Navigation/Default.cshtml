@@ -4,7 +4,12 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @inject IProjectModuleManager _moduleManager;
 
-<ul class="sidebar-nav" id="appSidebar" data-simplebar>
+<ul class="nav sidebar-menu flex-column"
+    data-lte-toggle="treeview"
+    role="navigation"
+    aria-label="Main navigation"
+    data-accordion="false"
+    id="navigation">
     @{
         var allModules = await _moduleManager.GetAllAsync();
         var allActiveModules = allModules.ToList().Where(s => s.Status == true);
@@ -15,25 +20,35 @@
 
         if (!canAccessModule) { continue; }
 
-        <li class="nav-group">
-            <a class="nav-link nav-group-toggle" href="#" aria-expanded="false">
-                <i class="nav-icon @module.Icon text-light"></i>  @module.DisplayName
+        <li class="nav-item" >
+            <a class="nav-link" href="#" aria-expanded="false">
+                <p>
+                    <i class=" @module.Icon text-light"></i>  @module.DisplayName
+                    <i class="nav-arrow bi bi-chevron-right"></i>
+                </p>
             </a>
 
-            <ul class="nav-group-items" style="background:#2F4361">
+            <ul class="nav nav-treeview" style="background:#2F4361;">
                 @foreach (var sub in module.Submodules)
                 {
-                    <li class="nav-group">
-                        <a class="nav-link nav-group-toggle" href="#" aria-expanded="false" ><i class="nav-icon @sub.Icon fa-1x"></i>  @sub.DisplayName</a>
+                    <li class="nav-item" >
+                        <a class="nav-link nav-group-toggle" href="#" aria-expanded="false">
+                            <p>
+                                <i class="@sub.Icon fa-1x"></i>
+                                @sub.DisplayName
+                                <i class="nav-arrow bi bi-chevron-right"></i>
+                            </p>
+                              
+                        </a>
 
-                        <ul class="nav-group-items" >
+                        <ul class="nav nav-treeview" style="margin-left:20px; border-left:0.5px solid #666;border-bottom:0.5px solid #666">
                             @foreach (var item in sub.Items)
                             {
                                 var hasClaim = string.IsNullOrEmpty(item.Claim)
                                 || HttpContextAccessor.HttpContext.User.HasClaim("Permission", item.Claim);
                                 if (!hasClaim) { continue; }
 
-                                <li class="nav-item">
+                                <li class="nav-item active" >
                                     <a class="nav-link" asp-controller="@item.Controller" asp-action="@item.Action" style="border-bottom:1px solid #29344C">
                                         <i class="nav-icon fas fa-arrow-right"></i> @item.DisplayName
                                     </a>

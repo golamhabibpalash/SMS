@@ -97,6 +97,8 @@
     <!--begin::Fonts-->
     <link href="~/lib/theme/adminlte/css/index.css" rel="stylesheet" />
     <!--end::Fonts-->
+    <!-- Font Awesome -->
+    <link href="~/lib/fontawesome/css/all.min.css" rel="stylesheet" />
 
     <!--begin::Third Party Plugin(OverlayScrollbars)-->   
     <link href="~/lib/theme/adminlte/css/overlayscrollbars.min.css" rel="stylesheet" />
@@ -346,7 +348,8 @@
         <div class="sidebar-wrapper">
           <nav class="mt-2">
             <!--begin::Sidebar Menu-->
-            <ul
+                    @await Component.InvokeAsync("Navigation")
+            @* <ul
               class="nav sidebar-menu flex-column"
               data-lte-toggle="treeview"
               role="navigation"
@@ -788,7 +791,7 @@
                   <p>Informational</p>
                 </a>
               </li>
-            </ul>
+            </ul> *@
             <!--end::Sidebar Menu-->
           </nav>
         </div>

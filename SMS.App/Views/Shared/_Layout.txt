@@ -137,7 +137,7 @@
   </head>
   <!--end::Head-->
   <!--begin::Body-->
-<body class="layout-fixed sidebar-collapse bg-body-tertiary">
+<body class="layout-fixed sidebar-expand-lg sidebar-collapse bg-body-tertiary">
     @if (!_signInManager.IsSignedIn(User))
     {
         <script>window.location.href = "/Accounts/Login";</script>
@@ -444,35 +444,21 @@
         document.addEventListener('DOMContentLoaded', function () {
             const body = document.body;
             const sidebarToggle = document.querySelector('[data-lte-toggle="sidebar"]');
-            const SIDEBAR_STATE_KEY = "sidebar-state"; // localStorage key
 
-            // Load saved state
-            const savedState = localStorage.getItem(SIDEBAR_STATE_KEY);
-            if (savedState === "collapsed") {
-                body.classList.remove("sidebar-open");
-                body.classList.add("sidebar-collapse");
-            } else if (savedState === "open") {
-                body.classList.remove("sidebar-collapse");
-                body.classList.add("sidebar-open");
-            }
-
-            // Toggle click
-            sidebarToggle?.addEventListener("click", function (e) {
+            sidebarToggle?.addEventListener('click', function (e) {
                 e.preventDefault();
 
-                if (body.classList.contains("sidebar-collapse")) {
-                    body.classList.remove("sidebar-collapse");
-                    body.classList.add("sidebar-open");
-                    localStorage.setItem(SIDEBAR_STATE_KEY, "open");
+                // Explicitly toggle collapse state
+                if (body.classList.contains('sidebar-collapse')) {
+                    body.classList.add('sidebar-open');
+                    body.classList.remove('sidebar-collapse');
                 } else {
-                    body.classList.remove("sidebar-open");
-                    body.classList.add("sidebar-collapse");
-                    localStorage.setItem(SIDEBAR_STATE_KEY, "collapsed");
+                    body.classList.add('sidebar-collapse');
+                    body.classList.remove('sidebar-open');
                 }
             });
         });
     </script>
-
 
 
     <!--end::Script-->

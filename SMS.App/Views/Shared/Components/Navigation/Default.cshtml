@@ -14,41 +14,8 @@
     var allActiveModules = allModules.ToList().Where(s => s.Status == true);
 }
 
-<ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="true">
-    @foreach (var module in Model.Modules)
-    {
-        <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="@module.Icon"></i> @module.DisplayName
-            </a>
 
-            <ul class="nav nav-treeview">
-                @foreach (var sub in module.Submodules)
-                {
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <i class="@sub.Icon"></i> @sub.DisplayName
-                        </a>
-                        <ul class="nav nav-treeview">
-                            @foreach (var item in sub.Items)
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="@item.Controller" asp-action="@item.Action">
-                                        @item.DisplayName
-                                    </a>
-                                </li>
-                            }
-                        </ul>
-                    </li>
-                }
-            </ul>
-        </li>
-    }
-</ul>
-
-
-
-@* <ul class="nav sidebar-menu flex-column"
+<ul class="nav sidebar-menu flex-column"
     data-lte-toggle="treeview"
     role="navigation"
     aria-label="Main navigation"
@@ -114,4 +81,4 @@
             </ul>
         </li>
     }
-</ul> *@
+</ul>

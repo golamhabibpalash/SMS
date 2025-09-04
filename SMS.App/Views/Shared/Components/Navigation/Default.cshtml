@@ -3,6 +3,8 @@
 @model SiteMap
 @inject IHttpContextAccessor HttpContextAccessor
 @inject IProjectModuleManager _moduleManager;
+@inject IClaimStoreManager _claimManager;
+@inject UserManager<ApplicationUser> _userManager;
 
 @{
     var currentController = ViewData["CurrentController"]?.ToString();
@@ -12,7 +14,41 @@
     var allActiveModules = allModules.ToList().Where(s => s.Status == true);
 }
 
-<ul class="nav sidebar-menu flex-column"
+<ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="true">
+    @foreach (var module in Model.Modules)
+    {
+        <li class="nav-item">
+            <a class="nav-link" href="#">
+                <i class="@module.Icon"></i> @module.DisplayName
+            </a>
+
+            <ul class="nav nav-treeview">
+                @foreach (var sub in module.Submodules)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="@sub.Icon"></i> @sub.DisplayName
+                        </a>
+                        <ul class="nav nav-treeview">
+                            @foreach (var item in sub.Items)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="@item.Controller" asp-action="@item.Action">
+                                        @item.DisplayName
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </li>
+                }
+            </ul>
+        </li>
+    }
+</ul>
+
+
+
+@* <ul class="nav sidebar-menu flex-column"
     data-lte-toggle="treeview"
     role="navigation"
     aria-label="Main navigation"
@@ -39,7 +75,7 @@
                 </p>
             </a>
 
-            <ul class="nav nav-treeview" style="background:#040f21;">
+            <ul class="nav nav-treeview" style="background:#35404f;margin-left:10px">
                 @foreach (var sub in module.Submodules)
                 {
                     var isSubActive = sub.Items.Any(item => string.Equals(item.Controller, currentController, StringComparison.OrdinalIgnoreCase) && string.Equals(item.Action, currentAction, StringComparison.OrdinalIgnoreCase));
@@ -78,4 +114,4 @@
             </ul>
         </li>
     }
-</ul>
+</ul> *@

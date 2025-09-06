@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Routing;
 using SMS.App.ViewModels.ModuleSubModuleVM;
 using SMS.BLL.Contracts;
 using SMS.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -47,8 +48,8 @@ public class NavigationViewComponent : ViewComponent
 
         // Collect user claims (values only)
         var userClaims = user.Claims
-            .Select(c => c.Value)
-            .ToHashSet();
+                            .Select(c => c.Value.Trim().ToLower())
+                            .ToList();
 
         // Get current route for active highlighting
         var routeData = _httpContextAccessor.HttpContext?.GetRouteData();
@@ -66,14 +67,19 @@ public class NavigationViewComponent : ViewComponent
                 DisplayName = m.DisplayName,
                 Icon = m.Icon,
                 Permission = m.Permission,
-                Submodules = m.Submodules.Select(s => new Submodule
+                Submodules = m.Submodules.Where(g => g.Items.Any(gi=> userClaims.Contains(gi.Claim.Trim().ToLower()))).Select(s => new Submodule
                 {
                     SystemName = s.SystemName,
                     DisplayName = s.DisplayName,
                     Icon = s.Icon,
-                    Items = s.Items
-                            .Where(i => string.IsNullOrEmpty(i.Claim) || user.Claims.Any(c => c.Value == i.Claim))
-                            .ToList()
+                    Items = s.Items.TakeWhile(i => userClaims.Contains(i.Claim.Trim().ToLower())).Select(i => new Item
+                    {
+                        SystemName = i.SystemName,
+                        DisplayName = i.DisplayName,
+                        Controller = i.Controller,
+                        Action = i.Action,
+                        Claim = i.Claim
+                    }).ToList()
                 }).ToList()
             })
             .ToList();

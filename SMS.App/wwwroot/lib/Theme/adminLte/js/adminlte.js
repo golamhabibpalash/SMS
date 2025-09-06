@@ -639,8 +639,13 @@
             const sidebarExpandList = document.querySelector(SELECTOR_SIDEBAR_EXPAND)?.classList ?? [];
             const sidebarExpand = Array.from(sidebarExpandList).find(className => className.startsWith(CLASS_NAME_SIDEBAR_EXPAND)) ?? '';
             const sidebar = document.getElementsByClassName(sidebarExpand)[0];
-            const sidebarContent = globalThis.getComputedStyle(sidebar, '::before').getPropertyValue('content');
-            this._config = { ...this._config, sidebarBreakpoint: Number(sidebarContent.replace(/[^\d.-]/g, '')) };
+            if (sidebar instanceof Element) {
+                const sidebarContent = globalThis.getComputedStyle(sidebar, '::before').getPropertyValue('content');
+                this._config = { ...this._config, sidebarBreakpoint: Number(sidebarContent.replace(/[^\d.-]/g, '')) };
+            } else {
+                // Fallback to default if sidebar not found
+                this._config = { ...this._config, sidebarBreakpoint: Defaults.sidebarBreakpoint };
+            }
             // FIXED: Don't auto-collapse on mobile if sidebar is currently open
             // This prevents resize events (triggered by scrolling) from closing the sidebar
             const isCurrentlyOpen = document.body.classList.contains(CLASS_NAME_SIDEBAR_OPEN);

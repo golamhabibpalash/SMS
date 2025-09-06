@@ -14,20 +14,15 @@ using System.Threading.Tasks;
 namespace SMS.App.Controllers;
 
 [Authorize(Roles = "SuperAdmin, Admin")]
-public class GradingTableController : Controller
+public class GradingTableController(IGradingTableManager gradingTableManager) : Controller
 {
-    private readonly IGradingTableManager _gradingTableManager;
-    public GradingTableController(IGradingTableManager gradingTableManager)
-    {
-        _gradingTableManager = gradingTableManager;
-    }
-
+    private readonly IGradingTableManager _gradingTableManager = gradingTableManager;
 
     [Authorize(Policy = "IndexGradingTablePolicy")]
     public async Task<IActionResult> Index()
     {
         List<GradingIndexVM> gradingIndexVMs = new List<GradingIndexVM>();
-        List<GradingTable> gradingTables = (List<GradingTable>)await _gradingTableManager.GetAllAsync();
+        List<GradingTable> gradingTables = (List<GradingTable>) await _gradingTableManager.GetAllAsync();
         if (gradingTables != null)
         {
             foreach (var item in gradingTables)

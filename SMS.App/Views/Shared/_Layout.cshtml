@@ -315,7 +315,7 @@
       </nav>
       <!--end::Header-->
       <!--begin::Sidebar-->
-      <aside class="main-sidebar app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+        <aside class="main-sidebar app-sidebar bg-body-secondary shadow sidebar-expand-lg" data-bs-theme="dark">
         <!--begin::Sidebar Brand-->
             <div class="sidebar-brand text-center p-2" style="height: auto !important;
     min-height: fit-content !important;
@@ -408,45 +408,15 @@
     <script src="~/lib/Theme/adminLte/js/adminlte.min.js"></script>
     <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
     @* Add Jquery  *@
-    @* <script src="~/lib/jquery/jquery3.7.1/code.jquery.com_jquery-3.7.1.min.js"></script>
-    <script>
-      const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
-      const Default = {
-        scrollbarTheme: 'os-theme-light',
-        scrollbarAutoHide: 'leave',
-        scrollbarClickScroll: true,
-      };
-      document.addEventListener('DOMContentLoaded', function () {
-        const sidebarWrapper = document.querySelector(SELECTOR_SIDEBAR_WRAPPER);
-
-        // Disable OverlayScrollbars on mobile devices to prevent touch interference
-        const isMobile = window.innerWidth <= 992;
-
-        if (
-          sidebarWrapper &&
-          OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined &&
-          !isMobile
-        ) {
-          OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
-            scrollbars: {
-              theme: Default.scrollbarTheme,
-              autoHide: Default.scrollbarAutoHide,
-              clickScroll: Default.scrollbarClickScroll,
-            },
-          });
-        }
-      });
-    </script> *@
+    <script src="~/lib/jquery/jquery3.7.1/code.jquery.com_jquery-3.7.1.min.js"></script>
+    
     <!--end::OverlayScrollbars Configure-->
-
-    @* Script for sidebar nav menu *@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            const SIDEBAR_STATE_KEY = "sidebar-state";
             const body = document.body;
-            const sidebarToggle = document.querySelector('[data-lte-toggle="sidebar"]');
-            const SIDEBAR_STATE_KEY = "sidebar-state"; // localStorage key
 
-            // Load saved state
+            // Restore sidebar state from localStorage
             const savedState = localStorage.getItem(SIDEBAR_STATE_KEY);
             if (savedState === "collapsed") {
                 body.classList.remove("sidebar-open");
@@ -456,25 +426,25 @@
                 body.classList.add("sidebar-open");
             }
 
-            // Toggle click
-            sidebarToggle?.addEventListener("click", function (e) {
-                e.preventDefault();
+            // Listen for AdminLTE sidebar toggle events
+            document.addEventListener('open.lte.push-menu', function () {
+                localStorage.setItem(SIDEBAR_STATE_KEY, "open");
+            });
+            document.addEventListener('collapse.lte.push-menu', function () {
+                localStorage.setItem(SIDEBAR_STATE_KEY, "collapsed");
+            });
 
+            // Watch for changes to body class and persist state
+            const observer = new MutationObserver(function () {
                 if (body.classList.contains("sidebar-collapse")) {
-                    body.classList.remove("sidebar-collapse");
-                    body.classList.add("sidebar-open");
-                    localStorage.setItem(SIDEBAR_STATE_KEY, "open");
-                } else {
-                    body.classList.remove("sidebar-open");
-                    body.classList.add("sidebar-collapse");
                     localStorage.setItem(SIDEBAR_STATE_KEY, "collapsed");
+                } else if (body.classList.contains("sidebar-open")) {
+                    localStorage.setItem(SIDEBAR_STATE_KEY, "open");
                 }
             });
+            observer.observe(body, { attributes: true, attributeFilter: ['class'] });
         });
     </script>
-
-
-
     <!--end::Script-->
     @RenderSection("Scripts", required: false)
   </body>

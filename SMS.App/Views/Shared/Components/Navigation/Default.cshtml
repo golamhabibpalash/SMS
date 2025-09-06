@@ -62,11 +62,6 @@
                                 var isActive = string.Equals(item.Controller, currentController, StringComparison.OrdinalIgnoreCase)
                                 && string.Equals(item.Action, currentAction, StringComparison.OrdinalIgnoreCase);
 
-
-                                var hasClaim = string.IsNullOrEmpty(item.Claim)
-                                || HttpContextAccessor.HttpContext.User.HasClaim("Permission", item.Claim);
-                                if (!hasClaim) { continue; }
-
                                 <li class="nav-item">
                                     <a class="nav-link @(isActive ? "active" : "")"
                                        asp-controller="@item.Controller" asp-action="@item.Action"

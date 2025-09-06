@@ -8,7 +8,7 @@
 
 <div class="row">
     <div class="col-md-4">
-        <div class="p-2 rounded rounded-2 alert-info" id="projectModuleCreateUpdateForm">
+        <div class="p-2 rounded rounded-2 bg-navy-blue" id="projectModuleCreateUpdateForm">
             <fieldset class="border p-3 shadow">
                 <legend class="text-light" style="width:inherit" id="create_update_title_id">Create Project Module</legend>
                 <form asp-action="Create" method="post" id="createUpdateForm">
@@ -63,7 +63,14 @@
                         <tr>
                             <td>@(++sl)</td>
                             <td>@item.ModuleName</td>
-                            <td>@item.Status</td>
+                            @if (@item.Status)
+                            {
+                                <td><i class="bi bi-check fs-2"></i></td>
+                            }
+                            else
+                            {
+                                <td><h2 class="text-danger">X</h2> </td>
+                            }
                             <td>@item.Remarks</td>
                             <td>
                                 @if (item.CreatedBy != null)

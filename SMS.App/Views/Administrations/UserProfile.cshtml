@@ -31,7 +31,7 @@
         <div class="col-md-12 text-center">
             <form id="frmSearchByUserId" asp-action="UserProfile" asp-controller="Administrations" method="get" class="">
                 <div class="row">
-                    <div class="col-md-4 text-md-left">
+                    <div class="col-md-4 text-start">
                         <button type="button" class="btn btn-light" data-toggle="modal" data-target="#employeeSearchModal">
                             Select User
                         </button>
@@ -252,7 +252,7 @@
                     <div class="form-group row">
                         <label class="col-md-4 text-md-right col-form-label">Select User</label>
                         <div class="col-md-8">
-                            <select class="form-control" asp-items="ViewBag.UserList" id="ddUserId">
+                            <select class="form-control select2" asp-items="ViewBag.UserList" id="ddUserId">
                                 <option selected disabled>-Select User-</option>
                             </select>
                         </div>
@@ -269,11 +269,14 @@
 
 @section Scripts{
     <script>
+        
+
         $('#ddUserId').change(function () {
             let cRoll = $('#ddUserId option:selected').val();
             $('#UserIdInput').val(cRoll);
             $('#frmSearchByUserId').submit();
         });
+
         $('.checkAll').change(function () {
             var nearestCardNode = $(this).closest('.card');
             var inputs = nearestCardNode.find('input');

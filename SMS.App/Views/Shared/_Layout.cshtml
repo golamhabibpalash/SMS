@@ -20,8 +20,8 @@
     }
     string instituteName = GlobalUI.InstituteName != null ? GlobalUI.InstituteName : "Institute Name";
     string instituteLogo = GlobalUI.Logo != null ? GlobalUI.Logo : "instituteLogo.png";
-}
-@{
+
+
     var userName = _userManager.GetUserName(User);
 
     string userImage = "";
@@ -110,10 +110,17 @@
     <!--begin::Required Plugin(AdminLTE)-->
     <link href="~/lib/theme/adminlte/css/adminlte.min.css" rel="stylesheet" />
     <!--end::Required Plugin(AdminLTE)-->
+
+
+    @* Alertify stylesheet *@
+    <link href="~/lib/alertify/css/alertify.min.css" rel="stylesheet" />
+
     <!-- Overlay Style-->
     <link href="~/css/userProfileOverLay.css" rel="stylesheet" />
     <!--Custom Css-->
     <link href="~/css/custom.css" rel="stylesheet" />
+    @* Select2 stylesheet *@
+    <link href="~/lib/select2/css/select2.min.css" rel="stylesheet" />
     @RenderSection("Styles", required: false)
     <style>
         /* Custom code for sidebar brand */
@@ -409,7 +416,9 @@
     <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
     @* Add Jquery  *@
     <script src="~/lib/jquery/jquery3.7.1/code.jquery.com_jquery-3.7.1.min.js"></script>
-    
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="~/lib/select2/js/select2.min.js"></script>
+    <script src="~/lib/alertify/alertify.min.js"></script>
     <!--end::OverlayScrollbars Configure-->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -446,6 +455,12 @@
         });
     </script>
     <!--end::Script-->
+    <script>
+    // $(document).ready(function() {
+    //     $('.select2').select2();
+    // });
+
+    </script>
     @RenderSection("Scripts", required: false)
   </body>
   <!--end::Body-->

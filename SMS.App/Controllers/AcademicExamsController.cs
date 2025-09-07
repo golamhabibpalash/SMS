@@ -65,6 +65,11 @@ namespace SMS.App.Controllers
             {
                 academicExamVM.AcademicExams = (List<AcademicExam>)exams;
             }
+            var sessionWiseExams = await _examManager.GetExaminationListAsync();
+            if (sessionWiseExams!=null)
+            {
+                academicExamVM.ExamSessionVM = sessionWiseExams.OrderByDescending(s => s.SessionName.Substring(s.SessionName.Length-4)).ToList() ;
+            }
 
             bool isAdminUser = false;
             var user = await _userManager.GetUserAsync(User);

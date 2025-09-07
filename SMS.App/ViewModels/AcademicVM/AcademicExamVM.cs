@@ -1,6 +1,7 @@
 ﻿using SMS.Entities;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using SMS.Entities.AdditionalModels;
 
 namespace SMS.App.ViewModels.AcademicVM;
 
@@ -12,5 +13,6 @@ public class AcademicExamVM : AcademicExam
     public List<SelectListItem> AcademicSectionList { get; set; } = new List<SelectListItem>();
     public List<SelectListItem> AcademicSubjectList { get; set; } = new List<SelectListItem>();
     public List<SelectListItem> TeacherList { get; set; } = new List<SelectListItem>();
+    public ICollection<ExamSessionDto> ExamSessionVM { get; set; }
 }
 

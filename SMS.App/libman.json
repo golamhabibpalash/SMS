@@ -29,6 +29,10 @@
     {
       "library": "fullcalendar@6.1.19",
       "destination": "wwwroot/lib/fullcalendar/"
+    },
+    {
+      "library": "select2@4.0.13",
+      "destination": "wwwroot/lib/select2/"
     }
   ]
 }

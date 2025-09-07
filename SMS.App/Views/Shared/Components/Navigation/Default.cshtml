@@ -12,6 +12,33 @@
 
     var allModules = await _moduleManager.GetAllAsync();
     var allActiveModules = allModules.ToList().Where(s => s.Status == true);
+
+    // Check if any navigation is active
+    bool hasActiveNav = Model.Modules.Any(module =>
+        module.Submodules.Any(sub =>
+            sub.Items.Any(item =>
+                string.Equals(item.Controller, currentController, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(item.Action, currentAction, StringComparison.OrdinalIgnoreCase)
+            )
+        )
+    );
+
+    // If no navigation is active, set to Index action of current controller
+    if (!hasActiveNav && !string.IsNullOrEmpty(currentController))
+    {
+        var indexItem = Model.Modules
+            .SelectMany(m => m.Submodules)
+            .SelectMany(s => s.Items)
+            .FirstOrDefault(item =>
+                string.Equals(item.Controller, currentController, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(item.Action, "Index", StringComparison.OrdinalIgnoreCase)
+            );
+
+        if (indexItem != null)
+        {
+            currentAction = indexItem.Action; // "Index"
+        }
+    }
 }
 
 

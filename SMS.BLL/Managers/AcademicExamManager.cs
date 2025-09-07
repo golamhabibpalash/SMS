@@ -53,58 +53,11 @@ namespace SMS.BLL.Managers
 
                 foreach (var examGroup in examsForSession)
                 {
-                    var firstExam = examGroup.First();
-
-                    var examGroupDto = new ExamGroupDto
-                    {
-                        Id = firstExam.AcademicExamGroup.Id,
-                        Name = firstExam.AcademicExamGroup.ExamGroupName,
-                        ExamSessionVMId = firstExam.AcademicExamGroup.AcademicSessionId,
-                        ExaminationDtos = new List<ExaminationDto>()
-                    };
-
-                    foreach (var exam in examGroup)
-                    {
-                        // Check if exam already exists in the group
-                        var existingExamDto = examGroupDto.ExaminationDtos
-                            .FirstOrDefault(e => e.ExamGroupVMId == exam.AcademicExamGroupId);
-
-                        if (existingExamDto != null)
-                        {
-                            // Only add details (prevent duplicate exam)
-                            var newDetails = exam.AcademicExamDetails
-                                .GroupBy(d => new { exam.AcademicSubjectId, exam.AcademicSectionId, exam.EmployeeId })
-                                .Select(g => new ExaminationDetailsDto
-                                {
-                                    Id = g.First().Id,
-                                    SubjectName = exam.AcademicSubject.SubjectName,
-                                    SubjectId = exam.AcademicSubjectId,
-                                    SectionName = exam.AcademicSection?.Name,
-                                    SectionId = exam.AcademicSection?.Id,
-                                    EmployeeName = exam.Employee.EmployeeName,
-                                    EmployeeId = exam.EmployeeId,
-                                    TotalStudents = g.Count(),
-                                    TotalMarks = exam.TotalMarks,
-                                    IsLocked = g.First().Status
-                                });
-
-                            // Add only if not already present
-                            foreach (var detail in newDetails)
-                            {
-                                if (!existingExamDto.ExaminationDetailsDtos.Any(d => d.Id == detail.Id))
-                                {
-                                    existingExamDto.ExaminationDetailsDtos.Add(detail);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            // Create a new ExaminationDto
-                            var examinationDto = MapToExaminationDto(exam);
-                            examGroupDto.ExaminationDtos.Add(examinationDto);
-                        }
-                    }
-
+                    var targetedExams = allExaminations.Where(s => s.AcademicExamGroupId == examGroup.Key);
+                    ExamGroupDto examGroupDto = new ExamGroupDto();
+                    examGroupDto.Id = examGroup.Key;
+                    examGroupDto.Name = examGroup.FirstOrDefault().AcademicExamGroup.ExamGroupName;
+                    examGroupDto.ExaminationDtos = targetedExams.Select(s => MapToExaminationDto(s)).ToList();
                     sessionDto.ExamGroupDtos.Add(examGroupDto);
                 }
 
@@ -120,6 +73,7 @@ namespace SMS.BLL.Managers
             {
                 Id = exam.Id,
                 ClassName = exam.AcademicClass.Name,
+                ClassId = exam.AcademicClassId,
                 ExamGroupVMId = exam.AcademicExamGroupId,
 
                 // Fix: prevent duplicate details

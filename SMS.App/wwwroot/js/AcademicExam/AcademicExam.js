@@ -214,6 +214,7 @@ function ExamAddBtnClick() {
         tableBody.innerHTML +=tr;
     }
 }
+
 $('#submitBtn').click(function () {
     //document.getElementById("submitForm").addEventListener("submit", function (event) {
     //    event.preventDefault(); // Prevent form submission

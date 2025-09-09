@@ -277,3 +277,12 @@ $('#updateFormSubmitBtn').click(function () {
     }
 
 });
+
+function examinationAddButtonClicked(groupId) {
+    var dropdown = document.getElementById("AcademicExamGroupId");
+
+    if (dropdown) {
+        dropdown.value = groupId; // set selected value
+    }
+    dropdown.dispatchEvent(new Event('change'));
+}

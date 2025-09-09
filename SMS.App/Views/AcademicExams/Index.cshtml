@@ -54,7 +54,7 @@
                                                             <th class="p-0 text-center" style="width:10%">
                                                                 @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
                                                                 {
-                                                                    <button class="btn btn-primary" id="CreateId" data-bs-toggle="modal" data-bs-target="#createUpdateModal"><i class="fa fa-plus"></i> Add</button>
+                                                                    <button class="btn btn-primary" id="CreateId" data-bs-toggle="modal" data-bs-target="#createUpdateModal" onclick="examinationAddButtonClicked(@itemByGroup.Id)"><i class="fa fa-plus"></i> Add</button>
 
                                                                 }
                                                             </th>
@@ -183,12 +183,24 @@
                         </div>
                     </div>
                     <div class="form-group row">
+                        <label class="col-md-2 col-form-label text-md-end" asp-for="AcademicExamDetails[0].ExamCategory"></label>
+                        <div class="col-md-4">
+                            @for (int i = 0; i < 1; i++)
+                            {
+                                <select asp-for="AcademicExamDetails[i].ExamCategory" class="form-control" asp-items="Model.ExamCategoryList">
+                                    <option selected disabled value="">Select Exam Category</option>
+                                </select>
+                                <span asp-validation-for="AcademicExamDetails[i].ExamCategory"></span>
+                            }
+                        </div>
+
                         <label class="col-md-2 col-form-label text-md-end" asp-for="Status"></label>
-                        <div class="col-md-1">
+                        <div class="col-md-4">
                             <input type="checkbox" class="btn-check" asp-for="Status" autocomplete="off">
                             <label class="btn btn-outline-primary" asp-for="Status">Status</label>
-
                         </div>
+                    </div>
+                    <div class="form-group row">
                         <div class="offset-md-3 col-md-9 text-md-end d-flex justify-content-end">
                             <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
                             <button type="button" class="btn btn-sm btn-primary" id="examAddBtn" onclick="ExamAddBtnClick()">Add Exam</button>

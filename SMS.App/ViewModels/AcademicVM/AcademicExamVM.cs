@@ -13,6 +13,7 @@ public class AcademicExamVM : AcademicExam
     public List<SelectListItem> AcademicSectionList { get; set; } = new List<SelectListItem>();
     public List<SelectListItem> AcademicSubjectList { get; set; } = new List<SelectListItem>();
     public List<SelectListItem> TeacherList { get; set; } = new List<SelectListItem>();
+    public List<SelectListItem> ExamCategoryList { get; set; } = new List<SelectListItem>();
     public ICollection<ExamSessionDto> ExamSessionVM { get; set; }
 }
 

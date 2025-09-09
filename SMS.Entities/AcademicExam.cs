@@ -28,6 +28,6 @@ namespace SMS.Entities
         [Display(Name = "Total Marks")]
         public int TotalMarks { get; set; }
         public bool Status { get; set; }
-        public List<AcademicExamDetail> AcademicExamDetails { get; set; }
+        public virtual List<AcademicExamDetail> AcademicExamDetails { get; set; }
     }
 }

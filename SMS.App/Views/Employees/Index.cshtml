@@ -35,9 +35,10 @@
 </div>
 
 <div class="row">
-    @foreach (var item in Model)
+    @foreach (var item in Model.GroupBy(c => c.Designation.DesignationName))
     {
-        var blurSize = item.Status == true ? "" : "2px";
+        <span>@item.Key</span>
+        @* var blurSize = item.Status == true ? "" : "2px";
         <div class="col-md-4">
             <div class="card mb-2">                
                 <div class="card-body" style="filter:blur(@blurSize)">
@@ -61,7 +62,7 @@
                                 </a>
                             </div>
                         </div>
-                        <div class="col-md-8 text-lg-left text-md-left text-center">
+                        <div class="col-md-8 text-lg-left text-md-start text-center">
                             @if (item.EmployeeName.Length > 18)
                             {
                                 <h6 class="card-title mb-0 text-primary" style="text-transform:capitalize">@item.EmployeeName</h6>
@@ -70,7 +71,8 @@
                             {
                                 <h5 class="card-title mb-0 text-primary" style="text-transform:capitalize">@item.EmployeeName</h5>
                             }
-
+                            <br />
+                            <br />
                             <small>(@item.Designation.DesignationName)</small>
                             <p>Employee Id : @item.Id.ToString().PadLeft(5,'0')</p>
                             <hr class="p-0 m-0" />
@@ -101,7 +103,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> *@
     }
 </div>
 

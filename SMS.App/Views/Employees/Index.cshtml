@@ -1,12 +1,8 @@
-﻿@using Microsoft.AspNetCore.Identity;
-@using System.IO;
-@using Microsoft.AspNetCore.Hosting;
-
+﻿
 @model IEnumerable<SMS.Entities.Employee>
 
 
 @inject UserManager<ApplicationUser> _userManager;
-@inject IWebHostEnvironment env;
 @{
 
     ViewData["Title"] = "Employees";
@@ -29,82 +25,44 @@
 }
 
 <div class="row">
-    <div class="col-md-12 text-right pb-2">
+    <div class="col-md-12 text-end pb-2">
         <partial name="_Create" />
     </div>
 </div>
 
-<div class="row">
-    @foreach (var item in Model.GroupBy(c => c.Designation.DesignationName))
+<div class="row d-flex justify-content-center">
+    @foreach (var desigNation in Model.OrderBy(d => d.Designation.SortingOrder).GroupBy(c => c.Designation.DesignationName))
     {
-        <span>@item.Key</span>
-        @* var blurSize = item.Status == true ? "" : "2px";
-        <div class="col-md-4">
-            <div class="card mb-2">                
-                <div class="card-body" style="filter:blur(@blurSize)">
-                    <div class="row">
-                        <div class="col-md-4 col-sm-4 text-center px-0">
-                            <div class="">
-                                <a href="#">
-                                    @{
-                                        var avatarImg = !string.IsNullOrEmpty(item.Image) ? $"/Images/Employee/photo/" + @item.Image : $"/Images/Employee/photo/maleEmployee.png";
-                                        string root = env.WebRootPath;
-                                        string folder = "Images/Employee/photo/";
-
-                                        var path = System.IO.Path.Combine(root, folder, item.Image);
-                                        if (!File.Exists(path))
-                                        {
-                                            avatarImg = $"/Images/Employee/photo/maleEmployee.png";
-                                        }
-                                    }
-                                    <img src="@avatarImg" class="img-circle img-fluid" style="max-height:160px;" alt="@item.EmployeeName" />
-
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-md-8 text-lg-left text-md-start text-center">
-                            @if (item.EmployeeName.Length > 18)
-                            {
-                                <h6 class="card-title mb-0 text-primary" style="text-transform:capitalize">@item.EmployeeName</h6>
-                            }
-                            else
-                            {
-                                <h5 class="card-title mb-0 text-primary" style="text-transform:capitalize">@item.EmployeeName</h5>
-                            }
-                            <br />
-                            <br />
-                            <small>(@item.Designation.DesignationName)</small>
-                            <p>Employee Id : @item.Id.ToString().PadLeft(5,'0')</p>
-                            <hr class="p-0 m-0" />
-                            <address>
-                                <span class="text-capitalize">@item.PresentAddress</span>, @item.PresentUpazila.Name,<br />
-                                @item.PresentDistrict.Name<br />
-                                <abbr title="Phone"><i class="fa fa-phone fa-lg text-info"></i></abbr> @item.Phone <br />
-
-                                <abbr title="Email"><i class="fa fa-envelope text-primary fa-lg"></i></abbr>
-                                @if (item.Email.Length > 25)
-                                {
-                                    <span style="font-size:10px">@item.Email</span>
-                                }
-                                else
-                                {
-                                    <span style="">@item.Email</span>
-                                }
-
-                            </address>
-                            <div class="btn-group">
-                                @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
-                                {
-                                    <a class=" btn-primary btn-sm" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                                }
-                                <a class=" btn-info btn-sm" asp-action="Details" asp-route-id="@item.Id">Details</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div class="card border-0 shadow-sm rounded-3">
+            <div class="card-header bg-light">
+                <h6 class="mb-0 text-muted">@desigNation.Key</h6>
             </div>
-        </div> *@
+            <div class="card-body">
+                @foreach (var item in desigNation)
+                {
+                    if (item.Status)
+                    {
+                        <partial name="_profileCard" model="item" />
+                    }
+                }
+            </div>
+        </div>
     }
+    
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-header bg-light">
+            <h6 class="mb-0 text-muted">Inactive Employees</h6>
+        </div>
+        <div class="card-body">
+            @foreach (var item in Model)
+            {
+                if (!item.Status)
+                {
+                    <partial name="_profileCard" model="item" />
+                }
+            }
+        </div>
+    </div>
 </div>
 
 @section Scripts{

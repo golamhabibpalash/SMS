@@ -1,4 +1,5 @@
-﻿@model IEnumerable<SMS.Entities.AcademicClass>
+﻿@using SMS.App.Utilities.Others
+@model IEnumerable<SMS.Entities.AcademicClass>
 
 @{
     ViewData["Title"] = "Academic Class";
@@ -10,87 +11,66 @@
 }
 
 
-<div class="">
-    <table class="table table-striped table-hover shadow rounded table-responsive-sm" id="myTable">
-        <thead class="bg-blue-sky">
-            <tr>
-                <th>#</th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Name)
-                </th>
-                <th>
-                    Total Students
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Description)
-                </th>
-                <th>
-                    Serial
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Status)
-                </th>
-
-                <th><a class="p-2 btn-sm btn-info rounded-pill" asp-action="Create"><i class="fa fa-plus"></i> Add</a></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
+<div class="card">
+    <div class="card-header" style="background:@AppColors.TableTitleBackground">
+        <h3 class="card-title"><i class="fas fa-chalkboard-teacher"></i> Academic Classes</h3>
+    </div>
+    <div class="card-body">
+        <table class="table table-striped table-hover shadow rounded table-responsive-sm datatable" id="myTable">
+            <thead class="bg-blue-sky">
                 <tr>
-                    <td>@(++i).</td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Name)
-                    </td>
-                    <td>
-                        @item.Students.Count
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Description)
-                    </td>
-                    <td>
-                        @item.ClassSerial
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Status)
-                    </td>
-                    <td>
-                        <partial name="_Edit_Details_Delete" model="@item.Id" />
-                    </td>
+                    <th>#</th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Name)
+                    </th>
+                    <th>
+                        Total Students
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Description)
+                    </th>
+                    <th>
+                        Serial
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Status)
+                    </th>
+
+                    <th><a class="p-2 btn-sm btn-info rounded-pill" asp-action="Create"><i class="fa fa-plus"></i> Add</a></th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@(++i).</td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @item.Students.Count
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Description)
+                        </td>
+                        <td>
+                            @item.ClassSerial
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Status)
+                        </td>
+                        <td>
+                            <partial name="_Edit_Details_Delete" model="@item.Id" />
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
 </div>
 
-@* <div class="row">
-    @foreach (var item in Model)
-    {
-        if (i>Model.Count())
-        {
-            i = 0;
-        }
-        <div class="col-md-3 mb-3">
-            <div class="card @">
-                <div class="card-header text-center p-1">
-                    <h4>@item.Name</h4>
-                </div>
-                <div class="card-body p-0">
-                    <ul class="list-group">
-                        <li class="list-group-item h4 text-info">Total Students: @item.Students.Count</li>
-                        <li class="list-group-item h4 text-info">Total Subjects: @item.AcademicSubjects.Count</li>
-                    </ul>
-                </div>
-                <div class="card-footer p-1 text-right">
-                    <span class="text-md-left"><a class="btn btn-warning btn-sm" asp-action="Edit" asp-controller="AcademicClasses" asp-route-id="@item.Id">Edit</a></span>
-                    <span class="text-md-right"><a class="btn btn-info btn-sm" asp-action="Details" asp-controller="AcademicClasses" asp-route-id="@item.Id">Details</a></span>
-                </div>
-            </div>
-        </div>
-        i++;
-    }
-    
-</div> *@
+
 
 
 @section Scripts{
@@ -118,6 +98,4 @@
             });
         </script>
     }
-    <script src="~/js/DataTable/dataTable.js"></script>
-
 }

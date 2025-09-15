@@ -2,6 +2,7 @@
 @using System.Security.Claims
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Http
+@using SMS.App.ViewModels.Layout
 
 @inject SignInManager<ApplicationUser> _signInManager
 @inject UserManager<ApplicationUser> _userManager
@@ -11,7 +12,9 @@
 @inject IHttpContextAccessor httpContextAccessor
 
 @{
-    var info = await _instituteManager.GetAllAsync();
+    var infoTask = _instituteManager.GetAllAsync();
+    var info = await infoTask;
+
     if (info.Any())
     {
         var firstInstitute = info.First();
@@ -39,182 +42,1054 @@
             if (!string.IsNullOrEmpty(emp?.Image))
                 userImage = $"/Images/Employee/Photo/{emp.Image}";
         }
-    }
+    };
+
+    var headerVM = new LayoutHeaderVM
+    {
+        InstituteName = instituteName
+    };
 }
 
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <title>@(ViewBag.Title != null ? $"{ViewBag.Title} : {instituteName}" : instituteName)</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-    <meta name="color-scheme" content="light dark" />
-    <meta name="theme-color" content="#007bff" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
-    <link rel="icon" type="image/x-icon" href="~/Images/Institute/favicon.ico" />
-    <link href="~/lib/theme/adminlte/css/index.css" rel="stylesheet" />
-    <link href="~/lib/fontawesome/css/all.min.css" rel="stylesheet" />
-    <link href="~/lib/theme/adminlte/css/overlayscrollbars.min.css" rel="stylesheet" />
-    <link href="~/lib/theme/adminlte/css/bootstrap-icons.min.css" rel="stylesheet" />
-    <link href="~/lib/bootstrap/bootstrap-5.3.8-dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="~/lib/theme/adminlte/css/adminlte.min.css" rel="stylesheet" />
-    <link href="~/lib/alertify/css/alertify.min.css" rel="stylesheet" />
-    <link href="~/css/userProfileOverLay.css" rel="stylesheet" />
-    <link href="~/css/custom.css" rel="stylesheet" />
-    <link href="~/lib/select2/css/select2.min.css" rel="stylesheet" />
-    @RenderSection("Styles", required: false)
-    <style>
-        .sidebar .sidebar-brand .institute-name {
-            white-space: normal;
-            word-break: break-word;
-            font-size: 14px;
-            line-height: 1.2;
-        }
-        .preIcon { width: 25px; }
-    </style>
-</head>
-<body class="layout-fixed sidebar-collapse bg-body-tertiary">
-    @if (!_signInManager.IsSignedIn(User))
-    {
-        <script>window.location.href = "/Accounts/Login";</script>
-    }
-    <div class="app-wrapper">
-        <!-- Header -->
-        <nav class="app-header navbar navbar-expand navbar-dark bg-secondary">
-            <div class="container-fluid">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <span class="nav-link" data-lte-toggle="sidebar"><i class="bi bi-list"></i></span>
-                    </li>
-                    <li class="nav-item d-none d-md-block">
-                        <span class="nav-link">@GlobalUI.PageTitle</span>
-                    </li>
-                </ul>
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-widget="navbar-search" role="button" aria-label="Search">
-                            <i class="bi bi-search"></i>
+    <!-- BEGIN HEAD -->
+    @await Html.PartialAsync("_HeadPartial",headerVM)
+    @await RenderSectionAsync("Styles", required: false)
+    <!-- END HEAD -->
+
+    <body class="page-header-fixed sidemenu-closed-hidelogo page-content-white page-md header-white dark-sidebar-color logo-indigo">
+        <div class="page-wrapper">
+
+            <!-- start header -->
+            <div class="page-header navbar navbar-fixed-top">
+                <div class="page-header-inner ">
+                    <!-- logo start -->
+                    <div class="page-logo p-2">
+                    <a class="" asp-action="index" asp-controller="Home">
+                            
+                        <img class="logo-icon material-icons" src="~/Images/Institute/@instituteLogo"  style="max-width:50px"/>
+                        <span class="logo-default fs-1" style="font-size:12px !important; line-height:0.7 !important">@instituteName</span>
                         </a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link" data-bs-toggle="dropdown" href="#" aria-label="Messages">
-                            <i class="bi bi-chat-text"></i>
-                            <span class="navbar-badge badge text-bg-danger">3</span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-                            <!-- Messages here (unchanged for brevity) -->
-                            <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
+                    </div>
+                    <!-- logo end -->
+                    <ul class="nav navbar-nav navbar-left in">
+                        <li><a href="#" class="menu-toggler sidebar-toggler"><i class="icon-menu"></i></a></li>
+                    </ul>
+                    <form class="search-form-opened" action="#" method="GET">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search..." name="query">
+                            <span class="input-group-btn">
+                                <a href="javascript:;" class="btn submit">
+                                    <i class="icon-magnifier"></i>
+                                </a>
+                            </span>
                         </div>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link" data-bs-toggle="dropdown" href="#" aria-label="Notifications">
-                            <i class="bi bi-bell-fill"></i>
-                            <span class="navbar-badge badge text-bg-warning">15</span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-                            <span class="dropdown-item dropdown-header">15 Notifications</span>
-                            <!-- Notifications here (unchanged for brevity) -->
-                            <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-lte-toggle="fullscreen" aria-label="Fullscreen">
-                            <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
-                            <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown user-menu">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-label="User Menu">
-                            <img src="@userImage" class="user-image rounded-circle shadow" alt="User Image" />
-                            <span class="d-none d-md-inline">@userName</span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-                            @await Component.InvokeAsync("ProfileOverlay")
+                    </form>
+                    <!-- start mobile menu -->
+                    <a class="menu-toggle responsive-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
+                        <span></span>
+                    </a>
+                    <!-- end mobile menu -->
+                    <!-- start header menu -->
+                    <div class="top-menu">
+                        <ul class="nav navbar-nav pull-right">
+                            <li><a class="fullscreen-btn"><i data-feather="maximize"></i></a></li>
+                            <!-- start language menu -->
+                            <li class="dropdown language-switch">
+                                <a class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="~/lib/theme/smart/assets/img/flags/gb.png" class="position-left" alt=""> English
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                    <a class="german"><img src="~/lib/theme/smart/assets/img/flags/de.png" alt=""> German</a>
+                                    </li>
+                                    <li>
+                                    <a class="french"><img src="~/lib/theme/smart/assets/img/flags/fr.png" alt=""> French</a>
+                                    </li>
+                                    <li>
+                                    <a class="english"><img src="~/lib/theme/smart/assets/img/flags/gb.png" alt=""> English</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <!-- end language menu -->
+                            <!-- start notification dropdown -->
+                            <li class="dropdown dropdown-extended dropdown-notification" id="header_notification_bar">
+                                <a class="dropdown-toggle" data-bs-toggle="dropdown" data-hover="dropdown"
+                                    data-close-others="true">
+                                    <i data-feather="bell"></i>
+                                    <span class="badge headerBadgeColor1"> 6 </span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class="external">
+                                        <h3><span class="bold">Notifications</span></h3>
+                                        <span class="notification-label purple-bgcolor">New 6</span>
+                                    </li>
+                                    <li>
+                                        <ul class="dropdown-menu-list small-slimscroll-style" data-handle-color="#637283">
+                                            <li>
+                                                <a href="javascript:;">
+                                                    <span class="time">just now</span>
+                                                    <span class="details">
+                                                        <span class="notification-icon circle deepPink-bgcolor">
+                                                            <i class="fa fa-check"></i>
+                                                        </span>
+                                                        Congratulations!.
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:;">
+                                                    <span class="time">3 mins</span>
+                                                    <span class="details">
+                                                        <span class="notification-icon circle purple-bgcolor">
+                                                            <i class="fa fa-user o"></i>
+                                                        </span>
+                                                        <b>John Micle </b>is now following you.
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:;">
+                                                    <span class="time">7 mins</span>
+                                                    <span class="details">
+                                                        <span class="notification-icon circle blue-bgcolor">
+                                                            <i class="fa fa-comments-o"></i>
+                                                        </span>
+                                                        <b>Sneha Jogi </b>sent you a message.
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:;">
+                                                    <span class="time">12 mins</span>
+                                                    <span class="details">
+                                                        <span class="notification-icon circle pink">
+                                                            <i class="fa fa-heart"></i>
+                                                        </span>
+                                                        <b>Ravi Patel </b>like your photo.
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:;">
+                                                    <span class="time">15 mins</span>
+                                                    <span class="details">
+                                                        <span class="notification-icon circle yellow">
+                                                            <i class="fa fa-warning"></i>
+                                                        </span> Warning!
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:;">
+                                                    <span class="time">10 hrs</span>
+                                                    <span class="details">
+                                                        <span class="notification-icon circle red">
+                                                            <i class="fa fa-times"></i>
+                                                        </span> Application error.
+                                                    </span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <div class="dropdown-menu-footer">
+                                        <a href="javascript:void(0)"> All notifications </a>
+                                    </div>
+                                </ul>
+                            </li>
+                            <!-- end notification dropdown -->
+                            <!-- start message dropdown -->
+                            <li class="dropdown dropdown-extended dropdown-inbox" id="header_inbox_bar">
+                                <a class="dropdown-toggle" data-bs-toggle="dropdown" data-hover="dropdown"
+                                    data-close-others="true">
+                                    <i data-feather="mail"></i>
+                                    <span class="badge headerBadgeColor2"> 2 </span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class="external">
+                                        <h3><span class="bold">Messages</span></h3>
+                                        <span class="notification-label cyan-bgcolor">New 2</span>
+                                    </li>
+                                    <li>
+                                        <ul class="dropdown-menu-list small-slimscroll-style" data-handle-color="#637283">
+                                            <li>
+                                                <a href="#">
+                                                    <span class="photo">
+                                                        <img src="~/lib/theme/smart/assets/img/user/user2.jpg" class="img-circle" alt="">
+                                                    </span>
+                                                    <span class="subject">
+                                                        <span class="from"> Sarah Smith </span>
+                                                        <span class="time">Just Now </span>
+                                                    </span>
+                                                    <span class="message"> Jatin I found you on LinkedIn... </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <span class="photo">
+                                                        <img src="~/lib/theme/smart/assets/img/user/user3.jpg" class="img-circle" alt="">
+                                                    </span>
+                                                    <span class="subject">
+                                                        <span class="from"> John Deo </span>
+                                                        <span class="time">16 mins </span>
+                                                    </span>
+                                                    <span class="message">
+                                                        Fwd: Important Notice Regarding Your Domain
+                                                        Name...
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <span class="photo">
+                                                        <img src="~/lib/theme/smart/assets/img/user/user1.jpg" class="img-circle" alt="">
+                                                    </span>
+                                                    <span class="subject">
+                                                        <span class="from"> Rajesh </span>
+                                                        <span class="time">2 hrs </span>
+                                                    </span>
+                                                    <span class="message"> pls take a print of attachments. </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <span class="photo">
+                                                        <img src="~/lib/theme/smart/assets/img/user/user8.jpg" class="img-circle" alt="">
+                                                    </span>
+                                                    <span class="subject">
+                                                        <span class="from"> Lina Smith </span>
+                                                        <span class="time">40 mins </span>
+                                                    </span>
+                                                    <span class="message"> Apply for Ortho Surgeon </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <span class="photo">
+                                                        <img src="~/lib/theme/smart/assets/img/user/user5.jpg" class="img-circle" alt="">
+                                                    </span>
+                                                    <span class="subject">
+                                                        <span class="from"> Jacob Ryan </span>
+                                                        <span class="time">46 mins </span>
+                                                    </span>
+                                                    <span class="message"> Request for leave application. </span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <div class="dropdown-menu-footer">
+                                        <a href="#"> All Messages </a>
+                                    </div>
+                                </ul>
+                            </li>
+                            <!-- end message dropdown -->
+                            <!-- start manage user dropdown -->
+                            <li class="dropdown dropdown-user">
+                                <a class="dropdown-toggle" data-bs-toggle="dropdown" data-hover="dropdown"
+                                    data-close-others="true">
+                                    <img alt="" class="img-circle " src="~/lib/theme/smart/assets/img/dp.jpg" />
+                                    <span class="username username-hide-on-mobile"> Sneha
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-default">
+                                    <li>
+                                        <a href="user_profile.html">
+                                            <i class="icon-user"></i> Profile
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#">
+                                            <i class="icon-settings"></i> Settings
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#">
+                                            <i class="icon-directions"></i> Help
+                                        </a>
+                                    </li>
+                                    <li class="divider"> </li>
+                                    <li>
+                                        <a href="lock_screen.html">
+                                            <i class="icon-lock"></i> Lock
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="login.html">
+                                            <i class="icon-logout"></i> Log Out
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <!-- end manage user dropdown -->
+                            <li class="dropdown dropdown-quick-sidebar-toggler">
+                                <a id="headerSettingButton" class="mdl-button mdl-js-button mdl-button--icon pull-right"
+                                    data-upgraded=",MaterialButton">
+                                    <i class="material-icons">more_vert</i>
+                                </a>
+                            </li>
                         </ul>
-                    </li>
-                </ul>
+                    </div>
+                </div>
             </div>
-        </nav>
-        <!-- Sidebar -->
-        <aside class="main-sidebar app-sidebar bg-body-secondary shadow sidebar-expand-lg" data-bs-theme="dark">
-            <div class="sidebar-brand text-center p-2" style="height: auto; min-height: fit-content; overflow: visible; white-space: normal; text-align: center;">
-                <a asp-action="Index" asp-controller="Home" class="d-block text-decoration-none">
-                    <img src="~/Images/Institute/@instituteLogo" alt="Logo" class="brand-image mb-2" style="max-height: 60px; width: auto;" />
-                    <span class="brand-text fw-light d-block institute-name text-light">@instituteName</span>
+            <!-- end header -->
+
+            <!-- start color quick setting -->
+            <div class="settingSidebar">
+                <a href="javascript:void(0)" class="settingPanelToggle">
+                    <i class="fa fa-spin fa-cog"></i>
                 </a>
-            </div>
-            <div class="sidebar-wrapper">
-                <nav class="mt-2">
-                    @await Component.InvokeAsync("Navigation")
-                </nav>
-            </div>
-        </aside>
-        <!-- Main Content -->
-        <main class="app-main">
-        <!-- 
-            <div class="app-content-header">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <h5 class="mb-0">@GlobalUI.PageTitle</h5>
+                <div class="settingSidebar-body ps-container ps-theme-default">
+                    <div class=" fade show active">
+                        <div class="setting-panel-header">
+                            Setting Panel
+                        </div>
+                        <div class="quick-setting slimscroll-style">
+                            <ul id="themecolors">
+                                <li>
+                                    <p class="sidebarSettingTitle">Sidebar Color</p>
+                                </li>
+                                <li class="complete">
+                                    <div class="theme-color sidebar-theme">
+                                        <a href="#" data-theme="white">
+                                            <span class="head"></span><span class="cont"></span>
+                                        </a>
+                                        <a href="#" data-theme="dark">
+                                            <span class="head"></span><span class="cont"></span>
+                                        </a>
+                                        <a href="#" data-theme="blue">
+                                            <span class="head"></span><span class="cont"></span>
+                                        </a>
+                                        <a href="#" data-theme="indigo">
+                                            <span class="head"></span><span class="cont"></span>
+                                        </a>
+                                        <a href="#" data-theme="cyan">
+                                            <span class="head"></span><span class="cont"></span>
+                                        </a>
+                                        <a href="#" data-theme="green">
+                                            <span class="head"></span><span class="cont"></span>
+                                        </a>
+                                        <a href="#" data-theme="red">
+                                            <span class="head"></span><span class="cont"></span>
+                                        </a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <p class="sidebarSettingTitle">Header Brand color</p>
+                                </li>
+                                <li class="theme-option">
+                                    <div class="theme-color logo-theme">
+                                        <a href="#" data-theme="logo-white">
+                                            <span class="head"></span><span class="cont"></span>
+                                        </a>
+                                        <a href="#" data-theme="logo-dark">
+                                            <span class="head"></span><span class="cont"></span>
+                                        </a>
+                                        <a href="#" data-theme="logo-blue">
+                                            <span class="head"></span><span class="cont"></span>
+                                        </a>
+                                        <a href="#" data-theme="logo-indigo">
+                                            <span class="head"></span><span class="cont"></span>
+                                        </a>
+                                        <a href="#" data-theme="logo-cyan">
+                                            <span class="head"></span><span class="cont"></span>
+                                        </a>
+                                        <a href="#" data-theme="logo-green">
+                                            <span class="head"></span><span class="cont"></span>
+                                        </a>
+                                        <a href="#" data-theme="logo-red">
+                                            <span class="head"></span><span class="cont"></span>
+                                        </a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <p class="sidebarSettingTitle">Header color</p>
+                                </li>
+                                <li class="theme-option">
+                                    <div class="theme-color header-theme">
+                                        <a href="#" data-theme="header-white">
+                                            <span class="head"></span><span class="cont"></span>
+                                        </a>
+                                        <a href="#" data-theme="header-dark">
+                                            <span class="head"></span><span class="cont"></span>
+                                        </a>
+                                        <a href="#" data-theme="header-blue">
+                                            <span class="head"></span><span class="cont"></span>
+                                        </a>
+                                        <a href="#" data-theme="header-indigo">
+                                            <span class="head"></span><span class="cont"></span>
+                                        </a>
+                                        <a href="#" data-theme="header-cyan">
+                                            <span class="head"></span><span class="cont"></span>
+                                        </a>
+                                        <a href="#" data-theme="header-green">
+                                            <span class="head"></span><span class="cont"></span>
+                                        </a>
+                                        <a href="#" data-theme="header-red">
+                                            <span class="head"></span><span class="cont"></span>
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
-            -->
-            <div class="app-content">
-                <div class="container-fluid">
-                    @RenderBody()
+            <!-- end color quick setting -->
+
+            <!-- start page container -->
+            <div class="page-container">
+                <!-- start sidebar menu -->
+                <div class="sidebar-container">
+                    <div class="sidemenu-container navbar-collapse collapse fixed-menu">
+                        <div id="remove-scroll" class="left-sidemenu">
+                            <ul class="sidemenu  page-header-fixed slimscroll-style" data-keep-expanded="false"
+                                data-auto-scroll="true" data-slide-speed="200" style="padding-top: 20px">
+                                <li class="sidebar-toggler-wrapper hide">
+                                    <div class="sidebar-toggler">
+                                        <span></span>
+                                    </div>
+                                </li>
+                            <!--  
+                                <li class="sidebar-user-panel">
+                                    <div class="sidebar-user">
+                                        <div class="sidebar-user-picture">
+                                        <img alt="image" src="~/Images/Institute/@instituteLogo">
+
+                                        </div>
+                                        <div class="sidebar-user-details">
+                                            <div class="user-name">Sneha Patel</div>
+                                            <div class="user-role">Administrator</div>
+                                        </div>
+                                    </div>
+                                </li>
+                            -->
+                                <li class="nav-item start ">
+                                    <a href="#" class="nav-link nav-toggle">
+                                        <i data-feather="home"></i>
+                                        <span class="title">Dashboard</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link nav-toggle">
+                                        <i data-feather="book"></i>
+                                        <span class="title">Courses</span>
+                                        <span class="arrow"></span>
+                                    </a>
+                                    <ul class="sub-menu">
+                                        <li class="nav-item">
+                                            <a href="all_courses.html" class="nav-link ">
+                                                <span class="title">
+                                                    All
+                                                    Courses
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="add_course.html" class="nav-link ">
+                                                <span class="title">
+                                                    Add
+                                                    Course
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="edit_course.html" class="nav-link ">
+                                                <span class="title">
+                                                    Edit
+                                                    Course
+                                                </span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link nav-toggle">
+                                        <i data-feather="book-open"></i>
+                                        <span class="title">Lectures</span>
+                                        <span class="arrow"></span>
+                                    </a>
+                                    <ul class="sub-menu">
+                                        <li class="nav-item">
+                                            <a href="all_lectures.html" class="nav-link ">
+                                                <span class="title">
+                                                    All
+                                                    Lectures
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="add_lecture.html" class="nav-link ">
+                                                <span class="title">
+                                                    Add
+                                                    Lecture
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="edit_lecture.html" class="nav-link ">
+                                                <span class="title">
+                                                    Edit
+                                                    Lecture
+                                                </span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link nav-toggle">
+                                        <i data-feather="users"></i>
+                                        <span class="title">Students</span>
+                                        <span class="arrow"></span>
+                                    </a>
+                                    <ul class="sub-menu">
+                                        <li class="nav-item">
+                                            <a href="all_students.html" class="nav-link ">
+                                                <span class="title">
+                                                    All
+                                                    Students
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="add_student.html" class="nav-link ">
+                                                <span class="title">
+                                                    Add
+                                                    Student
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="edit_student.html" class="nav-link ">
+                                                <span class="title">
+                                                    Edit
+                                                    Student
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="about_student.html" class="nav-link ">
+                                                <span class="title">
+                                                    About
+                                                    Student
+                                                </span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link nav-toggle">
+                                        <i data-feather="user-check"></i>
+                                        <span class="title">Professors</span>
+                                        <span class="arrow"></span>
+                                    </a>
+                                    <ul class="sub-menu">
+                                        <li class="nav-item">
+                                            <a href="all_professors.html" class="nav-link ">
+                                                <span class="title">
+                                                    All
+                                                    Professors
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="add_professor.html" class="nav-link ">
+                                                <span class="title">
+                                                    Add
+                                                    Professor
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="edit_professor.html" class="nav-link ">
+                                                <span class="title">
+                                                    Edit
+                                                    Professor
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="about_professor.html" class="nav-link ">
+                                                <span class="title">
+                                                    About
+                                                    Professor
+                                                </span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link nav-toggle">
+                                        <i data-feather="calendar"></i>
+                                        <span class="title">Events</span>
+                                        <span class="arrow"></span>
+                                    </a>
+                                    <ul class="sub-menu">
+                                        <li class="nav-item">
+                                            <a href="all_events.html" class="nav-link ">
+                                                <span class="title">
+                                                    All
+                                                    Events
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="add_event.html" class="nav-link ">
+                                                <span class="title">
+                                                    Add
+                                                    Event
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="edit_event.html" class="nav-link ">
+                                                <span class="title">
+                                                    Edit
+                                                    Event
+                                                </span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link nav-toggle">
+                                        <i data-feather="credit-card"></i>
+                                        <span class="title">Payments</span>
+                                        <span class="arrow"></span>
+                                    </a>
+                                    <ul class="sub-menu">
+                                        <li class="nav-item">
+                                            <a href="all_payments.html" class="nav-link ">
+                                                <span class="title">
+                                                    All
+                                                    Payments
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="add_payment.html" class="nav-link ">
+                                                <span class="title">
+                                                    Add
+                                                    Payment
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="invoice.html" class="nav-link ">
+                                                <span class="title">Invoice</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link nav-toggle">
+                                        <i data-feather="clipboard"></i>
+                                        <span class="title">Library</span>
+                                        <span class="arrow"></span>
+                                    </a>
+                                    <ul class="sub-menu">
+                                        <li class="nav-item">
+                                            <a href="all_books.html" class="nav-link ">
+                                                <span class="title">
+                                                    All
+                                                    Books
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="add_book.html" class="nav-link ">
+                                                <span class="title">Add Book</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link nav-toggle">
+                                        <i data-feather="slack"></i>
+                                        <span class="title">Departments</span>
+                                        <span class="arrow"></span>
+                                    </a>
+                                    <ul class="sub-menu">
+                                        <li class="nav-item">
+                                            <a href="all_departments.html" class="nav-link ">
+                                                <span class="title">
+                                                    All
+                                                    Departments
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="add_department.html" class="nav-link ">
+                                                <span class="title">
+                                                    Add
+                                                    Department
+                                                </span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item active open">
+                                    <a href="#" class="nav-link nav-toggle">
+                                        <i data-feather="file-text"></i>
+                                        <span class="title">Blog</span>
+                                        <span class="arrow"></span>
+                                    </a>
+                                    <ul class="sub-menu">
+                                        <li class="nav-item">
+                                            <a href="blog.html" class="nav-link ">
+                                                <span class="title">Blog List</span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item active">
+                                            <a href="blog_post.html" class="nav-link ">
+                                                <span class="title">
+                                                    Blog
+                                                    Post
+                                                </span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="email.html" class="nav-link nav-toggle">
+                                        <i data-feather="mail"></i>
+                                        <span class="title">Email</span>
+                                        <span class="badge bg-blue">5</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link nav-toggle">
+                                        <i data-feather="message-circle"></i>
+                                        <span class="title">Forum</span>
+                                        <span class="arrow"></span>
+                                    </a>
+                                    <ul class="sub-menu">
+                                        <li class="nav-item">
+                                            <a href="forum.html" class="nav-link ">
+                                                <span class="title">Forum Page</span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="forum_post.html" class="nav-link ">
+                                                <span class="title">
+                                                    Forum
+                                                    Post
+                                                </span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link nav-toggle">
+                                        <i data-feather="settings"></i>
+                                        <span class="title">Settings</span>
+                                        <span class="arrow"></span>
+                                    </a>
+                                    <ul class="sub-menu">
+                                        <li class="nav-item">
+                                            <a href="general_settings.html" class="nav-link ">
+                                                <span class="title">General Settings</span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="course_settings.html" class="nav-link ">
+                                                <span class="title">
+                                                    Course
+                                                    Settings
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="payment_settings.html" class="nav-link ">
+                                                <span class="title">Payment Settings</span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="social_settings.html" class="nav-link ">
+                                                <span class="title">
+                                                    Social
+                                                    Settings
+                                                </span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- end sidebar menu -->
+                <!-- start page content -->
+                <div class="page-content-wrapper">
+                    <div class="page-content">
+
+                    </div>
+                </div>
+                <!-- end page content -->
+                <!-- start chat sidebar -->
+                <div class="chat-sidebar-container" data-close-on-body-click="false">
+                    <div class="chat-sidebar">
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item">
+                                <a href="#quick_sidebar_tab_1" class="nav-link active tab-icon" data-bs-toggle="tab">
+                                    <i class="material-icons">chat</i>Chat
+                                    <span class="badge badge-danger">4</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#quick_sidebar_tab_3" class="nav-link tab-icon" data-bs-toggle="tab">
+                                    <i class="material-icons">settings</i>
+                                    Settings
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <!-- Start Doctor Chat -->
+                            <div class="tab-pane active chat-sidebar-chat in active show" role="tabpanel"
+                                    id="quick_sidebar_tab_1">
+                                <div class="chat-sidebar-list">
+                                    <div class="chat-sidebar-chat-users slimscroll-style" data-rail-color="#ddd"
+                                            data-wrapper-class="chat-sidebar-list">
+                                        <div class="chat-header">
+                                            <h5 class="list-heading">Online</h5>
+                                        </div>
+                                        <ul class="media-list list-items">
+                                            <li class="media">
+                                                <img class="media-object" src="~/lib/theme/smart/assets/img/user/user5.jpg"
+                                                        width="35" height="35" alt="...">
+                                                <div class="media-body">
+                                                    <h5 class="media-heading">Rajesh</h5>
+                                                    <div class="media-heading-sub">Ortho Surgeon</div>
+                                                </div>
+                                            </li>
+                                            <li class="media">
+                                                <div class="media-status">
+                                                    <span class="badge badge-success">8</span>
+                                                </div> <img class="media-object" src="~/lib/theme/smart/assets/img/user/user1.jpg"
+                                                            width="35" height="35" alt="...">
+                                                <div class="media-body">
+                                                    <h5 class="media-heading">Jacob Ryan</h5>
+                                                    <div class="media-heading-sub">Ortho Surgeon</div>
+                                                </div>
+                                            </li>
+                                            <li class="media">
+                                                <img class="media-object" src="~/lib/theme/smart/assets/img/user/user4.jpg"
+                                                        width="35" height="35" alt="...">
+                                                <div class="media-body">
+                                                    <h5 class="media-heading">Sarah Smith</h5>
+                                                    <div class="media-heading-sub">Anatomy</div>
+                                                </div>
+                                            </li>
+                                            <li class="media">
+                                                <div class="media-status">
+                                                    <span class="badge badge-danger">3</span>
+                                                </div> <img class="media-object" src="~/lib/theme/smart/assets/img/user/user2.jpg"
+                                                            width="35" height="35" alt="...">
+                                                <div class="media-body">
+                                                    <h5 class="media-heading">John Deo</h5>
+                                                    <div class="media-heading-sub">Dentist</div>
+                                                </div>
+                                            </li>
+                                            <li class="media">
+                                                <img class="media-object" src="~/lib/theme/smart/assets/img/user/user3.jpg"
+                                                        width="35" height="35" alt="...">
+                                                <div class="media-body">
+                                                    <h5 class="media-heading">Genelia James</h5>
+                                                    <div class="media-heading-sub">Cardiology</div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                        <div class="chat-header">
+                                            <h5 class="list-heading">Offline</h5>
+                                        </div>
+                                        <ul class="media-list list-items">
+                                            <li class="media">
+                                                <div class="media-status">
+                                                    <span class="badge badge-warning">4</span>
+                                                </div> <img class="media-object" src="~/lib/theme/smart/assets/img/user/user6.jpg"
+                                                            width="35" height="35" alt="...">
+                                                <div class="media-body">
+                                                    <h5 class="media-heading">Jennifer Maklen</h5>
+                                                    <div class="media-heading-sub">Neurology</div>
+                                                    <div class="media-heading-small">Last seen 01:20 AM</div>
+                                                </div>
+                                            </li>
+                                            <li class="media">
+                                                <img class="media-object" src="~/lib/theme/smart/assets/img/user/user7.jpg"
+                                                        width="35" height="35" alt="...">
+                                                <div class="media-body">
+                                                    <h5 class="media-heading">Lina Smith</h5>
+                                                    <div class="media-heading-sub">Ortho Surgeon</div>
+                                                    <div class="media-heading-small">Last seen 11:14 PM</div>
+                                                </div>
+                                            </li>
+                                            <li class="media">
+                                                <div class="media-status">
+                                                    <span class="badge badge-success">9</span>
+                                                </div> <img class="media-object" src="~/lib/theme/smart/assets/img/user/user8.jpg"
+                                                            width="35" height="35" alt="...">
+                                                <div class="media-body">
+                                                    <h5 class="media-heading">Jeff Adam</h5>
+                                                    <div class="media-heading-sub">Anatomy</div>
+                                                    <div class="media-heading-small">Last seen 3:31 PM</div>
+                                                </div>
+                                            </li>
+                                            <li class="media">
+                                                <img class="media-object" src="~/lib/theme/smart/assets/img/user/user9.jpg"
+                                                        width="35" height="35" alt="...">
+                                                <div class="media-body">
+                                                    <h5 class="media-heading">Anjelina Cardella</h5>
+                                                    <div class="media-heading-sub">Physiology</div>
+                                                    <div class="media-heading-small">Last seen 7:45 PM</div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End Doctor Chat -->
+                            <!-- Start Setting Panel -->
+                            <div class="tab-pane chat-sidebar-settings" role="tabpanel" id="quick_sidebar_tab_3">
+                                <div class="chat-sidebar-settings-list slimscroll-style">
+                                    <div class="chat-header">
+                                        <h5 class="list-heading">Layout Settings</h5>
+                                    </div>
+                                    <div class="chatp">
+                                        <div class="settings-item">
+                                            <div class="settings-name">Sidebar Position</div>
+                                            <div class="settings-value">
+                                                <select class="sidebar-pos-option form-control input-inline input-sm input-small ">
+                                                    <option value="left" selected="selected">Left</option>
+                                                    <option value="right">Right</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="settings-item">
+                                            <div class="settings-name">Header Position</div>
+                                            <div class="settings-value">
+                                                <select class="page-header-option form-control input-inline input-sm input-small ">
+                                                    <option value="fixed" selected="selected">Fixed</option>
+                                                    <option value="default">Default</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="settings-item">
+                                            <div class="settings-name">Sidebar Style </div>
+                                            <div class="settings-value">
+                                                <select class="sidebar-style-option form-control input-inline input-sm input-small ">
+                                                    <option value="default" selected="selected">Default</option>
+                                                    <option value="compact">Compact</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="settings-item">
+                                            <div class="settings-name">Layout Type</div>
+                                            <div class="settings-value">
+                                                <select class="layout-option form-control input-inline input-sm input-small ">
+                                                    <option value="fluid" selected="selected">Fluid</option>
+                                                    <option value="boxed">Boxed</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="settings-item">
+                                            <div class="settings-name">Chat Type</div>
+                                            <div class="settings-value">
+                                                <select class="chat-option form-control input-inline input-sm input-small ">
+                                                    <option value="always">Always</option>
+                                                    <option value="never" selected="selected">Never</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="chat-header">
+                                        <h5 class="list-heading">Account Settings</h5>
+                                    </div>
+                                    <div class="chatp">
+                                        <div class="settings-item">
+                                            <div class="settings-name">Chat Notifications</div>
+                                            <div class="settings-value">
+                                                <input type="checkbox" class="js-switch" checked />
+                                            </div>
+                                        </div>
+                                        <div class="settings-item">
+                                            <div class="settings-name">Show Online Status</div>
+                                            <div class="settings-value">
+                                                <input type="checkbox" class="js-switch" checked />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="chat-header">
+                                        <h5 class="list-heading">Notification Settings</h5>
+                                    </div>
+                                    <div class="chatp">
+                                        <div class="settings-item">
+                                            <div class="settings-name">Show Notifications</div>
+                                            <div class="settings-value">
+                                                <input type="checkbox" class="js-switch" checked />
+                                            </div>
+                                        </div>
+                                        <div class="settings-item">
+                                            <div class="settings-name">Show Task Notifications</div>
+                                            <div class="settings-value">
+                                                <input type="checkbox" class="js-switch" checked />
+                                            </div>
+                                        </div>
+                                        <div class="settings-item">
+                                            <div class="settings-name">Show Email Notifications</div>
+                                            <div class="settings-value">
+                                                <input type="checkbox" class="js-switch" checked />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end chat sidebar -->
+            </div>
+            <!-- end page container -->
+
+            <!-- start footer -->
+            <div class="page-footer">
+                <div class="page-footer-inner">
+                    2024 &copy; Smart University Theme By
+                    <a href="mailto:redstartheme@gmail.com" target="_top" class="makerCss">Redstar Theme</a>
+                </div>
+                <div class="scroll-to-top">
+                    <i class="icon-arrow-up"></i>
                 </div>
             </div>
-        </main>
-        <!-- Footer -->
-        <footer class="app-footer">
-            <div class="float-end d-none d-sm-inline">Anything you want</div>
-            <strong>
-                Copyright &copy; 2020&nbsp;
-                <a href="https://nobleschoolbd.com" class="text-decoration-none">NRS</a>.
-            </strong>
-            All rights reserved.
-        </footer>
-    </div>
-    <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="~/lib/bootstrap/bootstrap-5.3.8-dist/js/bootstrap.min.js"></script>
-    <script src="~/lib/theme/adminlte/js/overlayscrollbars.browser.es6.min.js"></script>
-    <script src="~/lib/theme/adminlte/js/popper.min.js"></script>
-    <script src="~/lib/theme/adminlte/js/bootstrap.min.js"></script>
-    <script src="~/lib/Theme/adminLte/js/adminlte.min.js"></script>
-    <script src="~/lib/select2/js/select2.min.js"></script>
-    <script src="~/lib/alertify/alertify.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const SIDEBAR_STATE_KEY = "sidebar-state";
-            const body = document.body;
-            const savedState = localStorage.getItem(SIDEBAR_STATE_KEY);
-            if (savedState === "collapsed") {
-                body.classList.remove("sidebar-open");
-                body.classList.add("sidebar-collapse");
-            } else if (savedState === "open") {
-                body.classList.remove("sidebar-collapse");
-                body.classList.add("sidebar-open");
-            }
-            document.addEventListener('open.lte.push-menu', function () {
-                localStorage.setItem(SIDEBAR_STATE_KEY, "open");
-            });
-            document.addEventListener('collapse.lte.push-menu', function () {
-                localStorage.setItem(SIDEBAR_STATE_KEY, "collapsed");
-            });
-            const observer = new MutationObserver(function () {
-                if (body.classList.contains("sidebar-collapse")) {
-                    localStorage.setItem(SIDEBAR_STATE_KEY, "collapsed");
-                } else if (body.classList.contains("sidebar-open")) {
-                    localStorage.setItem(SIDEBAR_STATE_KEY, "open");
-                }
-            });
-            observer.observe(body, { attributes: true, attributeFilter: ['class'] });
-        });
-    </script>
-    @RenderSection("Scripts", required: false)
-</body>
+            <!-- end footer -->
+        </div>
+        <!-- start js include path -->
+        <script src="~/lib/theme/smart/assets/plugins/jquery/jquery.min.js"></script>
+        <script src="~/lib/theme/smart/assets/plugins/popper/popper.js"></script>
+        <script src="~/lib/theme/smart/assets/plugins/jquery-blockui/jquery.blockui.min.js"></script>
+        <script src="~/lib/theme/smart/assets/plugins/jquery-slimscroll/jquery.slimscroll.js"></script>
+            <!-- bootstrap -->
+        <script src="~/lib/theme/smart/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+        <script src="~/lib/theme/smart/assets/plugins/bootstrap-switch/js/bootstrap-switch.min.js"></script>
+        <script src="~/lib/theme/smart/assets/plugins/sparkline/jquery.sparkline.min.js"></script>
+        <script src="~/lib/theme/smart/assets/js/pages/sparkline/sparkline-data.js"></script>
+            <!-- Common js-->
+        <script src="~/lib/theme/smart/assets/js/app.js"></script>
+        <script src="~/lib/theme/smart/assets/js/layout.js"></script>
+        <script src="~/lib/theme/smart/assets/js/theme-color.js"></script>
+            <!-- material -->
+        <script src="~/lib/theme/smart/assets/plugins/material/material.min.js"></script>
+            <!-- dropzone -->
+        <script src="~/lib/theme/smart/assets/plugins/dropzone/dropzone.js"></script>
+        <script src="~/lib/theme/smart/assets/plugins/dropzone/dropzone-call.js"></script>
+            <!-- animation -->
+        <script src="~/lib/theme/smart/assets/js/pages/ui/animations.js"></script>
+            <!-- end js include path -->
+            <!-- Feather icon -->
+        <script src="~/lib/theme/smart/assets/plugins/feather/feather.min.js"></script>
+            <script>
+                feather.replace();
+            </script>
+        @await RenderSectionAsync("Scripts", required: false)
+    </body>
+
 </html>

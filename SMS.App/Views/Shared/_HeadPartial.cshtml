@@ -1,0 +1,45 @@
+﻿@model SMS.App.ViewModels.Layout.LayoutHeaderVM
+
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <meta name="description" content="Responsive Admin Template" />
+    <meta name="author" content="GHPalash" />
+    <title>@(ViewBag.Title != null ? $"{ViewBag.Title} : {Model.InstituteName}" : Model.InstituteName)</title>
+
+    <!-- google font -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet" type="text/css" />
+
+    <!-- icons -->
+    <link href="~/lib/theme/smart/assets/fonts/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/lib/theme/smart/assets/fonts/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/lib/theme/smart/assets/fonts/font-awesome/v6/css/all.css" rel="stylesheet" type="text/css" />
+    <link href="~/lib/theme/smart/assets/fonts/material-design-icons/material-icon.css" rel="stylesheet" type="text/css" />
+
+    <!--bootstrap -->
+    <link href="~/lib/bootstrap/bootstrap-5.3.8-dist/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    @* <link href="./assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" /> *@
+
+    <!-- Material Design Lite CSS -->
+    <link rel="stylesheet" href="~/lib/theme/smart/assets/plugins/material/material.min.css">
+    <link rel="stylesheet" href="~/lib/theme/smart/assets/css/material_style.css">
+
+    <!-- Theme Styles -->
+    <link href="~/lib/theme/smart/assets/css/theme/light/theme_style.css" rel="stylesheet" id="rt_style_components" type="text/css" />
+    <link href="~/lib/theme/smart/assets/css/theme/light/style.css" rel="stylesheet" type="text/css" />
+    <link href="~/lib/theme/smart/assets/css/plugins.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/lib/theme/smart/assets/css/responsive.css" rel="stylesheet" type="text/css" />
+    <link href="~/lib/theme/smart/assets/css/theme/light/theme-color.css" rel="stylesheet" type="text/css" />
+
+    <!-- dropzone -->
+    <link href="~/lib/theme/smart/assets/plugins/dropzone/dropzone.css" rel="stylesheet" media="screen">
+
+    <!-- Date Time item CSS -->
+    <link rel="stylesheet" href="~/lib/theme/smart/assets/plugins/flatpicker/css/flatpickr.min.css" />
+
+    <!-- favicon -->
+    <link rel="icon" type="image/x-icon" href="~/Images/Institute/favicon.ico">
+
+</head>

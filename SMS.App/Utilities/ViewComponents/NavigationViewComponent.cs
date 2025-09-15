@@ -48,7 +48,7 @@ public class NavigationViewComponent : ViewComponent
 
         // Collect user claims (values only)
         var userClaims = user.Claims
-                            .Select(c => c.Value.Trim().ToLower())
+                            .Select(c => c.Value.Trim())
                             .ToList();
 
         // Get current route for active highlighting
@@ -67,12 +67,12 @@ public class NavigationViewComponent : ViewComponent
                 DisplayName = m.DisplayName,
                 Icon = m.Icon,
                 Permission = m.Permission,
-                Submodules = m.Submodules.Where(g => g.Items.Any(gi=> userClaims.Contains(gi.Claim.Trim().ToLower()))).Select(s => new Submodule
+                Submodules = m.Submodules.Where(g => g.Items.Any(gi=> userClaims.Contains(gi.Claim.Trim()))).Select(s => new Submodule
                 {
                     SystemName = s.SystemName,
                     DisplayName = s.DisplayName,
                     Icon = s.Icon,
-                    Items = s.Items.TakeWhile(i => userClaims.Contains(i.Claim.Trim().ToLower())).Select(i => new Item
+                    Items = s.Items.TakeWhile(i => userClaims.Contains(i.Claim.Trim())).Select(i => new Item
                     {
                         SystemName = i.SystemName,
                         DisplayName = i.DisplayName,

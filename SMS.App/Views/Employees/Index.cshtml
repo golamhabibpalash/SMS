@@ -37,7 +37,7 @@
             <div class="card-header bg-light">
                 <h6 class="mb-0 text-muted">@desigNation.Key</h6>
             </div>
-            <div class="card-body">
+            <div class="row">
                 @foreach (var item in desigNation)
                 {
                     if (item.Status)
@@ -49,11 +49,11 @@
         </div>
     }
     
-    <div class="card border-0 shadow-sm rounded-3">
+    <div class="row border-0 shadow-sm rounded-3">
         <div class="card-header bg-light">
             <h6 class="mb-0 text-muted">Inactive Employees</h6>
         </div>
-        <div class="card-body">
+        <div class="row">
             @foreach (var item in Model)
             {
                 if (!item.Status)

@@ -41,7 +41,8 @@
 
 	<ItemGroup>
 		<Content Remove="Views\AcademicExamType\Delete.cshtml" />
-		<Content Remove="Views\Shared\_Layout.cshtml" />
+		<Content Remove="Views\Shared\_layout.cshtml" />
+		<Content Remove="Views\Shared\_LayoutAdminLte.cshtml" />
 		<Content Remove="wwwroot\Reports\rptAnnualReport.rdlc" />
 		<Content Remove="wwwroot\Reports\rptStudent1.rdlc" />
 		<Content Remove="wwwroot\Reports\RptStudentDynamicReport.rdlc" />
@@ -118,7 +119,8 @@
 
 	<ItemGroup>
 		<None Include="Views\AcademicExamType\Delete.cshtml" />
-		<None Include="Views\Shared\_Layout.cshtml" />
+		<None Include="Views\Shared\_layout.cshtml" />
+		<None Include="Views\Shared\_LayoutAdminLte.cshtml" />
 		<None Include="wwwroot\lib\MultiSelect\js\bootstrap-3.3.2.min.js" />
 		<None Include="wwwroot\lib\MultiSelect\js\jquery-2.1.3.min.js" />
 		<None Include="wwwroot\lib\MultiSelect\js\prettify.min.js" />

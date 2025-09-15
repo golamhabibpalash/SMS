@@ -1,6 +1,6 @@
 ﻿
-$(function () {
-    $('#myTable').DataTable({
+$(function (selector) {
+    $(selector).DataTable({
         "responsive": true,
         "stateSave": true,
         "pagingType": "full_numbers",

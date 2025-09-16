@@ -3171,7 +3171,7 @@ form.search-form-opened .btn.submit {
   display: block;
   position: relative;
   margin: 0;
-  padding: 17px 15px;
+  padding: 12px 10px;
   text-decoration: none;
   font-size: 14px;
   font-weight: 300;
@@ -3183,7 +3183,7 @@ form.search-form-opened .btn.submit {
   > li
   > a
   > i {
-  font-size: 18px;
+  font-size: 16px;
   margin-right: 5px;
   text-shadow: none;
   float: left;
@@ -3399,7 +3399,7 @@ form.search-form-opened .btn.submit {
   > li
   > a
   > .arrow:before {
-  top: 19px;
+  top: 12px;
 }
 .sidemenu-container .sidemenu .sub-menu,
 .sidemenu-closed.sidemenu-container-fixed
@@ -3408,7 +3408,7 @@ form.search-form-opened .btn.submit {
   .sub-menu {
   list-style: none;
   display: none;
-  padding: 0 0 15px 0;
+  padding: 0 0 5px 0;
   margin: 0;
   background-color: #1e293c;
 }

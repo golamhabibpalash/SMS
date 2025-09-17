@@ -67,7 +67,7 @@ public class NavigationViewComponent : ViewComponent
                 DisplayName = m.DisplayName,
                 Icon = m.Icon,
                 Permission = m.Permission,
-                Submodules = m.Submodules.Where(g => g.Items.Any(gi=> userClaims.Contains(gi.Claim.Trim()))).Select(s => new Submodule
+                Submodules = m.Submodules.Select(s => new Submodule
                 {
                     SystemName = s.SystemName,
                     DisplayName = s.DisplayName,

@@ -43,6 +43,10 @@
 
 @foreach (var module in Model.Modules)
 {
+    if (!module.Submodules.Any(s => s.Items.Any()))
+    {
+        continue;
+    }
     var canAccessModule = allActiveModules.ToList().Any(s => s.ModuleName == module.SystemName);
 
     if (!canAccessModule) { continue; }
@@ -52,7 +56,6 @@
     sub.Items.Any(item =>
     string.Equals(item.Controller, currentController, StringComparison.OrdinalIgnoreCase) &&
     string.Equals(item.Action, currentAction, StringComparison.OrdinalIgnoreCase)));
-
     <li class="nav-item @(isModuleActive ? "open active" : "")">
         <a href="#" class="nav-link nav-toggle">
             <i class="@module.Icon"></i>
@@ -62,6 +65,10 @@
         <ul class="sub-menu">
             @foreach(var sub in module.Submodules)
             {
+                if (!sub.Items.Any())
+                {
+                    continue;
+                }
                 var isSubActive = sub.Items.Any(item => string.Equals(item.Controller, currentController, StringComparison.OrdinalIgnoreCase) && string.Equals(item.Action, currentAction, StringComparison.OrdinalIgnoreCase));
 
                 <li class="nav-item @(isSubActive ? "open active" : "")">

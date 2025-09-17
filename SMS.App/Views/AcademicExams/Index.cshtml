@@ -11,10 +11,12 @@
 <div class="accordion" id="sessionAccordion">
     @foreach (var itemBySession in Model.ExamSessionVM)
     {
+        int totalExamGroup = itemBySession.ExamGroupDtos.Count();
+
         <div class="accordion-item">
             <h2 class="accordion-header" id="session_@itemBySession.Id">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@itemBySession.Id" aria-expanded="false" aria-controls="collapse_@itemBySession.Id">
-                    Session @itemBySession.SessionName
+                    Session @itemBySession.SessionName <span> (Total Exam Group: @totalExamGroup)</span>
                 </button>
             </h2>
             <div id="collapse_@itemBySession.Id" class="accordion-collapse collapse" aria-labelledby="session_@itemBySession.Id" data-bs-parent="#sessionAccordion">
@@ -91,9 +93,9 @@
                                                                         <div class="btn-group btn-group-sm" role="group">
                                                                             @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
                                                                             {
-                                                                                <a class="btn btn-sm rounded mr-1 examEditBtn" id="editBtn_@row.Id" data-examid="@exam.Id" data-groupid="@itemByGroup.Id" data-classid="@exam.ClassId" data-subjectid="@row.SubjectId" data-sectionid="@row.SectionId" data-employeeid="@row.EmployeeId" data-status="@row.IsLocked" data-marks="@row.TotalMarks" data-bs-toggle="modal" data-bs-target="#createUpdateModal" onclick="EditExamClick(@exam.Id)"><i class="fas fa-edit text-dark"></i> </a>
+                                                                                <a class="btn btn-sm examEditBtn" id="editBtn_@row.Id" data-examid="@exam.Id" data-groupid="@itemByGroup.Id" data-classid="@exam.ClassId" data-subjectid="@row.SubjectId" data-sectionid="@row.SectionId" data-employeeid="@row.EmployeeId" data-status="@row.IsLocked" data-marks="@row.TotalMarks" data-bs-toggle="modal" data-bs-target="#createUpdateModal" onclick="EditExamClick(@exam.Id)"><i class="fas fa-edit text-dark"></i> </a>
                                                                             }
-                                                                            <a class="btn btn-sm rounded mr-1" asp-action="Details" asp-route-id="@exam.Id" data-bs-toggle="tooltip" data-placement="top" title="Details"><i class="fas fa-info-circle text-info"></i> </a>
+                                                                            <a class="btn btn-sm mr-1" asp-action="Details" asp-route-id="@exam.Id" data-bs-toggle="tooltip" data-placement="top" title="Details"><i class="fas fa-info-circle text-info"></i> </a>
                                                                             @if (User.IsInRole("SuperAdmin"))
                                                                             {
                                                                                 <button class="btn btn-group-sm" data-id="@exam.Id" data-bs-toggle="tooltip" data-placement="right" title="Delete" onclick="DeleteExam(@exam.Id)">

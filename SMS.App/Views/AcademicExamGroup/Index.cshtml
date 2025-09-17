@@ -58,12 +58,12 @@
                                                 </a>
                                     @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
                                     {
-                                        <a class="btn btn-warning btn-sm  rounded editBtnClass" data-toggle="tooltip" data-id="@item.Id" data-groupName="@item.ExamGroupName" data-examTypeId="@item.academicExamTypeId" data-sessionId="@item.AcademicSessionId" data-monthid="@item.ExamMonthId" data-status="@item.Status" data-placement="top" title="Edit" id="EditBtnId">
+                                        <a class="btn btn-warning editBtnClass" data-toggle="tooltip" data-id="@item.Id" data-groupName="@item.ExamGroupName" data-examTypeId="@item.academicExamTypeId" data-sessionId="@item.AcademicSessionId" data-monthid="@item.ExamMonthId" data-status="@item.Status" data-placement="top" title="Edit" id="EditBtnId">
                                             <i style="cursor:pointer" class="fa fa-edit text-dark"></i> </a>
                                     }
                                     @if (User.IsInRole("SuperAdmin"))
                                     {
-                                        <a class="btn btn-danger btn-sm rounded deleteBtnClass " data-id="@item.Id" data-toggle="modal" data-target="#DeleteModal" data-placement="right" title="Delete"><i style="cursor:pointer" class="text-light fa fa-trash text-danger"></i> </a>
+                                        <a class="btn btn-danger deleteBtnClass " data-id="@item.Id" data-toggle="modal" data-target="#DeleteModal" data-placement="right" title="Delete"><i style="cursor:pointer" class="text-light fa fa-trash text-danger"></i> </a>
                                     }
                                 </div>
                             </td>

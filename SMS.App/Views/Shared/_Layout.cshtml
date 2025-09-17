@@ -14,6 +14,7 @@
 @{
     var infoTask = _instituteManager.GetAllAsync();
     var info = await infoTask;
+    var user = await _userManager.GetUserAsync(User);
 
     if (info.Any())
     {
@@ -29,7 +30,6 @@
     string userImage = "/Images/noProfileImage.png";
     if (_signInManager.IsSignedIn(User))
     {
-        var user = await _userManager.GetUserAsync(User);
         if (user.UserType == 's')
         {
             var stu = await _studentManager.GetByIdAsync(user.ReferenceId);
@@ -74,7 +74,7 @@
                     </div>
                     <!-- logo end -->
                     <ul class="nav navbar-nav navbar-left in">
-                        <li><a href="#" class="menu-toggler sidebar-toggler"><i class="icon-menu"></i></a></li>
+                    <li><a href="#" class="menu-toggler sidebar-toggler"><i class="icon-menu"></i>@GlobalUI.PageTitle.ToString()</a></li>
                     </ul>
                     <form class="search-form-opened" action="#" method="GET">
                         <div class="input-group">
@@ -289,11 +289,11 @@
                                 <a class="dropdown-toggle" data-bs-toggle="dropdown" data-hover="dropdown"
                                     data-close-others="true">
                                     <img alt="" class="img-circle " src="@userImage" />
-                                <span class="username username-hide-on-mobile"> @userName
+                          <!--      <span class="username username-hide-on-mobile"> @userName</span> -->
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-default">
                                     <li>
-                                        <a href="user_profile.html">
+                                    <a asp-action="Details" asp-controller="Employees" asp-route-id="@user.ReferenceId">
                                             <i class="icon-user"></i> Profile
                                         </a>
                                     </li>
@@ -314,9 +314,11 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="login.html">
-                                            <i class="icon-logout"></i> Log Out
-                                        </a>
+                                        <form asp-action="Logout" asp-controller="Accounts" method="post" style="display:inline;">
+                                            <button type="submit" class="dropdown-item" style="background:none; border:none; padding:6px 20px; width:100%; text-align:left;">
+                                                <i class="icon-logout"></i> Log Out
+                                            </button>
+                                        </form>
                                     </li>
                                 </ul>
                             </li>
@@ -452,375 +454,7 @@
                                     </div>
                                 </li>
 
-                            @await Component.InvokeAsync("Navigation")
-
-
-                            <!--  
-                                <li class="sidebar-user-panel">
-                                    <div class="sidebar-user">
-                                        <div class="sidebar-user-picture">
-                                        <img alt="image" src="~/Images/Institute/@instituteLogo">
-
-                                        </div>
-                                        <div class="sidebar-user-details">
-                                            <div class="user-name">Sneha Patel</div>
-                                            <div class="user-role">Administrator</div>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="nav-item start ">
-                                    <a href="#" class="nav-link nav-toggle">
-                                        <i data-feather="home"></i>
-                                        <span class="title">Dashboard</span>
-                                        <span class="selected"></span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#" class="nav-link nav-toggle">
-                                        <i data-feather="book"></i>
-                                        <span class="title">Courses</span>
-                                        <span class="arrow"></span>
-                                    </a>
-                                    <ul class="sub-menu">
-                                        <li class="nav-item">
-                                            <a href="all_courses.html" class="nav-link ">
-                                                <span class="title">
-                                                    All
-                                                    Courses
-                                                </span>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="add_course.html" class="nav-link ">
-                                                <span class="title">
-                                                    Add
-                                                    Course
-                                                </span>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="edit_course.html" class="nav-link ">
-                                                <span class="title">
-                                                    Edit
-                                                    Course
-                                                </span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#" class="nav-link nav-toggle">
-                                        <i data-feather="book-open"></i>
-                                        <span class="title">Lectures</span>
-                                        <span class="arrow"></span>
-                                    </a>
-                                    <ul class="sub-menu">
-                                        <li class="nav-item">
-                                            <a href="all_lectures.html" class="nav-link ">
-                                                <span class="title">
-                                                    All
-                                                    Lectures
-                                                </span>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="add_lecture.html" class="nav-link ">
-                                                <span class="title">
-                                                    Add
-                                                    Lecture
-                                                </span>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="edit_lecture.html" class="nav-link ">
-                                                <span class="title">
-                                                    Edit
-                                                    Lecture
-                                                </span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#" class="nav-link nav-toggle">
-                                        <i data-feather="users"></i>
-                                        <span class="title">Students</span>
-                                        <span class="arrow"></span>
-                                    </a>
-                                    <ul class="sub-menu">
-                                        <li class="nav-item">
-                                            <a href="all_students.html" class="nav-link ">
-                                                <span class="title">
-                                                    All
-                                                    Students
-                                                </span>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="add_student.html" class="nav-link ">
-                                                <span class="title">
-                                                    Add
-                                                    Student
-                                                </span>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="edit_student.html" class="nav-link ">
-                                                <span class="title">
-                                                    Edit
-                                                    Student
-                                                </span>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="about_student.html" class="nav-link ">
-                                                <span class="title">
-                                                    About
-                                                    Student
-                                                </span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#" class="nav-link nav-toggle">
-                                        <i data-feather="user-check"></i>
-                                        <span class="title">Professors</span>
-                                        <span class="arrow"></span>
-                                    </a>
-                                    <ul class="sub-menu">
-                                        <li class="nav-item">
-                                            <a href="all_professors.html" class="nav-link ">
-                                                <span class="title">
-                                                    All
-                                                    Professors
-                                                </span>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="add_professor.html" class="nav-link ">
-                                                <span class="title">
-                                                    Add
-                                                    Professor
-                                                </span>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="edit_professor.html" class="nav-link ">
-                                                <span class="title">
-                                                    Edit
-                                                    Professor
-                                                </span>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="about_professor.html" class="nav-link ">
-                                                <span class="title">
-                                                    About
-                                                    Professor
-                                                </span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#" class="nav-link nav-toggle">
-                                        <i data-feather="calendar"></i>
-                                        <span class="title">Events</span>
-                                        <span class="arrow"></span>
-                                    </a>
-                                    <ul class="sub-menu">
-                                        <li class="nav-item">
-                                            <a href="all_events.html" class="nav-link ">
-                                                <span class="title">
-                                                    All
-                                                    Events
-                                                </span>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="add_event.html" class="nav-link ">
-                                                <span class="title">
-                                                    Add
-                                                    Event
-                                                </span>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="edit_event.html" class="nav-link ">
-                                                <span class="title">
-                                                    Edit
-                                                    Event
-                                                </span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#" class="nav-link nav-toggle">
-                                        <i data-feather="credit-card"></i>
-                                        <span class="title">Payments</span>
-                                        <span class="arrow"></span>
-                                    </a>
-                                    <ul class="sub-menu">
-                                        <li class="nav-item">
-                                            <a href="all_payments.html" class="nav-link ">
-                                                <span class="title">
-                                                    All
-                                                    Payments
-                                                </span>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="add_payment.html" class="nav-link ">
-                                                <span class="title">
-                                                    Add
-                                                    Payment
-                                                </span>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="invoice.html" class="nav-link ">
-                                                <span class="title">Invoice</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#" class="nav-link nav-toggle">
-                                        <i data-feather="clipboard"></i>
-                                        <span class="title">Library</span>
-                                        <span class="arrow"></span>
-                                    </a>
-                                    <ul class="sub-menu">
-                                        <li class="nav-item">
-                                            <a href="all_books.html" class="nav-link ">
-                                                <span class="title">
-                                                    All
-                                                    Books
-                                                </span>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="add_book.html" class="nav-link ">
-                                                <span class="title">Add Book</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#" class="nav-link nav-toggle">
-                                        <i data-feather="slack"></i>
-                                        <span class="title">Departments</span>
-                                        <span class="arrow"></span>
-                                    </a>
-                                    <ul class="sub-menu">
-                                        <li class="nav-item">
-                                            <a href="all_departments.html" class="nav-link ">
-                                                <span class="title">
-                                                    All
-                                                    Departments
-                                                </span>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="add_department.html" class="nav-link ">
-                                                <span class="title">
-                                                    Add
-                                                    Department
-                                                </span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="nav-item active open">
-                                    <a href="#" class="nav-link nav-toggle">
-                                        <i data-feather="file-text"></i>
-                                        <span class="title">Blog</span>
-                                        <span class="arrow"></span>
-                                    </a>
-                                    <ul class="sub-menu">
-                                        <li class="nav-item">
-                                            <a href="blog.html" class="nav-link ">
-                                                <span class="title">Blog List</span>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item active">
-                                            <a href="blog_post.html" class="nav-link ">
-                                                <span class="title">
-                                                    Blog
-                                                    Post
-                                                </span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="email.html" class="nav-link nav-toggle">
-                                        <i data-feather="mail"></i>
-                                        <span class="title">Email</span>
-                                        <span class="badge bg-blue">5</span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#" class="nav-link nav-toggle">
-                                        <i data-feather="message-circle"></i>
-                                        <span class="title">Forum</span>
-                                        <span class="arrow"></span>
-                                    </a>
-                                    <ul class="sub-menu">
-                                        <li class="nav-item">
-                                            <a href="forum.html" class="nav-link ">
-                                                <span class="title">Forum Page</span>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="forum_post.html" class="nav-link ">
-                                                <span class="title">
-                                                    Forum
-                                                    Post
-                                                </span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#" class="nav-link nav-toggle">
-                                        <i data-feather="settings"></i>
-                                        <span class="title">Settings</span>
-                                        <span class="arrow"></span>
-                                    </a>
-                                    <ul class="sub-menu">
-                                        <li class="nav-item">
-                                            <a href="general_settings.html" class="nav-link ">
-                                                <span class="title">General Settings</span>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="course_settings.html" class="nav-link ">
-                                                <span class="title">
-                                                    Course
-                                                    Settings
-                                                </span>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="payment_settings.html" class="nav-link ">
-                                                <span class="title">Payment Settings</span>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="social_settings.html" class="nav-link ">
-                                                <span class="title">
-                                                    Social
-                                                    Settings
-                                                </span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-
-                            -->
+                                @await Component.InvokeAsync("Navigation")
                             </ul>
                         </div>
                     </div>

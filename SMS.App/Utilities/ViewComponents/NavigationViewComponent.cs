@@ -72,14 +72,17 @@ public class NavigationViewComponent : ViewComponent
                     SystemName = s.SystemName,
                     DisplayName = s.DisplayName,
                     Icon = s.Icon,
-                    Items = s.Items.TakeWhile(i => userClaims.Contains(i.Claim.Trim())).Select(i => new Item
+                    Items = s.Items
+                    .Where(i => userClaims.Contains(i.Claim?.Trim()))
+                    .Select(i => new Item
                     {
                         SystemName = i.SystemName,
                         DisplayName = i.DisplayName,
                         Controller = i.Controller,
                         Action = i.Action,
                         Claim = i.Claim
-                    }).ToList()
+                    })
+                    .ToList()
                 }).ToList()
             })
             .ToList();

@@ -1,0 +1,111 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Http
+@using SMS.App.ViewModels.Layout
+
+@inject SignInManager<ApplicationUser> _signInManager
+@inject UserManager<ApplicationUser> _userManager
+@inject IInstituteManager _instituteManager
+@inject IEmployeeManager _employeeManager
+@inject IStudentManager _studentManager
+@inject IHttpContextAccessor httpContextAccessor
+
+@{
+    var infoTask = _instituteManager.GetAllAsync();
+    var info = await infoTask;
+    var user = await _userManager.GetUserAsync(User);
+
+    if (info.Any())
+    {
+        var firstInstitute = info.First();
+        GlobalUI.InstituteName = firstInstitute.Name;
+        GlobalUI.Logo = firstInstitute.Logo;
+        GlobalUI.Language = "En";
+    }
+    string instituteName = GlobalUI.InstituteName ?? "Institute Name";
+    string instituteLogo = GlobalUI.Logo ?? "instituteLogo.png";
+    var userName = _userManager.GetUserName(User);
+
+    string userImage = "/Images/noProfileImage.png";
+    if (_signInManager.IsSignedIn(User))
+    {
+        if (user.UserType == 's')
+        {
+            var stu = await _studentManager.GetByIdAsync(user.ReferenceId);
+            if (!string.IsNullOrEmpty(stu?.Photo))
+                userImage = $"/Images/Student/Photo/{stu.Photo}";
+        }
+        else if (user.UserType == 'e')
+        {
+            var emp = await _employeeManager.GetByIdAsync(user.ReferenceId);
+            if (!string.IsNullOrEmpty(emp?.Image))
+                userImage = $"/Images/Employee/Photo/{emp.Image}";
+        }
+    }
+    ;
+
+    var headerVM = new LayoutHeaderVM
+    {
+        InstituteName = instituteName
+    };
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<!-- BEGIN HEAD -->
+@await Html.PartialAsync("_HeadPartial", headerVM)
+@await RenderSectionAsync("Styles", required: false)
+<!-- END HEAD -->
+<body>
+    <div class="main">
+        <!-- Sing in  Form -->
+        <section class="sign-in">
+            <div class="container">
+                <div class="signin-content">
+                    <div class="signin-image">
+                        <div class="container-login100 page-background">
+                            <div class="wrap-login100">
+                                <form class="login100-form validate-form">
+                                    <span class="login100-form-logo">
+                                        <img src="@userImage" class="imgroundcorners" alt="John Doe">
+                                    </span>
+                                    <span class="login100-form-title">
+                                        @user.
+                                    </span>
+                                    <p class="text-center txt-locked">
+                                        Locked
+                                    </p>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="signin-form">
+                        <h2 class="form-title">Locked?</h2>
+                        <p>Enter your password to unlock</p><br>
+                        <form class="register-form" id="login-form">
+                            <div class="form-group">
+                                <div class="">
+                                    <input name="pwd" type="password" placeholder="Password" class="form-control input-height">
+                                </div>
+                            </div>
+                            <div class="form-group form-button">
+                                <button class="btn btn-round btn-primary" name="send" id="send">Send</button>
+                            </div>
+                        </form>
+
+                        <div class="text-center mt-3">
+                            <a class="txt1" asp-action="Login" asp-controller="Accounts">
+                                sign in as a different user
+                            </a>
+                        </div>
+                    </div>@RenderBody()
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+
+
+</html>

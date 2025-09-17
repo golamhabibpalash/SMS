@@ -231,7 +231,13 @@ namespace SMS.App.Controllers
             await _signInManager.SignOutAsync();
             return RedirectToAction("Login", "Accounts");
         }
-
+        
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult LockScreen()
+        {
+            return View();
+        }
 
         [Authorize(Roles = "SuperAdmin")]
         [Authorize(Policy = "DeleteUserAccountsPolicy")]

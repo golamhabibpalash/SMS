@@ -16,6 +16,5 @@ namespace SMS.Entities
         public Student Student { get; set; }
         public bool Status { get; set; }
         public string Remarks { get; set; }
-        public string ExamCategory { get; set; } //Written,MCQ,Practical
     }
 }

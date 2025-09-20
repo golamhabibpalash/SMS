@@ -740,14 +740,19 @@
         </div>
         <!-- start js include path -->
         <script src="~/lib/theme/smart/assets/plugins/jquery/jquery.min.js"></script>
+
+        <!-- Select2 JS -->
+    <!-- <script src="~/lib/select2/js/select2.min.js"></script>-->
+
         <script src="~/lib/theme/smart/assets/plugins/popper/popper.js"></script>
         <script src="~/lib/theme/smart/assets/plugins/jquery-blockui/jquery.blockui.min.js"></script>
         <script src="~/lib/theme/smart/assets/plugins/jquery-slimscroll/jquery.slimscroll.js"></script>
             <!-- bootstrap -->
         <script src="~/lib/theme/smart/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
-        <script src="~/lib/theme/smart/assets/plugins/bootstrap-switch/js/bootstrap-switch.min.js"></script>
+    @*<script src="~/lib/theme/smart/assets/plugins/bootstrap-switch/js/bootstrap-switch.min.js"></script>
+    <script src="~/lib/theme/smart/assets/js/pages/sparkline/sparkline-data.js"></script>*@
         <script src="~/lib/theme/smart/assets/plugins/sparkline/jquery.sparkline.min.js"></script>
-        <script src="~/lib/theme/smart/assets/js/pages/sparkline/sparkline-data.js"></script>
+        /* */
             <!-- Common js-->
         <script src="~/lib/theme/smart/assets/js/app.js"></script>
         <script src="~/lib/theme/smart/assets/js/layout.js"></script>
@@ -758,13 +763,22 @@
         <script src="~/lib/theme/smart/assets/plugins/dropzone/dropzone.js"></script>
         <script src="~/lib/theme/smart/assets/plugins/dropzone/dropzone-call.js"></script>
             <!-- animation -->
-        <script src="~/lib/theme/smart/assets/js/pages/ui/animations.js"></script>
+        @* <script src="~/lib/theme/smart/assets/js/pages/ui/animations.js"></script>*@
             <!-- end js include path -->
             <!-- Feather icon -->
         <script src="~/lib/theme/smart/assets/plugins/feather/feather.min.js"></script>
             <script>
                 feather.replace();
             </script>
+        <script>
+            $(document).ready(function () {
+                $('.select2').select2({
+                    placeholder: "Select an option",
+                    allowClear: true,
+                    width: '100%'
+                });
+            });
+        </script>
         @await RenderSectionAsync("Scripts", required: false)
     </body>
 

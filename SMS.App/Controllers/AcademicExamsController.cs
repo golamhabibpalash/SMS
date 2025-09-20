@@ -209,6 +209,7 @@ public class AcademicExamsController : Controller
                     exam.CreatedAt = DateTime.Now;
                     exam.CreatedBy = HttpContext.Session.GetString("UserId");
                     exam.MACAddress = MACService.GetMAC();
+                    exam.ExamCategory = exam.ExamCategory;
                     bool isSaved = await _examManager.AddAsync(exam);
                     if (isSaved)
                     {

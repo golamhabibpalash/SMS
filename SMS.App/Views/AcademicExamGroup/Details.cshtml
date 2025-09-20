@@ -44,7 +44,6 @@
 
         @foreach (var exam in Model.AcademicExams.GroupBy(s => s.AcademicExamGroup.ExamGroupName))
         {
-
             foreach (var item in exam.GroupBy(s => s.AcademicClass.Name).OrderBy(s => s.Min(m => m.AcademicClassId)))
             {
                 <div class="bg-secondary p-2">
@@ -116,6 +115,14 @@
             }
         }
     </div><br />
+    if (Model.AcademicExams.Count<=0)
+    {
+        <div class="text-center">
+            <h4>There is no exam created in this group! 
+                <a class="btn btn-sm btn-info" asp-action="" asp-controller="">Add Now</a>
+            </h4>
+        </div>
+    }
     <a asp-action="Index" class="btn btn-sm btn-info">Back to List</a>
 }
 

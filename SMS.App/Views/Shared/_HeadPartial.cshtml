@@ -39,9 +39,31 @@
     <!-- Date Time item CSS -->
     <link rel="stylesheet" href="~/lib/theme/smart/assets/plugins/flatpicker/css/flatpickr.min.css" />
 
+    <!-- Select2 CSS -->
+    <link href="~/lib/select2/css/select2.min.css" rel="stylesheet" />
+
     <!-- favicon -->
     <link rel="icon" type="image/x-icon" href="~/Images/Institute/favicon.ico">
     <link href="~/lib/theme/smart/assets/css/theme/light/login.css" rel="stylesheet" />
     <!--Custom Css-->
     <link href="~/css/custom.css" rel="stylesheet" />
+    <style>
+        .select2-container {
+            width: 100% !important;
+        }
+
+            .select2-container .select2-selection--single {
+                height: 38px;
+                border: 1px solid #ced4da;
+                border-radius: 4px;
+            }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 38px;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 38px;
+        }
+    </style>
 </head>

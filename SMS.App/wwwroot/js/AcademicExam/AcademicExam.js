@@ -109,7 +109,6 @@ $('#AcademicClassId').change(function () {
                 //$('#AcademicSectionId').append(o);
                 $('#AcademicSectionId').append(o2);
                 $.each(data, function (i, obj) {
-                    console.log(obj.name);
                     var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
                     $('#AcademicSectionId').append(op);
                 });
@@ -180,6 +179,9 @@ function ExamAddBtnClick() {
         let classId = classIdOption.value;
         let classIdText = classIdOption.text;
 
+        let examCategoryDD = document.getElementById('ExamCategory');
+        let examCategory = examCategoryDD.options[examCategoryDD.selectedIndex];
+
         let subjectidElement = document.getElementById('AcademicSubjectId');
         let subjectidOption = subjectidElement.options[subjectidElement.selectedIndex];
         let subjectid = subjectidOption.value;
@@ -204,33 +206,26 @@ function ExamAddBtnClick() {
 
         let serial_td = '<td><input type="hidden" name="AcademicExam[' + indexCount + '].AcademicExamGroupId" value="' + groupId + '" />' + rowCount + '</td>'
         let subject_td = '<td>  <input type="hidden" name="AcademicExam[' + indexCount + '].AcademicSubjectId" value="' + subjectid + '" />' + subjectIdText + '</td>';
+        let examCategory_td = '<td><input type="hidden" name="AcademicExam[' + indexCount + '].ExamCategory" value="' + examCategory.value + '" /> ' + examCategory.value + '</td>';
         let class_td = '<td> <input type="hidden" name="AcademicExam[' + indexCount + '].AcademicClassId" value="' + classId + '" />' + classIdText + '</td>';
         let section_td = '<td> <input type="hidden" name="AcademicExam[' + indexCount + '].AcademicSectionId" value="' + sectionId + '" />' + sectionIdText + '</td>';
         let teacher_td = '<td> <input type="hidden" name="AcademicExam[' + indexCount + '].EmployeeId" value="' + teacherId + '" />' + teacherIdText + '</td>';
-        let marks_td = '<td> <input type="hidden" name="AcademicExam[' + indexCount + '].TotalMarks" value="' + marks + '" />' + marks + '</td>';
+        let marks_td = '<td class="text-end"> <input type="hidden" name="AcademicExam[' + indexCount + '].TotalMarks" value="' + marks + '" />' + marks + '</td>';
         //let status_td = '<td> <input type="hidden" name="AcademicExam[' + indexCount + '].Status" value="' + status + '" />' + status + '</td>';
         let action_td = '<td><button onclick="removeRow(this)" class="removeBtn btn btn-sm btn-warning" value="Remove">Remove</button></td>';
-        let tr = '<tr>' + serial_td + subject_td + class_td + section_td + teacher_td + marks_td /*+ status_td*/ + action_td+ '</tr>';
+        let tr = '<tr>' + serial_td + subject_td + examCategory_td + class_td + section_td + teacher_td + marks_td /*+ status_td*/ + action_td+ '</tr>';
         tableBody.innerHTML +=tr;
     }
 }
 
 $('#submitBtn').click(function () {
-    //document.getElementById("submitForm").addEventListener("submit", function (event) {
-    //    event.preventDefault(); // Prevent form submission
 
-    //    // Display loading indicator
-        document.getElementById("loading").style.display = "block";
+    showLoader()
     $('#submitForm').submit(function () {
             $('#createUpdateModal').modal('hide');
         document.getElementById("loading").style.display = "block";
         setTimeout(function () {
-            // Hide loading indicator
-            /*document.getElementById("loading").style.display = "none";*/
 
-            // Close the modal
-
-            // Reset the form
             document.getElementById("myForm").reset();
         }, 2000);
 
@@ -254,7 +249,6 @@ function DeleteExam(id) {
         // Handle cancel action or do nothing
     }
 }
-
 
 function EditExamClick(id) {    
     let modalFooter = document.getElementById('editupdatemodalfooter');
@@ -285,4 +279,10 @@ function examinationAddButtonClicked(groupId) {
         dropdown.value = groupId; // set selected value
     }
     dropdown.dispatchEvent(new Event('change'));
+}
+function showLoader() {
+    document.getElementById('loading').classList.remove('d-none');
+}
+function hideLoader() {
+    document.getElementById('loading').classList.add('d-none');
 }

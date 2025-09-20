@@ -75,7 +75,7 @@ namespace SMS.BLL.Managers
                 ClassName = exam.AcademicClass.Name,
                 ClassId = exam.AcademicClassId,
                 ExamGroupVMId = exam.AcademicExamGroupId,
-
+                ExamCategory = exam.ExamCategory,
                 // Fix: prevent duplicate details
                 ExaminationDetailsDtos = exam.AcademicExamDetails
                     .GroupBy(d => new { exam.AcademicSubjectId, exam.AcademicSectionId, exam.EmployeeId})

@@ -7,7 +7,11 @@
     GlobalUI.PageTitle = ViewData["Title"].ToString();
     string styleForCurrentTransaction = string.Empty;
 }
-
+<div class="">
+    <div class="col-md-12 text-end">
+        <button class="btn btn-primary" id="CreateId" data-bs-toggle="modal" data-bs-target="#createUpdateModal" onclick="examinationAddButtonClicked(0)"><i class="fa fa-plus"></i> Add</button>
+    </div>
+</div>
 <div class="accordion" id="sessionAccordion">
     @foreach (var itemBySession in Model.ExamSessionVM)
     {
@@ -36,7 +40,7 @@
                                         <div class="accordion-body">
                                             @foreach (var classGroup in itemByGroup.ExaminationDtos.OrderBy(s => s.ClassId).GroupBy(c => c.ClassName).OrderBy(s => s.FirstOrDefault().ClassId))
                                             {
-                                                            int exSL = 0;
+                                                int exSL = 0;
                                                 <table class="table table-sm table-striped table-bordered table-responsive-sm" id="myTable">
                                                     <thead class="table-info">
                                                         <tr>
@@ -45,6 +49,7 @@
                                                         <tr>
                                                             <th class="text-center" style="width:2%">#</th>
                                                             <th style="width:15%">Subject</th>
+                                                            <th style="width:15%">Exam Category</th>
                                                             <th style="width:10%">Academic Section</th>
                                                             <th style="width:10%">Teacher</th>
                                                             <th style="width:10%">Total Students</th>
@@ -57,19 +62,18 @@
                                                                 @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
                                                                 {
                                                                     <button class="btn btn-primary" id="CreateId" data-bs-toggle="modal" data-bs-target="#createUpdateModal" onclick="examinationAddButtonClicked(@itemByGroup.Id)"><i class="fa fa-plus"></i> Add</button>
-
                                                                 }
                                                             </th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @foreach (var exam in classGroup)
-                                                        {
+                                                        @foreach (var exam in classGroup)   
                                                             foreach (var row in exam.ExaminationDetailsDtos)
                                                             {
                                                                 <tr style="@styleForCurrentTransaction">
                                                                     <td class="text-center">@{exSL++;}@exSL</td>
                                                                     <td><a asp-action="Details" asp-route-id="@row.Id">@row.SubjectName</a></td>
+                                                                    <td>@exam.ExamCategory</td>
                                                                     <td>
                                                                         @if (row.SectionName == null)
                                                                         {
@@ -185,14 +189,14 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-md-2 col-form-label text-md-end" asp-for="AcademicExamDetails[0].ExamCategory"></label>
+                        <label class="col-md-2 col-form-label text-md-end" asp-for="ExamCategory"></label>
                         <div class="col-md-4">
                             @for (int i = 0; i < 1; i++)
                             {
-                                <select asp-for="AcademicExamDetails[i].ExamCategory" class="form-control" asp-items="Model.ExamCategoryList">
+                                <select asp-for="ExamCategory" class="form-control" asp-items="Model.ExamCategoryList">
                                     <option selected disabled value="">Select Exam Category</option>
                                 </select>
-                                <span asp-validation-for="AcademicExamDetails[i].ExamCategory"></span>
+                                <span asp-validation-for="ExamCategory"></span>
                             }
                         </div>
 
@@ -221,11 +225,11 @@
                                 <tr>
                                     <td>#</td>
                                     <td>Subject</td>
+                                    <td>Exam Category</td>
                                     <td>Class</td>
                                     <td>Section</td>
                                     <td>Teacher</td>
                                     <td>Marks</td>
-                                    @*<td>Status</td>*@
                                     <td>Action</td>
                                 </tr>
                             </thead>
@@ -233,7 +237,7 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colspan="7" class="text-end">
+                                    <td colspan="8" class="text-end">
                                         <span class="btn btn-sm btn-danger" onclick="ClearBtnClicked()">Clear</span>
                                         <button class="btn btn-sm btn-light" id="submitBtn">Submit</button>
                                     </td>
@@ -246,8 +250,12 @@
         </div>
     </div>
 </div>
-<div id="loading" style="display:none;top:0;left:0;z-index:9999; position:fixed;width:100%;height:100%; ">
-    <img src="~/Images/loading1.gif" width="50%;" alt="Loading_Images" />
+<div id="loading" class="d-none position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-white bg-opacity-50" style="z-index: 9999;">
+    <div class="text-center">
+        <div class="spinner-border text-primary" style="width: 4rem; height: 4rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
 </div>
 @section Scripts{
     <script src="/js/AcademicExam/AcademicExam.js"></script>

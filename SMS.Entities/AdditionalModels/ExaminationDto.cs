@@ -24,6 +24,7 @@ public class ExaminationDto
     public string ClassName { get; set; }
     public int ClassId { get; set; }
     public int ExamGroupVMId { get; set; }
+    public string ExamCategory { get; set; }
     public ExamGroupDto ExamGroupDto { get; set; } = default!;
     public ICollection<ExaminationDetailsDto> ExaminationDetailsDtos { get; set; } = new List<ExaminationDetailsDto>();
 }

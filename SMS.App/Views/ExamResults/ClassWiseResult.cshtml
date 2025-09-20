@@ -44,7 +44,7 @@
         <form asp-action="ClassWiseResult" asp-controller="ExamResults" method="post">
             <div class="form-row">
                 <div class="col-md-2">
-                    <select class="form-control" asp-items="ViewBag.ExamGroupList" name="examGroupId" id="examGroupId">
+                    <select class="form-control select2" asp-items="ViewBag.ExamGroupList" name="examGroupId" id="examGroupId">
                         <option selected disabled>Select Exam Group</option>
                     </select>
                 </div>
@@ -237,11 +237,15 @@
             var headerTh = document.getElementById("headerTh");
             var headerTr = document.getElementById("headerTr");
 
-            // Calculate the number of <td> elements
-            var tdCount = headerTr.getElementsByTagName("td").length;
+            if (headerTr) {
+                // Calculate the number of <td> elements
+                var tdCount = headerTr.getElementsByTagName("td").length;
 
-            // Set the rowspan attribute of <th>
-            headerTh.setAttribute("colspan", tdCount);
+                // Set the rowspan attribute of <th>
+                headerTh.setAttribute("colspan", tdCount);
+            } else {
+                console.error("headerTr is null. Check the selector or DOM.");
+            }
 
 
 

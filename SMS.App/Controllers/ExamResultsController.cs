@@ -9,6 +9,7 @@ using SMS.App.ViewModels.ExamResult;
 using SMS.App.ViewModels.ExamVM;
 using SMS.BLL.Contracts;
 using SMS.Entities;
+using SMS.Entities.AdditionalModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -529,6 +530,14 @@ namespace SMS.App.Controllers
             return RedirectToAction("details", "AcademicExamGroup", new { id = groupId });
         }
 
+        public async Task<IActionResult> LiveResult(int academiClassId=2, int academicGroupId=47)
+        {
+            LiveResultVM liveResultVM = new LiveResultVM();
+            liveResultVM = await _academicExamManager.GetLiveResultByGroupIdClassId(academicGroupId, academiClassId);
+            return View(liveResultVM);
+
+        }
+
         // POST: ExamResultsController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -726,4 +735,5 @@ namespace SMS.App.Controllers
             return new JsonResult(isExist);
         }
     }
+
 }

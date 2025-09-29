@@ -1,0 +1,296 @@
+﻿@using SMS.Entities.AdditionalModels
+@model LiveResultVM
+
+<style>
+    .student-name-col {
+        width: 1%; /* shrink as much as possible */
+        white-space: nowrap; /* prevent line breaks */
+    }
+
+    .bangla {
+        background-color: #ffebcc; /* your color */
+        border: 2px solid #ffa500; /* outer border for the column */
+    }
+
+    .class-roll-col {
+        background-color: #ffebcc; /* your color */
+        border: 2px solid #ffa500; /* outer border for the column */
+    }
+
+    th.vertical {
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+    }
+</style>
+<table class="table table-bordered table-responsive table-auto table-striped">
+    <thead class="table-info">
+        <tr>
+            <th colspan="@Model.TotalColumn" class="text-center">@Model.ExamTitle</th>
+        </tr>
+        <tr>
+            <th rowspan="2" class="text-center">Class Roll</th>
+            <th rowspan="2" class="text-center text-nowrapl">Student Name</th>
+            @* @{
+                Model.ResultDetails.FirstOrDefault()?.LiveResultSubjectWises.ForEach(subject =>
+                {
+                    <th colspan="2" class="text-center">
+                        @subject.SubjectName
+                        <p><small>(Highest @subject.HighestMarks from @subject.TotalMarks)</small></p>
+                    </th>
+                });
+            } *@
+
+
+            @foreach (var sub in Model.Subjects)
+            {
+                int colCount = 2 + sub.ExamTypes.Count; 
+                <th colspan="@colCount" class="text-center">@sub.SubjectName
+
+                    <p><small>(Highest @sub.HighestMark from @sub.TotalMarks)</small></p>
+                </th>
+            }
+            <th rowspan="2" class="vertical">GPA</th>
+            <th rowspan="2" class="vertical">GRADE</th>
+            <th rowspan="2" class="vertical">Total Marks</th>
+            <th rowspan="2" class="vertical">Attendance(%)</th>
+            <th rowspan="2" class="vertical">Rank</th>
+        </tr>
+        <tr>
+            @foreach (var item in Model.Subjects)
+            {
+                foreach (var type in item.ExamTypes)
+                {
+                    <th class="vertical">@type.ExamType (@type.TotalMarks)</th>
+                }
+                <th class="vertical">marks</th>
+                <th class="vertical">Grade</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var studentResult in Model.ResultDetails)
+        {
+            <tr>
+                <td>@studentResult.ClassRoll</td>
+                <td>@studentResult.StudentName</td>
+                @foreach (var item in studentResult.LiveResultSubjectWises)
+                {
+                    <td>@item.Marks</td>
+                    <td>@item.GPA</td>
+                }
+                <td>@studentResult.FinalGPA</td>
+                <td>@studentResult.FinalGrade</td>
+                <td>@studentResult.TotalMarks</td>
+                <td>@studentResult.Attendance</td>
+                <td>@studentResult.Rank</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<Table class="table table-bordered table-responsive table-auto table-striped">
+
+    <thead class="table-info">
+        <tr class="table-primary">
+            <th colspan="35" class="text-center">@Model.ExamTitle</th>
+        </tr>
+        <tr>
+            <th rowspan="2" class="text-center">Class Roll</th>
+            <th rowspan="2" class="text-center text-nowrapl">Student Name</th>
+            <th colspan="4" class="text-center">
+                Bangla 2nd
+                <p><small>(Highest 70 from 70)</small></p>
+            </th>
+            <th colspan="5" class="text-center">
+                ICT
+                <p><small>(Highest 80 from 100)</small></p>
+            </th>
+            <th colspan="4" class="text-center">
+                Religion
+                <p><small>(Highest 59 from 60)</small></p>
+            </th>
+            <th colspan="5" class="text-center">
+                Science
+                <p><small>(Highest 80 from 100)</small></p>
+            </th>
+            <th colspan="5" class="text-center">
+                Chemistry
+                <p><small>(Highest 97 from 100)</small></p>
+            </th>
+            <th colspan="5" class="text-center">Mathematics 
+                <p><small>(Highest 80 from 80)</small></p></th>
+            <th rowspan="2" class="vertical">GPA</th>
+            <th rowspan="2" class="vertical">GRADE</th>
+            <th rowspan="2" class="vertical">Total Marks</th>
+            <th rowspan="2" class="vertical">Attendance(%)</th>
+            <th rowspan="2" class="vertical">Rank</th>
+        </tr>
+        <tr class="table-success">
+            <th class="vertical">CQ(50)</th>
+            <th class="vertical">MCQ(20)</th>
+            <th class="vertical">Marks</th>
+            <th class="vertical">GPA</th>
+
+            <th class="vertical">CQ(50)</th>
+            <th class="vertical">MCQ(30)</th>
+            <th class="vertical">PR(20)</th>
+            <th class="vertical">Marks</th>
+            <th class="vertical">GPA</th>
+
+            <th class="vertical">CQ(40)</th>
+            <th class="vertical">MCQ(20)</th>
+            <th class="vertical">Marks</th>
+            <th class="vertical">GPA</th>
+
+            <th class="vertical">CQ(50)</th>
+            <th class="vertical">MCQ(20)</th>
+            <th class="vertical">PR(10)</th>
+            <th class="vertical">Marks</th>
+            <th class="vertical">GPA</th>
+
+            <th class="vertical">CQ(50)</th>
+            <th class="vertical">MCQ(25)</th>
+            <th class="vertical">PR(25)</th>
+            <th class="vertical">Marks</th>
+            <th class="vertical">GPA</th>
+
+            <th class="vertical">CQ(70)</th>
+            <th class="vertical">MCQ(20)</th>
+            <th class="vertical">PR(10)</th>
+            <th class="vertical">Marks</th>
+            <th class="vertical">GPA</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>2001001</td>
+            <td class="text-nowrap">Md. Sakibul Islam Jamil Hasan</td>
+            <td>50</td>
+            <td>20</td>
+            <td>70</td>
+            <td>5.00</td>
+
+            <td>50</td>
+            <td>20</td>
+            <td>10</td>
+            <td>80</td>
+            <td>4.59</td>
+
+            <td>40</td>
+            <td>19</td>
+            <td>59</td>
+            <td>A+</td>
+
+            <td>50</td>
+            <td>20</td>
+            <td>10</td>
+            <td>80</td>
+            <td>A+</td>
+
+            <td>48</td>
+            <td>29</td>
+            <td>20</td>
+            <td>97</td>
+            <td>A+</td>
+
+            <td>50</td>
+            <td>20</td>
+            <td>10</td>
+            <td>80</td>
+            <td>A+</td>
+
+            <td>5.00</td>
+            <td>A+</td>
+            <td>512</td>
+            <td>85</td>
+            <td>2</td>
+        </tr>
+        <tr>
+            <td>2001002</td>
+            <td class="text-nowrap">Md. Hamidur Rahman</td>
+            <td>45</td>
+            <td>15</td>
+            <td>68</td>
+            <td>4.88</td>
+
+            <td>50</td>
+            <td>20</td>
+            <td>10</td>
+            <td>80</td>
+            <td>5.00</td>
+
+            <td>30</td>
+            <td>15</td>
+            <td>45</td>
+            <td>A</td>
+
+            <td>50</td>
+            <td>20</td>
+            <td>10</td>
+            <td>80</td>
+            <td>A+</td>
+
+            <td>44</td>
+            <td>20</td>
+            <td>15</td>
+            <td>79</td>
+            <td>A+</td>
+
+            <td>50</td>
+            <td>20</td>
+            <td>10</td>
+            <td>80</td>
+            <td>A+</td>
+
+            <td>4.50</td>
+            <td>A</td>
+            <td>512</td>
+            <td>82</td>
+            <td>3</td>
+        </tr>
+        <tr>
+            <td>2001003</td>
+            <td class="text-nowrap">Adittaya Mohon</td>
+            <td>50</td>
+            <td>20</td>
+            <td>70</td>
+            <td>5.00</td>
+
+            <td>50</td>
+            <td>20</td>
+            <td>10</td>
+            <td>80</td>
+            <td>4.59</td>
+
+            <td>40</td>
+            <td>19</td>
+            <td>59</td>
+            <td>A+</td>
+
+            <td>50</td>
+            <td>20</td>
+            <td>10</td>
+            <td>80</td>
+            <td>A+</td>
+
+            <td>48</td>
+            <td>29</td>
+            <td>20</td>
+            <td>97</td>
+            <td>A+</td>
+
+            <td>50</td>
+            <td>20</td>
+            <td>10</td>
+            <td>80</td>
+            <td>A+</td>
+
+            <td>5.00</td>
+            <td>A+</td>
+            <td>512</td>
+            <td>95</td>
+            <td>1</td>
+        </tr>
+    </tbody>
+</Table>

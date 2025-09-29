@@ -52,7 +52,7 @@
                             <thead>
                                 <tr class="bg-info">
                                     <td colspan="7">
-                                        <div class="d-flex justify-content-between text-light">
+                                        <div class="d-flex justify-content-between text-dark">
                                             <div>
                                                 <h5> @item.Key (Total Exam/s - @item.Count())</h5>
                                             </div>
@@ -78,6 +78,7 @@
                                 <tr class="table-info">
                                     <th>#</th>
                                     <th>Academic Subject</th>
+                                    <th>Exam Category</th>
                                     <th>Section</th>
                                     <th>Class Teacher</th>
                                     <th>Total Students</th>
@@ -89,6 +90,7 @@
                                     <tr>
                                         <td>@(++exSl)</td>
                                         <td class="w-25">@item2.AcademicSubject.SubjectName</td>
+                                        <td class="w-25">@item2.ExamCategory</td>
                                         <td>
                                             @if (item2.AcademicSection == null)
                                             {
@@ -174,8 +176,6 @@
         var scrollPosition = @ViewBag.ScrollPosition!=null?  @ViewBag.ScrollPosition:0; // Default to 0 if not set
         window.scrollTo(0, scrollPosition);
 
-    </script>
-    <script>
         // Call the functions based on your conditions
         window.onload = function () {
             var processButtons = document.querySelectorAll('.processResultBtn');

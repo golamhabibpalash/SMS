@@ -41,7 +41,6 @@ namespace SMS.BLL.Managers
 
             var result = new List<ExamSessionDto>();
 
-
             foreach (var session in allSessions)
             {
                 var sessionDto = new ExamSessionDto
@@ -71,13 +70,20 @@ namespace SMS.BLL.Managers
 
             return result;
         }
-
         public async Task<LiveResultVM> GetLiveResultByGroupIdClassId(int academicGroupId, int academiClassId)
         {
             var liveResultVM = new LiveResultVM();
 
             var existingExams = await _academicExamRepository.GetByClassIdExamGroupId(academicGroupId, academiClassId);
             var examGroup = await _academicExamGroupRepository.GetByIdAsync(academicGroupId);
+            if (examGroup==null)
+            {
+                return liveResultVM;
+            }
+            if (existingExams==null || existingExams.Count<=0)
+            {
+                return liveResultVM;
+            }
             var academicClass = await _academicClassRepository.GetByIdAsync(academiClassId);
             var existingStudents = await _studentRepository.GetStudentsByClassIdAndSessionIdAsync(examGroup.AcademicSessionId, academiClassId);
             
@@ -94,7 +100,7 @@ namespace SMS.BLL.Managers
                         TotalMarks = 2000,
                         Attendance = 100,
                         Rank = 0,
-                        LiveResultSubjectWises = GetLiveResultSubjectWise(existingExams)
+                        LiveResultSubjectWises = GetLiveResultSubjectWise(existingExams, student.Id)
                     };
                     liveResultVM.ResultDetails.Add(liveResultDetailsVM);
                 }
@@ -109,7 +115,6 @@ namespace SMS.BLL.Managers
 
             return liveResultVM;
         }
-
         private List<TableHeaderSubjects> GetTableHeaderSubjects(List<AcademicExam> existingExams)
         {
             var subjectList = new List<TableHeaderSubjects>();
@@ -147,7 +152,7 @@ namespace SMS.BLL.Managers
             return types;
         }
 
-        private List<LiveResultSubjectWise> GetLiveResultSubjectWise(List<AcademicExam> existingExams)
+        private List<LiveResultSubjectWise> GetLiveResultSubjectWise(List<AcademicExam> existingExams, int studentId)
         {
             var liveResultSubjectWise = new List<LiveResultSubjectWise>();
             if (existingExams!=null)
@@ -159,17 +164,21 @@ namespace SMS.BLL.Managers
 
                         SubjectName = sub.AcademicSubject.SubjectName,
                         GPA = 4.00,
-                        Marks = 20,
-                        SubjectTypes = GetLiveResultSubjectType(existingExams,sub.AcademicSubjectId)
+                        Marks = sub.TotalMarks,
+                        SubjectTypes = GetLiveResultSubjectType(existingExams,sub.AcademicSubjectId, studentId)
                     };
                     lrsw.TotalColumn = 2 + lrsw.SubjectTypes.Count;
-                    liveResultSubjectWise.Add(lrsw);
+                    var isExistOnSubjectWise = liveResultSubjectWise.FirstOrDefault(s => s.SubjectName == lrsw.SubjectName);
+                    if (isExistOnSubjectWise==null)
+                    {
+                        liveResultSubjectWise.Add(lrsw);
+                    }
                 }
             }
             return liveResultSubjectWise;
         }
 
-        private List<LiveResultSubjectType> GetLiveResultSubjectType(List<AcademicExam> existingExams, int academicSubjectId)
+        private List<LiveResultSubjectType> GetLiveResultSubjectType(List<AcademicExam> existingExams, int academicSubjectId, int studentId)
         {
             var liveResultSubjectTypes = new List<LiveResultSubjectType>();
             var examCategories = existingExams.GroupBy(s => new {s.AcademicExamGroupId,s.AcademicClassId,s.AcademicSubjectId }).ToList();
@@ -180,7 +189,9 @@ namespace SMS.BLL.Managers
                 {
                     LiveResultSubjectType liveResultSubjectType = new LiveResultSubjectType()
                     {
-                        SubjectTypeName = cat.ExamCategory+$"({cat.TotalMarks})"
+                        SubjectTypeName = cat.ExamCategory+$"({cat.TotalMarks})",
+                        GetMarks = existingExams.FirstOrDefault(s => s.AcademicSubjectId == academicSubjectId).AcademicExamDetails.FirstOrDefault(s => s.StudentId == studentId)?.ObtainMark??0,
+                        TotalMarks = cat.TotalMarks
                     };
                     liveResultSubjectTypes.Add(liveResultSubjectType);
                 }
@@ -217,6 +228,10 @@ namespace SMS.BLL.Managers
             };
         }
 
-
+        public async Task<AcademicExam> GetAcademicExam(int examGroupId, int classId, int subjectId, string examCategory)
+        {
+            var existingExam =await _repository.Table.FirstOrDefaultAsync(s => s.AcademicExamGroupId == examGroupId && s.AcademicClassId == classId && s.AcademicSubjectId == subjectId && s.ExamCategory == examCategory);
+            return existingExam;
+        }
     }
 }

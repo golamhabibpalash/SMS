@@ -25,7 +25,7 @@
             </h2>
             <div id="collapse_@itemBySession.Id" class="accordion-collapse collapse" aria-labelledby="session_@itemBySession.Id" data-bs-parent="#sessionAccordion">
                 <div class="accordion-body">
-                    @if (itemBySession.ExamGroupDtos.Count > 0)
+                    @if (itemBySession.ExamGroupDtos.Count >= 0)
                     {
                         foreach (var itemByGroup in itemBySession.ExamGroupDtos)
                         {

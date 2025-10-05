@@ -170,14 +170,15 @@ public class AcademicExamsController : Controller
         var academicExamVM = new ViewModels.AcademicVM.AcademicExamVM
         {
             AcademicExamGroup = exam.AcademicExamGroup,
-            AcademicExamDetails = exam.AcademicExamDetails,
+            AcademicExamDetails = exam.AcademicExamDetails
+                .OrderBy(s => s.Student != null ? s.Student.ClassRoll : int.MaxValue)
+                .ToList(),
             AcademicClass = exam.AcademicClass,
             AcademicSection = exam.AcademicSection,
             AcademicSubject = exam.AcademicSubject,
             Employee = exam.Employee,
             TotalMarks = exam.TotalMarks
         };
-
 
         return View(academicExamDetailVM);
     }
@@ -192,14 +193,14 @@ public class AcademicExamsController : Controller
     {
         int success = 0;
         int failed = 0;
-        var existingExams = await _examManager.GetAllAsync();
         try
         {
             if (AcademicExam.Count > 0)
             {
                 foreach (AcademicExam exam in AcademicExam)
                 {
-                    var isExist = existingExams.FirstOrDefault(s => s.AcademicExamGroupId == exam.AcademicExamGroupId && s.AcademicClassId == exam.AcademicClassId && s.AcademicSubjectId == exam.AcademicSubjectId);
+                    var isExist = await _examManager.GetAcademicExam(exam.AcademicExamGroupId, exam.AcademicClassId, exam.AcademicSubjectId, exam.ExamCategory);
+
                     if (isExist != null)
                     {
                         failed++;
@@ -413,41 +414,6 @@ public class AcademicExamsController : Controller
         return Json("");
     }
 
-    // POST: AcademicExamsController/Delete/5
-    //[HttpPost]
-    //[ValidateAntiForgeryToken]
-    //[Authorize(Roles = "SuperAdmin, Admin")]
-    //public async Task<ActionResult> Delete(int id, AcademicExam objAcademicExam)
-    //{
-    //    if (id != objAcademicExam.Id)
-    //    {
-    //        TempData["error"]= "Not Found";                
-    //        return View(objAcademicExam);
-    //    }
-    //    try
-    //    {
-    //        AcademicExam existingAcademicExam = await _examManager.GetByIdAsync(id);
-    //        if (existingAcademicExam == null)
-    //        {
-    //            TempData["error"] = "Not Found";
-    //            return View(objAcademicExam);
-    //        }
-
-    //        bool isDeleted = await _examManager.RemoveAsync(existingAcademicExam);
-    //        if (isDeleted)
-    //        {
-    //            TempData["deleted"] = "Exam has been successfully removed";
-    //            return RedirectToAction(nameof(Index));
-    //        }
-    //        TempData["error"] = "Fail to delete.";
-    //        return View(objAcademicExam);
-    //    }
-    //    catch
-    //    {
-    //        return View(objAcademicExam);
-    //    }
-    //}
-
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -571,12 +537,8 @@ public class AcademicExamsController : Controller
     }
     public async Task<JsonResult> GetAcademicClassByExamGrId(int examGroupId)
     {
-        List<AcademicExam> academicExams = (List<AcademicExam>)await _examManager.GetAllAsync();
-        List<AcademicClass> academicClasses = (List<AcademicClass>)await _classManager.GetAllAsync();
-        var result = (from t in academicExams
-                      join c in academicClasses on t.AcademicClassId equals c.Id
-                      where t.AcademicExamGroupId == examGroupId
-                      select c).Distinct();
-        return Json(result);
+        var examGroup = await _examGroupManager.GetByIdAsync(examGroupId);
+        var results = examGroup.AcademicExams.Select(e => e.AcademicClass).DistinctBy(c => c.Id).ToList();
+        return Json(results);
     }
 }

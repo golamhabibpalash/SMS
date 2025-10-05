@@ -530,9 +530,15 @@ namespace SMS.App.Controllers
             return RedirectToAction("details", "AcademicExamGroup", new { id = groupId });
         }
 
-        public async Task<IActionResult> LiveResult(int academiClassId=2, int academicGroupId=47)
+        public async Task<IActionResult> LiveResult(int academiClassId, int academicGroupId)
         {
             LiveResultVM liveResultVM = new LiveResultVM();
+
+            ViewData["ExamGroupList"] = new SelectList(await _academicExamGroupManager.GetAllAsync(), "Id", "ExamGroupName");
+            if (academiClassId == 0 || academicGroupId==0)
+            {
+                return View(liveResultVM);
+            }
             liveResultVM = await _academicExamManager.GetLiveResultByGroupIdClassId(academicGroupId, academiClassId);
             return View(liveResultVM);
 

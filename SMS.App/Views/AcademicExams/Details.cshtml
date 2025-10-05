@@ -129,7 +129,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model.AcademicExamDetails.Where(s => s.Student.Status == true))
+                    @foreach (var item in Model.AcademicExamDetails.OrderBy(c => c.Student?.ClassRoll).Where(s => s.Student.Status == true))
                     {
                         if (item.EditedBy != null)
                         {

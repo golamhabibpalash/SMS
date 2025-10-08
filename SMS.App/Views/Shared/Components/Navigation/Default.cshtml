@@ -56,7 +56,7 @@
     sub.Items.Any(item =>
     string.Equals(item.Controller, currentController, StringComparison.OrdinalIgnoreCase) &&
     string.Equals(item.Action, currentAction, StringComparison.OrdinalIgnoreCase)));
-    <li class="nav-item @(isModuleActive ? "open active" : "")">
+    <li class="nav-item shadow @(isModuleActive ? "open active" : "")">
         <a href="#" class="nav-link nav-toggle">
             <i class="@module.Icon"></i>
             <span class="title">@module.DisplayName</span>

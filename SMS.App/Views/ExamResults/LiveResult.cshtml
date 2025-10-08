@@ -67,17 +67,6 @@
         <tr>
             <th rowspan="2" class="text-center">Class Roll</th>
             <th rowspan="2" class="text-center text-nowrapl">Student Name</th>
-            @* @{
-                Model.ResultDetails.FirstOrDefault()?.LiveResultSubjectWises.ForEach(subject =>
-                {
-                    <th colspan="2" class="text-center">
-                        @subject.SubjectName
-                        <p><small>(Highest @subject.HighestMarks from @subject.TotalMarks)</small></p>
-                    </th>
-                });
-            } *@
-
-
             @foreach (var sub in Model.Subjects)
             {
                 int colCount = 2 + sub.ExamTypes.Count; 

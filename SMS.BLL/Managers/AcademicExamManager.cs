@@ -20,6 +20,7 @@ namespace SMS.BLL.Managers
         private readonly IAcademicExamGroupRepository _academicExamGroupRepository;
         private readonly IAcademicClassRepository _academicClassRepository;
         private readonly IStudentRepository _studentRepository;
+        private AcademicExamGroup _cachedExamGroup;
         public AcademicExamManager(IAcademicExamRepository academicExamRepository, IAcademicSessionRepository academicSessionRepository, IAcademicExamGroupRepository academicExamGroupRepository, IAcademicClassRepository academicClassRepository, IStudentRepository studentRepository) : base(academicExamRepository)
         {
             _academicExamRepository = academicExamRepository;
@@ -74,19 +75,22 @@ namespace SMS.BLL.Managers
         {
             var liveResultVM = new LiveResultVM();
 
-            var existingExams = await _academicExamRepository.GetByClassIdExamGroupId(academicGroupId, academiClassId);
             var examGroup = await _academicExamGroupRepository.GetByIdAsync(academicGroupId);
+
             if (examGroup==null)
             {
                 return liveResultVM;
             }
+            _cachedExamGroup = examGroup;
+            var existingExams = examGroup.AcademicExams.Where(s => s.AcademicClassId == academiClassId).ToList();
             if (existingExams==null || existingExams.Count<=0)
             {
                 return liveResultVM;
             }
             var academicClass = await _academicClassRepository.GetByIdAsync(academiClassId);
-            var existingStudents = await _studentRepository.GetStudentsByClassIdAndSessionIdAsync(examGroup.AcademicSessionId, academiClassId);
-            
+
+            var existingStudents = existingExams.SelectMany(s => s.AcademicExamDetails).Select(s => s.Student).Distinct().ToList();
+
             if (existingStudents!=null)
             {
                 foreach (var student in existingStudents)
@@ -95,11 +99,11 @@ namespace SMS.BLL.Managers
                     {
                         ClassRoll = student.ClassRoll.ToString(),
                         StudentName = student.Name,
-                        FinalGPA = 0,
-                        FinalGrade = "A+",
-                        TotalMarks = 2000,
-                        Attendance = 100,
-                        Rank = 0,
+                        FinalGPA = GetFinalGPA(student.Id, academicGroupId),
+                        FinalGrade = GetFinalGrade(student.Id,academicGroupId),
+                        TotalMarks = GetTotalMarks(student.Id),
+                        Attendance = GetAttendance(student.Id, academicGroupId),
+                        Rank = GetFinalRank(student.Id, academicGroupId),
                         LiveResultSubjectWises = GetLiveResultSubjectWise(existingExams, student.Id)
                     };
                     liveResultVM.ResultDetails.Add(liveResultDetailsVM);
@@ -115,6 +119,45 @@ namespace SMS.BLL.Managers
 
             return liveResultVM;
         }
+
+        private double GetFinalGPA(int id, int academicGroupId)
+        {
+            var finalGPA = 6.00;
+            return finalGPA;
+        }
+
+        private int GetFinalRank(int id, int academicGroupId)
+        {
+            var result = 3;
+            return result;
+        }
+
+        private double GetAttendance(int id, int academicGroupId)
+        {
+            var result = 87.44;
+            return result;
+        }
+
+        private string GetFinalGrade(int id, int academicGroupId)
+        {
+            var result = "ABC+";
+            return result;
+        }
+
+        private double GetTotalMarks(int id)
+        {
+            var result = 0.0;
+            foreach (var exam in _cachedExamGroup.AcademicExams)
+            {
+                var examDetail = exam.AcademicExamDetails.FirstOrDefault(s => s.StudentId == id);
+                if (examDetail != null)
+                {
+                    result += examDetail.ObtainMark;
+                }
+            }
+            return result;
+        }
+
         private List<TableHeaderSubjects> GetTableHeaderSubjects(List<AcademicExam> existingExams)
         {
             var subjectList = new List<TableHeaderSubjects>();
@@ -157,15 +200,15 @@ namespace SMS.BLL.Managers
             var liveResultSubjectWise = new List<LiveResultSubjectWise>();
             if (existingExams!=null)
             {
-                foreach (var sub in existingExams)
+                foreach (var exam in existingExams)
                 {
-                    LiveResultSubjectWise lrsw = new LiveResultSubjectWise()
+                    LiveResultSubjectWise lrsw = new()
                     {
 
-                        SubjectName = sub.AcademicSubject.SubjectName,
+                        SubjectName = exam.AcademicSubject.SubjectName,
                         GPA = 4.00,
-                        Marks = sub.TotalMarks,
-                        SubjectTypes = GetLiveResultSubjectType(existingExams,sub.AcademicSubjectId, studentId)
+                        Marks = GetSubjectWiseTotalMarks(exam.Id, studentId),
+                        SubjectTypes = GetLiveResultSubjectType(existingExams,exam.AcademicSubjectId, studentId)
                     };
                     lrsw.TotalColumn = 2 + lrsw.SubjectTypes.Count;
                     var isExistOnSubjectWise = liveResultSubjectWise.FirstOrDefault(s => s.SubjectName == lrsw.SubjectName);
@@ -176,6 +219,14 @@ namespace SMS.BLL.Managers
                 }
             }
             return liveResultSubjectWise;
+        }
+
+        private double GetSubjectWiseTotalMarks(int examId, int studentId)
+        {
+            var result = 0.0;
+            result = _cachedExamGroup.AcademicExams.SelectMany(s => s.AcademicExamDetails.Where(e => e.AcademicExamId == examId && e.StudentId == studentId)).Sum(c => c.ObtainMark);
+            
+            return result;
         }
 
         private List<LiveResultSubjectType> GetLiveResultSubjectType(List<AcademicExam> existingExams, int academicSubjectId, int studentId)

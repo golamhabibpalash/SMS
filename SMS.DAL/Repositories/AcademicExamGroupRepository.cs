@@ -41,7 +41,8 @@ namespace SMS.DAL.Repositories
                 .Include(s => s.AcademicExams)
                     .ThenInclude(s => s.Employee)
                 .Include(s => s.AcademicExams)
-                    .ThenInclude(m => m.AcademicExamDetails                    )
+                    .ThenInclude(m => m.AcademicExamDetails)
+                    .ThenInclude(d => d.Student)
                 .FirstOrDefaultAsync(s => s.Id == id);
             return result;
         }

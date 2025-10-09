@@ -29,6 +29,7 @@ public class LiveResultSubjectWise
     public string SubjectName { get; set; }
     public double GPA { get; set; }
     public double Marks { get; set; }
+    public double ObtainMarks { get; set; }
     public List<LiveResultSubjectType> SubjectTypes { get; set; }= new List<LiveResultSubjectType>();
 }
 public class LiveResultSubjectType

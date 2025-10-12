@@ -60,7 +60,7 @@
 }
 
 <table class="table table-bordered table-responsive table-auto table-striped">
-    <thead class="table-info">
+    <thead class="table-info sticky-top" style="top:5% !important">
         <tr>
             <th colspan="@Model.TotalColumn" class="text-center">@Model.ExamTitle</th>
         </tr>
@@ -108,10 +108,10 @@
                             <td>@types.GetMarks</td>
                         }
                     }
-                    <td>@item.Marks</td>
+                    <td>@item.ObtainMarks</td>
                     <td>@item.GPA</td>
                 }
-                <td>@studentResult.FinalGPA</td>
+                <td>@studentResult.FinalGPA.ToString("F1")</td>
                 <td>@studentResult.FinalGrade</td>
                 <td>@studentResult.TotalMarks</td>
                 <td>@studentResult.Attendance</td>

@@ -98,7 +98,7 @@
                                                                         <div class="btn-group btn-group-sm" role="group">
                                                                             @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
                                                                             {
-                                                                                <a class="btn btn-sm examEditBtn" id="editBtn_@row.Id" data-examid="@exam.Id" data-groupid="@itemByGroup.Id" data-classid="@exam.ClassId" data-subjectid="@row.SubjectId" data-sectionid="@row.SectionId" data-employeeid="@row.EmployeeId" data-status="@row.IsLocked" data-marks="@row.TotalMarks" data-bs-toggle="modal" data-bs-target="#createUpdateModal" onclick="EditExamClick(@exam.Id)"><i class="fas fa-edit text-dark"></i> </a>
+                                                                            <a class="btn btn-sm examEditBtn" id="editBtn_@exam.Id" data-examid="@exam.Id" data-groupid="@itemByGroup.Id" data-classid="@exam.ClassId" data-subjectid="@row.SubjectId" data-sectionid="@row.SectionId" data-employeeid="@row.EmployeeId" data-status="@row.IsLocked" data-marks="@row.TotalMarks" data-category="@row.ExaminationDto.ExamCategory" data-bs-toggle="modal" data-bs-target="#createUpdateModal" onclick="EditExamClick(@exam.Id)"><i class="fas fa-edit text-dark"></i> </a>
                                                                             }
                                                                             <a class="btn btn-sm mr-1" asp-action="Details" asp-route-id="@exam.Id" data-bs-toggle="tooltip" data-placement="top" title="Details"><i class="fas fa-info-circle text-info"></i> </a>
                                                                             @if (User.IsInRole("SuperAdmin"))
@@ -138,9 +138,7 @@
         <div class="modal-content">
             <div class="modal-header d-flex justify-content-between">
                 <h5 class="modal-title" id="createUpdateModalLabel">Add New Exam</h5>
-                <button type="button" class="btn btn-sm close btn-danger" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">Close &times;</span>
-                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form asp-action="Edit" method="post">
@@ -210,9 +208,9 @@
                     </div>
                     <div class="form-group row">
                         <div class="offset-md-3 col-md-9 text-md-end d-flex justify-content-end">
-                            <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-close btn-sm btn-secondary" data-bs-dismiss="modal" aria-label="Close">Close</button>
                             <button type="button" class="btn btn-sm btn-primary" id="examAddBtn" onclick="ExamAddBtnClick()">Add Exam</button>
-                            <button type="submit" class="btn btn-sm btn-success" id="updateFormSubmitBtn" style="visibility:hidden;">Update</button>
+                            <button type="submit" class="btn btn-sm btn-success" id="updateFormSubmitBtn" style="">Update</button>
                         </div>
                     </div>
                 </form>
@@ -261,4 +259,17 @@
 </div>
 @section Scripts{
     <script src="/js/AcademicExam/AcademicExam.js"></script>
+
+    <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
+    <script>
+        var errorMessage = '@ViewBag.error';
+        var successMessage = '@TempData["success"]';
+        if (errorMessage) {
+            alertify.error(errorMessage);
+        }
+        if(successMessage)
+        {
+            alertify.success(successMessage);
+        }
+    </script>
 }

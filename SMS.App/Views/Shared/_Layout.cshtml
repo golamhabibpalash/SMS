@@ -455,6 +455,13 @@
                                 </li>
 
                                 @await Component.InvokeAsync("Navigation")
+                                <li class="position-fixed bottom-0">
+                                <span class="alert">Version:
+                                    <span class="btn btn-sm p-0 m-0 text-light" data-bs-toggle="modal" data-bs-target="#versionModal">
+                                        1.2.3
+                                    </span>
+                                </span>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -738,6 +745,29 @@
         -->
             <!-- end footer -->
         </div>
+
+        <!-- Modal -->
+    <div class="modal fade" id="versionModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Version Info</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        ...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Understood</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
         <!-- start js include path -->
         <script src="~/lib/theme/smart/assets/plugins/jquery/jquery.min.js"></script>
 
@@ -767,18 +797,11 @@
             <!-- end js include path -->
             <!-- Feather icon -->
         <script src="~/lib/theme/smart/assets/plugins/feather/feather.min.js"></script>
+    <script src="~/lib/alertify/alertify.min.js"></script>
             <script>
                 feather.replace();
             </script>
-        <script>
-            $(document).ready(function () {
-                $('.select2').select2({
-                    placeholder: "Select an option",
-                    allowClear: true,
-                    width: '100%'
-                });
-            });
-        </script>
+
         @await RenderSectionAsync("Scripts", required: false)
     </body>
 

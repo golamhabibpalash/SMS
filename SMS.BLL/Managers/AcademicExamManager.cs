@@ -95,18 +95,23 @@ namespace SMS.BLL.Managers
 
             if (existingStudents!=null)
             {
+                var countOfExam = _cachedExamGroup.AcademicExams.DistinctBy(s => s.AcademicSubjectId).Count();
                 foreach (var student in existingStudents)
                 {
+                    var liveResultSubjectWises = GetLiveResultSubjectWise(student.Id);
+
+                    var sumOfSubjectWiseGP = liveResultSubjectWises.Sum(s => s.GPA);
+
                     LiveResultDetailsVM liveResultDetailsVM = new LiveResultDetailsVM
                     {
                         ClassRoll = student.ClassRoll.ToString(),
                         StudentName = student.Name,
-                        FinalGPA = GetFinalGPA(student.Id, academicGroupId),
-                        FinalGrade = GetFinalGrade(student.Id,academicGroupId),
+                        FinalGPA = (sumOfSubjectWiseGP/ countOfExam),
+                        FinalGrade = GetFinalGradeByGPA(sumOfSubjectWiseGP / countOfExam),
                         TotalMarks = GetTotalMarks(student.Id),
                         Attendance = GetAttendance(student.Id, academicGroupId),
                         Rank = GetFinalRank(student.Id, academicGroupId),
-                        LiveResultSubjectWises = GetLiveResultSubjectWise(student.Id)
+                        LiveResultSubjectWises = liveResultSubjectWises
                     };
                     liveResultVM.ResultDetails.Add(liveResultDetailsVM);
                 }
@@ -122,10 +127,19 @@ namespace SMS.BLL.Managers
             return liveResultVM;
         }
 
-        private double GetFinalGPA(int id, int academicGroupId)
+        private string GetFinalGradeByGPA(double gpa)
         {
-            var finalGPA = 6.00;
-            return finalGPA;
+            var grade = "";
+            var gradingTableRow = _cachedGradingTable.FirstOrDefault(s => (double)s.GradePoint >= gpa && (double)s.GradePoint <= gpa);
+            if (gradingTableRow!=null)
+            {
+                grade = gradingTableRow.LetterGrade??"";
+            }
+            else
+            {
+                
+            }
+            return grade;
         }
 
         private int GetFinalRank(int id, int academicGroupId)
@@ -137,12 +151,6 @@ namespace SMS.BLL.Managers
         private double GetAttendance(int id, int academicGroupId)
         {
             var result = 87.44;
-            return result;
-        }
-
-        private string GetFinalGrade(int id, int academicGroupId)
-        {
-            var result = "ABC+";
             return result;
         }
 
@@ -173,7 +181,7 @@ namespace SMS.BLL.Managers
                 TableHeaderSubjects headerSubjects = new TableHeaderSubjects()
                 {
                     SubjectName = item.AcademicSubject.SubjectName,
-                    TotalMarks = item.TotalMarks,
+                    TotalMarks = GetTotalMarks(item.AcademicSubjectId),
                     ExamTypes = GetExamTypes(existingExams,item.AcademicSubjectId),
                 };
                 subjectList.Add(headerSubjects);
@@ -189,7 +197,7 @@ namespace SMS.BLL.Managers
             {
                 TableHeaderExamTypes examType = new TableHeaderExamTypes()
                 {
-                    ExamType = item.ExamCategory??"CQ",
+                    ExamType = item.ExamCategory??"Written",
                     TotalMarks = item.TotalMarks
                 };
                 types.Add(examType);
@@ -202,18 +210,19 @@ namespace SMS.BLL.Managers
             var liveResultSubjectWise = new List<LiveResultSubjectWise>();
             if (_cachedExamGroup.AcademicExams.Count>0)
             {
-                var examList = _cachedExamGroup.AcademicExams.GroupBy(s => new { s.AcademicSubjectId, s.AcademicSubject.SubjectName, s.TotalMarks}).ToList();
+                var examList = _cachedExamGroup.AcademicExams.DistinctBy(s => s.AcademicSubjectId).ToList();
 
                 foreach (var exam in examList)
                 {
-                    var subWiseObtainMark = GetSubjectWiseTotalMarks(exam.Key.AcademicSubjectId, studentId);
+                    var subWiseObtainMark = GetSubjectWiseTotalObtainMarks(exam.AcademicSubjectId, studentId);
+                    var totalMarks = GetSubjectWiseTotalMarks(exam.AcademicSubjectId);
                     LiveResultSubjectWise lrsw = new()
                     {
-                        SubjectName = exam.Key.SubjectName,
-                        Marks = exam.Key.TotalMarks,
-                        GPA = GetGPAForSingleSubject(subWiseObtainMark,exam.Key.TotalMarks),
-                        SubjectTypes = GetLiveResultSubjectType(exam.Key.AcademicSubjectId, studentId),
-                        ObtainMarks = subWiseObtainMark
+                        SubjectName = exam.AcademicSubject.SubjectName,
+                        Marks = totalMarks,
+                        GPA = GetGPAForSingleSubject(subWiseObtainMark, totalMarks),
+                        SubjectTypes = GetLiveResultSubjectType(exam.AcademicSubjectId, studentId),
+                        ObtainMarks = subWiseObtainMark,
                     };
                     lrsw.TotalColumn = 2 + lrsw.SubjectTypes.Count;
                     var isExistOnSubjectWise = liveResultSubjectWise.FirstOrDefault(s => s.SubjectName == lrsw.SubjectName);
@@ -226,22 +235,29 @@ namespace SMS.BLL.Managers
             return liveResultSubjectWise;
         }
 
-        private double GetGPAForSingleSubject(double obtainMark,int totalMarks)
+        private double GetSubjectWiseTotalMarks(int subjectId)
+        {
+            var result = 0.0;
+            result = _cachedExamGroup.AcademicExams.Where(s => s.AcademicSubjectId == subjectId).ToList().Sum(s => s.TotalMarks);
+            var ss =_cachedExamGroup.AcademicExams.Where(s => s.AcademicSubjectId == subjectId).ToList();
+            result = ss.Sum(s => s.TotalMarks);
+            return result;
+        }
+
+        private double GetGPAForSingleSubject(double obtainMark,double totalMarks)
         {
             //Make 100%
             var hundredPercentMark = (obtainMark * 100) / totalMarks;
 
-            //Compare and Calculation Grade Point
-            
+            //Compare and Calculation Grade Point            
             var gradePoint = _cachedGradingTable
                 .FirstOrDefault(g => hundredPercentMark >= g.NumberRangeMin && hundredPercentMark <= g.NumberRangeMax)?
-                .GradePoint ?? 0m; // or any default value
-
+                .GradePoint ?? 0m; 
 
             return (double)gradePoint;
         }
 
-        private double GetSubjectWiseTotalMarks(int examId, int studentId)
+        private double GetSubjectWiseTotalObtainMarks(int examId, int studentId)
         {
             var result = 0.0;
             result = _cachedExamGroup.AcademicExams.SelectMany(s => s.AcademicExamDetails.Where(e => e.AcademicExam.AcademicSubjectId == examId && e.StudentId == studentId)).Sum(c => c.ObtainMark);
@@ -259,8 +275,9 @@ namespace SMS.BLL.Managers
                 {
                     SubjectTypeName = item.ExamCategory,
                     TotalMarks =item.TotalMarks,
-                    GetMarks = item.AcademicExamDetails.FirstOrDefault(s => s.StudentId == studentId).ObtainMark
-                };
+                    GetMarks = item.AcademicExamDetails.FirstOrDefault(s => s.StudentId == studentId)?.ObtainMark ?? 0
+                }
+            ;
                 var isExist = liveResultSubjectTypes.Any(s => s.SubjectTypeName == liveResultSubjectType.SubjectTypeName);
                 if (!isExist)
                 {

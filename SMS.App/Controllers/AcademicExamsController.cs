@@ -56,6 +56,10 @@ public class AcademicExamsController : Controller
     [Authorize(Policy = "IndexAcademicExamPolicy")]
     public async Task<ActionResult> Index()
     {
+        if (TempData["error"]!=null)
+        {
+            ViewBag.error = TempData["error"].ToString();
+        }
         ViewModels.AcademicVM.AcademicExamVM academicExamVM = new ViewModels.AcademicVM.AcademicExamVM();
         AcademicSession currentSession = await _sessionManager.GetCurrentAcademicSession();
         academicExamVM.AcademicExamGroupList = new SelectList(await _examGroupManager.GetAllAsync(currentSession.Id), "Id", "ExamGroupName").ToList();
@@ -250,11 +254,11 @@ public class AcademicExamsController : Controller
                         failed++;
                     }
                 }
-                TempData["created"] = "Success:" + success + " added & Failed: " + failed;
+                TempData["success"] = "Success:" + success + " added & Failed: " + failed;
             }
             else
             {
-                TempData["created"] = "No data found to add";
+                TempData["success"] = "No data found to add";
             }
         }
         catch (Exception ex)
@@ -313,8 +317,8 @@ public class AcademicExamsController : Controller
             return RedirectToAction("index");
         }
         //Checking, is already exist!
-        var allExams = await _examManager.GetAllAsync();
-        AcademicExam existingExam = allExams.FirstOrDefault(e => e.Id != academicExam.Id && e.AcademicExamGroupId == academicExam.AcademicExamGroupId && e.AcademicClassId == academicExam.AcademicClassId && e.AcademicSubjectId == academicExam.AcademicSubjectId);
+        AcademicExam existingExam = await _examManager.GetAcademicExam(academicExam.AcademicExamGroupId, academicExam.AcademicClassId, academicExam.AcademicSubjectId, academicExam.ExamCategory);
+
         if (existingExam != null)
         {
             TempData["error"] = "Exam is already exist in this group";
@@ -372,7 +376,7 @@ public class AcademicExamsController : Controller
                     }
                 }
 
-                TempData["created"] = "success! Data updated successfully";
+                TempData["success"] = "success! Data updated successfully";
                 return RedirectToAction("index");
             }
             else

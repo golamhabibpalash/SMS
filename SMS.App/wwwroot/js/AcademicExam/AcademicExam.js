@@ -21,35 +21,35 @@ $(document).ready(function () {
             return false;
         }
     });
-    $('.examEditBtn').click(function () {
-        let id = $(this).data('examid');
-        let marks = $('#editBtn_' + id).data('marks');
-        let groupId = $('#editBtn_' + id).data('groupid');
-        let classId = $('#editBtn_' + id).data('classid');
-        let subjectid = $('#editBtn_' + id).data('subjectid');
-        let sectionId = $('#editBtn_' + id).data('sectionid');
-        let teacherId = $('#editBtn_' + id).data('employeeid');
-        let isActive = $('#editBtn_' + id).data('status');
+    //$('.examEditBtn').click(function () {
+    //    let id = $(this).data('examid');
+    //    let marks = $('#editBtn_' + id).data('marks');
+    //    let groupId = $('#editBtn_' + id).data('groupid');
+    //    let classId = $('#editBtn_' + id).data('classid');
+    //    let subjectid = $('#editBtn_' + id).data('subjectid');
+    //    let sectionId = $('#editBtn_' + id).data('sectionid');
+    //    let teacherId = $('#editBtn_' + id).data('employeeid');
+    //    let isActive = $('#editBtn_' + id).data('status');
 
-        $('#Id').val(id);
-        $('#AcademicExamGroupId').val(groupId).trigger('change');
+    //    $('#Id').val(id);
+    //    $('#AcademicExamGroupId').val(groupId).trigger('change');
 
-        $('#AcademicClassId').val(classId).trigger('change');
+    //    $('#AcademicClassId').val(classId).trigger('change');
 
-        $('#TotalMarks').val(marks);
-        $('#EmployeeId').val(teacherId).trigger('change');
-        $('#AcademicSubjectId').val(subjectid).trigger('change');
-        $('#AcademicSectionId').val(sectionId).trigger('change');
+    //    $('#TotalMarks').val(marks);
+    //    $('#EmployeeId').val(teacherId).trigger('change');
+    //    $('#AcademicSubjectId').val(subjectid).trigger('change');
+    //    $('#AcademicSectionId').val(sectionId).trigger('change');
 
-        if (isActive == "True") {
-            $('#Status').prop('checked', true);
-        }
-        else {
-            $('#Status').prop('checked', false);
-        }
-        //document.getElementById('AcademicExamGroupId').disabled = "disabled";
-        //document.getElementById('AcademicClassId').disabled = "disabled";
-    });
+    //    if (isActive == "True") {
+    //        $('#Status').prop('checked', true);
+    //    }
+    //    else {
+    //        $('#Status').prop('checked', false);
+    //    }
+    //    //document.getElementById('AcademicExamGroupId').disabled = "disabled";
+    //    //document.getElementById('AcademicClassId').disabled = "disabled";
+    //});
 });
 function unlockExam(id, btnId) {
     $.ajax({
@@ -81,10 +81,10 @@ function lockExam(id, btnId) {
 $('#AcademicClassId').change(function () {
     let id = $('#AcademicClassId option:selected').val();
 
-    $.ajax({
+    let subjectsLoaded = $.ajax({
         url: '/AcademicSubjects/GetSubjectsByClassId?classId=' + id,
-        method: 'Post',
-        type: 'JSON',
+        method: 'POST',
+        dataType: 'JSON',
         success: function (data) {
             $('#AcademicSubjectId').empty();
             $.each(data, function (i, obj) {
@@ -95,7 +95,7 @@ $('#AcademicClassId').change(function () {
         error: function () { }
     });
 
-    $.ajax({
+    let sectionsLoaded = $.ajax({
         url: "/api/academicsections/getbyclasswithsessionId?classId=" + id + "&sessionId=" + null,
         dataType: "JSON",
         type: "POST",
@@ -103,17 +103,14 @@ $('#AcademicClassId').change(function () {
         success: function (data) {
             $('#AcademicSectionId').empty();
 
-            if (data != null || data != '') {
-                //var o = '<option disabled selected value="">Select Section Name</option>';
+            if (data && data.length > 0) {
                 var o2 = '<option value="">All Section</option>';
-                //$('#AcademicSectionId').append(o);
                 $('#AcademicSectionId').append(o2);
                 $.each(data, function (i, obj) {
                     var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
                     $('#AcademicSectionId').append(op);
                 });
-            }
-            else {
+            } else {
                 var o = '<option disabled selected>Section Not Found</option>';
                 $('#AcademicSectionId').append(o);
             }
@@ -122,7 +119,13 @@ $('#AcademicClassId').change(function () {
             console.log(err);
         }
     });
+
+    // 🔔 When BOTH ajax calls complete, trigger event
+    $.when(subjectsLoaded, sectionsLoaded).done(function () {
+        $(document).trigger('classDataLoaded');
+    });
 });
+
 function validateForm() {
     let marks = document.getElementById('TotalMarks').value;
     let groupId = document.getElementById('AcademicExamGroupId').value;
@@ -250,35 +253,81 @@ function DeleteExam(id) {
     }
 }
 
-function EditExamClick(id) {    
-    let modalFooter = document.getElementById('editupdatemodalfooter');
-    modalFooter.style.display = 'none';
-    let modalTitle = document.getElementById('createUpdateModalLabel');
-    modalTitle.innerHTML = "Edit Exam Info";
+async function EditExamClick(id) {
 
-    let examAddBtn = document.getElementById('examAddBtn');
-    examAddBtn.style.display = 'none';
+    //examGroup dropdown 
+    let groupId = $('#editBtn_' + id).data('groupid');
+    $('#AcademicExamGroupId').val(groupId).trigger('change');
 
-    let modalUpdateBtn = document.getElementById('updateFormSubmitBtn');
-    modalUpdateBtn.style.visibility = 'visible';
+    //Class Dropdown
+    let classId = $('#editBtn_' + id).data('classid');
+    $('#AcademicClassId').val(classId).trigger('change');
 
+    // 🕒 Wait for both subjects and sections to load
+    await new Promise(resolve => $(document).one('classDataLoaded', resolve));
+
+    //Now safely set dependent dropdowns
+    let sectionId = $('#editBtn_' + id).data('sectionid');
+    $('#AcademicSectionId').val(sectionId).trigger('change');
+
+    let subjectid = $('#editBtn_' + id).data('subjectid');
+    $('#AcademicSubjectId').val(subjectid).trigger('change');
+
+    //Mark input fields
+    let marks = $('#editBtn_' + id).data('marks');
+    $('#TotalMarks').val(marks);
+
+    //Exam Category
+    let marks = $('#editBtn_' + id).data('category');
+    $('#ExamCategory').val(marks);
+
+    //Teacher
+    let teacherId = $('#editBtn_' + id).data('employeeid');
+    $('#EmployeeId').val(teacherId).trigger('change');
+
+    let isActive = $('#editBtn_' + id).data('status');
+    $('#Id').val(id);
+    $('#Status').prop('checked', isActive === "True");
+
+    // UI adjustments
+    document.getElementById('editupdatemodalfooter').style.display = 'none';
+    document.getElementById('createUpdateModalLabel').innerHTML = "Edit Exam Info";
+    document.getElementById('examAddBtn').style.display = 'none';
+    document.getElementById('updateFormSubmitBtn').style.display = 'block';
 }
+
+
+
 $('#updateFormSubmitBtn').click(function () {
     /*modalFooter*/
     let isValidate = validateForm();
     if (isValidate) {
-        alert("form submited");
+        alertify.confirm("This is a confirm dialog.",
+            function () {
+                alertify.success('Ok');
+            },
+            function () {
+                alertify.error('Cancel');
+            });
     }
 
 });
 
 function examinationAddButtonClicked(groupId) {
+
+    let modalFooter = document.getElementById('editupdatemodalfooter');
+    modalFooter.style.display = 'block';
     var dropdown = document.getElementById("AcademicExamGroupId");
 
     if (dropdown) {
         dropdown.value = groupId; // set selected value
     }
     dropdown.dispatchEvent(new Event('change'));
+    let examAddBtn = document.getElementById('examAddBtn');
+    examAddBtn.style.display = 'block';
+
+    let modalUpdateBtn = document.getElementById('updateFormSubmitBtn');
+    modalUpdateBtn.style.display = 'none';
 }
 function showLoader() {
     document.getElementById('loading').classList.remove('d-none');

@@ -2,13 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using SMS.BLL.Contracts;
 using SMS.DAL.Contracts;
-using SMS.DAL.Repositories;
 using SMS.Entities;
 using SMS.Entities.AdditionalModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SMS.BLL.Managers;
@@ -199,8 +197,21 @@ public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
 
     private double GetHighestMarkOfTheSubject(int academicSubjectId, int classId)
     {
-        throw new NotImplementedException();
+        var exams = _cachedExamGroup?.AcademicExams?
+            .Where(e => e.AcademicSubjectId == academicSubjectId && e.AcademicClassId == classId)
+            .ToList();
+
+        if (exams == null || !exams.Any())
+            return 0;
+
+        return exams
+            .SelectMany(e => e.AcademicExamDetails ?? Enumerable.Empty<AcademicExamDetail>())
+            .GroupBy(d => d.StudentId)
+            .Select(g => g.Sum(d => d.ObtainMark))
+            .DefaultIfEmpty(0)
+            .Max();                                
     }
+
 
     private List<TableHeaderExamTypes> GetExamTypes(List<AcademicExam> existingExams, int subjectId)
     {

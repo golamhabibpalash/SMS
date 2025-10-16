@@ -530,19 +530,50 @@ namespace SMS.App.Controllers
             return RedirectToAction("details", "AcademicExamGroup", new { id = groupId });
         }
 
-        public async Task<IActionResult> LiveResult(int academiClassId, int academicGroupId)
+        public async Task<IActionResult> LiveResult(LiveResultVM model)
         {
-            LiveResultVM liveResultVM = new LiveResultVM();
+            var examGroups = await _academicExamGroupManager.GetAllAsync();
 
-            ViewData["ExamGroupList"] = new SelectList(await _academicExamGroupManager.GetAllAsync(), "Id", "ExamGroupName");
-            if (academiClassId == 0 || academicGroupId==0)
+            // Early return for missing parameters
+            if (model.AcademicClassId == 0 || model.ExamGroupId == 0)
             {
-                return View(liveResultVM);
+                return View(new LiveResultVM
+                {
+                    AcademicExamGroupList = new SelectList(examGroups, "Id", "ExamGroupName").ToList()
+                });
             }
-            liveResultVM = await _academicExamManager.GetLiveResultByGroupIdClassId(academicGroupId, academiClassId);
-            return View(liveResultVM);
 
+            // Use LINQ to extract distinct classes from all groups
+            var classList = examGroups?
+                .Where(g => g.AcademicExams != null && g.AcademicExams.Count > 0 && g.Id == model.ExamGroupId)
+                .SelectMany(g => g.AcademicExams)
+                .Where(e => e.AcademicClass != null)
+                .Select(e => e.AcademicClass)
+                .GroupBy(c => c.Id)
+                .Select(g => g.First())
+                .ToList() ?? new List<AcademicClass>();
+
+            // Fetch live result
+            var liveResult = await _academicExamManager.GetLiveResultByGroupIdClassId(
+                model.ExamGroupId,
+                model.AcademicClassId
+            );
+
+            // Build ViewModel
+            liveResult.AcademicExamGroupList = new SelectList(
+                examGroups, "Id", "ExamGroupName", model.ExamGroupId
+            ).ToList();
+
+            liveResult.AcademicClassList = new SelectList(
+                classList, "Id", "Name", model.AcademicClassId
+            ).ToList();
+
+            liveResult.AcademicClassId = model.AcademicClassId;
+            liveResult.ExamGroupId = model.ExamGroupId;
+
+            return View(liveResult);
         }
+
 
         // POST: ExamResultsController/Delete/5
         [HttpPost]

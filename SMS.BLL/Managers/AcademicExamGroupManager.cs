@@ -1,4 +1,5 @@
 ﻿using BLL.Managers.Base;
+using Microsoft.EntityFrameworkCore;
 using SMS.BLL.Contracts;
 using SMS.DAL.Contracts;
 using SMS.Entities;
@@ -14,6 +15,15 @@ namespace SMS.BLL.Managers
         public AcademicExamGroupManager(IAcademicExamGroupRepository academicExamGroupRepository) : base(academicExamGroupRepository)
         {
             _academicExamGroupRepository = academicExamGroupRepository;
+        }
+        public override async Task<IReadOnlyCollection<AcademicExamGroup>> GetAllAsync()
+        {
+            var result =await _academicExamGroupRepository
+                .Table
+                .Include(s => s.AcademicExams)
+                    .ThenInclude(e => e.AcademicClass)
+                .ToListAsync();
+            return result;
         }
         public async Task<IReadOnlyCollection<AcademicExamGroup>> GetAllAsync(int SessionId)
         {

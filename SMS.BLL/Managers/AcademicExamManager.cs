@@ -212,7 +212,6 @@ public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
             .Max();                                
     }
 
-
     private List<TableHeaderExamTypes> GetExamTypes(List<AcademicExam> existingExams, int subjectId)
     {
         var types = new List<TableHeaderExamTypes>();
@@ -240,11 +239,12 @@ public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
             {
                 var subWiseObtainMark = GetSubjectWiseTotalObtainMarks(exam.AcademicSubjectId, studentId);
                 var totalMarks = GetSubjectWiseTotalMarks(exam.AcademicSubjectId);
+                var isFailAnyCategory = IsFailedAnyCategory(exam.AcademicSubjectId, studentId); 
                 LiveResultSubjectWise lrsw = new()
                 {
                     SubjectName = exam.AcademicSubject.SubjectName,
                     Marks = totalMarks,
-                    GPA = GetGPAForSingleSubject(subWiseObtainMark, totalMarks),
+                    GPA =isFailAnyCategory==true? 0:GetGPAForSingleSubject(subWiseObtainMark, totalMarks),
                     SubjectTypes = GetLiveResultSubjectType(exam.AcademicSubjectId, studentId),
                     ObtainMarks = subWiseObtainMark,
                 };
@@ -259,12 +259,44 @@ public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
         return liveResultSubjectWise;
     }
 
+    private bool IsFailedAnyCategory(int academicSubjectId, int studentId)
+    {
+        var result = false;
+        var allExams = _cachedExamGroup.AcademicExams.Where(s => s.AcademicSubjectId == academicSubjectId).ToList();
+        if (allExams!=null && allExams.Count>0)
+        {
+            foreach (var exam in allExams)
+            {
+                if (exam.AcademicExamDetails?.Count<=0)
+                {
+                    continue;
+                }
+                var examDetail = exam.AcademicExamDetails.FirstOrDefault(s => s.StudentId == studentId);
+                if (examDetail==null)
+                {
+                    continue;
+                }
+                var hundredPercentMark = (examDetail.ObtainMark * 100) / exam.TotalMarks;
+
+                //Compare and Calculation Grade Point            
+                var gradePoint = _cachedGradingTable
+                    .FirstOrDefault(g => hundredPercentMark >= g.NumberRangeMin && hundredPercentMark <= g.NumberRangeMax)?
+                    .GradePoint ?? 0m;
+                if (gradePoint<=0)
+                {
+                    result = true;
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
     private double GetSubjectWiseTotalMarks(int subjectId)
     {
         var result = 0.0;
-        result = _cachedExamGroup.AcademicExams.Where(s => s.AcademicSubjectId == subjectId).ToList().Sum(s => s.TotalMarks);
         var ss =_cachedExamGroup.AcademicExams.Where(s => s.AcademicSubjectId == subjectId).ToList();
-        result = ss.Sum(s => s.TotalMarks);
+        result = ss?.Sum(s => s.TotalMarks)??result;
         return result;
     }
 

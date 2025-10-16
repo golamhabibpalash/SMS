@@ -27,12 +27,12 @@
 <form asp-action="LiveResult" asp-controller="ExamResults" method="get">
     <div class="form-row">
         <div class="col-md-2">
-            <select class="form-control form-control-sm" asp-items="ViewBag.ExamGroupList" name="academicGroupId" id="examGroupId" onchange="examGroupChanged()">
+            <select class="form-control form-control-sm" asp-items="Model.AcademicExamGroupList" asp-for="ExamGroupId" onchange="examGroupChanged()">
                 <option selected disabled>Select Exam Group</option>
             </select>
         </div>
         <div class="col-md-2">
-            <select class="form-control form-control-sm" name="academiClassId" id="AcademicClassId">
+            <select class="form-control form-control-sm" asp-for="AcademicClassId" asp-items="Model.AcademicClassList">
                 <option selected disabled>Select Academic Class</option>
             </select>
         </div>
@@ -58,72 +58,77 @@
         </span>
     </div>
 }
-
-<table class="table table-bordered table-responsive table-auto table-striped">
-    <thead class="table-info sticky-top" style="top:5% !important">
-        <tr>
-            <th colspan="@Model.TotalColumn" class="text-center">@Model.ExamTitle</th>
-        </tr>
-        <tr>
-            <th rowspan="2" class="text-center">Class Roll</th>
-            <th rowspan="2" class="text-center text-nowrapl">Student Name</th>
-            @foreach (var sub in Model.Subjects)
-            {
-                int colCount = 2 + sub.ExamTypes.Count; 
-                <th colspan="@colCount" class="text-center">@sub.SubjectName
-
-                    <p><small>(Highest @sub.HighestMark from @sub.TotalMarks)</small></p>
-                </th>
-            }
-            <th rowspan="2" class="vertical">Final GPA</th>
-            <th rowspan="2" class="vertical">Final Grade</th>
-            <th rowspan="2" class="vertical">Total Marks</th>
-            <th rowspan="2" class="vertical">Attendance(%)</th>
-            <th rowspan="2" class="vertical">Rank</th>
-        </tr>
-        <tr>
-            @foreach (var item in Model.Subjects)
-            {
-                foreach (var type in item.ExamTypes)
-                {
-                    <th class="vertical">@type.ExamType (@type.TotalMarks)</th>
-                }
-                <th class="vertical">marks</th>
-                <th class="vertical">Grade Point</th>
-            }
-        </tr>
-    </thead>
-    <tbody>
-        @foreach(var studentResult in Model.ResultDetails.OrderBy(s => s.ClassRoll))
-        {
-            <tr>
-                <td>@studentResult.ClassRoll</td>
-                <td>@studentResult.StudentName</td>
-                @foreach (var item in studentResult.LiveResultSubjectWises)
-                {
-                    if (item.SubjectTypes.Count>0)
+else
+{
+    <div class="">
+        <table class="table table-bordered table-responsive table-auto table-striped">
+            <thead class="table-info sticky-top" style="top:5% !important">
+                <tr>
+                    <th colspan="@Model.TotalColumn" class="text-center">@Model.ExamTitle</th>
+                </tr>
+                <tr>
+                    <th rowspan="2" class="text-center">Class Roll</th>
+                    <th rowspan="2" class="text-center text-nowrapl">Student Name</th>
+                    @foreach (var sub in Model.Subjects)
                     {
-                        foreach (var types in item.SubjectTypes)
-                        {
-                            <td>@types.GetMarks</td>
-                        }
-                    }
-                    <td>@item.ObtainMarks</td>
-                    <td>@item.GPA</td>
-                }
-                <td>@studentResult.FinalGPA.ToString("F1")</td>
-                <td>@studentResult.FinalGrade</td>
-                <td>@studentResult.TotalMarks</td>
-                <td>@studentResult.Attendance</td>
-                <td>@studentResult.Rank</td>
-            </tr>
-        }
-    </tbody>
-</table>
+                        int colCount = 2 + sub.ExamTypes.Count;
+                        <th colspan="@colCount" class="text-center">
+                            @sub.SubjectName
 
+                            <p><small>(Highest @sub.HighestMark from @sub.TotalMarks)</small></p>
+                        </th>
+                    }
+                    <th rowspan="2" class="vertical">Final GPA</th>
+                    <th rowspan="2" class="vertical">Final Grade</th>
+                    <th rowspan="2" class="vertical">Total Marks</th>
+                    <th rowspan="2" class="vertical">Attendance(%)</th>
+                    <th rowspan="2" class="vertical">Rank</th>
+                </tr>
+                <tr>
+                    @foreach (var item in Model.Subjects)
+                    {
+                        foreach (var type in item.ExamTypes)
+                        {
+                            <th class="vertical">@type.ExamType (@type.TotalMarks)</th>
+                        }
+                        <th class="vertical">marks</th>
+                        <th class="vertical">Grade Point</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var studentResult in Model.ResultDetails.OrderBy(s => s.ClassRoll))
+                {
+                    <tr>
+                        <td>@studentResult.ClassRoll</td>
+                        <td>@studentResult.StudentName</td>
+                        @foreach (var item in studentResult.LiveResultSubjectWises)
+                        {
+                            if (item.SubjectTypes.Count > 0)
+                            {
+                                foreach (var types in item.SubjectTypes)
+                                {
+                                    <td>@types.GetMarks</td>
+                                }
+                            }
+                            <td>@item.ObtainMarks</td>
+                            <td>@item.GPA</td>
+                        }
+                        <td>@studentResult.FinalGPA.ToString("F1")</td>
+                        <td>@studentResult.FinalGrade</td>
+                        <td>@studentResult.TotalMarks</td>
+                        <td>@studentResult.Attendance</td>
+                        <td>@studentResult.Rank</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+}
 <Table class="table table-bordered table-responsive table-auto table-striped">
 
-    <thead class="table-info">
+@*     <thead class="table-info">
         <tr class="table-primary">
             <th colspan="35" class="text-center">@Model.ExamTitle</th>
         </tr>
@@ -325,13 +330,13 @@
             <td>95</td>
             <td>1</td>
         </tr>
-    </tbody>
+    </tbody> *@
 </Table>
 
-            @section Scripts{
+@section Scripts{
     <script>
         function examGroupChanged() {
-            var examGroupId = $("#examGroupId").val();
+            var examGroupId = $("#ExamGroupId").val();
 
             if (!examGroupId) return;
 
@@ -359,4 +364,4 @@
         }
     </script>
 
-            }
+}

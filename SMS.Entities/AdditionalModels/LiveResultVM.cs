@@ -9,12 +9,12 @@ public class LiveResultVM
     public string ExamTitle { get; set; }
     public int ExamGroupId { get; set; }
     public int AcademicClassId { get; set; }
+    public int AcademicSectionId { get; set; }
     public List<SelectListItem> AcademicExamGroupList { get; set; } = new List<SelectListItem>();
     public List<SelectListItem> AcademicClassList { get; set; } = new List<SelectListItem>();
+    public List<SelectListItem> AcademicSectionList { get; set; } = new List<SelectListItem>();
     public List<TableHeaderSubjects> Subjects { get; set; } = new List<TableHeaderSubjects>();
     public List<LiveResultDetailsVM> ResultDetails { get; set; } = new List<LiveResultDetailsVM>();
-
-
 }
 
 public class LiveResultDetailsVM

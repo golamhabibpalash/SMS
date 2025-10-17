@@ -23,43 +23,40 @@
     }
 </style>
 
+<div class="col-md-12">
+    <form asp-action="LiveResult" asp-controller="ExamResults" method="get">
+        <div class="form-row">
+            <div class="col-md-2">
+                <select class="form-control form-control-sm" asp-items="Model.AcademicExamGroupList" asp-for="ExamGroupId" onchange="examGroupChanged()">
+                    <option selected disabled>Select Exam Group</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select class="form-control form-control-sm" asp-for="AcademicClassId" asp-items="Model.AcademicClassList" onchange="academicClassDropDownChanged()">
+                    <option selected disabled>Select Academic Class</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select class="form-control form-control-sm" asp-for="AcademicSectionId" asp-items="Model.AcademicSectionList">
+                    <option selected disabled>Select Academic Section</option>
+                </select>
+            </div>
+            <div>
+                <input type="submit" class="btn btn-info btn-sm" value="Search" onclick="reloadData()">
+            </div>
+            <div>
+                @if (ViewBag.IsLoading == true)
+                {
+                    <a style="display:none" class="btn btn-sm btn-success processResultBtn" asp-controller="ExamResults" asp-action="ProcessResult" asp-route-classId="ViewBag.classId" data-classId="ViewBag.classId" asp-route-groupId="ViewBag.examGroupId" data-groupId="ViewBag.examGroupId" onclick="reloadData()">Process Result</a>
 
-<form asp-action="LiveResult" asp-controller="ExamResults" method="get">
-    <div class="form-row">
-        <div class="col-md-2">
-            <select class="form-control form-control-sm" asp-items="Model.AcademicExamGroupList" asp-for="ExamGroupId" onchange="examGroupChanged()">
-                <option selected disabled>Select Exam Group</option>
-            </select>
+                    <a style="display:none" class="btn btn-sm btn-danger deleteResultBtn" asp-controller="ExamResults" asp-action="DeleteResult" asp-route-classId="ViewBag.classId" data-classId="ViewBag.classId" asp-route-groupId="ViewBag.examGroupId" data-groupId="ViewBag.examGroupId" onclick="reloadData()">Delete Result</a>
+                }
+            </div>
         </div>
-        <div class="col-md-2">
-            <select class="form-control form-control-sm" asp-for="AcademicClassId" asp-items="Model.AcademicClassList">
-                <option selected disabled>Select Academic Class</option>
-            </select>
-        </div>
-        <div>
-            <input type="submit" class="btn btn-info btn-sm" value="Search" onclick="reloadData()">
-        </div>
-        <div>
-            @if (ViewBag.IsLoading == true)
-            {
-                <a style="display:none" class="btn btn-sm btn-success processResultBtn" asp-controller="ExamResults" asp-action="ProcessResult" asp-route-classId="ViewBag.classId" data-classId="ViewBag.classId" asp-route-groupId="ViewBag.examGroupId" data-groupId="ViewBag.examGroupId" onclick="reloadData()">Process Result</a>
-
-                <a style="display:none" class="btn btn-sm btn-danger deleteResultBtn" asp-controller="ExamResults" asp-action="DeleteResult" asp-route-classId="ViewBag.classId" data-classId="ViewBag.classId" asp-route-groupId="ViewBag.examGroupId" data-groupId="ViewBag.examGroupId" onclick="reloadData()">Delete Result</a>
-            }
-        </div>
-    </div>
-</form>
-
-@if (Model.ResultDetails==null || Model.ResultDetails.Count<=0)
-{
-    <div class="alert alert-warning text-center">
-        <span class="h3">
-            Nothing Found
-        </span>
-    </div>
-}
-else
-{
+    </form>
+</div>
+@if (Model.ResultDetails.Count>0)
+{ 
     <div class="">
         <table class="table table-bordered table-responsive table-auto table-striped">
             <thead class="table-info sticky-top" style="top:5% !important">
@@ -335,17 +332,43 @@ else
 
 @section Scripts{
     <script>
+        var examList;
         function examGroupChanged() {
             var examGroupId = $("#ExamGroupId").val();
 
             if (!examGroupId) return;
 
             $.ajax({
-                url: '/AcademicExams/GetAcademicClassByExamGrId', // 👈 Update with your controller/action
+                url: '/AcademicExams/GetAcademicClassByExamGrId', 
                 type: 'GET',
                 data: { examGroupId: examGroupId },
                 success: function (data) {
-                    console.log(data);
+                    var classDropdown = $("#AcademicClassId");
+                    classDropdown.empty(); // clear previous options
+                    classDropdown.append('<option selected disabled>Select Academic Class</option>');
+
+                    $.each(data, function (i, item) {
+                        classDropdown.append($('<option>', {
+                            value: item.id, // ensure your JSON returns { value: , text: }
+                            text: item.name
+                        }));
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error loading academic classes:", error);
+                }
+            });
+        }
+
+        function academicClassDropDownChanged(){
+            var academicClassId = $("#AcademicClassId").val();
+            var examGroupId = $("#ExamGroupId").val();
+            if(!academicClassId) return;
+            $.ajax({
+                url: '/AcademicExams/GetAcademicSectionByExamGrId_ClassId', 
+                type: 'GET',
+                data: { examGroupId: examGroupId,classId:academicClassId },
+                success: function (data) {
                     var classDropdown = $("#AcademicClassId");
                     classDropdown.empty(); // clear previous options
                     classDropdown.append('<option selected disabled>Select Academic Class</option>');
@@ -363,5 +386,4 @@ else
             });
         }
     </script>
-
 }

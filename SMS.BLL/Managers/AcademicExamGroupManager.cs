@@ -16,6 +16,20 @@ namespace SMS.BLL.Managers
         {
             _academicExamGroupRepository = academicExamGroupRepository;
         }
+        public override async Task<AcademicExamGroup> GetByIdAsync(int id)
+        {
+            var examGroup = await _academicExamGroupRepository
+                .Table
+                .Include(g => g.AcademicExams)
+                    .ThenInclude(e => e.AcademicClass)
+                        .ThenInclude(c => c.AcademicSections)
+                .Include(g => g.AcademicSession)
+                .Include(g => g.academicExamType)
+                .FirstOrDefaultAsync(g => g.Id == 47);
+
+
+            return examGroup;
+        }
         public override async Task<IReadOnlyCollection<AcademicExamGroup>> GetAllAsync()
         {
             var result =await _academicExamGroupRepository

@@ -138,7 +138,7 @@ namespace SMS.App.Controllers
             ViewData["ExamGroupList"] = new SelectList(await _academicExamGroupManager.GetAllAsync(), "Id", "ExamGroupName", examGroupId);
             ViewData["AcademicClassList"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", classId);
 
-            var examList = await _academicExamManager.GetByClassIdExamGroupId(examGroupId, classId);
+            var examList = await _academicExamManager.GetByClassIdExamGroupIdAsync(examGroupId, classId);
             if (examList == null || examList.Count <= 0)
             {
                 TempData["failed"] = "Exam Not Found";
@@ -383,7 +383,7 @@ namespace SMS.App.Controllers
                     TempData[""] = TempData["failed"] = "This Result is already processed";
                     return RedirectToAction("Details", "AcademicExamGroup", new { id = groupId });
                 }
-                var exams = await _academicExamManager.GetByClassIdExamGroupId(groupId, classId);
+                var exams = await _academicExamManager.GetByClassIdExamGroupIdAsync(groupId, classId);
                 var session = await _sessionManager.GetCurrentAcademicSession();
                 var examGroup = await _academicExamGroupManager.GetByIdAsync(groupId);
                 List<Student> students = await _studentManager.GetStudentsByClassIdAndSessionIdAsync(session.Id, classId);
@@ -717,7 +717,7 @@ namespace SMS.App.Controllers
             else
             {
                 var student = await _studentManager.GetByIdAsync(studentId);
-                var exams = await _academicExamManager.GetByClassIdExamGroupId(examGroupId, student.AcademicClassId);
+                var exams = await _academicExamManager.GetByClassIdExamGroupIdAsync(examGroupId, student.AcademicClassId);
                 totalFail = exams.Count;
             }
             return totalFail;

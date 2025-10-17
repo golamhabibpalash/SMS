@@ -29,7 +29,7 @@ public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
         _gradingTableRepository = gradingTableRepository;
     }
 
-    public async Task<List<AcademicExam>> GetByClassIdExamGroupId(int examGroupId, int academicClassId)
+    public async Task<List<AcademicExam>> GetByClassIdExamGroupIdAsync(int examGroupId, int academicClassId)
     {
         var result = await _academicExamRepository.GetByClassIdExamGroupId(examGroupId, academicClassId);
         return result;

@@ -8,7 +8,7 @@ namespace SMS.BLL.Contracts;
 
 public interface IAcademicExamManager:IManager<AcademicExam>
 {
-    Task<List<AcademicExam>> GetByClassIdExamGroupId(int examGroupId, int academicClassId);
+    Task<List<AcademicExam>> GetByClassIdExamGroupIdAsync(int examGroupId, int academicClassId);
     Task<List<ExamSessionDto>> GetExaminationListAsync();
     Task<LiveResultVM> GetLiveResultByGroupIdClassId(int academicGroupId, int academiClassId);
     Task<AcademicExam> GetAcademicExam(int examGroupId, int classId, int subjectId, string examType);

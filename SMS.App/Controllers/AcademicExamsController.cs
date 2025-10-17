@@ -545,4 +545,15 @@ public class AcademicExamsController : Controller
         var results = examGroup.AcademicExams.Select(e => e.AcademicClass).DistinctBy(c => c.Id).ToList();
         return Json(results);
     }
+    public async Task<JsonResult> GetAcademicSectionByExamGrId_ClassId(int examGroupId,int classId)
+    {
+        var sections = new List<AcademicSection>();
+        var exams = await _examManager.GetByClassIdExamGroupIdAsync(examGroupId, classId);
+        if (exams.Count>0)
+        {
+            sections =exams.Select(e => e.AcademicSection).Distinct().ToList();
+        }
+
+        return Json(sections);
+    }
 }

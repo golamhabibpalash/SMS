@@ -59,6 +59,7 @@ namespace SMS.DAL.Repositories
             var exams = await _context.AcademicExams
                 .Where(s => s.AcademicClassId == academicClassId && s.AcademicExamGroupId == examGroupId)
                 .Include(s => s.AcademicClass)
+                .Include(s => s.AcademicSection)
                 .Include(s => s.AcademicExamGroup)
                 .Include(s => s.AcademicSubject)
                 .Include(s => s.AcademicExamDetails)

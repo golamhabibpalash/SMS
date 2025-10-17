@@ -551,7 +551,10 @@ public class AcademicExamsController : Controller
         var exams = await _examManager.GetByClassIdExamGroupIdAsync(examGroupId, classId);
         if (exams.Count>0)
         {
-            sections =exams.Select(e => e.AcademicSection).Distinct().ToList();
+            sections = exams
+                    .Select(e => e.AcademicSection ?? new AcademicSection { Id = 0, Name = "All" })
+                    .DistinctBy(s => s.Id)
+                    .ToList();
         }
 
         return Json(sections);

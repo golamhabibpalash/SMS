@@ -369,9 +369,10 @@
                 type: 'GET',
                 data: { examGroupId: examGroupId,classId:academicClassId },
                 success: function (data) {
-                    var classDropdown = $("#AcademicClassId");
+                    console.log(data);
+                    var classDropdown = $("#AcademicSectionId");
                     classDropdown.empty(); // clear previous options
-                    classDropdown.append('<option selected disabled>Select Academic Class</option>');
+                    classDropdown.append('<option selected disabled>Select Academic Section</option>');
 
                     $.each(data, function (i, item) {
                         classDropdown.append($('<option>', {

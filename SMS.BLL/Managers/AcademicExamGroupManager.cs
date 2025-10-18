@@ -32,10 +32,12 @@ namespace SMS.BLL.Managers
         }
         public override async Task<IReadOnlyCollection<AcademicExamGroup>> GetAllAsync()
         {
-            var result =await _academicExamGroupRepository
-                .Table
-                .Include(s => s.AcademicExams)
+            var result = await _academicExamGroupRepository.Table
+                .Include(g => g.AcademicExams)
                     .ThenInclude(e => e.AcademicClass)
+                .Include(g => g.AcademicExams)
+                    .ThenInclude(e => e.AcademicSection)
+                .AsNoTracking()
                 .ToListAsync();
             return result;
         }

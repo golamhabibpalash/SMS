@@ -13,6 +13,7 @@ using SMS.Entities.AdditionalModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace SMS.App.Controllers
@@ -543,8 +544,12 @@ namespace SMS.App.Controllers
                 });
             }
 
-            // Use LINQ to extract distinct classes from all groups
-            var classList = examGroups?
+            var expectedGroup = examGroups?
+                .Where(g => g.Id == model.ExamGroupId)
+                .ToList() ?? new List<AcademicExamGroup>();
+
+            // Extract distinct classes from all groups
+            var classList = expectedGroup?
                 .Where(g => g.AcademicExams != null && g.AcademicExams.Count > 0 && g.Id == model.ExamGroupId)
                 .SelectMany(g => g.AcademicExams)
                 .Where(e => e.AcademicClass != null)
@@ -553,10 +558,21 @@ namespace SMS.App.Controllers
                 .Select(g => g.First())
                 .ToList() ?? new List<AcademicClass>();
 
+            //Extract Distinct Sections from all class
+            var sectionList = expectedGroup?
+                .Where(g => g.AcademicExams != null && g.AcademicExams.Count > 0 && g.Id == model.ExamGroupId)
+                .SelectMany(g => g.AcademicExams)
+                .Where(e => e.AcademicSection != null && e.AcademicClassId == model.AcademicClassId)
+                .Select(e => e.AcademicSection)
+                .GroupBy(c => c.Id)
+                .Select(g => g.First())
+                .ToList() ?? new List<AcademicSection>();
+
             // Fetch live result
-            var liveResult = await _academicExamManager.GetLiveResultByGroupIdClassId(
+            var liveResult = await _academicExamManager.GetLiveResultByGroupIdClassIdSectionId(
                 model.ExamGroupId,
-                model.AcademicClassId
+                model.AcademicClassId,
+                model.AcademicSectionId
             );
 
             // Build ViewModel
@@ -566,6 +582,10 @@ namespace SMS.App.Controllers
 
             liveResult.AcademicClassList = new SelectList(
                 classList, "Id", "Name", model.AcademicClassId
+            ).ToList();
+            
+            liveResult.AcademicSectionList = new SelectList(
+                sectionList, "Id", "Name", model.AcademicSectionId
             ).ToList();
 
             liveResult.AcademicClassId = model.AcademicClassId;

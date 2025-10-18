@@ -70,15 +70,19 @@ public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
 
         return result;
     }
-    public async Task<LiveResultVM> GetLiveResultByGroupIdClassId(int academicGroupId, int academiClassId)
+    public async Task<LiveResultVM> GetLiveResultByGroupIdClassIdSectionId(int academicGroupId, int academiClassId, int? academicSectionId)
     {
         var liveResultVM = new LiveResultVM();
 
         var examGroup = await _academicExamGroupRepository.GetByIdAsync(academicGroupId);
-        examGroup.AcademicExams = examGroup.AcademicExams.Where(s => s.AcademicClassId == academiClassId).ToList();
         if (examGroup==null)
         {
             return liveResultVM;
+        }
+        examGroup.AcademicExams = examGroup.AcademicExams.Where(s => s.AcademicClassId == academiClassId).ToList();
+        if (academicSectionId.HasValue)
+        {
+            examGroup.AcademicExams = examGroup.AcademicExams.Where(s => s.AcademicSectionId == academicSectionId.Value).ToList();
         }
         _cachedGradingTable = (List<GradingTable>)await _gradingTableRepository.GetAllAsync();
         _cachedExamGroup = examGroup;
@@ -108,7 +112,7 @@ public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
                     FinalGrade = GetFinalGradeByGPA(sumOfSubjectWiseGP / countOfExam),
                     TotalMarks = GetTotalMarks(student.Id),
                     Attendance = GetAttendance(student.Id, academicGroupId),
-                    Rank = GetFinalRank(student.Id, academicGroupId),
+                    Rank = 0,
                     LiveResultSubjectWises = liveResultSubjectWises
                 };
                 liveResultVM.ResultDetails.Add(liveResultDetailsVM);
@@ -121,6 +125,9 @@ public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
             liveResultVM.TotalColumn = 7+liveResultVM.ResultDetails.Count;
             liveResultVM.Subjects = GetTableHeaderSubjects(existingExams);
         }
+
+        //Calculation Ranking
+
 
         return liveResultVM;
     }
@@ -140,8 +147,15 @@ public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
         return grade;
     }
 
-    private int GetFinalRank(int id, int academicGroupId)
+    private int GetFinalRank(int studentId,int? sectionId,int classId,int examGroupId)
     {
+        var expectedResult = _cachedExamGroup.AcademicExams.Where(e => e.AcademicClassId == classId && e.AcademicSectionId == sectionId);
+        //Rank by GPA
+
+        //Rank by Total Number
+
+        //Rank by Attendance
+
         var result = 3;
         return result;
     }

@@ -24,25 +24,27 @@
 </style>
 
 <div class="col-md-12">
-    <form asp-action="LiveResult" asp-controller="ExamResults" method="get">
+    <form class="form-inline" asp-action="LiveResult" asp-controller="ExamResults" method="get">
         <div class="form-row">
-            <div class="col-md-2">
-                <select class="form-control form-control-sm" asp-items="Model.AcademicExamGroupList" asp-for="ExamGroupId" onchange="examGroupChanged()">
-                    <option selected disabled>Select Exam Group</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <select class="form-control form-control-sm" asp-for="AcademicClassId" asp-items="Model.AcademicClassList" onchange="academicClassDropDownChanged()">
-                    <option selected disabled>Select Academic Class</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <select class="form-control form-control-sm" asp-for="AcademicSectionId" asp-items="Model.AcademicSectionList">
-                    <option selected disabled>Select Academic Section</option>
-                </select>
-            </div>
-            <div>
-                <input type="submit" class="btn btn-info btn-sm" value="Search" onclick="reloadData()">
+            <div class="row">
+                <div class="col-md-2">
+                    <select class="form-control form-control-sm" asp-items="Model.AcademicExamGroupList" asp-for="ExamGroupId" onchange="examGroupChanged()">
+                        <option selected disabled>Select Exam Group</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select class="form-control form-control-sm" asp-for="AcademicClassId" asp-items="Model.AcademicClassList" onchange="academicClassDropDownChanged()">
+                        <option selected disabled>Select Academic Class</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select class="form-control form-control-sm" asp-for="AcademicSectionId" asp-items="Model.AcademicSectionList">
+                        <option selected disabled>Select Academic Section</option>
+                    </select>
+                </div>
+                <div class="col-md-1">
+                    <input type="submit" class="btn btn-info btn-sm" value="Search" onclick="reloadData()">
+                </div>
             </div>
             <div>
                 @if (ViewBag.IsLoading == true)

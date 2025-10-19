@@ -102,14 +102,18 @@ public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
             {
                 var liveResultSubjectWises = GetLiveResultSubjectWise(student.Id);
 
-                var sumOfSubjectWiseGP = liveResultSubjectWises.Sum(s => s.GPA);
-
+                var sumOfSubjectWiseGP = liveResultSubjectWises.Any(s => s.GPA == 0)? 0 : liveResultSubjectWises.Sum(s => s.GPA);
+                if (student.ClassRoll == 2506036)
+                {
+                    int ss = student.ClassRoll;
+                }
+                decimal finalGPA = (decimal)(sumOfSubjectWiseGP / countOfExam);
                 LiveResultDetailsVM liveResultDetailsVM = new LiveResultDetailsVM
                 {
                     ClassRoll = student.ClassRoll.ToString(),
                     StudentName = student.Name,
-                    FinalGPA = (sumOfSubjectWiseGP/ countOfExam),
-                    FinalGrade = GetFinalGradeByGPA(sumOfSubjectWiseGP / countOfExam),
+                    FinalGPA = (double)finalGPA,
+                    FinalGrade = GetFinalGradeByGPA(finalGPA),
                     TotalMarks = GetTotalMarks(student.Id),
                     Attendance = GetAttendance(student.Id, academicGroupId),
                     Rank = 0,
@@ -127,15 +131,26 @@ public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
         }
 
         //Calculation Ranking
-
+        if (liveResultVM.ResultDetails.Count > 0) 
+        {
+            int rank = 1;
+            foreach (var result in liveResultVM.ResultDetails
+                .OrderByDescending(s=> s.FinalGPA)
+                .ThenByDescending(s=>s.TotalMarks)
+                .ThenByDescending(s => s.Attendance)
+                .ThenBy(s => s.ClassRoll))
+            {
+                result.Rank = rank++;
+            }
+        }
 
         return liveResultVM;
     }
 
-    private string GetFinalGradeByGPA(double gpa)
+    private string GetFinalGradeByGPA(decimal gpa)
     {
         var grade = "";
-        var gradingTableRow = _cachedGradingTable.FirstOrDefault(s => (double)s.GradePoint >= gpa && (double)s.GradePoint <= gpa);
+        var gradingTableRow = _cachedGradingTable.FirstOrDefault(s => s.GradePoint >= gpa && s.GradePoint <= gpa);
         if (gradingTableRow!=null)
         {
             grade = gradingTableRow.LetterGrade??"";

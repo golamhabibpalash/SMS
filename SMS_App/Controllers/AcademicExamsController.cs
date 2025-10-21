@@ -1,0 +1,562 @@
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using SMS_App.Utilities.MACIPServices;
+using SMS_App.ViewModels.ExamVM;
+using SMS.BLL.Contracts;
+using SMS.Entities;
+using SMS.Entities.Enums;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace SMS_App.Controllers;
+
+[Authorize]
+//Need to add exam module permission
+public class AcademicExamsController : Controller
+{
+    private readonly IAcademicExamManager _examManager;
+    private readonly IAcademicSessionManager _sessionManager;
+    private readonly IAcademicClassManager _classManager;
+    private readonly IAcademicExamTypeManager _examTypeManager;
+    private readonly IAcademicSubjectManager _academicSubjectManager;
+    private readonly IEmployeeManager _employeeManager;
+    private readonly IMapper _mapper;
+    private readonly IAcademicSectionManager _academicSectionManager;
+    private readonly IStudentManager _studentManager;
+    private readonly IAcademicExamDetailsManager _academicExamDetailsManager;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly IAcademicExamGroupManager _examGroupManager;
+    public AcademicExamsController(IAcademicExamManager examManager, IAcademicSessionManager sessionManager, IAcademicClassManager classManager, IAcademicExamTypeManager examTypeManager, IAcademicSubjectManager academicSubjectManager, IEmployeeManager employeeManager, IMapper mapper, IAcademicSectionManager academicSectionManager, IStudentManager studentManager, IAcademicExamDetailsManager academicExamDetailsManager, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IAcademicExamGroupManager academicExamGroupManager)
+    {
+        _examManager = examManager;
+        _sessionManager = sessionManager;
+        _classManager = classManager;
+        _examTypeManager = examTypeManager;
+        _academicSubjectManager = academicSubjectManager;
+        _employeeManager = employeeManager;
+        _mapper = mapper;
+        _academicSectionManager = academicSectionManager;
+        _studentManager = studentManager;
+        _academicExamDetailsManager = academicExamDetailsManager;
+        _userManager = userManager;
+        _roleManager = roleManager;
+        _examGroupManager = academicExamGroupManager;
+    }
+
+    // GET: AcademicExamsController
+    [Authorize(Roles = "Admin, Teacher, SuperAdmin")]
+    [Authorize(Policy = "IndexAcademicExamPolicy")]
+    public async Task<ActionResult> Index()
+    {
+        if (TempData["error"]!=null)
+        {
+            ViewBag.error = TempData["error"].ToString();
+        }
+        ViewModels.AcademicVM.AcademicExamVM academicExamVM = new ViewModels.AcademicVM.AcademicExamVM();
+        AcademicSession currentSession = await _sessionManager.GetCurrentAcademicSession();
+        academicExamVM.AcademicExamGroupList = new SelectList(await _examGroupManager.GetAllAsync(currentSession.Id), "Id", "ExamGroupName").ToList();
+        academicExamVM.AcademicClassList = new SelectList(await _classManager.GetAllAsync(), "Id", "Name").ToList();
+        List<Employee> emps = (List<Employee>)await _employeeManager.GetAllAsync();
+        academicExamVM.TeacherList = new SelectList(emps.Where(e => e.Status == true).OrderBy(e => e.JoiningDate).ThenBy(e => e.EmployeeName), "Id", "EmployeeName").ToList();
+        academicExamVM.ExamCategoryList =  new List<SelectListItem>();
+        foreach (var category in Enum.GetValues(typeof(ExamCategory)))
+        {
+            var newSelectListItem = new SelectListItem { Value = category.ToString(), Text = category.ToString() };
+            academicExamVM.ExamCategoryList.Add(newSelectListItem);
+        }
+        var exams = await _examManager.GetAllAsync();
+        if (exams != null)
+        {
+            academicExamVM.AcademicExams = (List<AcademicExam>)exams;
+        }
+        var sessionWiseExams = await _examManager.GetExaminationListAsync();
+        if (sessionWiseExams!=null)
+        {
+            academicExamVM.ExamSessionVM = sessionWiseExams.OrderByDescending(s => s.SessionName.Substring(s.SessionName.Length-4)).ToList() ;
+        }
+
+        bool isAdminUser = false;
+        var user = await _userManager.GetUserAsync(User);
+        var roles = await _userManager.GetRolesAsync(user);
+        foreach (var item in roles)
+        {
+            if (item.Contains("Admin") || item.Contains("SuperAdmin"))
+            {
+                isAdminUser = true;
+                break;
+            }
+        }
+        if (isAdminUser != true)
+        {
+            exams = exams.Where(m => m.EmployeeId == user.ReferenceId).ToList();
+        }
+
+        return View(academicExamVM);
+    }
+
+    // GET: AcademicExamsController/Details/5
+    [Authorize(Policy = "DetailsAcademicExamPolicy")]
+    public async Task<ActionResult> Details(int id)
+    {
+
+        var exam = await _examManager.GetByIdAsync(id);
+        if (exam == null)
+        {
+            TempData["error"] = "Data not found";
+            return RedirectToAction("index");
+        }
+        var academicExamDetailVM = new AcademicExamDetailVM();
+        academicExamDetailVM = _mapper.Map<AcademicExamDetailVM>(exam);
+        var allStudents = await _studentManager.GetStudentsByClassIdAndSessionIdAsync(exam.AcademicExamGroup.AcademicSessionId, exam.AcademicClassId);
+
+        if (exam.AcademicExamDetails.Count > 0)
+        {
+            foreach (var eItem in exam.AcademicExamDetails)
+            {
+                allStudents.Remove(eItem.Student);
+            }
+        }
+
+        academicExamDetailVM.StudentList = allStudents.OrderBy(s => s.ClassRoll).Select(s => new SelectListItem
+        {
+            Value = s.Id.ToString(),
+            Text = s.Name + "-(" + s.ClassRoll + ")"
+        }).ToList();
+
+
+        var selectedStudent = new List<Student>();
+
+        // Create a HashSet of student IDs from AcademicExamDetails for quick lookup
+        var existingStudentIds = new HashSet<int>(
+            academicExamDetailVM.AcademicExamDetails.Select(detail => detail.Student.Id)
+        );
+
+        // Filter students who are not in the existingStudentIds
+        selectedStudent.AddRange(
+            allStudents.Where(student => !existingStudentIds.Contains(student.Id))
+        );
+
+        academicExamDetailVM.MissingStudentList = selectedStudent.OrderBy(s => s.ClassRoll).Select(s => new SelectListItem
+        {
+            Value = s.Id.ToString(),
+            Text = s.Name + "-(" + s.ClassRoll + ")"
+        }).ToList();
+
+        var user = await _userManager.GetUserAsync(User);
+        var roles = await _userManager.GetRolesAsync(user);
+        bool isAdminUser = false;
+        foreach (var item in roles)
+        {
+            if (item.Contains("Admin") || item.Contains("SuperAdmin"))
+            {
+                isAdminUser = true;
+                break;
+            }
+        }
+        if (user.UserType == 'e')
+        {
+            if (user.ReferenceId != exam.EmployeeId)
+            {
+                if (isAdminUser == false)
+                {
+                    return RedirectToAction("AccessDenied", "Accounts");
+                }
+            }
+        }
+        var academicExamVM = new ViewModels.AcademicVM.AcademicExamVM
+        {
+            AcademicExamGroup = exam.AcademicExamGroup,
+            AcademicExamDetails = exam.AcademicExamDetails
+                .OrderBy(s => s.Student != null ? s.Student.ClassRoll : int.MaxValue)
+                .ToList(),
+            AcademicClass = exam.AcademicClass,
+            AcademicSection = exam.AcademicSection,
+            AcademicSubject = exam.AcademicSubject,
+            Employee = exam.Employee,
+            TotalMarks = exam.TotalMarks
+        };
+
+        return View(academicExamDetailVM);
+    }
+
+
+    // POST: AcademicExamsController/Create
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = "SuperAdmin, Admin")]
+    [Authorize(Policy = "CreateAcademicExamPolicy")]
+    public async Task<ActionResult> Create(List<AcademicExam> AcademicExam)
+    {
+        int success = 0;
+        int failed = 0;
+        try
+        {
+            if (AcademicExam.Count > 0)
+            {
+                foreach (AcademicExam exam in AcademicExam)
+                {
+                    var isExist = await _examManager.GetAcademicExam(exam.AcademicExamGroupId, exam.AcademicClassId, exam.AcademicSubjectId, exam.ExamCategory);
+
+                    if (isExist != null)
+                    {
+                        failed++;
+                        continue;
+                    }
+                    AcademicSubject academicSubject = await _academicSubjectManager.GetByIdAsync(exam.AcademicSubjectId);
+                    exam.CreatedAt = DateTime.Now;
+                    exam.CreatedBy = HttpContext.Session.GetString("UserId");
+                    exam.MACAddress = MACService.GetMAC();
+                    exam.ExamCategory = exam.ExamCategory;
+                    bool isSaved = await _examManager.AddAsync(exam);
+                    if (isSaved)
+                    {
+                        success++;
+                        AcademicExamGroup academicExamGroup = await _examGroupManager.GetByIdAsync(exam.AcademicExamGroupId);
+                        var students = await _studentManager.GetStudentsByClassIdAndSessionIdAsync(academicExamGroup.AcademicSessionId, exam.AcademicClassId);
+                        students = students.Where(s => s.Status == true).ToList();
+                        foreach (Student student in students.Where(s => s.Status = true))
+                        {
+                            if (exam.AcademicSectionId != null || exam.AcademicSectionId > 0)
+                            {
+                                if (student.AcademicSectionId != exam.AcademicSectionId)
+                                {
+                                    continue;
+                                }
+                            }
+                            if (academicSubject.ReligionId != null || academicSubject.ReligionId >= 0)
+                            {
+                                if (student.ReligionId != academicSubject.ReligionId)
+                                {
+                                    continue;
+                                }
+                            }
+                            AcademicExamDetail academicExamDetail = new AcademicExamDetail();
+                            academicExamDetail.AcademicExamId = exam.Id;
+                            academicExamDetail.ObtainMark = 0;
+                            academicExamDetail.StudentId = student.Id;
+                            academicExamDetail.Status = true;
+                            academicExamDetail.CreatedAt = DateTime.Now;
+                            academicExamDetail.CreatedBy = HttpContext.Session.GetString("UserId");
+                            academicExamDetail.MACAddress = MACService.GetMAC();
+                            await _academicExamDetailsManager.AddAsync(academicExamDetail);
+                        }
+                    }
+                    else
+                    {
+                        failed++;
+                    }
+                }
+                TempData["success"] = "Success:" + success + " added & Failed: " + failed;
+            }
+            else
+            {
+                TempData["success"] = "No data found to add";
+            }
+        }
+        catch (Exception ex)
+        {
+            TempData["error"] = "Exception: " + ex.Message;
+        }
+        return RedirectToAction("index");
+    }
+
+    [HttpPost]
+    public async Task<ActionResult> AddStudentToExistingExam(IndividualStudentExamGroup model)
+    {
+        var existingExam = await _examManager.GetByIdAsync(model.AcademicExamId);
+        if (existingExam != null)
+        {
+            AcademicExamDetail newDetail = new AcademicExamDetail()
+            {
+                AcademicExamId = existingExam.Id,
+                ObtainMark = model.ObtainMarks,
+                StudentId = model.StudentId,
+                Remarks = model.Remarks,
+                Status = true,
+                CreatedAt = DateTime.Now,
+                CreatedBy = HttpContext.Session.GetString("UserId"),
+                EditedBy = HttpContext.Session.GetString("UserId")
+            };
+            var ss = await _academicExamDetailsManager.AddAsync(newDetail);
+            if (ss)
+            {
+                TempData["success"] = "Student Added in Exam";
+            }
+            existingExam.EditedAt = DateTime.Now;
+            existingExam.EditedBy = HttpContext.Session.GetString("UserId");
+            await _examManager.UpdateAsync(existingExam);
+        }
+        return RedirectToAction("Details", new { id = model.AcademicExamId });
+    }
+
+    // POST: AcademicExamsController/Edit/5
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = "SuperAdmin, Admin")]
+    [Authorize(Policy = "EditAcademicExamPolicy")]
+    public async Task<ActionResult> Edit(int id, AcademicExam academicExam, ViewModels.ExamVM.AcademicExamVM academicExamVM)
+    {
+
+        //Minimum checking
+        if (id != academicExam.Id)
+        {
+            TempData["error"] = "Data Id mismatched.";
+            return RedirectToAction("index");
+        }
+        if (!ModelState.IsValid)
+        {
+            TempData["error"] = "Failed! Error:" + ModelState.ErrorCount + " Please fillup the form properly.";
+            return RedirectToAction("index");
+        }
+        //Checking, is already exist!
+        AcademicExam existingExam = await _examManager.GetAcademicExam(academicExam.AcademicExamGroupId, academicExam.AcademicClassId, academicExam.AcademicSubjectId, academicExam.ExamCategory);
+
+        if (existingExam != null)
+        {
+            TempData["error"] = "Exam is already exist in this group";
+            return RedirectToAction("index");
+        }
+        //Checking is it same data!
+        AcademicExam exam = await _examManager.GetByIdAsync(academicExam.Id);
+
+        try
+        {
+            academicExam.EditedAt = DateTime.Now;
+            academicExam.EditedBy = HttpContext.Session.GetString("UserId");
+            academicExam.MACAddress = MACService.GetMAC();
+            bool isUpdate = await _examManager.UpdateAsync(academicExam);
+            if (isUpdate)
+            {
+                AcademicSubject academicSubject = await _academicSubjectManager.GetByIdAsync(academicExam.AcademicSubjectId);
+                if (exam.AcademicSubjectId != academicExam.AcademicSubjectId)
+                {
+                    var examDetails = await _academicExamDetailsManager.GetByExamIdAsync(exam.Id);
+                    if (examDetails != null)
+                    {
+                        foreach (var eDetail in examDetails)
+                        {
+                            await _academicExamDetailsManager.RemoveAsync(eDetail);
+                        }
+                    }
+                    AcademicExamGroup academicExamGroup = await _examGroupManager.GetByIdAsync(academicExam.AcademicExamGroupId);
+                    var students = await _studentManager.GetStudentsByClassIdAndSessionIdAsync(academicExamGroup.AcademicSessionId, academicExam.AcademicClassId);
+                    foreach (Student student in students.Where(s => s.Status = true))
+                    {
+                        if (academicExam.AcademicSectionId != null || academicExam.AcademicSectionId > 0)
+                        {
+                            if (student.AcademicSectionId != academicExam.AcademicSectionId)
+                            {
+                                continue;
+                            }
+                        }
+                        if (academicSubject.ReligionId != null || academicSubject.ReligionId >= 0)
+                        {
+                            if (student.ReligionId != academicSubject.ReligionId)
+                            {
+                                continue;
+                            }
+                        }
+                        AcademicExamDetail academicExamDetail = new AcademicExamDetail();
+                        academicExamDetail.AcademicExamId = exam.Id;
+                        academicExamDetail.ObtainMark = 0;
+                        academicExamDetail.StudentId = student.Id;
+                        academicExamDetail.Status = true;
+                        academicExamDetail.CreatedAt = DateTime.Now;
+                        academicExamDetail.CreatedBy = HttpContext.Session.GetString("UserId");
+                        academicExamDetail.MACAddress = MACService.GetMAC();
+                        await _academicExamDetailsManager.AddAsync(academicExamDetail);
+                    }
+                }
+
+                TempData["success"] = "success! Data updated successfully";
+                return RedirectToAction("index");
+            }
+            else
+            {
+                TempData["error"] = "Failed! Something wrong. Please try again later.";
+                return RedirectToAction("index");
+            }
+        }
+        catch (Exception ex)
+        {
+            TempData["error"] = "Execption: " + ex.Message;
+            return RedirectToAction("index");
+        }
+    }
+
+    // GET: AcademicExamsController/Delete/5
+    [HttpPost]
+    [Authorize(Policy = "DeleteAcademicExamPolicy")]
+    public async Task<JsonResult> Delete(int id)
+    {
+        AcademicExam academicExam = await _examManager.GetByIdAsync(id);
+        try
+        {
+            bool isRemoved = await _examManager.RemoveAsync(academicExam);
+            if (isRemoved)
+            {
+                TempData["created"] = "Data deleted successfully.";
+            }
+            else
+            {
+                TempData["error"] = "Failed to delete";
+            }
+            return Json("ok");
+        }
+        catch (Exception ex)
+        {
+            TempData["error"] = "Exception:" + ex.Message;
+        }
+        return Json("");
+    }
+
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Policy = "ExamMarkSubmitAcademicExamPolicy")]
+    public async Task<ActionResult> ExmaMarkSubmit(ExamDetailsVM examDetailVM)
+    {
+        List<AcademicExamDetail> academicExamDetail = new();
+        academicExamDetail = examDetailVM.AcademicExamDetails;
+        foreach (AcademicExamDetail item in academicExamDetail)
+        {
+            var existingDetails = await _academicExamDetailsManager.GetByIdAsync(item.Id);
+            if (existingDetails != null)
+            {
+                if (existingDetails.ObtainMark != item.ObtainMark || existingDetails.Remarks != item.Remarks || existingDetails.Status != item.Status)
+                {
+                    item.MACAddress = MACService.GetMAC();
+                    item.EditedAt = DateTime.Now;
+                    item.EditedBy = HttpContext.Session.GetString("UserId");
+                    await _academicExamDetailsManager.UpdateAsync(item);
+                }
+            }
+        }
+        return RedirectToAction("Index");
+    }
+
+    [HttpPost]
+    public async Task<JsonResult> ExamMarkSubmitAjax([FromBody] AcademicExamDetail examDetail)
+    {
+        AcademicExamDetail existingDetails = new();
+        if (examDetail != null)
+        {
+            try
+            {
+                existingDetails = await _academicExamDetailsManager.GetByIdAsync(examDetail.Id);
+                if (existingDetails != null)
+                {
+                    if (existingDetails.ObtainMark != examDetail.ObtainMark || existingDetails.Remarks != examDetail.Remarks || existingDetails.Status != examDetail.Status)
+                    {
+                        examDetail.MACAddress = MACService.GetMAC();
+                        examDetail.EditedAt = DateTime.Now;
+                        examDetail.EditedBy = HttpContext.Session.GetString("UserId");
+                        await _academicExamDetailsManager.UpdateAsync(examDetail);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        return Json(existingDetails);
+    }
+
+    [Authorize(Policy = "AdmitCardAcademicExamPolicy")]
+    public async Task<ActionResult> AdmitCard()
+    {
+        ViewData["ExamType"] = new SelectList(await _examTypeManager.GetAllAsync(), "Id", "ExamTypeName");
+        ViewData["AcademicClass"] = new SelectList(await _classManager.GetAllAsync(), "Id", "Name");
+
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<JsonResult> UnlockExam(int exId)
+    {
+        string msg = string.Empty;
+        var existingExam = await _examManager.GetByIdAsync(exId);
+        if (existingExam != null)
+        {
+            //existingExam.IsActive = false;
+            bool isUpdated = await _examManager.UpdateAsync(existingExam);
+            if (isUpdated)
+            {
+                msg = "Exam is Unlocked Successfully";
+            }
+            else
+            {
+                msg = "Unloacked faild";
+            }
+            return Json(new { exId = exId, msg = msg });
+        }
+        return Json(new { msg = "Exam not found!" });
+    }
+
+    [HttpPost]
+    [Authorize(Policy = "LockAcademicExamPolicy")]
+    public async Task<ActionResult> LockExam(int exId)
+    {
+        string msg = string.Empty;
+        var existingExam = await _examManager.GetByIdAsync(exId);
+        if (existingExam != null)
+        {
+            //existingExam.IsActive = true;
+            bool isUpdated = await _examManager.UpdateAsync(existingExam);
+            if (isUpdated)
+            {
+                msg = "Exam is Locked Successfully";
+            }
+            else
+            {
+                msg = "Loacked faild";
+            }
+            return Json(new { exId = exId, msg = msg });
+        }
+        return Json(new { msg = "Exam not found!" });
+    }
+
+    public async Task<JsonResult> GetExamsByGrIdAndClassId(int examGroupId, int academicClassId)
+    {
+        List<AcademicExam> academicExams = (List<AcademicExam>)await _examManager.GetAllAsync();
+        var results = academicExams.Where(s => s.AcademicExamGroupId == examGroupId && s.AcademicClassId == academicClassId).ToList();
+        return Json(results);
+    }
+    public async Task<JsonResult> GetExamsByGrId(int examGroupId)
+    {
+        List<AcademicExam> academicExams = (List<AcademicExam>)await _examManager.GetAllAsync();
+        var results = academicExams.Where(s => s.AcademicExamGroupId == examGroupId).ToList();
+        return Json(results);
+    }
+    public async Task<JsonResult> GetAcademicClassByExamGrId(int examGroupId)
+    {
+        var examGroup = await _examGroupManager.GetByIdAsync(examGroupId);
+        var results = examGroup.AcademicExams.Select(e => e.AcademicClass).DistinctBy(c => c.Id).ToList();
+        return Json(results);
+    }
+    public async Task<JsonResult> GetAcademicSectionByExamGrId_ClassId(int examGroupId,int classId)
+    {
+        var sections = new List<AcademicSection>();
+        var exams = await _examManager.GetByClassIdExamGroupIdAsync(examGroupId, classId);
+        if (exams.Count>0)
+        {
+            sections = exams
+                    .Select(e => e.AcademicSection ?? new AcademicSection { Id = 0, Name = "All" })
+                    .DistinctBy(s => s.Id)
+                    .ToList();
+        }
+
+        return Json(sections);
+    }
+}

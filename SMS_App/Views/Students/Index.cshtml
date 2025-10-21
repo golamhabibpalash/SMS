@@ -1,0 +1,490 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@using System.IO;
+@using SMS_App.Utilities.Pagination;
+@using Microsoft.AspNetCore.Hosting;
+@using System.Globalization;
+
+@inject UserManager<ApplicationUser> _userManager;
+@inject IWebHostEnvironment env;
+
+@model PaginatedList<SMS.Entities.AdditionalModels.StudentListVM>
+
+@{
+    ViewData["Title"] = "Students";
+    GlobalUI.PageTitle = ViewBag.Title;
+    string totalFound = ViewBag.totalFound == null ? "Nothing Found" : ViewBag.totalFound + " Found";
+    TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+    string name = string.Empty;
+    int pSize = Convert.ToInt32(ViewData["pageSize"]);
+    int tFound = Convert.ToInt32(ViewBag.totalFound);
+    int showingCount = 0;
+    if (tFound < pSize)
+    {
+        showingCount = tFound;
+    }
+    else
+    {
+        showingCount = Convert.ToInt32(ViewData["pageSize"]);
+    }
+}
+
+
+<div class="row">
+    <form asp-controller="Students" asp-action="Index" class="" id="FilterForm">
+        <section class="bg-navy-blue p-2 pt-4">
+            <input type="hidden" name="pageSize" value="" id="pageSizeHiddenId"/>
+            <div class="form-group row">
+                <label for="aAcademicSessionId" class="col-md-1 col-sm-2 col-form-label text-lg-right">Academic Session</label>
+                <div class="col-md-3 col-sm-4">
+                    <select class="form-control" name="AcademicSessionId" id="aAcademicSessionId" asp-items="@ViewBag.academicSessionId">
+                    </select>
+                </div>
+                <label for="aAcademicClassId" class="col-md-1 col-sm-2 col-form-label text-lg-right">Academic Class</label>
+                <div class="col-md-3 col-sm-4">
+                    <select class="form-control" name="AcademicClassId" id="aAcademicClassId" asp-items="@ViewBag.academicClassId">
+                        <option value="">Select Academic Class Option</option>
+                    </select>
+                </div>
+                <label for="aAcademicSectionId" class="col-md-1 col-sm-2 col-form-label text-lg-right">Academic Section</label>
+                <div class="col-md-3 col-sm-4">
+                    <select class="form-control" id="aAcademicSectionId" name="AcademicSectionId" asp-items="ViewBag.SectionList">
+                        <option value="">Select Academic Class first</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="inputPassword" class="col-md-1 col-sm-2 col-form-label text-md-right">keyword search</label>
+                <div class="col-md-3 col-sm-4">
+                    <input type="text" class="form-control" name="searchString" id="nameRoll" placeholder="Search By Name/Roll/Unique ID/ Phone" value="@ViewData["searchString"]">
+                </div>
+                <label for="aAcademicSectionId" class="col-md-1 col-sm-2 col-form-label text-lg-right">Student Category</label>
+                <div class="col-md-3 col-sm-4">
+                    <select class="form-control" id="aCategoryId" name="aCategory" asp-items="ViewBag.aCategory">
+                        <option value="">Select Category Option</option>
+                    </select>
+                </div>
+                <label for="aStatusType" class="col-md-1 col-sm-2 col-form-label text-lg-right">Status Type</label>
+                <div class="col-md-3 col-sm-4">
+                    <select class="form-control" name="aStatus" id="aStatusType" asp-items="ViewBag.aStatus">
+                        <option value="">Type of Student</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row justify-content-center">
+                <div class="col-md-3 col-sm-4 text-right">
+                    <button type="submit" class="btn btn-sm btn-block form-control btn-light col-md-6" id="findButton"><i class="fa fa-search"></i> Find</button>
+                    <a class="btn btn-sm  btn-warning form-control text-success col-md-5" asp-action="Index">Reset</a>
+                </div>
+                <div class="col-md-2 text-md-left col-form-label">
+                    <span>(Showing @showingCount of @ViewBag.totalFound)</span>
+                </div>
+            </div>
+        </section>
+        @if (Model.Count <= 0)
+        {
+            <h3 class="text-center mt-5">Student not found</h3>
+            <h3 class="text-center">You are searching by <span class="text-danger" id="searchParameter"></span></h3>
+        }
+        else
+        {
+            <table class="table table-hover table-bordered table-responsive-sm table-striped" id="">
+                <thead class="bg-blue text-light">
+                    <tr>
+                        <td width="2%">Photo</td>
+                        <th width="3%" class="text-nowrap">Unique ID</th>
+                        <th width="4%">
+                            <a class="text-light" asp-action="Index" asp-route-pageSize="@ViewData["pageSize"]" asp-route-sortOrder="@ViewData["rollSortParam"]" asp-route-currentFilter="@ViewData["CurrentFilter"]"> Class Roll <i class="fa fa-sort"></i></a>
+                        </th>
+                        <th width="10%"> Name</th>
+                        <th width="5%">নাম </th>
+                        <th width="5%"> <a class="text-light" asp-action="Index" asp-route-pageSize="@ViewData["pageSize"]" asp-route-sortOrder="@ViewData["academicClassSortParam"]" asp-route-currentFilter="@ViewData["CurrentFilter"]"> Class <i class="fa fa-sort"></i></a> </th>
+                        <th width="5%"> Section </th>
+                        <th width="5%">Student  PhoneNo</th>
+                        <th width="5%"> Guardian PhoneNo</th>
+                        <th width="5%">Session </th>
+                        <th width="5%">Gender </th>
+                        <th width="5%">Status</th>
+                        <th width="5%"><a asp-action="Create" class="p-2 btn-sm btn-info rounded-pill"><i class="fa fa-plus"></i> Add <i class="fa fa-user-alt"></i> </a></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="p-1">
+                                <a asp-action="Details" asp-route-id="@item.Id" asp-controller="Students">
+                                    @{
+                                        var avatar = !string.IsNullOrEmpty(item.Photo) ? "/Images/Student/" + item.Photo : "/Images/noProfileImage.png";
+                                    }
+                                    @{
+                                        string root = env.WebRootPath;
+                                        string folder = "Images/Student/";
+                                        if (!string.IsNullOrEmpty(item.Photo))
+                                        {
+                                            var path = System.IO.Path.Combine(root, folder, item.Photo);
+
+                                            if (!File.Exists(path))
+                                            {
+                                                avatar = $"/Images/noProfileImage.png";
+                                            }
+                                        }
+                                    }
+                                    <span>
+                                        <img src=@avatar alt="@item.StudentName" style="max-width:30px; max-height:30px; border-radius:50%;" />
+                                    </span>
+                                </a>
+                            </td>
+                            <td class="p-1">
+                                <span>
+                                    @item.UniqueId
+                                </span>
+                            </td>
+                            <td class="p-1">
+                                <span>
+                                    @Html.DisplayFor(modelItem => item.ClassRoll)
+                                </span>
+                            </td>
+
+                            <td class="p-1">
+                                @{
+                                    name = textInfo.ToTitleCase(item.StudentName);
+                                }
+                                <a asp-action="Details" asp-route-id="@item.Id" asp-controller="Students">
+                                    @if (item.Status)
+                                    {
+                                        <span>
+                                            @name
+                                            @if (item.IsResidential)
+                                            {
+                                                <span class="badge badge-info"><i class="fas fa-home"></i></span>
+                                            }
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-danger">
+                                            @name
+                                            @if (item.IsResidential)
+                                            {
+                                                <span class="badge badge-info"><i class="fas fa-home"></i></span>
+                                            }
+                                        </span>
+                                    }
+                                </a>
+                            </td>
+                            <td class="p-1">
+                                <span>
+                                    @item.NameBangla
+                                </span>
+                            </td>
+                            <td class="p-1">
+                                <span>
+                                    @Html.DisplayFor(modelItem => item.ClassName)
+                                </span>
+                            </td>
+                            @if (item.SectionName != null)
+                            {
+                                <td class="p-1">
+                                    <span>
+                                        @item.SectionName
+                                    </span>
+                                </td>
+                            }
+                            else
+                            {
+                                <td class="p-1">
+                                    <span>
+                                        N/A
+                                    </span>
+                                </td>
+                            }
+
+                            <td class="p-1">
+                                <span>
+                                    @item.PhoneNo.ToString().PadLeft(11, '0')
+                                </span>
+                            </td>
+                            <td class="p-1">
+                                <span>
+                                    @if (item.GuardianPhone != null)
+                                    {
+                                        @item.GuardianPhone.ToString().PadLeft(11, '0')
+                                    }
+                                </span>
+                            </td>
+
+                            <td class="p-1">
+                                <span>
+                                    @Html.DisplayFor(modelItem => item.SessionName)
+                                </span>
+                            </td>
+                            <td class="p-1">
+                                <span>
+                                    @item.Gender
+                                </span>
+                            </td>
+                            @if (item.Status)
+                            {
+                                <td class="p-1">
+                                    <span>
+                                        <input type="checkbox" checked disabled /> Active
+                                    </span>
+                                </td>
+                            }
+                            else
+                            {
+                                <td class="p-1">
+                                    <span>
+                                        <input type="checkbox" disabled /> InActive
+                                    </span>
+                                </td>
+
+                            }
+                            <td class="p-1">
+                                <span>
+                                    <partial name="_Edit_Details_Delete" model="@item.Id" />
+
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="p-0">
+                @{
+                    var prevDisabled = !Model.HasPreviousPage ? "disabled btn-default" : "btn-success";
+                    var nextDisabled = !Model.HasNextPage ? "disabled btn-default" : "btn-success";
+                }
+                <div class="row">
+                    <div class="col-md-7 col-sm-12">
+                        <a asp-action="Index"
+                           asp-route-pageNumber="@(Model.PageIndex - 1)"
+                           asp-route-academicClassId="@(ViewData["selectedAcademicClassId"])"
+                           asp-route-academicSectionId="@(ViewData["selectedAcademicSectionId"])"
+                           asp-route-academicSessionId="@(ViewData["selectedAcademicSessionId"])"
+                           asp-route-aCategory="@(ViewData["categoryId"])"
+                           asp-route-aStatus="@(ViewData["statusId"])"
+                           asp-route-pageSize="@ViewData["pageRowCount"]"
+                           asp-route-searchString="@ViewData["searchString"]"
+                           class="btn @prevDisabled">Previous</a>
+
+                        @for (int i = Model.PageIndex - 8; i < Model.PageIndex + 8; i++)
+                        {
+                            var btnOuterSuccess = Model.PageIndex == i ? "btn-secondary" : "btn-outline-secondary";
+                            if (i > 0 && i<Model.TotalPages)
+                            {
+                                <a asp-action="Index"
+                                   asp-route-pageNumber="@i"
+                                   asp-route-academicClassId="@(ViewData["selectedAcademicClassId"])"
+                                   asp-route-academicSectionId="@(ViewData["selectedAcademicSectionId"])"
+                                   asp-route-academicSessionId="@(ViewData["selectedAcademicSessionId"])"
+                                   asp-route-aCategory="@(ViewData["categoryId"])"
+                                   asp-route-aStatus="@(ViewData["statusId"])"
+                                   asp-route-pageSize="@ViewData["pageRowCount"]"
+                                    asp-route-searchString="@ViewData["searchString"]"
+                                   class="btn @btnOuterSuccess">@i</a>
+
+                            }
+
+
+                        }
+
+                        <a asp-action="Index"
+                           asp-route-pageNumber="@(Model.PageIndex + 1)"
+                           asp-route-academicClassId="@(ViewData["selectedAcademicClassId"])"
+                           asp-route-academicSectionId="@(ViewData["selectedAcademicSectionId"])"
+                           asp-route-academicSessionId="@(ViewData["selectedAcademicSessionId"])"
+                           asp-route-aCategory="@(ViewData["categoryId"])"
+                           asp-route-aStatus="@(ViewData["statusId"])"
+                           asp-route-pageSize="@ViewData["pageRowCount"]"
+                           asp-route-searchString="@ViewData["searchString"]"
+                           class="btn @nextDisabled">
+                            Next
+                        </a>
+                        <span>(Showing @showingCount of @ViewBag.totalFound in @Model.TotalPages pages)</span>
+                    </div>
+                    <div class="col-md-5 col-sm-12 text-md-right">
+                        <div class="row">
+                            <label class="col-md-4 text-md-right col-form-label">Rows per page</label>
+                            <div class="col-md-3">
+                                <select class="form-control" id="pageSizeDDId" name="rowsCount" asp-items="ViewBag.rowsCount">
+                                </select>
+                            </div>
+                            <a asp-action="ExportToCsv"
+                               asp-route-academicClassId="@(ViewData["selectedAcademicClassId"])"
+                               asp-route-academicSectionId="@(ViewData["selectedAcademicSectionId"])"
+                               asp-route-academicSessionId="@(ViewData["selectedAcademicSessionId"])"
+                               asp-route-aCategory="@(ViewData["categoryId"])"
+                               asp-route-aStatus="@(ViewData["statusId"])"
+                               asp-route-searchString="@ViewData["searchString"]"
+                               class="btn btn-warning col-md-4 text-dark">
+                                <i class="fa fa-file-excel"></i> Export as CSV
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+    </form>
+</div>
+<!-- Full-screen overlay (hidden by default) -->
+<div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 9998;"></div>
+
+<!-- Loading spinner (hidden by default) -->
+<div id="loadingSpinner" style="display: none; position: fixed; top: 50%; left: 50%; z-index: 1000;">
+    <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
+
+    <script>
+                let saved = '@TempData["saved"]';
+                let deleted = '@TempData["deleted"]';
+                let edited = '@TempData["edited"]';
+                let failed = '@TempData["failed"]'
+                if (saved != "") {
+                    alertify.success("Saved Successfully");
+                    }
+                if (deleted != "") {
+                    alertify.error("Deleted Successfully");
+                    }
+                if (edited != "") {
+                    alertify.message('Updated Successfully');
+                    }
+                if (failed != "") {
+                    alertify.error(failed);
+    }
+
+
+        $(document).ready(function () {
+            $("#myTable_info").detach().insertAfter('#myTable_length');
+
+            $('#aAcademicClassId').change(function () {
+                let id = $('#aAcademicClassId option:selected').val();
+                let sessionId = $('#aAcademicSessionId option:selected').val();
+
+                $.ajax({
+                    url: "/api/academicsections/getbyclasswithsessionId?classId=" + id + "&sessionId=" + sessionId,
+                    dataType: "JSON",
+                    type: "POST",
+                    cache: false,
+                    success: function (data) {
+                        $('#aAcademicSectionId').empty();
+
+                        if (data != null || data != '') {
+                            var o = '<option disabled selected>Select Section Name</option>';
+                            var o2 = '<option value="0">No Section</option>';
+                            $('#aAcademicSectionId').append(o);
+                            $('#aAcademicSectionId').append(o2);
+                            $.each(data, function (i, obj) {
+                                console.log(obj.name);
+                                var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
+                                $('#aAcademicSectionId').append(op);
+                            });
+                        }
+                        else {
+                            var o = '<option disabled selected>Section Not Found</option>';
+                            $('#aAcademicSectionId').append(o);
+                        }
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                });
+            });
+            $('#aAcademicSessionId').change(function () {
+                $('#aAcademicSectionId').empty();
+                $.ajax({
+                    url: "/academicClasses/getAll",
+                    dataType: "JSON",
+                    type: "POST",
+                    cache: false,
+                    success: function (data) {
+                        $('#aAcademicClassId').empty();
+                        var o = '<option disabled selected>Select Class Name</option>';
+                        $('#aAcademicClassId').append(o);
+                        $.each(data, function (i, obj) {
+                            console.log(obj.name);
+                            var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
+                            $('#aAcademicClassId').append(op);
+                        });
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                });
+            });
+
+            //pageSize Dropdown chnage code
+            $('#pageSizeDDId').change(function () {
+                let pageSizeDDId = $('#pageSizeDDId').val();
+                $("#pageSizeHiddenId").val(pageSizeDDId);
+                $('#FilterForm').submit();
+            })
+        });
+        //Searching filter
+        //searchParameter
+        let classVal = '', catVal = '', secVal = '', statusVal = '',searchVal = '';
+
+        const classData = $('#aAcademicClassId option:selected').val();
+        const catData = $('#aCategoryId option:selected').val();
+        const secData = $('#aAcademicSectionId option:selected').val();
+        const statusData = $('#aStatusType option:selected').val();
+        const searchKeyData = $('#nameRoll').val();
+        if (classData !=="") {
+            classVal = $('#aAcademicClassId option:selected').text();
+        }
+        if (catData !== '') {
+            catVal = $('#aCategoryId option:selected').text();
+        }
+        if (secData !== '') {
+            secVal = $('#aAcademicSectionId option:selected').text();
+        }
+        if (statusData!=="") {
+            statusVal = $('#aStatusType option:selected').text();
+        }
+        if (searchKeyData !=="") {
+            searchVal = $('#nameRoll').val();
+        }
+
+
+        $('#searchParameter').html(classVal + ' ' + secVal + ' ' + catVal + ' ' + statusVal + ' '+searchVal);
+        
+        if(classVal=='' && secVal=='' && catVal=='' && statusVal=='' && searchVal=='')
+        {
+                $('#searchParameter').html('nothing');
+        }
+
+        //Loading code here
+        // Show loading spinner when form is submitted
+        $('#findButton').click(function () {
+            document.getElementById('loadingOverlay').style.display = 'block';
+            document.getElementById('loadingSpinner').style.display = 'block';
+
+        });
+        // Show loading spinner when pagination links are clicked
+        document.querySelectorAll('.pagination a').forEach(function (element) {
+            element.addEventListener('click', function () {
+                document.getElementById('loadingOverlay').style.display = 'block';
+                document.getElementById('loadingSpinner').style.display = 'block';
+            });
+        });
+
+        // Hide loading spinner after page load
+        window.onload = function () {
+            document.getElementById('loadingOverlay').style.display = 'none';
+            document.getElementById('loadingSpinner').style.display = 'none';
+        };
+
+
+    </script>
+
+}

@@ -11,5 +11,5 @@ public interface IAcademicExamManager:IManager<AcademicExam>
     Task<List<AcademicExam>> GetByClassIdExamGroupIdAsync(int examGroupId, int academicClassId);
     Task<List<ExamSessionDto>> GetExaminationListAsync();
     Task<LiveResultVM> GetLiveResultByGroupIdClassIdSectionId(int academicGroupId, int academiClassId, int? academicSectionId);
-    Task<AcademicExam> GetAcademicExam(int examGroupId, int classId, int subjectId, string examType);
+    Task<AcademicExam> GetAcademicExam(int examGroupId, int classId, int subjectId, string examType, int? sectionId);
 }

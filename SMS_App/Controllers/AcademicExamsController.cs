@@ -203,7 +203,7 @@ public class AcademicExamsController : Controller
             {
                 foreach (AcademicExam exam in AcademicExam)
                 {
-                    var isExist = await _examManager.GetAcademicExam(exam.AcademicExamGroupId, exam.AcademicClassId, exam.AcademicSubjectId, exam.ExamCategory);
+                    var isExist = await _examManager.GetAcademicExam(exam.AcademicExamGroupId, exam.AcademicClassId, exam.AcademicSubjectId, exam.ExamCategory, exam.AcademicSectionId);
 
                     if (isExist != null)
                     {
@@ -317,7 +317,7 @@ public class AcademicExamsController : Controller
             return RedirectToAction("index");
         }
         //Checking, is already exist!
-        AcademicExam existingExam = await _examManager.GetAcademicExam(academicExam.AcademicExamGroupId, academicExam.AcademicClassId, academicExam.AcademicSubjectId, academicExam.ExamCategory);
+        AcademicExam existingExam = await _examManager.GetAcademicExam(academicExam.AcademicExamGroupId, academicExam.AcademicClassId, academicExam.AcademicSubjectId, academicExam.ExamCategory,academicExam.AcademicSectionId);
 
         if (existingExam != null)
         {

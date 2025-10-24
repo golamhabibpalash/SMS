@@ -278,8 +278,8 @@ async function EditExamClick(id) {
     $('#TotalMarks').val(marks);
 
     //Exam Category
-    let marks = $('#editBtn_' + id).data('category');
-    $('#ExamCategory').val(marks);
+    let cat = $('#editBtn_' + id).data('category');
+    $('#ExamCategory').val(cat);
 
     //Teacher
     let teacherId = $('#editBtn_' + id).data('employeeid');

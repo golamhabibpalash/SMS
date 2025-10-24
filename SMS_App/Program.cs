@@ -25,7 +25,6 @@ byte[] key = Encoding.UTF8.GetBytes("1234567890123456");
 byte[] iv = Encoding.UTF8.GetBytes("1234567890123456");
 var connectionString = AesEncryptionHelper.Decrypt(builder.Configuration.GetConnectionString("DefaultConnection"), key, iv);
 
-
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(connectionString,

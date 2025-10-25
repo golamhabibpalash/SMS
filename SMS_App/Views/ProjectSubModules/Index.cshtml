@@ -70,7 +70,7 @@
                     {
                         <tr>
                             <td>@(++sl)</td>
-                            <td>@item.SubModuleName</td>
+                            <td class="text-nowrap">@item.SubModuleName</td>
                             <td>@item.ProjectModule.ModuleName</td>
                             <td>@item.Remarks</td>
                             <td>
@@ -96,14 +96,17 @@
                                 <span>@createdBy</span>
                             </td>
                             <td class="d-flex">
-                                <button class="btn btn-warning btn-sm updateBtn" data-subModuleName="@item.SubModuleName" data-moduleId="@item.ProjectModuleId" data-subModuleId="@item.Id" data-remark="@item.Remarks" data-status="@item.Status">Edit</button>
+                                <button class=" btn-warning btn-sm updateBtn" data-subModuleName="@item.SubModuleName" data-moduleId="@item.ProjectModuleId" data-subModuleId="@item.Id" data-remark="@item.Remarks" data-status="@item.Status" data-toggle="tooltip" data-placement="top" title="Edit/Update">
+                                <i class="fa fa-edit"></i>
+                                </button>
                                 <form asp-action="delete" method="post" id="delete">
                                     <input type="hidden" asp-for="ProjectSubModule.Id" value="@item.Id" />
                                     <input type="hidden" asp-for="ProjectSubModule.ProjectModuleId" value="@item.ProjectModuleId" />
                                     <input type="hidden" asp-for="ProjectSubModule.ProjectModuleId" value="@item.ProjectModule.ModuleName" />
                                     <input type="hidden" asp-for="ProjectSubModule.ProjectModuleId" value="@item.ProjectModule.Remarks" />
                                     <input type="hidden" asp-for="ProjectSubModule.ProjectModuleId" value="@item.ProjectModule.Status" />
-                                    <input type="submit"  value="Delete" class="btn btn-sm btn-danger" />
+                                    @* <input type="submit"  value="Delete" class="btn btn-sm btn-danger" /> *@
+                                    <button class=" btn-sm btn-danger" ><i class="fa fa-trash"></i> </button>
                                 </form>
                             </td>
                         </tr>

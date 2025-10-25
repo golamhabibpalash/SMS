@@ -82,7 +82,12 @@ public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
         examGroup.AcademicExams = examGroup.AcademicExams.Where(s => s.AcademicClassId == academiClassId).ToList();
         if (academicSectionId.HasValue)
         {
-            examGroup.AcademicExams = examGroup.AcademicExams.Where(s => s.AcademicSectionId == academicSectionId.Value).ToList();
+            examGroup.AcademicExams = examGroup
+                .AcademicExams
+                .Where(s => s.AcademicSectionId == academicSectionId.Value)
+                .OrderBy(s => s.AcademicExamDetails.Min(e => e.Student.ClassRoll))
+                .ToList();
+
         }
         _cachedGradingTable = (List<GradingTable>)await _gradingTableRepository.GetAllAsync();
         _cachedExamGroup = examGroup;
@@ -93,7 +98,7 @@ public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
         }
         var academicClass = await _academicClassRepository.GetByIdAsync(academiClassId);
 
-        var existingStudents = existingExams.SelectMany(s => s.AcademicExamDetails).Select(s => s.Student).DistinctBy(s => s.Id).ToList();
+        var existingStudents = existingExams.SelectMany(s => s.AcademicExamDetails.OrderBy(e => e.StudentId)).Select(s => s.Student).DistinctBy(s => s.Id).OrderBy(s => s.ClassRoll).ToList();
 
         if (existingStudents!=null)
         {
@@ -122,8 +127,11 @@ public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
         if (existingExams != null || existingExams.Count > 0)
         {
             liveResultVM.ExamTitle = $"{examGroup.ExamGroupName} ({academicClass.Name})";
-            liveResultVM.TotalColumn = 7+liveResultVM.ResultDetails.Count;
-            liveResultVM.Subjects = GetTableHeaderSubjects(existingExams);
+
+            var totalSubjects = GetTableHeaderSubjects(existingExams);
+            liveResultVM.Subjects = totalSubjects;
+            int totalExamTypes = totalSubjects.Sum(s => s.ExamTypes.Count);
+            liveResultVM.TotalColumn = 7+(totalSubjects.Count*2) + totalExamTypes;
         }
 
         //Calculation Ranking
@@ -385,9 +393,9 @@ public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
         };
     }
 
-    public async Task<AcademicExam> GetAcademicExam(int examGroupId, int classId, int subjectId, string examCategory)
+    public async Task<AcademicExam> GetAcademicExam(int examGroupId, int classId, int subjectId, string examCategory, int? sectionId)
     {
-        var existingExam =await _repository.Table.FirstOrDefaultAsync(s => s.AcademicExamGroupId == examGroupId && s.AcademicClassId == classId && s.AcademicSubjectId == subjectId && s.ExamCategory == examCategory);
+        var existingExam =await _repository.Table.FirstOrDefaultAsync(s => s.AcademicExamGroupId == examGroupId && s.AcademicClassId == classId && s.AcademicSubjectId == subjectId && s.ExamCategory == examCategory && s.AcademicSectionId == (int)sectionId);
         return existingExam;
     }
 }

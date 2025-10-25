@@ -271,7 +271,7 @@
 
             if (Number(obtainMark) > Number(maxAttributeValue)) {
                 inputElement.classList.add("error");
-                alert("Mark should not exceed from Total Mark.");
+                alert(`Mark should not exceed from Total Mark(${Number (maxAttributeValue)}).`);
             } else {
                 inputElement.classList.remove("error");
 

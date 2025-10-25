@@ -8,15 +8,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SMS.DB;
+using SMS.Entities;
 using SMS_App.Configurations;
 using SMS_App.Utilities.Automation.Hangfire;
 using SMS_App.ViewModels.ModuleSubModuleVM;
-using SMS.DB;
-using SMS.Entities;
 using System;
 using System.IO;
 using System.Text;
-using System.Xml.Linq;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,7 +23,6 @@ var builder = WebApplication.CreateBuilder(args);
 byte[] key = Encoding.UTF8.GetBytes("1234567890123456");
 byte[] iv = Encoding.UTF8.GetBytes("1234567890123456");
 var connectionString = AesEncryptionHelper.Decrypt(builder.Configuration.GetConnectionString("DefaultConnection"), key, iv);
-
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {

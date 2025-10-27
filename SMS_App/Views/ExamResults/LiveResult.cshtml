@@ -1,6 +1,10 @@
 ﻿@using SMS.Entities.AdditionalModels
 @model LiveResultVM
 
+@{
+    bool isPassed = true;
+}
+
 <style>
     .student-name-col {
         width: 1%; /* shrink as much as possible */
@@ -77,11 +81,14 @@
                             <p><small>(Highest @sub.HighestMark from @sub.TotalMarks)</small></p>
                         </th>
                     }
-                    <th rowspan="2" class="vertical">Final GPA</th>
+                    <th rowspan="2" class="vertical">cGPA</th>
                     <th rowspan="2" class="vertical">Final Grade</th>
                     <th rowspan="2" class="vertical">Total Marks</th>
                     <th rowspan="2" class="vertical">Attendance(%)</th>
+                    <th rowspan="2" class="">Status</th>
+                    <th rowspan="2" class="vertical">Fail/s</th>
                     <th rowspan="2" class="vertical">Rank</th>
+                    <th rowspan="2" class="vertical">Previous Rank</th>
                 </tr>
                 <tr>
                     @foreach (var item in Model.Subjects)
@@ -100,24 +107,28 @@
                 {
                     <tr>
                         <td>@studentResult.ClassRoll</td>
-                        <td>@studentResult.StudentName</td>
+                        <td>@studentResult.StudentName </td>
                         @foreach (var item in studentResult.LiveResultSubjectWises)
                         {
                             if (item.SubjectTypes.Count > 0)
                             {
                                 foreach (var types in item.SubjectTypes)
                                 {
-                                    <td>@types.GetMarks</td>
+                                    isPassed = types.GetMarks >= types.PassMark?true:false;
+                                    <td class="@(isPassed ? "" : "text-danger")">@types.GetMarks</td>
                                 }
                             }
                             <td>@item.ObtainMarks</td>
                             <td>@item.GPA</td>
                         }
                         <td>@studentResult.FinalGPA.ToString("F1")</td>
-                        <td>@studentResult.FinalGrade</td>
+                        <td class="@(studentResult.FinalGrade == "F" ? "text-danger" : "")" >@studentResult.FinalGrade</td>
                         <td>@studentResult.TotalMarks</td>
                         <td>@studentResult.Attendance</td>
+                        <td>@studentResult.Status</td>
+                        <td>@studentResult.Fails</td>
                         <td>@studentResult.Rank</td>
+                        <td>@studentResult.PreviousRank</td>
                     </tr>
                 }
             </tbody>

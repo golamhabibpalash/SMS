@@ -26,6 +26,9 @@ public class LiveResultDetailsVM
     public double TotalMarks { get; set; }
     public double Attendance { get; set; }
     public int Rank { get; set; }
+    public int PreviousRank { get; set; }
+    public string Status { get; set; }
+    public int Fails { get; set; }
     public List<LiveResultSubjectWise> LiveResultSubjectWises { get; set; } = new List<LiveResultSubjectWise>();
 
 }
@@ -44,6 +47,7 @@ public class LiveResultSubjectType
     public string SubjectTypeName { get; set; }
     public double TotalMarks { get; set; }
     public double GetMarks { get; set; }
+    public double PassMark { get; set; } = 0.00;
 }
 
 public class TableHeaderSubjects

@@ -37,7 +37,7 @@
                         <tr>
                             <td>@(++sl)</td>
                             <td>@item.ExamGroupName</td>
-                            <td>@item.academicExamType.ExamTypeName</td>
+                            <td>@item.academicExamType?.ExamTypeName</td>
                             <td>@item.AcademicSession.Name</td>
                             <td>@item.AcademicExams.Count</td>
                             <td>@item.NumberOfProcessResults</td>

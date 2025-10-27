@@ -37,6 +37,7 @@ namespace SMS.BLL.Managers
                     .ThenInclude(e => e.AcademicClass)
                 .Include(g => g.AcademicExams)
                     .ThenInclude(e => e.AcademicSection)
+                .Include(g=> g.AcademicSession)
                 .AsNoTracking()
                 .ToListAsync();
             return result;

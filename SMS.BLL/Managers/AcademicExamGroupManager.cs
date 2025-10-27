@@ -25,7 +25,7 @@ namespace SMS.BLL.Managers
                         .ThenInclude(c => c.AcademicSections)
                 .Include(g => g.AcademicSession)
                 .Include(g => g.academicExamType)
-                .FirstOrDefaultAsync(g => g.Id == 47);
+                .FirstOrDefaultAsync(g => g.Id == id);
 
 
             return examGroup;

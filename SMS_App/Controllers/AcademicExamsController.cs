@@ -193,15 +193,15 @@ public class AcademicExamsController : Controller
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "SuperAdmin, Admin")]
     [Authorize(Policy = "CreateAcademicExamPolicy")]
-    public async Task<ActionResult> Create(List<AcademicExam> AcademicExam)
+    public async Task<ActionResult> Create(List<AcademicExam> AcademicExams)
     {
         int success = 0;
         int failed = 0;
         try
         {
-            if (AcademicExam.Count > 0)
+            if (AcademicExams.Count > 0)
             {
-                foreach (AcademicExam exam in AcademicExam)
+                foreach (AcademicExam exam in AcademicExams)
                 {
                     var isExist = await _examManager.GetAcademicExam(exam.AcademicExamGroupId, exam.AcademicClassId, exam.AcademicSubjectId, exam.ExamCategory, exam.AcademicSectionId);
 

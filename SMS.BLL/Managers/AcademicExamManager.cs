@@ -432,7 +432,15 @@ public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
 
     public async Task<AcademicExam> GetAcademicExam(int examGroupId, int classId, int subjectId, string examCategory, int? sectionId)
     {
-        var existingExam =await _repository.Table.FirstOrDefaultAsync(s => s.AcademicExamGroupId == examGroupId && s.AcademicClassId == classId && s.AcademicSubjectId == subjectId && s.ExamCategory == examCategory && s.AcademicSectionId == (int)sectionId);
+        var existingExam = await _repository.Table
+    .FirstOrDefaultAsync(s =>
+        s.AcademicExamGroupId == examGroupId &&
+        s.AcademicClassId == classId &&
+        s.AcademicSubjectId == subjectId &&
+        s.ExamCategory == examCategory &&
+        s.AcademicSectionId == sectionId
+    );
+
         return existingExam;
     }
 }

@@ -207,13 +207,13 @@ function ExamAddBtnClick() {
 
         let rowCount = indexCount + 1; 
 
-        let serial_td = '<td><input type="hidden" name="AcademicExam[' + indexCount + '].AcademicExamGroupId" value="' + groupId + '" />' + rowCount + '</td>'
-        let subject_td = '<td>  <input type="hidden" name="AcademicExam[' + indexCount + '].AcademicSubjectId" value="' + subjectid + '" />' + subjectIdText + '</td>';
-        let examCategory_td = '<td><input type="hidden" name="AcademicExam[' + indexCount + '].ExamCategory" value="' + examCategory.value + '" /> ' + examCategory.value + '</td>';
-        let class_td = '<td> <input type="hidden" name="AcademicExam[' + indexCount + '].AcademicClassId" value="' + classId + '" />' + classIdText + '</td>';
-        let section_td = '<td> <input type="hidden" name="AcademicExam[' + indexCount + '].AcademicSectionId" value="' + sectionId + '" />' + sectionIdText + '</td>';
-        let teacher_td = '<td> <input type="hidden" name="AcademicExam[' + indexCount + '].EmployeeId" value="' + teacherId + '" />' + teacherIdText + '</td>';
-        let marks_td = '<td class="text-end"> <input type="hidden" name="AcademicExam[' + indexCount + '].TotalMarks" value="' + marks + '" />' + marks + '</td>';
+        let serial_td = '<td><input type="hidden" name="AcademicExams[' + indexCount + '].AcademicExamGroupId" value="' + groupId + '" />' + rowCount + '</td>'
+        let subject_td = '<td>  <input type="hidden" name="AcademicExams[' + indexCount + '].AcademicSubjectId" value="' + subjectid + '" />' + subjectIdText + '</td>';
+        let examCategory_td = '<td><input type="hidden" name="AcademicExams[' + indexCount + '].ExamCategory" value="' + examCategory.value + '" /> ' + examCategory.value + '</td>';
+        let class_td = '<td> <input type="hidden" name="AcademicExams[' + indexCount + '].AcademicClassId" value="' + classId + '" />' + classIdText + '</td>';
+        let section_td = '<td> <input type="hidden" name="AcademicExams[' + indexCount + '].AcademicSectionId" value="' + sectionId + '" />' + sectionIdText + '</td>';
+        let teacher_td = '<td> <input type="hidden" name="AcademicExams[' + indexCount + '].EmployeeId" value="' + teacherId + '" />' + teacherIdText + '</td>';
+        let marks_td = '<td class="text-end"> <input type="hidden" name="AcademicExams[' + indexCount + '].TotalMarks" value="' + marks + '" />' + marks + '</td>';
         //let status_td = '<td> <input type="hidden" name="AcademicExam[' + indexCount + '].Status" value="' + status + '" />' + status + '</td>';
         let action_td = '<td><button onclick="removeRow(this)" class="removeBtn btn btn-sm btn-warning" value="Remove">Remove</button></td>';
         let tr = '<tr>' + serial_td + subject_td + examCategory_td + class_td + section_td + teacher_td + marks_td /*+ status_td*/ + action_td+ '</tr>';

@@ -543,6 +543,10 @@ public class ExamResultsController : Controller
                 AcademicExamGroupList = new SelectList(examGroups, "Id", "ExamGroupName").ToList()
             });
         }
+        if(model.AcademicSectionId==0)
+        {
+            model.AcademicSectionId = null;
+        }
 
         var expectedGroup = examGroups?
             .Where(g => g.Id == model.ExamGroupId)

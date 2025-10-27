@@ -9,7 +9,7 @@ public class LiveResultVM
     public string ExamTitle { get; set; }
     public int ExamGroupId { get; set; }
     public int AcademicClassId { get; set; }
-    public int AcademicSectionId { get; set; }
+    public int? AcademicSectionId { get; set; }
     public List<SelectListItem> AcademicExamGroupList { get; set; } = new List<SelectListItem>();
     public List<SelectListItem> AcademicClassList { get; set; } = new List<SelectListItem>();
     public List<SelectListItem> AcademicSectionList { get; set; } = new List<SelectListItem>();

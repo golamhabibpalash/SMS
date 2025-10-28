@@ -132,7 +132,7 @@
 
 </div>
 
-<!-- Modal -->
+<!--Create Update Modal -->
 <div class="modal fade" id="createUpdateModal" tabindex="-1" role="dialog" aria-labelledby="createUpdateModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -203,6 +203,19 @@
                         <label class="col-md-2 col-form-label text-md-end" asp-for="Status"></label>
                         <div class="col-md-4">
                             <input type="checkbox" class="btn-check" asp-for="Status" autocomplete="off">
+                            <label class="btn btn-outline-primary" asp-for="Status">Status</label>
+                        </div>
+                    </div>
+                    @* Attendnace Section *@
+                    <div class="form-group row">
+                        <label class="col-md-2 col-form-label text-md-end" asp-for="Status">Attendance</label>
+                        <div class="col-md-4">
+                            <input type="checkbox" class="btn-check" asp-for="Status" autocomplete="off">
+                            <label class="btn btn-outline-primary" asp-for="Status">Attendace</label>
+                        </div>
+                        <label class="col-md-2 col-form-label text-md-end" asp-for="IsAttendance"></label>
+                        <div class="col-md-4">
+                            <input type="checkbox" class="btn-check" asp-for="IsAttendance" autocomplete="off">
                             <label class="btn btn-outline-primary" asp-for="Status">Status</label>
                         </div>
                     </div>

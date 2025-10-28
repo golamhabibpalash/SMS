@@ -74,6 +74,7 @@ public static class EmailService
         catch (Exception ex)
         {
             // TODO: Optionally log the error: ex.Message
+            ex.Message.ToString();
             return false;
         }
     }

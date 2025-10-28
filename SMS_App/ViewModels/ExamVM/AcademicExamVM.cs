@@ -29,8 +29,9 @@ namespace SMS_App.ViewModels.ExamVM
         public double TotalMarks { get; set; }
 
         public bool IsActive { get; set; }
-        [Display(Name ="Month")]
+        [Display(Name = "Month")]
         public int MonthId { get; set; }
+        public bool IsAttendance { get; set; }
 
         public List<SelectListItem> AcademicSessionList { get; set; } = new List<SelectListItem>();
         public List<SelectListItem> AcademicClassList { get; set; } = new List<SelectListItem>();

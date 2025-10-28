@@ -28,7 +28,6 @@ public class AcademicExam : CommonProps
     [Display(Name = "Total Marks")]
     public int TotalMarks { get; set; }
     public bool Status { get; set; }
-    public bool IsAttendance { get; set; }
     public string ExamCategory { get; set; } //Written,MCQ,Practical
     public virtual List<AcademicExamDetail> AcademicExamDetails { get; set; }
 }

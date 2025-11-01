@@ -781,7 +781,7 @@ public class HangfireController : ControllerBase
                     if (toEmailString != null)
                     {
                         string[] toEmail = toEmailString.Split(',');
-                        string emailSubject = "Todays attended report summary";
+                        // string emailSubject = "Todays attended report summary";
                         string mailBody = msgText;
                         int i = 0;
 

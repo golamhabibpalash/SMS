@@ -36,9 +36,10 @@
                 <input class="btn btn-info" type="submit" id="submitButton" style="display:none" onclick="onSubmitAction()" />
             </div>
         </div>
-        <div class="col-md-4 p-2 rounded" style="background-color:antiquewhite;position:relative" id="studentFeeAllocationCreatePortion">
+        <div class="col-md-4 p-2 " style="background-color:antiquewhite;position:relative" id="studentFeeAllocationCreatePortion">
             <fieldset class="border-primary p-2 border" id="createFieldSetId" style="position:sticky;top:50px;right:5px">
-                <legend class="w-auto text-primary pb-0" id="create_update_title_id">Create New Group Allocation</legend>
+                <legend  class="float-none w-auto text-primary px-2"
+                        style="font-size: 1.1rem; position: relative;" id="create_update_title_id">Create New Group Allocation</legend>
                 <input type="hidden" asp-for="SFAllocation.Id" />
                 <div class="form-group row">
                     <label class="col-md-4 col-form-label">Academic Session</label>

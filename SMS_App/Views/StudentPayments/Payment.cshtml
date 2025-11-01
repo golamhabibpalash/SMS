@@ -131,7 +131,7 @@
 }
 <div class="row">
     <div class="col-md-12 text-center">
-        <div class="panel p-2 clearfix rounded rounded-2 bg-navy-blue">
+        <div class="panel p-2 clearfix bg-navy-blue">
             <form id="frmSearchByRollId" asp-action="Payment" asp-controller="StudentPayments" method="get" class="">
                 <div class="row">
                     <div class="col-md-4 offset-md-3">
@@ -145,12 +145,12 @@
                                 <input id="rollInput" placeholder="Input Student Roll Number" class="form-control form-control-sm" name="stRoll" />
                             }
                             <div class="input-group-append">
-                                <button class="btn btn-sm btn-info rounded" type="submit"><i class="fas fa-search"></i> Go</button>
+                                <button class="btn btn-info" type="submit"><i class="fas fa-search"></i> Go</button>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4 text-md-left">
-                        <button type="button" class="btn btn-light btn-sm" data-toggle="modal" data-target="#exampleModal">
+                        <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal">
                             Select
                         </button>
                     </div>
@@ -168,7 +168,7 @@
         </div>
         <div class="col-md-6 mh-100">
 
-            <div class="panel bg-navy-blue rounded rounded-2 " id="inputPanel" style="min-height:270px;">
+            <div class="panel bg-navy-blue " id="inputPanel" style="min-height:300px;">
                 <div class="form-horizontal pt-3">
                     <form asp-action="payment" asp-controller="StudentPayments" method="post" id="studentPaymentFormId">
                         <input type="hidden" id="academicSessionId" value="@Model.StudentPayment.Student.AcademicSessionId" />
@@ -326,7 +326,7 @@
                             <button type="submit" name="reportType" value="word" class="btn-sm btn btn-primary" data-toggle="tooltip" title="Export doc" data-placement="top"><i class="fas fa-file-word"></i></button>
                         </div>
                     </form>
-                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>

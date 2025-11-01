@@ -167,6 +167,7 @@ namespace SMS_App.Configurations
             options.AddPolicy("UpdateRankingExamResultsPolicy", policy => policy.RequireClaim("Update Ranking"));
             options.AddPolicy("DeleteExamResultsPolicy", policy => policy.RequireClaim("Delete Exam"));
             options.AddPolicy("DeleteResultExamResultsPolicy", policy => policy.RequireClaim("Delete Results"));
+            options.AddPolicy("LiveResultExamResultsPolicy", policy => policy.RequireClaim("Live Results"));
 
             //Expense Types
             options.AddPolicy("IndexExpensTypesPolicy", policy => policy.RequireClaim("View Expense Types"));

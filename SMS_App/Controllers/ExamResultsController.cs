@@ -1,20 +1,20 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SchoolManagementSystem;
-using SMS_App.Utilities.MACIPServices;
-using SMS_App.ViewModels.ExamResult;
-using SMS_App.ViewModels.ExamVM;
 using SMS.BLL.Contracts;
 using SMS.Entities;
 using SMS.Entities.AdditionalModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using SMS_App.Utilities.MACIPServices;
+using SMS_App.ViewModels.ExamResult;
+using SMS_App.ViewModels.ExamVM;
 
 namespace SMS_App.Controllers;
 
@@ -262,7 +262,7 @@ public class ExamResultsController : Controller
     {
         GlobalUI.PageTitle = GlobalUI.SiteTitle = "Class-Wise Result";
         var currentSession = await _sessionManager.GetCurrentAcademicSession();
-        var allExamGroups =await _academicExamGroupManager.GetAllAsync();
+        var allExamGroups = await _academicExamGroupManager.GetAllAsync();
         allExamGroups = allExamGroups.Where(s => s.AcademicSessionId == currentSession.Id).ToList();
         ViewData["ExamGroupList"] = new SelectList(allExamGroups, "Id", "ExamGroupName");
         ViewData["AcademicClassList"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name");
@@ -530,7 +530,7 @@ public class ExamResultsController : Controller
         }
         return RedirectToAction("details", "AcademicExamGroup", new { id = groupId });
     }
-
+    [Authorize(Policy = "LiveResultExamResultsPolicy")]
     public async Task<IActionResult> LiveResult(LiveResultVM model)
     {
         var examGroups = await _academicExamGroupManager.GetAllAsync();
@@ -543,7 +543,7 @@ public class ExamResultsController : Controller
                 AcademicExamGroupList = new SelectList(examGroups, "Id", "ExamGroupName").ToList()
             });
         }
-        if(model.AcademicSectionId==0)
+        if (model.AcademicSectionId == 0)
         {
             model.AcademicSectionId = null;
         }
@@ -587,7 +587,7 @@ public class ExamResultsController : Controller
         liveResult.AcademicClassList = new SelectList(
             classList, "Id", "Name", model.AcademicClassId
         ).ToList();
-        
+
         liveResult.AcademicSectionList = new SelectList(
             sectionList, "Id", "Name", model.AcademicSectionId
         ).ToList();

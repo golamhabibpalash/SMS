@@ -1,23 +1,23 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using SchoolManagementSystem;
-using SMS_App.Utilities.MACIPServices;
-using SMS_App.Utilities.Others;
-using SMS_App.Utilities.ShortMessageService;
-using SMS_App.ViewModels;
-using SMS_App.ViewModels.PaymentVM;
-using SMS.BLL.Contracts;
-using SMS.Entities;
-using SMS.Entities.AdditionalModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using SchoolManagementSystem;
+using SMS.BLL.Contracts;
+using SMS.Entities;
+using SMS.Entities.AdditionalModels;
+using SMS_App.Utilities.MACIPServices;
+using SMS_App.Utilities.Others;
+using SMS_App.Utilities.ShortMessageService;
+using SMS_App.ViewModels;
+using SMS_App.ViewModels.PaymentVM;
 using SessionWisePaymentVM = SMS.Entities.AdditionalModels.SessionWisePaymentVM;
 
 namespace SMS_App.Controllers;
@@ -644,7 +644,7 @@ public class StudentPaymentsController : Controller
             },
             StudentPreviousPayments = (List<StudentPayment>)await _studentPaymentManager.GetAllByStudentIdAsync(student.Id),
             StudentCurrentPayments = (List<StudentPayment>)await _studentPaymentManager.GetAllByStudentIdAsync(student.Id),
-            StudentId = student.Id,                
+            StudentId = student.Id,
             ClassFeeLists = await GetClassFeeList(student)
         };
 
@@ -694,7 +694,7 @@ public class StudentPaymentsController : Controller
     {
         var allFees = await _classFeeListManager.GetAllByClassIdAsync(student.AcademicClassId);
         allFees = allFees.Where(s => s.AcademicSessionId == student.AcademicSessionId).ToList();
-        
+
         return allFees;
     }
 

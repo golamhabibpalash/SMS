@@ -12,7 +12,7 @@
             <div class="form-group row">
                 <label asp-for="Name" class="col-form-label col-md-2 text-md-right text-sm-left"></label>
                 <div class="col-md-10">
-                    <input asp-for="Name" class="form-control rounded" placeholder="Ex: Section A" />
+                    <input asp-for="Name" class="form-control " placeholder="Ex: Section A" />
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
             </div>
@@ -20,7 +20,7 @@
             <div class="form-group row">
                 <label asp-for="AcademicSessionId" class="col-form-label col-md-2 text-md-right text-sm-left ">Session</label>
                 <div class="col-md-4">
-                    <select asp-for="AcademicSessionId" class="form-control rounded" asp-items="ViewBag.AcademicSessionId">
+                    <select asp-for="AcademicSessionId" class="form-control " asp-items="ViewBag.AcademicSessionId">
                         <option disabled selected>Select Session</option>
                     </select>
                     <span asp-validation-for="AcademicSessionId" class="text-danger"></span>
@@ -28,7 +28,7 @@
 
                 <label asp-for="AcademicClassId" class="col-form-label col-md-2 text-md-right text-sm-left "></label>
                 <div class="col-md-4">
-                    <select asp-for="AcademicClassId" class="form-control rounded" asp-items="ViewBag.AcademicClassId">
+                    <select asp-for="AcademicClassId" class="form-control " asp-items="ViewBag.AcademicClassId">
                         <option>Select Session First</option>
                     </select>
                     <span asp-validation-for="AcademicClassId" class="text-danger"></span>

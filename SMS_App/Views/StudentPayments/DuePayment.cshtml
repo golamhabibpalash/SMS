@@ -6,8 +6,8 @@
     string activeInactiveClass = string.Empty;
 }
 @section Styles{
-    <link href="~/lib/DataTable/css/cdn.datatables.net_buttons_2.0.0_css_buttons.dataTables.min.css" rel="stylesheet" />
-    <link href="~/lib/DataTable/css/cdn.datatables.net_1.11.5_css_jquery.dataTables.min.css" rel="stylesheet" />
+    @* <link href="~/lib/DataTable/css/cdn.datatables.net_buttons_2.0.0_css_buttons.dataTables.min.css" rel="stylesheet" /> *@
+    @* <link href="~/lib/DataTable/css/cdn.datatables.net_1.11.5_css_jquery.dataTables.min.css" rel="stylesheet" /> *@
     <style>
         .dataTables_length, .dataTables_filter
         {
@@ -36,7 +36,8 @@
         <div class="row">
             <div class="col-md-12">
                 <fieldset class="border-primary p-2 border">
-                    <legend class="w-auto text-primary">Select Criteria</legend>
+                    <legend  class="float-none w-auto text-primary px-2"
+                        style="font-size: 1.1rem; position: relative;">Select Criteria</legend>
                     <form id="studentInfoForm" asp-action="DuePayment">
                         <div class="form-group row">
                             <label asp-for="AcademicClassId" class="col-md-4 col-form-label text-md-right">Academic Class :</label>
@@ -219,18 +220,18 @@
 
 
 @section Scripts{
-    <script src="~/lib/DataTable/js/jquery-3.7.0.js"></script>
-    <script src="~/lib/DataTable/js/jquery.dataTables.min.js"></script>
-    <script src="~/lib/DataTable/js/dataTables.buttons.min.js"></script>
-    <script src="~/lib/DataTable/js/jszip.min.js"></script>
+    @* <script src="~/lib/DataTable/js/jquery-3.7.0.js"></script> *@
+    @* <script src="~/lib/DataTable/js/jquery.dataTables.min.js"></script> *@
+    @* <script src="~/lib/DataTable/js/dataTables.buttons.min.js"></script> *@
+    @* <script src="~/lib/DataTable/js/jszip.min.js"></script>
     <script src="~/lib/DataTable/js/pdfmake.min.js"></script>
     <script src="~/lib/DataTable/js/vfs_fonts.js"></script>
-    <script src="~/lib/DataTable/js/buttons.html5.min.js"></script>
+    <script src="~/lib/DataTable/js/buttons.html5.min.js"></script> *@
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.4/xlsx.full.min.js"></script>
     <script>
-        $(document).ready(function () {
+        @* $(document).ready(function () {
             $('#myTable').dataTable({
                 "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
                 "dom": 'lBfrtip',
@@ -270,7 +271,7 @@
                     }
                 ]
             });
-        });
+        }); *@
 
         document.getElementById('exportExcelButton').addEventListener('click', function () {
             // Get the table element
@@ -353,7 +354,6 @@
                         $('#AcademicSectionId').append(o);
                         $('#AcademicSectionId').append(o2);
                         $.each(data, function (i, obj) {
-                            console.log(obj.name);
                             var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
                             $('#AcademicSectionId').append(op);
                         });

@@ -96,14 +96,14 @@
                         <form asp-action="Create" method="post" id="createUpdateFormId">
                             <input asp-for="Id" type="hidden" />
                             <div class="form-group row">
-                                <label asp-for="ExamGroupName" class="col-md-4 col-form-label"></label>
+                                <label asp-for="ExamGroupName" class="col-md-4 col-form-label text-end"></label>
                                 <div class="col-md-8">
                                     <input class="form-control" asp-for="ExamGroupName" readonly placeholder="Auto Generated" />
                                     <span asp-validation-for="ExamGroupName" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label asp-for="academicExamTypeId" class="col-md-4 col-form-label"></label>
+                                <label asp-for="academicExamTypeId" class="col-md-4 col-form-label text-end"></label>
                                 <div class="col-md-8">
                                     <select class="form-control" asp-for="academicExamTypeId" asp-items="Model.ExamTypeList" onchange="createExamName()">
                                         <option selected disabled>-Select Exam Type</option>
@@ -112,7 +112,7 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label asp-for="AcademicSessionId" class="col-md-4 col-form-label"></label>
+                                <label asp-for="AcademicSessionId" class="col-md-4 col-form-label text-end"></label>
                                 <div class="col-md-8">
                                     <select class="form-control" asp-for="AcademicSessionId" asp-items="Model.AcademicSessionList" onchange="createExamName()">
                                         <option selected disabled>-Select Session-</option>
@@ -121,7 +121,7 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label asp-for="ExamMonthId" class="col-md-4 col-form-label"></label>
+                                <label asp-for="ExamMonthId" class="col-md-4 col-form-label text-end"></label>
                                 <div class="col-md-8">
                                     <select class="form-control" asp-for="ExamMonthId" onchange="createExamName()">
                                         <option selected disabled>-Select Exam Month-</option>
@@ -134,26 +134,26 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label asp-for="Status" class="col-md-4"></label>
+                                <label asp-for="Status" class="col-md-4 text-end"></label>
                                 <div class="col-md-1 text-start">
                                     <input asp-for="Status" class=""  />
                                     <span asp-validation-for="Status" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label  class="col-md-4">Attendance Enable</label>
+                                <label  class="col-md-4 text-end">Attendance Enable</label>
                                 <div class="col-md-1 text-start">
                                     <input type="checkbox" class=""  />
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label  class="col-md-4" asp-for="StartDate">Start Date</label>
+                                <label  class="col-md-4 text-end" asp-for="StartDate">Start Date</label>
                                 <div class="col-md-8 text-start">
                                     <input type="date" asp-for="StartDate" class="form-control"  />
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label  class="col-md-4" asp-for="EndDate">End Date</label>
+                                <label  class="col-md-4 text-end" asp-for="EndDate">End Date</label>
                                 <div class="col-md-8 text-start">
                                     <input type="date" asp-for="EndDate" class="form-control"  />
                                 </div>

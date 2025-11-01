@@ -17,7 +17,7 @@
     </style>
 }
 
-<table class="table table-responsive-sm" id="myTable">
+<table class="table table-responsive-sm" >
     <thead>
         <tr>
             <th>#</th>
@@ -197,9 +197,6 @@
 
 @section Scripts{
 
-    <script src="~/js/DataTable/dataTable.js"></script>
-    <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
-
     <script>
         let deleted = '@TempData["deleted"]';
         let created = '@TempData["created"]';
@@ -210,7 +207,7 @@
             $(function () {
                 // Initialize form validation on the registration form.
                 // It has the name attribute "registration"
-                $("form[name='subjectCreateForm']").validate({
+                @* $("form[name='subjectCreateForm']").validate({
                     errorClass: 'errors',
                     rules: {
                         // The key name on the left side is the name attribute
@@ -231,7 +228,7 @@
                     submitHandler: function (form) {
                         form.submit();
                     }
-                });
+                }); *@
             });
 
             $("form[name='subjectCreateForm']").on('change', function () {

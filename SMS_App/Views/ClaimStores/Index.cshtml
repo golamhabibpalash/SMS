@@ -11,7 +11,8 @@
         <div class="col-md-4">
             <div class="p-1" id="claimStoreCreateUpdateForm">
                 <fieldset class="border p-3 shadow">
-                    <legend class="" style="width: inherit" id="create_update_title_id">Create new Claims</legend>
+                    <legend  class="float-none w-auto text-primary px-2"
+                        style="font-size: 1.1rem; position: relative;" style="width: inherit" id="create_update_title_id">Create new Claims</legend>
                     <form asp-action="Create" method="post" id="createUpdateForm">
                         <input type="hidden" asp-for="ClaimStores.Id" value="" />
                         <div class="form-group row">
@@ -46,7 +47,7 @@
                         </div>
 
                         <div class="form-group row">
-                            <div class="col-sm-10 text-right">
+                            <div class="col-sm-12 text-end">
                                 <input type="submit" class="btn btn-primary" id="submitId" value="Create" />
                             </div>
                         </div>

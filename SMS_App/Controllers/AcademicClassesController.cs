@@ -148,7 +148,7 @@ public class AcademicClassesController : Controller
                 }
                 else
                 {
-                    throw;
+                    return BadRequest(ex.Message);
                 }
             }
             TempData["edit"] = "Updated Successfully";

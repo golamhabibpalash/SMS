@@ -10,7 +10,8 @@
             <div class="col-md-12">
                 <form asp-action="DailyAttendanceReport" method="post">
                     <fieldset class="border border-info p-2">
-                        <legend class="w-auto text-primary">Daily Attendance Info</legend>
+                        <legend  class="float-none w-auto text-primary px-2"
+                        style="font-size: 1.1rem; position: relative;">Daily Attendance Info</legend>
 
                         <input type="hidden" id="attendancForId" />
                         <div class="form-group row">
@@ -75,7 +76,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="text-right">
+                        <div class="text-end">
                             <span id="loadReportBtn" class="btn btn-sm btn-info">Load Report</span>
                         </div>
                     </fieldset>

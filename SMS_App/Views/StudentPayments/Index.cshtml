@@ -6,32 +6,37 @@
 }
 <div class="row pt-3 pb-2 bg-navy-blue">
     <div class="col-md-12 text-center">
-        <form id="frmSearchByRollId" asp-action="Payment" asp-controller="StudentPayments" class="" method="get">
-            <div class="row">
-                <div class="col-md-4 offset-md-3">
-                    <div class="input-group mb-3">
-                        @if (ViewBag.roll != null)
-                        {
-                            <input id="rollInput" class="form-control form-control-sm" name="stRoll" value="@ViewBag.roll" />
-                        }
-                        else
-                        {
-                            <input id="rollInput" placeholder="Input Student Roll Number" class="form-control form-control-sm" name="stRoll" />
-                        }
-                        @*<input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2">*@
-                        <div class="input-group-append">
-                            <button class="btn btn-sm btn-info rounded" type="submit"><i class="fas fa-search"></i> Go</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 text-md-left">
-                    <button type="button" class="btn btn-light btn-sm" data-toggle="modal" data-target="#exampleModal">
-                        Select
+
+        <form id="frmSearchByRollId" asp-action="Payment" asp-controller="StudentPayments"
+      method="get" class="mb-3">
+            <div class="row justify-content-center">
+                
+                <!-- Input + Go Button -->
+                <div class="col-md-6 col-lg-5">
+                <div class="input-group input-group">
+                    <input id="rollInput"
+                        name="stRoll"
+                        class="form-control form-control-sm"
+                        placeholder="Input Student Roll Number"
+                        value="@ViewBag.roll" />
+                    <button class="btn btn-info text-white" type="submit">
+                    <i class="fas fa-search me-1"></i> Go
                     </button>
                 </div>
-            </div>
+                </div>
 
+                <!-- Select Button -->
+                <div class="col-auto ps-0">
+                <button type="button" class="btn btn-info text-white"
+                        data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <i class="fas fa-list me-1"></i> Select
+                </button>
+                </div>
+
+            </div>
         </form>
+
+
     </div>
 </div>
 

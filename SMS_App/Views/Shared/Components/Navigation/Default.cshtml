@@ -6,6 +6,16 @@
 @inject IClaimStoreManager _claimManager;
 @inject UserManager<ApplicationUser> _userManager;
 
+<style>
+    .activeLi{
+        background: lightgray !important;
+        color:#000000;
+    }
+    .activeLi a{
+        color:#000000 !important;
+    }
+</style>
+
 @{
     var currentController = ViewData["CurrentController"]?.ToString();
     var currentAction = ViewData["CurrentAction"]?.ToString();
@@ -43,10 +53,10 @@
 
 @foreach (var module in Model.Modules)
 {
-    if (!module.Submodules.Any(s => s.Items.Any()))
+    @* if (!module.Submodules.Any(s => s.Items.Any()))
     {
         continue;
-    }
+    } *@
     var canAccessModule = allActiveModules.ToList().Any(s => s.ModuleName == module.SystemName);
 
     if (!canAccessModule) { continue; }
@@ -83,7 +93,7 @@
                             var isActive = string.Equals(item.Controller, currentController, StringComparison.OrdinalIgnoreCase)
                             && string.Equals(item.Action, currentAction, StringComparison.OrdinalIgnoreCase);
 
-                            <li class="nav-item @(isActive ? "open" : "")">
+                            <li class="nav-item @(isActive ? "open activeLi" : "")">
                                 <a class="nav-link" asp-action="@item.Action" asp-controller="@item.Controller">@item.DisplayName</a>
                             </li>
                         }
@@ -92,6 +102,4 @@
             }
         </ul>
     </li>
-
 }
-

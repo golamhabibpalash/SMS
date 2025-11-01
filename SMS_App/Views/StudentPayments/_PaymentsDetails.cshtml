@@ -39,7 +39,7 @@
                     {
                         continue;
                     }
-                        <tr class="card-header table-active font-weight-bold" data-toggle="collapse" data-target=".tr_@trCount" area-control="collapse_@trCount" aria-expanded="false">
+                        <tr class="card-header table-active font-weight-bold" data-bs-toggle="collapse" data-bs-target=".tr_@trCount" area-control="collapse_@trCount" aria-expanded="false">
                             <td>@trCount</td>
                             <td>@item.FeeHeadName <span class="badge badge-info">@item.SessionWisePaymentDetails.Count</span></td>
                             <td class="text-right">@item.Amount</td>
@@ -64,7 +64,7 @@
                             <td class="p-0">
                                 @if (item.Status == StudentPaymentStatus.Paid.ToString() || item.Status == StudentPaymentStatus.Partial.ToString())
                                 {
-                                    <span class="btn btn-sm btn-info toggle-icon m-2" data-target=".tr_@trCount">
+                                    <span class="btn btn-sm btn-info toggle-icon m-2" data-bs-target=".tr_@trCount">
                                         <i class="fa fa-chevron-down"></i>
                                     </span>
                                 }                                                        
@@ -72,15 +72,15 @@
                         </tr>
                         @if (item.SessionWisePaymentDetails.Count > 0)
                         {
-                            <tr class="collapse tr_@trCount card-body table-sm table-light text-dark" data-parent="#accordion">
+                            <tr class="collapse tr_@trCount card-body table-sm table-light text-dark" data-bs-parent="#accordion">
                                 <td colspan="7" class="text-center">
                                     <span class="font-weight-bold">Breakdowns</span>
                                 </td>
                             </tr>
                             foreach (var dItem in item.SessionWisePaymentDetails)
                             {
-                                <tr class="collapse tr_@trCount  card-body  multi-collapse table-sm table-light text-dark" data-parent="#accordion">
-                                    <td colspan="2">
+                                <tr class="collapse tr_@trCount  card-body  multi-collapse table-sm table-light text-dark" data-bs-parent="#accordion">
+                                    <td colspan="1">
                                         <span class="alert">#@dItem.ReceiptNo</span>
                                         <span class="alert">Paid Date: @dItem.PaidDate</span>
                                     </td>
@@ -106,19 +106,19 @@
                                     <td class="">
                                         @if (Model.AcademicSession == Model.CurrentSession)
                                         {
-                                            <span class="m-2 editBtn" data-id="@dItem.PaymentDetailId" data-toggle="modal" data-target=".paymentUpdateModal1" style="cursor:pointer">
+                                            <span class="m-2 editBtn" data-id="@dItem.PaymentDetailId" data-bs-toggle="modal" data-bs-target=".paymentUpdateModal1" style="cursor:pointer">
                                                 <i class="text-warning fa fa-edit fa-2x"></i>
                                             </span> 
                                         }
                                         @if (item.Status != StudentPaymentStatus.Unpaid.ToString())
                                         {
-                                            <span class="m-0 modalViewId" data-paymentid="@dItem.PaymentId" data-target="#exampleModalCenter" data-toggle="modal" style="cursor:pointer"><i class="fa fa-print fa-2x"></i></span>
+                                            <span class="m-0 modalViewId" data-paymentid="@dItem.PaymentId" data-bs-target="#exampleModalCenter" data-bs-toggle="modal" style="cursor:pointer"><i class="fa fa-print fa-2x"></i></span>
                                         }
                                     </td>
                                 </tr>
                                 if (!string.IsNullOrEmpty(dItem.Remarks))
                                 {
-                                    <tr class="collapse tr_@trCount border card-body table-sm table-light text-dark" data-parent="#accordion">
+                                    <tr class="collapse tr_@trCount border card-body table-sm table-light text-dark" data-bs-parent="#accordion">
                                         <td class="p-0 pl-2" colspan="7">Remarks:<span class="font-italic"> @dItem.Remarks</span></td>
                                     </tr>
                                 }

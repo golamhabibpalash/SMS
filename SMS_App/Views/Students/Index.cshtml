@@ -71,10 +71,11 @@
                     </select>
                 </div>
             </div>
-            <div class="form-row justify-content-center">
+            <div class="form-group row justify-content-center">
                 <div class="col-md-3 col-sm-4 text-right">
                     <button type="submit" class="btn btn-sm btn-block form-control btn-light col-md-6" id="findButton"><i class="fa fa-search"></i> Find</button>
-                    <a class="btn btn-sm  btn-warning form-control text-success col-md-5" asp-action="Index">Reset</a>
+                </div>
+                <div class="col-md-3 col-sm-4 text-right"><a class="btn btn-sm  btn-warning form-control text-success col-md-5" asp-action="Index">Reset</a>
                 </div>
                 <div class="col-md-2 text-md-left col-form-label">
                     <span>(Showing @showingCount of @ViewBag.totalFound)</span>
@@ -342,7 +343,7 @@
 
 
 @section Scripts{
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @* <script src="~/lib/jquery/dist/jquery.min.js"></script> *@
     <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
 
     <script>

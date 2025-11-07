@@ -33,7 +33,7 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./publish
+          local-dir: ./publish/
           server-dir: ${{ secrets.FTP_PATH }}
           protocol: ftps # or ftp if your host doesn’t support FTPS
           timeout: 60000

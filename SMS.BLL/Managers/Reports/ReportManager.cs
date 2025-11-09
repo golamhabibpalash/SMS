@@ -24,7 +24,22 @@ namespace SMS.BLL.Managers.Reports
         public async Task<List<RptAdmitCardVM>> GetAdmitCard(int monthId, int academicClassId, int academicSectionId)
         {
             var admitCards = await _reportRepository.GetAdmitCard(monthId, academicClassId, academicSectionId);
-            return admitCards.OrderBy(s => s.ClassRoll).ToList();
+
+            List<RptAdmitCardVM> filteredAdmitCards = new List<RptAdmitCardVM>();
+            foreach (var admitCard in admitCards)
+            {
+                var isExist = filteredAdmitCards.Any(s => s.SubjectCode == admitCard.SubjectCode);
+                if (isExist)
+                {
+                    continue;
+                }
+                if (admitCard.StudentStauts)
+                {
+                    filteredAdmitCards.Add(admitCard);
+                }
+            }
+
+            return filteredAdmitCards.OrderBy(s => s.ClassRoll).ToList();
         }
 
         public async Task<List<RptDailyAttendaceVM>> GetDailyAttendanceReport(string fromDate, string academicClassId, string academicSectionId,string attendanceType, string aSessionId, string attendanceFor)

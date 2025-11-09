@@ -68,7 +68,7 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-md-4 col-form-label">Academic Section</label>
+                    <label asp-for="AcademicSectionId" class="col-md-4 col-form-label">Academic Section</label>
                     <div class="col-md-8">
                         <select class="form-control" onchange="handleSectionIdChange()" asp-for="AcademicSectionId">
                             <option selected disabled>-Select Section-</option>
@@ -331,9 +331,18 @@
 
             let rDoc = document.getElementById('SFAllocation_FeeAllocationApplication');
         }
+        
+        function LoadStudentTable(){
+            let classId = $('#AcademicClassId option:selected').val();
+            let sessionId = $('#AcademicSessionId option:selected').val();
+            let isResidential = $('#residentialNonResidentialId option:selected').val();
+            let sectionId = $('#AcademicSectionId option:selected').val();
+
+        }
+
         $(document).ready(function () {
 
-            $('#myTable').DataTable();
+            
             // Add a click event listener to the button
             $(".updateBtn").click(async function () {
                 formUIChange();

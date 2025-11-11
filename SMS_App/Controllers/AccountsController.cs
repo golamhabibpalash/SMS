@@ -85,6 +85,7 @@ namespace SMS_App.Controllers
             return View();
         }
 
+        [Authorize(Policy = "UserListAccountsPolicy")]
         public IActionResult UserList()
         {
             if (TempData["msg"] != null)

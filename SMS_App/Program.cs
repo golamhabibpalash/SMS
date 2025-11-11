@@ -22,7 +22,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Generate secure key and IV
 byte[] key = Encoding.UTF8.GetBytes("1234567890123456");
 byte[] iv = Encoding.UTF8.GetBytes("1234567890123456");
-var cs = "Server=localhost,1433;Database=smsdb;User Id=sa;Password=MyStrong!Pass;TrustServerCertificate=True;";
+var cs = "Server=130.51.120.11\\MSSQLSERVER2022; Database=sms_uat; User= ghp; Password=A4$AjUPzp$Wt174~;MultipleActiveResultSets=true;TrustServerCertificate=True";
 var encriptedCs = AesEncryptionHelper.Encrypt(cs, key, iv);
 var connectionString = AesEncryptionHelper.Decrypt(builder.Configuration.GetConnectionString("DefaultConnection"), key, iv);
 

@@ -8,7 +8,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0f3a4495-bfcd-470d-996f-f1b6739c8ea8" name="Changes" comment="" />
+    <list default="true" id="0f3a4495-bfcd-470d-996f-f1b6739c8ea8" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.SchoolManagementSystem/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SchoolManagementSystem/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SMS_App/SiteMap.Config" beforeDir="false" afterPath="$PROJECT_DIR$/SMS_App/SiteMap.Config" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SMS_App/Views/AcademicSections/Delete.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/SMS_App/Views/AcademicSections/Delete.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SMS_App/Views/AcademicSubjects/Delete.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/SMS_App/Views/AcademicSubjects/Delete.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SMS_App/Views/AttachDocs/Delete.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/SMS_App/Views/AttachDocs/Delete.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SMS_App/Views/ClaimStores/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/SMS_App/Views/ClaimStores/Index.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SMS_App/Views/ClassRoutines/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/SMS_App/Views/ClassRoutines/Index.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SMS_App/Views/Districts/Delete.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/SMS_App/Views/Districts/Delete.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SMS_App/Views/Employees/Delete.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/SMS_App/Views/Employees/Delete.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SMS_App/Views/ProjectSubModules/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/SMS_App/Views/ProjectSubModules/Index.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SMS_App/Views/Shared/_Edit_Details_Delete.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/SMS_App/Views/Shared/_Edit_Details_Delete.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SMS_App/Views/Shared/_Layout.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/SMS_App/Views/Shared/_Layout.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SMS_App/Views/Students/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/SMS_App/Views/Students/Index.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SMS_App/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/SMS_App/appsettings.json" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -25,27 +40,30 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "history": [
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;history&quot;: [
     {
-      "assignee": "golamhabibpalash",
-      "author": "golamhabibpalash"
+      &quot;assignee&quot;: &quot;golamhabibpalash&quot;,
+      &quot;author&quot;: &quot;golamhabibpalash&quot;
     }
   ],
-  "lastFilter": {
-    "assignee": "golamhabibpalash",
-    "author": "golamhabibpalash"
+  &quot;lastFilter&quot;: {
+    &quot;assignee&quot;: &quot;golamhabibpalash&quot;,
+    &quot;author&quot;: &quot;golamhabibpalash&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/golamhabibpalash/SMS.git",
-    "accountId": "d2d40380-ec3e-48f0-8a55-6bc89da1be30"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/golamhabibpalash/SMS.git&quot;,
+    &quot;accountId&quot;: &quot;d2d40380-ec3e-48f0-8a55-6bc89da1be30&quot;
   }
-}]]></component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 1
-}]]></component>
+}</component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1
+}</component>
   <component name="ProjectId" id="34Nblv5X5jMsYnE1JyLGYeVnYoY" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -65,10 +83,11 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.sourceCode.C#",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager" selected=".NET Launch Settings Profile.SMS.App: SchoolManagementSystem">
+  <component name="RunManager">
     <configuration name="SMS.App: SchoolManagementSystem" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/SMS.App/SMS.App.csproj" />
       <option name="LAUNCH_PROFILE_TFM" value="net7.0" />
@@ -110,6 +129,8 @@
       <option name="presentableId" value="Default" />
       <updated>1761057131087</updated>
       <workItem from="1761057132295" duration="1742000" />
+      <workItem from="1763778218524" duration="123000" />
+      <workItem from="1763778357892" duration="426000" />
     </task>
     <servers />
   </component>

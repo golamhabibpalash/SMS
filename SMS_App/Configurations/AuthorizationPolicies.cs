@@ -69,6 +69,7 @@ namespace SMS_App.Configurations
 
             //Accounts
             options.AddPolicy("RegisterAccountsPolicy", policy => policy.RequireClaim("Register New User"));
+            options.AddPolicy("UserListAccountsPolicy", policy => policy.RequireClaim("User List"));
             options.AddPolicy("EditUserAccountsPolicy", policy => policy.RequireClaim("Edit User Accounts"));
             options.AddPolicy("DeleteUserAccountsPolicy", policy => policy.RequireClaim("Delete User Account"));
             options.AddPolicy("ViewRolesAccountsPolicy", policy => policy.RequireClaim("View User Role"));

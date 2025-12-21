@@ -107,16 +107,16 @@ namespace SMS_App.Controllers
                 AcademicExamGroupVM academicExamGroupVM = new AcademicExamGroupVM();
                 //academicExamGroupVM.AcademicExamGroups = (List<AcademicExamGroup>)await _examGroupManager.GetAllAsync();
                 academicExamGroupVM.ExamGroupName = academicExamGroup.ExamGroupName;
-                academicExamGroupVM.academicExamTypeId = academicExamGroup.academicExamTypeId;
+                academicExamGroupVM.AcademicExamTypeId = academicExamGroup.AcademicExamTypeId;
                 academicExamGroupVM.ExamMonthId = academicExamGroup.ExamMonthId;
                 return RedirectToAction("index");
             }
 
             ViewData["AcademicSessionList"] = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name", academicExamGroup.AcademicSessionId);
-            ViewData["AcademicExamTypeList"] = new SelectList(await _academicExamTypeManager.GetAllAsync(), "Id", "ExamTypeName", academicExamGroup.academicExamTypeId);
+            ViewData["AcademicExamTypeList"] = new SelectList(await _academicExamTypeManager.GetAllAsync(), "Id", "ExamTypeName", academicExamGroup.AcademicExamTypeId);
 
             var allExamGroup = await _examGroupManager.GetAllAsync();
-            AcademicExamGroup existingExamGroup = allExamGroup.FirstOrDefault(s => s.ExamGroupName == academicExamGroup.ExamGroupName && s.AcademicSessionId == academicExamGroup.AcademicSessionId && s.academicExamTypeId == academicExamGroup.academicExamTypeId);
+            AcademicExamGroup existingExamGroup = allExamGroup.FirstOrDefault(s => s.ExamGroupName == academicExamGroup.ExamGroupName && s.AcademicSessionId == academicExamGroup.AcademicSessionId && s.AcademicExamTypeId == academicExamGroup.AcademicExamTypeId);
             try
             {
                 if (existingExamGroup != null)
@@ -158,7 +158,7 @@ namespace SMS_App.Controllers
             if (academicExamGroup != null)
             {
                 ViewData["AcademicSessionList"] = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name", academicExamGroup.AcademicSessionId);
-                ViewData["AcademicExamTypeList"] = new SelectList(await _academicExamTypeManager.GetAllAsync(), "Id", "ExamTypeName", academicExamGroup.academicExamTypeId);
+                ViewData["AcademicExamTypeList"] = new SelectList(await _academicExamTypeManager.GetAllAsync(), "Id", "ExamTypeName", academicExamGroup.AcademicExamTypeId);
                 return View(academicExamGroup);
             }
             else
@@ -181,10 +181,10 @@ namespace SMS_App.Controllers
             }
 
             var allExamGroup = await _examGroupManager.GetAllAsync();
-            AcademicExamGroup existingExamGroup = allExamGroup.FirstOrDefault(s => s.ExamGroupName == academicExamGroup.ExamGroupName && s.AcademicSessionId == academicExamGroup.AcademicSessionId && s.academicExamTypeId == academicExamGroup.academicExamTypeId);
+            AcademicExamGroup existingExamGroup = allExamGroup.FirstOrDefault(s => s.ExamGroupName == academicExamGroup.ExamGroupName && s.AcademicSessionId == academicExamGroup.AcademicSessionId && s.AcademicExamTypeId == academicExamGroup.AcademicExamTypeId);
 
             ViewData["AcademicSessionList"] = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name", academicExamGroup.AcademicSessionId);
-            ViewData["AcademicExamTypeList"] = new SelectList(await _academicExamTypeManager.GetAllAsync(), "Id", "ExamTypeName", academicExamGroup.academicExamTypeId);
+            ViewData["AcademicExamTypeList"] = new SelectList(await _academicExamTypeManager.GetAllAsync(), "Id", "ExamTypeName", academicExamGroup.AcademicExamTypeId);
             try
             {
                 if (existingExamGroup != null && id != existingExamGroup.Id)

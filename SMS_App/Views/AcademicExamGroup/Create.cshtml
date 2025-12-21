@@ -19,13 +19,13 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label asp-for="academicExamTypeId" class="col-md-3 col-form-label"></label>
+                        <label asp-for="AcademicExamTypeId" class="col-md-3 col-form-label"></label>
                         <div class="col-md-9">
-                            <select class="form-control" asp-for="academicExamTypeId"
+                            <select class="form-control" asp-for="AcademicExamTypeId"
                                 asp-items="ViewBag.AcademicExamTypeList" onchange="createExamName()">
                                 <option selected disabled>-Select Exam Type</option>
                             </select>
-                            <span asp-validation-for="academicExamTypeId" class="text-danger"></span>
+                            <span asp-validation-for="AcademicExamTypeId" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="form-group row">

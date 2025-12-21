@@ -89,7 +89,7 @@
                                 {
                                     <tr>
                                         <td>@(++exSl)</td>
-                                        <td class="w-25">@item2.AcademicSubject.SubjectName</td>
+                                        <td class="w-25">@item2.AcademicSubject?.SubjectName</td>
                                         <td class="w-25">@item2.ExamCategory</td>
                                         <td>
                                             @if (item2.AcademicSection == null)
@@ -101,8 +101,8 @@
                                                 @item2.AcademicSection.Name
                                             }
                                         </td>
-                                        <td>@item2.Employee.EmployeeName</td>
-                                        <td>@item2.AcademicExamDetails.Count</td>
+                                        <td>@item2.Employee?.EmployeeName</td>
+                                        <td>@item2.AcademicExamDetails?.Count</td>
                                         <td>@item2.TotalMarks</td>
                                         <td>@item2.Status</td>
                                     </tr>

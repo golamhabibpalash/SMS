@@ -13,7 +13,7 @@
                 <div id="accordion">
                 @foreach (var session in allSessionData.OrderByDescending(c => c.Key.sessionId))
                 {
-                    <div class="well col-md-12 text-start bg-navy-blue d-flex justify-content-between" data-bs-toggle="collapse" href="#collapseExample_@session.Key.sessionId">
+                    <div class="well col-md-12 text-start bg-navy-blue d-flex justify-content-between" data-bs-toggle="collapse" href="#collapseExample_@session.Key.sessionId" role="button">
                         <span>Session @session.Key.sessionName</span><span> <i class="fa fa-arrow-alt-down"></i> </span>
                     
                     </div>
@@ -37,7 +37,7 @@
                         <tr>
                             <td>@(++sl)</td>
                             <td>@item.ExamGroupName</td>
-                            <td>@item.academicExamType?.ExamTypeName</td>
+                            <td>@item.AcademicExamType?.ExamTypeName</td>
                             <td>@item.AcademicSession.Name</td>
                             <td>@item.AcademicExams.Count</td>
                             <td>@item.NumberOfProcessResults</td>
@@ -58,7 +58,7 @@
                                                 </a>
                                     @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
                                     {
-                                        <a class="btn btn-warning editBtnClass" data-toggle="tooltip" data-id="@item.Id" data-groupName="@item.ExamGroupName" data-examTypeId="@item.academicExamTypeId" data-sessionId="@item.AcademicSessionId" data-monthid="@item.ExamMonthId" data-status="@item.Status" data-placement="top" title="Edit" id="EditBtnId">
+                                        <a class="btn btn-warning editBtnClass" data-toggle="tooltip" data-id="@item.Id" data-groupName="@item.ExamGroupName" data-examTypeId="@item.AcademicExamTypeId" data-sessionId="@item.AcademicSessionId" data-monthid="@item.ExamMonthId" data-status="@item.Status" data-placement="top" title="Edit" id="EditBtnId">
                                             <i style="cursor:pointer" class="fa fa-edit text-dark"></i> </a>
                                     }
                                     @if (User.IsInRole("SuperAdmin"))
@@ -103,12 +103,12 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label asp-for="academicExamTypeId" class="col-md-4 col-form-label text-end"></label>
+                                <label asp-for="AcademicExamTypeId" class="col-md-4 col-form-label text-end"></label>
                                 <div class="col-md-8">
-                                    <select class="form-control" asp-for="academicExamTypeId" asp-items="Model.ExamTypeList" onchange="createExamName()">
+                                    <select class="form-control" asp-for="AcademicExamTypeId" asp-items="Model.ExamTypeList" onchange="createExamName()">
                                         <option selected disabled>-Select Exam Type</option>
                                     </select>
-                                    <span asp-validation-for="academicExamTypeId" class="text-danger"></span>
+                                    <span asp-validation-for="AcademicExamTypeId" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="form-group row">

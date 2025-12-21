@@ -1,5 +1,6 @@
 ﻿using GHPEncryptDecript;
 using Hangfire;
+using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -17,79 +18,104 @@ using System;
 using System.IO;
 using System.Text;
 
-
 var builder = WebApplication.CreateBuilder(args);
-// Generate secure key and IV
+
+// AES Key/IV
 byte[] key = Encoding.UTF8.GetBytes("1234567890123456");
 byte[] iv = Encoding.UTF8.GetBytes("1234567890123456");
-var cs = "Server=130.51.120.11\\MSSQLSERVER2022; Database=sms_uat; User= ghp; Password=A4$AjUPzp$Wt174~;MultipleActiveResultSets=true;TrustServerCertificate=True";
-var encriptedCs = AesEncryptionHelper.Encrypt(cs, key, iv);
-var connectionString = AesEncryptionHelper.Decrypt(builder.Configuration.GetConnectionString("DefaultConnection"), key, iv);
 
+// decrypt connection string
+var connectionString =
+    AesEncryptionHelper.Decrypt(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        key, iv
+    );
+
+// ⭐ read hangfire config without model class
+bool hangfireEnabled = builder.Configuration.GetValue<bool>("Hangfire:IsEnabled");
+string dashboardPath = builder.Configuration.GetValue<string>("Hangfire:DashboardPath") ?? "/hangfire";
+int workerCount = builder.Configuration.GetValue<int>("Hangfire:WorkerCount");
+
+// DB context
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseSqlServer(connectionString,
-        sqlServerOptionsAction: sqlOptions =>
-        {
-            sqlOptions.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
-            sqlOptions.CommandTimeout(180); // Set command timeout to 120 seconds
-        });
+    options.UseSqlServer(connectionString, sqlOptions =>
+    {
+        sqlOptions.EnableRetryOnFailure(5);
+        sqlOptions.CommandTimeout(180);
+    });
+
     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 });
-builder.Services.AddHttpClient();
-builder.Services.AddHangfire(x => x.UseSqlServerStorage(connectionString));
-builder.Services.AddHangfireServer();
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>(option =>
+builder.Services.AddHttpClient();
+
+// ⭐ conditional Hangfire registration
+if (hangfireEnabled)
 {
-    option.Password.RequiredLength = 5;
-    option.Password.RequireDigit = false;
-    option.Password.RequireLowercase = false;
-    option.Password.RequireUppercase = false;
-    option.Password.RequireNonAlphanumeric = false;
-}).AddEntityFrameworkStores<ApplicationDbContext>()
+    builder.Services.AddHangfire(config =>
+    {
+        config.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+             .UseSimpleAssemblyNameTypeSerializer()
+             .UseRecommendedSerializerSettings()
+             .UseSqlServerStorage(connectionString,
+                new SqlServerStorageOptions
+                {
+                    SchemaName = "hangfire",
+                    QueuePollInterval = TimeSpan.FromSeconds(10)
+                }
+             );
+    });
+
+    builder.Services.AddHangfireServer(options =>
+    {
+        options.WorkerCount = workerCount; // background workers count
+    });
+}
+
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+{
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 5;
+})
+.AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultUI()
 .AddDefaultTokenProviders();
 
+// MVC + JSON
 builder.Services.AddControllers()
-    .AddNewtonsoftJson(options =>
-     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
- );
+    .AddNewtonsoftJson(opt =>
+        opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
 builder.Services.AddMvc(options =>
 {
     var policy = new AuthorizationPolicyBuilder()
-    .RequireAuthenticatedUser()
-    .Build();
-    options.Filters.Add(new AuthorizeFilter(policy));
-})
-    .AddSessionStateTempDataProvider();
+        .RequireAuthenticatedUser()
+        .Build();
 
+    options.Filters.Add(new AuthorizeFilter(policy));
+});
 
 builder.Services.AddSessionConfiguration();
 ServiceExtensions.ConfigureApplicationCookie(builder.Services);
-builder.Services.AddAuthorization(options =>
+
+builder.Services.AddAuthorization(o =>
 {
-    AuthorizationPolicies.ConfigureAuthorization(options);
+    AuthorizationPolicies.ConfigureAuthorization(o);
 });
 
-
 builder.Services.AddControllersWithViews()
-                .AddRazorRuntimeCompilation();
+    .AddRazorRuntimeCompilation();
 
-// Add services to the container.
 builder.Services.AddRazorPages();
-
 builder.Services.AddAutoMapper(typeof(Program));
-
-//builder.Services.AddHostedService<ScopedBackgroundService>();
-
 builder.Services.Addservices();
 
-//Load Navigation Menu
 builder.Services.AddSingleton<SiteMap>(provider =>
 {
-    // keep it in config file path, better: appsettings.json
     var filePath = Path.Combine(builder.Environment.ContentRootPath, "siteMap.config");
     return SiteMapLoader.Load(filePath);
 });
@@ -106,25 +132,34 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseSession();
 app.UseRouting();
-var options = new DashboardOptions
-{
-    Authorization = new[] { new HangfireAuthorizationFilter() }
-};
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseHangfireDashboard("/hangfire", options);
 
-// Area routes (more specific)
+// ⭐ conditionally enable dashboard
+if (hangfireEnabled)
+{
+    var dashboardOptions = new DashboardOptions
+    {
+        Authorization = new[] { new HangfireAuthorizationFilter() }
+    };
+
+    app.UseHangfireDashboard(dashboardPath, dashboardOptions);
+}
+else
+{
+    Console.WriteLine("⚠ Hangfire Disabled by configuration.");
+}
+
+// AREA routing
 app.MapControllerRoute(
     name: "areas",
     pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
-// Default routes
+// default MVC routes
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
 
 app.MapRazorPages();
 app.Run();

@@ -18,13 +18,17 @@ namespace SMS.BLL.Managers
         }
         public override async Task<AcademicExamGroup> GetByIdAsync(int id)
         {
-            var examGroup = await _academicExamGroupRepository
-                .Table
+
+            var examGroup = await _academicExamGroupRepository.Table
+                .Include(g => g.AcademicSession)
+                .Include(g => g.AcademicExamType)
                 .Include(g => g.AcademicExams)
                     .ThenInclude(e => e.AcademicClass)
                         .ThenInclude(c => c.AcademicSections)
-                .Include(g => g.AcademicSession)
-                .Include(g => g.academicExamType)
+                .Include(g => g.AcademicExams)
+                    .ThenInclude(e => e.AcademicSubject)
+                .Include(g => g.AcademicExams)
+                    .ThenInclude(e => e.Employee)
                 .FirstOrDefaultAsync(g => g.Id == id);
 
 

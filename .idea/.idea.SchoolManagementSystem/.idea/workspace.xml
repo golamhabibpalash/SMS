@@ -8,22 +8,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0f3a4495-bfcd-470d-996f-f1b6739c8ea8" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.SchoolManagementSystem/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SchoolManagementSystem/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SMS_App/SiteMap.Config" beforeDir="false" afterPath="$PROJECT_DIR$/SMS_App/SiteMap.Config" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SMS_App/Views/AcademicSections/Delete.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/SMS_App/Views/AcademicSections/Delete.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SMS_App/Views/AcademicSubjects/Delete.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/SMS_App/Views/AcademicSubjects/Delete.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SMS_App/Views/AttachDocs/Delete.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/SMS_App/Views/AttachDocs/Delete.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SMS_App/Views/ClaimStores/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/SMS_App/Views/ClaimStores/Index.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SMS_App/Views/ClassRoutines/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/SMS_App/Views/ClassRoutines/Index.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SMS_App/Views/Districts/Delete.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/SMS_App/Views/Districts/Delete.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SMS_App/Views/Employees/Delete.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/SMS_App/Views/Employees/Delete.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SMS_App/Views/ProjectSubModules/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/SMS_App/Views/ProjectSubModules/Index.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SMS_App/Views/Shared/_Edit_Details_Delete.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/SMS_App/Views/Shared/_Edit_Details_Delete.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SMS_App/Views/Shared/_Layout.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/SMS_App/Views/Shared/_Layout.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SMS_App/Views/Students/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/SMS_App/Views/Students/Index.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SMS_App/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/SMS_App/appsettings.json" afterDir="false" />
-    </list>
+    <list default="true" id="0f3a4495-bfcd-470d-996f-f1b6739c8ea8" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -69,24 +54,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    ".NET Launch Settings Profile.SMS.App: SchoolManagementSystem.executor": "Run",
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "W2M",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.sourceCode.C#",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;.NET Launch Settings Profile.SMS.App: SchoolManagementSystem.executor&quot;: &quot;Run&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;W2M&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.C#&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="SMS.App: SchoolManagementSystem" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/SMS.App/SMS.App.csproj" />
@@ -131,6 +116,7 @@
       <workItem from="1761057132295" duration="1742000" />
       <workItem from="1763778218524" duration="123000" />
       <workItem from="1763778357892" duration="426000" />
+      <workItem from="1766430305719" duration="13000" />
     </task>
     <servers />
   </component>

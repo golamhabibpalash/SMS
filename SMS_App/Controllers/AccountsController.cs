@@ -217,6 +217,14 @@ public class AccountsController : Controller
                 }
                 if (result.Succeeded)
                 {
+
+                await _logManager.AddAsync(new Log {
+                    Level = "Succeed",
+                    Exception = "AccountsController line 223",
+                    MessageTemplate = "AccountsController line 223",
+                    Message = model.AppUser + " is Succeeded to login.",
+                    Timestamp = DateTime.Now,
+                });
                     var userList = _userManager.Users;
 
                     var appUser = await userList.FirstOrDefaultAsync(u => u.UserName == model.AppUser);
@@ -231,6 +239,13 @@ public class AccountsController : Controller
                     }
                     else
                     {
+                    await _logManager.AddAsync(new Log {
+                        Level = "Succeed",
+                        Exception = "AccountsController line 244",
+                        MessageTemplate = "AccountsController line 245",
+                        Message = model.AppUser + " is Succeeded to login and redirected to home.",
+                        Timestamp = DateTime.Now,
+                    });
                         return RedirectToAction("index", "home");
                     }
                 }

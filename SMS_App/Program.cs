@@ -136,7 +136,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// ⭐ conditionally enable dashboard
+// conditionally enable dashboard
 if (hangfireEnabled)
 {
     var dashboardOptions = new DashboardOptions
@@ -148,7 +148,7 @@ if (hangfireEnabled)
 }
 else
 {
-    Console.WriteLine("⚠ Hangfire Disabled by configuration.");
+    Console.WriteLine(" Hangfire Disabled by configuration.");
 }
 
 // AREA routing

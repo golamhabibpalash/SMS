@@ -30,8 +30,9 @@ namespace SMS_App.Controllers
         private readonly IAttendanceManager _attendanceManager;
         private readonly IAttendanceMachineManager _attendanceMachineManager;
         private readonly IStudentPaymentManager _studentPaymentManager;
+        private readonly ILogManager _logManager;
 
-        public HomeController(ILogger<HomeController> logger, IStudentManager studentManager, IEmployeeManager employeeManager, UserManager<ApplicationUser> userManager, IInstituteManager instituteManager, IAcademicClassManager academicClassManager, IDesignationManager designationManager, IAttendanceManager attendanceManager, IAttendanceMachineManager attendanceMachineManager, IStudentPaymentManager studentPaymentManager)
+        public HomeController(ILogger<HomeController> logger, IStudentManager studentManager, IEmployeeManager employeeManager, UserManager<ApplicationUser> userManager, IInstituteManager instituteManager, IAcademicClassManager academicClassManager, IDesignationManager designationManager, IAttendanceManager attendanceManager, IAttendanceMachineManager attendanceMachineManager, IStudentPaymentManager studentPaymentManager, ILogManager logManager)
         {
             _logger = logger;
             _studentManager = studentManager;
@@ -43,6 +44,7 @@ namespace SMS_App.Controllers
             _attendanceManager = attendanceManager;
             _attendanceMachineManager = attendanceMachineManager;
             _studentPaymentManager = studentPaymentManager;
+            _logManager = logManager;
         }
         //public HomeController(UserManager<ApplicationUser> userManager, IInstituteManager instituteManager)
         //{
@@ -61,6 +63,15 @@ namespace SMS_App.Controllers
         //}
         public async Task<IActionResult> Index()
         {
+
+                    await _logManager.AddAsync(new Log {
+                        Level = "Succeed",
+                        Exception = "Home Controller line 69",
+                        MessageTemplate = "Home Controller line 69",
+                        Message = "user is Succeeded to come home. index",
+                        Timestamp = DateTime.Now,
+                    });
+
             HttpContext.Session.SetString("macAddress", MACService.GetMAC());
 
             Institute institute = new Institute();

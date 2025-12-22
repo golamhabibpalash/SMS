@@ -79,6 +79,10 @@ namespace SMS.DB
         public DbSet<Institute> Institute { get; set; }
         #endregion
 
+        #region L
+        public DbSet<Log> Logs { get; set; }
+        #endregion
+
         #region N
         public DbSet<Nationality> Nationality { get; set; }
         public DbSet<NotificationEvent> NotificationEvents { get; set; }

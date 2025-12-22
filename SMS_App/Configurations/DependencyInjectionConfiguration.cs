@@ -162,6 +162,9 @@ public static class DependencyInjectionConfiguration
         services.AddScoped<IAppliedStudentManager, AppliedStudentManager>();
         services.AddScoped<IAppliedStudentRepository, AppliedStudentRepository>();
 
+        services.AddScoped<ILogManager, LogManager>();
+        services.AddScoped<ILogRepository, LogRepository>();
+
 
         //Reporing part start here===================================
         services.AddScoped<IReportManager, ReportManager>();

@@ -78,8 +78,10 @@
                 </div>
                 <!-- logo end -->
                 <ul class="nav navbar-nav navbar-left in">
-                    <li><a href="#" class="menu-toggler sidebar-toggler"><i
-                                class="icon-menu"></i>@GlobalUI.PageTitle.ToString()</a></li>
+                    <li><a href="#" class="menu-toggler sidebar-toggler">
+                        <i class="icon-menu"></i>@(GlobalUI.PageTitle ?? "Dashboard")
+
+                        </a></li>
                 </ul>
                 <form class="search-form-opened" action="#" method="GET">
                     <div class="input-group">

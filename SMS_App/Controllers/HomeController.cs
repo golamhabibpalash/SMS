@@ -174,6 +174,15 @@ namespace SMS_App.Controllers
                 throw;
             }
             DashboardVM.MonthlyCollections = mPaymentCollections;
+
+            await _logManager.AddAsync(new Log {
+                Level = "Succeed",
+                Exception = "Home Controller line 180",
+                MessageTemplate = "Home Controller line 180",
+                Message = "user is Succeeded to come home and before go to index view",
+                Timestamp = DateTime.Now,
+            });
+
             return View(DashboardVM);
         }
 

@@ -31,6 +31,17 @@
         }
     </style>
 }
+
+@if (Model == null) { <div>Model is null</div> }
+@if (Model.Employees == null) { <div>Employees is NULL</div> }
+@if (Model.Students == null) { <div>Students is NULL</div> }
+@if (Model.TodaysAttendanceEmpVMs == null) { <div>Emp VM NULL</div> }
+@if (Model.TodaysAttendanceStuVMs == null) { <div>Stu VM NULL</div> }
+@if (Model.DailyCollections == null) { <div>Daily NULL</div> }
+@if (Model.MonthlyCollections == null) { <div>Monthly NULL</div> }
+
+
+
 <div class="row">
     <div class="col-md-12">
         <div class="jumbotron mb-0 vh-100">

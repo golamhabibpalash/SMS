@@ -184,27 +184,11 @@ public class AccountsController : Controller
         {
             try
             {
-
-                await _logManager.AddAsync(new Log {
-                    Level = "Warning",
-                    Exception = "AccountsController line 190",
-                    MessageTemplate = "AccountsController line 191",
-                    Message = model.AppUser + " is trying to login.",
-                    Timestamp = DateTime.UtcNow
-                });
                 //Checking the user is entering user/mobile/email/roll
                 //01. If student enter with the currnet roll number
                 var result = await _signInManager.PasswordSignInAsync(model.AppUser, model.Password, model.RememberMe, false);
                 if (!result.Succeeded)
                 {
-
-                await _logManager.AddAsync(new Log {
-                    Level = "Failed",
-                    Exception = "AccountsController line 203",
-                    MessageTemplate = "AccountsController line 203",
-                    Message = model.AppUser + " is Failed to login.",
-                    Timestamp = DateTime.Now,
-                });
                     if (model.AppUser.Length == 7)
                     {
                         //search student with the roll number
@@ -217,14 +201,7 @@ public class AccountsController : Controller
                 }
                 if (result.Succeeded)
                 {
-
-                await _logManager.AddAsync(new Log {
-                    Level = "Succeed",
-                    Exception = "AccountsController line 223",
-                    MessageTemplate = "AccountsController line 223",
-                    Message = model.AppUser + " is Succeeded to login.",
-                    Timestamp = DateTime.Now,
-                });
+ 
                     var userList = _userManager.Users;
 
                     var appUser = await userList.FirstOrDefaultAsync(u => u.UserName == model.AppUser);
@@ -239,13 +216,13 @@ public class AccountsController : Controller
                     }
                     else
                     {
-                    await _logManager.AddAsync(new Log {
-                        Level = "Succeed",
-                        Exception = "AccountsController line 244",
-                        MessageTemplate = "AccountsController line 245",
-                        Message = model.AppUser + " is Succeeded to login and redirected to home.",
-                        Timestamp = DateTime.Now,
-                    });
+                        await _logManager.AddAsync(new Log {
+                            Level = "Info",
+                            Exception = "AccountsController Login method",
+                            MessageTemplate = "",
+                            Message = $"{model.AppUser} is Succeeded to login and redirected to home.",
+                            Timestamp = DateTime.Now,
+                        });
                         return RedirectToAction("index", "home");
                     }
                 }

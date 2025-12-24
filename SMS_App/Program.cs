@@ -107,8 +107,7 @@ builder.Services.AddAuthorization(o =>
     AuthorizationPolicies.ConfigureAuthorization(o);
 });
 
-builder.Services.AddControllersWithViews()
-    .AddRazorRuntimeCompilation();
+builder.Services.AddControllersWithViews();
 
 builder.Services.AddRazorPages();
 builder.Services.AddAutoMapper(typeof(Program));

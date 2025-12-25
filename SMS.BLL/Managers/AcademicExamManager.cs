@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace SMS.BLL.Managers;
 
-public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
+public class AcademicExamManager : Manager<AcademicExam>, IAcademicExamManager
 {
     private readonly IAcademicExamRepository _academicExamRepository;
     private readonly IAcademicSessionRepository _academicSessionRepository;
@@ -75,48 +75,62 @@ public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
         var liveResultVM = new LiveResultVM();
 
         var examGroup = await _academicExamGroupRepository.GetByIdAsync(academicGroupId);
-        if (examGroup==null)
+        if (examGroup == null)
         {
             return liveResultVM;
         }
         examGroup.AcademicExams = examGroup.AcademicExams.Where(s => s.AcademicClassId == academiClassId).ToList();
-        if (academicSectionId.HasValue)
+        if (academicSectionId.HasValue && academicSectionId > 0)
         {
-            examGroup.AcademicExams = examGroup.AcademicExams.Where(s => s.AcademicSectionId == academicSectionId.Value).ToList();
+            examGroup.AcademicExams = examGroup
+                .AcademicExams
+                .Where(s => s.AcademicSectionId == academicSectionId.Value)
+                .OrderBy(s => s.AcademicExamDetails.Min(e => e.Student.ClassRoll))
+                .ToList();
+
+        }
+        else
+        {
+            examGroup.AcademicExams = examGroup
+                .AcademicExams
+                .Where(s => s.AcademicSectionId == null)
+                .OrderBy(s => s.AcademicExamDetails.Min(e => e.Student.ClassRoll))
+                .ToList();
         }
         _cachedGradingTable = (List<GradingTable>)await _gradingTableRepository.GetAllAsync();
         _cachedExamGroup = examGroup;
         var existingExams = examGroup.AcademicExams.Where(s => s.AcademicClassId == academiClassId).ToList();
-        if (existingExams==null || existingExams.Count<=0)
+        if (existingExams == null || existingExams.Count <= 0)
         {
             return liveResultVM;
         }
         var academicClass = await _academicClassRepository.GetByIdAsync(academiClassId);
 
-        var existingStudents = existingExams.SelectMany(s => s.AcademicExamDetails).Select(s => s.Student).DistinctBy(s => s.Id).ToList();
+        var existingStudents = existingExams.SelectMany(s => s.AcademicExamDetails.OrderBy(e => e.StudentId)).Select(s => s.Student).DistinctBy(s => s.Id).OrderBy(s => s.ClassRoll).ToList();
 
-        if (existingStudents!=null)
+        if (existingStudents != null)
         {
             var countOfExam = _cachedExamGroup.AcademicExams.DistinctBy(s => s.AcademicSubjectId).Count();
             foreach (var student in existingStudents)
             {
                 var liveResultSubjectWises = GetLiveResultSubjectWise(student.Id);
 
-                var sumOfSubjectWiseGP = liveResultSubjectWises.Any(s => s.GPA == 0)? 0 : liveResultSubjectWises.Sum(s => s.GPA);
-                if (student.ClassRoll == 2506036)
-                {
-                    int ss = student.ClassRoll;
-                }
-                decimal finalGPA = (decimal)(sumOfSubjectWiseGP / countOfExam);
+                var sumOfSubjectWiseGP = liveResultSubjectWises.Sum(s => s.GPA);
+                var isFailedAnySubject = liveResultSubjectWises.Any(s => s.GPA == 0);
+                var totalFails = liveResultSubjectWises.Count(c => c.GPA == 0);
+                var finalGpa = isFailedAnySubject ? 0 : (sumOfSubjectWiseGP / countOfExam);
+                string rStatus = string.Empty;
                 LiveResultDetailsVM liveResultDetailsVM = new LiveResultDetailsVM
                 {
                     ClassRoll = student.ClassRoll.ToString(),
                     StudentName = student.Name,
-                    FinalGPA = (double)finalGPA,
-                    FinalGrade = GetFinalGradeByGPA(finalGPA),
+                    FinalGPA = finalGpa,
+                    FinalGrade = GetFinalGradeByGPA(finalGpa, out rStatus),
                     TotalMarks = GetTotalMarks(student.Id),
                     Attendance = GetAttendance(student.Id, academicGroupId),
                     Rank = 0,
+                    Fails = totalFails,
+                    Status = rStatus,
                     LiveResultSubjectWises = liveResultSubjectWises
                 };
                 liveResultVM.ResultDetails.Add(liveResultDetailsVM);
@@ -126,43 +140,49 @@ public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
         if (existingExams != null || existingExams.Count > 0)
         {
             liveResultVM.ExamTitle = $"{examGroup.ExamGroupName} ({academicClass.Name})";
-            liveResultVM.TotalColumn = 7+liveResultVM.ResultDetails.Count;
-            liveResultVM.Subjects = GetTableHeaderSubjects(existingExams);
+
+            var totalSubjects = GetTableHeaderSubjects(existingExams);
+            liveResultVM.Subjects = totalSubjects;
+            int totalExamTypes = totalSubjects.Sum(s => s.ExamTypes.Count);
+            liveResultVM.TotalColumn = 10 + (totalSubjects.Count * 2) + totalExamTypes;
         }
 
         //Calculation Ranking
-        if (liveResultVM.ResultDetails.Count > 0) 
+        // Calculate Ranking
+        var orderedResults = liveResultVM.ResultDetails
+            .OrderByDescending(r => r.FinalGPA)
+            .ThenByDescending(r => r.TotalMarks)
+            .ThenByDescending(r => r.Attendance)
+            .ThenBy(r => r.ClassRoll)
+            .ToList();
+
+        for (int i = 0; i < orderedResults.Count; i++)
         {
-            int rank = 1;
-            foreach (var result in liveResultVM.ResultDetails
-                .OrderByDescending(s=> s.FinalGPA)
-                .ThenByDescending(s=>s.TotalMarks)
-                .ThenByDescending(s => s.Attendance)
-                .ThenBy(s => s.ClassRoll))
-            {
-                result.Rank = rank++;
-            }
+            orderedResults[i].Rank = i + 1;
         }
+
 
         return liveResultVM;
     }
 
-    private string GetFinalGradeByGPA(decimal gpa)
+    private string GetFinalGradeByGPA(double gpa, out string status)
     {
         var grade = "";
-        var gradingTableRow = _cachedGradingTable.FirstOrDefault(s => s.GradePoint >= gpa && s.GradePoint <= gpa);
-        if (gradingTableRow!=null)
+        var gradingTableRow = _cachedGradingTable.Where(s => (double)s.GradePoint >= gpa).OrderBy(g => g.GradePoint).FirstOrDefault();
+        if (gradingTableRow != null)
         {
-            grade = gradingTableRow.LetterGrade??"";
+            grade = gradingTableRow.LetterGrade ?? "";
+            status = gradingTableRow.gradeComments;
         }
         else
         {
-            
+
         }
+        status = gradingTableRow.gradeComments;
         return grade;
     }
 
-    private int GetFinalRank(int studentId,int? sectionId,int classId,int examGroupId)
+    private int GetFinalRank(int studentId, int? sectionId, int classId, int examGroupId)
     {
         var expectedResult = _cachedExamGroup.AcademicExams.Where(e => e.AcademicClassId == classId && e.AcademicSectionId == sectionId);
         //Rank by GPA
@@ -197,7 +217,7 @@ public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
 
     private double GetSubjectWiseTotalMark(int subjectId, int classId)
     {
-        var totalMarks = _cachedExamGroup.AcademicExams.Where(e => e.AcademicSubjectId == subjectId && classId == e.AcademicClassId).Sum(e=>e.TotalMarks);
+        var totalMarks = _cachedExamGroup.AcademicExams.Where(e => e.AcademicSubjectId == subjectId && classId == e.AcademicClassId).Sum(e => e.TotalMarks);
         return totalMarks;
     }
 
@@ -215,9 +235,9 @@ public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
             TableHeaderSubjects headerSubjects = new TableHeaderSubjects()
             {
                 SubjectName = item.AcademicSubject.SubjectName,
-                TotalMarks = GetSubjectWiseTotalMark(item.AcademicSubjectId,classId),
-                ExamTypes = GetExamTypes(existingExams,item.AcademicSubjectId),
-                HighestMark = GetHighestMarkOfTheSubject(item.AcademicSubjectId,classId)
+                TotalMarks = GetSubjectWiseTotalMark(item.AcademicSubjectId, classId),
+                ExamTypes = GetExamTypes(existingExams, item.AcademicSubjectId),
+                HighestMark = GetHighestMarkOfTheSubject(item.AcademicSubjectId, classId)
             };
             subjectList.Add(headerSubjects);
         }
@@ -238,7 +258,7 @@ public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
             .GroupBy(d => d.StudentId)
             .Select(g => g.Sum(d => d.ObtainMark))
             .DefaultIfEmpty(0)
-            .Max();                                
+            .Max();
     }
 
     private List<TableHeaderExamTypes> GetExamTypes(List<AcademicExam> existingExams, int subjectId)
@@ -249,18 +269,27 @@ public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
         {
             TableHeaderExamTypes examType = new TableHeaderExamTypes()
             {
-                ExamType = item.ExamCategory??"Written",
-                TotalMarks = item.TotalMarks
+                ExamType = item.ExamCategory ?? "Written",
+                TotalMarks = item.TotalMarks,
             };
             types.Add(examType);
         }
         return types;
     }
-
+    private double GetPassMark(double totalMark)
+    {
+        double passMark = 0;
+        var maxFailNumber = _cachedGradingTable.FirstOrDefault(s => s.NumberRangeMin == 0).NumberRangeMax;
+        if (maxFailNumber > 0)
+        {
+            passMark = (maxFailNumber * totalMark) / 100;
+        }
+        return passMark + 1;
+    }
     private List<LiveResultSubjectWise> GetLiveResultSubjectWise(int studentId)
     {
         var liveResultSubjectWise = new List<LiveResultSubjectWise>();
-        if (_cachedExamGroup.AcademicExams.Count>0)
+        if (_cachedExamGroup.AcademicExams.Count > 0)
         {
             var examList = _cachedExamGroup.AcademicExams.DistinctBy(s => s.AcademicSubjectId).ToList();
 
@@ -268,12 +297,12 @@ public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
             {
                 var subWiseObtainMark = GetSubjectWiseTotalObtainMarks(exam.AcademicSubjectId, studentId);
                 var totalMarks = GetSubjectWiseTotalMarks(exam.AcademicSubjectId);
-                var isFailAnyCategory = IsFailedAnyCategory(exam.AcademicSubjectId, studentId); 
+                var isFailAnyCategory = IsFailedAnyCategory(exam.AcademicSubjectId, studentId);
                 LiveResultSubjectWise lrsw = new()
                 {
                     SubjectName = exam.AcademicSubject.SubjectName,
                     Marks = totalMarks,
-                    GPA =isFailAnyCategory==true? 0:GetGPAForSingleSubject(subWiseObtainMark, totalMarks),
+                    GPA = isFailAnyCategory == true ? 0 : GetGPAForSingleSubject(subWiseObtainMark, totalMarks),
                     SubjectTypes = GetLiveResultSubjectType(exam.AcademicSubjectId, studentId),
                     ObtainMarks = subWiseObtainMark,
                 };
@@ -292,16 +321,16 @@ public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
     {
         var result = false;
         var allExams = _cachedExamGroup.AcademicExams.Where(s => s.AcademicSubjectId == academicSubjectId).ToList();
-        if (allExams!=null && allExams.Count>0)
+        if (allExams != null && allExams.Count > 0)
         {
             foreach (var exam in allExams)
             {
-                if (exam.AcademicExamDetails?.Count<=0)
+                if (exam.AcademicExamDetails?.Count <= 0)
                 {
                     continue;
                 }
                 var examDetail = exam.AcademicExamDetails.FirstOrDefault(s => s.StudentId == studentId);
-                if (examDetail==null)
+                if (examDetail == null)
                 {
                     continue;
                 }
@@ -311,7 +340,7 @@ public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
                 var gradePoint = _cachedGradingTable
                     .FirstOrDefault(g => hundredPercentMark >= g.NumberRangeMin && hundredPercentMark <= g.NumberRangeMax)?
                     .GradePoint ?? 0m;
-                if (gradePoint<=0)
+                if (gradePoint <= 0)
                 {
                     result = true;
                     break;
@@ -324,12 +353,12 @@ public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
     private double GetSubjectWiseTotalMarks(int subjectId)
     {
         var result = 0.0;
-        var ss =_cachedExamGroup.AcademicExams.Where(s => s.AcademicSubjectId == subjectId).ToList();
-        result = ss?.Sum(s => s.TotalMarks)??result;
+        var ss = _cachedExamGroup.AcademicExams.Where(s => s.AcademicSubjectId == subjectId).ToList();
+        result = ss?.Sum(s => s.TotalMarks) ?? result;
         return result;
     }
 
-    private double GetGPAForSingleSubject(double obtainMark,double totalMarks)
+    private double GetGPAForSingleSubject(double obtainMark, double totalMarks)
     {
         //Make 100%
         var hundredPercentMark = (obtainMark * 100) / totalMarks;
@@ -337,7 +366,7 @@ public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
         //Compare and Calculation Grade Point            
         var gradePoint = _cachedGradingTable
             .FirstOrDefault(g => hundredPercentMark >= g.NumberRangeMin && hundredPercentMark <= g.NumberRangeMax)?
-            .GradePoint ?? 0m; 
+            .GradePoint ?? 0m;
 
         return (double)gradePoint;
     }
@@ -346,7 +375,7 @@ public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
     {
         var result = 0.0;
         result = _cachedExamGroup.AcademicExams.SelectMany(s => s.AcademicExamDetails.Where(e => e.AcademicExam.AcademicSubjectId == examId && e.StudentId == studentId)).Sum(c => c.ObtainMark);
-        
+
         return result;
     }
 
@@ -359,8 +388,9 @@ public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
             LiveResultSubjectType liveResultSubjectType = new LiveResultSubjectType()
             {
                 SubjectTypeName = item.ExamCategory,
-                TotalMarks =item.TotalMarks,
-                GetMarks = item.AcademicExamDetails.FirstOrDefault(s => s.StudentId == studentId)?.ObtainMark ?? 0
+                TotalMarks = item.TotalMarks,
+                GetMarks = item.AcademicExamDetails.FirstOrDefault(s => s.StudentId == studentId)?.ObtainMark ?? 0,
+                PassMark = GetPassMark(item.TotalMarks)
             }
         ;
             var isExist = liveResultSubjectTypes.Any(s => s.SubjectTypeName == liveResultSubjectType.SubjectTypeName);
@@ -383,7 +413,7 @@ public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
             ExamCategory = exam.ExamCategory,
             // Fix: prevent duplicate details
             ExaminationDetailsDtos = exam.AcademicExamDetails
-                .GroupBy(d => new { exam.AcademicSubjectId, exam.AcademicSectionId, exam.EmployeeId})
+                .GroupBy(d => new { exam.AcademicSubjectId, exam.AcademicSectionId, exam.EmployeeId })
                 .Select(g => new ExaminationDetailsDto
                 {
                     Id = g.First().Id,
@@ -400,9 +430,17 @@ public class AcademicExamManager:Manager<AcademicExam>, IAcademicExamManager
         };
     }
 
-    public async Task<AcademicExam> GetAcademicExam(int examGroupId, int classId, int subjectId, string examCategory)
+    public async Task<AcademicExam> GetAcademicExam(int examGroupId, int classId, int subjectId, string examCategory, int? sectionId)
     {
-        var existingExam =await _repository.Table.FirstOrDefaultAsync(s => s.AcademicExamGroupId == examGroupId && s.AcademicClassId == classId && s.AcademicSubjectId == subjectId && s.ExamCategory == examCategory);
+        var existingExam = await _repository.Table
+    .FirstOrDefaultAsync(s =>
+        s.AcademicExamGroupId == examGroupId &&
+        s.AcademicClassId == classId &&
+        s.AcademicSubjectId == subjectId &&
+        s.ExamCategory == examCategory &&
+        s.AcademicSectionId == sectionId
+    );
+
         return existingExam;
     }
 }

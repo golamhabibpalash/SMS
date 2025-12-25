@@ -9,7 +9,7 @@ public class LiveResultVM
     public string ExamTitle { get; set; }
     public int ExamGroupId { get; set; }
     public int AcademicClassId { get; set; }
-    public int AcademicSectionId { get; set; }
+    public int? AcademicSectionId { get; set; }
     public List<SelectListItem> AcademicExamGroupList { get; set; } = new List<SelectListItem>();
     public List<SelectListItem> AcademicClassList { get; set; } = new List<SelectListItem>();
     public List<SelectListItem> AcademicSectionList { get; set; } = new List<SelectListItem>();
@@ -26,6 +26,9 @@ public class LiveResultDetailsVM
     public double TotalMarks { get; set; }
     public double Attendance { get; set; }
     public int Rank { get; set; }
+    public int PreviousRank { get; set; }
+    public string Status { get; set; }
+    public int Fails { get; set; }
     public List<LiveResultSubjectWise> LiveResultSubjectWises { get; set; } = new List<LiveResultSubjectWise>();
 
 }
@@ -44,6 +47,7 @@ public class LiveResultSubjectType
     public string SubjectTypeName { get; set; }
     public double TotalMarks { get; set; }
     public double GetMarks { get; set; }
+    public double PassMark { get; set; } = 0.00;
 }
 
 public class TableHeaderSubjects

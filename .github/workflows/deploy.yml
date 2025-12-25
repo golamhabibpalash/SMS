@@ -35,5 +35,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./publish/
           server-dir: ${{ secrets.FTP_PATH }}
-          protocol: ftps # or ftp if your host doesn’t support FTPS
-          timeout: 60000
+          protocol: ftp
+          timeout: 120000
+          retry-count: 3    
+          retry-wait: 5000 

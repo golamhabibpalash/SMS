@@ -107,8 +107,7 @@ builder.Services.AddAuthorization(o =>
     AuthorizationPolicies.ConfigureAuthorization(o);
 });
 
-builder.Services.AddControllersWithViews()
-    .AddRazorRuntimeCompilation();
+builder.Services.AddControllersWithViews();
 
 builder.Services.AddRazorPages();
 builder.Services.AddAutoMapper(typeof(Program));
@@ -136,7 +135,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// ⭐ conditionally enable dashboard
+// conditionally enable dashboard
 if (hangfireEnabled)
 {
     var dashboardOptions = new DashboardOptions
@@ -148,7 +147,7 @@ if (hangfireEnabled)
 }
 else
 {
-    Console.WriteLine("⚠ Hangfire Disabled by configuration.");
+    Console.WriteLine(" Hangfire Disabled by configuration.");
 }
 
 // AREA routing

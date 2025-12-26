@@ -2,5 +2,5 @@
 
 public class LayoutHeaderVM
 {
-    public string InstituteName { get; set; }
+    public string InstituteName { get; set; } = string.Empty;
 }

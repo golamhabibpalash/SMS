@@ -12,8 +12,9 @@
 @inject IHttpContextAccessor httpContextAccessor
 
 @{
-    var infoTask = _instituteManager.GetAllAsync();
-    var info = await infoTask;
+    var headerVM = new LayoutHeaderVM();
+
+    var info = await _instituteManager.GetAllAsync();
     var user = await _userManager.GetUserAsync(User);
 
     if (info.Any())
@@ -23,12 +24,15 @@
         GlobalUI.Logo = firstInstitute.Logo;
         GlobalUI.Language = "En";
     }
+
     string instituteName = GlobalUI.InstituteName ?? "Institute Name";
     string instituteLogo = GlobalUI.Logo ?? "instituteLogo.png";
     var userName = _userManager.GetUserName(User);
+    headerVM.InstituteName = instituteName;
 
     string userImage = "/Images/noProfileImage.png";
-    if (_signInManager.IsSignedIn(User))
+
+    if (_signInManager.IsSignedIn(User) && user != null)
     {
         if (user.UserType == 's')
         {
@@ -43,12 +47,11 @@
                 userImage = $"/Images/Employee/Photo/{emp.Image}";
         }
     }
-;
-
-    var headerVM = new LayoutHeaderVM
+    else
     {
-        InstituteName = instituteName
-    };
+        <a asp-area="Identity" asp-page="/Account/Login">Log in</a>
+    }
+
 }
 
 

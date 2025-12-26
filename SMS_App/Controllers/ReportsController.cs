@@ -868,7 +868,7 @@ public class ReportsController : Controller
     [Authorize(Policy = "StudentWiseMarkSheetReportsPolicy")]
     public async Task<IActionResult> MarkSheetReport()
     {
-        GlobalUI.PageTitle = "Auto Mark-Sheet Generate";
+        GlobalUI.PageTitle = "Mark-Sheet Automation";
         ViewBag.SessionList = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name").ToList();
         ViewBag.ClassList = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name").ToList();
         ViewBag.ExamGroupList = new SelectList(await _academicExamGroupManager.GetAllAsync(), "Id", "ExamGroupName").ToList();
@@ -889,10 +889,12 @@ public class ReportsController : Controller
         {
             results = results.Where(s => s.AcademicSectionId == sectionId).ToList();
         }
+
         if (studentId > 0)
         {
             results = results.Where(s => s.StudentId == studentId).ToList();
         }
+
         if (results == null || results.Count <= 0)
         {
             return new JsonResult("Result not found");
@@ -910,7 +912,6 @@ public class ReportsController : Controller
             byte[] imageBytes = ms.ToArray();
             imageParam = Convert.ToBase64String(imageBytes);
         }
-
 
         StringBuilder stringBuilderMediaType = new StringBuilder();
         stringBuilderMediaType.Append("application/pdf");
@@ -975,6 +976,7 @@ public class ReportsController : Controller
         ReportDataSource reportDataSource = new ReportDataSource("GradingTable_DataSet", gTables);
         e.DataSources.Add(reportDataSource);
     }
+    
     void SubReportAnnualReportProcessingAsync(object sender, SubreportProcessingEventArgs e)
     {
         if (e.ReportPath == "rptAnnualReport")

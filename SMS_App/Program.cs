@@ -3,6 +3,7 @@ using Hangfire;
 using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -99,8 +100,29 @@ builder.Services.AddMvc(options =>
     options.Filters.Add(new AuthorizeFilter(policy));
 });
 
-builder.Services.AddSessionConfiguration();
-ServiceExtensions.ConfigureApplicationCookie(builder.Services);
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromHours(6);
+});
+
+builder.Services.ConfigureApplicationCookie(option =>
+{
+    option.Cookie.HttpOnly = true;
+    option.ExpireTimeSpan = TimeSpan.FromHours(6);
+    option.SlidingExpiration = true;
+
+    //Paths
+    option.LoginPath = "/Accounts/Login";
+    option.AccessDeniedPath = "/Accounts/AccessDenied";
+
+    //Security
+    option.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Strict;
+    #if DEBUG
+        option.Cookie.SecurePolicy = CookieSecurePolicy.None;
+    #else
+        option.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    #endif
+});
 
 builder.Services.AddAuthorization(o =>
 {

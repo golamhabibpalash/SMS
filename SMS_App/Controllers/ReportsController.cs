@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Reporting.NETCore;
 using SchoolManagementSystem;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
 using SMS_App.Utilities.Others;
@@ -22,11 +23,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.IO;
+using File =System.IO;
 using System.Linq;
 using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
-using Image = System.Drawing.Image;
 using LocalReport = Microsoft.Reporting.NETCore.LocalReport;
 
 namespace SMS_App.Controllers;
@@ -107,18 +108,30 @@ public class ReportsController : Controller
         }
 
         string mediaType = "application/pdf";
-        var path = _host.WebRootPath + "\\Reports\\Academic\\Students\\rptStudent.rdlc";
 
-        string imageParam = "";
-        var imagePath = _host.WebRootPath + "\\Images\\Institute\\" + institute.Logo;
+        // Cross-platform RDLC path
+        var path = Path.Combine(
+            _host.WebRootPath,
+            "Reports",
+            "Academic",
+            "Students",
+            "rptStudent.rdlc"
+        );
 
-        Image image = Image.FromFile(imagePath);
-        using (MemoryStream ms = new MemoryStream())
-        {
-            image.Save(ms, image.RawFormat);
-            byte[] imageBytes = ms.ToArray();
-            imageParam = Convert.ToBase64String(imageBytes);
-        }
+        // Cross-platform image path
+        var imagePath = Path.Combine(
+            _host.WebRootPath,
+            "Images",
+            "Institute",
+            institute.Logo
+        );
+
+        // Read image file without System.Drawing
+        byte[] imageBytes = await System.IO.File.ReadAllBytesAsync(imagePath);
+
+        // Convert to base64 for RDLC
+        string imageParam = "data:image/png;base64," + Convert.ToBase64String(imageBytes);
+
 
         using var report = new Microsoft.Reporting.NETCore.LocalReport();
         report.DataSources.Add(new ReportDataSource("DataSet1", studens));
@@ -224,13 +237,21 @@ public class ReportsController : Controller
         var reportColumns = GetReportColumns();
         var dataTable = BuildDataTable(students, reportColumns, columnMappings, dynamicColumnMap);
 
-        // 8️ Prepare report path
-        var reportPath = Path.Combine(_host.WebRootPath, "Reports\\Academic\\Students", "RptStudentDynamicReport.rdlc");
+        // 8️⃣ Prepare report path (cross-platform)
+        var reportPath = Path.Combine(
+            _host.WebRootPath,
+            "Reports",
+            "Academic",
+            "Students",
+            "RptStudentDynamicReport.rdlc"
+        );
+
         if (!System.IO.File.Exists(reportPath))
             throw new FileNotFoundException("RDLC file not found at: " + reportPath);
 
-        // 9️ Prepare institute logo
-        string imageParam = GetBase64Logo(institute.Logo);
+        // 9️⃣ Prepare institute logo (cross-platform, async)
+        string imageParam = await GetBase64LogoAsync(institute.Logo);
+
 
         // 10 Configure LocalReport
         using var report = new Microsoft.Reporting.NETCore.LocalReport();
@@ -238,7 +259,7 @@ public class ReportsController : Controller
         report.DataSources.Add(new ReportDataSource("StudentDynamicReportDataset", dataTable));
 
         // 11️ Set report parameters
-        var parameters = GetReportParameters(institute, dynamicColumnMap, columnMappings);
+        var parameters = await GetReportParameters(institute, dynamicColumnMap, columnMappings);
         report.SetParameters(parameters);
 
         // 12 Determine render format
@@ -356,18 +377,28 @@ public class ReportsController : Controller
         return dt;
     }
 
-    private string GetBase64Logo(string logoFileName)
+    private async Task<string> GetBase64LogoAsync(string logoFileName)
     {
         var path = Path.Combine(_host.WebRootPath, "Images", "Institute", logoFileName);
-        if (!System.IO.File.Exists(path)) return string.Empty;
 
-        using var img = Image.FromFile(path);
-        using var ms = new MemoryStream();
-        img.Save(ms, img.RawFormat);
-        return Convert.ToBase64String(ms.ToArray());
+        if (!System.IO.File.Exists(path))
+            return string.Empty;
+
+        try
+        {
+            // Read the image bytes directly (cross-platform)
+            byte[] imageBytes = await System.IO.File.ReadAllBytesAsync(path);
+
+            // Convert to Base64 and prefix for RDLC external image
+            return "data:image/png;base64," + Convert.ToBase64String(imageBytes);
+        }
+        catch
+        {
+            return string.Empty;
+        }
     }
 
-    private ReportParameter[] GetReportParameters(
+    private async Task<ReportParameter[]> GetReportParameters(
         Institute institute,
         Dictionary<string, string> dynamicColumnMap,
         Dictionary<string, (string Label, Func<Student, object> Selector)> columnMappings)
@@ -383,13 +414,6 @@ public class ReportsController : Controller
                 )
             )
             .ToArray();
-        //var dynamicParams = dynamicColumnMap
-        //    .Select((map, index) =>
-        //        new ReportParameter(
-        //            $"Column{index + 3}Header", columnMappings.TryGetValue(map.Value, out var val) ? val.Label : map.Value
-        //        )
-        //    )
-        //    .ToArray();
 
 
         var parameters = new[]
@@ -398,7 +422,7 @@ public class ReportsController : Controller
         new ReportParameter("ReportName", "Student List"),
         new ReportParameter("Address", institute.Address),
         new ReportParameter("EIIN", institute.EIIN),
-        new ReportParameter("Logo", GetBase64Logo(institute.Logo))
+        new ReportParameter("Logo", await GetBase64LogoAsync(institute.Logo))
     }.Concat(dynamicParams).ToArray();
 
         return parameters;
@@ -429,6 +453,7 @@ public class ReportsController : Controller
 
         string imageParam = "";
         var imagePath = _host.WebRootPath + "\\Images\\Institute\\" + institute.Logo;
+
         var reportName = "Students Daily Attendance Report (Check In)";
         if (attendanceCategory == "In")
         {
@@ -437,16 +462,27 @@ public class ReportsController : Controller
         else
         {
             reportName = "Students Daily Attendance Report (Check Out)";
-            path = _host.WebRootPath + "\\Reports\\Attendance\\Rpt_Daily_Attendance_CheckOut.rdlc";
+            path = Path.Combine(
+                _host.WebRootPath,
+                "Reports",
+                "Attendance",
+                "Rpt_Daily_Attendance_CheckOut.rdlc"
+            );
         }
 
-            Image image = Image.FromFile(imagePath);
-        using (MemoryStream ms = new MemoryStream())
-        {
-            image.Save(ms, image.RawFormat);
-            byte[] imageBytes = ms.ToArray();
-            imageParam = Convert.ToBase64String(imageBytes);
-        }
+        // Cross-platform image path
+        imagePath = Path.Combine(
+            _host.WebRootPath,
+            "Images",
+            "Institute",
+            institute.Logo
+        );
+
+        // Read image file without System.Drawing
+        byte[] imageBytes = await System.IO.File.ReadAllBytesAsync(imagePath);
+        // Convert to base64 for RDLC
+        imageParam = "data:image/png;base64," + Convert.ToBase64String(imageBytes);
+
         attendanceFor = attendanceFor == "s" ? "student" : "employees";
         AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSession();
         var reportData = new List<RptDailyAttendaceVM>();
@@ -455,6 +491,7 @@ public class ReportsController : Controller
         if (attendanceFor == "employees")
         {
             path = _host.WebRootPath + "\\Reports\\Attendance\\Rpt_Daily_Attendance_Employee.rdlc";
+
             reportName = "Employees Daily Attendance Report";
         }
         using var report = new Microsoft.Reporting.NETCore.LocalReport();
@@ -639,19 +676,28 @@ public class ReportsController : Controller
 
         var students = await _studentManager.GetStudentsByClassIdAndSessionIdAsync(5, 1);
         string mediaType = "application/pdf";
-        var path = _host.WebRootPath + "\\Reports\\Attendance\\Rpt_Monthly_Attendance_Report.rdlc";
+        var path = Path.Combine(_host.WebRootPath, "Reports", "Attendance", "Rpt_Monthly_Attendance_Report.rdlc");
 
         using var report = new LocalReport();
-        string imageParam = "";
-        var imagePath = _host.WebRootPath + "\\Images\\Institute\\" + institute.Logo;
 
-        Image image = Image.FromFile(imagePath);
-        using (MemoryStream ms = new MemoryStream())
+        // 1️⃣ Cross-platform image path
+        var imagePath = Path.Combine(_host.WebRootPath, "Images", "Institute", institute.Logo);
+
+        // 2️⃣ Check if file exists
+        string imageParam = string.Empty;
+        if (!System.IO.File.Exists(imagePath))
         {
-            image.Save(ms, image.RawFormat);
-            byte[] imageBytes = ms.ToArray();
-            imageParam = Convert.ToBase64String(imageBytes);
+            imageParam = string.Empty;
         }
+        else
+        {
+            // 3️⃣ Read file bytes directly (no System.Drawing)
+            byte[] imageBytes = await System.IO.File.ReadAllBytesAsync(imagePath);
+
+            // 4️⃣ Convert to Base64 for RDLC external image
+            imageParam = "data:image/png;base64," + Convert.ToBase64String(imageBytes);
+        }
+
         int monthId = 1;
 
         DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
@@ -739,18 +785,27 @@ public class ReportsController : Controller
         Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
 
         string mediaType = "application/pdf";
-        var reportPath = _host.WebRootPath + "\\Reports\\ExamResult\\Rpt_Subject_Wise_MarkSheet.rdlc";
+        var reportPath = Path.Combine(_host.WebRootPath, "Reports", "ExamResult", "Rpt_Subject_Wise_MarkSheet.rdlc");
 
         string imageParam = "";
-        var instituteLogoPath = _host.WebRootPath + "\\Images\\Institute\\" + institute.Logo;
+        var instituteLogoPath = Path.Combine(_host.WebRootPath, "Images", "Institute", institute.Logo);
 
-        Image image = Image.FromFile(instituteLogoPath);
-        using (MemoryStream ms = new MemoryStream())
+        // 2️⃣ Check if file exists
+        if (!System.IO.File.Exists(instituteLogoPath))
         {
-            image.Save(ms, image.RawFormat);
-            byte[] imageBytes = ms.ToArray();
-            imageParam = Convert.ToBase64String(imageBytes);
+            imageParam = string.Empty;
         }
+        else
+        {
+            // 3️⃣ Read file bytes directly (no System.Drawing)
+            byte[] imageBytes = await System.IO.File.ReadAllBytesAsync(instituteLogoPath);
+
+            // 4️⃣ Convert to Base64 for RDLC external image
+            imageParam = "data:image/png;base64," + Convert.ToBase64String(imageBytes);
+        }
+
+
+
         var examDetails = await _reportManager.GetSubjectWiseMarkSheet(examId);
         if (examDetails == null)
         {
@@ -810,13 +865,17 @@ public class ReportsController : Controller
         string imageParam = "";
         var instituteLogoPath = _host.WebRootPath + "\\Images\\Institute\\" + institute.Logo;
 
-        Image image = Image.FromFile(instituteLogoPath);
-        using (MemoryStream ms = new MemoryStream())
+        
+        if (System.IO.File.Exists(instituteLogoPath))
         {
-            image.Save(ms, image.RawFormat);
-            byte[] imageBytes = ms.ToArray();
-            imageParam = Convert.ToBase64String(imageBytes);
+            // Read image bytes directly (cross-platform)
+            byte[] imageBytes = await System.IO.File.ReadAllBytesAsync(instituteLogoPath);
+
+            // Convert to Base64 for RDLC or other use
+            imageParam = "data:image/png;base64," + Convert.ToBase64String(imageBytes);
         }
+
+
         var examDetails = await _reportManager.GetStudentWiseMarkSheet(examGroupId, classId);
         if (examDetails == null)
         {
@@ -876,7 +935,7 @@ public class ReportsController : Controller
     }
 
     [Authorize(Policy = "StudentWiseMarkSheetReportsPolicy")]
-    public async Task<IActionResult> MarkSheetReportExport(string reportType, string fileName, int examGroupId, int academicClassId, int? sectionId, int sessionId, int studentId)
+    public async Task<IActionResult> MarkSheetReportExportOld(string reportType, string fileName, int examGroupId, int academicClassId, int? sectionId, int sessionId, int studentId)
     {
         var results = await _reportManager.GetStudentWiseMarkSheet(examGroupId, academicClassId);
         var highestMarks = results.Max(r => r.TotalObtainMarks).ToString();
@@ -900,15 +959,22 @@ public class ReportsController : Controller
             return new JsonResult("Result not found");
         }
 
+        // Get institute first
         Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
 
-        string imageParam = "";
-        var instituteLogoPath = _host.WebRootPath + "\\Images\\Institute\\" + institute.Logo;
+        var instituteLogoPath = Path.Combine(
+            _host.WebRootPath,
+            "Images",
+            "Institute",
+            institute.Logo
+        );
 
-        Image image = Image.FromFile(instituteLogoPath);
-        using (MemoryStream ms = new MemoryStream())
+        string imageParam = "";
+
+        using (var image = SixLabors.ImageSharp.Image.Load(instituteLogoPath)) // ImageSharp cross-platform
+        using (var ms = new MemoryStream())
         {
-            image.Save(ms, image.RawFormat);
+            image.Save(ms, image.Metadata.DecodedImageFormat); 
             byte[] imageBytes = ms.ToArray();
             imageParam = Convert.ToBase64String(imageBytes);
         }
@@ -918,7 +984,13 @@ public class ReportsController : Controller
 
         RenderType renderType = RenderType.Pdf;
         renderType = !string.IsNullOrEmpty(reportType) ? GetRenderType(reportType) : renderType;
-        var path = _host.WebRootPath + "\\Reports\\ExamResult\\Rpt_MarkSheet.rdlc";
+        //var path = _host.WebRootPath + "\\Reports\\ExamResult\\Rpt_MarkSheet.rdlc";
+        var path = Path.Combine(
+            _host.WebRootPath,
+            "Reports",
+            "ExamResult",
+            "Rpt_MarkSheet.rdlc"
+        );
 
         using var report = new Microsoft.Reporting.NETCore.LocalReport();
         report.DataSources.Add(new ReportDataSource("DataSet1", results));
@@ -968,6 +1040,120 @@ public class ReportsController : Controller
             return File(pdf, MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
         }
         return File(pdf, stringBuilderMediaType.ToString());
+    }
+
+    public async Task<IActionResult> MarkSheetReportExport(
+    string reportType,
+    string fileName,
+    int examGroupId,
+    int academicClassId,
+    int? sectionId,
+    int sessionId,
+    int studentId)
+    {
+        // 1️⃣ Get report data
+        var results = await _reportManager.GetStudentWiseMarkSheet(examGroupId, academicClassId);
+
+        if (results == null || results.Count == 0)
+            return new JsonResult("Result not found");
+
+        if (sectionId.HasValue && sectionId.Value > 0)
+            results = results.Where(s => s.AcademicSectionId == sectionId).ToList();
+
+        if (studentId > 0)
+            results = results.Where(s => s.StudentId == studentId).ToList();
+
+        if (results.Count == 0)
+            return new JsonResult("Result not found");
+
+        // 2️⃣ Get highest marks
+        var highestMarks = results.Max(r => r.TotalObtainMarks).ToString();
+
+        // 3️⃣ Get institute info
+        Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
+
+        // 4️⃣ Prepare institute logo (cross-platform)
+        var instituteLogoPath = Path.Combine(
+            _host.WebRootPath,
+            "Images",
+            "Institute",
+            institute.Logo
+        );
+
+        string imageParam = string.Empty;
+        if (System.IO.File.Exists(instituteLogoPath))
+        {
+            byte[] imageBytes = await System.IO.File.ReadAllBytesAsync(instituteLogoPath);
+            imageParam = "data:image/png;base64," + Convert.ToBase64String(imageBytes);
+        }
+
+        // 5️⃣ Prepare RDLC report path (cross-platform)
+        var reportPath = Path.Combine(
+            _host.WebRootPath,
+            "Reports",
+            "ExamResult",
+            "Rpt_MarkSheet.rdlc"
+        );
+
+        if (!System.IO.File.Exists(reportPath))
+            return new JsonResult($"RDLC file not found at: {reportPath}");
+
+        // 6️⃣ Create LocalReport
+        using var report = new LocalReport();
+        report.ReportPath = reportPath;
+        report.DataSources.Add(new ReportDataSource("DataSet1", results));
+
+        string publicationDate = results.Select(r => r.CreatedAt).FirstOrDefault().ToString("dd MMM yyyy");
+
+        // 7️⃣ Set report parameters
+        var parameters = new[]
+        {
+            new ReportParameter("InstituteName", institute.Name),
+            new ReportParameter("Address", institute.Address),
+            new ReportParameter("InstituteLogo", imageParam),
+            new ReportParameter("EIINNo", institute.EIIN),
+            new ReportParameter("ExamName", results.Select(s => s.ExamGroupName).FirstOrDefault()),
+            new ReportParameter("ClassName", results.Select(s => s.ClassName).FirstOrDefault()),
+            new ReportParameter("PublicationDate", publicationDate),
+            new ReportParameter("HighestMarks", highestMarks),
+        };
+
+        report.SetParameters(parameters);
+
+        // 8️⃣ Handle subreports
+        TempData["gTables"] = await _gradingTableManager.GetAllAsync();
+        report.SubreportProcessing += SubReportAnnualReportProcessingAsync;
+        report.SubreportProcessing += SubReportGraddingTableProcessingAsync;
+
+        // 9️⃣ Determine output format
+        RenderType renderType = !string.IsNullOrEmpty(reportType) ? GetRenderType(reportType) : RenderType.Pdf;
+        string mediaType = renderType switch
+        {
+            RenderType.Pdf => MediaTypeNames.Application.Pdf,
+            RenderType.Excel => "application/vnd.ms-excel",
+            RenderType.Word => "application/msword",
+            _ => MediaTypeNames.Application.Octet
+        };
+
+        // 10️⃣ Render report
+        string renderFormat = renderType switch
+        {
+            RenderType.Pdf => "pdf",
+            RenderType.Excel => "excel",
+            RenderType.Word => "word",
+            _ => "pdf"
+        };
+
+        var reportBytes = report.Render(renderFormat);
+
+        // 11️⃣ Return file
+        if (!string.IsNullOrEmpty(fileName))
+        {
+            fileName = fileName + "_" + DateTime.Now.ToString("dd MMM yyyy");
+            return File(reportBytes, mediaType, GetReportName(fileName, reportType));
+        }
+
+        return File(reportBytes, mediaType);
     }
 
     void SubReportGraddingTableProcessingAsync(object sender, SubreportProcessingEventArgs e)
@@ -1021,17 +1207,29 @@ public class ReportsController : Controller
         }
 
         string mediaType = "application/pdf";
-        var path = _host.WebRootPath + "\\Reports\\Accounts\\rptStudentPaymentFullInfo.rdlc";
+        var path = Path.Combine(
+            _host.WebRootPath,
+            "Reports",
+            "Accounts",
+            "rptStudentPaymentFullInfo.rdlc"
+        );
 
         string imageParam = "";
-        var imagePath = _host.WebRootPath + "\\Images\\Institute\\" + institute.Logo;
+        var imagePath = Path.Combine(
+            _host.WebRootPath,
+            "Images",
+            "Institute",
+            institute.Logo
+        );
 
-        Image image = Image.FromFile(imagePath);
-        using (MemoryStream ms = new MemoryStream())
+        
+        if (System.IO.File.Exists(imagePath))
         {
-            image.Save(ms, image.RawFormat);
-            byte[] imageBytes = ms.ToArray();
-            imageParam = Convert.ToBase64String(imageBytes);
+            // Read image bytes directly (cross-platform)
+            byte[] imageBytes = await System.IO.File.ReadAllBytesAsync(imagePath);
+
+            // Convert to Base64 for RDLC or other use
+            imageParam = "data:image/png;base64," + Convert.ToBase64String(imageBytes);
         }
 
         using var report = new LocalReport();
@@ -1113,18 +1311,30 @@ public class ReportsController : Controller
             return new JsonResult("Institute Information not found!");
         }
         string imageParam = "";
-        var imagePath = _host.WebRootPath + "\\Images\\Institute\\" + institute.Logo;
-        var reportPath = _host.WebRootPath + "\\Reports\\Accounts\\Rpt_Student_Payment.rdlc";
+        var imagePath = Path.Combine(
+            _host.WebRootPath,
+            "Images",
+            "Institute",
+            institute.Logo
+        );
+        var reportPath = Path.Combine(
+            _host.WebRootPath,
+            "Reports",
+            "Accounts",
+            "Rpt_Student_Payment.rdlc"
+        );
         byte[] pdf;
         string mediaType = "application/pdf";
-        Image image = Image.FromFile(imagePath);
-        using (MemoryStream ms = new MemoryStream())
-        {
-            image.Save(ms, image.RawFormat);
-            byte[] imageBytes = ms.ToArray();
-            imageParam = Convert.ToBase64String(imageBytes);
-        }
 
+        
+        if (System.IO.File.Exists(imagePath))
+        {
+            // Read image bytes directly (cross-platform)
+            byte[] imageBytes = await System.IO.File.ReadAllBytesAsync(imagePath);
+
+            // Convert to Base64 for RDLC or other use
+            imageParam = "data:image/png;base64," + Convert.ToBase64String(imageBytes);
+        }
         using var report = new LocalReport();
         report.Refresh();
         try
@@ -1178,14 +1388,22 @@ public class ReportsController : Controller
         var path = _host.WebRootPath + "\\Reports\\Accounts\\Rpt_Payment_Receipt.rdlc";
 
         string imageParam = "";
-        var imagePath = _host.WebRootPath + "\\Images\\Institute\\institute.jpeg";
+        var imagePath = Path.Combine(
+            _host.WebRootPath,
+            "Images",
+            "Institute",
+            "institute.jpeg"
+        );
 
-        Image image = Image.FromFile(imagePath);
-        using (MemoryStream ms = new MemoryStream())
+
+
+        if (System.IO.File.Exists(imagePath))
         {
-            image.Save(ms, image.RawFormat);
-            byte[] imageBytes = ms.ToArray();
-            imageParam = Convert.ToBase64String(imageBytes);
+            // Read image bytes directly (cross-platform)
+            byte[] imageBytes = await System.IO.File.ReadAllBytesAsync(imagePath);
+
+            // Convert to Base64 for RDLC or other use
+            imageParam = "data:image/png;base64," + Convert.ToBase64String(imageBytes);
         }
         List<RptPaymentReceiptVM> rptPaymentReceiptVMs = await _reportManager.GetPaymentReceiptReport(paymentId);
 

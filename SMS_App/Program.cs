@@ -88,6 +88,12 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddDefaultUI()
 .AddDefaultTokenProviders();
 
+// Fix Auto Logout Issue
+builder.Services.Configure<SecurityStampValidatorOptions>(options =>
+{
+    options.ValidationInterval = TimeSpan.FromHours(24);
+});
+
 // MVC + JSON
 builder.Services.AddControllers()
     .AddNewtonsoftJson(opt =>

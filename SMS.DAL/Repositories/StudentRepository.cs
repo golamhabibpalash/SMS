@@ -1,16 +1,14 @@
-﻿using SMS.DB;
-using SMS.Entities;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using SMS.DAL.Repositories.Base;
 using SMS.DAL.Contracts;
-using System.Linq;
-using Microsoft.Data.SqlClient;
-using System;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using SMS.DAL.Repositories.Base;
+using SMS.DB;
+using SMS.Entities;
 using SMS.Entities.AdditionalModels;
-using SMS.Entities.RptModels;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SMS.DAL.Repositories
 {
@@ -86,14 +84,14 @@ namespace SMS.DAL.Repositories
                 .Include(s => s.AcademicClass)
                 .Include(s => s.AcademicSession)
                 .Include(s => s.AcademicSection)
-                .FirstOrDefaultAsync(s => s.UniqueId == uniqueId);
+                .FirstOrDefaultAsync(s => Convert.ToInt32(s.UniqueId.Trim()).ToString() == (Convert.ToInt32(uniqueId).ToString()).Trim());
             return student;
         }
 
         public async Task<Student> GetStudentByClassRollAsync(int id, int classRoll)
         {
             return await _context.Student
-                .FirstOrDefaultAsync(s => s.Id != id 
+                .FirstOrDefaultAsync(s => s.Id != id
                 && s.ClassRoll == classRoll);
         }
 
@@ -102,7 +100,7 @@ namespace SMS.DAL.Repositories
             List<Student> students = await _context.Student
                 .Include(s => s.AcademicSection)
                 .Include(s => s.Gender)
-                .Where(s => s.AcademicSessionId == sessionId 
+                .Where(s => s.AcademicSessionId == sessionId
                 && s.AcademicClassId == classId)
                 .ToListAsync();
             return students;
@@ -116,9 +114,18 @@ namespace SMS.DAL.Repositories
                 .Include(s => s.AcademicSection)
                 .Include(s => s.AcademicSession)
                 .Include(s => s.AcademicClass)
+                .Include(s => s.Gender)
+                .Include(s => s.PresentDivision)
+                .Include(s => s.PresentDistrict)
+                .Include(s => s.PresentUpazila)
+                .Include(s => s.PermanentDivision)
+                .Include(s => s.PermanentDistrict)
+                .Include(s => s.PermanentUpazila)
+                .Include(s => s.Religion)
+                .Include(s => s.BloodGroup)
                 .ToListAsync();
 
-            if (classId!=0)
+            if (classId != 0)
             {
                 students = students.Where(s => s.AcademicClassId == classId).ToList();
             }

@@ -1,6 +1,5 @@
 ﻿
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using SMS.Entities;
 using SMS.Entities.AdditionalModels;
@@ -8,10 +7,7 @@ using SMS.Entities.RptModels;
 using SMS.Entities.RptModels.AttendanceVM;
 using SMS.Entities.RptModels.Results;
 using SMS.Entities.RptModels.StudentPayment;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Reflection.Emit;
-using System.Threading.Tasks;
 
 namespace SMS.DB
 {
@@ -35,6 +31,7 @@ namespace SMS.DB
         public DbSet<AcademicExamDetail> AcademicExamDetails { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<ApplicationSettings> ApplicationSettings { get; set; }
+        public DbSet<AppliedStudent> AppliedStudent { get; set; }
         public DbSet<AttachDoc> AttachDocs { get; set; }
         public DbSet<Attendance> Attendances { get; set; }
         #endregion
@@ -47,6 +44,10 @@ namespace SMS.DB
         public DbSet<ClassFeeList> ClassFeeList { get; set; }
         public DbSet<Chapter> Chapters { get; set; }
         public DbSet<ClaimStores> ClaimStores { get; set; }
+        public DbSet<ClassRoom> ClassRooms { get; set; }
+        public DbSet<ClassRoutine> ClassRoutines { get; set; }
+        public DbSet<ClassPeriods> ClassPeriods { get; set; }
+
         #endregion
 
         #region D
@@ -54,6 +55,7 @@ namespace SMS.DB
         public DbSet<DesignationType> DesignationType { get; set; }
         public DbSet<District> District { get; set; }
         public DbSet<Division> Division { get; set; }
+        public DbSet<Days> Days { get; set; }
         #endregion
 
         #region E
@@ -75,6 +77,10 @@ namespace SMS.DB
 
         #region I
         public DbSet<Institute> Institute { get; set; }
+        #endregion
+
+        #region L
+        public DbSet<Log> Logs { get; set; }
         #endregion
 
         #region N
@@ -119,19 +125,20 @@ namespace SMS.DB
 
         #region T
         public DbSet<Tran_MachineRawPunch> Tran_MachineRawPunch { get; set; }
+        public DbSet<TeacherSubjectMap> TeacherSubjectMaps { get; set; }
         #endregion
 
         #region U
         public DbSet<Upazila> Upazila { get; set; }
         #endregion
 
-        
+
 
         [NotMapped]
         public DbSet<RptStudentVM> RptStudentVMs { get; set; }
 
         [NotMapped]
-        public DbSet<RptAdmitCardVM> RptAdmitCardVMs { get;set; }
+        public DbSet<RptAdmitCardVM> RptAdmitCardVMs { get; set; }
 
         [NotMapped]
         public DbSet<AttendanceVM> AttendanceVMs { get; set; }
@@ -162,17 +169,19 @@ namespace SMS.DB
         public DbSet<SubjectWiseMarkSheetVM> SubjectWiseMarkSheetVMs { get; set; }
         [NotMapped]
         public DbSet<StudentWiseMarkSheetVM> StudentWiseMarkSheetVMs { get; set; }
+        [NotMapped]
+        public DbSet<PaidAmountResult> PaidAmountResults { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
             builder.Entity<ClaimStores>()
-                .HasIndex(p=> new { p.ClaimValue, p.ClaimType})
+                .HasIndex(p => new { p.ClaimValue, p.ClaimType })
                 .IsUnique(true);
-            
+
             builder.Entity<ProjectModule>()
-                .HasIndex(p=> new { p.ModuleName})
+                .HasIndex(p => new { p.ModuleName })
                 .IsUnique(true);
 
             builder.Entity<Student>()
@@ -188,7 +197,11 @@ namespace SMS.DB
                 .IsUnique();
 
             builder.Entity<ParamBusConfig>()
-                .HasIndex(s => new { s.ParamSL, s.ConfigName })
+                .HasIndex(s => s.ParamSL)
+                .IsUnique();
+
+            builder.Entity<ParamBusConfig>()
+                .HasIndex(s => s.ConfigName)
                 .IsUnique();
 
             builder.Entity<AttendanceVM>(entity => entity.HasNoKey());
@@ -205,7 +218,8 @@ namespace SMS.DB
             builder.Entity<StudentPaymentSchedulePaidVM>().ToView(nameof(StudentPaymentSchedulePaidVMs)).HasNoKey();
             builder.Entity<SubjectWiseMarkSheetVM>().ToView(nameof(SubjectWiseMarkSheetVMs)).HasNoKey();
             builder.Entity<StudentWiseMarkSheetVM>().ToView(nameof(StudentWiseMarkSheetVMs)).HasNoKey();
+            builder.Entity<PaidAmountResult>().ToView(nameof(PaidAmountResults)).HasNoKey();
 
-        }        
+        }
     }
 }

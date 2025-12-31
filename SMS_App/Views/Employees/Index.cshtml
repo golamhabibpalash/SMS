@@ -1,0 +1,91 @@
+﻿
+@model IEnumerable<SMS.Entities.Employee>
+
+
+@inject UserManager<ApplicationUser> _userManager;
+@{
+
+    ViewData["Title"] = "Employees";
+    GlobalUI.PageTitle = ViewBag.Title;
+
+}
+@section Styles{
+    <style>
+        .img-responsive
+        {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .img-circle
+        {
+            border-radius: 100%;
+        }
+    </style>
+}
+
+<div class="row">
+    <div class="col-md-12 text-end pb-2">
+        <partial name="_Create" />
+    </div>
+</div>
+
+<div class="row d-flex justify-content-center">
+    @foreach (var desigNation in Model.OrderBy(d => d.Designation.SortingOrder).GroupBy(c => c.Designation.DesignationName))
+    {
+        <div class="card border-0 shadow-sm rounded-3">
+            <div class="card-header bg-light">
+                <h6 class="mb-0 text-muted">@desigNation.Key</h6>
+            </div>
+            <div class="row">
+                @foreach (var item in desigNation)
+                {
+                    if (item.Status)
+                    {
+                        <partial name="_profileCard" model="item" />
+                    }
+                }
+            </div>
+        </div>
+    }
+    
+    <div class="row border-0 shadow-sm rounded-3">
+        <div class="card-header bg-light">
+            <h6 class="mb-0 text-muted">Inactive Employees</h6>
+        </div>
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                if (!item.Status)
+                {
+                    <partial name="_profileCard" model="item" />
+                }
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    @*<script src="~/js/AlertifyNotify/successNotify.js"></script>*@
+    <script>
+
+    $(document).ready(function () {
+
+        $(function () {
+            let saved = '@TempData["saved"]';
+            let deleted = '@TempData["deleted"]';
+            let edited = '@TempData["edited"]';
+
+            if (saved != "") {
+                alertify.success("Saved Successfully");
+            }
+            if (deleted != "") {
+                alertify.error("Deleted Successfully");
+            }
+            if (edited != "") {
+                alertify.message('Updated Successfully');
+            }
+        });
+    });
+    </script>
+}

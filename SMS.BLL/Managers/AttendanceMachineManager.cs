@@ -1,13 +1,11 @@
 ﻿using BLL.Managers.Base;
 using SMS.BLL.Contracts;
 using SMS.DAL.Contracts;
-using SMS.DAL.Repositories;
 using SMS.Entities;
 using SMS.Entities.AdditionalModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SMS.BLL.Managers
@@ -16,9 +14,9 @@ namespace SMS.BLL.Managers
     {
         private readonly IAttendanceMachineRepository _attendanceMachineRepository;
 
-        public AttendanceMachineManager(IAttendanceMachineRepository attendanceMachineRepository) :base(attendanceMachineRepository)
+        public AttendanceMachineManager(IAttendanceMachineRepository attendanceMachineRepository) : base(attendanceMachineRepository)
         {
-           _attendanceMachineRepository = attendanceMachineRepository;
+            _attendanceMachineRepository = attendanceMachineRepository;
         }
 
 
@@ -29,7 +27,7 @@ namespace SMS.BLL.Managers
 
         public async Task<IEnumerable<AttendanceVM>> GetAttendanceByDateAsync(string attendanceFor, string date, string attendanceType, int? aSessionId, int? aClassId)
         {
-            var result =  await _attendanceMachineRepository.GetAttendanceByDateAsync(attendanceFor, date, attendanceType, aSessionId, aClassId);
+            var result = await _attendanceMachineRepository.GetAttendanceByDateAsync(attendanceFor, date, attendanceType, aSessionId, aClassId);
             return result.OrderByDescending(m => m.CardNo);
         }
 
@@ -39,17 +37,17 @@ namespace SMS.BLL.Managers
             return result;
         }
 
-        public async Task<List<Tran_MachineRawPunch>> GetAttendanceByMonthSingleStudent(int studentId, int monthId)
+        public async Task<List<Tran_MachineRawPunch>> GetAttendanceByMonthSingleStudent(int studentId, string monthYear)
         {
-            var result = await _attendanceMachineRepository.GetAttendanceByMonthSingleStudent(studentId, monthId);
+            var result = await _attendanceMachineRepository.GetAttendanceByMonthSingleStudent(studentId, monthYear);
             return result;
         }
 
         public async Task<List<Tran_MachineRawPunch>> GetCheckinDataByDateAsync(string date)
         {
-            List<Tran_MachineRawPunch> allCheckInAttendnace = new List<Tran_MachineRawPunch>();
-            var result =await _attendanceMachineRepository.GetCheckinDataByDateAsync(date);
-            if (result.Count>0)
+            List<Tran_MachineRawPunch> allCheckInAttendnace = new();
+            var result = await _attendanceMachineRepository.GetCheckinDataByDateAsync(date);
+            if (result.Count > 0)
             {
                 allCheckInAttendnace = result;
             }
@@ -58,8 +56,8 @@ namespace SMS.BLL.Managers
         public async Task<List<Tran_MachineRawPunch>> GetEmpCheckinDataByDateAsync(string date)
         {
             List<Tran_MachineRawPunch> allCheckInAttendnace = new List<Tran_MachineRawPunch>();
-            var result =await _attendanceMachineRepository.GetEmpCheckinDataByDateAsync(date);
-            if (result.Count>0)
+            var result = await _attendanceMachineRepository.GetEmpCheckinDataByDateAsync(date);
+            if (result.Count > 0)
             {
                 allCheckInAttendnace = result;
             }

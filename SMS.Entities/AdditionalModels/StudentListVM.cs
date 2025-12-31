@@ -1,6 +1,4 @@
-﻿using SMS.Entities;
-
-namespace SMS.Entities.AdditionalModels
+﻿namespace SMS.Entities.AdditionalModels
 {
     public class StudentListVM
     {
@@ -15,8 +13,9 @@ namespace SMS.Entities.AdditionalModels
         public string SessionName { get; set; }
         public string Gender { get; set; }
         public bool Status { get; set; }
-        public int ClassSerial { get; set; }
+        public int? ClassSerial { get; set; }
         public bool IsResidential { get; set; }
         public string UniqueId { get; set; }
+        public string GuardianPhone { get; set; }
     }
 }

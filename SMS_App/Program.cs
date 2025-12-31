@@ -102,13 +102,13 @@ builder.Services.AddMvc(options =>
 
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromHours(6);
+    options.IdleTimeout = TimeSpan.FromHours(24);
 });
 
 builder.Services.ConfigureApplicationCookie(option =>
 {
     option.Cookie.HttpOnly = true;
-    option.ExpireTimeSpan = TimeSpan.FromHours(6);
+    option.ExpireTimeSpan = TimeSpan.FromHours(24);
     option.SlidingExpiration = true;
 
     //Paths

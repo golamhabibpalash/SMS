@@ -3,6 +3,7 @@ using Hangfire;
 using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -154,6 +155,13 @@ builder.Services.AddSingleton<SiteMap>(provider =>
     var filePath = Path.Combine(builder.Environment.ContentRootPath, "siteMap.config");
     return SiteMapLoader.Load(filePath);
 });
+
+// FIX: Persist Data Protection Keys (required for shared hosting)
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo(
+        Path.Combine(builder.Environment.ContentRootPath, "Keys")
+    ))
+    .SetApplicationName("SMS_App");
 
 var app = builder.Build();
 

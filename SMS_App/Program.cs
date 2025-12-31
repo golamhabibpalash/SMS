@@ -25,19 +25,19 @@ var builder = WebApplication.CreateBuilder(args);
 byte[] key = Encoding.UTF8.GetBytes("1234567890123456");
 byte[] iv = Encoding.UTF8.GetBytes("1234567890123456");
 
-// decrypt connection string
+// Decrypt connection string
 var connectionString =
     AesEncryptionHelper.Decrypt(
         builder.Configuration.GetConnectionString("DefaultConnection"),
         key, iv
     );
 
-// ⭐ read hangfire config without model class
+// Hangfire configuration
 bool hangfireEnabled = builder.Configuration.GetValue<bool>("Hangfire:IsEnabled");
 string dashboardPath = builder.Configuration.GetValue<string>("Hangfire:DashboardPath") ?? "/hangfire";
 int workerCount = builder.Configuration.GetValue<int>("Hangfire:WorkerCount");
 
-// DB context
+// DB Context
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(connectionString, sqlOptions =>
@@ -49,9 +49,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 });
 
+// HTTP Client
 builder.Services.AddHttpClient();
 
-// ⭐ conditional Hangfire registration
+// Conditional Hangfire
 if (hangfireEnabled)
 {
     builder.Services.AddHangfire(config =>
@@ -70,10 +71,11 @@ if (hangfireEnabled)
 
     builder.Services.AddHangfireServer(options =>
     {
-        options.WorkerCount = workerCount; // background workers count
+        options.WorkerCount = workerCount;
     });
 }
 
+// Identity Configuration
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.Password.RequireDigit = false;
@@ -91,6 +93,7 @@ builder.Services.AddControllers()
     .AddNewtonsoftJson(opt =>
         opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
+// Global Authorization
 builder.Services.AddMvc(options =>
 {
     var policy = new AuthorizationPolicyBuilder()
@@ -100,41 +103,46 @@ builder.Services.AddMvc(options =>
     options.Filters.Add(new AuthorizeFilter(policy));
 });
 
+// SESSION (Fixed)
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromHours(24);
+    options.IdleTimeout = TimeSpan.FromHours(24);      // Session length
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+    options.Cookie.MaxAge = TimeSpan.FromHours(24);    // Important!
+    options.Cookie.SameSite = SameSiteMode.Lax;        // Fix Chrome issues
 });
 
+// COOKIE FIXED (Identity Cookie)
 builder.Services.ConfigureApplicationCookie(option =>
 {
     option.Cookie.HttpOnly = true;
-    option.ExpireTimeSpan = TimeSpan.FromHours(24);
+    option.ExpireTimeSpan = TimeSpan.FromHours(24);     // Cookie length
+    option.Cookie.MaxAge = TimeSpan.FromHours(24);      // Important!
     option.SlidingExpiration = true;
+    option.Cookie.SameSite = SameSiteMode.Lax;
+    option.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 
-    //Paths
     option.LoginPath = "/Accounts/Login";
     option.AccessDeniedPath = "/Accounts/AccessDenied";
 
-    //Security
-    option.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Strict;
-    #if DEBUG
-        option.Cookie.SecurePolicy = CookieSecurePolicy.None;
-    #else
-        option.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    #endif
+    // Force cookie refresh
+    option.Events.OnValidatePrincipal = SecurityStampValidator.ValidatePrincipalAsync;
 });
 
+// Authorization Policies
 builder.Services.AddAuthorization(o =>
 {
     AuthorizationPolicies.ConfigureAuthorization(o);
 });
 
+// MVC / Views / Automapper
 builder.Services.AddControllersWithViews();
-
 builder.Services.AddRazorPages();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.Addservices();
 
+// SiteMap loader
 builder.Services.AddSingleton<SiteMap>(provider =>
 {
     var filePath = Path.Combine(builder.Environment.ContentRootPath, "siteMap.config");
@@ -151,13 +159,16 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseSession();
+
+// ORDER IS IMPORTANT
+app.UseSession();      // Session BEFORE routing
 app.UseRouting();
 
+// Auth middlewares
 app.UseAuthentication();
 app.UseAuthorization();
 
-// conditionally enable dashboard
+// Hangfire Dashboard
 if (hangfireEnabled)
 {
     var dashboardOptions = new DashboardOptions
@@ -169,7 +180,7 @@ if (hangfireEnabled)
 }
 else
 {
-    Console.WriteLine(" Hangfire Disabled by configuration.");
+    Console.WriteLine("Hangfire Disabled by configuration.");
 }
 
 // AREA routing
@@ -177,10 +188,11 @@ app.MapControllerRoute(
     name: "areas",
     pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
-// default MVC routes
+// default MVC routing
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapRazorPages();
+
 app.Run();

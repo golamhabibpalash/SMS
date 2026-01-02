@@ -10,6 +10,19 @@
         "${workspaceFolder}/SchoolManagementSystem.sln"
       ],
       "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "watch",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "watch",
+        "run",
+        "--project",
+        "${workspaceFolder}/SMS_App" 
+      ],
+      "problemMatcher": "$msCompile",
+      "isBackground": true
     }
   ]
 }

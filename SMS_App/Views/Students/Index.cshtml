@@ -94,8 +94,13 @@
         </section>
         @if (Model.Count <= 0)
         {
-            <h3 class="text-center mt-5">Student not found</h3>
-            <h3 class="text-center">You are searching by <span class="text-danger" id="searchParameter"></span></h3>
+            <div class="row text-center">
+                <h3 class="text-center mt-5">Student not found</h3>
+                <a asp-action="Create" class="p-2 btn-sm btn-info rounded-pill">
+                    <i class="fa fa-plus"></i> Add <i class="fa fa-user-alt"></i> 
+                </a>
+                <h3 class="text-center">You are searching by <span class="text-danger" id="searchParameter"></span></h3>
+            </div>
         }
         else
         {

@@ -53,10 +53,10 @@
 
 @foreach (var module in Model.Modules)
 {
-    @* if (!module.Submodules.Any(s => s.Items.Any()))
+    if (!module.Submodules.Any(s => s.Items.Any()))
     {
         continue;
-    } *@
+    }
     var canAccessModule = allActiveModules.ToList().Any(s => s.ModuleName == module.SystemName);
 
     if (!canAccessModule) { continue; }

@@ -1,10 +1,10 @@
 name: Deploy ASP.NET Core to Client
 
 on:
-  # Automatically trigger on push to FinalDeployment branch
+  # Automatically trigger on push to deployment branch
   push:
     branches:
-      - FinalDeployment   # change to your deployment branch
+      - FinalDeployment   # Change to your deployment branch
   # Manual trigger with client selection
   workflow_dispatch:
     inputs:
@@ -22,7 +22,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      # 1️⃣ Checkout code
+      # 1️⃣ Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -44,32 +44,41 @@ jobs:
       - name: Publish
         run: dotnet publish -c Release -o ./publish
 
-      # 6️⃣ Set deployment variables based on selected client
+      # 6️⃣ Set deployment variables based on client
       - name: Set deployment variables
         id: vars
         shell: pwsh
         run: |
-          if ("${{ github.event.inputs.client }}" -eq "Noble") {
+          # Use manual input if available, otherwise default to Noble
+          $client = "${{ github.event.inputs.client }}"
+          if ([string]::IsNullOrEmpty($client)) { $client = "Noble" }
+          Write-Host "Selected client: $client"
+
+          if ($client -eq "Noble") {
             echo "ftp_server=${{ secrets.NOBLE_FTP_SERVER }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
             echo "ftp_username=${{ secrets.NOBLE_FTP_USERNAME }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
             echo "ftp_password=${{ secrets.NOBLE_FTP_PASSWORD }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
             echo "ftp_path=${{ secrets.NOBLE_FTP_PATH }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+            $url = "https://your-noble-domain.com"
           }
-          elseif ("${{ github.event.inputs.client }}" -eq "Mamitonnesa") {
+          elseif ($client -eq "Mamitonnesa") {
             echo "ftp_server=${{ secrets.MAMI_FTP_SERVER }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
             echo "ftp_username=${{ secrets.MAMI_FTP_USERNAME }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
             echo "ftp_password=${{ secrets.MAMI_FTP_PASSWORD }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
             echo "ftp_path=${{ secrets.MAMI_FTP_PATH }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+            $url = "https://your-mamitonnesa-domain.com"
           }
-          elseif ("${{ github.event.inputs.client }}" -eq "DMCPS") {
+          elseif ($client -eq "DMCPS") {
             echo "ftp_server=${{ secrets.DMCPS_FTP_SERVER }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
             echo "ftp_username=${{ secrets.DMCPS_FTP_USERNAME }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
             echo "ftp_password=${{ secrets.DMCPS_FTP_PASSWORD }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
             echo "ftp_path=${{ secrets.DMCPS_FTP_PATH }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+            $url = "https://your-dmcps-domain.com"
           }
           else {
-            Write-Error "Unknown client selected"
+            Write-Error "Unknown client selected: $client"
           }
+          echo "deploy_url=$url" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
 
       # 7️⃣ Deploy via FTP
       - name: Deploy to FTP
@@ -84,3 +93,20 @@ jobs:
           timeout: 120000
           retry-count: 3
           retry-wait: 5000
+
+      # 8️⃣ Post-deployment HTTP check
+      - name: Verify website is live
+        shell: pwsh
+        run: |
+          $url = "${{ steps.vars.outputs.deploy_url }}"
+          Write-Host "Checking if website is live at $url ..."
+          try {
+            $response = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 30
+            if ($response.StatusCode -eq 200) {
+              Write-Host "✅ Website $url is live. Deployment successful."
+            } else {
+              Write-Error "❌ Website $url returned status $($response.StatusCode)"
+            }
+          } catch {
+            Write-Error "❌ Website $url is not reachable. Deployment failed."
+          }

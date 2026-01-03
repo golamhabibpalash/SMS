@@ -120,22 +120,26 @@ builder.Services.AddSession(options =>
     options.Cookie.SameSite = SameSiteMode.Lax;        // Fix Chrome issues
 });
 
-// COOKIE FIXED (Identity Cookie)
-builder.Services.ConfigureApplicationCookie(option =>
+builder.Services.ConfigureApplicationCookie(options =>
 {
-    option.Cookie.HttpOnly = true;
-    option.ExpireTimeSpan = TimeSpan.FromHours(24);     // Cookie length
-    option.Cookie.MaxAge = TimeSpan.FromHours(24);      // Important!
-    option.SlidingExpiration = true;
-    option.Cookie.SameSite = SameSiteMode.Lax;
-    option.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest; // safer for hosting
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.ExpireTimeSpan = TimeSpan.FromHours(24);
+    options.SlidingExpiration = true;
 
-    option.LoginPath = "/Accounts/Login";
-    option.AccessDeniedPath = "/Accounts/AccessDenied";
+    options.LoginPath = "/Accounts/Login";
+    options.AccessDeniedPath = "/Accounts/AccessDenied";
 
     // Force cookie refresh
-    option.Events.OnValidatePrincipal = SecurityStampValidator.ValidatePrincipalAsync;
+    options.Events.OnValidatePrincipal = SecurityStampValidator.ValidatePrincipalAsync;
+
+    // Avoid chunked cookies if possible
+    options.Cookie.Name = ".AspNetCore.Identity.Application";  
 });
+
+
+
 
 // Authorization Policies
 builder.Services.AddAuthorization(o =>

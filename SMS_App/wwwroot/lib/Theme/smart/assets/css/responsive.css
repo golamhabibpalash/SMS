@@ -1428,10 +1428,14 @@
 }
 @media (max-width: 420px) {
   .page-header.navbar .page-logo {
-    width: 100%;
+    width: 90%;
   }
   .chat-sidebar-container {
     top: 168px;
+  }
+  .page-header.navbar .menu-toggler.responsive-toggler {
+    float: right;
+    margin: 10px 10px 0;
   }
 }
 

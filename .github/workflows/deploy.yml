@@ -1,41 +1,71 @@
-name: Deploy ASP.NET Core via FTP
+name: Deploy ASP.NET Core to Client
 
 on:
-  push:
-    branches:
-      - FinalDeployment # or master, or your deployment branch
+  workflow_dispatch:
+    inputs:
+      client:
+        description: "Select client to deploy"
+        required: true
+        type: choice
+        options:
+          - Noble
+          - Mamitonnesa
+          - DMCPS
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: "8.0.x" # or your version
+          dotnet-version: "8.0.x"
 
-      - name: Restore dependencies
+      - name: Restore
         run: dotnet restore
 
-      - name: Build project
+      - name: Build
         run: dotnet build --configuration Release --no-restore
 
-      - name: Publish project
+      - name: Publish
         run: dotnet publish -c Release -o ./publish
+
+      # 🧠 Choose secrets based on client
+      - name: Set deployment variables
+        id: vars
+        run: |
+          if ("${{ github.event.inputs.client }}" -eq "Noble") {
+            echo "ftp_server=${{ secrets.NOBLE_FTP_SERVER }}" >> $env:GITHUB_OUTPUT
+            echo "ftp_username=${{ secrets.NOBLE_FTP_USERNAME }}" >> $env:GITHUB_OUTPUT
+            echo "ftp_password=${{ secrets.NOBLE_FTP_PASSWORD }}" >> $env:GITHUB_OUTPUT
+            echo "ftp_path=${{ secrets.NOBLE_FTP_PATH }}" >> $env:GITHUB_OUTPUT
+          }
+          elseif ("${{ github.event.inputs.client }}" -eq "Mamitonnesa") {
+            echo "ftp_server=${{ secrets.MAMI_FTP_SERVER }}" >> $env:GITHUB_OUTPUT
+            echo "ftp_username=${{ secrets.MAMI_FTP_USERNAME }}" >> $env:GITHUB_OUTPUT
+            echo "ftp_password=${{ secrets.MAMI_FTP_PASSWORD }}" >> $env:GITHUB_OUTPUT
+            echo "ftp_path=${{ secrets.MAMI_FTP_PATH }}" >> $env:GITHUB_OUTPUT
+          }
+          elseif ("${{ github.event.inputs.client }}" -eq "DMCPS") {
+            echo "ftp_server=${{ secrets.DMCPS_FTP_SERVER }}" >> $env:GITHUB_OUTPUT
+            echo "ftp_username=${{ secrets.DMCPS_FTP_USERNAME }}" >> $env:GITHUB_OUTPUT
+            echo "ftp_password=${{ secrets.DMCPS_FTP_PASSWORD }}" >> $env:GITHUB_OUTPUT
+            echo "ftp_path=${{ secrets.DMCPS_FTP_PATH }}" >> $env:GITHUB_OUTPUT
+          }
 
       - name: Deploy to FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
+          server: ${{ steps.vars.outputs.ftp_server }}
+          username: ${{ steps.vars.outputs.ftp_username }}
+          password: ${{ steps.vars.outputs.ftp_password }}
+          server-dir: ${{ steps.vars.outputs.ftp_path }}
           local-dir: ./publish/
-          server-dir: ${{ secrets.FTP_PATH }}
           protocol: ftp
           timeout: 120000
-          retry-count: 3    
-          retry-wait: 5000 
+          retry-count: 3
+          retry-wait: 5000

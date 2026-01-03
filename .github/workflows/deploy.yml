@@ -1,6 +1,11 @@
 name: Deploy ASP.NET Core to Client
 
 on:
+  # Automatically trigger on push to FinalDeployment branch
+  push:
+    branches:
+      - FinalDeployment   # change to your deployment branch
+  # Manual trigger with client selection
   workflow_dispatch:
     inputs:
       client:
@@ -17,46 +22,56 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout code
+      # 1️⃣ Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2️⃣ Setup .NET 8
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "8.0.x"
 
+      # 3️⃣ Restore dependencies
       - name: Restore
         run: dotnet restore
 
+      # 4️⃣ Build project
       - name: Build
         run: dotnet build --configuration Release --no-restore
 
+      # 5️⃣ Publish project
       - name: Publish
         run: dotnet publish -c Release -o ./publish
 
-      # 🧠 Choose secrets based on client
+      # 6️⃣ Set deployment variables based on selected client
       - name: Set deployment variables
         id: vars
+        shell: pwsh
         run: |
           if ("${{ github.event.inputs.client }}" -eq "Noble") {
-            echo "ftp_server=${{ secrets.NOBLE_FTP_SERVER }}" >> $env:GITHUB_OUTPUT
-            echo "ftp_username=${{ secrets.NOBLE_FTP_USERNAME }}" >> $env:GITHUB_OUTPUT
-            echo "ftp_password=${{ secrets.NOBLE_FTP_PASSWORD }}" >> $env:GITHUB_OUTPUT
-            echo "ftp_path=${{ secrets.NOBLE_FTP_PATH }}" >> $env:GITHUB_OUTPUT
+            echo "ftp_server=${{ secrets.NOBLE_FTP_SERVER }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+            echo "ftp_username=${{ secrets.NOBLE_FTP_USERNAME }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+            echo "ftp_password=${{ secrets.NOBLE_FTP_PASSWORD }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+            echo "ftp_path=${{ secrets.NOBLE_FTP_PATH }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
           }
           elseif ("${{ github.event.inputs.client }}" -eq "Mamitonnesa") {
-            echo "ftp_server=${{ secrets.MAMI_FTP_SERVER }}" >> $env:GITHUB_OUTPUT
-            echo "ftp_username=${{ secrets.MAMI_FTP_USERNAME }}" >> $env:GITHUB_OUTPUT
-            echo "ftp_password=${{ secrets.MAMI_FTP_PASSWORD }}" >> $env:GITHUB_OUTPUT
-            echo "ftp_path=${{ secrets.MAMI_FTP_PATH }}" >> $env:GITHUB_OUTPUT
+            echo "ftp_server=${{ secrets.MAMI_FTP_SERVER }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+            echo "ftp_username=${{ secrets.MAMI_FTP_USERNAME }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+            echo "ftp_password=${{ secrets.MAMI_FTP_PASSWORD }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+            echo "ftp_path=${{ secrets.MAMI_FTP_PATH }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
           }
           elseif ("${{ github.event.inputs.client }}" -eq "DMCPS") {
-            echo "ftp_server=${{ secrets.DMCPS_FTP_SERVER }}" >> $env:GITHUB_OUTPUT
-            echo "ftp_username=${{ secrets.DMCPS_FTP_USERNAME }}" >> $env:GITHUB_OUTPUT
-            echo "ftp_password=${{ secrets.DMCPS_FTP_PASSWORD }}" >> $env:GITHUB_OUTPUT
-            echo "ftp_path=${{ secrets.DMCPS_FTP_PATH }}" >> $env:GITHUB_OUTPUT
+            echo "ftp_server=${{ secrets.DMCPS_FTP_SERVER }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+            echo "ftp_username=${{ secrets.DMCPS_FTP_USERNAME }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+            echo "ftp_password=${{ secrets.DMCPS_FTP_PASSWORD }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+            echo "ftp_path=${{ secrets.DMCPS_FTP_PATH }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          }
+          else {
+            Write-Error "Unknown client selected"
           }
 
+      # 7️⃣ Deploy via FTP
       - name: Deploy to FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:

@@ -89,7 +89,7 @@ jobs:
           password: ${{ steps.vars.outputs.ftp_password }}
           server-dir: ${{ steps.vars.outputs.ftp_path }}
           local-dir: ./publish/
-          protocol: ftp
+          protocol: sftp
           security: loose
           log-level: verbose
           timeout: 600000

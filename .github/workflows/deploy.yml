@@ -49,9 +49,9 @@ jobs:
         id: vars
         shell: pwsh
         run: |
-          # Use manual input if available, otherwise default to Mamitonnesa
+          # Use manual input if available, otherwise default to DMCPS
           $client = "${{ github.event.inputs.client }}"
-          if ([string]::IsNullOrEmpty($client)) { $client = "Mamitonnesa" }
+          if ([string]::IsNullOrEmpty($client)) { $client = "DMCPS" }
           Write-Host "Selected client: $client"
 
           if ($client -eq "Noble") {

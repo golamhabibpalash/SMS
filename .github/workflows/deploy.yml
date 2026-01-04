@@ -51,7 +51,7 @@ jobs:
         run: |
           # Use manual input if available, otherwise default to Noble
           $client = "${{ github.event.inputs.client }}"
-          if ([string]::IsNullOrEmpty($client)) { $client = "Noble" }
+          if ([string]::IsNullOrEmpty($client)) { $client = "DMCPS" }
           Write-Host "Selected client: $client"
 
           if ($client -eq "Noble") {

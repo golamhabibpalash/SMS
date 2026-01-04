@@ -201,17 +201,21 @@ public class AccountsController : Controller
                 }
                 if (result.Succeeded)
                 {
- 
-                    var userList = _userManager.Users;
-
-                    var appUser = await userList.FirstOrDefaultAsync(u => u.UserName == model.AppUser);
+                    var appUser = await _userManager.GetUserAsync(User);
 
                     if (appUser.UserType == 's')
                     {
                         return RedirectToAction("profile", "students", new { id = appUser.ReferenceId });
                     }
-                    if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+                    if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl) && model.ReturnUrl != "/")
                     {
+                        await _logManager.AddAsync(new Log {
+                            Level = "Info",
+                            Exception = "AccountsController Login method",
+                            MessageTemplate = "",
+                            Message = $"{model.AppUser} is Succeeded to login and redirected to {model.ReturnUrl}",
+                            Timestamp = DateTime.Now,
+                        });
                         return Redirect(model.ReturnUrl);
                     }
                     else

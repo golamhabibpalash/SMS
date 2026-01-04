@@ -92,6 +92,8 @@ jobs:
           protocol: ftp
           timeout: 300000
           passive: true
+          max-retries: 5
+          retry-wait: 15000 
 
       # 8️⃣ Post-deployment HTTP check
       - name: Verify website is live

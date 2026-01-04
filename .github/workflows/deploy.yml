@@ -59,21 +59,21 @@ jobs:
             echo "ftp_username=${{ secrets.NOBLE_FTP_USERNAME }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
             echo "ftp_password=${{ secrets.NOBLE_FTP_PASSWORD }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
             echo "ftp_path=${{ secrets.NOBLE_FTP_PATH }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-            $url = "https://your-noble-domain.com"
+            $url = "https://eims.nobleschoolbd.com"
           }
           elseif ($client -eq "Mamitonnesa") {
             echo "ftp_server=${{ secrets.MAMI_FTP_SERVER }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
             echo "ftp_username=${{ secrets.MAMI_FTP_USERNAME }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
             echo "ftp_password=${{ secrets.MAMI_FTP_PASSWORD }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
             echo "ftp_path=${{ secrets.MAMI_FTP_PATH }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-            $url = "https://your-mamitonnesa-domain.com"
+            $url = "https://eims.mamitonnessaghs.edu.bd"
           }
           elseif ($client -eq "DMCPS") {
             echo "ftp_server=${{ secrets.DMCPS_FTP_SERVER }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
             echo "ftp_username=${{ secrets.DMCPS_FTP_USERNAME }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
             echo "ftp_password=${{ secrets.DMCPS_FTP_PASSWORD }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
             echo "ftp_path=${{ secrets.DMCPS_FTP_PATH }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-            $url = "https://your-dmcps-domain.com"
+            $url = "https://eims.mcpsbd.com"
           }
           else {
             Write-Error "Unknown client selected: $client"
@@ -91,8 +91,6 @@ jobs:
           local-dir: ./publish/
           protocol: ftp
           timeout: 120000
-          retry-count: 3
-          retry-wait: 5000
 
       # 8️⃣ Post-deployment HTTP check
       - name: Verify website is live

@@ -89,7 +89,7 @@ jobs:
           password: ${{ steps.vars.outputs.ftp_password }}
           server-dir: ${{ steps.vars.outputs.ftp_path }}
           local-dir: ./publish/
-          protocol: ftp
+          protocol: ftps
           timeout: 300000
           passive: true
           max-retries: 5

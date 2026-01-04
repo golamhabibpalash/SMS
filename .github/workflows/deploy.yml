@@ -90,9 +90,14 @@ jobs:
           server-dir: ${{ steps.vars.outputs.ftp_path }}
           local-dir: ./publish/
           protocol: ftp
-          security: none    
-          passive: true           
-          timeout: 600000 
+          security: loose
+          log-level: verbose
+          timeout: 600000
+          exclude: |
+            **/*.pdb
+            **/obj/**
+            **/bin/**
+            **/*.log
 
       # 8️⃣ Post-deployment HTTP check
       - name: Verify website is live

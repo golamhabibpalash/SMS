@@ -91,7 +91,6 @@ jobs:
           local-dir: ./publish/
           protocol: ftps
           security: loose                    # "loose" usually works for Windows shared hosting
-          dangerous-clean-slate: true        # replace all files
           timeout: 600000 
 
       # 8️⃣ Post-deployment HTTP check

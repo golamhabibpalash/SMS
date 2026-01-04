@@ -49,9 +49,9 @@ jobs:
         id: vars
         shell: pwsh
         run: |
-          # Use manual input if available, otherwise default to DMCPS
+          # Use manual input if available, otherwise default to Noble
           $client = "${{ github.event.inputs.client }}"
-          if ([string]::IsNullOrEmpty($client)) { $client = "DMCPS" }
+          if ([string]::IsNullOrEmpty($client)) { $client = "Noble" }
           Write-Host "Selected client: $client"
 
           if ($client -eq "Noble") {
@@ -89,8 +89,9 @@ jobs:
           password: ${{ steps.vars.outputs.ftp_password }}
           server-dir: ${{ steps.vars.outputs.ftp_path }}
           local-dir: ./publish/
-          protocol: ftps
-          security: loose                    # "loose" usually works for Windows shared hosting
+          protocol: ftp
+          security: none    
+          passive: true           
           timeout: 600000 
 
       # 8️⃣ Post-deployment HTTP check

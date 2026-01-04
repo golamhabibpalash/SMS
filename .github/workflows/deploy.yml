@@ -90,10 +90,12 @@ jobs:
           server-dir: ${{ steps.vars.outputs.ftp_path }}
           local-dir: ./publish/
           protocol: ftps
-          timeout: 300000
+          security: explicit
+          timeout: 600000
           passive: true
           max-retries: 5
-          retry-wait: 15000 
+          retry-wait: 15000
+          dangerous-clean-slate: true
 
       # 8️⃣ Post-deployment HTTP check
       - name: Verify website is live

@@ -49,7 +49,7 @@ jobs:
         id: vars
         shell: pwsh
         run: |
-          # Use manual input if available, otherwise default to Noble
+          # Use manual input if available, otherwise default to DMCPS
           $client = "${{ github.event.inputs.client }}"
           if ([string]::IsNullOrEmpty($client)) { $client = "DMCPS" }
           Write-Host "Selected client: $client"
@@ -90,7 +90,8 @@ jobs:
           server-dir: ${{ steps.vars.outputs.ftp_path }}
           local-dir: ./publish/
           protocol: ftp
-          timeout: 120000
+          timeout: 300000
+          passive: true
 
       # 8️⃣ Post-deployment HTTP check
       - name: Verify website is live

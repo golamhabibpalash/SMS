@@ -86,8 +86,9 @@ jobs:
           password: ${{ steps.vars.outputs.ftp_password }}
           server-dir: ${{ steps.vars.outputs.ftp_path }}
           local-dir: ./publish/
+          security: loose
           protocol: ftp
-          timeout: 120000
+          timeout: 600000
           exclude: |
             wwwroot/**
             **/*.pdb

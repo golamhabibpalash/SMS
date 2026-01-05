@@ -19,7 +19,7 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: windows-latest
+    runs-on: self-hosted
 
     steps:
       # 1️⃣ Checkout repository
@@ -47,7 +47,7 @@ jobs:
       # 6️⃣ Set deployment variables based on client
       - name: Set deployment variables
         id: vars
-        shell: pwsh
+        shell: bash
         run: |
           # Use manual input if available, otherwise default to Noble
           $client = "${{ github.event.inputs.client }}"
@@ -101,7 +101,7 @@ jobs:
 
       # 8️⃣ Post-deployment HTTP check
       - name: Verify website is live
-        shell: pwsh
+        shell: bash
         run: |
           $url = "${{ steps.vars.outputs.deploy_url }}"
           Write-Host "Checking if website is live at $url ..."

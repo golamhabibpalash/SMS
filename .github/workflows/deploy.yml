@@ -90,11 +90,13 @@ jobs:
           protocol: ftp
           timeout: 600000
           exclude: |
-            wwwroot/**
+            wwwroot/Images/**
             **/*.pdb
             **/obj/**
             **/bin/**
             **/*.log
+            runtimes/**
+            appsettings.Development.json
 
       # 8️⃣ Post-deployment HTTP check
       - name: Verify website is live

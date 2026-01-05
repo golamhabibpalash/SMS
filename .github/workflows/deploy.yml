@@ -88,9 +88,9 @@ jobs:
           local-dir: ./publish/
           security: loose
           protocol: ftp
-          timeout: 1200000
-          exclude: |
-            wwwroot/**
+          timeout: 900000
+          #exclude: |
+           # wwwroot/**
 
       # 8️⃣ Post-deployment HTTP check
       - name: Verify website is live

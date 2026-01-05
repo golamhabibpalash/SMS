@@ -58,7 +58,7 @@
 }
 
 <div class="row p-2">
-    <div class="col-md-3 bg-navy-blue mh-100 rounded">
+    <div class="col-md-3 bg-navy-blue mh-100">
         <div class="row pt-2">
             <div class="col-md-12 text-center">
                 @if (string.IsNullOrEmpty(Model.Student.Photo))
@@ -74,37 +74,37 @@
         <div class="row text-light">
             <div class="col-md-12">
                 <dl class="row p-2">
-                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
+                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-md-end">
                         Unique ID :
                     </dt>
                     <dd class="col-sm-8 col-8 border-bottom">
                         @Html.DisplayFor(model => model.Student.UniqueId)
                     </dd>
-                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
+                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-md-end">
                         Name :
                     </dt>
                     <dd class="col-sm-8 col-8 border-bottom">
                         @Html.DisplayFor(model => model.Student.Name)
                     </dd>
-                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
+                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-md-end">
                         নাম (বাংলা) :
                     </dt>
                     <dd class="col-sm-8 col-8 border-bottom">
                         @Html.DisplayFor(model => model.Student.NameBangla)
                     </dd>
-                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
+                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-md-end">
                         Session :
                     </dt>
                     <dd class="col-sm-8 col-8 border-bottom">
                         @Html.DisplayFor(model => model.Student.AcademicSession.Name)
                     </dd>
-                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
+                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-md-end">
                         Class :
                     </dt>
                     <dd class="col-sm-8 col-8 border-bottom">
                         @Html.DisplayFor(model => model.Student.AcademicClass.Name)
                     </dd>
-                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
+                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-md-end">
                         Section :
                     </dt>
                     <dd class="col-sm-8 col-8 border-bottom">
@@ -117,19 +117,19 @@
                             <span>No Section</span>
                         }
                     </dd>
-                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
+                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-md-end">
                         Roll :
                     </dt>
                     <dd class="col-sm-8 col-8 border-bottom">
                         @Html.DisplayFor(model => model.Student.ClassRoll)
                     </dd>
-                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
+                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-md-end">
                         Admission Date :
                     </dt>
                     <dd class="col-sm-8 col-8 border-bottom">
                         @Model.Student.AdmissionDate.ToString("dd MMM yyyy")
                     </dd>
-                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">Status : </dt>
+                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-md-end">Status : </dt>
                     @{ 
                         studentStatus = Model.Student.Status ? "Active" : "Inactive";
                     }
@@ -173,36 +173,36 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>Student Name</td>
+                                    <td class="text-end">Student Name</td>
                                     <td>:</td>
-                                    <td>@Model.Student.Name</td>
+                                    <td class="text-start">@Model.Student.Name</td>
                                 </tr>
                                 <tr>
-                                    <td>Gender</td>
+                                    <td class="text-end">Gender</td>
                                     <td>:</td>
-                                    <td>@Model.Student.Gender.Name</td>
+                                    <td class="text-start">@Model.Student.Gender.Name</td>
                                 </tr>
                                 <tr>
-                                    <td>Date of Birth</td>
+                                    <td class="text-end">Date of Birth</td>
                                     <td>:</td>
-                                    <td>@Model.Student.DOB.ToString("dd MMM yyyy") (@age years)</td>
+                                    <td class="text-start">@Model.Student.DOB.ToString("dd MMM yyyy") (@age years)</td>
                                 </tr>
                                 <tr>
-                                    <td>Nationality</td>
+                                    <td class="text-end">Nationality</td>
                                     <td>:</td>
-                                    <td>@Model.Student.Nationality.Name</td>
+                                    <td class="text-start">@Model.Student.Nationality.Name</td>
                                 </tr>
                                 <tr>
-                                    <td>Religion</td>
+                                    <td class="text-end">Religion</td>
                                     <td>:</td>
-                                    <td>@Model.Student.Religion.Name</td>
+                                    <td class="text-start">@Model.Student.Religion.Name</td>
                                 </tr>
                                 <tr>
-                                    <td>Blood Group</td>
+                                    <td class="text-end">Blood Group</td>
                                     <td>:</td>
                                     @if (Model.Student.BloodGroupId != null)
                                     {
-                                        <td>@Model.Student.BloodGroup.Name</td>
+                                        <td class="text-start">@Model.Student.BloodGroup.Name</td>
                                     }
                                     else
                                     {
@@ -216,58 +216,58 @@
                                 </tr>
 
                                 <tr>
-                                    <td>Phone</td>
+                                    <td class="text-end">Phone</td>
                                     <td>:</td>
-                                    <td>@phonePrefix@Model.Student.PhoneNo</td>
+                                    <td class="text-start">@phonePrefix@Model.Student.PhoneNo</td>
                                 </tr>
                                 <tr>
-                                    <td>Email</td>
+                                    <td class="text-end">Email</td>
                                     <td>:</td>
-                                    <td>@Model.Student.Email</td>
+                                    <td class="text-start">@Model.Student.Email</td>
                                 </tr>
-                                <tr class="bg-navy-blue">
+                                <tr class="bg-blue">
                                     <td colspan="3" class="p-1">
                                         <span class="font-weight-bold p-2">Guardians Information</span>
                                     </td>
                                 </tr>
 
                                 <tr>
-                                    <td>Father's Name</td>
+                                    <td class="text-end">Father's Name</td>
                                     <td>:</td>
-                                    <td>@Model.Student.FatherName</td>
+                                    <td class="text-start">@Model.Student.FatherName</td>
                                 </tr>
                                 <tr>
-                                    <td>Mother's Name</td>
+                                    <td class="text-end">Mother's Name</td>
                                     <td>:</td>
-                                    <td>@Model.Student.MotherName</td>
+                                    <td class="text-start">@Model.Student.MotherName</td>
                                 </tr>
                                 <tr>
-                                    <td>Guardian's Phone</td>
+                                    <td class="text-end">Guardian's Phone</td>
                                     <td>:</td>
-                                    <td>@phonePrefix@Model.Student.GuardianPhone</td>
+                                    <td class="text-start">@phonePrefix@Model.Student.GuardianPhone</td>
                                 </tr>
-                                <tr class="bg-navy-blue">
+                                <tr class="bg-blue">
                                     <td colspan="3" class="p-1">
                                         <span class="font-weight-bold p-2">Address Information</span>
                                     </td>
                                 </tr>
 
                                 <tr>
-                                    <td>Present Address</td>
+                                    <td class="text-end">Present Address</td>
                                     <td>:</td>
-                                    <td>Vill/Area - @Model.Student.PresentAddressArea, Post Office - @Model.Student.PresentAddressPO, Polic Station - @Model.Student.PresentUpazila.Name, @Model.Student.PresentDistrict.Name</td>
+                                    <td class="text-start">Vill/Area - @Model.Student.PresentAddressArea, Post Office - @Model.Student.PresentAddressPO, Polic Station - @Model.Student.PresentUpazila.Name, @Model.Student.PresentDistrict.Name</td>
                                 </tr>
                                 <tr>
-                                    <td>Permanent Address</td>
+                                    <td class="text-end">Permanent Address</td>
                                     <td>:</td>
-                                    <td>Vill/Area - @Model.Student.PermanentAddressArea, Post Office - @Model.Student.PermanentAddressPO, Polic Station - @Model.Student.PermanentUpazila.Name, @Model.Student.PermanentDistrict.Name</td>
+                                    <td class="text-start">Vill/Area - @Model.Student.PermanentAddressArea, Post Office - @Model.Student.PermanentAddressPO, Polic Station - @Model.Student.PermanentUpazila.Name, @Model.Student.PermanentDistrict.Name</td>
                                 </tr>
                                 @if (!string.IsNullOrEmpty(Model.Student.AddressInfo))
                                 {
                                     <tr>
-                                        <td>Address Information:</td>
+                                        <td class="text-end">Address Information:</td>
                                         <td>:</td>
-                                        <td>@Model.Student.AddressInfo</td>
+                                        <td class="text-start">@Model.Student.AddressInfo</td>
                                     </tr>
                                 }
                             </tbody>
@@ -280,34 +280,34 @@
                             <table class="table table-responsive">
                                 <tbody class="text-left">
                                     <tr>
-                                        <td>Name</td>
+                                        <td class="text-end">Name</td>
                                         <td>:</td>
-                                        <td>@Model.Student.Name</td>
+                                        <td class="text-start">@Model.Student.Name</td>
                                     </tr>
                                     <tr>
-                                        <td>Name (নাম)</td>
+                                        <td class="text-end">Name (নাম)</td>
                                         <td>:</td>
-                                        <td>@Model.Student.NameBangla</td>
+                                        <td class="text-start">@Model.Student.NameBangla</td>
                                     </tr>
                                     <tr>
-                                        <td>Session</td>
+                                        <td class="text-end">Session</td>
                                         <td>:</td>
-                                        <td>@Model.Student.AcademicSession.Name</td>
+                                        <td class="text-start">@Model.Student.AcademicSession.Name</td>
                                     </tr>
                                     <tr>
-                                        <td>Class</td>
+                                        <td class="text-end">Class</td>
                                         <td>:</td>
-                                        <td>@Model.Student.AcademicClass.Name</td>
+                                        <td class="text-start">@Model.Student.AcademicClass.Name</td>
                                     </tr>
                                     <tr>
-                                        <td>Class Roll</td>
+                                        <td class="text-end">Class Roll</td>
                                         <td>:</td>
-                                        <td>@Model.Student.ClassRoll</td>
+                                        <td class="text-start">@Model.Student.ClassRoll</td>
                                     </tr>
                                     <tr>
-                                        <td>Section</td>
+                                        <td class="text-end">Section</td>
                                         <td>:</td>
-                                        <td>
+                                        <td class="text-start">
                                             @if (Model?.Student != null && Model.Student.AcademicSection != null)
                                             {
                                                 @Model.Student.AcademicSection.Name
@@ -319,32 +319,32 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Admission Date</td>
+                                        <td class="text-end">Admission Date</td>
                                         <td>:</td>
-                                        <td>@Model.Student.AdmissionDate.ToString("dd MMM yyyy")</td>
+                                        <td class="text-start">@Model.Student.AdmissionDate.ToString("dd MMM yyyy")</td>
                                     </tr>
                                     <tr>
-                                        <td>Blood Group</td>
+                                        <td class="text-end">Blood Group</td>
                                         <td>:</td>
-                                        <td>@Model.Student.BloodGroup.Name</td>
+                                        <td class="text-start">@Model.Student.BloodGroup.Name</td>
                                     </tr>
                                     <tr>
-                                        <td>Gender</td>
+                                        <td class="text-end">Gender</td>
                                         <td>:</td>
-                                        <td>@Model.Student.Gender.Name</td>
+                                        <td class="text-start">@Model.Student.Gender.Name</td>
                                     </tr>
                                     <tr>
-                                        <td>Nationality</td>
+                                        <td class="text-end">Nationality</td>
                                         <td>:</td>
-                                        <td>@Model.Student.Nationality.Name</td>
+                                        <td class="text-start">@Model.Student.Nationality.Name</td>
                                     </tr>
                                     <tr>
-                                        <td>Religion</td>
+                                        <td class="text-end">Religion</td>
                                         <td>:</td>
-                                        <td>@Model.Student.Religion.Name</td>
+                                        <td class="text-start">@Model.Student.Religion.Name</td>
                                     </tr>
                                     <tr>
-                                        <td>Birth Certificate</td>
+                                        <td class="text-end">Birth Certificate</td>
                                         <td>:</td>
                                         @if (string.IsNullOrEmpty(Model.Student.BirthCertificateNo))
                                         {
@@ -354,7 +354,7 @@
                                         }
                                         else
                                         {
-                                            <td>
+                                            <td class="text-start">
                                                 @Model.Student.BirthCertificateNo
                                             </td>
 
@@ -410,7 +410,7 @@
                                                         <td>#</td>
                                                         <td class="text-left">Payment Type</td>
                                                         <td>Amount</td>
-                                                        <td class="text-right">Total</td>
+                                                        <td class="text-md-end">Total</td>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -419,8 +419,8 @@
                                                         <tr>
                                                             <td>@(paymentScheduleSL++)</td>
                                                             <td class="text-left">@item.PaymentType</td>
-                                                            <td class="text-right">@item.Amount <span class="badge badge-pill badge-warning">@item.yearlyFrequency</span></td>
-                                                            <td class="text-right">@(item.Amount * item.yearlyFrequency)</td>
+                                                            <td class="text-md-end">@item.Amount <span class="badge badge-pill badge-warning">@item.yearlyFrequency</span></td>
+                                                            <td class="text-md-end">@(item.Amount * item.yearlyFrequency)</td>
                                                         </tr>
 
                                                         paymentScheduleTotal += item.Amount * item.yearlyFrequency;
@@ -429,7 +429,7 @@
                                                 <tfoot class="bg-info text-light">
                                                     <tr class="font-weight-bolder">
                                                         <td colspan="3">Total</td>
-                                                        <td class="text-right">@paymentScheduleTotal</td>
+                                                        <td class="text-md-end">@paymentScheduleTotal</td>
                                                     </tr>
                                                 </tfoot>
                                             </table>
@@ -450,7 +450,7 @@
                                                     <tr>
                                                         <td>#</td>
                                                         <td class="text-left">Payment Type</td>
-                                                        <td class="text-right">Amount</td>
+                                                        <td class="text-md-end">Amount</td>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -459,7 +459,7 @@
                                                     <tr>
                                                         <td>@(paymentSchedulePaidSL++)</td>
                                                         <td class="text-left">@item.PaymentType</td>
-                                                        <td class="text-right">@item.PaidAmount</td>
+                                                        <td class="text-md-end">@item.PaidAmount</td>
                                                     </tr>
                                                         paidScheduleTotal += item.PaidAmount;
                                                     }
@@ -467,7 +467,7 @@
                                                 <tfoot class="bg-info">
                                                     <tr class="font-weight-bolder text-light">
                                                         <td colspan="2">Total</td>
-                                                        <td class="text-right">@paidScheduleTotal</td>
+                                                        <td class="text-md-end">@paidScheduleTotal</td>
                                                     </tr>
                                                 </tfoot>
                                             </table>
@@ -485,7 +485,7 @@
                                         <h5 class="h5 text-light">Current Due Amount : <span class="text-warning font-weight-bolder">@Model.CurrentDue tk</span></h5>
                                         @* <h5 class="h5 text-light">Total Due Amount : <span class="text-warning font-weight-bolder">@Model.TotalDue tk</span></h5> *@
                                     </div>
-                                    <div class="col-md-6 text-right">
+                                    <div class="col-md-6 text-md-end">
                                         <a asp-action="Payment" asp-controller="StudentPayments" asp-route-stRoll="@Model.Student.ClassRoll" class="btn btn-warning text-primary font-weight-bolder">Make Payment</a>
                                     </div>
                                 </div>
@@ -507,7 +507,7 @@
                                                     <td>Receipt No</td>
                                                     <td>Paid For</td>
                                                     <td>Payment Date</td>
-                                                    <td class="text-right">Amount</td>
+                                                    <td class="text-md-end">Amount</td>
                                                     <td>Remarks</td>
                                                     <td>Received By</td>
                                                     <td>Received Date</td>
@@ -529,7 +529,7 @@
                                                             <td>@payment.ReceiptNo</td>
                                                             <td class="text-left">@pDetails.StudentFeeHead.Name</td>
                                                             <td>@payment.PaidDate.ToString("dd MMM yyyy")</td>
-                                                            <td class="text-right">@payment.TotalPayment</td>
+                                                            <td class="text-md-end">@payment.TotalPayment</td>
                                                             <td>@payment.Remarks</td>
                                                             <td>@createdBy</td>
                                                             <td class="text-md-left">@payment.CreatedAt.ToString("dd MMM yyyy")</td>
@@ -540,9 +540,9 @@
                                             </tbody>
                                             <tfoot class="bg-blue-sky">
                                                 <tr>
-                                                    <td colspan="4" class="text-right">Total Paid</td>
+                                                    <td colspan="4" class="text-md-end">Total Paid</td>
 
-                                                    <td class="text-right font-weight-bolder">@totalPaid</td>
+                                                    <td class="text-md-end font-weight-bolder">@totalPaid</td>
                                                     <td colspan="3" class="text-left">Tk</td>
                                                 </tr>
                                             </tfoot>

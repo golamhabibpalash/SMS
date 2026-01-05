@@ -91,8 +91,6 @@ jobs:
           timeout: 600000
           exclude: |
             wwwroot/**
-            appsettings.Development.json
-            appsettings.json
 
       # 8️⃣ Post-deployment HTTP check
       - name: Verify website is live

@@ -86,7 +86,7 @@ jobs:
           password: ${{ steps.vars.outputs.ftp_password }}
           server-dir: ${{ steps.vars.outputs.ftp_path }}
           local-dir: ./publish/
-          protocol: ftp
+          protocol: ftps
           security: loose
           passive: true      # <- important for shared hosting
           log-level: verbose

@@ -88,6 +88,12 @@ jobs:
           local-dir: ./publish/
           protocol: ftp
           timeout: 120000
+          exclude: |
+            wwwroot/**
+            **/*.pdb
+            **/obj/**
+            **/bin/**
+            **/*.log
 
       # 8️⃣ Post-deployment HTTP check
       - name: Verify website is live

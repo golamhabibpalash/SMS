@@ -86,16 +86,8 @@ jobs:
           password: ${{ steps.vars.outputs.ftp_password }}
           server-dir: ${{ steps.vars.outputs.ftp_path }}
           local-dir: ./publish/
-          protocol: ftps
-          security: loose
-          passive: true      # <- important for shared hosting
-          log-level: verbose
-          timeout: 600000
-          exclude: |
-            **/*.pdb
-            **/obj/**
-            **/bin/**
-            **/*.log
+          protocol: ftp
+          timeout: 120000
 
       # 8️⃣ Post-deployment HTTP check
       - name: Verify website is live

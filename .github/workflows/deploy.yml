@@ -88,6 +88,7 @@ jobs:
           local-dir: ./publish/
           protocol: ftp
           security: loose
+          passive: true      # <- important for shared hosting
           log-level: verbose
           timeout: 600000
           exclude: |

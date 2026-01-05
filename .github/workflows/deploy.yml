@@ -44,41 +44,38 @@ jobs:
       - name: Publish
         run: dotnet publish -c Release -o ./publish
 
-      # 6️⃣ Set deployment variables based on client
       - name: Set deployment variables
         id: vars
         shell: bash
         run: |
           # Use manual input if available, otherwise default to Noble
-          $client = "${{ github.event.inputs.client }}"
-          if ([string]::IsNullOrEmpty($client)) { $client = "Noble" }
-          Write-Host "Selected client: $client"
+          client="${{ github.event.inputs.client }}"
+          if [ -z "$client" ]; then client="Noble"; fi
 
-          if ($client -eq "Noble") {
-            echo "ftp_server=${{ secrets.NOBLE_FTP_SERVER }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-            echo "ftp_username=${{ secrets.NOBLE_FTP_USERNAME }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-            echo "ftp_password=${{ secrets.NOBLE_FTP_PASSWORD }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-            echo "ftp_path=${{ secrets.NOBLE_FTP_PATH }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-            $url = "https://eims.nobleschoolbd.com"
-          }
-          elseif ($client -eq "Mamitonnesa") {
-            echo "ftp_server=${{ secrets.MAMI_FTP_SERVER }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-            echo "ftp_username=${{ secrets.MAMI_FTP_USERNAME }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-            echo "ftp_password=${{ secrets.MAMI_FTP_PASSWORD }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-            echo "ftp_path=${{ secrets.MAMI_FTP_PATH }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-            $url = "https://eims.mamitonnessaghs.edu.bd"
-          }
-          elseif ($client -eq "DMCPS") {
-            echo "ftp_server=${{ secrets.DMCPS_FTP_SERVER }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-            echo "ftp_username=${{ secrets.DMCPS_FTP_USERNAME }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-            echo "ftp_password=${{ secrets.DMCPS_FTP_PASSWORD }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-            echo "ftp_path=${{ secrets.DMCPS_FTP_PATH }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-            $url = "https://eims.mcpsbd.com"
-          }
-          else {
-            Write-Error "Unknown client selected: $client"
-          }
-          echo "deploy_url=$url" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          echo "Selected client: $client"
+
+          if [ "$client" = "Noble" ]; then
+            echo "ftp_server=${{ secrets.NOBLE_FTP_SERVER }}" >> $GITHUB_OUTPUT
+            echo "ftp_username=${{ secrets.NOBLE_FTP_USERNAME }}" >> $GITHUB_OUTPUT
+            echo "ftp_password=${{ secrets.NOBLE_FTP_PASSWORD }}" >> $GITHUB_OUTPUT
+            echo "ftp_path=${{ secrets.NOBLE_FTP_PATH }}" >> $GITHUB_OUTPUT
+            echo "deploy_url=https://eims.nobleschoolbd.com" >> $GITHUB_OUTPUT
+          elif [ "$client" = "Mamitonnesa" ]; then
+            echo "ftp_server=${{ secrets.MAMI_FTP_SERVER }}" >> $GITHUB_OUTPUT
+            echo "ftp_username=${{ secrets.MAMI_FTP_USERNAME }}" >> $GITHUB_OUTPUT
+            echo "ftp_password=${{ secrets.MAMI_FTP_PASSWORD }}" >> $GITHUB_OUTPUT
+            echo "ftp_path=${{ secrets.MAMI_FTP_PATH }}" >> $GITHUB_OUTPUT
+            echo "deploy_url=https://eims.mamitonnessaghs.edu.bd" >> $GITHUB_OUTPUT
+          elif [ "$client" = "DMCPS" ]; then
+            echo "ftp_server=${{ secrets.DMCPS_FTP_SERVER }}" >> $GITHUB_OUTPUT
+            echo "ftp_username=${{ secrets.DMCPS_FTP_USERNAME }}" >> $GITHUB_OUTPUT
+            echo "ftp_password=${{ secrets.DMCPS_FTP_PASSWORD }}" >> $GITHUB_OUTPUT
+            echo "ftp_path=${{ secrets.DMCPS_FTP_PATH }}" >> $GITHUB_OUTPUT
+            echo "deploy_url=https://eims.mcpsbd.com" >> $GITHUB_OUTPUT
+          else
+            echo "Unknown client selected: $client"
+            exit 1
+          fi
 
       # 7️⃣ Deploy via FTP
       - name: Deploy to FTP

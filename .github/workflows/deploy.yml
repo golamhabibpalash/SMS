@@ -1,11 +1,9 @@
 name: Deploy ASP.NET Core to Client
 
 on:
-  # Automatically trigger on push to deployment branch
   push:
     branches:
-      - FinalDeployment   # Change to your deployment branch
-  # Manual trigger with client selection
+      - FinalDeployment
   workflow_dispatch:
     inputs:
       client:
@@ -36,22 +34,28 @@ jobs:
       - name: Restore
         run: dotnet restore
 
-      # 4️⃣ Build project
+      # 4️⃣ Build solution
       - name: Build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build SMS.sln --configuration Release --no-restore
 
-      # 5️⃣ Publish project
-      - name: Publish
-        run: dotnet publish -c Release -o ./publish
+      # 5️⃣ Publish individual projects
+      - name: Publish projects
+        run: |
+          mkdir -p ./publish
+          dotnet publish SMS.Frameworks -c Release -o ./publish/SMS.Frameworks
+          dotnet publish SMS.Entities  -c Release -o ./publish/SMS.Entities
+          dotnet publish SMS.DB        -c Release -o ./publish/SMS.DB
+          dotnet publish SMS.DAL       -c Release -o ./publish/SMS.DAL
+          dotnet publish SMS.BLL       -c Release -o ./publish/SMS.BLL
+          dotnet publish SMS_App       -c Release -o ./publish/SMS_App
 
+      # 6️⃣ Set deployment variables
       - name: Set deployment variables
         id: vars
         shell: bash
         run: |
-          # Use manual input if available, otherwise default to DMCPS
           client="${{ github.event.inputs.client }}"
           if [ -z "$client" ]; then client="DMCPS"; fi
-
           echo "Selected client: $client"
 
           if [ "$client" = "Noble" ]; then
@@ -89,22 +93,20 @@ jobs:
           security: loose
           protocol: ftp
           timeout: 900000
-          #exclude: |
-           # wwwroot/**
 
       # 8️⃣ Post-deployment HTTP check
       - name: Verify website is live
-        shell: bash
+        shell: pwsh
         run: |
           $url = "${{ steps.vars.outputs.deploy_url }}"
           Write-Host "Checking if website is live at $url ..."
           try {
-            $response = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 30
-            if ($response.StatusCode -eq 200) {
-              Write-Host "✅ Website $url is live. Deployment successful."
-            } else {
-              Write-Error "❌ Website $url returned status $($response.StatusCode)"
-            }
+              $response = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 30
+              if ($response.StatusCode -eq 200) {
+                  Write-Host "✅ Website $url is live. Deployment successful."
+              } else {
+                  Write-Error "❌ Website $url returned status $($response.StatusCode)"
+              }
           } catch {
-            Write-Error "❌ Website $url is not reachable. Deployment failed."
+              Write-Error "❌ Website $url is not reachable. Deployment failed."
           }

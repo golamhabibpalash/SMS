@@ -38,11 +38,11 @@ jobs:
 
       # 4️⃣ Restore dependencies
       - name: Restore
-        run: dotnet restore ./SMS.sln
+        run: dotnet restore ./SMS_App.sln
 
       # 5️⃣ Build solution
       - name: Build solution
-        run: dotnet build ./SMS.sln --configuration Release --no-restore
+        run: dotnet build ./SMS_App.sln --configuration Release --no-restore
 
       # 6️⃣ Publish individual projects
       - name: Publish projects

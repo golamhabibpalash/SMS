@@ -24,32 +24,38 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Setup .NET 8
+      # 2️⃣ Show runner info (for debugging paths)
+      - name: Show current working directory
+        run: |
+          echo "PWD: $(pwd)"
+          ls -R
+
+      # 3️⃣ Setup .NET 8
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "8.0.x"
 
-      # 3️⃣ Restore dependencies
+      # 4️⃣ Restore dependencies
       - name: Restore
-        run: dotnet restore
+        run: dotnet restore ./SMS.sln
 
-      # 4️⃣ Build solution
-      - name: Build
-        run: dotnet build SMS.sln --configuration Release --no-restore
+      # 5️⃣ Build solution
+      - name: Build solution
+        run: dotnet build ./SMS.sln --configuration Release --no-restore
 
-      # 5️⃣ Publish individual projects
+      # 6️⃣ Publish individual projects
       - name: Publish projects
         run: |
           mkdir -p ./publish
-          dotnet publish SMS.Frameworks -c Release -o ./publish/SMS.Frameworks
-          dotnet publish SMS.Entities  -c Release -o ./publish/SMS.Entities
-          dotnet publish SMS.DB        -c Release -o ./publish/SMS.DB
-          dotnet publish SMS.DAL       -c Release -o ./publish/SMS.DAL
-          dotnet publish SMS.BLL       -c Release -o ./publish/SMS.BLL
-          dotnet publish SMS_App       -c Release -o ./publish/SMS_App
+          dotnet publish ./SMS.Frameworks/SMS.Frameworks.csproj -c Release -o ./publish/SMS.Frameworks
+          dotnet publish ./SMS.Entities/SMS.Entities.csproj   -c Release -o ./publish/SMS.Entities
+          dotnet publish ./SMS.DB/SMS.DB.csproj               -c Release -o ./publish/SMS.DB
+          dotnet publish ./SMS.DAL/SMS.DAL.csproj            -c Release -o ./publish/SMS.DAL
+          dotnet publish ./SMS.BLL/SMS.BLL.csproj            -c Release -o ./publish/SMS.BLL
+          dotnet publish ./SMS_App/SMS_App.csproj            -c Release -o ./publish/SMS_App
 
-      # 6️⃣ Set deployment variables
+      # 7️⃣ Set deployment variables
       - name: Set deployment variables
         id: vars
         shell: bash
@@ -81,7 +87,7 @@ jobs:
             exit 1
           fi
 
-      # 7️⃣ Deploy via FTP
+      # 8️⃣ Deploy via FTP
       - name: Deploy to FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -94,7 +100,7 @@ jobs:
           protocol: ftp
           timeout: 900000
 
-      # 8️⃣ Post-deployment HTTP check
+      # 9️⃣ Post-deployment HTTP check
       - name: Verify website is live
         shell: pwsh
         run: |

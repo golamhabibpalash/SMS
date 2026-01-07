@@ -1,9 +1,11 @@
 name: Deploy ASP.NET Core to Client
 
 on:
+  # Automatically trigger on push to deployment branch
   push:
     branches:
-      - FinalDeployment
+      - FinalDeployment   # Change to your deployment branch
+  # Manual trigger with client selection
   workflow_dispatch:
     inputs:
       client:
@@ -24,46 +26,32 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Show runner info (for debugging paths)
-      - name: Show current working directory
-        run: |
-          echo "PWD: $(pwd)"
-          ls -R
-
-      # 3️⃣ Setup .NET 8
+      # 2️⃣ Setup .NET 8
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "8.0.x"
 
-      # 4️⃣ Restore dependencies
+      # 3️⃣ Restore dependencies
       - name: Restore
-        working-directory: ./SMS
-        run: dotnet restore SMS.sln
+        run: dotnet restore
 
+      # 4️⃣ Build project
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
 
-      # 5️⃣ Build solution
-      - name: Build solution
-        run: dotnet build ./SMS_App.sln --configuration Release --no-restore
+      # 5️⃣ Publish project
+      - name: Publish
+        run: dotnet publish -c Release -o ./publish
 
-      # 6️⃣ Publish individual projects
-      - name: Publish projects
-        run: |
-          mkdir -p ./publish
-          dotnet publish ./SMS.Frameworks/SMS.Frameworks.csproj -c Release -o ./publish/SMS.Frameworks
-          dotnet publish ./SMS.Entities/SMS.Entities.csproj   -c Release -o ./publish/SMS.Entities
-          dotnet publish ./SMS.DB/SMS.DB.csproj               -c Release -o ./publish/SMS.DB
-          dotnet publish ./SMS.DAL/SMS.DAL.csproj            -c Release -o ./publish/SMS.DAL
-          dotnet publish ./SMS.BLL/SMS.BLL.csproj            -c Release -o ./publish/SMS.BLL
-          dotnet publish ./SMS_App/SMS_App.csproj            -c Release -o ./publish/SMS_App
-
-      # 7️⃣ Set deployment variables
       - name: Set deployment variables
         id: vars
         shell: bash
         run: |
+          # Use manual input if available, otherwise default to DMCPS
           client="${{ github.event.inputs.client }}"
           if [ -z "$client" ]; then client="DMCPS"; fi
+
           echo "Selected client: $client"
 
           if [ "$client" = "Noble" ]; then
@@ -89,7 +77,7 @@ jobs:
             exit 1
           fi
 
-      # 8️⃣ Deploy via FTP
+      # 7️⃣ Deploy via FTP
       - name: Deploy to FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -100,21 +88,23 @@ jobs:
           local-dir: ./publish/
           security: loose
           protocol: ftp
-          timeout: 900000
+          timeout: 1200000
+          #exclude: |
+           # wwwroot/**
 
-      # 9️⃣ Post-deployment HTTP check
+      # 8️⃣ Post-deployment HTTP check
       - name: Verify website is live
-        shell: pwsh
+        shell: bash
         run: |
           $url = "${{ steps.vars.outputs.deploy_url }}"
           Write-Host "Checking if website is live at $url ..."
           try {
-              $response = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 30
-              if ($response.StatusCode -eq 200) {
-                  Write-Host "✅ Website $url is live. Deployment successful."
-              } else {
-                  Write-Error "❌ Website $url returned status $($response.StatusCode)"
-              }
+            $response = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 30
+            if ($response.StatusCode -eq 200) {
+              Write-Host "✅ Website $url is live. Deployment successful."
+            } else {
+              Write-Error "❌ Website $url returned status $($response.StatusCode)"
+            }
           } catch {
-              Write-Error "❌ Website $url is not reachable. Deployment failed."
+            Write-Error "❌ Website $url is not reachable. Deployment failed."
           }

@@ -38,7 +38,9 @@ jobs:
 
       # 4️⃣ Restore dependencies
       - name: Restore
-        run: dotnet restore ./SMS_App.sln
+        working-directory: ./SMS
+        run: dotnet restore SMS.sln
+
 
       # 5️⃣ Build solution
       - name: Build solution

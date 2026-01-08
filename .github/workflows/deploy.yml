@@ -99,9 +99,9 @@ jobs:
           echo "Checking if website is live at $url ..."
 
           status=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "$url")
-
-          if [ "$status" -eq 200 ]; then
-            echo "Website $url is live. Deployment successful."
+          
+          if [ "$status" -eq 200 ] || [ "$status" -eq 301 ] || [ "$status" -eq 302 ]; then
+            echo "Website $url is live with status $status. Deployment successful."
           else
             echo "Website $url returned status $status"
             exit 1

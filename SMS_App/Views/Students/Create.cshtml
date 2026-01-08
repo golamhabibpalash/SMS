@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Add New Student";
     GlobalUI.PageTitle = ViewBag.Title;
-    var dobMaxDate = DateTime.Now.AddYears(-6);
+    var dobMaxDate = DateTime.Now;
 }
 @if (ViewBag.msg != null)
 {
@@ -18,9 +18,6 @@
                     <h6 class="alert alert-heading alert-info">Academic Information</h6>
                 </div>
             </div>
-
-            
-
             <div class="form-group row">
                 <label asp-for="AcademicSessionId" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
@@ -174,7 +171,7 @@
             <div class="form-group row">
                 <label asp-for="DOB" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
-                    <input asp-for="DOB" class="form-control" min="1998-12-31" max="@dobMaxDate.ToString("yyyy-MM-dd")" />
+                    <input asp-for="DOB" class="form-control" max="@dobMaxDate.ToString("yyyy-MM-dd")" />
                     <span asp-validation-for="DOB" class="text-danger"></span>
                 </div>
 

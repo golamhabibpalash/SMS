@@ -76,15 +76,18 @@
                         <img class="logo-icon material-icons" src="~/Images/Institute/@instituteLogo"
                             style="max-width:50px" />
                         <span class="logo-default fs-1"
-                            style="font-size:12px !important; line-height:0.7 !important">@instituteName</span>
+                            style="font-size:12px !important; line-height:0.7 !important">@GlobalUI.InstituteName</span>
                     </a>
                 </div>
                 <!-- logo end -->
                 <ul class="nav navbar-nav navbar-left in">
-                    <li><a href="#" class="menu-toggler sidebar-toggler">
-                        <i class="icon-menu"></i>@(GlobalUI.PageTitle ?? "Dashboard")
+                    <li>
+                        <a href="#" class="menu-toggler sidebar-toggler" data-bs-toggle="collapse"data-bs-target=".sidemenu-container">
+                            <i class="icon-menu"></i>@(GlobalUI.PageTitle ?? "Dashboard")
+                        </a>
+                    </li>
 
-                        </a></li>
+                        
                 </ul>
                 <form class="search-form-opened" action="#" method="GET">
                     <div class="input-group">
@@ -97,7 +100,7 @@
                     </div>
                 </form>
                 <!-- start mobile menu -->
-                <a class="menu-toggle responsive-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
+                <a class="menu-toggle responsive-toggler" data-bs-toggle="collapse" data-bs-target=".page-sidebar-wrapper">
                     <span></span>
                 </a>
                 <!-- end mobile menu -->
@@ -106,7 +109,7 @@
                     <ul class="nav navbar-nav pull-right">
                         <li><a class="fullscreen-btn"><i data-feather="maximize"></i></a></li>
                         <!-- start language menu -->
-                        <li class="dropdown language-switch">
+                        @* <li class="dropdown language-switch">
                             <a class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                 <img src="~/lib/theme/smart/assets/img/flags/gb.png" class="position-left" alt="">
                                 English
@@ -125,7 +128,7 @@
                                         English</a>
                                 </li>
                             </ul>
-                        </li>
+                        </li> *@
                         <!-- end language menu -->
                         <!-- start notification dropdown -->
                         <li class="dropdown dropdown-extended dropdown-notification" id="header_notification_bar">
@@ -344,12 +347,12 @@
                             </ul>
                         </li>
                         <!-- end manage user dropdown -->
-                        <li class="dropdown dropdown-quick-sidebar-toggler">
+                        @* <li class="dropdown dropdown-quick-sidebar-toggler">
                             <a id="headerSettingButton" class="mdl-button mdl-js-button mdl-button--icon pull-right"
                                 data-upgraded=",MaterialButton">
                                 <i class="material-icons">more_vert</i>
                             </a>
-                        </li>
+                        </li> *@
                     </ul>
                 </div>
             </div>
@@ -743,7 +746,7 @@
 
                     <!-- Part 2: Institute Name -->
                     <div class="footer-institute text-center col-12 col-md-4 mb-2 mb-md-0">
-                        <strong>Institute:</strong> Example Institute of Management & Science
+                        <strong>Institute:</strong> @instituteName
                     </div>
 
                     <!-- Part 3: Developer Info -->

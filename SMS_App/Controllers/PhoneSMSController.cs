@@ -38,8 +38,14 @@ namespace SMS_App.Controllers
             
             var allSMS = await _phoneSMSManager.GetAllAsync();
             totalCount = allSMS.Count;
-            string minDate = ViewBag.minDate = allSMS?.OrderBy(s => s.CreatedAt).Select(s => s.CreatedAt.ToString("yyyy-MM-dd")).FirstOrDefault().ToString();
-            string maxDate = ViewBag.maxDate = allSMS.OrderByDescending(s => s.CreatedAt).Select(s => s.CreatedAt.ToString("yyyy-MM-dd")).FirstOrDefault().ToString();
+            if (!string.IsNullOrEmpty(ViewBag.minDate))
+            {
+                string minDate = ViewBag.minDate = allSMS?.OrderBy(s => s.CreatedAt).Select(s => s.CreatedAt.ToString("yyyy-MM-dd")).FirstOrDefault().ToString();
+            }
+            if (!string.IsNullOrEmpty(ViewBag.maxDate))
+            {
+                string maxDate = ViewBag.maxDate = allSMS.OrderByDescending(s => s.CreatedAt).Select(s => s.CreatedAt.ToString("yyyy-MM-dd")).FirstOrDefault().ToString();
+            }
             if (!string.IsNullOrEmpty(fromDate))
             {
                 allSMS = allSMS.Where(s => s.CreatedAt >= Convert.ToDateTime(fromDate)).ToList();

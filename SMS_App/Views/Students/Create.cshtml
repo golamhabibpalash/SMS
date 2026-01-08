@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Add New Student";
     GlobalUI.PageTitle = ViewBag.Title;
-    var dobMaxDate = DateTime.Now.AddYears(-6);
+    var dobMaxDate = DateTime.Now;
 }
 @if (ViewBag.msg != null)
 {
@@ -18,18 +18,15 @@
                     <h6 class="alert alert-heading alert-info">Academic Information</h6>
                 </div>
             </div>
-
-            
-
             <div class="form-group row">
-                <label asp-for="AcademicSessionId" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="AcademicSessionId" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
                     <div class="input-group mb-3">
-                        <select asp-for="AcademicSessionId" class="form-control" asp-items="Model.AcademicSessionList">
+                        <select asp-for="AcademicSessionId" class="form-control input-sm" asp-items="Model.AcademicSessionList">
                             <option disabled selected value="">Select Academic Session</option>
                         </select>
                         <div class="input-group-append">
-                            <a asp-controller="AcademicSessions" asp-action="Create" class="btn btn-outline-secondary btn-sm btn-md" title="Create New Session">
+                            <a asp-controller="AcademicSessions" asp-action="Create" class="btn btn-outline-secondary btn-sm" title="Create New Session">
                                 <span class="fa fa-plus"></span>
                             </a>
                         </div>
@@ -37,7 +34,7 @@
                     </div>
                 </div>
                 
-                <label asp-for="AcademicClassId" class="col-form-label text-md-right col-md-2"></label>
+                <label asp-for="AcademicClassId" class="col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
 
                     <div class="input-group mb-3">
@@ -45,7 +42,7 @@
                             <option disabled selected value="">Select Academic Class</option>
                         </select>
                         <div class="input-group-append">
-                            <a asp-controller="AcademicClasses" asp-action="Create" class="btn btn-outline-secondary btn-sm btn-md" title="Create New Class">
+                            <a asp-controller="AcademicClasses" asp-action="Create" class="btn btn-outline-secondary btn-sm" title="Create New Class">
                                 <span class="fa fa-plus"></span>
                             </a>
                         </div>
@@ -54,7 +51,7 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="AcademicSectionId" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="AcademicSectionId" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
 
                     <div class="input-group mb-3">
@@ -71,14 +68,14 @@
                     <span asp-validation-for="AcademicSectionId" class="text-danger"></span>
                 </div>
 
-                <label asp-for="ClassRoll" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="ClassRoll" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
                     <input asp-for="ClassRoll" placeholder="Input Class roll" class="form-control input-sm" required max="999" min="1" onchange="classRollChnaged()" />
                     <span asp-validation-for="ClassRoll" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="AdmissionDate" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="AdmissionDate" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
                     <input asp-for="AdmissionDate" class="form-control" value="@DateTime.Now.Date.ToString("yyyy-MM-dd")" />
                     <span asp-validation-for="AdmissionDate" class="text-danger"></span>
@@ -90,7 +87,7 @@
             </div>
 
             <div class="form-group row">
-                <label asp-for="UniqueId" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="UniqueId" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
                     <input asp-for="UniqueId" class="form-control" disabled />
                     <span asp-validation-for="UniqueId" class="text-danger"></span>
@@ -103,12 +100,12 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="Name" class="col-form-label text-md-right col-md-2"></label>
+                <label asp-for="Name" class="col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
                     <input asp-for="Name" class="form-control" />
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
-                <label asp-for="FatherName" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="FatherName" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
                     <input asp-for="FatherName" class="form-control" />
                     <span asp-validation-for="FatherName" class="text-danger"></span>
@@ -116,14 +113,14 @@
 
             </div>
             <div class="form-group row">
-                <label asp-for="NameBangla" class="col-form-label text-md-right col-md-2"></label>
+                <label asp-for="NameBangla" class="col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-10">
                     <input asp-for="NameBangla" class="form-control" />
                     <span asp-validation-for="NameBangla" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="Photo" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="Photo" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
                     <div class="row">
                         <div class="col-md-6">
@@ -137,20 +134,20 @@
                 </div>
 
 
-                <label asp-for="MotherName" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="MotherName" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
                     <input asp-for="MotherName" class="form-control" />
                     <span asp-validation-for="MotherName" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="Email" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="Email" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
                     <input asp-for="Email" class="form-control" />
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
 
-                <label asp-for="GuardianPhone" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="GuardianPhone" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
                     <input asp-for="GuardianPhone" class="form-control" />
                     <span asp-validation-for="GuardianPhone" class="text-danger"></span>
@@ -158,13 +155,13 @@
 
             </div>
             <div class="form-group row">
-                <label asp-for="PhoneNo" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="PhoneNo" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
                     <input asp-for="PhoneNo" class="form-control" maxlength="11" />
                     <span asp-validation-for="PhoneNo" class="text-danger"></span>
                 </div>
 
-                <label asp-for="BirthCertificateNo" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="BirthCertificateNo" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
                     <input asp-for="BirthCertificateNo" class="form-control" />
                     <span asp-validation-for="BirthCertificateNo" class="text-danger"></span>
@@ -172,20 +169,20 @@
             </div>
 
             <div class="form-group row">
-                <label asp-for="DOB" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="DOB" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
-                    <input asp-for="DOB" class="form-control" min="1998-12-31" max="@dobMaxDate.ToString("yyyy-MM-dd")" />
+                    <input asp-for="DOB" class="form-control" max="@dobMaxDate.ToString("yyyy-MM-dd")" />
                     <span asp-validation-for="DOB" class="text-danger"></span>
                 </div>
 
-                <label asp-for="BirthCertificateImage" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="BirthCertificateImage" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
                     <input type="file" name="DOBFile" class="form-control-plaintext" />
                     <span asp-validation-for="BirthCertificateImage" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="GenderId" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="GenderId" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
                     <select asp-for="GenderId" class="form-control" asp-items="Model.GenderList">
                         <option selected disabled>Select Gender</option>
@@ -193,7 +190,7 @@
                     <span asp-validation-for="GenderId" class="text-danger"></span>
                 </div>
 
-                <label asp-for="NationalityId" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="NationalityId" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
                     <select asp-for="NationalityId" class="form-control" asp-items="Model.NationalityList">
                         <option selected disabled>Select Nationality</option>
@@ -203,7 +200,7 @@
 
             </div>
             <div class="form-group row">
-                <label asp-for="BloodGroupId" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="BloodGroupId" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
                     <select asp-for="BloodGroupId" class="form-control" asp-items="Model.BloodGroupList">
                         <option selected disabled>Select Blood Group</option>
@@ -211,7 +208,7 @@
                     </select>
                     <span asp-validation-for="BloodGroupId" class="text-danger"></span>
                 </div>
-                <label asp-for="ReligionId" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="ReligionId" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
                     <select asp-for="ReligionId" class="form-control" asp-items="Model.ReligionList">
                         <option selected disabled>Select Religion</option>
@@ -226,20 +223,20 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="PresentAddressArea" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="PresentAddressArea" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
                     <input asp-for="PresentAddressArea" class="form-control" />
                     <span asp-validation-for="PresentAddressArea" class="text-danger"></span>
                 </div>
 
-                <label asp-for="PresentAddressPO" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="PresentAddressPO" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
                     <input asp-for="PresentAddressPO" class="form-control" />
                     <span asp-validation-for="PresentAddressPO" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="PresentDivisionId" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="PresentDivisionId" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
                     <select asp-for="PresentDivisionId" class="form-control" asp-items="Model.DivisionList" style="width:100%;">
                         <option disabled selected>Select Division Name</option>
@@ -247,7 +244,7 @@
                     <span asp-validation-for="PresentDivisionId" class="text-danger"></span>
                 </div>
 
-                <label asp-for="PresentDistrictId" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="PresentDistrictId" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
                     <select asp-for="PresentDistrictId" class="form-control select2" style="width:100%;">
                         <option disabled selected>Select Division First</option>
@@ -256,7 +253,7 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="PresentUpazilaId" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="PresentUpazilaId" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
                     <select asp-for="PresentUpazilaId" class="form-control select2" style="width:100%;">
                         <option disabled selected>Select District First</option>
@@ -271,20 +268,20 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="PermanentAddressArea" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="PermanentAddressArea" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
                     <input asp-for="PermanentAddressArea" class="form-control" />
                     <span asp-validation-for="PermanentAddressArea" class="text-danger"></span>
                 </div>
 
-                <label asp-for="PermanentAddressPO" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="PermanentAddressPO" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
                     <input asp-for="PermanentAddressPO" class="form-control" />
                     <span asp-validation-for="PermanentAddressPO" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="PermanentDivisionId" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="PermanentDivisionId" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
                     <select asp-for="PermanentDivisionId" class="form-control select2" asp-items="Model.DivisionList" style="width:100%;">
                         <option disabled selected>Select Division Name</option>
@@ -292,7 +289,7 @@
                     <span asp-validation-for="PermanentDivisionId" class="text-danger"></span>
                 </div>
 
-                <label asp-for="PermanentDistrictId" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="PermanentDistrictId" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
                     <select asp-for="PermanentDistrictId" class="form-control select2" style="width:100%;">
                         <option disabled selected>Select Division First</option>
@@ -301,7 +298,7 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="PermanentUpazilaId" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="PermanentUpazilaId" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-4">
                     <select asp-for="PermanentUpazilaId" class="form-control select2" style="width:100%;">
                         <option disabled selected>Select District First</option>
@@ -311,14 +308,14 @@
 
             </div>
             <div class="form-group row">
-                <label asp-for="AddressInfo" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="AddressInfo" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-10">
                     <input asp-for="AddressInfo" class="form-control" />
                     <span asp-validation-for="AddressInfo" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="PreviousSchool" class="control-label col-form-label text-md-right col-md-2"></label>
+                <label asp-for="PreviousSchool" class="control-label col-form-label text-md-end col-md-2"></label>
                 <div class="col-md-10">
                     <input asp-for="PreviousSchool" class="form-control" />
                     <span asp-validation-for="PreviousSchool" class="text-danger"></span>

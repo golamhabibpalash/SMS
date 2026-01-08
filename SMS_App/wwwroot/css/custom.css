@@ -1524,7 +1524,9 @@ a:hover, a:focus {
 footer {
   background: #fff;
   padding: 10px 20px;
-  display: block; }
+  display: block; 
+  min-height: 40px;
+}
 
 .nav-sm footer {
   margin-left: 70px; }

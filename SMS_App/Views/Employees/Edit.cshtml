@@ -17,28 +17,28 @@
                     <div class="form-group row">
                         <label asp-for="EmployeeName" class="control-label col-form-label col-md-4 text-md-right"></label>
                         <div class="col-md-8">
-                            <input asp-for="EmployeeName" class="form-control form-control-sm rounded" />
+                            <input asp-for="EmployeeName" class="form-control form-control-sm " />
                             <span asp-validation-for="EmployeeName" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label asp-for="EmployeeNameBangla" class="control-label col-form-label col-md-4 text-md-right"></label>
                         <div class="col-md-8">
-                            <input asp-for="EmployeeNameBangla" class="form-control form-control-sm rounded" />
+                            <input asp-for="EmployeeNameBangla" class="form-control form-control-sm " />
                             <span asp-validation-for="EmployeeNameBangla" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label asp-for="Phone" class="control-label col-form-label col-md-4 text-md-right"></label>
                         <div class="col-md-8">
-                            <input asp-for="Phone" class="form-control form-control-sm rounded" placeholder="Ex: 01725252525" />
+                            <input asp-for="Phone" class="form-control form-control-sm " placeholder="Ex: 01725252525" />
                             <span asp-validation-for="Phone" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label asp-for="Email" class="control-label col-form-label col-md-4 text-md-right"></label>
                         <div class="col-md-8">
-                            <input asp-for="Email" class="form-control form-control-sm rounded" placeholder="Enter a valid email" />
+                            <input asp-for="Email" class="form-control form-control-sm " placeholder="Enter a valid email" />
                             <span asp-validation-for="Email" class="text-danger"></span>
                         </div>
                     </div>
@@ -48,14 +48,14 @@
                         <div class="form-group row">
                             <label asp-for="Image" class="control-label col-md-6 text-md-right"></label>
                             <div class="col-md-6">
-                                <input asp-for="Image" type="file" class="rounded" id="empImage" />
+                                <input asp-for="Image" type="file" class="" id="empImage" />
                                 <span asp-validation-for="Image" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label asp-for="GenderId" class="control-label col-form-label col-md-6 text-md-right"></label>
                             <div class="col-md-6">
-                                <select asp-for="GenderId" class="form-control form-control-sm rounded" asp-items="Model.GenderList">
+                                <select asp-for="GenderId" class="form-control form-control-sm " asp-items="Model.GenderList">
                                     <option selected disabled>Select Gender</option>
                                 </select>
                             </div>
@@ -63,7 +63,7 @@
                         <div class="form-group row">
                             <label asp-for="ReligionId" class="control-label col-form-label col-md-6 text-md-right"></label>
                             <div class="col-md-6">
-                                <select asp-for="ReligionId" class="form-control form-control-sm rounded" asp-items="Model.ReligionList">
+                                <select asp-for="ReligionId" class="form-control form-control-sm " asp-items="Model.ReligionList">
                                     <option selected disabled>Select Religion</option>
                                 </select>
                             </div>
@@ -83,13 +83,13 @@
             <div class="form-group row">
                 <label asp-for="DOB" class="col-form-label col-md-2 text-md-right"></label>
                 <div class="col-md-4">
-                    <input asp-for="DOB" class="form-control form-control-sm rounded" />
+                    <input asp-for="DOB" class="form-control form-control-sm " />
                     <span asp-validation-for="DOB" class="text-danger"></span>
                 </div>
 
                 <label asp-for="JoiningDate" class="control-label col-form-label col-md-2 text-md-right"></label>
                 <div class="col-md-4">
-                    <input asp-for="JoiningDate" class="form-control form-control-sm rounded" />
+                    <input asp-for="JoiningDate" class="form-control form-control-sm " />
                     <span asp-validation-for="JoiningDate" class="text-danger"></span>
                 </div>
             </div>
@@ -97,7 +97,7 @@
             <div class="form-group row">
                 <label asp-for="BloodGroupId" class="control-label col-form-label col-md-2 text-md-right"></label>
                 <div class="col-md-4">
-                    <select asp-for="BloodGroupId" class="form-control form-control-sm rounded" asp-items="Model.BloodGroupList">
+                    <select asp-for="BloodGroupId" class="form-control form-control-sm " asp-items="Model.BloodGroupList">
                         <option selected disabled>Select Blood Group</option>
                     </select>
                     <span asp-validation-for="BloodGroupId" class="text-danger"></span>
@@ -105,7 +105,7 @@
 
                 <label asp-for="NationalityId" class="control-label col-form-label col-md-2 text-md-right"></label>
                 <div class="col-md-4">
-                    <select asp-for="NationalityId" class="form-control form-control-sm rounded" asp-items="Model.NationalityList">
+                    <select asp-for="NationalityId" class="form-control form-control-sm " asp-items="Model.NationalityList">
                         <option selected disabled>Select Nationality</option>
                     </select>
                 </div>
@@ -113,14 +113,14 @@
             <div class="form-group row">
                 <label asp-for="NIDNo" class="control-label col-form-label col-md-2 text-md-right"></label>
                 <div class="col-md-4">
-                    <input asp-for="NIDNo" class="form-control form-control-sm rounded" placeholder="Ex:123456789" />
+                    <input asp-for="NIDNo" class="form-control form-control-sm " placeholder="Ex:123456789" />
                     <span asp-validation-for="NIDNo" class="text-danger"></span>
                 </div>
 
 
                 <label asp-for="NIDCard" class="control-label col-md-2 text-md-right"></label>
                 <div class="col-md-4">
-                    <input asp-for="NIDCard" type="file" class="rounded" />
+                    <input asp-for="NIDCard" type="file" class="" />
                     <span asp-validation-for="NIDCard" class="text-danger"></span>
                 </div>
             </div>
@@ -129,27 +129,27 @@
             <div class="form-group row">
                 <label asp-for="Nominee" class="control-label col-form-label col-md-2 text-md-right"></label>
                 <div class="col-md-4">
-                    <input asp-for="Nominee" class="form-control form-control-sm rounded" />
+                    <input asp-for="Nominee" class="form-control form-control-sm " />
                     <span asp-validation-for="Nominee" class="text-danger"></span>
                 </div>
 
                 <label asp-for="NomineePhone" class="control-label col-form-label col-md-2 text-md-right"></label>
                 <div class="col-md-4">
-                    <input asp-for="NomineePhone" class="form-control form-control-sm rounded" placeholder="Ex: 01700000000" />
+                    <input asp-for="NomineePhone" class="form-control form-control-sm " placeholder="Ex: 01700000000" />
                     <span asp-validation-for="NomineePhone" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
                 <label asp-for="EmpTypeId" class="control-label col-form-label col-md-2 text-md-right"></label>
                 <div class="col-md-4">
-                    <select asp-for="EmpTypeId" class="form-control form-control-sm rounded" asp-items="Model.EmpTypeList">
+                    <select asp-for="EmpTypeId" class="form-control form-control-sm " asp-items="Model.EmpTypeList">
                         <option selected disabled>Select Type of Employee</option>
                     </select>
                 </div>
 
                 <label asp-for="DesignationId" class="control-label col-form-label col-md-2 text-md-right"></label>
                 <div class="col-md-4">
-                    <select asp-for="DesignationId" class="form-control form-control-sm rounded" asp-items="Model.DesignationList">
+                    <select asp-for="DesignationId" class="form-control form-control-sm " asp-items="Model.DesignationList">
                         <option selected disabled>Select Designation</option>
                     </select>
                 </div>
@@ -158,7 +158,7 @@
             <div class="form-group row">
                 <label asp-for="PresentAddress" class="control-label col-form-label col-md-2 text-md-right"></label>
                 <div class="col-md-10">
-                    <input asp-for="PresentAddress" class="form-control form-control-sm rounded" placeholder="Area / Village / Road" />
+                    <input asp-for="PresentAddress" class="form-control form-control-sm " placeholder="Area / Village / Road" />
                     <span asp-validation-for="PresentAddress" class="text-danger"></span>
                 </div>
             </div>
@@ -166,19 +166,19 @@
                 <div class="offset-2 col-md-10">
                     <div class="row">
                         <div class="col-md-4">
-                            <select asp-for="PresentDivisionId" class="form-control form-control-sm rounded" asp-items="Model.DivisionList">
+                            <select asp-for="PresentDivisionId" class="form-control form-control-sm " asp-items="Model.DivisionList">
                                 <option selected disabled>Select Division</option>
                             </select>
                             <span asp-validation-for="PresentDivisionId" class="text-danger"></span>
                         </div>
                         <div class="col-md-4">
-                            <select asp-for="PresentDistrictId" class="form-control form-control-sm rounded" asp-items="ViewBag.PresentDistrictId">
+                            <select asp-for="PresentDistrictId" class="form-control form-control-sm " asp-items="ViewBag.PresentDistrictId">
                                 <option selected disabled>Select District</option>
                             </select>
                             <span asp-validation-for="PresentDistrictId" class="text-danger"></span>
                         </div>
                         <div class="col-md-4">
-                            <select asp-for="PresentUpazilaId" class="form-control form-control-sm rounded" asp-items="ViewBag.PresentUpazilaId">
+                            <select asp-for="PresentUpazilaId" class="form-control form-control-sm " asp-items="ViewBag.PresentUpazilaId">
                                 <option selected disabled>Select Upazila</option>
                             </select>
                             <span asp-validation-for="PresentUpazilaId" class="text-danger"></span>
@@ -198,7 +198,7 @@
             <div class="form-group row">
                 <label asp-for="PermanentAddress" class="control-label col-form-label col-md-2 text-md-right"></label>
                 <div class="col-md-10">
-                    <input asp-for="PermanentAddress" class="form-control form-control-sm rounded" placeholder="Vill / Area / Road" />
+                    <input asp-for="PermanentAddress" class="form-control form-control-sm " placeholder="Vill / Area / Road" />
                     <span asp-validation-for="PermanentAddress" class="text-danger"></span>
                 </div>
             </div>
@@ -206,19 +206,19 @@
                 <div class="col-md-10 offset-2">
                     <div class="row">
                         <div class="col-md-4">
-                            <select asp-for="PermanentDivisionId" class="form-control form-control-sm rounded" asp-items="Model.DivisionList">
+                            <select asp-for="PermanentDivisionId" class="form-control form-control-sm " asp-items="Model.DivisionList">
                                 <option selected disabled>Select Division</option>
                             </select>
                             <span asp-validation-for="PermanentDivisionId" class="text-danger"></span>
                         </div>
                         <div class="col-md-4">
-                            <select asp-for="PermanentDistrictId" class="form-control form-control-sm rounded" asp-items="ViewBag.PermanentDistrictId">
+                            <select asp-for="PermanentDistrictId" class="form-control form-control-sm " asp-items="ViewBag.PermanentDistrictId">
                                 <option selected disabled>Select District</option>
                             </select>
                             <span asp-validation-for="PermanentDistrictId" class="text-danger"></span>
                         </div>
                         <div class="col-md-4">
-                            <select asp-for="PermanentUpazilaId" class="form-control form-control-sm rounded" asp-items="ViewBag.PermanentUpazilaId">
+                            <select asp-for="PermanentUpazilaId" class="form-control form-control-sm " asp-items="ViewBag.PermanentUpazilaId">
                                 <option selected disabled>Select Upazila</option>
                             </select>
                             <span asp-validation-for="PermanentUpazilaId" class="text-danger"></span>

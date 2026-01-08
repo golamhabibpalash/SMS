@@ -92,19 +92,17 @@ jobs:
           #exclude: |
            # wwwroot/**
 
-      # 8️⃣ Post-deployment HTTP check
       - name: Verify website is live
         shell: bash
         run: |
-          $url = "${{ steps.vars.outputs.deploy_url }}"
-          Write-Host "Checking if website is live at $url ..."
-          try {
-            $response = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 30
-            if ($response.StatusCode -eq 200) {
-              Write-Host "✅ Website $url is live. Deployment successful."
-            } else {
-              Write-Error "❌ Website $url returned status $($response.StatusCode)"
-            }
-          } catch {
-            Write-Error "❌ Website $url is not reachable. Deployment failed."
-          }
+          url="${{ steps.vars.outputs.deploy_url }}"
+          echo "Checking if website is live at $url ..."
+
+          status=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "$url")
+
+          if [ "$status" -eq 200 ]; then
+            echo "Website $url is live. Deployment successful."
+          else
+            echo "Website $url returned status $status"
+            exit 1
+          fi

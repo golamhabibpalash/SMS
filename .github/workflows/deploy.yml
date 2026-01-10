@@ -48,9 +48,9 @@ jobs:
         id: vars
         shell: bash
         run: |
-          # Use manual input if available, otherwise default to Noble
+          # Use manual input if available, otherwise default to Mamitonnesa
           client="${{ github.event.inputs.client }}"
-          if [ -z "$client" ]; then client="Noble"; fi
+          if [ -z "$client" ]; then client="Mamitonnesa"; fi
 
           echo "Selected client: $client"
 

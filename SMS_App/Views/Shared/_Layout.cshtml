@@ -2,7 +2,8 @@
 @using System.Security.Claims
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Http
-@using SMS_App.ViewModels.Layout
+@using SMS_App.ViewModels.Layout 
+@using System.IO
 
 @inject SignInManager<ApplicationUser> _signInManager
 @inject UserManager<ApplicationUser> _userManager
@@ -10,6 +11,8 @@
 @inject IEmployeeManager _employeeManager
 @inject IStudentManager _studentManager
 @inject IHttpContextAccessor httpContextAccessor
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment _webHostEnvironment 
+
 
 @{
     var headerVM = new LayoutHeaderVM();
@@ -43,8 +46,10 @@
         else if (user.UserType == 'e')
         {
             var emp = await _employeeManager.GetByIdAsync(user.ReferenceId);
-            if (!string.IsNullOrEmpty(emp?.Image))
-                userImage = $"/Images/Employee/Photo/{emp.Image}";
+            // Fix: Use Path.Combine from System.IO and ensure _webHostEnvironment is injected
+            var imagePath = System.IO.Path.Combine(_webHostEnvironment.WebRootPath, "Images", "Employee", "Photo", emp?.Image);
+
+            userImage = System.IO.File.Exists(imagePath) ? $"/Images/Employee/Photo/{emp?.Image}" : userImage;
         }
     }
     else
@@ -69,13 +74,16 @@
         <!-- start header -->
         <div class="page-header navbar navbar-fixed-top">
             <div class="page-header-inner ">
+
+
+
                 <!-- logo start -->
                 <div class="page-logo p-2">
                     <a class="" asp-action="index" asp-controller="Home">
 
                         <img class="logo-icon material-icons" src="~/Images/Institute/@instituteLogo"
                             style="max-width:50px" />
-                        <span class="logo-default fs-1"
+                        <span class="logo-default fs-1 hidden-516"
                             style="font-size:12px !important; line-height:0.7 !important">@GlobalUI.InstituteName</span>
                     </a>
                 </div>
@@ -251,7 +259,7 @@
                                                 </span>
                                                 <span class="subject">
                                                     <span class="from"> John Deo </span>
-                                                    <span class="time">16 mins </span>
+                                                     <span class="time">16 mins </span>
                                                 </span>
                                                 <span class="message">
                                                     Fwd: Important Notice Regarding Your Domain

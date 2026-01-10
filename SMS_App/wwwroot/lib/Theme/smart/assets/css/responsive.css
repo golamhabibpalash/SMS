@@ -260,12 +260,6 @@
   .page-header-fixed-mobile .page-header.navbar .top-menu {
     background-color: #2b3643;
   }
-  .page-header.navbar
-    .top-menu
-    .navbar-nav
-    > li.dropdown-user
-    .dropdown-toggle {
-  }
   .page-header-fixed-mobile
     .page-header.navbar
     .top-menu
@@ -1009,9 +1003,7 @@
     /*padding-left: 0 !important;*/
     background: transparent;
   }
-  .header-white .page-logo a {
-    /*color: #000;*/
-  }
+  
   .page-header.navbar .page-logo img {
     margin-left: 4px !important;
   }
@@ -1217,9 +1209,6 @@
 }
 
 @media (max-width: 767px) {
-  .page-header.navbar {
-    /*padding: 0 10px*/
-  }
   .page-header.navbar .page-logo {
     width: auto;
   }

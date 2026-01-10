@@ -48,9 +48,9 @@ jobs:
         id: vars
         shell: bash
         run: |
-          # Use manual input if available, otherwise default to Mamitonnesa
+          # Use manual input if available, otherwise default to DMCPS
           client="${{ github.event.inputs.client }}"
-          if [ -z "$client" ]; then client="Mamitonnesa"; fi
+          if [ -z "$client" ]; then client="DMCPS"; fi
 
           echo "Selected client: $client"
 

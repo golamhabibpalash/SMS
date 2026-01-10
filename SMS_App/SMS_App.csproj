@@ -106,6 +106,7 @@
 		<Folder Include="Areas\WebSite\Data\" />
 		<Folder Include="Areas\WebSite\Models\" />
 		<Folder Include="Areas\WebSite\Views\" />
+		<Folder Include="Utilities/TagHelpers/" />
 		<Folder Include="wwwroot\Images\Employee\photo\" />
 		<Folder Include="wwwroot\Images\Employee\NID\" />
 		<Folder Include="wwwroot\Images\Question\" />

@@ -7,21 +7,16 @@ on:
   workflow_dispatch:
     inputs:
       client:
-        description: "Select client to deploy"
         required: true
         type: choice
-        options:
-          - Noble
-          - Mamitonnesa
-          - DMCPS
+        options: [Noble, Mamitonnesa, DMCPS]
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: self-hosted
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -32,111 +27,87 @@ jobs:
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build -c Release --no-restore
 
       - name: Publish
-        run: dotnet publish -c Release -o ./publish
+        run: dotnet publish -c Release -o publish
 
-      - name: Set deployment variables
+      - name: Set FTP variables
         id: vars
         shell: bash
         run: |
           client="${{ github.event.inputs.client }}"
-          if [ -z "$client" ]; then client="DMCPS"; fi
-
-          echo "Selected client: $client"
-
           if [ "$client" = "Noble" ]; then
-            echo "ftp_server=${{ secrets.NOBLE_FTP_SERVER }}" >> $GITHUB_OUTPUT
-            echo "ftp_username=${{ secrets.NOBLE_FTP_USERNAME }}" >> $GITHUB_OUTPUT
-            echo "ftp_password=${{ secrets.NOBLE_FTP_PASSWORD }}" >> $GITHUB_OUTPUT
-            echo "ftp_path=${{ secrets.NOBLE_FTP_PATH }}" >> $GITHUB_OUTPUT
-            echo "deploy_url=https://eims.nobleschoolbd.com" >> $GITHUB_OUTPUT
+            echo "server=${{ secrets.NOBLE_FTP_SERVER }}" >> $GITHUB_OUTPUT
+            echo "username=${{ secrets.NOBLE_FTP_USERNAME }}" >> $GITHUB_OUTPUT
+            echo "password=${{ secrets.NOBLE_FTP_PASSWORD }}" >> $GITHUB_OUTPUT
+            echo "path=${{ secrets.NOBLE_FTP_PATH }}" >> $GITHUB_OUTPUT
+            echo "url=https://eims.nobleschoolbd.com" >> $GITHUB_OUTPUT
           elif [ "$client" = "Mamitonnesa" ]; then
-            echo "ftp_server=${{ secrets.MAMI_FTP_SERVER }}" >> $GITHUB_OUTPUT
-            echo "ftp_username=${{ secrets.MAMI_FTP_USERNAME }}" >> $GITHUB_OUTPUT
-            echo "ftp_password=${{ secrets.MAMI_FTP_PASSWORD }}" >> $GITHUB_OUTPUT
-            echo "ftp_path=${{ secrets.MAMI_FTP_PATH }}" >> $GITHUB_OUTPUT
-            echo "deploy_url=https://eims.mamitonnessaghs.edu.bd" >> $GITHUB_OUTPUT
-          elif [ "$client" = "DMCPS" ]; then
-            echo "ftp_server=${{ secrets.DMCPS_FTP_SERVER }}" >> $GITHUB_OUTPUT
-            echo "ftp_username=${{ secrets.DMCPS_FTP_USERNAME }}" >> $GITHUB_OUTPUT
-            echo "ftp_password=${{ secrets.DMCPS_FTP_PASSWORD }}" >> $GITHUB_OUTPUT
-            echo "ftp_path=${{ secrets.DMCPS_FTP_PATH }}" >> $GITHUB_OUTPUT
-            echo "deploy_url=https://eims.mcpsbd.com" >> $GITHUB_OUTPUT
+            echo "server=${{ secrets.MAMI_FTP_SERVER }}" >> $GITHUB_OUTPUT
+            echo "username=${{ secrets.MAMI_FTP_USERNAME }}" >> $GITHUB_OUTPUT
+            echo "password=${{ secrets.MAMI_FTP_PASSWORD }}" >> $GITHUB_OUTPUT
+            echo "path=${{ secrets.MAMI_FTP_PATH }}" >> $GITHUB_OUTPUT
+            echo "url=https://eims.mamitonnessaghs.edu.bd" >> $GITHUB_OUTPUT
           else
-            echo "Unknown client selected: $client"
-            exit 1
+            echo "server=${{ secrets.DMCPS_FTP_SERVER }}" >> $GITHUB_OUTPUT
+            echo "username=${{ secrets.DMCPS_FTP_USERNAME }}" >> $GITHUB_OUTPUT
+            echo "password=${{ secrets.DMCPS_FTP_PASSWORD }}" >> $GITHUB_OUTPUT
+            echo "path=${{ secrets.DMCPS_FTP_PATH }}" >> $GITHUB_OUTPUT
+            echo "url=https://eims.mcpsbd.com" >> $GITHUB_OUTPUT
           fi
 
-      ###############################################################
-      # PUT APPLICATION OFFLINE (Correct way to deploy app_offline)
-      ###############################################################
-
-      - name: Prepare offline folder
+      ##########################################################
+      # 1. Upload app_offline.htm (FAST)
+      ##########################################################
+      - name: Upload app_offline.htm
         run: |
-          mkdir offline
-          echo "<html><body><h2>Maintenance in progress. Please check back shortly.</h2></body></html>" > offline/app_offline.htm
-
-      - name: Put application offline
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ steps.vars.outputs.ftp_server }}
-          username: ${{ steps.vars.outputs.ftp_username }}
-          password: ${{ steps.vars.outputs.ftp_password }}
-          server-dir: ${{ steps.vars.outputs.ftp_path }}
-          local-dir: ./offline/
-          protocol: ftp
-          security: loose
-
-      ###############################################################
-      # DEPLOY PUBLISHED FILES
-      ###############################################################
-
-      - name: Deploy application
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ steps.vars.outputs.ftp_server }}
-          username: ${{ steps.vars.outputs.ftp_username }}
-          password: ${{ steps.vars.outputs.ftp_password }}
-          server-dir: ${{ steps.vars.outputs.ftp_path }}
-          local-dir: ./publish/
-          protocol: ftp
-          timeout: 1200000
-          security: loose
-
-      ###############################################################
-      # BRING APPLICATION ONLINE
-      ###############################################################
-
-      - name: Prepare empty folder to remove app_offline.htm
-        run: mkdir offline-remove
-
-      - name: Remove app_offline.htm
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ steps.vars.outputs.ftp_server }}
-          username: ${{ steps.vars.outputs.ftp_username }}
-          password: ${{ steps.vars.outputs.ftp_password }}
-          server-dir: ${{ steps.vars.outputs.ftp_path }}
-          local-dir: ./offline-remove/
-          protocol: ftp
-          security: loose
-
-      ###############################################################
-      # VERIFY WEBSITE STATUS
-      ###############################################################
-
-      - name: Verify website is live
+          echo "<h2>Maintenance...</h2>" > app_offline.htm
         shell: bash
-        run: |
-          url="${{ steps.vars.outputs.deploy_url }}"
-          echo "Checking if website is live at $url ..."
-          status=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "$url")
 
-          if [ "$status" -eq 200 ] || [ "$status" -eq 301 ] || [ "$status" -eq 302 ]; then
-            echo "Website $url is live with status $status. Deployment successful."
+      - name: Upload offline file
+        uses: sebastianpopp/ftp-action@v2
+        with:
+          host: ${{ steps.vars.outputs.server }}
+          user: ${{ steps.vars.outputs.username }}
+          password: ${{ steps.vars.outputs.password }}
+          localPath: app_offline.htm
+          remotePath: ${{ steps.vars.outputs.path }}/app_offline.htm
+
+      ##########################################################
+      # 2. Upload only changed publish files (VERY FAST)
+      ##########################################################
+      - name: Upload published files
+        uses: sebastianpopp/ftp-action@v2
+        with:
+          host: ${{ steps.vars.outputs.server }}
+          user: ${{ steps.vars.outputs.username }}
+          password: ${{ steps.vars.outputs.password }}
+          localPath: publish
+          remotePath: ${{ steps.vars.outputs.path }}
+          # Upload only differences = FAST
+          options: "--only-newer --recursive"
+
+      ##########################################################
+      # 3. Remove app_offline.htm (FAST)
+      ##########################################################
+      - name: Remove app_offline.htm
+        uses: sebastianpopp/ftp-action@v2
+        with:
+          host: ${{ steps.vars.outputs.server }}
+          user: ${{ steps.vars.outputs.username }}
+          password: ${{ steps.vars.outputs.password }}
+          command: "delete ${{ steps.vars.outputs.path }}/app_offline.htm"
+
+      ##########################################################
+      # 4. Verify site
+      ##########################################################
+      - name: Verify website
+        run: |
+          code=$(curl -s -o /dev/null -w "%{http_code}" ${{ steps.vars.outputs.url }})
+          if [ "$code" = "200" ] || [ "$code" = "301" ] || [ "$code" = "302" ]; then
+            echo "Live: $code"
           else
-            echo "Website $url returned status $status"
+            echo "Error: $code"
             exit 1
           fi

@@ -171,7 +171,8 @@ public class StudentsController : Controller
             Status = s.Status,
             ClassSerial = s.AcademicClass?.ClassSerial,
             IsResidential = s.IsResidential,
-            UniqueId = s.UniqueId
+            UniqueId = s.UniqueId,
+            AcademicSessionId = s.AcademicSessionId
         }).ToList();
 
 
@@ -252,7 +253,7 @@ public class StudentsController : Controller
 
         ViewData["pageSize"] = pageSize;
 
-        return View(PaginatedList<SMS.Entities.AdditionalModels.StudentListVM>.Create(students.OrderBy(s => s.ClassSerial).ThenBy(s => s.ClassRoll).ToList(), pageNumber ?? 1, (int)pSize));
+        return View(PaginatedList<SMS.Entities.AdditionalModels.StudentListVM>.Create(students.OrderByDescending(s => s.AcademicSessionId).ThenBy(s => s.ClassSerial).ThenBy(s => s.ClassRoll).ToList(), pageNumber ?? 1, (int)pSize));
     }
 
     #endregion Index

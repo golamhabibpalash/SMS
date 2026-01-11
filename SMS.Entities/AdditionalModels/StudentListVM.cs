@@ -17,5 +17,6 @@
         public bool IsResidential { get; set; }
         public string UniqueId { get; set; }
         public string GuardianPhone { get; set; }
+        public int AcademicSessionId { get; set; }
     }
 }

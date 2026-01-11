@@ -1,9 +1,11 @@
 name: Deploy ASP.NET Core to Client
 
 on:
+  # Automatically trigger on push to deployment branch
   push:
     branches:
-      - FinalDeployment
+      - FinalDeployment   # Change to your deployment branch
+  # Manual trigger with client selection
   workflow_dispatch:
     inputs:
       client:
@@ -20,33 +22,33 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      # 1. Checkout repository
+      # 1️⃣ Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Setup .NET 8
+      # 2️⃣ Setup .NET 8
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "8.0.x"
 
-      # 3. Restore dependencies
+      # 3️⃣ Restore dependencies
       - name: Restore
         run: dotnet restore
 
-      # 4. Build project
+      # 4️⃣ Build project
       - name: Build
         run: dotnet build --configuration Release --no-restore
 
-      # 5. Publish project
+      # 5️⃣ Publish project
       - name: Publish
         run: dotnet publish -c Release -o ./publish
 
-      # 6. Set deployment variables
       - name: Set deployment variables
         id: vars
         shell: bash
         run: |
+          # Use manual input if available, otherwise default to DMCPS
           client="${{ github.event.inputs.client }}"
           if [ -z "$client" ]; then client="DMCPS"; fi
 
@@ -75,26 +77,8 @@ jobs:
             exit 1
           fi
 
-      # 7. Create app_offline.htm
-      - name: Create app_offline.htm
-        run: |
-          echo "<html><body><h2>Maintenance in progress. Please check back shortly.</h2></body></html>" > app_offline.htm
-
-      # 8. Put site offline (upload only the offline file)
-      - name: Put application offline
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ steps.vars.outputs.ftp_server }}
-          username: ${{ steps.vars.outputs.ftp_username }}
-          password: ${{ steps.vars.outputs.ftp_password }}
-          server-dir: ${{ steps.vars.outputs.ftp_path }}
-          local-dir: .
-          protocol: ftp
-          files: |
-            app_offline.htm
-
-      # 9. Deploy published files
-      - name: Deploy application
+      # 7️⃣ Deploy via FTP
+      - name: Deploy to FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ steps.vars.outputs.ftp_server }}
@@ -102,30 +86,18 @@ jobs:
           password: ${{ steps.vars.outputs.ftp_password }}
           server-dir: ${{ steps.vars.outputs.ftp_path }}
           local-dir: ./publish/
+          security: loose
           protocol: ftp
           timeout: 1200000
-          # Comment below if needed
-          # exclude: |
-          #   wwwroot/**
+          #exclude: |
+           # wwwroot/**
 
-      # 10. Bring site back online (remove the offline file)
-      - name: Remove app_offline.htm
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ steps.vars.outputs.ftp_server }}
-          username: ${{ steps.vars.outputs.ftp_username }}
-          password: ${{ steps.vars.outputs.ftp_password }}
-          server-dir: ${{ steps.vars.outputs.ftp_path }}
-          protocol: ftp
-          remove: |
-            app_offline.htm
-
-      # 11. Verify site is live
       - name: Verify website is live
         shell: bash
         run: |
           url="${{ steps.vars.outputs.deploy_url }}"
           echo "Checking if website is live at $url ..."
+
           status=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "$url")
           
           if [ "$status" -eq 200 ] || [ "$status" -eq 301 ] || [ "$status" -eq 302 ]; then

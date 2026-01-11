@@ -20,29 +20,23 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      # 1. Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Setup .NET 8
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "8.0.x"
 
-      # 3. Restore dependencies
       - name: Restore
         run: dotnet restore
 
-      # 4. Build project
       - name: Build
         run: dotnet build --configuration Release --no-restore
 
-      # 5. Publish project
       - name: Publish
         run: dotnet publish -c Release -o ./publish
 
-      # 6. Set deployment variables
       - name: Set deployment variables
         id: vars
         shell: bash
@@ -75,12 +69,15 @@ jobs:
             exit 1
           fi
 
-      # 7. Create app_offline.htm
-      - name: Create app_offline.htm
-        run: |
-          echo "<html><body><h2>Maintenance in progress. Please check back shortly.</h2></body></html>" > app_offline.htm
+      ###############################################################
+      # PUT APPLICATION OFFLINE (Correct way to deploy app_offline)
+      ###############################################################
 
-      # 8. Put site offline (upload only the offline file)
+      - name: Prepare offline folder
+        run: |
+          mkdir offline
+          echo "<html><body><h2>Maintenance in progress. Please check back shortly.</h2></body></html>" > offline/app_offline.htm
+
       - name: Put application offline
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -88,12 +85,14 @@ jobs:
           username: ${{ steps.vars.outputs.ftp_username }}
           password: ${{ steps.vars.outputs.ftp_password }}
           server-dir: ${{ steps.vars.outputs.ftp_path }}
-          local-dir: .
+          local-dir: ./offline/
           protocol: ftp
-          files: |
-            app_offline.htm
+          security: loose
 
-      # 9. Deploy published files
+      ###############################################################
+      # DEPLOY PUBLISHED FILES
+      ###############################################################
+
       - name: Deploy application
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -104,11 +103,15 @@ jobs:
           local-dir: ./publish/
           protocol: ftp
           timeout: 1200000
-          # Comment below if needed
-          # exclude: |
-          #   wwwroot/**
+          security: loose
 
-      # 10. Bring site back online (remove the offline file)
+      ###############################################################
+      # BRING APPLICATION ONLINE
+      ###############################################################
+
+      - name: Prepare empty folder to remove app_offline.htm
+        run: mkdir offline-remove
+
       - name: Remove app_offline.htm
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -116,18 +119,21 @@ jobs:
           username: ${{ steps.vars.outputs.ftp_username }}
           password: ${{ steps.vars.outputs.ftp_password }}
           server-dir: ${{ steps.vars.outputs.ftp_path }}
+          local-dir: ./offline-remove/
           protocol: ftp
-          remove: |
-            app_offline.htm
+          security: loose
 
-      # 11. Verify site is live
+      ###############################################################
+      # VERIFY WEBSITE STATUS
+      ###############################################################
+
       - name: Verify website is live
         shell: bash
         run: |
           url="${{ steps.vars.outputs.deploy_url }}"
           echo "Checking if website is live at $url ..."
           status=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "$url")
-          
+
           if [ "$status" -eq 200 ] || [ "$status" -eq 301 ] || [ "$status" -eq 302 ]; then
             echo "Website $url is live with status $status. Deployment successful."
           else

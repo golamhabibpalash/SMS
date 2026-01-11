@@ -52,7 +52,6 @@ public class AccountsController : Controller
     }
 
     [HttpPost]
-
     [Authorize(Policy = "RegisterAccountsPolicy")]
     public async Task<IActionResult> Register(RegisterVM model)
     {

@@ -18,7 +18,7 @@ on:
 jobs:
   deploy:
     runs-on: self-hosted
-    timeout-minutes: 30
+    timeout-minutes: 45
 
     steps:
       - name: Checkout code
@@ -74,6 +74,20 @@ jobs:
               ;;
           esac
 
+      - name: Install lftp (if not available)
+        shell: bash
+        run: |
+          if ! command -v lftp &> /dev/null; then
+            echo "Installing lftp..."
+            if [[ "$OSTYPE" == "darwin"* ]]; then
+              brew install lftp
+            elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+              sudo apt-get update && sudo apt-get install -y lftp
+            fi
+          else
+            echo "lftp already installed"
+          fi
+
       - name: Create maintenance page
         shell: bash
         run: |
@@ -99,53 +113,59 @@ jobs:
           EOF
 
       - name: Upload maintenance page
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ steps.vars.outputs.server }}
-          username: ${{ steps.vars.outputs.username }}
-          password: ${{ steps.vars.outputs.password }}
-          local-dir: ./publish/
-          server-dir: ${{ steps.vars.outputs.path }}/
-          dangerous-clean-slate: false
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/.vscode/**
-            **/.vs/**
-          include: |
-            app_offline.htm
+        shell: bash
+        run: |
+          lftp -c "
+          set ftp:ssl-allow no;
+          set net:timeout 30;
+          set net:max-retries 3;
+          set net:reconnect-interval-base 5;
+          open -u ${{ steps.vars.outputs.username }},${{ steps.vars.outputs.password }} ${{ steps.vars.outputs.server }};
+          cd ${{ steps.vars.outputs.path }};
+          put ./publish/app_offline.htm;
+          bye
+          "
 
       - name: Wait for app to go offline
         shell: bash
         run: sleep 3
 
-      - name: Deploy application files
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ steps.vars.outputs.server }}
-          username: ${{ steps.vars.outputs.username }}
-          password: ${{ steps.vars.outputs.password }}
-          local-dir: ./publish/
-          server-dir: ${{ steps.vars.outputs.path }}/
-          dangerous-clean-slate: false
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/.vscode/**
-            **/.vs/**
-            **/app_offline.htm
+      - name: Deploy application files with lftp
+        shell: bash
+        run: |
+          echo "Starting deployment with mirror mode (only uploads changes)..."
+          lftp -c "
+          set ftp:ssl-allow no;
+          set net:timeout 60;
+          set net:max-retries 5;
+          set net:reconnect-interval-base 5;
+          set mirror:use-pget-n 5;
+          open -u ${{ steps.vars.outputs.username }},${{ steps.vars.outputs.password }} ${{ steps.vars.outputs.server }};
+          mirror --reverse \
+                 --verbose \
+                 --only-newer \
+                 --exclude .git/ \
+                 --exclude .github/ \
+                 --exclude node_modules/ \
+                 --exclude .vscode/ \
+                 --exclude .vs/ \
+                 --exclude app_offline.htm \
+                 ./publish/ ${{ steps.vars.outputs.path }};
+          bye
+          "
 
       - name: Remove maintenance page
         shell: bash
         continue-on-error: true
         run: |
-          # Using curl to delete the file via FTP
-          curl -s --ftp-pasv \
-            --user "${{ steps.vars.outputs.username }}:${{ steps.vars.outputs.password }}" \
-            -Q "DELE ${{ steps.vars.outputs.path }}/app_offline.htm" \
-            "ftp://${{ steps.vars.outputs.server }}" || echo "Maintenance page removal attempted"
+          lftp -c "
+          set ftp:ssl-allow no;
+          set net:timeout 30;
+          open -u ${{ steps.vars.outputs.username }},${{ steps.vars.outputs.password }} ${{ steps.vars.outputs.server }};
+          cd ${{ steps.vars.outputs.path }};
+          rm -f app_offline.htm;
+          bye
+          " || echo "Maintenance page removal attempted"
 
       - name: Wait for app to restart
         shell: bash

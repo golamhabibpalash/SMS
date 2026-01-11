@@ -40,44 +40,44 @@ jobs:
 
       - name: Set deployment variables
         id: vars
-        shell: pwsh
+        shell: bash
         run: |
-          $client = "${{ github.event.inputs.client }}"
-          if ([string]::IsNullOrEmpty($client)) {
-            $client = "DMCPS"  # Default for push events
-          }
+          client="${{ github.event.inputs.client }}"
+          if [ -z "$client" ]; then
+            client="Noble"  # Default for push events
+          fi
           
-          switch ($client) {
-            "Noble" {
-              "server=${{ secrets.NOBLE_FTP_SERVER }}" >> $env:GITHUB_OUTPUT
-              "username=${{ secrets.NOBLE_FTP_USERNAME }}" >> $env:GITHUB_OUTPUT
-              "password=${{ secrets.NOBLE_FTP_PASSWORD }}" >> $env:GITHUB_OUTPUT
-              "path=${{ secrets.NOBLE_FTP_PATH }}" >> $env:GITHUB_OUTPUT
-              "url=https://eims.nobleschoolbd.com" >> $env:GITHUB_OUTPUT
-              "client_name=Noble" >> $env:GITHUB_OUTPUT
-            }
-            "Mamitonnesa" {
-              "server=${{ secrets.MAMI_FTP_SERVER }}" >> $env:GITHUB_OUTPUT
-              "username=${{ secrets.MAMI_FTP_USERNAME }}" >> $env:GITHUB_OUTPUT
-              "password=${{ secrets.MAMI_FTP_PASSWORD }}" >> $env:GITHUB_OUTPUT
-              "path=${{ secrets.MAMI_FTP_PATH }}" >> $env:GITHUB_OUTPUT
-              "url=https://eims.mamitonnessaghs.edu.bd" >> $env:GITHUB_OUTPUT
-              "client_name=Mamitonnesa" >> $env:GITHUB_OUTPUT
-            }
-            "DMCPS" {
-              "server=${{ secrets.DMCPS_FTP_SERVER }}" >> $env:GITHUB_OUTPUT
-              "username=${{ secrets.DMCPS_FTP_USERNAME }}" >> $env:GITHUB_OUTPUT
-              "password=${{ secrets.DMCPS_FTP_PASSWORD }}" >> $env:GITHUB_OUTPUT
-              "path=${{ secrets.DMCPS_FTP_PATH }}" >> $env:GITHUB_OUTPUT
-              "url=https://eims.mcpsbd.com" >> $env:GITHUB_OUTPUT
-              "client_name=DMCPS" >> $env:GITHUB_OUTPUT
-            }
-          }
+          case "$client" in
+            "Noble")
+              echo "server=${{ secrets.NOBLE_FTP_SERVER }}" >> $GITHUB_OUTPUT
+              echo "username=${{ secrets.NOBLE_FTP_USERNAME }}" >> $GITHUB_OUTPUT
+              echo "password=${{ secrets.NOBLE_FTP_PASSWORD }}" >> $GITHUB_OUTPUT
+              echo "path=${{ secrets.NOBLE_FTP_PATH }}" >> $GITHUB_OUTPUT
+              echo "url=https://eims.nobleschoolbd.com" >> $GITHUB_OUTPUT
+              echo "client_name=Noble" >> $GITHUB_OUTPUT
+              ;;
+            "Mamitonnesa")
+              echo "server=${{ secrets.MAMI_FTP_SERVER }}" >> $GITHUB_OUTPUT
+              echo "username=${{ secrets.MAMI_FTP_USERNAME }}" >> $GITHUB_OUTPUT
+              echo "password=${{ secrets.MAMI_FTP_PASSWORD }}" >> $GITHUB_OUTPUT
+              echo "path=${{ secrets.MAMI_FTP_PATH }}" >> $GITHUB_OUTPUT
+              echo "url=https://eims.mamitonnessaghs.edu.bd" >> $GITHUB_OUTPUT
+              echo "client_name=Mamitonnesa" >> $GITHUB_OUTPUT
+              ;;
+            "DMCPS")
+              echo "server=${{ secrets.DMCPS_FTP_SERVER }}" >> $GITHUB_OUTPUT
+              echo "username=${{ secrets.DMCPS_FTP_USERNAME }}" >> $GITHUB_OUTPUT
+              echo "password=${{ secrets.DMCPS_FTP_PASSWORD }}" >> $GITHUB_OUTPUT
+              echo "path=${{ secrets.DMCPS_FTP_PATH }}" >> $GITHUB_OUTPUT
+              echo "url=https://eims.mcpsbd.com" >> $GITHUB_OUTPUT
+              echo "client_name=DMCPS" >> $GITHUB_OUTPUT
+              ;;
+          esac
 
       - name: Create maintenance page
-        shell: pwsh
+        shell: bash
         run: |
-          @"
+          cat > ./publish/app_offline.htm << 'EOF'
           <!DOCTYPE html>
           <html>
           <head>
@@ -96,7 +96,7 @@ jobs:
             <p><small>Please refresh in a few seconds</small></p>
           </body>
           </html>
-          "@ | Out-File -FilePath ./publish/app_offline.htm -Encoding UTF8
+          EOF
 
       - name: Upload maintenance page
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -117,8 +117,8 @@ jobs:
             app_offline.htm
 
       - name: Wait for app to go offline
-        shell: pwsh
-        run: Start-Sleep -Seconds 3
+        shell: bash
+        run: sleep 3
 
       - name: Deploy application files
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -138,68 +138,53 @@ jobs:
             **/app_offline.htm
 
       - name: Remove maintenance page
-        shell: pwsh
+        shell: bash
         continue-on-error: true
         run: |
-          $ftpUri = "ftp://${{ steps.vars.outputs.server }}${{ steps.vars.outputs.path }}/app_offline.htm"
-          $request = [System.Net.FtpWebRequest]::Create($ftpUri)
-          $request.Credentials = New-Object System.Net.NetworkCredential("${{ steps.vars.outputs.username }}", "${{ steps.vars.outputs.password }}")
-          $request.Method = [System.Net.WebRequestMethods+Ftp]::DeleteFile
-          $request.UseBinary = $true
-          $request.KeepAlive = $false
-          
-          try {
-            $response = $request.GetResponse()
-            Write-Host "Maintenance page removed successfully"
-            $response.Close()
-          } catch {
-            Write-Host "Note: Maintenance page may already be removed or not found"
-          }
+          # Using curl to delete the file via FTP
+          curl -s --ftp-pasv \
+            --user "${{ steps.vars.outputs.username }}:${{ steps.vars.outputs.password }}" \
+            -Q "DELE ${{ steps.vars.outputs.path }}/app_offline.htm" \
+            "ftp://${{ steps.vars.outputs.server }}" || echo "Maintenance page removal attempted"
 
       - name: Wait for app to restart
-        shell: pwsh
-        run: Start-Sleep -Seconds 5
+        shell: bash
+        run: sleep 5
 
       - name: Verify deployment
-        shell: pwsh
+        shell: bash
         run: |
-          $url = "${{ steps.vars.outputs.url }}"
-          $maxRetries = 5
-          $retryCount = 0
-          $success = $false
+          url="${{ steps.vars.outputs.url }}"
+          max_retries=5
+          retry_count=0
+          success=false
           
-          while ($retryCount -lt $maxRetries -and -not $success) {
-            try {
-              $response = Invoke-WebRequest -Uri $url -Method Head -TimeoutSec 10 -UseBasicParsing
-              $statusCode = $response.StatusCode
-              
-              if ($statusCode -eq 200 -or $statusCode -eq 301 -or $statusCode -eq 302) {
-                Write-Host "✓ Deployment verified! Site is live with status code: $statusCode"
-                $success = $true
-              } else {
-                Write-Host "Warning: Unexpected status code: $statusCode"
-              }
-            } catch {
-              $retryCount++
-              if ($retryCount -lt $maxRetries) {
-                Write-Host "Retry $retryCount/$maxRetries - Waiting for site to respond..."
-                Start-Sleep -Seconds 5
-              } else {
-                Write-Host "Error: Site verification failed after $maxRetries attempts"
-                Write-Host "Error details: $($_.Exception.Message)"
+          while [ $retry_count -lt $max_retries ] && [ "$success" = "false" ]; do
+            status_code=$(curl -s -o /dev/null -w "%{http_code}" -L "$url" || echo "000")
+            
+            if [ "$status_code" = "200" ] || [ "$status_code" = "301" ] || [ "$status_code" = "302" ]; then
+              echo "✓ Deployment verified! Site is live with status code: $status_code"
+              success=true
+            else
+              retry_count=$((retry_count + 1))
+              if [ $retry_count -lt $max_retries ]; then
+                echo "Retry $retry_count/$max_retries - Waiting for site to respond... (Status: $status_code)"
+                sleep 5
+              else
+                echo "Error: Site verification failed after $max_retries attempts (Status: $status_code)"
                 exit 1
-              }
-            }
-          }
+              fi
+            fi
+          done
 
       - name: Deployment summary
         if: success()
-        shell: pwsh
+        shell: bash
         run: |
-          Write-Host "========================================" -ForegroundColor Green
-          Write-Host "Deployment Successful!" -ForegroundColor Green
-          Write-Host "========================================" -ForegroundColor Green
-          Write-Host "Client: ${{ steps.vars.outputs.client_name }}"
-          Write-Host "URL: ${{ steps.vars.outputs.url }}"
-          Write-Host "Time: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
-          Write-Host "========================================" -ForegroundColor Green
+          echo "========================================"
+          echo "✓ Deployment Successful!"
+          echo "========================================"
+          echo "Client: ${{ steps.vars.outputs.client_name }}"
+          echo "URL: ${{ steps.vars.outputs.url }}"
+          echo "Time: $(date '+%Y-%m-%d %H:%M:%S')"
+          echo "========================================"

@@ -168,7 +168,7 @@
             <div class="form-group row">
                 <label asp-for="DOB" class="control-label col-form-label text-md-right col-md-2"></label>
                 <div class="col-md-4">
-                    <input asp-for="DOB" class="form-control" max="@DateTime.Now.Date" />
+                    <input asp-for="DOB" class="form-control" max="@DateTime.Now.Date.ToString("yyyy-MM-dd")" />
                     <span asp-validation-for="DOB" class="text-danger"></span>
                 </div>
 

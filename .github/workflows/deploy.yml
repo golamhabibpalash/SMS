@@ -73,12 +73,17 @@ jobs:
               echo "client_name=DMCPS" >> $GITHUB_OUTPUT
               ;;
           esac
-
-      - name: Install lftp
+          
+      - name: Ensure lftp is available
         shell: bash
         run: |
-          sudo apt-get update -y
-          sudo apt-get install -y lftp
+          if ! command -v lftp >/dev/null 2>&1; then
+            sudo apt-get update -y
+            sudo apt-get install -y lftp
+          else
+            echo "lftp is already installed"
+          fi
+
 
       - name: Create maintenance page
         shell: bash

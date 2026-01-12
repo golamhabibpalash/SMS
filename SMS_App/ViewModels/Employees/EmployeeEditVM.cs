@@ -46,7 +46,7 @@ public class EmployeeEditVM
     [Display(Name = "Nominee Name")]
     public string? Nominee { get; set; }
 
-    [RegularExpression(@"^(01[3-9]\d{8})?$", ErrorMessage = "Enter a valid phone number.")]
+    [RegularExpression(@"^$|^(01[3-9][0-9]{8})$", ErrorMessage = "Enter a valid phone number.")]
     public string? NomineePhone { get; set; }
 
     [Display(Name = "Employee Type")]
@@ -85,11 +85,11 @@ public class EmployeeEditVM
 
     public ICollection<AttachDoc>? Documents { get; set; }
 
-    [Display(Name = "Created By")]
-    public required string CreatedBy { get; set; }
+    //[Display(Name = "Created By")]
+    //public required string CreatedBy { get; set; }
 
-    [Display(Name = "Created At")]
-    public DateTime CreatedAt { get; set; }
+    //[Display(Name = "Created At")]
+    //public DateTime CreatedAt { get; set; }
 
     [Display(Name = "Updated By")]
     public string? EditedBy { get; set; }

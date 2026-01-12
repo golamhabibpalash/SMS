@@ -307,106 +307,68 @@ public class EmployeesController : Controller
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "SuperAdmin, Admin")]
     [Authorize(Policy = "EditEmployeesPolicy")]
-    public async Task<IActionResult> Edit(int id, [Bind("Id,EmployeeName,EmployeeNameBangla,DOB,Image,GenderId,ReligionId,NationalityId,NIDNo,NIDCard,Phone,Email,Nominee,NomineePhone,EmpTypeId,DesignationId,JoiningDate,PresentAddress,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddress,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,CreatedBy,CreatedAt,EditedBy,EditedAt,Status,BloodGroupId")] EmployeeEditVM employeeVM, IFormFile Image, IFormFile NIDCard)
+    public async Task<IActionResult> Edit(
+    int id,
+    EmployeeEditVM employeeVM,
+    IFormFile Image,
+    IFormFile NIDCard)
     {
-        string msg = "";
-        string empPhoto = "";
-        string nidPhoto = "";
+        var currectUser = HttpContext.Session.GetString("UserId");
         if (id != employeeVM.Id)
-        {
             return NotFound();
-        }
-        //var existEmployee = await _employeeManager.GetByIdAsync(employeeVM.Id);
-        if (Image != null)
-        {
-            string root = _host.WebRootPath;
-            if (string.IsNullOrEmpty(root))
-            {
-                root = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-            }
-            string folder = "Images/Employee/photo";
-            string fileExtension = Path.GetExtension(Image.FileName);
-            empPhoto = "e_" + DateTime.Today.ToString("yyyy") + "_" + employeeVM.NIDNo + fileExtension;
-            string pathCombine = Path.Combine(root, folder, empPhoto);
-            using (var stream = new FileStream(pathCombine, FileMode.Create))
-            {
-                await Image.CopyToAsync(stream);
-            }
-            employeeVM.Image = empPhoto;
-        }
-        else
-        {
-            employeeVM.Image = TempData["Image"].ToString();
-        }
 
-        if (NIDCard != null)
-        {
-            string root = _host.WebRootPath;
-            string folder = "Images/Employee/NID";
+        var existingEmployee = await _employeeManager.GetByIdAsync(id);
+        if (existingEmployee == null)
+            return NotFound();
 
-            string fileExtension = Path.GetExtension(NIDCard.FileName);
-            nidPhoto = "e_" + employeeVM.NIDNo + fileExtension;
-            string pathCombine = Path.Combine(root, folder, nidPhoto);
-            using (var stream = new FileStream(pathCombine, FileMode.Create))
-            {
-                await NIDCard.CopyToAsync(stream);
-            }
-            employeeVM.NIDCard = nidPhoto;
-        }
-        else
+        if (!ModelState.IsValid)
         {
-            employeeVM.NIDCard = TempData["NIDCard"].ToString();
+            var firstError = ModelState
+                .Where(ms => ms.Value.Errors.Count > 0)
+                .Select(ms => new { Field = ms.Key, Error = ms.Value.Errors.First().ErrorMessage })
+                .FirstOrDefault();
+
+            if (firstError != null)
+            {
+                TempData["deleted"] = $"{firstError.Field}: {firstError.Error}";
+            }
+            else
+            {
+                TempData["deleted"] = "Validation error.";
+            }
+            ViewBag.msg = "Validation error.";
+            await LoadDropdowns(employeeVM);
+            return View(employeeVM);
         }
 
+        // FILE UPLOAD HANDLING
+        employeeVM.Image = await SaveFileIfProvided(Image, $"{id.ToString()}_image_", "Images/Employee/photo", employeeVM.Image);
+        employeeVM.NIDCard = await SaveFileIfProvided(NIDCard, $"{id.ToString()}_NID_", "Images/Employee/NID", employeeVM.NIDCard);
 
-        var employee = _mapper.Map<Employee>(employeeVM);
-        if (ModelState.IsValid)
+        try
         {
-            try
-            {
-                employee.EditedAt = DateTime.Now;
-                employee.EditedBy = HttpContext.Session.GetString("UserId");
+            // MAP updated fields from VM to entity
+            _mapper.Map(employeeVM, existingEmployee);
 
-                bool isUpdated = await _employeeManager.UpdateAsync(employee);
-                if (isUpdated)
-                {
-                    TempData["edited"] = "Update Successfully";
-                }
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!EmployeeExists(employee.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            existingEmployee.EditedAt = DateTime.Now;
+            existingEmployee.EditedBy = currectUser;
+
+            bool isUpdated = await _employeeManager.UpdateAsync(existingEmployee);
+
+            if (isUpdated)
+                TempData["edited"] = "Update Successfully";
+
             return RedirectToAction(nameof(Index));
         }
-        else
+        catch (DbUpdateConcurrencyException)
         {
-            msg = "Something wrong";
+            if (!EmployeeExists(employeeVM.Id))
+                return NotFound();
+
+            throw;
         }
-        ViewBag.msg = msg;
-        var employee1 = _mapper.Map<EmployeeEditVM>(employee);
-        employee1.GenderList = new SelectList(await _genderManager.GetAllAsync(), "Id", "Name", employee.GenderId).ToList();
-        employee1.ReligionList = new SelectList(await _religionManager.GetAllAsync(), "Id", "Name", employee.ReligionId).ToList();
-        employee1.NationalityList = new SelectList(await _nationalityManager.GetAllAsync(), "Id", "Name", employee.NationalityId).ToList();
-        employee1.EmpTypeList = new SelectList(await _empTypeManager.GetAllAsync(), "Id", "Name", employee.EmpTypeId).ToList();
-        employee1.DesignationList = new SelectList(await _designationManager.GetAllAsync(), "Id", "DesignationName", employee.DesignationId).ToList();
-        employee1.DivisionList = new SelectList(await _divisionManager.GetAllAsync(), "Id", "Name").ToList();
-        employee1.BloodGroupList = new SelectList(await _bloodGroupManager.GetAllAsync(), "Id", "Name", employee.BloodGroupId).ToList();
-
-        ViewData["PermanentDistrictId"] = new SelectList(await _districtManager.GetAllAsync(), "Id", "Name", employee.PermanentDistrictId);
-        ViewData["PermanentUpazilaId"] = new SelectList(await _upazilaManager.GetAllAsync(), "Id", "Name", employee.PermanentUpazilaId);
-        ViewData["PresentDistrictId"] = new SelectList(await _districtManager.GetAllAsync(), "Id", "Name", employee.PresentDistrictId);
-        ViewData["PresentUpazilaId"] = new SelectList(await _upazilaManager.GetAllAsync(), "Id", "Name", employee.PresentUpazilaId);
-
-        return View(employee1);
     }
+
 
     // GET: Employees/Delete/5
 
@@ -461,5 +423,46 @@ public class EmployeesController : Controller
     {
         return View();
     }
+
+    private async Task<string> SaveFileIfProvided(
+    IFormFile file,
+    string nidNo,
+    string folder,
+    string existingFileName)
+    {
+        if (file == null)
+            return existingFileName; // keep previous image
+
+        string root = _host.WebRootPath;
+        if (string.IsNullOrEmpty(root))
+            root = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+
+        string extension = Path.GetExtension(file.FileName);
+        string newFileName = $"e_{nidNo}{extension}";
+        string fullPath = Path.Combine(root, folder, newFileName);
+
+        Directory.CreateDirectory(Path.Combine(root, folder));
+
+        using (var stream = new FileStream(fullPath, FileMode.Create))
+            await file.CopyToAsync(stream);
+
+        return newFileName;
+    }
+
+    private async Task LoadDropdowns(EmployeeEditVM vm)
+    {
+        vm.GenderList = new SelectList(await _genderManager.GetAllAsync(), "Id", "Name", vm.GenderId).ToList();
+        vm.ReligionList = new SelectList(await _religionManager.GetAllAsync(), "Id", "Name", vm.ReligionId).ToList();
+        vm.NationalityList = new SelectList(await _nationalityManager.GetAllAsync(), "Id", "Name", vm.NationalityId).ToList();
+        vm.EmpTypeList = new SelectList(await _empTypeManager.GetAllAsync(), "Id", "Name", vm.EmpTypeId).ToList();
+        vm.DesignationList = new SelectList(await _designationManager.GetAllAsync(), "Id", "DesignationName", vm.DesignationId).ToList();
+        vm.DivisionList = new SelectList(await _divisionManager.GetAllAsync(), "Id", "Name").ToList();
+        vm.BloodGroupList = new SelectList(await _bloodGroupManager.GetAllAsync(), "Id", "Name", vm.BloodGroupId).ToList();
+
+        ViewData["PermanentDistrictId"] = new SelectList(await _districtManager.GetAllAsync(), "Id", "Name", vm.PermanentDistrictId);
+        ViewData["PresentDistrictId"] = new SelectList(await _districtManager.GetAllAsync(), "Id", "Name", vm.PresentDistrictId);
+        ViewData["PresentUpazilaId"] = new SelectList(await _upazilaManager.GetAllAsync(), "Id", "Name", vm.PresentUpazilaId);
+    }
+
 }
 

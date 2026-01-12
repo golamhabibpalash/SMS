@@ -44,7 +44,7 @@ jobs:
         run: |
           client="${{ github.event.inputs.client }}"
           if [ -z "$client" ]; then
-            client="Noble"  # Default for push events
+            client="Noble"
           fi
           
           case "$client" in
@@ -74,10 +74,13 @@ jobs:
               ;;
           esac
 
-      - name: Install lftp (if not available)
+      - name: Install lftp
         shell: bash
         run: |
-          echo "Skipping lftp installation - using curl instead"
+          if ! command -v lftp &> /dev/null; then
+            sudo apt-get update -y
+            sudo apt-get install lftp -y
+          fi
 
       - name: Create maintenance page
         shell: bash
@@ -103,126 +106,59 @@ jobs:
           </html>
           EOF
 
-      - name: Upload maintenance page
+      - name: Upload maintenance page (lftp)
         shell: bash
         run: |
-          # Upload using curl - more compatible with various FTP servers
-          curl --ftp-create-dirs --ftp-pasv \
-               --retry 3 \
-               --retry-delay 5 \
-               --connect-timeout 30 \
-               --max-time 120 \
-               -T ./publish/app_offline.htm \
-               --user "${{ steps.vars.outputs.username }}:${{ steps.vars.outputs.password }}" \
-               "ftp://${{ steps.vars.outputs.server }}${{ steps.vars.outputs.path }}/app_offline.htm"
-          echo "Maintenance page uploaded successfully"
+          echo "Uploading maintenance page..."
+
+          lftp -u "${{ steps.vars.outputs.username }},${{ steps.vars.outputs.password }}" "ftp://${{ steps.vars.outputs.server }}" <<EOF
+          set ftp:passive-mode on
+          set net:max-retries 2
+          set net:timeout 30
+
+          put ./publish/app_offline.htm -o "${{ steps.vars.outputs.path }}/app_offline.htm"
+          quit
+          EOF
+
+          echo "Maintenance page uploaded."
 
       - name: Wait for app to go offline
         shell: bash
         run: sleep 3
 
-      - name: Create deployment state cache
+      - name: Deploy application files with lftp
         shell: bash
         run: |
-          # Create a hash of all files to track changes
-          mkdir -p .deployment-cache
-          cd ./publish
-          find . -type f -not -path '*/.*' -exec md5sum {} \; | sort > ../.deployment-cache/current-state.txt
-          
-          # Show what will be deployed
-          if [ -f ../.deployment-cache/last-state.txt ]; then
-            echo "Comparing with previous deployment..."
-            diff ../.deployment-cache/last-state.txt ../.deployment-cache/current-state.txt > ../.deployment-cache/changes.txt || true
-            
-            if [ -s ../.deployment-cache/changes.txt ]; then
-              echo "Changed files detected:"
-              cat ../.deployment-cache/changes.txt | grep "^>" | awk '{print $3}' || echo "No changes"
-            else
-              echo "No changes detected"
-            fi
-          else
-            echo "First deployment - all files will be uploaded"
-          fi
+          echo "Starting application deployment using lftp..."
 
-      - name: Deploy application files with curl
-        shell: bash
-        run: |
-          echo "Starting deployment..."
-          
-          uploaded=0
-          skipped=0
-          
-          # Function to get file hash
-          get_hash() {
-            md5sum "$1" | awk '{print $1}'
-          }
-          
-          # Function to check if file changed
-          file_changed() {
-            local file="$1"
-            if [ ! -f .deployment-cache/last-state.txt ]; then
-              return 0  # First deployment, upload all
-            fi
-            
-            local current_hash=$(get_hash "$file")
-            local rel_path="${file#./publish/}"
-            
-            # Check if file exists in previous state with same hash
-            if grep -q "$current_hash  ./$rel_path" .deployment-cache/last-state.txt 2>/dev/null; then
-              return 1  # File unchanged
-            fi
-            return 0  # File changed or new
-          }
-          
-          # Upload files
-          cd ./publish
-          find . -type f -not -path '*/.*' -not -name 'app_offline.htm' | while read -r file; do
-            rel_path="${file#./}"
-            
-            if file_changed "$file"; then
-              echo "Uploading: $rel_path"
-              
-              curl --ftp-create-dirs --ftp-pasv \
-                   --retry 2 \
-                   --retry-delay 3 \
-                   --connect-timeout 30 \
-                   --max-time 180 \
-                   -T "$file" \
-                   --user "${{ steps.vars.outputs.username }}:${{ steps.vars.outputs.password }}" \
-                   "ftp://${{ steps.vars.outputs.server }}${{ steps.vars.outputs.path }}/$rel_path" 2>&1 | grep -v "Warning: Binary output"
-              
-              if [ $? -eq 0 ]; then
-                uploaded=$((uploaded + 1))
-              else
-                echo "Failed to upload: $rel_path"
-                exit 1
-              fi
-            else
-              skipped=$((skipped + 1))
-            fi
-          done
-          
-          echo "✓ Deployment completed: $uploaded uploaded, $skipped unchanged"
-          
-      - name: Update deployment state
-        if: success()
-        shell: bash
-        run: |
-          # Save current state for next deployment
-          cp .deployment-cache/current-state.txt .deployment-cache/last-state.txt
-          echo "Deployment state saved"
+          lftp -u "${{ steps.vars.outputs.username }},${{ steps.vars.outputs.password }}" "ftp://${{ steps.vars.outputs.server }}" <<EOF
+          set ftp:passive-mode on
+          set net:max-retries 2
+          set net:timeout 30
+          set ftp:ssl-allow no
+
+          mirror -R \
+            --parallel=10 \
+            --only-newer \
+            --exclude app_offline.htm \
+            ./publish \
+            "${{ steps.vars.outputs.path }}"
+
+          quit
+          EOF
+
+          echo "Deployment completed with lftp."
 
       - name: Remove maintenance page
         shell: bash
         continue-on-error: true
         run: |
-          # Delete using curl
-          curl --ftp-pasv \
-               --user "${{ steps.vars.outputs.username }}:${{ steps.vars.outputs.password }}" \
-               -Q "DELE ${{ steps.vars.outputs.path }}/app_offline.htm" \
-               "ftp://${{ steps.vars.outputs.server }}" \
-               && echo "Maintenance page removed successfully" \
-               || echo "Maintenance page removal attempted"
+          lftp -u "${{ steps.vars.outputs.username }},${{ steps.vars.outputs.password }}" "ftp://${{ steps.vars.outputs.server }}" <<EOF
+          set ftp:passive-mode on
+          rm "${{ steps.vars.outputs.path }}/app_offline.htm"
+          quit
+          EOF
+          echo "Maintenance page removed."
 
       - name: Wait for app to restart
         shell: bash
@@ -232,27 +168,27 @@ jobs:
         shell: bash
         run: |
           url="${{ steps.vars.outputs.url }}"
-          max_retries=5
-          retry_count=0
+          retries=5
+          count=0
           success=false
           
-          while [ $retry_count -lt $max_retries ] && [ "$success" = "false" ]; do
-            status_code=$(curl -s -o /dev/null -w "%{http_code}" -L "$url" || echo "000")
+          while [ $count -lt $retries ] && [ "$success" = false ]; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" "$url")
             
-            if [ "$status_code" = "200" ] || [ "$status_code" = "301" ] || [ "$status_code" = "302" ]; then
-              echo "✓ Deployment verified! Site is live with status code: $status_code"
+            if [[ "$code" == "200" || "$code" == "301" || "$code" == "302" ]]; then
+              echo "Deployment verified with status code $code"
               success=true
             else
-              retry_count=$((retry_count + 1))
-              if [ $retry_count -lt $max_retries ]; then
-                echo "Retry $retry_count/$max_retries - Waiting for site to respond... (Status: $status_code)"
-                sleep 5
-              else
-                echo "Error: Site verification failed after $max_retries attempts (Status: $status_code)"
-                exit 1
-              fi
+              count=$((count+1))
+              echo "Retrying ($count/$retries)... current status: $code"
+              sleep 5
             fi
           done
+          
+          if [ "$success" = false ]; then
+            echo "Deployment verification failed."
+            exit 1
+          fi
 
       - name: Deployment summary
         if: success()

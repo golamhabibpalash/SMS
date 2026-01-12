@@ -77,10 +77,8 @@ jobs:
       - name: Install lftp
         shell: bash
         run: |
-          if ! command -v lftp &> /dev/null; then
-            sudo apt-get update -y
-            sudo apt-get install lftp -y
-          fi
+          sudo apt-get update -y
+          sudo apt-get install -y lftp
 
       - name: Create maintenance page
         shell: bash
@@ -106,97 +104,63 @@ jobs:
           </html>
           EOF
 
-      - name: Upload maintenance page (lftp)
+      - name: Upload maintenance page
         shell: bash
         run: |
-          echo "Uploading maintenance page..."
-
           lftp -u "${{ steps.vars.outputs.username }},${{ steps.vars.outputs.password }}" "ftp://${{ steps.vars.outputs.server }}" <<EOF
-          set ftp:passive-mode on
-          set net:max-retries 2
-          set net:timeout 30
-
-          put ./publish/app_offline.htm -o "${{ steps.vars.outputs.path }}/app_offline.htm"
-          quit
+            set ftp:passive-mode on
+            set ssl:verify-certificate no
+            put ./publish/app_offline.htm -o "${{ steps.vars.outputs.path }}/app_offline.htm"
+            quit
           EOF
-
-          echo "Maintenance page uploaded."
 
       - name: Wait for app to go offline
-        shell: bash
         run: sleep 3
 
-      - name: Deploy application files with lftp
+      - name: Deploy files
         shell: bash
         run: |
-          echo "Starting application deployment using lftp..."
-
           lftp -u "${{ steps.vars.outputs.username }},${{ steps.vars.outputs.password }}" "ftp://${{ steps.vars.outputs.server }}" <<EOF
-          set ftp:passive-mode on
-          set net:max-retries 2
-          set net:timeout 30
-          set ftp:ssl-allow no
-
-          mirror -R \
-            --parallel=10 \
-            --only-newer \
-            --exclude app_offline.htm \
-            ./publish \
-            "${{ steps.vars.outputs.path }}"
-
-          quit
+            set ftp:passive-mode on
+            set ssl:verify-certificate no
+            set net:max-retries 3
+            set net:timeout 35
+            mirror -R --parallel=10 --only-newer --exclude app_offline.htm ./publish "${{ steps.vars.outputs.path }}"
+            quit
           EOF
-
-          echo "Deployment completed with lftp."
 
       - name: Remove maintenance page
         shell: bash
         continue-on-error: true
         run: |
           lftp -u "${{ steps.vars.outputs.username }},${{ steps.vars.outputs.password }}" "ftp://${{ steps.vars.outputs.server }}" <<EOF
-          set ftp:passive-mode on
-          rm "${{ steps.vars.outputs.path }}/app_offline.htm"
-          quit
+            set ftp:passive-mode on
+            set ssl:verify-certificate no
+            rm "${{ steps.vars.outputs.path }}/app_offline.htm"
+            quit
           EOF
-          echo "Maintenance page removed."
 
       - name: Wait for app to restart
-        shell: bash
         run: sleep 5
 
       - name: Verify deployment
         shell: bash
         run: |
           url="${{ steps.vars.outputs.url }}"
-          retries=5
-          count=0
-          success=false
-          
-          while [ $count -lt $retries ] && [ "$success" = false ]; do
-            code=$(curl -s -o /dev/null -w "%{http_code}" "$url")
-            
-            if [[ "$code" == "200" || "$code" == "301" || "$code" == "302" ]]; then
-              echo "Deployment verified with status code $code"
-              success=true
-            else
-              count=$((count+1))
-              echo "Retrying ($count/$retries)... current status: $code"
-              sleep 5
-            fi
-          done
-          
-          if [ "$success" = false ]; then
-            echo "Deployment verification failed."
+          code=$(curl -s -o /dev/null -w "%{http_code}" "$url")
+          echo "Status: $code"
+          if [[ "$code" != "200" && "$code" != "301" && "$code" != "302" ]]; then
+            echo "Verification failed"
             exit 1
           fi
+          echo "Deployment verified successfully"
 
       - name: Deployment summary
         if: success()
         shell: bash
         run: |
           echo "========================================"
-          echo "✓ Deployment Successful!"
-          echo "========================================"
+          echo "Deployment Successful"
           echo "Client: ${{ steps.vars.outputs.client_name }}"
           echo "URL: ${{ steps.vars.outputs.url }}"
           echo "Time: $(date '+%Y-%m-%d %H:%M:%S')"

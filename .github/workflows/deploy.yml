@@ -140,10 +140,13 @@ jobs:
           set net:max-retries 5;
           set net:reconnect-interval-base 5;
           set mirror:use-pget-n 5;
+          set ftp:use-site-chmod no;
+          set file:use-fallocate no;
           open -u ${{ steps.vars.outputs.username }},${{ steps.vars.outputs.password }} ${{ steps.vars.outputs.server }};
           mirror --reverse \
                  --verbose \
                  --only-newer \
+                 --no-perms \
                  --exclude .git/ \
                  --exclude .github/ \
                  --exclude node_modules/ \

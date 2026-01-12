@@ -44,7 +44,7 @@ jobs:
         run: |
           client="${{ github.event.inputs.client }}"
           if [ -z "$client" ]; then
-            client="Noble"
+            client="Mamitonnesa"
           fi
 
           case "$client" in

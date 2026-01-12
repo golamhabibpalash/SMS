@@ -43,20 +43,34 @@
             if (!string.IsNullOrEmpty(stu?.Photo))
                 userImage = $"/Images/Student/Photo/{stu.Photo}";
         }
-        else if (user.UserType == 'e')
+        else if (user.UserType == "e")
         {
             var emp = await _employeeManager.GetByIdAsync(user.ReferenceId);
 
-            if (emp != null && !string.IsNullOrEmpty(emp.Image))
+            if (emp != null)
             {
                 string root = _webHostEnvironment.WebRootPath ??
-                              System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                              Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
 
-                var imagePath = System.IO.Path.Combine(root, "Images", "Employee", "Photo", emp.Image);
+                string defaultImage = "/Images/Employee/Photo/maleEmployee.png"; // fallback image
 
-                if (System.IO.File.Exists(imagePath))
+                // Only check file if emp.Image is not null or empty
+                if (!string.IsNullOrEmpty(emp.Image))
                 {
-                    userImage = $"/Images/Employee/Photo/{emp.Image}";
+                    var imagePath = Path.Combine(root, "Images", "Employee", "Photo", emp.Image);
+
+                    if (System.IO.File.Exists(imagePath))
+                    {
+                        userImage = $"/Images/Employee/Photo/{emp.Image}";
+                    }
+                    else
+                    {
+                        userImage = defaultImage;
+                    }
+                }
+                else
+                {
+                    userImage = defaultImage;
                 }
             }
         }

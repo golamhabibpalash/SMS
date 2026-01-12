@@ -431,23 +431,27 @@ public class EmployeesController : Controller
     string existingFileName)
     {
         if (file == null)
-            return existingFileName; // keep previous image
+            return existingFileName ?? string.Empty;
+
+        // Normalize folder (no leading slash)
+        folder = folder.TrimStart('/', '\\');
 
         string root = _host.WebRootPath;
         if (string.IsNullOrEmpty(root))
             root = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
 
+        Directory.CreateDirectory(Path.Combine(root, folder));
+
         string extension = Path.GetExtension(file.FileName);
         string newFileName = $"e_{nidNo}{extension}";
         string fullPath = Path.Combine(root, folder, newFileName);
-
-        Directory.CreateDirectory(Path.Combine(root, folder));
 
         using (var stream = new FileStream(fullPath, FileMode.Create))
             await file.CopyToAsync(stream);
 
         return newFileName;
     }
+
 
     private async Task LoadDropdowns(EmployeeEditVM vm)
     {

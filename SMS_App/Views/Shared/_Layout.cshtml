@@ -46,11 +46,21 @@
         else if (user.UserType == 'e')
         {
             var emp = await _employeeManager.GetByIdAsync(user.ReferenceId);
-            // Fix: Use Path.Combine from System.IO and ensure _webHostEnvironment is injected
-            var imagePath = System.IO.Path.Combine(_webHostEnvironment.WebRootPath, "Images", "Employee", "Photo", emp?.Image);
 
-            userImage = System.IO.File.Exists(imagePath) ? $"/Images/Employee/Photo/{emp?.Image}" : userImage;
+            if (emp != null && !string.IsNullOrEmpty(emp.Image))
+            {
+                string root = _webHostEnvironment.WebRootPath ??
+                              System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+
+                var imagePath = System.IO.Path.Combine(root, "Images", "Employee", "Photo", emp.Image);
+
+                if (System.IO.File.Exists(imagePath))
+                {
+                    userImage = $"/Images/Employee/Photo/{emp.Image}";
+                }
+            }
         }
+
     }
     else
     {

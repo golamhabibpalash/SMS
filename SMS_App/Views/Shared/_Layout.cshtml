@@ -43,6 +43,9 @@
             if (!string.IsNullOrEmpty(stu?.Photo))
                 userImage = $"/Images/Student/Photo/{stu.Photo}";
         }
+
+
+
         else if (user.UserType == 'e')
         {
             var emp = await _employeeManager.GetByIdAsync(user.ReferenceId);
@@ -50,22 +53,23 @@
             if (emp != null)
             {
                 // Ensure root is never null
-                string root = _webHostEnvironment.WebRootPath;
-                if (string.IsNullOrEmpty(root))
+                string root = _webHostEnvironment?.WebRootPath;
+                if (string.IsNullOrWhiteSpace(root))
                 {
                     root = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
                 }
 
-                string defaultImage = "/Images/Employee/Photo/default.png"; // fallback
+                string defaultImage = "/Images/Employee/Photo/maleEmployee.png"; // fallback
+                string empImage = emp.Image?.Trim(); // remove whitespace
 
-                // Only use emp.Image if it's not null or empty
-                if (!string.IsNullOrEmpty(emp.Image))
+                if (!string.IsNullOrEmpty(empImage))
                 {
-                    var imagePath = System.IO.Path.Combine(root, "Images", "Employee", "Photo", emp.Image);
+                    // Combine only non-null strings
+                    string imagePath = System.IO.Path.Combine(new[] { root, "Images", "Employee", "Photo", empImage });
 
-                    if (System.IO.File.Exists(imagePath))
+                    if (File.Exists(imagePath))
                     {
-                        userImage = $"/Images/Employee/Photo/{emp.Image}";
+                        userImage = $"/Images/Employee/Photo/{empImage}";
                     }
                     else
                     {
@@ -77,8 +81,11 @@
                     userImage = defaultImage;
                 }
             }
+            else
+            {
+                userImage = "/Images/Employee/Photo/default.png";
+            }
         }
-
 
     }
     else

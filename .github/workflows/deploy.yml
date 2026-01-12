@@ -77,16 +77,7 @@ jobs:
       - name: Install lftp (if not available)
         shell: bash
         run: |
-          if ! command -v lftp &> /dev/null; then
-            echo "Installing lftp..."
-            if [[ "$OSTYPE" == "darwin"* ]]; then
-              brew install lftp
-            elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-              sudo apt-get update && sudo apt-get install -y lftp
-            fi
-          else
-            echo "lftp already installed"
-          fi
+          echo "Skipping lftp installation - using curl instead"
 
       - name: Create maintenance page
         shell: bash
@@ -130,32 +121,96 @@ jobs:
         shell: bash
         run: sleep 3
 
-      - name: Deploy application files with lftp
+      - name: Create deployment state cache
         shell: bash
         run: |
-          echo "Starting deployment with mirror mode (only uploads changes)..."
-          lftp -c "
-          set ftp:ssl-allow no;
-          set net:timeout 60;
-          set net:max-retries 5;
-          set net:reconnect-interval-base 5;
-          set mirror:use-pget-n 5;
-          set ftp:use-site-chmod no;
-          set file:use-fallocate no;
-          open -u ${{ steps.vars.outputs.username }},${{ steps.vars.outputs.password }} ${{ steps.vars.outputs.server }};
-          mirror --reverse \
-                 --verbose \
-                 --only-newer \
-                 --no-perms \
-                 --exclude .git/ \
-                 --exclude .github/ \
-                 --exclude node_modules/ \
-                 --exclude .vscode/ \
-                 --exclude .vs/ \
-                 --exclude app_offline.htm \
-                 ./publish/ ${{ steps.vars.outputs.path }};
-          bye
-          "
+          # Create a hash of all files to track changes
+          mkdir -p .deployment-cache
+          cd ./publish
+          find . -type f -not -path '*/.*' -exec md5sum {} \; | sort > ../.deployment-cache/current-state.txt
+          
+          # Show what will be deployed
+          if [ -f ../.deployment-cache/last-state.txt ]; then
+            echo "Comparing with previous deployment..."
+            diff ../.deployment-cache/last-state.txt ../.deployment-cache/current-state.txt > ../.deployment-cache/changes.txt || true
+            
+            if [ -s ../.deployment-cache/changes.txt ]; then
+              echo "Changed files detected:"
+              cat ../.deployment-cache/changes.txt | grep "^>" | awk '{print $3}' || echo "No changes"
+            else
+              echo "No changes detected"
+            fi
+          else
+            echo "First deployment - all files will be uploaded"
+          fi
+
+      - name: Deploy application files with curl
+        shell: bash
+        run: |
+          echo "Starting deployment..."
+          
+          uploaded=0
+          skipped=0
+          
+          # Function to get file hash
+          get_hash() {
+            md5sum "$1" | awk '{print $1}'
+          }
+          
+          # Function to check if file changed
+          file_changed() {
+            local file="$1"
+            if [ ! -f .deployment-cache/last-state.txt ]; then
+              return 0  # First deployment, upload all
+            fi
+            
+            local current_hash=$(get_hash "$file")
+            local rel_path="${file#./publish/}"
+            
+            # Check if file exists in previous state with same hash
+            if grep -q "$current_hash  ./$rel_path" .deployment-cache/last-state.txt 2>/dev/null; then
+              return 1  # File unchanged
+            fi
+            return 0  # File changed or new
+          }
+          
+          # Upload files
+          cd ./publish
+          find . -type f -not -path '*/.*' -not -name 'app_offline.htm' | while read -r file; do
+            rel_path="${file#./}"
+            
+            if file_changed "$file"; then
+              echo "Uploading: $rel_path"
+              
+              curl --ftp-create-dirs --ftp-pasv \
+                   --retry 2 \
+                   --retry-delay 3 \
+                   --connect-timeout 30 \
+                   --max-time 180 \
+                   -T "$file" \
+                   --user "${{ steps.vars.outputs.username }}:${{ steps.vars.outputs.password }}" \
+                   "ftp://${{ steps.vars.outputs.server }}${{ steps.vars.outputs.path }}/$rel_path" 2>&1 | grep -v "Warning: Binary output"
+              
+              if [ $? -eq 0 ]; then
+                uploaded=$((uploaded + 1))
+              else
+                echo "Failed to upload: $rel_path"
+                exit 1
+              fi
+            else
+              skipped=$((skipped + 1))
+            fi
+          done
+          
+          echo "✓ Deployment completed: $uploaded uploaded, $skipped unchanged"
+          
+      - name: Update deployment state
+        if: success()
+        shell: bash
+        run: |
+          # Save current state for next deployment
+          cp .deployment-cache/current-state.txt .deployment-cache/last-state.txt
+          echo "Deployment state saved"
 
       - name: Remove maintenance page
         shell: bash

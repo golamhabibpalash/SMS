@@ -49,12 +49,16 @@
 
             if (emp != null)
             {
-                string root = _webHostEnvironment.WebRootPath ??
-                              System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                // Ensure root is never null
+                string root = _webHostEnvironment.WebRootPath;
+                if (string.IsNullOrEmpty(root))
+                {
+                    root = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                }
 
-                string defaultImage = "/Images/Employee/Photo/maleEmployee.png"; // fallback image
+                string defaultImage = "/Images/Employee/Photo/default.png"; // fallback
 
-                // Only check file if emp.Image is not null or empty
+                // Only use emp.Image if it's not null or empty
                 if (!string.IsNullOrEmpty(emp.Image))
                 {
                     var imagePath = System.IO.Path.Combine(root, "Images", "Employee", "Photo", emp.Image);
@@ -74,6 +78,7 @@
                 }
             }
         }
+
 
     }
     else

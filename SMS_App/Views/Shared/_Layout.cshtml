@@ -49,6 +49,7 @@
         else if (user.UserType == 'e')
         {
             var emp = await _employeeManager.GetByIdAsync(user.ReferenceId);
+            string defaultImage = "/Images/Employee/photo/maleEmployee.png"; // fallback
 
             if (emp != null)
             {
@@ -59,17 +60,16 @@
                     root = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
                 }
 
-                string defaultImage = "/Images/Employee/Photo/maleEmployee.png"; // fallback
                 string empImage = emp.Image?.Trim(); // remove whitespace
 
                 if (!string.IsNullOrEmpty(empImage))
                 {
                     // Combine only non-null strings
-                    string imagePath = System.IO.Path.Combine(new[] { root, "Images", "Employee", "Photo", empImage });
+                    string imagePath = System.IO.Path.Combine(new[] { root, "Images", "Employee","photo", empImage });
 
                     if (File.Exists(imagePath))
                     {
-                        userImage = $"/Images/Employee/Photo/{empImage}";
+                        userImage = $"/Images/Employee/photo/{empImage}";
                     }
                     else
                     {
@@ -83,7 +83,7 @@
             }
             else
             {
-                userImage = "/Images/Employee/Photo/default.png";
+                userImage = defaultImage;
             }
         }
 

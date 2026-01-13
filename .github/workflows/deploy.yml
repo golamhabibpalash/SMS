@@ -132,32 +132,27 @@ jobs:
         run: |
           echo "Waiting for application to go offline..."
           sleep 5
-          
+
       - name: Prepare publish directory (exclude sensitive/config files)
         shell: bash
         run: |
           echo "Preparing publish directory..."
           
-          # Create a backup of original files we need to exclude
-          if [ -f "./publish/appsettings.json" ]; then
-            cp ./publish/appsettings.json ./appsettings_backup.json
-          fi
-          
           # Create a clean directory for sync
           rm -rf ./publish_sync
           cp -r ./publish ./publish_sync
           
-          # Remove files we don't want to overwrite on server
+          # Remove files we don't want to upload to server
           cd ./publish_sync
           
           # Remove appsettings files
           rm -f appsettings.json
           rm -f appsettings.*.json
           
-          # Remove the entire wwwroot folder (don't sync it at all)
+          # Remove wwwroot folder from sync directory (don't upload it)
           if [ -d "./wwwroot" ]; then
             rm -rf ./wwwroot
-            echo "Removed wwwroot folder from sync"
+            echo "Removed wwwroot folder from sync (will not be uploaded)"
           fi
           
           cd ..

@@ -47,11 +47,12 @@
 
         else if (user.UserType == 'e')
         {
-            var emp = await _employeeManager.GetByIdAsync(user.ReferenceId);
-            // Fix: Use Path.Combine from System.IO and ensure _webHostEnvironment is injected
-            var imagePath = System.IO.Path.Combine(_webHostEnvironment.WebRootPath, "Images", "Employee", "Photo", emp?.Image);
+            // var emp = await _employeeManager.GetByIdAsync(user.ReferenceId);
+            // // Fix: Use Path.Combine from System.IO and ensure _webHostEnvironment is injected
+            // var imagePath = System.IO.Path.Combine(_webHostEnvironment.WebRootPath, "Images", "Employee", "Photo", emp?.Image);
 
-            userImage = System.IO.File.Exists(imagePath) ? $"/Images/Employee/Photo/{emp?.Image}" : userImage;
+            // userImage = System.IO.File.Exists(imagePath) ? $"/Images/Employee/Photo/{emp?.Image}" : userImage;
+            
         }
     }
     else

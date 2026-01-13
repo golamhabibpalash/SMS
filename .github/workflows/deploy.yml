@@ -1,4 +1,4 @@
-name: Deploy ASP.NET Core (Skip wwwroot)
+name: Deploy ASP.NET Core via ZIP
 
 on:
   push:
@@ -55,7 +55,7 @@ jobs:
               echo "path=${{ secrets.NOBLE_FTP_PATH }}" >> $GITHUB_OUTPUT
               echo "url=https://eims.nobleschoolbd.com" >> $GITHUB_OUTPUT
               echo "client_name=Noble" >> $GITHUB_OUTPUT
-              ;
+              ;;
             "Mamitonnesa")
               echo "server=${{ secrets.MAMI_FTP_SERVER }}" >> $GITHUB_OUTPUT
               echo "username=${{ secrets.MAMI_FTP_USERNAME }}" >> $GITHUB_OUTPUT
@@ -63,7 +63,7 @@ jobs:
               echo "path=${{ secrets.MAMI_FTP_PATH }}" >> $GITHUB_OUTPUT
               echo "url=https://eims.mamitonnessaghs.edu.bd" >> $GITHUB_OUTPUT
               echo "client_name=Mamitonnesa" >> $GITHUB_OUTPUT
-              ;
+              ;;
             "DMCPS")
               echo "server=${{ secrets.DMCPS_FTP_SERVER }}" >> $GITHUB_OUTPUT
               echo "username=${{ secrets.DMCPS_FTP_USERNAME }}" >> $GITHUB_OUTPUT
@@ -71,13 +71,13 @@ jobs:
               echo "path=${{ secrets.DMCPS_FTP_PATH }}" >> $GITHUB_OUTPUT
               echo "url=https://eims.mcpsbd.com" >> $GITHUB_OUTPUT
               echo "client_name=DMCPS" >> $GITHUB_OUTPUT
-              ;
+              ;;
           esac
 
       - name: Create maintenance page
         shell: bash
         run: |
-          cat > ./maintenance.html << 'EOF'
+          cat > ./publish/app_offline.htm << 'EOF'
           <!DOCTYPE html>
           <html>
           <head>
@@ -101,192 +101,82 @@ jobs:
       - name: Upload maintenance page
         shell: bash
         run: |
-          echo "Uploading maintenance page..."
           lftp -u "${{ steps.vars.outputs.username }},${{ steps.vars.outputs.password }}" "ftp://${{ steps.vars.outputs.server }}" <<EOF
             set ftp:passive-mode on
             set ssl:verify-certificate no
-            set net:timeout 30
-            cd "${{ steps.vars.outputs.path }}"
-            put ./maintenance.html -o app_offline.htm
+            put ./publish/app_offline.htm -o "${{ steps.vars.outputs.path }}/app_offline.htm"
             quit
           EOF
-          echo "Maintenance page uploaded"
 
       - name: Wait for app to go offline
-        run: |
-          echo "Waiting for application to go offline..."
-          sleep 8
+        run: sleep 3
 
-      - name: Upload application files (SKIP wwwroot completely)
+      - name: Remove excluded files before packaging
         shell: bash
         run: |
-          echo "Starting file upload (skipping wwwroot folder)..."
-          echo "Server: ${{ steps.vars.outputs.server }}"
-          echo "Path: ${{ steps.vars.outputs.path }}"
-          
-          # Count total files to upload (excluding wwwroot and appsettings)
-          total_files=$(find ./publish -type f ! -path "*/wwwroot/*" ! -name "appsettings.json" ! -name "appsettings.*.json" | wc -l)
-          echo "Found $total_files files to upload (excluding wwwroot)"
-          
-          uploaded=0
-          failed=0
-          
-          # Create a file list to process
-          file_list=$(find ./publish -type f ! -path "*/wwwroot/*" ! -name "appsettings.json" ! -name "appsettings.*.json")
-          
-          # Process each file
-          echo "$file_list" | while read file; do
-            # Get relative path from publish folder
-            rel_path="${file#./publish/}"
-            dir_path=$(dirname "$rel_path")
-            
-            uploaded=$((uploaded + 1))
-            
-            # Show progress every 10 files
-            if [ $((uploaded % 10)) -eq 0 ]; then
-              echo "Progress: $uploaded/$total_files files uploaded"
-            fi
-            
-            # Try to upload the file
-            if lftp -u "${{ steps.vars.outputs.username }},${{ steps.vars.outputs.password }}" "ftp://${{ steps.vars.outputs.server }}" <<UPLOAD_EOF
+          echo "Removing excluded files..."
+
+          # Remove appsettings.json
+          if [ -f "./publish/appsettings.json" ]; then
+            rm ./publish/appsettings.json
+            echo "Removed appsettings.json"
+          fi
+
+          # Remove appsettings.*.json (e.g., Development/Staging/Production)
+          rm -f ./publish/appsettings.*.json
+
+          # Remove all images inside wwwroot/Images
+          if [ -d "./publish/wwwroot/Images" ]; then
+            rm -rf ./publish/wwwroot/Images/*
+            echo "Removed images from wwwroot/Images"
+          fi
+
+
+      - name: Compress publish folder
+        run: |
+          zip -r ./publish.zip ./publish/* > /dev/null
+          echo "Publish folder compressed into publish.zip"
+
+      - name: Upload ZIP package
+        shell: bash
+        run: |
+          lftp -u "${{ steps.vars.outputs.username }},${{ steps.vars.outputs.password }}" "ftp://${{ steps.vars.outputs.server }}" <<EOF
             set ftp:passive-mode on
             set ssl:verify-certificate no
-            set net:timeout 30
-            cd "${{ steps.vars.outputs.path }}"
-            mkdir -p "$dir_path"
-            put "$file" -o "$rel_path"
+            put ./publish.zip -o "${{ steps.vars.outputs.path }}/publish.zip"
             quit
-            UPLOAD_EOF
-            then
-              echo "  ✓ $rel_path"
-            else
-              echo "  ✗ Failed: $rel_path"
-              failed=$((failed + 1))
-            fi
-          done
-          
-          echo "========================================"
-          echo "Upload completed:"
-          echo "  Successfully uploaded: $uploaded files"
-          if [ $failed -gt 0 ]; then
-            echo "  Failed uploads: $failed files"
-          fi
-          echo "  wwwroot folder was NOT touched"
-          echo "========================================"
-          
-          if [ $failed -gt 0 ]; then
-            echo "Warning: Some files failed to upload"
-          fi
+          EOF
 
       - name: Remove maintenance page
         shell: bash
         continue-on-error: true
         run: |
-          echo "Removing maintenance page..."
-          max_retries=3
-          
-          for i in $(seq 1 $max_retries); do
-            echo "Attempt $i/$max_retries..."
-            
-            if lftp -u "${{ steps.vars.outputs.username }},${{ steps.vars.outputs.password }}" "ftp://${{ steps.vars.outputs.server }}" <<EOF
+          lftp -u "${{ steps.vars.outputs.username }},${{ steps.vars.outputs.password }}" "ftp://${{ steps.vars.outputs.server }}" <<EOF
             set ftp:passive-mode on
             set ssl:verify-certificate no
-            set net:timeout 15
-            cd "${{ steps.vars.outputs.path }}"
-            rm -f app_offline.htm
+            rm "${{ steps.vars.outputs.path }}/app_offline.htm"
             quit
-            EOF
-            then
-              echo "✓ Maintenance page removed successfully"
-              break
-            else
-              echo "✗ Attempt $i failed"
-              if [ $i -lt $max_retries ]; then
-                sleep 5
-              fi
-            fi
-          done
+          EOF
 
       - name: Verify deployment
         shell: bash
         run: |
           url="${{ steps.vars.outputs.url }}"
-          max_attempts=15
-          attempt=1
-          
-          echo "Verifying deployment: $url"
-          echo "Waiting for application to come online..."
-          
-          while [ $attempt -le $max_attempts ]; do
-            echo "Attempt $attempt/$max_attempts..."
-            
-            # Try to get HTTP status
-            status_code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 --retry 0 "$url" 2>/dev/null || echo "000")
-            
-            echo "HTTP Status: $status_code"
-            
-            if [[ "$status_code" == "200" || "$status_code" == "301" || "$status_code" == "302" ]]; then
-              echo "✅ SUCCESS: Application is online!"
-              exit 0
-            fi
-            
-            if [ $attempt -lt $max_attempts ]; then
-              echo "Waiting 10 seconds before next attempt..."
-              sleep 10
-            fi
-            
-            attempt=$((attempt + 1))
-          done
-          
-          echo "❌ ERROR: Application did not come online after $max_attempts attempts"
-          echo "Last status code: $status_code"
-          
-          # Try one more time with verbose output
-          echo "Final diagnostic attempt..."
-          curl -v --max-time 30 "$url" 2>&1 | head -20
-          
-          exit 1
-
-      - name: Cleanup temporary files
-        if: always()
-        shell: bash
-        run: |
-          echo "Cleaning up..."
-          rm -f ./maintenance.html
-          echo "Cleanup completed"
+          code=$(curl -s -o /dev/null -w "%{http_code}" "$url")
+          echo "Status: $code"
+          if [[ "$code" != "200" && "$code" != "301" && "$code" != "302" ]]; then
+            echo "Verification failed"
+            exit 1
+          fi
+          echo "Deployment verified successfully"
 
       - name: Deployment summary
         if: success()
         shell: bash
         run: |
-          echo ""
-          echo "╔════════════════════════════════════════╗"
-          echo "║        DEPLOYMENT SUCCESSFUL          ║"
-          echo "╠════════════════════════════════════════╣"
-          echo "║ Client:   ${{ steps.vars.outputs.client_name }}"
-          echo "║ URL:      ${{ steps.vars.outputs.url }}"
-          echo "║ Time:     $(date '+%Y-%m-%d %H:%M:%S')"
-          echo "║ Status:   ✅ Online and running"
-          echo "║"
-          echo "║ Note: wwwroot folder was preserved"
-          echo "║       (not modified during deployment)"
-          echo "╚════════════════════════════════════════╝"
-          echo ""
-
-      - name: Deployment failed
-        if: failure()
-        shell: bash
-        run: |
-          echo ""
-          echo "╔════════════════════════════════════════╗"
-          echo "║         DEPLOYMENT FAILED             ║"
-          echo "╠════════════════════════════════════════╣"
-          echo "║ Client:   ${{ steps.vars.outputs.client_name }}"
-          echo "║ URL:      ${{ steps.vars.outputs.url }}"
-          echo "║ Time:     $(date '+%Y-%m-%d %H:%M:%S')"
-          echo "║ Status:   ❌ Failed"
-          echo "║"
-          echo "║ Check the logs above for error details"
-          echo "║ wwwroot folder was NOT modified"
-          echo "╚════════════════════════════════════════╝"
-          echo ""
+          echo "========================================"
+          echo "Deployment Successful"
+          echo "Client: ${{ steps.vars.outputs.client_name }}"
+          echo "URL: ${{ steps.vars.outputs.url }}"
+          echo "Time: $(date '+%Y-%m-%d %H:%M:%S')"
+          echo "========================================"

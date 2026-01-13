@@ -1,4 +1,4 @@
-name: Deploy ASP.NET Core via Smart FTP Sync
+name: Deploy ASP.NET Core (Skip wwwroot)
 
 on:
   push:
@@ -74,21 +74,6 @@ jobs:
               ;;
           esac
 
-      - name: Install lftp (if not installed)
-        shell: bash
-        run: |
-          if ! command -v lftp &> /dev/null; then
-            echo "Installing lftp..."
-            if [[ "$RUNNER_OS" == "Linux" ]]; then
-              sudo apt-get update && sudo apt-get install -y lftp
-            elif [[ "$RUNNER_OS" == "macOS" ]]; then
-              brew install lftp
-            else
-              echo "Unsupported OS for lftp installation"
-            fi
-          fi
-          lftp --version
-
       - name: Create maintenance page
         shell: bash
         run: |
@@ -121,7 +106,6 @@ jobs:
             set ftp:passive-mode on
             set ssl:verify-certificate no
             set net:timeout 30
-            set net:max-retries 3
             cd "${{ steps.vars.outputs.path }}"
             put ./maintenance.html -o app_offline.htm
             quit
@@ -131,127 +115,119 @@ jobs:
       - name: Wait for app to go offline
         run: |
           echo "Waiting for application to go offline..."
-          sleep 5
+          sleep 8
 
-      - name: Prepare publish directory (exclude sensitive/config files)
+      - name: Upload application files (SKIP wwwroot completely)
         shell: bash
         run: |
-          echo "Preparing publish directory..."
-          
-          # Create a clean directory for sync
-          rm -rf ./publish_sync
-          cp -r ./publish ./publish_sync
-          
-          # Remove files we don't want to upload to server
-          cd ./publish_sync
-          
-          # Remove appsettings files
-          rm -f appsettings.json
-          rm -f appsettings.*.json
-          
-          # Remove wwwroot folder from sync directory (don't upload it)
-          if [ -d "./wwwroot" ]; then
-            rm -rf ./wwwroot
-            echo "Removed wwwroot folder from sync (will not be uploaded)"
-          fi
-          
-          cd ..
-          echo "Publish directory prepared"
-
-      - name: Smart FTP Sync (Upload only changed files)
-        shell: bash
-        run: |
-          echo "Starting smart FTP sync..."
-          echo "Connecting to: ${{ steps.vars.outputs.server }}"
+          echo "Starting file upload (skipping wwwroot folder)..."
+          echo "Server: ${{ steps.vars.outputs.server }}"
           echo "Path: ${{ steps.vars.outputs.path }}"
           
-          lftp -u "${{ steps.vars.outputs.username }},${{ steps.vars.outputs.password }}" "ftp://${{ steps.vars.outputs.server }}" <<EOF
-            set ftp:passive-mode on
-            set ssl:verify-certificate no
-            set net:timeout 60
-            set net:max-retries 5
-            set net:reconnect-interval-base 5
-            set ftp:use-feat no
-            set mirror:use-pget-n 5
-            
-            cd "${{ steps.vars.outputs.path }}"
-            
-            echo "Starting mirror operation..."
-            
-            # Mirror local to remote with smart sync
-            mirror \
-              --reverse \
-              --verbose \
-              --delete \
-              --only-newer \
-              --parallel=5 \
-              --exclude "appsettings.json" \
-              --exclude "appsettings.*.json" \
-              --exclude-glob "wwwroot/Images/*" \
-              --no-perms \
-              ./publish_sync .
-            
-            echo "Mirror operation completed"
-            quit
-          EOF
+          # Count total files to upload (excluding wwwroot and appsettings)
+          total_files=$(find ./publish -type f ! -path "*/wwwroot/*" ! -name "appsettings.json" ! -name "appsettings.*.json" | wc -l)
+          echo "Found $total_files files to upload (excluding wwwroot)"
           
-          echo "Smart FTP sync completed"
+          uploaded=0
+          failed=0
+          
+          # Upload each file individually (skip wwwroot completely)
+          find ./publish -type f ! -path "*/wwwroot/*" ! -name "appsettings.json" ! -name "appsettings.*.json" | while read file; do
+            # Get relative path from publish folder
+            rel_path="${file#./publish/}"
+            dir_path=$(dirname "$rel_path")
+            
+            uploaded=$((uploaded + 1))
+            
+            # Show progress every 10 files
+            if [ $((uploaded % 10)) -eq 0 ]; then
+              echo "Progress: $uploaded/$total_files files uploaded"
+            fi
+            
+            # Try to upload the file
+            if lftp -u "${{ steps.vars.outputs.username }},${{ steps.vars.outputs.password }}" "ftp://${{ steps.vars.outputs.server }}" <<EOF
+              set ftp:passive-mode on
+              set ssl:verify-certificate no
+              set net:timeout 30
+              cd "${{ steps.vars.outputs.path }}"
+              
+              # Create directory if needed
+              mkdir -p "$dir_path"
+              
+              # Upload file
+              put "$file" -o "$rel_path"
+              
+              quit
+            EOF; then
+              echo "  ✓ $rel_path"
+            else
+              echo "  ✗ Failed: $rel_path"
+              failed=$((failed + 1))
+            fi
+          done
+          
+          echo "========================================"
+          echo "Upload completed:"
+          echo "  Successfully uploaded: $uploaded files"
+          if [ $failed -gt 0 ]; then
+            echo "  Failed uploads: $failed files"
+          fi
+          echo "  wwwroot folder was NOT touched"
+          echo "========================================"
+          
+          if [ $failed -gt 0 ]; then
+            echo "Warning: Some files failed to upload"
+          fi
 
-      - name: Restore app_offline.htm removal with retry
+      - name: Remove maintenance page
         shell: bash
         continue-on-error: true
         run: |
           echo "Removing maintenance page..."
           max_retries=3
-          retry_count=0
           
-          while [ $retry_count -lt $max_retries ]; do
-            lftp -u "${{ steps.vars.outputs.username }},${{ steps.vars.outputs.password }}" "ftp://${{ steps.vars.outputs.server }}" <<EOF
+          for i in $(seq 1 $max_retries); do
+            echo "Attempt $i/$max_retries..."
+            
+            if lftp -u "${{ steps.vars.outputs.username }},${{ steps.vars.outputs.password }}" "ftp://${{ steps.vars.outputs.server }}" <<EOF
               set ftp:passive-mode on
               set ssl:verify-certificate no
-              set net:timeout 30
+              set net:timeout 15
               cd "${{ steps.vars.outputs.path }}"
               rm -f app_offline.htm
               quit
-            EOF
-            
-            if [ $? -eq 0 ]; then
-              echo "Maintenance page removed successfully"
+            EOF; then
+              echo "✓ Maintenance page removed successfully"
               break
             else
-              retry_count=$((retry_count + 1))
-              echo "Failed to remove maintenance page, retry $retry_count/$max_retries"
-              sleep 5
+              echo "✗ Attempt $i failed"
+              if [ $i -lt $max_retries ]; then
+                sleep 5
+              fi
             fi
           done
-          
-          if [ $retry_count -eq $max_retries ]; then
-            echo "Warning: Could not remove maintenance page after $max_retries attempts"
-          fi
 
-      - name: Verify deployment with retry logic
+      - name: Verify deployment
         shell: bash
         run: |
           url="${{ steps.vars.outputs.url }}"
-          max_attempts=12
+          max_attempts=15
           attempt=1
-          success=false
           
-          echo "Verifying deployment for: $url"
+          echo "Verifying deployment: $url"
           echo "Waiting for application to come online..."
           
           while [ $attempt -le $max_attempts ]; do
             echo "Attempt $attempt/$max_attempts..."
             
-            # Try to get HTTP status with timeout
-            status_code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "$url" || echo "000")
+            # Try to get HTTP status
+            status_code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 --retry 0 "$url" 2>/dev/null || echo "000")
             
-            echo "Status code: $status_code"
+            echo "HTTP Status: $status_code"
             
             if [[ "$status_code" == "200" || "$status_code" == "301" || "$status_code" == "302" ]]; then
-              echo "✅ Application is online!"
-              success=true
-              break
+              echo "✅ SUCCESS: Application is online!"
+              exit 0
             fi
             
             if [ $attempt -lt $max_attempts ]; then
@@ -262,57 +238,55 @@ jobs:
             attempt=$((attempt + 1))
           done
           
-          if [ "$success" = false ]; then
-            echo "❌ ERROR: Application did not come online after $max_attempts attempts"
-            echo "Last status code: $status_code"
-            
-            # Try to get more detailed error
-            curl_error=$(curl -s -o /dev/null -w "%{errormsg}" --max-time 30 "$url" 2>/dev/null || echo "Unknown error")
-            echo "Error details: $curl_error"
-            
-            exit 1
-          fi
+          echo "❌ ERROR: Application did not come online after $max_attempts attempts"
+          echo "Last status code: $status_code"
+          
+          # Try one more time with verbose output
+          echo "Final diagnostic attempt..."
+          curl -v --max-time 30 "$url" 2>&1 | head -20
+          
+          exit 1
 
       - name: Cleanup temporary files
         if: always()
         shell: bash
         run: |
-          echo "Cleaning up temporary files..."
-          rm -rf ./publish_sync
+          echo "Cleaning up..."
           rm -f ./maintenance.html
-          rm -f ./appsettings_backup.json 2>/dev/null || true
           echo "Cleanup completed"
 
       - name: Deployment summary
         if: success()
         shell: bash
         run: |
-          echo "========================================"
-          echo "✅ DEPLOYMENT SUCCESSFUL"
-          echo "========================================"
-          echo "Client: ${{ steps.vars.outputs.client_name }}"
-          echo "URL: ${{ steps.vars.outputs.url }}"
-          echo "Server: ${{ steps.vars.outputs.server }}"
-          echo "Time: $(date '+%Y-%m-%d %H:%M:%S %Z')"
-          echo "Duration: $((SECONDS / 60)) minutes and $((SECONDS % 60)) seconds"
-          echo "========================================"
-          
-          # Show disk usage info if available
-          if [ -d "./publish" ]; then
-            echo "Deployment size: $(du -sh ./publish | cut -f1)"
-          fi
+          echo ""
+          echo "╔════════════════════════════════════════╗"
+          echo "║        DEPLOYMENT SUCCESSFUL          ║"
+          echo "╠════════════════════════════════════════╣"
+          echo "║ Client:   ${{ steps.vars.outputs.client_name }}"
+          echo "║ URL:      ${{ steps.vars.outputs.url }}"
+          echo "║ Time:     $(date '+%Y-%m-%d %H:%M:%S')"
+          echo "║ Status:   ✅ Online and running"
+          echo "║"
+          echo "║ Note: wwwroot folder was preserved"
+          echo "║       (not modified during deployment)"
+          echo "╚════════════════════════════════════════╝"
+          echo ""
 
-      - name: Deployment failed notification
+      - name: Deployment failed
         if: failure()
         shell: bash
         run: |
-          echo "========================================"
-          echo "❌ DEPLOYMENT FAILED"
-          echo "========================================"
-          echo "Client: ${{ steps.vars.outputs.client_name }}"
-          echo "URL: ${{ steps.vars.outputs.url }}"
-          echo "Server: ${{ steps.vars.outputs.server }}"
-          echo "Time: $(date '+%Y-%m-%d %H:%M:%S %Z')"
-          echo "Error occurred in step: ${{ job.status }}"
-          echo "========================================"
-          echo "Check the logs above for detailed error information."
+          echo ""
+          echo "╔════════════════════════════════════════╗"
+          echo "║         DEPLOYMENT FAILED             ║"
+          echo "╠════════════════════════════════════════╣"
+          echo "║ Client:   ${{ steps.vars.outputs.client_name }}"
+          echo "║ URL:      ${{ steps.vars.outputs.url }}"
+          echo "║ Time:     $(date '+%Y-%m-%d %H:%M:%S')"
+          echo "║ Status:   ❌ Failed"
+          echo "║"
+          echo "║ Check the logs above for error details"
+          echo "║ wwwroot folder was NOT modified"
+          echo "╚════════════════════════════════════════╝"
+          echo ""

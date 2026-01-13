@@ -131,8 +131,11 @@ jobs:
           uploaded=0
           failed=0
           
-          # Upload each file individually (skip wwwroot completely)
-          find ./publish -type f ! -path "*/wwwroot/*" ! -name "appsettings.json" ! -name "appsettings.*.json" | while read file; do
+          # Create a file list to process
+          file_list=$(find ./publish -type f ! -path "*/wwwroot/*" ! -name "appsettings.json" ! -name "appsettings.*.json")
+          
+          # Process each file
+          echo "$file_list" | while read file; do
             # Get relative path from publish folder
             rel_path="${file#./publish/}"
             dir_path=$(dirname "$rel_path")
@@ -145,20 +148,16 @@ jobs:
             fi
             
             # Try to upload the file
-            if lftp -u "${{ steps.vars.outputs.username }},${{ steps.vars.outputs.password }}" "ftp://${{ steps.vars.outputs.server }}" <<EOF
-              set ftp:passive-mode on
-              set ssl:verify-certificate no
-              set net:timeout 30
-              cd "${{ steps.vars.outputs.path }}"
-              
-              # Create directory if needed
-              mkdir -p "$dir_path"
-              
-              # Upload file
-              put "$file" -o "$rel_path"
-              
-              quit
-            EOF; then
+            if lftp -u "${{ steps.vars.outputs.username }},${{ steps.vars.outputs.password }}" "ftp://${{ steps.vars.outputs.server }}" <<UPLOAD_EOF
+            set ftp:passive-mode on
+            set ssl:verify-certificate no
+            set net:timeout 30
+            cd "${{ steps.vars.outputs.path }}"
+            mkdir -p "$dir_path"
+            put "$file" -o "$rel_path"
+            quit
+            UPLOAD_EOF
+            then
               echo "  ✓ $rel_path"
             else
               echo "  ✗ Failed: $rel_path"
@@ -190,13 +189,14 @@ jobs:
             echo "Attempt $i/$max_retries..."
             
             if lftp -u "${{ steps.vars.outputs.username }},${{ steps.vars.outputs.password }}" "ftp://${{ steps.vars.outputs.server }}" <<EOF
-              set ftp:passive-mode on
-              set ssl:verify-certificate no
-              set net:timeout 15
-              cd "${{ steps.vars.outputs.path }}"
-              rm -f app_offline.htm
-              quit
-            EOF; then
+            set ftp:passive-mode on
+            set ssl:verify-certificate no
+            set net:timeout 15
+            cd "${{ steps.vars.outputs.path }}"
+            rm -f app_offline.htm
+            quit
+            EOF
+            then
               echo "✓ Maintenance page removed successfully"
               break
             else

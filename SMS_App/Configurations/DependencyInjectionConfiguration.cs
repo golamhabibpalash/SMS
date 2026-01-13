@@ -8,6 +8,7 @@ using SMS.DAL.Contracts;
 using SMS.DAL.Contracts.Reports;
 using SMS.DAL.Repositories;
 using SMS.DAL.Repositories.Reports;
+using SMS_App.Utilities.LoggerService;
 
 namespace SMS_App.Configurations;
 
@@ -169,6 +170,10 @@ public static class DependencyInjectionConfiguration
         //Reporing part start here===================================
         services.AddScoped<IReportManager, ReportManager>();
         services.AddScoped<IReportRepository, ReportRepository>();
+
+
+        //Logger =============================
+        services.AddScoped<IAppLogger, AppLogger>();
         return services;
     }
 }

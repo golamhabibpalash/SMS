@@ -15,6 +15,8 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
+using SMS_App.Utilities.LoggerService;
 
 
 namespace SMS_App.Controllers;
@@ -38,8 +40,9 @@ public class EmployeesController : Controller
     private readonly IPhoneSMSManager _phoneSMSManager;
     private readonly IInstituteManager _instituteManager;
     private readonly ILogManager _logManager;
+    private readonly IAppLogger _appLogger;
 
-    public EmployeesController(IWebHostEnvironment host, IEmployeeManager employeeManager, IGenderManager genderManager, IReligionManager religionManager, IMapper mapper, INationalityManager nationalityManager, IEmpTypeManager empTypeManager, IDesignationManager designationManager, IDivisionManager divisionManager, IDistrictManager districtManager, IUpazilaManager upazilaManager, IBloodGroupManager bloodGroupManager, UserManager<ApplicationUser> userManager, IPhoneSMSManager phoneSMSManager, IInstituteManager instituteManager, ILogManager logManager)
+    public EmployeesController(IWebHostEnvironment host, IEmployeeManager employeeManager, IGenderManager genderManager, IReligionManager religionManager, IMapper mapper, INationalityManager nationalityManager, IEmpTypeManager empTypeManager, IDesignationManager designationManager, IDivisionManager divisionManager, IDistrictManager districtManager, IUpazilaManager upazilaManager, IBloodGroupManager bloodGroupManager, UserManager<ApplicationUser> userManager, IPhoneSMSManager phoneSMSManager, IInstituteManager instituteManager, ILogManager logManager, IAppLogger appLogger)
     {
         _host = host;
         _employeeManager = employeeManager;
@@ -57,6 +60,7 @@ public class EmployeesController : Controller
         _phoneSMSManager = phoneSMSManager;
         _instituteManager = instituteManager;
         _logManager = logManager;
+        _appLogger = appLogger;
     }
 
 
@@ -327,8 +331,11 @@ public class EmployeesController : Controller
         employeeVM.Image = await SaveFileIfProvided(Image, $"{id.ToString()}_image_", "Images/Employee/photo", employeeVM.Image);
         employeeVM.NIDCard = await SaveFileIfProvided(NIDCard, $"{id.ToString()}_NID_", "Images/Employee/NID", employeeVM.NIDCard);
 
+        await _appLogger.InfoAsync($"Employee image {employeeVM.Image} uploaded.");
+
         if (!ModelState.IsValid)
         {
+            await _appLogger.InfoAsync($"ModelState is not valid");
             var firstError = ModelState
                 .Where(ms => ms.Value.Errors.Count > 0)
                 .Select(ms => new { Field = ms.Key, Error = ms.Value.Errors.First().ErrorMessage })
@@ -355,8 +362,9 @@ public class EmployeesController : Controller
 
             existingEmployee.EditedAt = DateTime.Now;
             existingEmployee.EditedBy = currectUser;
-
+            await _appLogger.InfoAsync($"before update employee");
             bool isUpdated = await _employeeManager.UpdateAsync(existingEmployee);
+            await _appLogger.InfoAsync($"after update employee");
 
             if (isUpdated)
                 TempData["edited"] = "Update Successfully";

@@ -51,7 +51,7 @@ namespace SMS.DAL.Repositories.Base
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error in AddAsync: {ex.Message}");
+                Console.WriteLine($"Error in UpdateAsync: {ex.Message}");
                 return false;
             }
         }

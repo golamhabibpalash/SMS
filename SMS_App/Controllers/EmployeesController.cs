@@ -290,6 +290,8 @@ public class EmployeesController : Controller
             }
             TempData["Image"] = employee.Image;
             TempData["NIDCard"] = employee.NIDCard;
+            employee1.Image = employee.Image;
+            employee1.NIDCard = employee.NIDCard;
 
             return View(employee1);
 

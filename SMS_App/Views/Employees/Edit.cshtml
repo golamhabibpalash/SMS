@@ -50,6 +50,7 @@
                             <div class="col-md-6">
                                 <input asp-for="Image" type="file" class="" id="empImage" />
                                 <span asp-validation-for="Image" class="text-danger"></span>
+                                <input type="hidden" name="@Model.Image" value="@Model.Image" />
                             </div>
                         </div>
                         <div class="form-group row">
@@ -121,6 +122,7 @@
                 <label asp-for="NIDCard" class="control-label col-md-2 text-md-end"></label>
                 <div class="col-md-4">
                     <input asp-for="NIDCard" type="file" class="" />
+                    <input type="hidden" name="@Model.NIDCard" value="@Model.NIDCard" />
                     <span asp-validation-for="NIDCard" class="text-danger"></span>
                 </div>
             </div>

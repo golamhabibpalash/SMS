@@ -319,6 +319,8 @@ public class EmployeesController : Controller
     IFormFile Image,
     IFormFile NIDCard)
     {
+
+        await _appLogger.InfoAsync($"Enter method");
         var currectUser = HttpContext.Session.GetString("UserId");
         if (id != employeeVM.Id)
             return NotFound();
@@ -327,6 +329,7 @@ public class EmployeesController : Controller
         if (existingEmployee == null)
             return NotFound();
 
+        await _appLogger.InfoAsync($"Before Upload Files.");
         // FILE UPLOAD HANDLING
         employeeVM.Image = await SaveFileIfProvided(Image, $"{id.ToString()}_image_", "Images/Employee/photo", employeeVM.Image);
         employeeVM.NIDCard = await SaveFileIfProvided(NIDCard, $"{id.ToString()}_NID_", "Images/Employee/NID", employeeVM.NIDCard);

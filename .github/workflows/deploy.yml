@@ -55,7 +55,7 @@ jobs:
               echo "path=${{ secrets.NOBLE_FTP_PATH }}" >> $GITHUB_OUTPUT
               echo "url=https://eims.nobleschoolbd.com" >> $GITHUB_OUTPUT
               echo "client_name=Noble" >> $GITHUB_OUTPUT
-              ;;
+              ;
             "Mamitonnesa")
               echo "server=${{ secrets.MAMI_FTP_SERVER }}" >> $GITHUB_OUTPUT
               echo "username=${{ secrets.MAMI_FTP_USERNAME }}" >> $GITHUB_OUTPUT
@@ -63,7 +63,7 @@ jobs:
               echo "path=${{ secrets.MAMI_FTP_PATH }}" >> $GITHUB_OUTPUT
               echo "url=https://eims.mamitonnessaghs.edu.bd" >> $GITHUB_OUTPUT
               echo "client_name=Mamitonnesa" >> $GITHUB_OUTPUT
-              ;;
+              ;
             "DMCPS")
               echo "server=${{ secrets.DMCPS_FTP_SERVER }}" >> $GITHUB_OUTPUT
               echo "username=${{ secrets.DMCPS_FTP_USERNAME }}" >> $GITHUB_OUTPUT
@@ -71,7 +71,7 @@ jobs:
               echo "path=${{ secrets.DMCPS_FTP_PATH }}" >> $GITHUB_OUTPUT
               echo "url=https://eims.mcpsbd.com" >> $GITHUB_OUTPUT
               echo "client_name=DMCPS" >> $GITHUB_OUTPUT
-              ;;
+              ;
           esac
 
       - name: Create maintenance page

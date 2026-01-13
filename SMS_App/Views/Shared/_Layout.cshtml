@@ -45,48 +45,14 @@
         }
 
 
-
         else if (user.UserType == 'e')
         {
             var emp = await _employeeManager.GetByIdAsync(user.ReferenceId);
-            string defaultImage = "/Images/Employee/photo/maleEmployee.png"; // fallback
+            // Fix: Use Path.Combine from System.IO and ensure _webHostEnvironment is injected
+            var imagePath = System.IO.Path.Combine(_webHostEnvironment.WebRootPath, "Images", "Employee", "Photo", emp?.Image);
 
-            if (emp != null)
-            {
-                // Ensure root is never null
-                string root = _webHostEnvironment?.WebRootPath;
-                if (string.IsNullOrWhiteSpace(root))
-                {
-                    root = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-                }
-
-                string empImage = emp.Image?.Trim(); // remove whitespace
-
-                if (!string.IsNullOrEmpty(empImage))
-                {
-                    // Combine only non-null strings
-                    string imagePath = System.IO.Path.Combine(new[] { root, "Images", "Employee","photo", empImage });
-
-                    if (File.Exists(imagePath))
-                    {
-                        userImage = $"/Images/Employee/photo/{empImage}";
-                    }
-                    else
-                    {
-                        userImage = defaultImage;
-                    }
-                }
-                else
-                {
-                    userImage = defaultImage;
-                }
-            }
-            else
-            {
-                userImage = defaultImage;
-            }
+            userImage = System.IO.File.Exists(imagePath) ? $"/Images/Employee/Photo/{emp?.Image}" : userImage;
         }
-
     }
     else
     {

@@ -323,6 +323,10 @@ public class EmployeesController : Controller
         if (existingEmployee == null)
             return NotFound();
 
+        // FILE UPLOAD HANDLING
+        employeeVM.Image = await SaveFileIfProvided(Image, $"{id.ToString()}_image_", "Images/Employee/photo", employeeVM.Image);
+        employeeVM.NIDCard = await SaveFileIfProvided(NIDCard, $"{id.ToString()}_NID_", "Images/Employee/NID", employeeVM.NIDCard);
+
         if (!ModelState.IsValid)
         {
             var firstError = ModelState
@@ -343,9 +347,6 @@ public class EmployeesController : Controller
             return View(employeeVM);
         }
 
-        // FILE UPLOAD HANDLING
-        employeeVM.Image = await SaveFileIfProvided(Image, $"{id.ToString()}_image_", "Images/Employee/photo", employeeVM.Image);
-        employeeVM.NIDCard = await SaveFileIfProvided(NIDCard, $"{id.ToString()}_NID_", "Images/Employee/NID", employeeVM.NIDCard);
 
         try
         {

@@ -111,26 +111,6 @@ jobs:
       - name: Wait for app to go offline
         run: sleep 3
 
-      - name: Remove excluded files before packaging
-        shell: bash
-        run: |
-          echo "Removing excluded files..."
-
-          # Remove appsettings.json
-          if [ -f "./publish/appsettings.json" ]; then
-            rm ./publish/appsettings.json
-            echo "Removed appsettings.json"
-          fi
-
-          # Remove appsettings.*.json (e.g., Development/Staging/Production)
-          rm -f ./publish/appsettings.*.json
-
-          # Remove all images inside wwwroot/Images
-          if [ -d "./publish/wwwroot/Images" ]; then
-            rm -rf ./publish/wwwroot/Images/*
-            echo "Removed images from wwwroot/Images"
-          fi
-
 
       - name: Compress publish folder
         run: |

@@ -132,7 +132,7 @@ jobs:
         run: |
           echo "Waiting for application to go offline..."
           sleep 5
-
+          
       - name: Prepare publish directory (exclude sensitive/config files)
         shell: bash
         run: |
@@ -154,13 +154,11 @@ jobs:
           rm -f appsettings.json
           rm -f appsettings.*.json
           
-          # Remove images directory (keep structure but not files)
-          if [ -d "./wwwroot/Images" ]; then
-            find ./wwwroot/Images -type f -delete
+          # Remove the entire wwwroot folder (don't sync it at all)
+          if [ -d "./wwwroot" ]; then
+            rm -rf ./wwwroot
+            echo "Removed wwwroot folder from sync"
           fi
-          
-          # Create empty directories to maintain structure
-          mkdir -p ./wwwroot/Images
           
           cd ..
           echo "Publish directory prepared"

@@ -28,7 +28,7 @@ namespace SMS.BLL.Managers.Reports
             List<RptAdmitCardVM> filteredAdmitCards = new List<RptAdmitCardVM>();
             foreach (var admitCard in admitCards)
             {
-                var isExist = filteredAdmitCards.Any(s => s.SubjectCode == admitCard.SubjectCode);
+                var isExist = filteredAdmitCards.Any(s => s.SubjectCode == admitCard.SubjectCode && s.ClassRoll == admitCard.ClassRoll);
                 if (isExist)
                 {
                     continue;

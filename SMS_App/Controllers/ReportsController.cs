@@ -29,6 +29,8 @@ using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 using LocalReport = Microsoft.Reporting.NETCore.LocalReport;
+using Microsoft.Extensions.Logging;
+using SMS_App.Utilities.LoggerService;
 
 namespace SMS_App.Controllers;
 
@@ -51,11 +53,12 @@ public class ReportsController : Controller
     private readonly IAcademicExamGroupManager _academicExamGroupManager;
     private readonly IStudentFeeHeadManager _studentFeeHeadManager;
     private readonly IExamResultManager _examResultManager;
+    private readonly IAppLogger _appLogger;
 
     #endregion properties
 
     #region Constructor
-    public ReportsController(IWebHostEnvironment host, IStudentManager studentManager, IReportManager reportManager, IAcademicClassManager academicClassManager, IAttendanceMachineManager attendanceMachineManager, IOffDayManager dayManager, IAcademicSessionManager academicSessionManager, IAcademicSectionManager academicSectionManager, IInstituteManager instituteManager, IAcademicExamDetailsManager academicExamDetailsManager, IAcademicExamManager academicExamManager, IGradingTableManager gradingTableManager, IAcademicExamGroupManager academicExamGroupManager, IStudentFeeHeadManager studentFeeHeadManager, IExamResultManager examResultManager)
+    public ReportsController(IWebHostEnvironment host, IStudentManager studentManager, IReportManager reportManager, IAcademicClassManager academicClassManager, IAttendanceMachineManager attendanceMachineManager, IOffDayManager dayManager, IAcademicSessionManager academicSessionManager, IAcademicSectionManager academicSectionManager, IInstituteManager instituteManager, IAcademicExamDetailsManager academicExamDetailsManager, IAcademicExamManager academicExamManager, IGradingTableManager gradingTableManager, IAcademicExamGroupManager academicExamGroupManager, IStudentFeeHeadManager studentFeeHeadManager, IExamResultManager examResultManager, IAppLogger appLogger)
     {
         _host = host;
         _studentManager = studentManager;
@@ -72,6 +75,7 @@ public class ReportsController : Controller
         _academicExamGroupManager = academicExamGroupManager;
         _studentFeeHeadManager = studentFeeHeadManager;
         _examResultManager = examResultManager;
+        _appLogger = appLogger;
     }
     #endregion Constructor
 
@@ -1446,8 +1450,31 @@ public class ReportsController : Controller
         }
 
         // Step 2: Prepare Image and Signature as Base64 strings
-        string imageParam = ConvertImageToBase64(Path.Combine(_host.WebRootPath, "Images", "Institute", institute.Logo));
-        string signatureParam = ConvertImageToBase64(Path.Combine(_host.WebRootPath, "Images", "Institute", "signature.jpg"));
+
+        //Prepare Image/logo
+        string defaultInstituteLogo = "smslogo.png";
+        string logoFileName = string.IsNullOrWhiteSpace(institute.Logo)
+            ? defaultInstituteLogo
+            : institute.Logo;
+
+        string logoPath = Path.Combine(_host.WebRootPath, "Images", "Institute", logoFileName);
+
+        // If the provided logo doesn't exist, fallback to default
+        if (!System.IO.File.Exists(logoPath))
+        {
+            await _appLogger.InfoAsync($"Institute logo not found");
+            logoPath = Path.Combine(_host.WebRootPath, "Images", "Institute", defaultInstituteLogo);
+        }
+
+        string imageParam = ConvertImageToBase64(logoPath);
+
+        //Prepare signature image
+        string signaturePath = Path.Combine(_host.WebRootPath, "Images", "Institute", "signature.jpg");
+        if (!System.IO.File.Exists(signaturePath))
+        {
+            await _appLogger.InfoAsync($"Signature not found");
+        }
+        string signatureParam = ConvertImageToBase64(signaturePath);
 
         // Step 3: Determine Report Format (default is PDF)
         var renderType = string.IsNullOrEmpty(reportType) ? RenderType.Pdf : GetRenderType(reportType);

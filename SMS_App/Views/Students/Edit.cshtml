@@ -338,7 +338,7 @@
             <div class="form-group form-check row">
                 <label class="form-check-label control-label col-form-label col-md-4 offset-2">
                     <span class="alert alert-info">@Model.Name is @studentStatus</span>
-                    <i class="btn btn-info" data-toggle="modal" data-target="#exampleModalCenter">Change</i>;
+                    <i class="btn btn-info" data-bs-toggle="modal" data-bs-target="#exampleModalCenter">Change</i>
                 </label>
             </div>
             <div class="form-group text-right">
@@ -358,8 +358,8 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLongTitle">Student Active/Inactive</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"> X </span>
                     </button>
                 </div>
                 <div class="modal-body">
@@ -391,7 +391,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" onclick="submitStatusForm()">Save changes</button>
                 </div>
             </div>

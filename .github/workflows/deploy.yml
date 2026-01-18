@@ -183,6 +183,9 @@ jobs:
             set net:max-retries 3
             set net:reconnect-interval-base 5
             set net:reconnect-interval-multiplier 1
+            set ftp:use-site-chmod no
+            set ftp:use-site-utime no
+            set file:charset utf-8
             
             cd "${{ steps.vars.outputs.path }}"
             
@@ -190,9 +193,13 @@ jobs:
             mirror -R \
               --verbose \
               --delete \
+              --no-perms \
+              --no-umask \
               --exclude-glob app_offline.htm \
               --exclude-glob appsettings*.json \
               --exclude-glob wwwroot/ \
+              --exclude-glob *.pdb \
+              --exclude-glob web.config \
               --parallel=3 \
               ./publish/ .
             

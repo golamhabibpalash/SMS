@@ -89,9 +89,9 @@ jobs:
             echo "✓ Removed wwwroot folder"
           fi
           
-          # Optional: Remove other unnecessary files
-          rm -f ./publish/web.config
+          # Remove debug symbols
           rm -f ./publish/*.pdb
+          echo "✓ Removed .pdb files"
           
           echo "Exclusion complete"
 
@@ -189,17 +189,17 @@ jobs:
             
             cd "${{ steps.vars.outputs.path }}"
             
-            # Upload all files from publish folder, mirroring the structure
+            # Upload all files from publish folder, overwriting existing ones
             mirror -R \
               --verbose \
-              --delete \
               --no-perms \
               --no-umask \
               --exclude-glob app_offline.htm \
               --exclude-glob appsettings*.json \
               --exclude-glob wwwroot/ \
+              --exclude-glob Keys/ \
+              --exclude-glob logs/ \
               --exclude-glob *.pdb \
-              --exclude-glob web.config \
               --parallel=3 \
               ./publish/ .
             

@@ -23,6 +23,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SMS_App.Utilities.LoggerService;
 
 namespace SMS_App.Controllers;
 
@@ -54,10 +55,11 @@ public class StudentsController : Controller
     private readonly IOffDayManager _offDayManager;
     private readonly IStudentFeeAllocationManager _studentFeeAllocationManager;
     private readonly IAppliedStudentManager _appliedStudentManager;
+    private readonly IAppLogger _appLogger;
     #endregion
 
     #region Constructor
-    public StudentsController(IStudentManager studentManager, IAcademicClassManager academicClassManager, IWebHostEnvironment host, IMapper mapper, IAcademicSessionManager academicSessionManager, IStudentPaymentManager studentPaymentManager, IDistrictManager districtManager, IUpazilaManager upazilaManager, IAcademicSectionManager academicSectionManager, IBloodGroupManager bloodGroupManager, IDivisionManager divisionManager, INationalityManager nationalityManager, IGenderManager genderManager, IReligionManager religionManager, IStudentFeeHeadManager studentFeeHeadManager, IClassFeeListManager classFeeListManager, UserManager<ApplicationUser> userManager, IPhoneSMSManager phoneSMSManager, IAttendanceMachineManager attendanceMachineManager, IInstituteManager instituteManager, IStudentActivateHistManager studentActivateHistManager, IOffDayManager offDayManager, IStudentFeeAllocationManager studentFeeAllocationManager, IAppliedStudentManager appliedStudentManager)
+    public StudentsController(IStudentManager studentManager, IAcademicClassManager academicClassManager, IWebHostEnvironment host, IMapper mapper, IAcademicSessionManager academicSessionManager, IStudentPaymentManager studentPaymentManager, IDistrictManager districtManager, IUpazilaManager upazilaManager, IAcademicSectionManager academicSectionManager, IBloodGroupManager bloodGroupManager, IDivisionManager divisionManager, INationalityManager nationalityManager, IGenderManager genderManager, IReligionManager religionManager, IStudentFeeHeadManager studentFeeHeadManager, IClassFeeListManager classFeeListManager, UserManager<ApplicationUser> userManager, IPhoneSMSManager phoneSMSManager, IAttendanceMachineManager attendanceMachineManager, IInstituteManager instituteManager, IStudentActivateHistManager studentActivateHistManager, IOffDayManager offDayManager, IStudentFeeAllocationManager studentFeeAllocationManager, IAppliedStudentManager appliedStudentManager, IAppLogger appLogger)
     {
         _academicClassManager = academicClassManager;
         _host = host;
@@ -83,6 +85,7 @@ public class StudentsController : Controller
         _offDayManager = offDayManager;
         _studentFeeAllocationManager = studentFeeAllocationManager;
         _appliedStudentManager = appliedStudentManager;
+        _appLogger = appLogger;
     }
     #endregion Constructor
 
@@ -384,8 +387,10 @@ public class StudentsController : Controller
     [Authorize(Policy = "CreateStudentsPolicy")]
     public async Task<IActionResult> Create([Bind("Id,Name,NameBangla,ClassRoll,FatherName,MotherName,AdmissionDate,Email,PhoneNo,Photo,DOB,BirthCertificateNo,BirthCertificateImage,ReligionId,GenderId,BloodGroupId,NationalityId,PresentAddressArea,PresentAddressPO,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddressArea,PermanentAddressPO,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,AcademicSessionId,AcademicClassId,AcademicSectionId,AddressInfo,PreviousSchool,Status,CreatedBy,CreatedAt,EditedBy,EditedAt,GuardianPhone,MACAddress,IsResidential,SMSService, UniqueId")] StudentCreateVM newStudent, IFormFile sPhoto, IFormFile DOBFile)
     {
+        await _appLogger.InfoAsync($"Enter method");
         newStudent.ClassRoll = await CreateRoll(newStudent.AcademicSessionId, newStudent.AcademicClassId, newStudent.ClassRoll);
         var rollIsExist = await _studentManager.GetStudentByClassRollAsync(newStudent.ClassRoll);
+        await _appLogger.InfoAsync($"Roll Checking done");
         if (rollIsExist == null)
         {
             try
@@ -396,6 +401,8 @@ public class StudentsController : Controller
                     {
                         return RedirectToAction("Login", "Accounts");
                     }
+
+                    await _appLogger.InfoAsync($"Model state is valid");
                     newStudent.CreatedBy = HttpContext.Session.GetString("UserId");
                     newStudent.CreatedAt = DateTime.Now;
                     newStudent.EditedAt = DateTime.Now;
@@ -403,9 +410,10 @@ public class StudentsController : Controller
 
                     var student = _mapper.Map<Student>(newStudent);
                     student.UniqueId = await GenerateUniquId(student);
-
+                    await _appLogger.InfoAsync($"Unique Id generated: {student.UniqueId}");
                     if (sPhoto != null && sPhoto.Length > 0)
                     {
+                        await _appLogger.InfoAsync($"Image Processing Started");
                         // Allowed extensions
                         var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
 
@@ -415,6 +423,8 @@ public class StudentsController : Controller
                         // Validate extension
                         if (!allowedExtensions.Contains(fileExt))
                         {
+
+                            await _appLogger.InfoAsync($"file extension not allowed: {fileExt}");
                             throw new InvalidOperationException("Only .jpg, .jpeg, and .png files are allowed.");
                         }
 
@@ -422,9 +432,12 @@ public class StudentsController : Controller
                         const long maxFileSize = 1 * 1024 * 1024;
                         if (sPhoto.Length > maxFileSize)
                         {
+
+                            await _appLogger.InfoAsync($"file size exceeded: {sPhoto.Length} bytes");
                             throw new InvalidOperationException("File size must not exceed 1 MB.");
                         }
 
+                        await _appLogger.InfoAsync($"File validation passed");
                         // Prepare paths
                         string root = _host.WebRootPath;
                         string folder = Path.Combine("Images", "Student");
@@ -572,6 +585,7 @@ public class StudentsController : Controller
         {
             ViewBag.msg = "Roll number is already exist";
         }
+
         newStudent.AcademicSessionList = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name", newStudent.AcademicSessionId).ToList();
         newStudent.AcademicClassList = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", newStudent.AcademicClassId).ToList();
         newStudent.BloodGroupList = new SelectList(await _bloodGroupManager.GetAllAsync(), "Id", "Name", newStudent.BloodGroupId).ToList();

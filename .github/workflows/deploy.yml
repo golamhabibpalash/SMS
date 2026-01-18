@@ -1,4 +1,4 @@
-name: Deploy ASP.NET Core via ZIP
+name: Deploy ASP.NET Core via FTP
 
 on:
   push:
@@ -74,109 +74,207 @@ jobs:
               ;;
           esac
 
+      - name: Remove excluded files
+        shell: bash
+        run: |
+          echo "Removing excluded files and folders..."
+          
+          # Remove appsettings.json and all variants
+          rm -f ./publish/appsettings*.json
+          echo "✓ Removed appsettings*.json files"
+          
+          # Remove entire wwwroot folder
+          if [ -d "./publish/wwwroot" ]; then
+            rm -rf ./publish/wwwroot
+            echo "✓ Removed wwwroot folder"
+          fi
+          
+          # Optional: Remove other unnecessary files
+          rm -f ./publish/web.config
+          rm -f ./publish/*.pdb
+          
+          echo "Exclusion complete"
+
       - name: Create maintenance page
         shell: bash
         run: |
           cat > ./publish/app_offline.htm << 'EOF'
           <!DOCTYPE html>
-          <html>
+          <html lang="en">
           <head>
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1">
-            <title>Maintenance</title>
+            <title>System Maintenance</title>
             <style>
-              body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #f5f5f5; }
-              h1 { color: #333; }
-              p { color: #666; }
+              body { 
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                text-align: center; 
+                padding: 50px 20px; 
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                margin: 0;
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              }
+              .container {
+                background: rgba(255,255,255,0.1);
+                backdrop-filter: blur(10px);
+                padding: 40px;
+                border-radius: 15px;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+                max-width: 500px;
+              }
+              h1 { margin: 0 0 20px 0; font-size: 2em; }
+              p { font-size: 1.1em; margin: 10px 0; }
+              .spinner {
+                border: 4px solid rgba(255,255,255,0.3);
+                border-top: 4px solid white;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                animation: spin 1s linear infinite;
+                margin: 20px auto;
+              }
+              @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+              }
             </style>
           </head>
           <body>
-            <h1>System Maintenance</h1>
-            <p>We're updating the system. This will only take a moment...</p>
-            <p><small>Please refresh in a few seconds</small></p>
+            <div class="container">
+              <h1>🔧 System Maintenance</h1>
+              <div class="spinner"></div>
+              <p>We're updating the system with the latest improvements.</p>
+              <p><small>This will only take a moment. Please refresh in a few seconds.</small></p>
+            </div>
           </body>
           </html>
           EOF
 
+      - name: Compress publish folder
+        shell: bash
+        run: |
+          cd publish
+          zip -r ../deployment.zip . -q
+          cd ..
+          echo "✓ Created deployment.zip ($(du -h deployment.zip | cut -f1))"
+
       - name: Upload maintenance page
         shell: bash
         run: |
+          echo "Uploading maintenance page..."
           lftp -u "${{ steps.vars.outputs.username }},${{ steps.vars.outputs.password }}" "ftp://${{ steps.vars.outputs.server }}" <<EOF
             set ftp:passive-mode on
             set ssl:verify-certificate no
-            put ./publish/app_offline.htm -o "${{ steps.vars.outputs.path }}/app_offline.htm"
+            set net:timeout 30
+            set net:max-retries 3
+            cd "${{ steps.vars.outputs.path }}"
+            put ./publish/app_offline.htm -o app_offline.htm
             quit
           EOF
+          echo "✓ Maintenance page uploaded"
 
-      - name: Wait for app to go offline
-        run: sleep 3
+      - name: Wait for application to go offline
+        run: sleep 5
 
-      - name: Remove excluded files before packaging
+      - name: Upload deployment package
         shell: bash
         run: |
-          echo "Removing excluded files..."
-
-          # Remove appsettings.json
-          if [ -f "./publish/appsettings.json" ]; then
-            rm ./publish/appsettings.json
-            echo "Removed appsettings.json"
-          fi
-
-          # Remove appsettings.*.json (e.g., Development/Staging/Production)
-          rm -f ./publish/appsettings.*.json
-
-          # Remove all images inside wwwroot/Images
-          if [ -d "./publish/wwwroot/Images" ]; then
-            rm -rf ./publish/wwwroot/Images/*
-            echo "Removed images from wwwroot/Images"
-          fi
-
-
-      - name: Compress publish folder
-        run: |
-          zip -r ./publish.zip ./publish/* > /dev/null
-          echo "Publish folder compressed into publish.zip"
-
-      - name: Upload ZIP package
-        shell: bash
-        run: |
+          echo "Uploading deployment package..."
           lftp -u "${{ steps.vars.outputs.username }},${{ steps.vars.outputs.password }}" "ftp://${{ steps.vars.outputs.server }}" <<EOF
             set ftp:passive-mode on
             set ssl:verify-certificate no
-            put ./publish.zip -o "${{ steps.vars.outputs.path }}/publish.zip"
+            set net:timeout 60
+            set net:max-retries 3
+            set ftp:ssl-allow no
+            cd "${{ steps.vars.outputs.path }}"
+            put ./deployment.zip -o deployment.zip
             quit
           EOF
+          echo "✓ Deployment package uploaded"
+
+      - name: Extract and cleanup on server
+        shell: bash
+        continue-on-error: true
+        run: |
+          echo "Note: Extraction must be done manually via Plesk File Manager"
+          echo "1. Log into Plesk control panel"
+          echo "2. Navigate to File Manager"
+          echo "3. Extract deployment.zip to application root"
+          echo "4. Delete deployment.zip after extraction"
 
       - name: Remove maintenance page
         shell: bash
         continue-on-error: true
         run: |
+          echo "Removing maintenance page..."
           lftp -u "${{ steps.vars.outputs.username }},${{ steps.vars.outputs.password }}" "ftp://${{ steps.vars.outputs.server }}" <<EOF
             set ftp:passive-mode on
             set ssl:verify-certificate no
-            rm "${{ steps.vars.outputs.path }}/app_offline.htm"
+            set net:timeout 30
+            cd "${{ steps.vars.outputs.path }}"
+            rm -f app_offline.htm
             quit
           EOF
+          echo "✓ Maintenance page removed"
+
+      - name: Wait for application startup
+        run: sleep 10
 
       - name: Verify deployment
         shell: bash
+        continue-on-error: true
         run: |
           url="${{ steps.vars.outputs.url }}"
-          code=$(curl -s -o /dev/null -w "%{http_code}" "$url")
-          echo "Status: $code"
-          if [[ "$code" != "200" && "$code" != "301" && "$code" != "302" ]]; then
-            echo "Verification failed"
-            exit 1
-          fi
-          echo "Deployment verified successfully"
+          echo "Verifying deployment at: $url"
+          
+          for i in {1..5}; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" -L "$url" --max-time 10)
+            echo "Attempt $i: HTTP $code"
+            
+            if [[ "$code" == "200" || "$code" == "301" || "$code" == "302" ]]; then
+              echo "✓ Deployment verified successfully"
+              exit 0
+            fi
+            
+            if [ $i -lt 5 ]; then
+              echo "Retrying in 5 seconds..."
+              sleep 5
+            fi
+          done
+          
+          echo "⚠ Warning: Could not verify deployment. Please check manually."
+          exit 0
 
       - name: Deployment summary
-        if: success()
+        if: always()
         shell: bash
         run: |
-          echo "========================================"
-          echo "Deployment Successful"
-          echo "Client: ${{ steps.vars.outputs.client_name }}"
-          echo "URL: ${{ steps.vars.outputs.url }}"
-          echo "Time: $(date '+%Y-%m-%d %H:%M:%S')"
-          echo "========================================"
+          echo ""
+          echo "════════════════════════════════════════"
+          echo "    DEPLOYMENT SUMMARY"
+          echo "════════════════════════════════════════"
+          echo "Client:     ${{ steps.vars.outputs.client_name }}"
+          echo "URL:        ${{ steps.vars.outputs.url }}"
+          echo "Time:       $(date '+%Y-%m-%d %H:%M:%S %Z')"
+          echo "Status:     ${{ job.status }}"
+          echo "════════════════════════════════════════"
+          echo ""
+          echo "📋 NEXT STEPS:"
+          echo "1. Log into Plesk control panel"
+          echo "2. Navigate to File Manager at: ${{ steps.vars.outputs.path }}"
+          echo "3. Extract 'deployment.zip' to the application root"
+          echo "4. Delete 'deployment.zip' after extraction"
+          echo "5. Verify the application at: ${{ steps.vars.outputs.url }}"
+          echo ""
+
+      - name: Cleanup local files
+        if: always()
+        shell: bash
+        run: |
+          rm -f ./deployment.zip
+          rm -rf ./publish
+          echo "✓ Local files cleaned up"

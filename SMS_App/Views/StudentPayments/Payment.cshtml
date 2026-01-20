@@ -181,7 +181,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group row pt-2">
-                                    <label class="col-md-3 col-form-label text-md-right text-left">Date </label>
+                                    <label class="col-md-3 col-form-label text-md-end">Date </label>
                                     <div class="col-md-3">
                                         <input type="date"
                                                asp-for="StudentPayment.PaidDate"
@@ -192,7 +192,7 @@
                                         <span asp-validation-for="StudentPayment.PaidDate" class="text-danger col-form-label"></span>
                                     </div>
 
-                                    <label class="col-md-3 col-form-label text-md-right text-left">Payment For </label>
+                                    <label class="col-md-3 col-form-label text-md-end text-left">Payment For </label>
                                     <div class="col-md-3">
                                         <select class="form-control" asp-items="ViewBag.FeeList" asp-for="StudentPayment.StudentPaymentDetails[0].StudentFeeHeadId">
                                             <option selected disabled>Select Payment</option>
@@ -201,20 +201,20 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label class="col-md-3 col-form-label text-md-right text-left">Amount</label>
+                                    <label class="col-md-3 col-form-label text-md-end text-left">Amount</label>
                                     <div class="col-md-3">
                                         <input class="form-control form-control-sm text-dark font-weight-bolder text-right" placeholder="Amount" asp-for="StudentPayment.StudentPaymentDetails[0].PaidAmount" />
                                         <input type="hidden" id="academicClassId" value="@Model.StudentPayment.Student.AcademicClassId" />
                                         <input type="hidden" asp-for="StudentPayment.StudentPaymentDetails[0].ClassFeeId" />
                                     </div>
-                                    <label class="col-md-3 col-form-label text-md-right text-left">Total</label>
+                                    <label class="col-md-3 col-form-label text-md-end text-left">Total</label>
                                     <div class="col-md-3">
                                         <input asp-for="StudentPayment.TotalPayment" class="form-control form-control-sm text-right text-dark font-weight-bolder" />
                                     </div>
                                     <span asp-validation-for="StudentPayment.TotalPayment" class="text-danger col-form-label"></span>
                                 </div>
                                 <div class="form-group row">
-                                    <label class="col-md-3 col-form-label text-md-right text-left">Remark</label>
+                                    <label class="col-md-3 col-form-label text-md-end text-left">Remark</label>
                                     <div class="col-md-3">
                                         <input asp-for="StudentPayment.Remarks" class="form-control form-control-sm" />
                                         <span asp-validation-for="StudentPayment.Remarks" class="text-danger col-form-label"></span>
@@ -343,7 +343,7 @@
             <div class="modal-body">
                 <form action="/" method="post">
                     <div class="form-group row">
-                        <label class="col-md-4 text-md-right col-form-label">Academic Class</label>
+                        <label class="col-md-4 text-md-end col-form-label">Academic Class</label>
                         <div class="col-md-8">
                             <select class="form-control" asp-items="ViewBag.AcademicClassList" id="modalAcademicClassId">
                                 <option selected disabled>-Select Class-</option>
@@ -351,7 +351,7 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-md-4 text-md-right col-form-label">Student</label>
+                        <label class="col-md-4 text-md-end col-form-label">Student</label>
                         <div class="col-md-8">
                             <select class="form-control" id="studentListId">
                                 <option selected disabled>-Select Student-</option>

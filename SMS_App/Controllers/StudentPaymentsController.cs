@@ -155,8 +155,6 @@ public class StudentPaymentsController : Controller
     }
 
     // POST: StudentPayments/Create
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Policy = "CreateStudentPaymentsPolicy")]
@@ -293,10 +291,7 @@ public class StudentPaymentsController : Controller
         }
         return RedirectToAction("Payment", new { stRoll = studentPayment.Student.ClassRoll });
     }
-    public IActionResult Page()
-    {
-        return View();
-    }
+
     // GET: StudentPayments/Delete/5
     [Authorize(Policy = "DeleteStudentPaymentsPolicy")]
     public async Task<IActionResult> Delete(int? id)
@@ -400,93 +395,6 @@ public class StudentPaymentsController : Controller
         return View(viewModel);
     }
 
-
-
-    #region DeuPayment Old Code
-    //[HttpPost]
-    //[Authorize(Policy = "DuePaymentStudentPaymentsPolicy")]
-    //public async Task<IActionResult> DuePayment(int? aSessionId, int? AcademicClassId, int? AcademicSectionId, int studentId, int dueType, string isResidential, string status)
-    //{
-    //    GlobalUI.PageTitle = "Due Payment List";
-    //    if (string.IsNullOrEmpty(aSessionId.ToString()))
-    //    {
-    //        AcademicSession currentSession = await _academicSessionManager.GetCurrentAcademicSession();
-    //        aSessionId = currentSession.Id;
-    //    }
-    //    List<Student> students = new List<Student>();
-    //    if (string.IsNullOrEmpty(AcademicSectionId.ToString()))
-    //    {
-    //        AcademicSectionId = 0;
-    //    }
-    //    if (string.IsNullOrEmpty(AcademicClassId.ToString()))
-    //    {
-    //        AcademicClassId = 0;
-    //    }
-
-    //    students = await _studentManager.GetStudentsByClassSessionSectionAsync((int)aSessionId, (int)AcademicClassId, (int)AcademicSectionId);
-    //    if (!string.IsNullOrEmpty(isResidential))
-    //    {
-    //        if (isResidential == "residential")
-    //        {
-    //            students = students.Where(s => s.IsResidential == true).ToList();
-    //        }
-    //        if (isResidential == "nonResidential")
-    //        {
-
-    //            students = students.Where(s => s.IsResidential == false).ToList();
-    //        }
-    //    }
-    //    if (!string.IsNullOrEmpty(status))
-    //    {
-    //        if (status == "1")
-    //        {
-    //            students = students.Where(s => s.Status == true).ToList();
-    //        }
-
-    //        if (status == "0")
-    //        {
-    //            students = students.Where(s => s.Status == false).ToList();
-    //        }
-    //    }
-
-    //    DuePaymentVM duePaymentVM = new DuePaymentVM();
-    //    if (students != null)
-    //    {
-    //        duePaymentVM.ShowCount = students.Count;
-    //    }
-    //    var classes = await _academicClassManager.GetAllAsync();
-    //    duePaymentVM.AcademicClassList = new SelectList(classes.Where(s => s.Status == true), "Id", "Name", AcademicClassId).ToList();
-    //    duePaymentVM.AcademicSectionList = new SelectList(await _academicSectionManager.GetAllByClassWithSessionId((int)AcademicClassId, (int)aSessionId), "Id", "Name", duePaymentVM.AcademicSectionId).ToList(); duePaymentVM.StudentStatusSelectList = new SelectList(GetActiveInActiveList(), "Id", "sName", status).ToList();
-    //    var studentCategory = new List<SelectListItem>
-    //    {
-    //        new() { Text = "all", Value = "all" },
-    //        new() { Text = "residential", Value = "residential" },
-    //        new() { Text = "nonResidential", Value = "nonResidential" }
-    //    };
-    //    duePaymentVM.StudentCategorySelectList = new SelectList(studentCategory.ToList(), "Value", "Text", isResidential).ToList();
-    //    duePaymentVM.AcademicClassId = (int)AcademicClassId;
-    //    duePaymentVM.AcademicClass = await _academicClassManager.GetByIdAsync((int)AcademicClassId);
-    //    duePaymentVM.Institute = await _instituteManager.GetFirstOrDefaultAsync();
-    //    duePaymentVM.GrandTotal = 0.00;
-    //    List<DuePaymentDetailsVM> duePaymentDetailsVMs = new List<DuePaymentDetailsVM>();
-    //    if (students != null)
-    //    {
-    //        foreach (var item in students)
-    //        {
-    //            DuePaymentDetailsVM duePaymentDetailsVM = new DuePaymentDetailsVM();
-    //            duePaymentDetailsVM.StudentId = item.Id;
-    //            duePaymentDetailsVM.Student = item;
-    //            duePaymentDetailsVM.TotalDue = await _studentPaymentManager.GetStudentCurrentDue(item.Id);
-    //            duePaymentDetailsVMs.Add(duePaymentDetailsVM);
-    //        }
-    //    }
-    //    duePaymentVM.DuePayments = duePaymentDetailsVMs;
-    //    duePaymentVM.GrandTotal = duePaymentDetailsVMs.Sum(d => d.TotalDue);
-    //    ViewBag.isFromPost = true;
-    //    return View(duePaymentVM);
-    //}
-
-    #endregion DuePayment Old Code End
     [HttpGet]
     [Authorize(Policy = "PreviousDuePaymentStudentPaymentsPolicy")]
     public async Task<IActionResult> DuePaymentPrevious()

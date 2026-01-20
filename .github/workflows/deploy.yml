@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       client:
-        description: 'Select client to deploy'
+        description: "Select client to deploy"
         required: true
         type: choice
         options:
@@ -27,7 +27,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: "8.0.x"
 
       - name: Restore dependencies
         run: dotnet restore
@@ -44,7 +44,7 @@ jobs:
         run: |
           client="${{ github.event.inputs.client }}"
           if [ -z "$client" ]; then
-            client="Noble"
+            client="DMCPS"
           fi
 
           case "$client" in
@@ -78,21 +78,21 @@ jobs:
         shell: bash
         run: |
           echo "Removing excluded files and folders..."
-          
+
           # Remove appsettings.json and all variants
           rm -f ./publish/appsettings*.json
           echo "✓ Removed appsettings*.json files"
-          
+
           # Remove entire wwwroot folder
           if [ -d "./publish/wwwroot" ]; then
             rm -rf ./publish/wwwroot
             echo "✓ Removed wwwroot folder"
           fi
-          
+
           # Remove debug symbols
           rm -f ./publish/*.pdb
           echo "✓ Removed .pdb files"
-          
+
           echo "Exclusion complete"
 
       - name: Create maintenance page (outside publish folder)
@@ -231,7 +231,7 @@ jobs:
         run: |
           url="${{ steps.vars.outputs.url }}"
           echo "Verifying deployment at: $url"
-          
+
           for i in {1..5}; do
             code=$(curl -s -o /dev/null -w "%{http_code}" -L "$url" --max-time 10)
             echo "Attempt $i: HTTP $code"
@@ -246,7 +246,7 @@ jobs:
               sleep 5
             fi
           done
-          
+
           echo "⚠ Warning: Could not verify deployment. Please check manually."
           exit 0
 

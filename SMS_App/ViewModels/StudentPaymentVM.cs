@@ -15,7 +15,6 @@ namespace SMS_App.ViewModels
         public int ClassFeeHeadId { get; set; }
         public int StudentId { get; set; }
         public bool IsSMSSend { get; set; }
-        public List<PaymentItemVM> PaymentItemVMs { get; set; } = new List<PaymentItemVM>();
         public AcademicSession CurrentAcademicSession { get; set; }
 
         public StudentPaymentDetailVM PaymentVM { get; set; } = new StudentPaymentDetailVM();

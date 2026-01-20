@@ -5,16 +5,17 @@
 <div class="panel bg-navy-blue" style="min-height:300px;">
     <div class="row p-4">
         <div class="col-md-4 text-center p-3">
-            <img src="~/Images/Student/@studentPhoto" alt="Alternate Text" class="rounded-circle" style="width:50%;" />
+            <img src="~/Images/Student/@studentPhoto"
+                 alt="Student Photo"
+                 class="rounded-circle"
+                 style="width:50%;"
+                 onerror="this.onerror=null;this.src='/Images/Student/noimage.jpg';" />
+            <h4 class="text-light">@Model.StudentPayment.Student.Name</h4>
         </div>
 
         <div class="col-md-8">
             <table class="table text-light">
-                <tr>
-                    <td width="140px">Student Name</td>
-                    <td>:</td>
-                    <td>@Model.StudentPayment.Student.Name</td>
-                </tr>
+
                 <tr>
                     <td>Academic Class</td>
                     <td>:</td>
@@ -28,6 +29,11 @@
                         <td>@Model.StudentPayment.Student.AcademicSection.Name</td>
                     </tr>
                 }
+                <tr>
+                    <td>Unique Id</td>
+                    <td>:</td>
+                    <td>@Model.StudentPayment.Student.UniqueId</td>
+                </tr>
                 <tr>
                     <td>Class Roll</td>
                     <td>:</td>

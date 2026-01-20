@@ -9773,10 +9773,10 @@ button.bg-dark:focus {
 }
 
 @media (min-width: 768px) {
-  .text-md-left {
+  .text-md-start {
     text-align: left !important;
   }
-  .text-md-right {
+  .text-md-end {
     text-align: right !important;
   }
   .text-md-center {

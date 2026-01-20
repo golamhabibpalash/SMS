@@ -23,12 +23,12 @@
             </div>
         </div>
         <div class="form-group row">
-            <label asp-for="AcademicSessionId" class="control-label col-form-label text-md-right col-md-2"></label>
+            <label asp-for="AcademicSessionId" class="control-label col-form-label text-md-end col-md-2"></label>
             <div class="col-md-4">
                 <select asp-for="AcademicSessionId" class="form-control" asp-items="Model.AcademicSessionList"></select>
                 <span asp-validation-for="AcademicSessionId" class="text-danger"></span>
             </div>
-            <label asp-for="InterestedAppliedClassId" class="control-label col-form-label text-md-right col-md-2"></label>
+            <label asp-for="InterestedAppliedClassId" class="control-label col-form-label text-md-end col-md-2"></label>
             <div class="col-md-4">
                 <select asp-for="InterestedAppliedClassId" class="form-control" asp-items="Model.InterestedAcademicClassList"></select>
                 <span asp-validation-for="InterestedAppliedClassId" class="text-danger"></span>
@@ -37,25 +37,25 @@
         <div class="row">
             <div class="col-md-8">
                 <div class="form-group row">
-                    <label asp-for="NameBangla" class="control-label col-form-label text-md-right col-md-3"></label>
+                    <label asp-for="NameBangla" class="control-label col-form-label text-md-end col-md-3"></label>
                     <div class="col-md-9">
                         <input asp-for="NameBangla" type="text" class="form-control" placeholder="Name in Bangla">
                         <span asp-validation-for="NameBangla" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label asp-for="Name" class="control-label col-form-label text-md-right col-md-3"></label>
+                    <label asp-for="Name" class="control-label col-form-label text-md-end col-md-3"></label>
                     <div class="col-md-9">
                         <input asp-for="Name" type="text" class="form-control" placeholder="Name in English">
                         <span asp-validation-for="Name" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label asp-for="DOB" class="control-label col-form-label text-md-right col-md-3"></label>
+                    <label asp-for="DOB" class="control-label col-form-label text-md-end col-md-3"></label>
                     <div class="col-md-3">
                         <input asp-for="DOB" class="form-control" min="@dobMin" max="@dobMax" value="@dobVal" />
                     </div>
-                    <label asp-for="GenderId" class="control-label col-form-label text-md-right col-md-3"></label>
+                    <label asp-for="GenderId" class="control-label col-form-label text-md-end col-md-3"></label>
                     <div class="col-md-3">
                         <select asp-for="GenderId" class="form-control" asp-items="Model.GenderList"></select>
                         <span asp-validation-for="GenderId" class="text-danger"></span>
@@ -78,75 +78,75 @@
 
 
         <div class="form-group row">
-            <label asp-for="FatherNameBangla" class="control-label col-form-label text-md-right col-md-2"></label>
+            <label asp-for="FatherNameBangla" class="control-label col-form-label text-md-end col-md-2"></label>
             <div class="col-md-10">
                 <input asp-for="FatherNameBangla" class="form-control" placeholder="Father Name in Bangla">
                 <span asp-validation-for="FatherNameBangla" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group row">
-            <label asp-for="FatherName" class="control-label col-form-label text-md-right col-md-2"></label>
+            <label asp-for="FatherName" class="control-label col-form-label text-md-end col-md-2"></label>
             <div class="col-md-10">
                 <input asp-for="FatherName" class="form-control" placeholder="Father Name in English">
                 <span asp-validation-for="FatherName" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group row">
-            <label asp-for="FatherNID" class="control-label col-form-label text-md-right col-md-2"></label>
+            <label asp-for="FatherNID" class="control-label col-form-label text-md-end col-md-2"></label>
             <div class="col-md-10">
                 <input asp-for="FatherNID" class="form-control" placeholder="Father's NID">
                 <span asp-validation-for="FatherNID" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group row">
-            <label asp-for="FatherOccupation" class="control-label col-form-label text-md-right col-md-2"></label>
+            <label asp-for="FatherOccupation" class="control-label col-form-label text-md-end col-md-2"></label>
             <div class="col-md-2">
                 <select asp-for="FatherOccupation" class="form-control" asp-items="Model.FOccupationList"></select>
                 <span asp-validation-for="FatherOccupation" class="text-danger"></span>
             </div>
-            <label asp-for="FatherMonthlyIncome" class="control-label col-form-label text-md-right col-md-2"></label>
+            <label asp-for="FatherMonthlyIncome" class="control-label col-form-label text-md-end col-md-2"></label>
             <div class="col-md-2">
                 <input asp-for="FatherMonthlyIncome" class="form-control" placeholder="Father's Income">
                 <span asp-validation-for="FatherMonthlyIncome" class="text-danger"></span>
             </div>
-            <label asp-for="FatherPhoneNo" class="control-label col-form-label text-md-right col-md-2"></label>
+            <label asp-for="FatherPhoneNo" class="control-label col-form-label text-md-end col-md-2"></label>
             <div class="col-md-2">
                 <input asp-for="FatherPhoneNo" class="form-control" placeholder="Father's Phone">
                 <span asp-validation-for="FatherPhoneNo" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group row">
-            <label asp-for="MotherNameBangla" class="control-label col-form-label text-md-right col-md-2"></label>
+            <label asp-for="MotherNameBangla" class="control-label col-form-label text-md-end col-md-2"></label>
             <div class="col-md-10">
                 <input asp-for="MotherNameBangla" class="form-control" placeholder="Mother's Name in Bangla">
                 <span asp-validation-for="MotherNameBangla" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group row">
-            <label asp-for="MotherName" class="control-label col-form-label text-md-right col-md-2"></label>
+            <label asp-for="MotherName" class="control-label col-form-label text-md-end col-md-2"></label>
             <div class="col-md-10">
                 <input asp-for="MotherName" class="form-control" placeholder="Mother's' Name in English">
                 <span asp-validation-for="MotherName" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group row">
-            <label asp-for="MotherNID" class="control-label col-form-label text-md-right col-md-2"></label>
+            <label asp-for="MotherNID" class="control-label col-form-label text-md-end col-md-2"></label>
             <div class="col-md-10">
                 <input asp-for="MotherNID" class="form-control" placeholder="Mother's NID">
                 <span asp-validation-for="MotherNID" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group row">
-            <label asp-for="MotherOccupation" class="control-label col-form-label text-md-right col-md-2"></label>
+            <label asp-for="MotherOccupation" class="control-label col-form-label text-md-end col-md-2"></label>
             <div class="col-md-2">
                 <select asp-for="MotherOccupation" class="form-control" asp-items="Model.MOccupationList"></select>
                 <span asp-validation-for="MotherOccupation" class="text-danger"></span>
             </div>
-            <label asp-for="MotherMonthlyIncome" class="control-label col-form-label text-md-right col-md-2"></label>
+            <label asp-for="MotherMonthlyIncome" class="control-label col-form-label text-md-end col-md-2"></label>
             <div class="col-md-2">
                 <input asp-for="MotherMonthlyIncome" class="form-control" placeholder="Mother's Income"/>
             </div>
-            <label asp-for="MotherPhoneNo" class="control-label col-form-label text-md-right col-md-2"></label>
+            <label asp-for="MotherPhoneNo" class="control-label col-form-label text-md-end col-md-2"></label>
             <div class="col-md-2">
                 <input asp-for="MotherPhoneNo" class="form-control" placeholder="Mother's Phone">
                 <span asp-validation-for="MotherPhoneNo" class="text-danger"></span>
@@ -158,24 +158,24 @@
             </div>
         </div>
         <div class="form-group row">
-            <label asp-for="PresentAddressArea" class="control-label col-form-label text-md-right col-md-2"></label>
+            <label asp-for="PresentAddressArea" class="control-label col-form-label text-md-end col-md-2"></label>
             <div class="col-md-4">
                 <input asp-for="PresentAddressArea" class="form-control" placeholder="Village" />
                 <span asp-validation-for="PresentAddressArea" class="text-danger"></span>
             </div>
-            <label asp-for="PresentAddressPO" class="control-label col-form-label text-md-right col-md-2"></label>
+            <label asp-for="PresentAddressPO" class="control-label col-form-label text-md-end col-md-2"></label>
             <div class="col-md-4">
                 <input asp-for="PresentAddressPO" class="form-control" placeholder="Post office" />
                 <span asp-validation-for="PresentAddressPO" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group row">
-            <label asp-for="PresentUpazilaId" class="control-label col-form-label text-md-right col-md-2"></label>
+            <label asp-for="PresentUpazilaId" class="control-label col-form-label text-md-end col-md-2"></label>
             <div class="col-md-4">
                 <select asp-for="PresentUpazilaId" class="form-control" asp-items="Model.PresentUpazilaList"></select>
                 <span asp-validation-for="PresentUpazilaId" class="text-danger"></span>
             </div>
-            <label asp-for="PresentDistrictId" class="control-label col-form-label text-md-right col-md-2"></label>
+            <label asp-for="PresentDistrictId" class="control-label col-form-label text-md-end col-md-2"></label>
             <div class="col-md-4">
                 <select asp-for="PresentDistrictId" class="form-control" asp-items="Model.PresentDistrictList"></select>
                 <span asp-validation-for="PresentDistrictId" class="text-danger"></span>
@@ -187,21 +187,21 @@
             </div>
         </div>
         <div class="form-group row">
-            <label asp-for="PermanentAddressArea" class="control-label col-form-label text-md-right col-md-2"></label>
+            <label asp-for="PermanentAddressArea" class="control-label col-form-label text-md-end col-md-2"></label>
             <div class="col-md-4">
                 <input asp-for="PermanentAddressArea" class="form-control-plaintext" placeholder="Village" readonly/>
             </div>
-            <label asp-for="PermanentAddressPO" class="control-label col-form-label text-md-right col-md-2"></label>
+            <label asp-for="PermanentAddressPO" class="control-label col-form-label text-md-end col-md-2"></label>
             <div class="col-md-4">
                 <input asp-for="PermanentAddressPO" class="form-control-plaintext" placeholder="Post office" readonly/>
             </div>
         </div>
         <div class="form-group row">
-            <label asp-for="PermanentUpazilaId" class="control-label col-form-label text-md-right col-md-2"></label>
+            <label asp-for="PermanentUpazilaId" class="control-label col-form-label text-md-end col-md-2"></label>
             <div class="col-md-4">
                 <select asp-for="PermanentUpazilaId" class="form-control" asp-items="Model.PermanentUpazilaList"></select>
             </div>
-            <label asp-for="PermanentDistrictId" class="control-label col-form-label text-md-right col-md-2"></label>
+            <label asp-for="PermanentDistrictId" class="control-label col-form-label text-md-end col-md-2"></label>
             <div class="col-md-4">
                 <select asp-for="PermanentDistrictId" class="form-control" asp-items="Model.PermanentDistrictList" onchange="districtChanged(this.value, 'PermanentUpazilaId')"></select>
             </div>
@@ -212,31 +212,31 @@
             </div>
         </div>
         <div class="form-group row">
-            <label asp-for="NationalityId" class="control-label col-form-label text-md-right col-md-2"></label>
+            <label asp-for="NationalityId" class="control-label col-form-label text-md-end col-md-2"></label>
             <div class="col-md-4">
                 <select asp-for="NationalityId" class="form-control" asp-items="Model.NationalityList"></select>
                 <span asp-validation-for="NationalityId" class="text-danger"></span>
             </div>
-            <label asp-for="ReligionId" class="control-label col-form-label text-md-right col-md-2"></label>
+            <label asp-for="ReligionId" class="control-label col-form-label text-md-end col-md-2"></label>
             <div class="col-md-4">
                 <select asp-for="ReligionId" class="form-control" asp-items="Model.ReligionList"></select>
                 <span asp-validation-for="ReligionId" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group row">
-            <label asp-for="AimInLife" class="control-label col-form-label text-md-right col-md-2"></label>
+            <label asp-for="AimInLife" class="control-label col-form-label text-md-end col-md-2"></label>
             <div class="col-md-10">
                 <input asp-for="AimInLife" class="form-control" placeholder="Aim In Life" />
                 <span asp-validation-for="AimInLife" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group row">
-            <label asp-for="PreviousSchool" class="control-label col-form-label text-md-right col-md-2"></label>
+            <label asp-for="PreviousSchool" class="control-label col-form-label text-md-end col-md-2"></label>
             <div class="col-md-6">
                 <input asp-for="PreviousSchool" class="form-control" placeholder="Previous School Name" />
                 <span asp-validation-for="PreviousSchool" class="text-danger"></span>
             </div>
-            <label asp-for="PreviousSchoolClassId" class="control-label col-form-label text-md-right col-md-2"></label>
+            <label asp-for="PreviousSchoolClassId" class="control-label col-form-label text-md-end col-md-2"></label>
             <div class="col-md-2">
                 <select asp-for="PreviousSchoolClassId" class="form-control" asp-items="Model.PreviousAcademicClassList"></select>
                 <span asp-validation-for="PreviousSchoolClassId" class="text-danger"></span>

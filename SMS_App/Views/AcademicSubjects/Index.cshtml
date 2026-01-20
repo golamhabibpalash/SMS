@@ -124,7 +124,7 @@
                                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                                 @*<div class="form-group row">
-                                        <label for="AcademicClassId" class="control-label col-form-label col-md-3 text-md-right ">Academic Class</label>
+                                        <label for="AcademicClassId" class="control-label col-form-label col-md-3 text-md-end ">Academic Class</label>
                                         <div class="col-md-9">
                                             <select class="form-control" name="AcademicClassId" asp-items="ViewBag.AcademicClassId">
                                                 <option disabled selected>Select Academic Class</option>
@@ -134,25 +134,25 @@
                                     </div>*@
 
                                 <div class="form-group row">
-                                    <label for="SubjectName" class="control-label col-form-label col-md-3 text-md-right ">Subject Name</label>
+                                    <label for="SubjectName" class="control-label col-form-label col-md-3 text-md-end ">Subject Name</label>
                                     <div class="col-md-9">
                                         <input name="SubjectName" class="form-control rounded" />
                                         <span class="text-danger"></span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="TotalMarks" class="control-label col-form-label col-md-3 text-md-right">Total Marks</label>
+                                    <label for="TotalMarks" class="control-label col-form-label col-md-3 text-md-end">Total Marks</label>
                                     <div class="col-md-3">
                                         <input name="TotalMarks" class="form-control" />
                                     </div>
-                                    <label for="SubjectCode" class="control-label  col-form-label col-md-3 text-md-right">Subject Code</label>
+                                    <label for="SubjectCode" class="control-label  col-form-label col-md-3 text-md-end">Subject Code</label>
                                     <div class="col-md-3">
                                         <input name="SubjectCode" class="form-control rounded" placeholder="Ex: 103" />
                                     </div>
                                 </div>
 
                                 <div class="form-group row">
-                                    <label class="control-label col-form-label col-md-3 text-md-right  ">Subject Type</label>
+                                    <label class="control-label col-form-label col-md-3 text-md-end  ">Subject Type</label>
                                     <div class="col-md-9 input-group">
                                         <select name="AcademicSubjectTypeId" class="form-control rounded" asp-items="ViewBag.AcademicSubjectTypeId">
                                             <option selected disabled>Select Subject Type</option>
@@ -164,7 +164,7 @@
                                 </div>
 
                                 <div class="form-group row">
-                                    <label for="AcademicClassId" class="control-label col-form-label col-md-3 text-md-right ">Question</label>
+                                    <label for="AcademicClassId" class="control-label col-form-label col-md-3 text-md-end ">Question</label>
                                     <div class="col-md-9">
                                         <select class="form-control" name="QuestionFormatId" asp-items="ViewBag.QuestionFormatId">
                                             <option disabled selected>Select Quesetion Formation</option>

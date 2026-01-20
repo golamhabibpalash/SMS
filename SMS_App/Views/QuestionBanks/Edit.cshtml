@@ -16,7 +16,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group row pb-2">
-                        <label asp-for="AcademicClassId" class="col-2 col-md-4 text-md-right col-form-label bg-lightgray">Class</label>
+                        <label asp-for="AcademicClassId" class="col-2 col-md-4 text-md-end col-form-label bg-lightgray">Class</label>
                         <div class="col-md-8 col-10">
                             <select asp-for="AcademicClassId" class="form-control" asp-items="ViewBag.AcademicClassId">
                                 <option disabled selected>Select Class</option>
@@ -24,7 +24,7 @@
                         </div>
                     </div>
                     <div class="form-group row pb-2">
-                        <label asp-for="AcademicSubjectId" class="col-2 col-md-4 text-md-right col-form-label bg-lightgray">Subject</label>
+                        <label asp-for="AcademicSubjectId" class="col-2 col-md-4 text-md-end col-form-label bg-lightgray">Subject</label>
                         <div class="col-md-8 col-10">
                             <select asp-for="AcademicSubjectId" class="form-control" asp-items="ViewBag.AcademicSubjectId">
                                 <option disabled selected>Select Class First</option>
@@ -32,7 +32,7 @@
                         </div>
                     </div>
                     <div class="form-group row pb-2">
-                        <label asp-for="ChapterId" class="col-2 col-md-4 text-md-right col-form-label bg-lightgray">Chapter</label>
+                        <label asp-for="ChapterId" class="col-2 col-md-4 text-md-end col-form-label bg-lightgray">Chapter</label>
                         <div class="col-md-8 col-10">
                             <select asp-for="ChapterId" class="form-control" asp-items="ViewBag.ChapterId" required>
                                 <option disabled selected>Select Subject First</option>
@@ -79,7 +79,7 @@
                     {
                         <input type="hidden" name="QuestionDetails[@qSl].Id" value="@item.Id" />
                         <div class="form-group row pb-2">
-                            <label asp-for="@item.QuestionText" class="form-label col-md-2 col-2 text-md-right col-form-label bg-lightgray">Q(@(qSl+1))</label>
+                            <label asp-for="@item.QuestionText" class="form-label col-md-2 col-2 text-md-end col-form-label bg-lightgray">Q(@(qSl+1))</label>
                             <div class="col-md-10 col-10">
                                 <input name="QuestionDetails[@qSl].QuestionText" class="form-control" value="@item.QuestionText" required />
                             </div>
@@ -91,10 +91,10 @@
 
             <div class="modal-footer">
                 <div class="col-md-12">
-                    <div class="col-md-6 text-md-left">
+                    <div class="col-md-6 text-md-start">
                         <a asp-action="AllQuestion" asp-controller="QuestionBanks" class="btn btn-info btn-sm"><i class="fa fa-backward"></i> Back to List</a>
                     </div>
-                    <div class="col-md-6 text-md-right">
+                    <div class="col-md-6 text-md-end">
                         <input type="submit" value="Update" class="btn btn-primary btn-sm" />
                     </div>
                 </div>

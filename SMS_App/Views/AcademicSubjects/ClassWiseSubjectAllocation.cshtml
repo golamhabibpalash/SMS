@@ -80,7 +80,7 @@
                     </div>
                     <div class="card-body pb-0">
                         <div class="form-group row">
-                            <label class="col-md-3 text-md-right col-form-label">Academic Class</label>
+                            <label class="col-md-3 text-md-end col-form-label">Academic Class</label>
                             <div class="col-md-9">
                                 <select class="form-control" asp-items="ViewBag.classList" asp-for="AcademicClassId">
                                     <option selected disabled value="-1">-Select Class-</option>
@@ -88,7 +88,7 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-md-3 text-md-right col-form-label">Academic Subject</label>
+                            <label class="col-md-3 text-md-end col-form-label">Academic Subject</label>
                             <div class="col-md-9">
                                 <select class="form-control" asp-items="ViewBag.subjectList" asp-for="AcademicSubjectId">
                                     <option selected disabled value="-1">-Select Subject-</option>
@@ -114,7 +114,7 @@
                             <tbody id="tableBodyId">
                             </tbody>
                         </table>
-                        <div class="text-center text-md-right">
+                        <div class="text-center text-md-end">
                             <input type="button" class="btn-sm btn-danger" onclick="ClearBtnClicked()" value="Clear" />
                             <button class="btn btn-primary btn-sm">Submit</button>
                         </div>

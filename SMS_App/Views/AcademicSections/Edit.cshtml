@@ -11,7 +11,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group row">
-                <label asp-for="Name" class="col-form-label col-md-2 text-md-right text-sm-left"></label>
+                <label asp-for="Name" class="col-form-label col-md-2 text-md-end text-sm-left"></label>
                 <div class="col-md-10">
                     <input asp-for="Name" class="form-control rounded" placeholder="Ex: Section A" />
                     <span asp-validation-for="Name" class="text-danger"></span>
@@ -19,14 +19,14 @@
             </div>
 
             <div class="form-group row">
-                <label asp-for="AcademicSessionId" class="col-form-label col-md-2 text-md-right text-sm-left ">Session</label>
+                <label asp-for="AcademicSessionId" class="col-form-label col-md-2 text-md-end text-sm-left ">Session</label>
                 <div class="col-md-4">
                     <input asp-for="AcademicSessionId"  hidden/>
                     <input asp-for="AcademicSession.Name" class="form-control rounded" readonly />
                     <span asp-validation-for="AcademicSessionId" class="text-danger"></span>
                 </div>
 
-                <label asp-for="AcademicClassId" class="col-form-label col-md-2 text-md-right text-sm-left "></label>
+                <label asp-for="AcademicClassId" class="col-form-label col-md-2 text-md-end text-sm-left "></label>
                 <div class="col-md-4">
                     <input asp-for="AcademicClassId" hidden />
                     <input asp-for="AcademicClass.Name" class="form-control rounded" readonly/>

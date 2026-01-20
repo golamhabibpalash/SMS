@@ -80,50 +80,50 @@
                     <div class="row">
                         <div class="col-md-12">
                             <dl class="row p-2">
-                                <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
+                                <dt class="col-sm-4 col-4 text-md-end text-sm-right text-right">
                                     ID :
                                 </dt>
                                 <dd class="col-sm-8 col-8 border-bottom">
                                     @Model.Employee.Id.ToString().PadLeft(5, '0')
                                 </dd>
-                                <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
+                                <dt class="col-sm-4 col-4 text-md-end text-sm-right text-right">
                                     Name :
                                 </dt>
                                 <dd class="col-sm-8 col-8 border-bottom">
                                     @Html.DisplayFor(model => model.Employee.EmployeeName)
                                 </dd>
 
-                                <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
+                                <dt class="col-sm-4 col-4 text-md-end text-sm-right text-right">
                                     নাম :
                                 </dt>
                                 <dd class="col-sm-8 col-8 border-bottom">
                                     @Html.DisplayFor(model => model.Employee.EmployeeNameBangla)
                                 </dd>
-                                <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
+                                <dt class="col-sm-4 col-4 text-md-end text-sm-right text-right">
                                     Designation :
                                 </dt>
                                 <dd class="col-sm-8 col-8 border-bottom">
                                     @Html.DisplayFor(model => model.Employee.Designation.DesignationName)
                                 </dd>
-                                <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
+                                <dt class="col-sm-4 col-4 text-md-end text-sm-right text-right">
                                     Joining Date :
                                 </dt>
                                 <dd class="col-sm-8 col-8 border-bottom">
                                     @Model.Employee.JoiningDate.ToString("dd MMM yyyy")
                                 </dd>
-                                <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
+                                <dt class="col-sm-4 col-4 text-md-end text-sm-right text-right">
                                     Phone :
                                 </dt>
                                 <dd class="col-sm-8 col-8 border-bottom">
                                     @Model.Employee.Phone
                                 </dd>
-                                <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
+                                <dt class="col-sm-4 col-4 text-md-end text-sm-right text-right">
                                     Email :
                                 </dt>
                                 <dd class="col-sm-8 col-8 border-bottom">
                                     @Model.Employee.Email
                                 </dd>
-                                <dt class="col-sm-4 col-4 text-md-right text-sm-right text-right">
+                                <dt class="col-sm-4 col-4 text-md-end text-sm-right text-right">
                                     Status :
                                 </dt>
                                 <dd class="col-sm-8 col-8 border-bottom">
@@ -250,7 +250,7 @@
             <div class="modal-body">
                 <form action="/" method="post">
                     <div class="form-group row">
-                        <label class="col-md-4 text-md-right col-form-label">Select User</label>
+                        <label class="col-md-4 text-md-end col-form-label">Select User</label>
                         <div class="col-md-8">
                             <select class="form-control select2" asp-items="ViewBag.UserList" id="ddUserId">
                                 <option selected disabled>-Select User-</option>

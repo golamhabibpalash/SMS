@@ -10,7 +10,7 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group row">
-                <label asp-for="Name" class="col-form-label col-md-2 text-md-right text-sm-left"></label>
+                <label asp-for="Name" class="col-form-label col-md-2 text-md-end text-sm-left"></label>
                 <div class="col-md-10">
                     <input asp-for="Name" class="form-control " placeholder="Ex: Section A" />
                     <span asp-validation-for="Name" class="text-danger"></span>
@@ -18,7 +18,7 @@
             </div>
 
             <div class="form-group row">
-                <label asp-for="AcademicSessionId" class="col-form-label col-md-2 text-md-right text-sm-left ">Session</label>
+                <label asp-for="AcademicSessionId" class="col-form-label col-md-2 text-md-end text-sm-left ">Session</label>
                 <div class="col-md-4">
                     <select asp-for="AcademicSessionId" class="form-control " asp-items="ViewBag.AcademicSessionId">
                         <option disabled selected>Select Session</option>
@@ -26,7 +26,7 @@
                     <span asp-validation-for="AcademicSessionId" class="text-danger"></span>
                 </div>
 
-                <label asp-for="AcademicClassId" class="col-form-label col-md-2 text-md-right text-sm-left "></label>
+                <label asp-for="AcademicClassId" class="col-form-label col-md-2 text-md-end text-sm-left "></label>
                 <div class="col-md-4">
                     <select asp-for="AcademicClassId" class="form-control " asp-items="ViewBag.AcademicClassId">
                         <option>Select Session First</option>

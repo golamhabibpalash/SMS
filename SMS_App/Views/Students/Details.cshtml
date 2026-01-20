@@ -74,37 +74,37 @@
         <div class="row text-light">
             <div class="col-md-12">
                 <dl class="row p-2">
-                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-md-end">
+                    <dt class="col-sm-4 col-4 text-md-end text-sm-right text-md-end">
                         Unique ID :
                     </dt>
                     <dd class="col-sm-8 col-8 border-bottom">
                         @Html.DisplayFor(model => model.Student.UniqueId)
                     </dd>
-                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-md-end">
+                    <dt class="col-sm-4 col-4 text-md-end text-sm-right text-md-end">
                         Name :
                     </dt>
                     <dd class="col-sm-8 col-8 border-bottom">
                         @Html.DisplayFor(model => model.Student.Name)
                     </dd>
-                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-md-end">
+                    <dt class="col-sm-4 col-4 text-md-end text-sm-right text-md-end">
                         নাম (বাংলা) :
                     </dt>
                     <dd class="col-sm-8 col-8 border-bottom">
                         @Html.DisplayFor(model => model.Student.NameBangla)
                     </dd>
-                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-md-end">
+                    <dt class="col-sm-4 col-4 text-md-end text-sm-right text-md-end">
                         Session :
                     </dt>
                     <dd class="col-sm-8 col-8 border-bottom">
                         @Html.DisplayFor(model => model.Student.AcademicSession.Name)
                     </dd>
-                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-md-end">
+                    <dt class="col-sm-4 col-4 text-md-end text-sm-right text-md-end">
                         Class :
                     </dt>
                     <dd class="col-sm-8 col-8 border-bottom">
                         @Html.DisplayFor(model => model.Student.AcademicClass.Name)
                     </dd>
-                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-md-end">
+                    <dt class="col-sm-4 col-4 text-md-end text-sm-right text-md-end">
                         Section :
                     </dt>
                     <dd class="col-sm-8 col-8 border-bottom">
@@ -117,19 +117,19 @@
                             <span>No Section</span>
                         }
                     </dd>
-                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-md-end">
+                    <dt class="col-sm-4 col-4 text-md-end text-sm-right text-md-end">
                         Roll :
                     </dt>
                     <dd class="col-sm-8 col-8 border-bottom">
                         @Html.DisplayFor(model => model.Student.ClassRoll)
                     </dd>
-                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-md-end">
+                    <dt class="col-sm-4 col-4 text-md-end text-sm-right text-md-end">
                         Admission Date :
                     </dt>
                     <dd class="col-sm-8 col-8 border-bottom">
                         @Model.Student.AdmissionDate.ToString("dd MMM yyyy")
                     </dd>
-                    <dt class="col-sm-4 col-4 text-md-right text-sm-right text-md-end">Status : </dt>
+                    <dt class="col-sm-4 col-4 text-md-end text-sm-right text-md-end">Status : </dt>
                     @{ 
                         studentStatus = Model.Student.Status ? "Active" : "Inactive";
                     }
@@ -532,7 +532,7 @@
                                                             <td class="text-md-end">@payment.TotalPayment</td>
                                                             <td>@payment.Remarks</td>
                                                             <td>@createdBy</td>
-                                                            <td class="text-md-left">@payment.CreatedAt.ToString("dd MMM yyyy")</td>
+                                                            <td class="text-md-start">@payment.CreatedAt.ToString("dd MMM yyyy")</td>
                                                         </tr>
                                                     }
                                                     totalPaid += payment.TotalPayment;

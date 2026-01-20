@@ -134,7 +134,7 @@
                     <td></td>
                     <td></td>
                     <td>
-                        <div class="col-sm-12 col-md-12 text-md-right text-sm-center">
+                        <div class="col-sm-12 col-md-12 text-md-end text-sm-center">
                             @*<a asp-action="Edit" asp-controller="Institutes" asp-route-id="@Model.Id" class="btn btn-sm btn-success"><i class="fa fa-edit"></i> Edit Info</a>*@
                             <button type="button" class="btn btn-sm btn-navy-blue" data-toggle="modal" data-target=".bd-example-modal-lg"><i class="fas fa-edit"></i> Edit</button>
                         </div>
@@ -158,86 +158,86 @@
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                             <input type="hidden" asp-for="Id" />
                             <div class="form-group row">
-                                <label asp-for="Name" class="control-label col-form-label col-md-2 text-md-right"></label>
+                                <label asp-for="Name" class="control-label col-form-label col-md-2 text-md-end"></label>
                                 <div class="col-md-10">
                                     <input spellcheck="true" asp-for="Name" class="form-control inputClass rounded" />
                                     <span asp-validation-for="Name" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label asp-for="ShortName" class="control-label col-form-label col-md-2 text-md-right"></label>
+                                <label asp-for="ShortName" class="control-label col-form-label col-md-2 text-md-end"></label>
                                 <div class="col-md-4">
                                     <input spellcheck="true" asp-for="ShortName" class="form-control inputClass rounded" />
                                     <span asp-validation-for="ShortName" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label asp-for="EIIN" class="control-label col-form-label col-md-2 text-md-right"></label>
+                                <label asp-for="EIIN" class="control-label col-form-label col-md-2 text-md-end"></label>
                                 <div class="col-md-4">
                                     <input asp-for="EIIN" class="form-control inputClass rounded" />
                                     <span asp-validation-for="EIIN" class="text-danger"></span>
                                 </div>
 
-                                <label asp-for="BranchName" class="control-label col-form-label col-md-2 text-md-right"></label>
+                                <label asp-for="BranchName" class="control-label col-form-label col-md-2 text-md-end"></label>
                                 <div class="col-md-4">
                                     <input asp-for="BranchName" class="form-control inputClass rounded col-form-label" />
                                     <span asp-validation-for="BranchName" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label asp-for="Phone1" class="control-label col-form-label col-md-2 text-md-right"></label>
+                                <label asp-for="Phone1" class="control-label col-form-label col-md-2 text-md-end"></label>
                                 <div class="col-md-4">
                                     <input asp-for="Phone1" class="form-control inputClass rounded" />
                                     <span asp-validation-for="Phone1" class="text-danger"></span>
                                 </div>
 
-                                <label asp-for="Phone2" class="control-label col-form-label col-md-2 text-md-right"></label>
+                                <label asp-for="Phone2" class="control-label col-form-label col-md-2 text-md-end"></label>
                                 <div class="col-md-4">
                                     <input asp-for="Phone2" class="form-control inputClass rounded col-form-label" />
                                     <span asp-validation-for="Phone2" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label asp-for="Email" class="control-label col-form-label col-md-2 text-md-right"></label>
+                                <label asp-for="Email" class="control-label col-form-label col-md-2 text-md-end"></label>
                                 <div class="col-md-4">
                                     <input asp-for="Email" class="form-control inputClass rounded" />
                                     <span asp-validation-for="Email" class="text-danger"></span>
                                 </div>
 
-                                <label asp-for="Slogan" class="control-label col-form-label col-md-2 text-md-right"></label>
+                                <label asp-for="Slogan" class="control-label col-form-label col-md-2 text-md-end"></label>
                                 <div class="col-md-4">
                                     <input asp-for="Slogan" class="form-control inputClass rounded col-form-label" />
                                     <span asp-validation-for="Slogan" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label asp-for="Address" class="control-label col-form-label col-md-2 text-md-right"></label>
+                                <label asp-for="Address" class="control-label col-form-label col-md-2 text-md-end"></label>
                                 <div class="col-md-10">
                                     <input asp-for="Address" class="form-control inputClass" />
                                     <span asp-validation-for="Address" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label asp-for="StartingTime" class="control-label col-form-label col-md-2 text-md-right"></label>
+                                <label asp-for="StartingTime" class="control-label col-form-label col-md-2 text-md-end"></label>
                                 <div class="col-md-4">
                                     <input type="time" asp-for="StartingTime" class="form-control inputClass rounded" />
                                     <span asp-validation-for="StartingTime" class="text-danger"></span>
                                 </div>
 
-                                <label asp-for="ClosingTime" class="control-label col-form-label col-md-2 text-md-right"></label>
+                                <label asp-for="ClosingTime" class="control-label col-form-label col-md-2 text-md-end"></label>
                                 <div class="col-md-4">
                                     <input type="time" asp-for="ClosingTime" class="form-control inputClass rounded" />
                                     <span asp-validation-for="ClosingTime" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label asp-for="LateTime" class="control-label col-form-label col-md-2 text-md-right"></label>
+                                <label asp-for="LateTime" class="control-label col-form-label col-md-2 text-md-end"></label>
                                 <div class="col-md-4">
                                     <input type="time" asp-for="LateTime" class="form-control inputClass rounded" />
                                     <span asp-validation-for="LateTime" class="text-danger"></span>
                                 </div>
 
-                                <label asp-for="Banner" class="control-label col-form-label col-md-2 text-md-right"></label>
+                                <label asp-for="Banner" class="control-label col-form-label col-md-2 text-md-end"></label>
                                 <div class="col-md-4">
                                     <input type="hidden" asp-for="Banner" />
                                     <input type="file" name="banner" class="col-form-label imageClass" id="BannerId" />
@@ -249,7 +249,7 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label asp-for="Logo" class="control-label col-form-label col-md-2 text-md-right"></label>
+                                <label asp-for="Logo" class="control-label col-form-label col-md-2 text-md-end"></label>
                                 <div class="col-md-4">
 
                                     <input hidden asp-for="Logo" class="col-form-label" />
@@ -262,7 +262,7 @@
                                     </div>
                                 </div>
 
-                                <label asp-for="FavIcon" class="control-label col-form-label col-md-2 text-md-right"></label>
+                                <label asp-for="FavIcon" class="control-label col-form-label col-md-2 text-md-end"></label>
                                 <div class="col-md-4">
                                     <input asp-for="FavIcon" type="hidden" />
                                     <input type="file" accept="ico/png" name="fav_Icon" id="fav_Icon" class="col-form-label inputClass" />

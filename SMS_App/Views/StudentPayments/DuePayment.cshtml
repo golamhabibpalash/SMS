@@ -32,7 +32,7 @@
     </style>
 }
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="row">
             <div class="col-md-12">
                 <fieldset class="border-primary p-2 border">
@@ -40,7 +40,7 @@
                         style="font-size: 1.1rem; position: relative;">Select Criteria</legend>
                     <form id="studentInfoForm" asp-action="DuePayment">
                         <div class="form-group row">
-                            <label asp-for="AcademicClassId" class="col-md-4 col-form-label text-md-right">Academic Class :</label>
+                            <label asp-for="AcademicClassId" class="col-md-4 col-form-label text-md-end">Academic Class :</label>
                             <div class="col-md-8">
                                 <select class="form-control" asp-for="AcademicClassId" asp-items="Model.AcademicClassList">
                                     <option selected disabled value="">Select Academic Class</option>
@@ -50,7 +50,7 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label asp-for="AcademicSectionId" class="col-md-4 col-form-label text-md-right">Section :</label>
+                            <label asp-for="AcademicSectionId" class="col-md-4 col-form-label text-md-end">Section :</label>
                             <div class="col-md-8">
                                 <select class="form-control" asp-for="AcademicSectionId" asp-items="Model.AcademicSectionList">
                                     <option selected disabled value="">Select Academic Section</option>
@@ -58,14 +58,14 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label asp-for="ResidentialStatus" class="col-md-4 col-form-label text-md-right">Is Residential :</label>
+                            <label asp-for="ResidentialStatus" class="col-md-4 col-form-label text-md-end">Is Residential :</label>
                             <div class="col-md-8">
                                 <select class="form-control" name="isResidential" asp-items="@Model.StudentCategorySelectList">
                                 </select>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label asp-for="StudentStatus" class="col-md-4 col-form-label text-md-right">Status :</label>
+                            <label asp-for="StudentStatus" class="col-md-4 col-form-label text-md-end">Status :</label>
                             <div class="col-md-8">
                                 <select class="form-control" name="status" asp-items="@Model.StudentStatusSelectList">
                                 </select>
@@ -89,7 +89,7 @@
                     </form>
                 </fieldset><br />
                 <div class="row m-2" id="exportPortion" style="visibility:hidden">
-                    <div class="col-md-3 offset-md-9 text-md-right">
+                    <div class="col-md-3 offset-md-9 text-md-end">
                         <!-- Add a button to trigger the export -->
                         @*<button id="exportPdfButton">Export to PDF</button>*@
 
@@ -105,7 +105,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-8" id="iframe-container" style="overflow:scroll;height:800px">
+    <div class="col-md-9 p-3 bg-blue-sky" id="iframe-container" style="overflow:scroll;height:800px">
         @if (Model.DuePayments != null && Model.DuePayments.Count() > 0)
         {
             <table class="table table-hover table-bordered table-striped display" id="myTable" style="width:100%;">
@@ -114,17 +114,20 @@
                         <td colspan="7" class="text-center pb-0 mb-0">
 
                             <div class="row">
-                                <div class="col-md-5 text-md-right">
-                                    <img src="~/Images/Institute/@Model.Institute.Logo" alt="Alternate Text" style="width:100px" />
+                                <div class="col-md-5 text-md-end">
+                                    <img src="~/Images/Institute/@Model.Institute.Logo" 
+                                        alt="Alternate Text"
+                                        style="width:100px" 
+                                        onerror="this.onerror=null;this.src='/images/institute/smslogo.png';" />
                                 </div>
-                                <div class="col-md-7 text-md-left">
+                                <div class="col-md-7 text-md-start">
                                     <h2 class="text-info font-weight-bolder"> @Model.Institute.Name</h2>
                                     <h5 class="h5">@Model.Institute.Address</h5>
                                     <h6 class="font-italic" style="text-decoration:underline">Due Payment (Current)</h6>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-6 text-md-left">
+                                <div class="col-md-6 text-md-start">
                                     @if (Model.AcademicClass != null)
                                     {
                                         @Model.AcademicClass.Name
@@ -136,7 +139,7 @@
                                         ViewBag.ClassName = "All Class";
                                     }
                                 </div>
-                                <div class="col-md-6 text-md-right"><span>Date:@DateTime.Now.ToString("dd MMM yyyy")</span> </div>
+                                <div class="col-md-6 text-md-end"><span>Date:@DateTime.Now.ToString("dd MMM yyyy")</span> </div>
                             </div>
                         </td>
                     </tr>
@@ -192,11 +195,11 @@
                             <td class="text-right">@item.TotalDue</td>
                             <td class="text-center action">
                                 <span class="btn-group-sm">
-                                    <a class="btn-sm btn-group-sm btn-info" asp-action="StudentPaymentInfoExport" asp-controller="Reports" asp-route-reportType="pdf" asp-route-fileName="payment_report_@item.Student.ClassRoll" asp-route-classRoll="@item.Student.ClassRoll" asp-route-fromDate="@item.Student.AdmissionDate.ToString("yyyy-MM-dd")" asp-route-toDate="@DateTime.Today.ToString("yyyy-MM-dd")" target="_blank">
+                                    <a class="btn btn-sm btn-group-sm btn-info" asp-action="StudentPaymentInfoExport" asp-controller="Reports" asp-route-reportType="pdf" asp-route-fileName="payment_report_@item.Student.ClassRoll" asp-route-classRoll="@item.Student.ClassRoll" asp-route-fromDate="@item.Student.AdmissionDate.ToString("yyyy-MM-dd")" asp-route-toDate="@DateTime.Today.ToString("yyyy-MM-dd")" target="_blank">
                                         <span class="fa fa-file"></span> Pay Slip
                                     </a>
-                                    <a class="btn-sm btn-group-sm btn-primary" asp-action="Details" asp-controller="Students" asp-fragment="financials" asp-route-tabName="financials" asp-route-id="@item.Student.Id">details</a>
-                                    <a class="btn-sm btn-group-sm btn-success" asp-action="Payment" asp-controller="StudentPayments" asp-route-stRoll="@item.Student.ClassRoll">Pay</a>
+                                    <a class="btn btn-sm btn-group-sm btn-primary" asp-action="Details" asp-controller="Students" asp-fragment="financials" asp-route-tabName="financials" asp-route-id="@item.Student.Id">details</a>
+                                    <a class="btn btn-sm btn-group-sm btn-success" asp-action="Payment" asp-controller="StudentPayments" asp-route-stRoll="@item.Student.ClassRoll">Pay</a>
                                 </span>
                             </td>
                         </tr>

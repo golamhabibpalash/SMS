@@ -57,7 +57,7 @@ $('#QCreateVM_AcademicSubjectId').change(function () {
             let j = 1;
             for (var i = 0; i < data.questionFormat.numberOfQuestion; i++) {
                 
-                let lbl = '<label asp-for="QCreateVM.QuestionDetails[' + i + '].QuestionText" class="form-label col-md-2 col-2 text-md-right col-form-label bg-lightgray">Q. (' + j + ')</label>';
+                let lbl = '<label asp-for="QCreateVM.QuestionDetails[' + i + '].QuestionText" class="form-label col-md-2 col-2 text-md-end col-form-label bg-lightgray">Q. (' + j + ')</label>';
                 let inputDiv = '<div class="col-md-10 col-10"><input name="QCreateVM.QuestionDetails[' + i + '].QuestionText" class="form-control" required /></div>';
                 let myDiv = '<div class="form-group row pb-2">' + lbl + inputDiv + '</div>';
                 $('#qDetailsDivId').append(myDiv);

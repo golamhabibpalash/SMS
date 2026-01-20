@@ -31,7 +31,7 @@
                                 </div>
                                 @*</div>
                             <div class="form-group row">*@
-                                <label class="col-form-label col-md-3 text-sm-left text-md-right" asp-for="AcademicSessionId"></label>
+                                <label class="col-form-label col-md-3 text-sm-left text-md-end" asp-for="AcademicSessionId"></label>
                                 <div class="col-md-3">
                                     <select asp-for="AcademicSessionId" asp-items="ViewBag.AcademicSessionList" class="form-control" onchange="createExamName()">
                                         <option selected disabled>-Select Academic Session-</option>
@@ -50,7 +50,7 @@
                                 </div>
                                 @*</div>
                             <div class="form-group row">*@
-                                <label class="col-form-label col-md-3 text-sm-left text-md-right" asp-for="AcademicSectionId"></label>
+                                <label class="col-form-label col-md-3 text-sm-left text-md-end" asp-for="AcademicSectionId"></label>
                                 <div class="col-md-3">
                                     <select asp-for="AcademicSectionId" asp-items="ViewBag.AcademicSectionList" class="form-control" onchange="createExamName()">
                                         <option disabled selected>Select Class First</option>
@@ -71,7 +71,7 @@
                                     </select>
                                     <span asp-validation-for="MonthId" class="text-danger"></span>
                                 </div>
-                                <label class="col-form-label col-md-3 text-sm-left text-md-right" asp-for="MonthId">How Many Exam</label>
+                                <label class="col-form-label col-md-3 text-sm-left text-md-end" asp-for="MonthId">How Many Exam</label>
                                 <div class="col-md-3">
                                     <input type="number" id="ExamCount" value="" class="form-control" />
                                     <span asp-validation-for="MonthId" class="text-danger"></span>
@@ -125,7 +125,7 @@
                                 <span asp-validation-for="AcademicSubjectId" class="text-danger"></span>
                             </div>
 
-                            <label class="col-form-label col-md-2 text-sm-left text-md-right" asp-for="EmployeeId"></label>
+                            <label class="col-form-label col-md-2 text-sm-left text-md-end" asp-for="EmployeeId"></label>
                             <div class="col-md-2">
                                 <select asp-for="EmployeeId" asp-items="Model.TeacherList" class="form-control" onchange="createExamName()">
                                     <option selected disabled>Select Exam Teacher</option>
@@ -133,7 +133,7 @@
                                 <span asp-validation-for="EmployeeId" class="text-danger"></span>
                             </div>
 
-                            <label class="col-form-label col-md-2 text-sm-left text-md-right" asp-for="TotalMarks"></label>
+                            <label class="col-form-label col-md-2 text-sm-left text-md-end" asp-for="TotalMarks"></label>
                             <div class="col-md-2">
                                 <input asp-for="TotalMarks" class="form-control" min="10" max="100" />
                                 <span asp-validation-for="TotalMarks" class="text-danger"></span>

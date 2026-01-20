@@ -12,7 +12,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group row">
-                <label asp-for="Name" class="control-label col-md-2 col-form-label text-md-right">
+                <label asp-for="Name" class="control-label col-md-2 col-form-label text-md-end">
                     Fee Head Name
                 </label>
                 <div class="col-md-6">
@@ -33,14 +33,14 @@
             </div>
 
             <div class="form-group row">
-                <label asp-for="YearlyFrequency" class="control-label col-md-2 col-form-label text-md-right"></label>
+                <label asp-for="YearlyFrequency" class="control-label col-md-2 col-form-label text-md-end"></label>
                 <div class="col-md-6">
                     <input asp-for="YearlyFrequency" class="form-control" placeholder="1/2/3.../12" />
                     <span asp-validation-for="YearlyFrequency" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="ContraFeeheadId" class="control-label col-md-2 col-form-label text-md-right"></label>
+                <label asp-for="ContraFeeheadId" class="control-label col-md-2 col-form-label text-md-end"></label>
                 <div class="col-md-6">
                     <select class="form-control" asp-for="ContraFeeheadId" asp-items="ViewBag.StudentFeeHeadList">
                         <option selected disabled>-Select Contra Type-</option>
@@ -50,7 +50,7 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="SL" class="control-label col-md-2 col-form-label text-md-right"></label>
+                <label asp-for="SL" class="control-label col-md-2 col-form-label text-md-end"></label>
                 <div class="col-md-6">
                     <input asp-for="SL" class="form-control" placeholder="0,1,2,3,4,......" />
                     <span asp-validation-for="SL" class="text-danger"></span>

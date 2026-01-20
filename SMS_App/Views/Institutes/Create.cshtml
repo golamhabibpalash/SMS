@@ -10,7 +10,7 @@
         <form asp-action="Create" enctype="multipart/form-data" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group row">
-                <label asp-for="Name" class="control-label col-md-2 text-md-right col-form-label"></label>
+                <label asp-for="Name" class="control-label col-md-2 text-md-end col-form-label"></label>
                 <div class="col-md-8">
                     <input asp-for="Name" class="form-control" />
                     <span asp-validation-for="Name" class="text-danger"></span>
@@ -18,7 +18,7 @@
             </div>
 
 @*            <div class="form-group row">
-                <label asp-for="ISO" class="control-label col-md-2 text-md-right col-form-label"></label>
+                <label asp-for="ISO" class="control-label col-md-2 text-md-end col-form-label"></label>
                 <div class="col-md-8">
                     <input asp-for="ISO" class="form-control" />
                     <span asp-validation-for="ISO" class="text-danger"></span>
@@ -26,7 +26,7 @@
             </div>*@
 
             <div class="form-group row">
-                <label asp-for="EIIN" class="control-label col-md-2 text-md-right col-form-label"></label>
+                <label asp-for="EIIN" class="control-label col-md-2 text-md-end col-form-label"></label>
                 <div class="col-md-8">
                     <input asp-for="EIIN" class="form-control" />
                     <span asp-validation-for="EIIN" class="text-danger"></span>
@@ -34,14 +34,14 @@
             </div>
 
             <div class="form-group row">
-                <label asp-for="Slogan" class="control-label col-md-2 text-md-right col-form-label"></label>
+                <label asp-for="Slogan" class="control-label col-md-2 text-md-end col-form-label"></label>
                 <div class="col-md-8">
                     <input asp-for="Slogan" class="form-control" />
                     <span asp-validation-for="Slogan" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="Banner" class="control-label col-md-2 text-md-right col-form-label"></label>
+                <label asp-for="Banner" class="control-label col-md-2 text-md-end col-form-label"></label>
                 <div class="col-md-8 input-group">
                     <div class="custom-file">
                         <input name="banner" type="file" class="custom-file-input" id="inputGroupFile01">
@@ -51,7 +51,7 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="Logo" class="control-label col-md-2 text-md-right col-form-label"></label>
+                <label asp-for="Logo" class="control-label col-md-2 text-md-end col-form-label"></label>
                 <div class="input-group col-md-8">
                     <div class="custom-file">
                         <input name="logo" type="file" class="custom-file-input" id="inputGroupFile02">
@@ -61,14 +61,14 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="Address" class="control-label col-md-2 text-md-right col-form-label"></label>
+                <label asp-for="Address" class="control-label col-md-2 text-md-end col-form-label"></label>
                 <div class="col-md-8">
                     <input asp-for="Address" class="form-control" />
                     <span asp-validation-for="Address" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="BranchName" class="control-label col-md-2 text-md-right col-form-label">Branch Name</label>
+                <label asp-for="BranchName" class="control-label col-md-2 text-md-end col-form-label">Branch Name</label>
                 <div class="col-md-8">
                     <input asp-for="BranchName" class="form-control" />
                     <span asp-validation-for="BranchName" class="text-danger"></span>

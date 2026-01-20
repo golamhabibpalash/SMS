@@ -6,17 +6,16 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SMS.BLL.Contracts;
+using SMS.Entities;
+using SMS_App.Utilities.LoggerService;
 using SMS_App.Utilities.MACIPServices;
 using SMS_App.Utilities.ShortMessageService;
 using SMS_App.ViewModels.Employees;
-using SMS.BLL.Contracts;
-using SMS.Entities;
 using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Runtime.CompilerServices;
-using SMS_App.Utilities.LoggerService;
 
 
 namespace SMS_App.Controllers;
@@ -331,8 +330,8 @@ public class EmployeesController : Controller
 
         await _appLogger.InfoAsync($"Before Upload Files.");
         // FILE UPLOAD HANDLING
-        employeeVM.Image = await SaveFileIfProvided(Image, $"{id.ToString()}_image_", "Images/Employee/photo", employeeVM.Image);
-        employeeVM.NIDCard = await SaveFileIfProvided(NIDCard, $"{id.ToString()}_NID_", "Images/Employee/NID", employeeVM.NIDCard);
+        employeeVM.Image = await SaveFileIfProvided(Image, $"{id.ToString()}_image_", "Images/Employee/photo", existingEmployee.Image);
+        employeeVM.NIDCard = await SaveFileIfProvided(NIDCard, $"{id.ToString()}_NID_", "Images/Employee/NID", existingEmployee.NIDCard);
 
         await _appLogger.InfoAsync($"Employee image {employeeVM.Image} uploaded.");
 

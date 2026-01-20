@@ -46,7 +46,7 @@ public class EmployeeEditVM
     [Display(Name = "Nominee Name")]
     public string? Nominee { get; set; }
 
-    [RegularExpression(@"^$|^(01[3-9][0-9]{8})$", ErrorMessage = "Enter a valid phone number.")]
+    [Range(01300000000, 01999999999,ErrorMessage = "Enter a valid phone number.")]
     public string? NomineePhone { get; set; }
 
     [Display(Name = "Employee Type")]

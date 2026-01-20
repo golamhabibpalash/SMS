@@ -50,7 +50,6 @@
                             <div class="col-md-6">
                                 <input asp-for="Image" type="file" class="" id="empImage" />
                                 <span asp-validation-for="Image" class="text-danger"></span>
-                                <input type="hidden" name="@Model.Image" value="@Model.Image" />
                             </div>
                         </div>
                         <div class="form-group row">
@@ -70,9 +69,14 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4 text-center h-100" style=" background: #e6e9ea">
+                    <div class="col-md-4 text-center" style=" background: #e6e9ea">
                         <span id="empImageHolder" class="align-middle">
-                            <img class="shadow align-middle" id="blah" src="~/Images/Employee/photo/@Model.Image" alt="your image" style="width:100px; height:120px;" />
+                            <img class="shadow align-middle"
+                                 id="blah" 
+                                 src="~/Images/Employee/photo/@Model.Image" 
+                                 alt="your image" 
+                                 style="width:100px; height:120px;" 
+                                 onerror="this.onerror=null;this.src='/images/Employee/photo/maleEmployee.png';" />
                         </span>
                     </div>
                 </div>

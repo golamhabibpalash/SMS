@@ -16,6 +16,13 @@ public interface IAppLogger
         [CallerLineNumber] int lineNumber = 0,
         [CallerMemberName] string memberName = ""
     );
+    Task WarningAsync(
+        string message,
+        string exception = "No Exception",
+        [CallerFilePath] string filePath = "",
+        [CallerLineNumber] int lineNumber = 0,
+        [CallerMemberName] string memberName = ""
+    );
 
     Task ErrorAsync(
         string message,
@@ -46,6 +53,17 @@ public class AppLogger : IAppLogger
         await WriteLogAsync("Info", message, exception, filePath, lineNumber, memberName);
     }
 
+    public async Task WarningAsync(
+        string message,
+        string exception = "No Exception",
+        [CallerFilePath] string filePath = "",
+        [CallerLineNumber] int lineNumber = 0,
+        [CallerMemberName] string memberName = ""
+    )
+    {
+        await WriteLogAsync("Warning", message, exception, filePath, lineNumber, memberName);
+    }
+
     public async Task ErrorAsync(
         string message,
         string exception,
@@ -70,7 +88,7 @@ public class AppLogger : IAppLogger
         {
             Level = level,
             Exception = exception,
-            MessageTemplate = $"{Path.GetFileNameWithoutExtension(filePath)}.{memberName} (line {lineNumber})",
+            MessageTemplate = $"{Path.GetFileNameWithoutExtension(filePath)}.{memberName} (line : {lineNumber})",
             Message = message,
             Timestamp = DateTime.Now
         });

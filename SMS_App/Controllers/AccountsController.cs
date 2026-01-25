@@ -4,12 +4,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using SMS.BLL.Contracts;
+using SMS.Entities;
 using SMS_App.Utilities.EmailServices;
+using SMS_App.Utilities.LoggerService;
 using SMS_App.Utilities.MACIPServices;
 using SMS_App.Utilities.ShortMessageService;
 using SMS_App.ViewModels.AdministrationVM;
-using SMS.BLL.Contracts;
-using SMS.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,9 +30,10 @@ public class AccountsController : Controller
     private readonly IInstituteManager _instituteManager;
     private readonly ILogger<AccountsController> _logger;
     private readonly ILogManager _logManager;
+    private readonly IAppLogger _appLogger;
     //private readonly ApplicationDbContext _context;
 
-    public AccountsController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IStudentManager studentManager, IEmployeeManager employeeManager, RoleManager<IdentityRole> roleManager, IPhoneSMSManager phoneSMSManager, IInstituteManager instituteManager, ILogger<AccountsController> logger, ILogManager logManager)
+    public AccountsController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IStudentManager studentManager, IEmployeeManager employeeManager, RoleManager<IdentityRole> roleManager, IPhoneSMSManager phoneSMSManager, IInstituteManager instituteManager, ILogger<AccountsController> logger, ILogManager logManager, IAppLogger appLogger = null)
     {
         _signInManager = signInManager;
         _userManager = userManager;
@@ -42,6 +44,7 @@ public class AccountsController : Controller
         _instituteManager = instituteManager;
         _logger = logger;
         _logManager = logManager;
+        _appLogger = appLogger;
     }
 
     [HttpGet]
@@ -204,28 +207,17 @@ public class AccountsController : Controller
 
                     if (appUser.UserType == 's')
                     {
+                        await _appLogger.InfoAsync($"{model.AppUser} is Succeeded to login and redirected to Student Profile.");
                         return RedirectToAction("profile", "students", new { id = appUser.ReferenceId });
                     }
                     if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl) && model.ReturnUrl != "/")
                     {
-                        await _logManager.AddAsync(new Log {
-                            Level = "Info",
-                            Exception = "AccountsController Login method",
-                            MessageTemplate = "",
-                            Message = $"{model.AppUser} is Succeeded to login and redirected to {model.ReturnUrl}",
-                            Timestamp = DateTime.Now,
-                        });
+                        await _appLogger.InfoAsync($"{model.AppUser} is Succeeded to login and redirected to {model.ReturnUrl}");
                         return Redirect(model.ReturnUrl);
                     }
                     else
-                    {
-                        await _logManager.AddAsync(new Log {
-                            Level = "Info",
-                            Exception = "AccountsController Login method",
-                            MessageTemplate = "",
-                            Message = $"{model.AppUser} is Succeeded to login and redirected to home.",
-                            Timestamp = DateTime.Now,
-                        });
+                    {   
+                        await _appLogger.InfoAsync($"{model.AppUser} is Succeeded to login and redirected to home.");
                         return RedirectToAction("index", "home");
                     }
                 }
@@ -237,14 +229,7 @@ public class AccountsController : Controller
                 model.Error = e.Message;
 
                 model.Error = e.Message;
-                _logger.LogError(e, "Error during login for user {User}", model.AppUser);
-                await _logManager.AddAsync(new Log {
-                    Level = "Error",
-                    Exception = e.Message,
-                    MessageTemplate = e.StackTrace,
-                    Message = e.StackTrace,
-                    Timestamp = DateTime.UtcNow
-                });
+                await _appLogger.ErrorAsync($"Error during login for user {User}", e.Message);
             }
         }
         return View(model);

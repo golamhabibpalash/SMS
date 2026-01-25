@@ -387,10 +387,8 @@ public class StudentsController : Controller
     [Authorize(Policy = "CreateStudentsPolicy")]
     public async Task<IActionResult> Create([Bind("Id,Name,NameBangla,ClassRoll,FatherName,MotherName,AdmissionDate,Email,PhoneNo,Photo,DOB,BirthCertificateNo,BirthCertificateImage,ReligionId,GenderId,BloodGroupId,NationalityId,PresentAddressArea,PresentAddressPO,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddressArea,PermanentAddressPO,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,AcademicSessionId,AcademicClassId,AcademicSectionId,AddressInfo,PreviousSchool,Status,CreatedBy,CreatedAt,EditedBy,EditedAt,GuardianPhone,MACAddress,IsResidential,SMSService, UniqueId")] StudentCreateVM newStudent, IFormFile sPhoto, IFormFile DOBFile)
     {
-        await _appLogger.InfoAsync($"Enter method");
         newStudent.ClassRoll = await CreateRoll(newStudent.AcademicSessionId, newStudent.AcademicClassId, newStudent.ClassRoll);
         var rollIsExist = await _studentManager.GetStudentByClassRollAsync(newStudent.ClassRoll);
-        await _appLogger.InfoAsync($"Roll Checking done");
         if (rollIsExist == null)
         {
             try
@@ -410,7 +408,6 @@ public class StudentsController : Controller
 
                     var student = _mapper.Map<Student>(newStudent);
                     student.UniqueId = await GenerateUniquId(student);
-                    await _appLogger.InfoAsync($"Unique Id generated: {student.UniqueId}");
                     if (sPhoto != null && sPhoto.Length > 0)
                     {
                         await _appLogger.InfoAsync($"Image Processing Started");
@@ -576,8 +573,9 @@ public class StudentsController : Controller
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                await _appLogger.ErrorAsync(e.Message,e.StackTrace);
                 throw;
             }
         }

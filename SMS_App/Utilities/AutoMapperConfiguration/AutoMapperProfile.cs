@@ -6,6 +6,7 @@ using SMS_App.ViewModels.ModuleSubModuleVM;
 using SMS_App.ViewModels.SetupVM;
 using SMS_App.ViewModels.Students;
 using SMS.Entities;
+using SMS_App.ViewModels.LogVM;
 
 namespace SMS_App.Utilities.AutoMapperConfiguration
 {
@@ -43,6 +44,8 @@ namespace SMS_App.Utilities.AutoMapperConfiguration
 
             CreateMap<AppliedStudent, AppliedStudentVM>().ReverseMap();
             CreateMap<AcademicExam, AcademicExamDetailVM>().ReverseMap();
+
+            CreateMap<Log, ActivityLogVM>().ReverseMap();
 
         }
     }

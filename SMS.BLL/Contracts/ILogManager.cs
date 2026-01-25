@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using SMS.BLL.Contracts.Base;
 using SMS.Entities;
 

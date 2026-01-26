@@ -1,9 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using SMS.BLL.Contracts;
-using SMS.Entities;
-using SMS_App.Utilities.LoggerService;
 using SMS_App.Utilities.Pagination;
 using SMS_App.ViewModels.LogVM;
 using System;

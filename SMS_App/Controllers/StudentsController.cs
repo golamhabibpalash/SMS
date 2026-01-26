@@ -887,12 +887,17 @@ public class StudentsController : Controller
             {
                 if (existingStudent.AdmissionDate.Date <= Convert.ToDateTime(operationDate).Date)
                 {
-
                     existingStudent.Status = studentStatus;
                     existingStudent.EditedBy = HttpContext.Session.GetString("UserId");
                     existingStudent.EditedAt = DateTime.Now;
                     existingStudent.MACAddress = MACService.GetMAC();
                     isStudentUpdated = await _studentManager.UpdateAsync(existingStudent);
+                    var user = await _userManager.FindByIdAsync(HttpContext.Session.GetString("UserId"));
+                    await _appLogger.InfoAsync($"{existingStudent.Name} status has been changed to {studentStatus} by {user.Email}");
+                }
+                else
+                {
+                    await _appLogger.WarningAsync("Admission Date is bigger than change status date");
                 }
             }
             else

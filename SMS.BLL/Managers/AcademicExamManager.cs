@@ -453,4 +453,13 @@ public class AcademicExamManager : Manager<AcademicExam>, IAcademicExamManager
         }
         return totalExamsCount;
     }
+
+    public async Task<List<AcademicClass>> GetAcademicClassListByGroupIdAsync(int groupId)
+    {
+        List<AcademicClass> classes = new List<AcademicClass>();
+        classes = await _repository.Table.Where(s => s.AcademicExamGroupId == groupId).Select(s => s.AcademicClass).DistinctBy(c => c.Id).ToListAsync();
+        
+        return classes;
+    }
+
 }

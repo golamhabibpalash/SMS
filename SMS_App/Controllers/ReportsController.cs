@@ -1060,6 +1060,8 @@ public class ReportsController : Controller
 
         if (results == null || results.Count == 0)
             return new JsonResult("Result not found");
+        // Get highest marks
+        var highestMarks = results.Max(r => r.TotalObtainMarks).ToString();
 
         if (sectionId.HasValue && sectionId.Value > 0)
             results = results.Where(s => s.AcademicSectionId == sectionId).ToList();
@@ -1070,20 +1072,21 @@ public class ReportsController : Controller
         if (results.Count == 0)
             return new JsonResult("Result not found");
 
-        // 2️⃣ Get highest marks
-        var highestMarks = results.Max(r => r.TotalObtainMarks).ToString();
 
-        // 3️⃣ Get institute info
+        // Get institute info
         Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
 
-        // 4️⃣ Prepare institute logo (cross-platform)
-        var instituteLogoPath = Path.Combine(
-            _host.WebRootPath,
-            "Images",
-            "Institute",
-            institute.Logo
-        );
-
+        // Prepare institute logo (cross-platform)
+        var logoFileName = string.IsNullOrWhiteSpace(institute.Logo) ? "smslogo.png" : institute.Logo; 
+        
+        var instituteLogoPath = Path.Combine(_host.WebRootPath, "Images", "Institute", logoFileName); 
+        
+        if (!System.IO.File.Exists(instituteLogoPath))
+        { 
+            // fallback to default logo if the given one is missing
+            instituteLogoPath = Path.Combine( _host.WebRootPath, "Images", "Institute", "smslogo.png"); 
+        }
+        
         string imageParam = string.Empty;
         if (System.IO.File.Exists(instituteLogoPath))
         {
@@ -1091,13 +1094,13 @@ public class ReportsController : Controller
             imageParam = "data:image/png;base64," + Convert.ToBase64String(imageBytes);
         }
 
-        // 5️⃣ Prepare RDLC report path (cross-platform)
-        var reportPath = Path.Combine(
-            _host.WebRootPath,
-            "Reports",
-            "ExamResult",
-            "Rpt_MarkSheet.rdlc"
-        );
+            // 5️⃣ Prepare RDLC report path (cross-platform)
+            var reportPath = Path.Combine(
+                _host.WebRootPath,
+                "Reports",
+                "ExamResult",
+                "Rpt_MarkSheet.rdlc"
+            );
 
         if (!System.IO.File.Exists(reportPath))
             return new JsonResult($"RDLC file not found at: {reportPath}");

@@ -403,7 +403,7 @@ public class ExamResultsController : Controller
                 examResult.StudentId = student.Id;
                 examResult.AcademicClassId = classId;
                 examResult.TotalObtainMarks = await GetTotalObtainMarkFromExam(groupId, student.Id);
-                string gpa = (await GetCgpaPointFromExam(groupId, student.Id)).ToString("F2");
+                string gpa = (await GetCgpaPointFromExam(groupId, student.Id, student.AcademicClassId)).ToString("F2");
                 examResult.CGPA = Convert.ToDouble(gpa);
                 examResult.FinalGrade = await GetGradeByPoint(examResult.CGPA);
                 examResult.GradeComments = await GetGradeComments(examResult.CGPA);
@@ -694,17 +694,18 @@ public class ExamResultsController : Controller
         }
         return totalObtainMark;
     }
-    private async Task<double> GetCgpaPointFromExam(int examGroupId, int studentId)
+    private async Task<double> GetCgpaPointFromExam(int examGroupId, int studentId, int academicClassId)
     {
         double cgpaPoint = 0;
-        int totalSubject = 0;
+        int totalSubject = await _academicExamManager.GetTotalExamAsync(examGroupId, academicClassId);
         double totalGPA = 0;
         var eDetails = await _academicExamDetailsManager.GetAllByExamGroupAndStudentId(examGroupId, studentId);
+        int totalAttendedSub = 0;
         if (eDetails.Count() > 0)
         {
             foreach (var e in eDetails)
             {
-                totalSubject++;
+                totalAttendedSub++;
                 double gpa = await GetGradePointByNumber((e.ObtainMark * 100) / e.AcademicExam.TotalMarks);
                 if (gpa <= 0)
                 {
@@ -713,7 +714,10 @@ public class ExamResultsController : Controller
                 }
                 totalGPA += gpa;
             }
-            cgpaPoint = totalGPA / totalSubject;
+            if (totalAttendedSub == totalSubject)
+            {
+                cgpaPoint = totalGPA / totalSubject;
+            }
         }
         return cgpaPoint;
     }

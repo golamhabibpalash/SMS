@@ -15,14 +15,10 @@ namespace SMS_App.Controllers;
 
 public class LogsController : Controller
 {
-    private readonly ILogger<LogsController> _logger;
     private readonly ILogManager _logManager;
-    private readonly IAppLogger _appLogger;
     private readonly IMapper _mapper;
-    public LogsController(ILogger<LogsController> logger, ILogManager logManager, IAppLogger appLogger = null, IMapper mapper = null)
+    public LogsController(ILogManager logManager, IMapper mapper = null)
     {
-        _logger = logger;
-        _appLogger = appLogger;
         _logManager = logManager;
         _mapper = mapper;
     }

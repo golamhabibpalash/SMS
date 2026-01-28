@@ -740,7 +740,7 @@ public class ExamResultsController : Controller
         // Start fail count with missing exams
         int totalFail = missingExams;
 
-        if (examDetails == null || examDetails.Count == 0)
+        if (examDetails == null || examDetails?.Count == 0)
             return totalFail;
 
         // Check each exam result

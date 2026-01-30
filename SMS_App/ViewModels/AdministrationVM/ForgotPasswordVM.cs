@@ -8,8 +8,8 @@ namespace SMS_App.ViewModels.AdministrationVM
 {
     public class ForgotPasswordVM
     {
-        public string Email { get; set; }
+        public required string Email { get; set; }
         public string Name { get; set; }
-        public string verificationBy { get; set; }
+        public string VerificationBy { get; set; }
     }
 }

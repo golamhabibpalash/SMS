@@ -1,79 +1,91 @@
-﻿@model SMS.Entities.Student
+﻿@using SMS.Entities.AdditionalModels.StudentVM
+@model StudentProfileVM
 @{
     Layout = "~/Views/Shared/_StudentLayout.cshtml";
 }
-@{ 
-    ViewData["Title"] = "Profile ("+Model.Name+")";
+@{
+    ViewData["Title"] = "Profile ("+Model.Student.Name+")";
     GlobalUI.PageTitle = ViewBag.Title;
 }
 
-<div class="row">
-    @*<div class="col-md-6">
-        <img class="rounded-circle" src="~/Images/Student/noimage.jpg" alt="@Model.Name Photo" />
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Profile Sidebar -->
+        <div class="col-lg-3 mb-4">
+            <partial name="_profileStudent" model="Model.Student" />
+        </div>
 
-        @if (string.IsNullOrEmpty(Model.Photo))
-        {
-            <img class="rounded-circle" src="~/Images/Student/noimage.jpg" alt="@Model.Name Photo" />
-        }
-        else
-        {
-            <img class="rounded-circlerounded-circlerounded-circlerounded-circle" src="~/Images/Student/@Model.Photo" alt="@Model.Name Photo" />
-        }
-    </div>*@
-    <div class="col-md-6 flex align-items-center">
-        <button class="btn btn-danger">This page is underconstruction</button>
+        <!-- Main Content -->
+        <div class="col-lg-9">
+            <!-- Navigation Tabs -->
+            <ul class="nav nav-tabs mb-4" id="profileTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="attendance-tab" data-bs-toggle="tab" data-bs-target="#attendance" type="button" role="tab" aria-controls="attendance" aria-selected="true">
+                        <i class="bi bi-calendar-check me-2"></i>Attendance
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="results-tab" data-bs-toggle="tab" data-bs-target="#results" type="button" role="tab" aria-controls="results" aria-selected="false">
+                        <i class="bi bi-trophy me-2"></i>Results
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="payment-tab" data-bs-toggle="tab" data-bs-target="#payment" type="button" role="tab" aria-controls="payment" aria-selected="false">
+                        <i class="bi bi-credit-card me-2"></i>Payment
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="documents-tab" data-bs-toggle="tab" data-bs-target="#documents" type="button" role="tab" aria-controls="documents" aria-selected="false">
+                        <i class="bi bi-file-earmark-text me-2"></i>Documents
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Tab Content -->
+            <div class="tab-content" id="profileTabsContent">
+                <!-- Attendance Tab -->
+                <partial name="_profileAttendance" model="Model.Attendances" />
+                
+
+                <!-- Results Tab -->
+                <partial name="_profileResult" model="Model.Results" />
+
+                <!-- Payment Tab -->
+                <partial name="_profilePayment" model="Model.Payments" />
+
+                <!-- Documents Tab -->
+                <partial name="_profileDocuments" model="Model.Documents" />
+            </div>
+        </div>
     </div>
 </div>
 
-@*<div class="row">
-    <div class="col-md-12 m-2">
-        @if (ViewBag.activeStatus != null)
-        {
-            <span class="alert alert-warning">@ViewBag.activeStatus</span>
+@section Styles {
+    <style>
+        .card {
+            border-radius: 10px;
         }
-        @if (ViewBag.attendance != null)
-        {
-            <span class="alert alert-info">@ViewBag.attendance</span>
+
+        .nav-tabs .nav-link {
+            color: #495057;
+            font-weight: 500;
         }
-        @if (ViewBag.absent != null)
-        {
-            <span class="alert alert-danger">@ViewBag.absent</span>
+
+            .nav-tabs .nav-link.active {
+                color: #0d6efd;
+                font-weight: 600;
+            }
+
+        .progress {
+            border-radius: 5px;
         }
-        @if (ViewBag.lateAttendance != null)
-        {
-            <span class="alert alert-warning">@ViewBag.lateAttendance</span>
+
+        .table th {
+            font-weight: 600;
         }
-    </div>
-</div>*@
-@*<hr />
-<div class="row text-light">
-    <div class="col-md-3">
-        <div class="card bg-info">
-            <div class="card-header">Todays Exam</div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card bg-info">
-            <div class="card-header">Todays Class</div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card bg-info">
-            <div class="card-header">Todays Class</div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card bg-info">
-            <div class="card-header">Todays Exam</div>
-        </div>
-    </div>
-</div>
-<div class="card">
-    <table>
-        <tr>
-            <td>Name</td>
-            <td>:</td>
-            <td>@Model.Name</td>
-        </tr>
-    </table>
-</div>*@
+
+        .card-header h5 {
+            font-weight: 600;
+        }
+    </style>
+}

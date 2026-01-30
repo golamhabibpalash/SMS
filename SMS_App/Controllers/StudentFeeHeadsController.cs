@@ -231,7 +231,7 @@ namespace SMS_App.Controllers
         {
             if (sessionId == null)
             {
-                AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSession();
+                AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSessionAsync();
                 sessionId = academicSession.Id;
             }
             var feeHead = await _studentFeeHeadManager.GetByIdAsync(id);

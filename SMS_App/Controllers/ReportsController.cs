@@ -94,7 +94,7 @@ public class ReportsController : Controller
     [Authorize(Policy = "StudentsReportsPolicy")]
     public async Task<IActionResult> StudentsReportExport(string reportType, string fileName, int? academicClassId, int? academicSectionId)
     {
-        AcademicSession aSession = await _academicSessionManager.GetCurrentAcademicSession();
+        AcademicSession aSession = await _academicSessionManager.GetCurrentAcademicSessionAsync();
         if (aSession == null)
         {
             return new JsonResult("Current Session not set");
@@ -488,7 +488,7 @@ public class ReportsController : Controller
         imageParam = "data:image/png;base64," + Convert.ToBase64String(imageBytes);
 
         attendanceFor = attendanceFor == "s" ? "student" : "employees";
-        AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSession();
+        AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSessionAsync();
         var reportData = new List<RptDailyAttendaceVM>();
         reportData = attendanceCategory == "In" ? await _reportManager.GetDailyAttendanceReport(fromDate, academicClassId, academicSectionId, attendanceType, academicSession.Id.ToString(), attendanceFor) : await _reportManager.GetDailyAttendanceReportCheckOut(fromDate, academicClassId,academicSectionId,attendanceFor);
 
@@ -622,7 +622,7 @@ public class ReportsController : Controller
         int monthDays = ViewBag.daysInMonth = DateTime.DaysInMonth(DateTime.Today.Year, monthId);
 
         var attendanceList = await _attendanceMachineManager.GetAttendanceByDateRangeAsync(StartDate, EndDate);
-        AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSession();
+        AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSessionAsync();
         var studentList = await _studentManager.GetStudentsByClassIdAndSessionIdAsync(academicSession.Id, classId);
 
         List<DateTime> monthlyHolidays = await _OffDayManager.GetMonthlyHolidaysAsync(firstDateOfMonth.ToString("MMyyyy"));

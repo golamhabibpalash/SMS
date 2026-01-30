@@ -113,7 +113,7 @@ public class StudentPaymentsController : Controller
     [Authorize(Policy = "PaymentStudentPaymentsPolicy")]
     public async Task<IActionResult> Payment(StudentPaymentVM paymentObject)
     {
-        paymentObject.CurrentAcademicSession = await _academicSessionManager.GetCurrentAcademicSession();
+        paymentObject.CurrentAcademicSession = await _academicSessionManager.GetCurrentAcademicSessionAsync();
         try
         {
             await ProcessPayment(paymentObject);
@@ -220,7 +220,7 @@ public class StudentPaymentsController : Controller
         }
         var classfeelist = await _classFeeListManager.GetAllByClassIdAsync(studentPayment.Student.AcademicClassId);
         List<StudentFeeHead> feeHeadList = (List<StudentFeeHead>)await _studentFeeHeadManager.GetAllAsync();
-        AcademicSession currentSession = await _academicSessionManager.GetCurrentAcademicSession();
+        AcademicSession currentSession = await _academicSessionManager.GetCurrentAcademicSessionAsync();
 
         feeHeadList = (from f in feeHeadList
                        join t in classfeelist on f.Id equals t.StudentFeeHeadId
@@ -349,7 +349,7 @@ public class StudentPaymentsController : Controller
         Stopwatch stopwatch = Stopwatch.StartNew();
         GlobalUI.PageTitle = "Due Payment List";
 
-        var currentSession = await _academicSessionManager.GetCurrentAcademicSession();
+        var currentSession = await _academicSessionManager.GetCurrentAcademicSessionAsync();
         int sessionId = aSessionId ?? currentSession.Id;
         int classId = academicClassId ?? 0;
         int sectionId = academicSectionId ?? 0;
@@ -540,7 +540,7 @@ public class StudentPaymentsController : Controller
 
     private async Task<StudentPaymentVM> CreateStudentPaymentVM(Student student)
     {
-        var currentAcademicSession = await _academicSessionManager.GetCurrentAcademicSession();
+        var currentAcademicSession = await _academicSessionManager.GetCurrentAcademicSessionAsync();
         var spvm = new StudentPaymentVM
         {
             CurrentAcademicSession = currentAcademicSession,

@@ -68,7 +68,7 @@ namespace SMS_App.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    if (await _sessionManager.IsExistByName(academicSession.Name))
+                    if (await _sessionManager.IsExistByNameAsync(academicSession.Name))
                     {
                         msg = "This name is already exists.";
                         TempData["error"] = msg;

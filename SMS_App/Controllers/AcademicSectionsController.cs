@@ -206,7 +206,7 @@ namespace SMS_App.Controllers
         {
             if (sessionId<=0)
             {
-                AcademicSession currentAcademicSession = await _academicSessionManager.GetCurrentAcademicSession();
+                AcademicSession currentAcademicSession = await _academicSessionManager.GetCurrentAcademicSessionAsync();
                 if (currentAcademicSession!=null)
                 {
                     sessionId = currentAcademicSession.Id;

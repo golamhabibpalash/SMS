@@ -57,9 +57,9 @@
     }
 
     <!-- Bootstrap -->
-    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap/bootstrap-5.3.8-dist/css/bootstrap.min.css" rel="stylesheet" />
 
-    <!-- Font Awesome -->\
+    <!-- Font Awesome -->
     <link href="~/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
 
     <!-- NProgress -->
@@ -88,7 +88,14 @@
                 <div class="left_col scroll-view">
 
                     <div class="navbar nav_title" style="overflow:hidden">
-                        <a asp-action="Profile" asp-controller="Students" asp-route-id="@user.ReferenceId" class="" style="font-size:20px;color:#fff;font-weight:bold;width:100%"><img class="img-circle img-fluid p-2" src="~/Images/Institute/@instituteLogo" alt="Logo" style="width:60px;" /> @instituteName</a>
+                        <a asp-action="Profile" asp-controller="Students" asp-route-id="@user.ReferenceId" class="" style="font-size:20px;color:#fff;font-weight:bold;width:100%">
+                                <img class="img-circle img-fluid p-2" 
+                                src="~/Images/Institute/@instituteLogo" 
+                                alt="Logo" 
+                                style="width:60px;"
+                                 onerror="this.src='/images/institute/smslogo.png'" />
+                            @instituteName
+                            </a>
                     </div>
 
                     <div class="clearfix"></div>
@@ -96,31 +103,9 @@
                     <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
                         <div class="menu_section">
                             <ul class="nav side-menu">
-                                @*<li>
-                                    <a asp-controller="Students" asp-action="Dashboard" asp-route-id="@user.ReferenceId"><i class="fa fa-dashboard"></i> Dashboard <span class="fa fa-chevron-down"></span></a>
-                                </li>*@
                                 <li>
                                     <a asp-controller="Students" asp-action="Details" asp-route-id="@user.ReferenceId"><i class="fa fa-home"></i> Details <span class="fa fa-chevron-down"></span></a>
                                 </li>
-                                @*<li>
-                                    <a><i class="fa fa-users"></i> Students <span class="fa fa-chevron-down"></span></a>
-                                    <ul class="nav child_menu">
-                                        <li>
-                                            <a asp-action="Index" asp-controller="Students">Change Password</a>
-                                        </li>
-                                        <li>
-                                            <a asp-action="Index" asp-controller="StudentPayments">Make Payment</a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <a><i class="fa fa-user"></i> Academic <span class="fa fa-chevron-down"></span></a>
-                                    <ul class="nav child_menu">
-                                        <li>
-                                            <a asp-action="Index" asp-controller="ExamResults"><span class="glyphicon glyphicon-asterisk"></span> Result</a>
-                                        </li>
-                                    </ul>
-                                </li>*@
 
                             </ul>
                         </div>
@@ -176,10 +161,19 @@
                         {
                             <span class="p-1 h5">@userName </span>
                             <span class="float-right p-2" id="userProfileIcon">
-                                <img  src="@userImage" alt="profile Image" class="img-circle" data-toggle="popover" data-placement="bottom" style="width:25px;" onclick="openNav()" />
+
+                            <img src="@userImage"
+                                     class="img-circle border border-info"
+                                    alt="Student Photo"
+                                    data-toggle="popover" 
+                                    data-placement="bottom"
+                                    style="width:25px"
+                                    onerror="this.src='/Images/Student/noimage.jpg'"
+                                    onclick="openNav()" />
+
                             </span>
                             <div id="myNav" class="overlay">
-                                <button class="btn btn-sm btn-danger btn-block closebtn" onclick="closeNav()">Close</button>
+                                <button class="btn btn-sm btn-danger btn-block closebtn" onclick="closeNav()">X</button>
                                 <div class="overlay-content">
                                     @await Component.InvokeAsync("ProfileOverlay")
                                 </div>
@@ -217,7 +211,7 @@
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 
     <!-- Bootstrap -->
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/bootstrap/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
     <!-- FastClick -->
     <script src="~/lib/Theme/js/fastclick.js"></script>
     <!-- NProgress -->
@@ -232,12 +226,12 @@
     <script src="~/lib/DataTable/js/jquery.dataTables.min.js"></script>
 
     <!-- Custom Theme Scripts -->
-    <script src="~/js/custom.min.js"></script>
+    @* <script src="~/js/custom.min.js"></script> *@
     @await RenderSectionAsync("Scripts", required: false)
     <script>
-        $(function () {
-            $('[data-toggle="popover"]').popover()
-        })
+        // $(function () {
+        //     $('[data-toggle="popover"]').popover()
+        // })
 
         $(document).click(function (e) {
             let sss1 = $(e.target).parents("#myNav").length === 0;
@@ -274,16 +268,16 @@
         $(document).ready(function () {
             menuToggle();
             //$('#menu_toggle').click();
-            $("[data-toggle=popover]").popover({
-                html: true,
-                animation: true,
-                delay: { "show": 500, "hide": 100 },
-                template: '<div class="popover" role="tooltip"><div class="arrow"></div><h3 class="popover-header"></h3><div class="popover-body"></div></div>',
-                content: function () {
+            // $("[data-toggle=popover]").popover({
+            //     html: true,
+            //     animation: true,
+            //     delay: { "show": 500, "hide": 100 },
+            //     template: '<div class="popover" role="tooltip"><div class="arrow"></div><h3 class="popover-header"></h3><div class="popover-body"></div></div>',
+            //     content: function () {
 
-                    return $('#popover-content').html();
-                }
-            });
+            //         return $('#popover-content').html();
+            //     }
+            // });
         });
     </script>
 </body>

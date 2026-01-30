@@ -313,11 +313,27 @@ public class AccountsController : Controller
     {
         if (ModelState.IsValid)
         {
+            var username = string.Empty;
+            Student student = null;
             await _appLogger.WarningAsync($"{model.Email} user trying to reset password.");
-            var user = await _userManager.FindByNameAsync(model.Email);
+            bool isEmail = IsValidEmail(model.Email);
+            if (isEmail)
+            {
+                username = model.Email;
+            }
+            else
+            {
+                student = await _studentManager.GetStudentByClassRollAsync(Convert.ToInt32(model.Email));
+                if (student!=null)
+                {
+                    username = student.UniqueId;
+                }
+            }
+
+            var user = await _userManager.FindByNameAsync(username);
             if (user == null)
             {
-                ViewBag.msg = "please insert a varified email.";
+                ViewBag.msg = "please insert a varified user name";
                 return View(model);
             }
             string name = "";
@@ -329,7 +345,6 @@ public class AccountsController : Controller
             }
             else if (user.UserType == 's')
             {
-                var student = await _studentManager.GetStudentByUniqueIdAsync(user.ReferenceId.ToString());
                 name = student.Name;
                 model.Name = name;
             }
@@ -349,7 +364,7 @@ public class AccountsController : Controller
                 string text = "Your OTP is:" + randomNumber + " -" + instituteInfo.FirstOrDefault().Name;
 
                 await _appLogger.WarningAsync($"{model.Email} user OTP is {randomNumber}");
-                if (model.verificationBy == "SMS")
+                if (model.VerificationBy == "SMS")
                 {
                     bool smsSend = await MobileSMS.SendSMS(user.PhoneNumber, text);
                     if (smsSend == false)
@@ -381,7 +396,7 @@ public class AccountsController : Controller
 
                     return RedirectToAction("OTPGenerate");
                 }
-                else if (model.verificationBy == "Email")
+                else if (model.VerificationBy == "Email")
                 {
                     bool isSend = EmailService.SendOTP(model.Email,"One time password",DateTime.Now,randomNumber.ToString());
                     if (isSend)
@@ -406,6 +421,7 @@ public class AccountsController : Controller
     [HttpPost, AllowAnonymous]
     public IActionResult OTPGenerate(OTPVM model)
     {
+        
         var email = HttpContext.Session.GetString("useremail");
         model.Email = email;
         if (ModelState.IsValid)
@@ -446,7 +462,11 @@ public class AccountsController : Controller
             ApplicationUser user = null;
             if (!isValieUser)
             {
-                user = await _userManager.FindByNameAsync(model.Email);
+                var student = await _studentManager.GetStudentByClassRollAsync(Convert.ToInt32(model.Email));
+                if (student!=null)
+                {
+                    user = await _userManager.FindByNameAsync(student.UniqueId);
+                }
             }
             else
             {

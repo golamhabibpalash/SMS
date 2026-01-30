@@ -23,7 +23,7 @@ public class LogsController : Controller
     public async Task<IActionResult> Index(
     int pageIndex = 1,
     int pageSize = 50,
-    string? searchText = null,
+    string searchText = null,
     string sortOrder = "date_desc")
     {
         // Get all logs

@@ -1,4 +1,5 @@
 ﻿using BLL.Managers.Base;
+using Microsoft.EntityFrameworkCore;
 using SMS.BLL.Contracts;
 using SMS.DAL.Contracts;
 using SMS.Entities;
@@ -13,10 +14,12 @@ namespace SMS.BLL.Managers
     public class AttendanceMachineManager : Manager<Tran_MachineRawPunch>, IAttendanceMachineManager
     {
         private readonly IAttendanceMachineRepository _attendanceMachineRepository;
+        private readonly IAcademicSessionRepository _academicSessionRepository;
 
-        public AttendanceMachineManager(IAttendanceMachineRepository attendanceMachineRepository) : base(attendanceMachineRepository)
+        public AttendanceMachineManager(IAttendanceMachineRepository attendanceMachineRepository, IAcademicSessionRepository academicSessionRepository) : base(attendanceMachineRepository)
         {
             _attendanceMachineRepository = attendanceMachineRepository;
+            _academicSessionRepository = academicSessionRepository;
         }
 
 
@@ -92,6 +95,15 @@ namespace SMS.BLL.Managers
         public async Task<Tran_MachineRawPunch> GetTodaysAttendanceByUserIdAsync(int attendanceId)
         {
             return await _attendanceMachineRepository.GetTodaysAttendanceByUserIdAsync(attendanceId);
+        }
+
+        public async Task<List<Tran_MachineRawPunch>> GetSessionWiseAttendanceByStudentUniqueIdAsync(int sessionId, string uniqueId)
+        {
+            var academicSession = await _academicSessionRepository.GetByIdAsync(sessionId);
+            int sessionYear = Convert.ToInt32(academicSession.Name.Substring(academicSession.Name.Length - 4));
+            List<Tran_MachineRawPunch> attendanceList = new List<Tran_MachineRawPunch>();
+            attendanceList = await _attendanceMachineRepository.Table.AsNoTracking().Where(s => s.CardNo == uniqueId && s.PunchDatetime.Year == sessionYear).ToListAsync();
+            return attendanceList;
         }
     }
 }

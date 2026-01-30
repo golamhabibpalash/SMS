@@ -9,6 +9,6 @@ namespace SMS_App.ViewModels.AdministrationVM
     {
         public int OTP { get; set; }
         public string Link { get; set; }
-        public string Email { get; set; }
+        public required string Email { get; set; }
     }
 }

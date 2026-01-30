@@ -1,0 +1,104 @@
+﻿@model SMS.Entities.AdditionalModels.StudentVM.ProfilePayment
+
+<div class="tab-pane fade" id="payment" role="tabpanel" aria-labelledby="payment-tab">
+
+    <h2 class="text-danger">This page is under construction</h2>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-warning text-dark">
+            <h5 class="mb-0">Payment Information</h5>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card border-success">
+                        <div class="card-body text-center">
+                            <h6 class="text-muted">Total Fees</h6>
+                            <h3 class="text-success">$12,000</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-primary">
+                        <div class="card-body text-center">
+                            <h6 class="text-muted">Paid Amount</h6>
+                            <h3 class="text-primary">$9,000</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-danger">
+                        <div class="card-body text-center">
+                            <h6 class="text-muted">Due Amount</h6>
+                            <h3 class="text-danger">$3,000</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-warning" role="alert">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <strong>Payment Due:</strong> Next installment of $1,500 is due on February 15, 2026
+            </div>
+
+            <h6 class="mb-3">Payment History</h6>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Amount</th>
+                            <th>Payment Method</th>
+                            <th>Status</th>
+                            <th>Receipt</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Jan 10, 2026</td>
+                            <td>Tuition Fee - Semester 6</td>
+                            <td>$3,000</td>
+                            <td>Credit Card</td>
+                            <td><span class="badge bg-success">Paid</span></td>
+                            <td><button class="btn btn-sm btn-outline-primary"><i class="bi bi-download"></i></button></td>
+                        </tr>
+                        <tr>
+                            <td>Sep 15, 2025</td>
+                            <td>Tuition Fee - Semester 5</td>
+                            <td>$3,000</td>
+                            <td>Bank Transfer</td>
+                            <td><span class="badge bg-success">Paid</span></td>
+                            <td><button class="btn btn-sm btn-outline-primary"><i class="bi bi-download"></i></button></td>
+                        </tr>
+                        <tr>
+                            <td>May 20, 2025</td>
+                            <td>Tuition Fee - Semester 4</td>
+                            <td>$3,000</td>
+                            <td>Credit Card</td>
+                            <td><span class="badge bg-success">Paid</span></td>
+                            <td><button class="btn btn-sm btn-outline-primary"><i class="bi bi-download"></i></button></td>
+                        </tr>
+                        <tr>
+                            <td>Feb 28, 2026</td>
+                            <td>Tuition Fee - Installment 2</td>
+                            <td>$1,500</td>
+                            <td>-</td>
+                            <td><span class="badge bg-warning">Upcoming</span></td>
+                            <td>-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-4">
+                <button class="btn btn-primary me-2">
+                    <i class="bi bi-credit-card me-2"></i>Make Payment
+                </button>
+                <button class="btn btn-outline-secondary">
+                    <i class="bi bi-file-earmark-pdf me-2"></i>Download Payment History
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

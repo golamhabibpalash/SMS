@@ -24,6 +24,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SMS_App.Utilities.LoggerService;
+using SMS.Entities.AdditionalModels.StudentVM;
 
 namespace SMS_App.Controllers;
 
@@ -106,7 +107,7 @@ public class StudentsController : Controller
 
         var students = new List<SMS.Entities.AdditionalModels.StudentListVM>();
         var allStudent = await _studentManager.GetAllAsync();
-        var currentSession = await _academicSessionManager.GetCurrentAcademicSession();
+        var currentSession = await _academicSessionManager.GetCurrentAcademicSessionAsync();
         if (academicSessionId != null)
         {
             allStudent = allStudent?.Where(s => s.AcademicSessionId == academicSessionId).ToList();
@@ -810,34 +811,38 @@ public class StudentsController : Controller
         {
             return NotFound();
         }
-        if (student.Status == true)
+        var todaysAttendance = await _attendanceMachineManager.GetTodaysAttendanceByUserIdAsync(Convert.ToInt32(student.UniqueId));
+        if (todaysAttendance == null)
         {
-            var attendance = await _attendanceMachineManager.GetTodaysAttendanceByUserIdAsync(student.ClassRoll);
-            if (attendance == null)
-            {
-                ViewBag.absent = "You are absent today";
-            }
-            else
-            {
-                var instituteInfo = await _instituteManager.GetFirstOrDefaultAsync();
-
-                DateTime schoolLateTime = Convert.ToDateTime(instituteInfo.LateTime);
-                if (attendance.PunchDatetime.Hour > schoolLateTime.Hour)
-                {
-                    ViewBag.lateAttendance = "You are late today ( " + attendance.PunchDatetime.ToString("hh:mm tt") + ")";
-                }
-                else
-                {
-                    ViewBag.attendance = "You are attended (" + attendance.PunchDatetime.ToString("hh:mm tt") + ") today";
-                }
-            }
-
+            ViewBag.absent = "You are absent today";
         }
         else
         {
-            ViewBag.activeStatus = "You are not an active student.";
+            var instituteInfo = await _instituteManager.GetFirstOrDefaultAsync();
+
+            DateTime schoolLateTime = Convert.ToDateTime(instituteInfo.LateTime);
+            if (todaysAttendance.PunchDatetime.Hour > schoolLateTime.Hour)
+            {
+                ViewBag.lateAttendance = "You are late today ( " + todaysAttendance.PunchDatetime.ToString("hh:mm tt") + ")";
+            }
+            else
+            {
+                ViewBag.attendance = "You are attended (" + todaysAttendance.PunchDatetime.ToString("hh:mm tt") + ") today";
+            }
         }
-        return View(student);
+        StudentProfileVM studentProfileVM = new StudentProfileVM();
+        studentProfileVM.Student = student;
+
+        //Attendance
+        var attendance = await _studentManager.GetProfileAttendanceAsync(student.Id);
+        studentProfileVM.Attendances = attendance;
+        //Results
+
+        //Payment
+
+        //Documents
+
+        return View(studentProfileVM);
     }
     #endregion
 
@@ -1086,7 +1091,7 @@ public class StudentsController : Controller
         {
             if (academicSessionId == null)
             {
-                AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSession();
+                AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSessionAsync();
                 academicSessionId = academicSession.Id;
             }
             var studentList = await _studentManager.GetStudentsByClassIdAndSessionIdAsync((int)academicSessionId, academicClassId);
@@ -1102,7 +1107,7 @@ public class StudentsController : Controller
     {
         if (academicSessionId == null || academicSessionId <= 0)
         {
-            AcademicSession currentSession = await _academicSessionManager.GetCurrentAcademicSession();
+            AcademicSession currentSession = await _academicSessionManager.GetCurrentAcademicSessionAsync();
             academicSessionId = currentSession.Id;
         }
         if (academicSectionId == null || academicSectionId <= 0)

@@ -126,6 +126,9 @@
                         <td>Is Present</td>
                         <td>Remarks</td>
                         <td>Updated by</td>
+                        <td>
+                            <i class="fa fa-edit"></i>
+                        </td>
                     </tr>
                 </thead>
                 <tbody>
@@ -175,6 +178,9 @@
                             </td>
                             <td>
                                 @updatedBy
+                            </td>
+                            <td>
+                                <i class="fa fa-trash text-danger btn-sm btn p-0 m-0" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete From this exam list" data-examDetailId="@Model.AcademicExamDetails[detailId].Id" onclick="confirmDelete(this)"></i>
                             </td>
                         </tr>
                         detailId++;
@@ -324,6 +330,35 @@
 
             // Now, you can submit the form
             document.getElementById("myForm").submit();
+        }
+
+        function confirmDelete(element) { 
+            // Read attributes from the clicked icon 
+            var examDetailId = element.getAttribute("data-examDetailId"); 
+            
+            // Show confirmation alert 
+            if (confirm("Are you sure you want to delete this exam?")) { 
+                // Call your custom function with parameters
+                deleteExam(element, examDetailId);
+            } 
+        }
+
+        // Example function that receives the parameters
+        function deleteExam(element, examDetailId) {
+            $.ajax({ url: '/AcademicExams/RemoveExamDetailsFromExam', 
+            type: 'POST', 
+            data: { examDetailId: examDetailId }, 
+            success: function (response) {
+                if (response === true) {
+                    alert("Exam detail deleted successfully!");
+                    $(element).closest('tr').remove(); 
+                } else { 
+                        alert("Failed to delete exam detail."); 
+                    } 
+                }, 
+                error: function (xhr, status, error) { 
+                    console.error("Error deleting exam detail:", error); alert("An error occurred while deleting."); } 
+                    });
         }
     </script>
 }

@@ -14,7 +14,13 @@
         var user = await _userManager.GetUserAsync(User);
         if (user.UserType == 's')
         {
-            var stu = await _studentManager.GetByIdAsync(user.ReferenceId);
+            var stu = await _studentManager.GetStudentByUniqueIdAsync(user.ReferenceId.ToString());
+            if (stu == null)
+            {
+                userName = "Unknown Student";
+                userImage = "/Images/noProfileImage.png";
+                return;
+            }
             userName = stu.Name;
             if (stu.Photo != null)
             {

@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Net.Mail;
 
 namespace SMS_App.Controllers;
 
@@ -312,7 +313,8 @@ public class AccountsController : Controller
     {
         if (ModelState.IsValid)
         {
-            var user = await _userManager.FindByEmailAsync(model.Email);
+            await _appLogger.WarningAsync($"{model.Email} user trying to reset password.");
+            var user = await _userManager.FindByNameAsync(model.Email);
             if (user == null)
             {
                 ViewBag.msg = "please insert a varified email.";
@@ -327,7 +329,7 @@ public class AccountsController : Controller
             }
             else if (user.UserType == 's')
             {
-                var student = await _studentManager.GetByIdAsync(user.ReferenceId);
+                var student = await _studentManager.GetStudentByUniqueIdAsync(user.ReferenceId.ToString());
                 name = student.Name;
                 model.Name = name;
             }
@@ -346,6 +348,7 @@ public class AccountsController : Controller
                 var instituteInfo = await _instituteManager.GetAllAsync();
                 string text = "Your OTP is:" + randomNumber + " -" + instituteInfo.FirstOrDefault().Name;
 
+                await _appLogger.WarningAsync($"{model.Email} user OTP is {randomNumber}");
                 if (model.verificationBy == "SMS")
                 {
                     bool smsSend = await MobileSMS.SendSMS(user.PhoneNumber, text);
@@ -439,12 +442,23 @@ public class AccountsController : Controller
     {
         if (ModelState.IsValid)
         {
-            var user = await _userManager.FindByEmailAsync(model.Email);
+            bool isValieUser = IsValidEmail(model.Email);
+            ApplicationUser user = null;
+            if (!isValieUser)
+            {
+                user = await _userManager.FindByNameAsync(model.Email);
+            }
+            else
+            {
+                user = await _userManager.FindByEmailAsync(model.Email);
+            }
+            
             if (user != null)
             {
                 var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
                 if (result.Succeeded)
                 {
+                    await _appLogger.InfoAsync($"Password reset to {model.Password} by {model.Email}", "Password Reset Success");
                     return View("ResetPasswordConfirmation");
                 }
                 ViewBag.msg = "Password not changed. Please input proper password";
@@ -455,6 +469,7 @@ public class AccountsController : Controller
             }
             else
             {
+                await _appLogger.WarningAsync($"Password reset attempt failed. User with email {model.Email} not found.");
                 TempData["msg"] = "User doesn't found";
                 return RedirectToAction("ForgotPassword");
             }
@@ -702,6 +717,19 @@ public class AccountsController : Controller
             return Json(new { token = token, link = passwordResetLink, phone = phoneNumber });
         }
         return Json("");
+    }
+
+    public bool IsValidEmail(string email)
+    {
+        try
+        {
+            var mailAddress = new MailAddress(email);
+            return mailAddress.Address == email;
+        }
+        catch
+        {
+            return false;
+        }
     }
 }
 

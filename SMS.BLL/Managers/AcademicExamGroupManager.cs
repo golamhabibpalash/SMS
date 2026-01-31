@@ -59,6 +59,7 @@ namespace SMS.BLL.Managers
             var result = await _academicExamGroupRepository.GetByMonthExamType(monthId, examTypeId);
             return result;
         }
+
         public async Task<IReadOnlyCollection<AcademicExamGroup>> GetBySession(int sessionId)
         {
             var allExamGroup = await _academicExamGroupRepository.GetAllAsync();

@@ -8,7 +8,6 @@ namespace SMS_App.ViewModels.AdministrationVM
 {
     public class ResetPasswordVM
     {
-        [Required, EmailAddress]
         public string Email { get; set; }
 
         [Required, DataType(DataType.Password)]

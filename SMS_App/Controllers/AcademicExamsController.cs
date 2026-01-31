@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace SMS_App.Controllers;
 
@@ -418,7 +419,6 @@ public class AcademicExamsController : Controller
         return Json("");
     }
 
-
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Policy = "ExamMarkSubmitAcademicExamPolicy")]
@@ -533,18 +533,21 @@ public class AcademicExamsController : Controller
         var results = academicExams.Where(s => s.AcademicExamGroupId == examGroupId && s.AcademicClassId == academicClassId).ToList();
         return Json(results);
     }
+
     public async Task<JsonResult> GetExamsByGrId(int examGroupId)
     {
         List<AcademicExam> academicExams = (List<AcademicExam>)await _examManager.GetAllAsync();
         var results = academicExams.Where(s => s.AcademicExamGroupId == examGroupId).ToList();
         return Json(results);
     }
+
     public async Task<JsonResult> GetAcademicClassByExamGrId(int examGroupId)
     {
         var examGroup = await _examGroupManager.GetByIdAsync(examGroupId);
         var results = examGroup.AcademicExams.Select(e => e.AcademicClass).DistinctBy(c => c.Id).ToList();
         return Json(results);
     }
+
     public async Task<JsonResult> GetAcademicSectionByExamGrId_ClassId(int examGroupId,int classId)
     {
         var sections = new List<AcademicSection>();
@@ -558,5 +561,24 @@ public class AcademicExamsController : Controller
         }
 
         return Json(sections);
+    }
+
+    public async Task<JsonResult> RemoveExamDetailsFromExam(int examDetailId)
+    {
+        bool result = false;
+        var examDetail =await _academicExamDetailsManager.GetByIdAsync(examDetailId);
+        if (examDetail!=null)
+        {
+            var ss = await _academicExamDetailsManager.RemoveAsync(examDetail);
+            if (ss)
+            {
+                result = true;
+            }
+            else
+            {
+                result = false;
+            }
+        }
+        return Json(result);
     }
 }

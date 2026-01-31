@@ -390,6 +390,10 @@ public class ExamResultsController : Controller
             List<Student> students = await _studentManager.GetStudentsByClassIdAndSessionIdAsync(session.Id, classId);
             foreach (var student in students)
             {
+                if (student.ClassRoll == 2609097)
+                {
+                    Console.WriteLine("Got it");
+                }
                 if (student.Status == false)
                 {
                     continue;
@@ -410,7 +414,7 @@ public class ExamResultsController : Controller
                 examResult.TotalFails = 0;
                 if (examResult.CGPA <= 0)
                 {
-                    examResult.TotalFails = await GetTotalFailFromExam(groupId, student.Id);
+                    examResult.TotalFails = await GetTotalFailFromExam(groupId, student.Id, student.AcademicClassId);
                 }
                 List<ExamResultDetail> examResultDetails = new List<ExamResultDetail>();
                 foreach (var exam in exams)
@@ -721,33 +725,40 @@ public class ExamResultsController : Controller
         }
         return cgpaPoint;
     }
-    private async Task<int> GetTotalFailFromExam(int examGroupId, int studentId)
+    private async Task<int> GetTotalFailFromExam(int examGroupId, int studentId, int academicClassId)
     {
-        int totalFail = 0;
-        var eDetails = await _academicExamDetailsManager.GetAllByExamGroupAndStudentId(examGroupId, studentId);
+        // Fetch exam details and total exams for the class
+        var examDetails = await _academicExamDetailsManager
+            .GetAllByExamGroupAndStudentId(examGroupId, studentId);
 
-        double obtainPercentageMark = 0.00;
-        if (eDetails != null && eDetails.Count > 0)
+        var totalExams = await _academicExamManager
+            .GetTotalExamAsync(examGroupId, academicClassId);
+
+        // Calculate missing exams (if no details, all are missing)
+        int missingExams = totalExams - (examDetails?.Count ?? 0);
+
+        // Start fail count with missing exams
+        int totalFail = missingExams;
+
+        if (examDetails == null || examDetails?.Count == 0)
+            return totalFail;
+
+        // Check each exam result
+        foreach (var exam in examDetails)
         {
-            foreach (var e in eDetails)
-            {
-                obtainPercentageMark = (e.ObtainMark * 100) / e.AcademicExam.TotalMarks;
-                double gpa = await GetGradePointByNumber(obtainPercentageMark);
-                if (gpa <= 0)
-                {
-                    totalFail++;
-                    continue;
-                }
-            }
+            if (exam.AcademicExam?.TotalMarks <= 0)
+                continue; // skip invalid exam data
+
+            double percentage = (exam.ObtainMark * 100.0) / exam.AcademicExam.TotalMarks;
+            double gpa = await GetGradePointByNumber(percentage);
+
+            if (gpa <= 0)
+                totalFail++;
         }
-        else
-        {
-            var student = await _studentManager.GetByIdAsync(studentId);
-            var exams = await _academicExamManager.GetByClassIdExamGroupIdAsync(examGroupId, student.AcademicClassId);
-            totalFail = exams.Count;
-        }
+
         return totalFail;
     }
+
     private async Task<int> GetAttendancePercentage(int monthId, int studentId)
     {
         int attendancePercentage = 0;

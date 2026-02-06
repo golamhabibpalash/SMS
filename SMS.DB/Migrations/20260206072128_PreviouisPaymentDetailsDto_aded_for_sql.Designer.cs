@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SMS.DB;
 
@@ -11,9 +12,11 @@ using SMS.DB;
 namespace SMS.DB.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260206072128_PreviouisPaymentDetailsDto_aded_for_sql")]
+    partial class PreviouisPaymentDetailsDto_aded_for_sql
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -707,7 +710,7 @@ namespace SMS.DB.Migrations
 
             modelBuilder.Entity("SMS.Entities.AdditionalModels.Finance.PreviouisPaymentDetailsDto", b =>
                 {
-                    b.Property<int?>("AcademicSectionId")
+                    b.Property<int>("AcademicSectionId")
                         .HasColumnType("int");
 
                     b.Property<int>("CurrentClassId")

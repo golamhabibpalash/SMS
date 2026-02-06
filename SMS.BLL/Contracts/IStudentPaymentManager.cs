@@ -1,6 +1,7 @@
 ﻿using SMS.BLL.Contracts.Base;
 using SMS.Entities;
 using SMS.Entities.AdditionalModels;
+using SMS.Entities.AdditionalModels.Finance;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -20,5 +21,6 @@ namespace SMS.BLL.Contracts
         Task<List<StudentPayment>> GetPaymentByStudentUniqueId(string uniqueId);
         Task<List<PaidAmountResult>> GetPaidAmountByFeeHeadAsync(string uniqueId, int sessionId, int isResidential, int classId, int feeHeadId);
         Task<StudentPaymentDetailVM> GetAllDetailPaymentByUniqueId(string studentUniqueId);
+        Task<List<DuePayment>> GetPreviousDuesAsync(int? studentId, int? sectionId, int academicClassId);
     }
 }

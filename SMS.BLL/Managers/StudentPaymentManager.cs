@@ -1,8 +1,10 @@
 using BLL.Managers.Base;
 using SMS.BLL.Contracts;
 using SMS.DAL.Contracts;
+using SMS.DAL.Repositories;
 using SMS.Entities;
 using SMS.Entities.AdditionalModels;
+using SMS.Entities.AdditionalModels.Finance;
 using SMS.Entities.Enums;
 using System;
 using System.Collections.Generic;
@@ -21,6 +23,8 @@ public class StudentPaymentManager : Manager<StudentPayment>, IStudentPaymentMan
     private readonly IStudentPaymentDetailsRepository _studentPaymentDetailsRepository;
     private readonly IStudentFeeAllocationRepository _studentFeeAllocationRepository;
     private readonly IParamBusConfigManager _paramBusConfigManager;
+    private readonly IAcademicClassManager _academicClassManager;
+    private readonly IStudentManager _studentManager;
 
     public StudentPaymentManager(
         IStudentPaymentRepository studentPaymentRepository,
@@ -30,7 +34,9 @@ public class StudentPaymentManager : Manager<StudentPayment>, IStudentPaymentMan
         IStudentFeeHeadRepository studentFeeHeadRepository,
         IStudentPaymentDetailsRepository studentPaymentDetailsRepository,
         IStudentFeeAllocationRepository studentFeeAllocationRepository,
-        IParamBusConfigManager paramBusConfigManager)
+        IParamBusConfigManager paramBusConfigManager,
+        IAcademicClassManager academicClassManager = null,
+        IStudentManager studentManager = null)
         : base(studentPaymentRepository)
     {
         _studentPaymentRepository = studentPaymentRepository;
@@ -41,6 +47,8 @@ public class StudentPaymentManager : Manager<StudentPayment>, IStudentPaymentMan
         _studentPaymentDetailsRepository = studentPaymentDetailsRepository;
         _studentFeeAllocationRepository = studentFeeAllocationRepository;
         _paramBusConfigManager = paramBusConfigManager;
+        _academicClassManager = academicClassManager;
+        _studentManager = studentManager;
     }
 
     public async Task<IReadOnlyCollection<StudentPayment>> GetAllByStudentIdAsync(int id)
@@ -364,5 +372,32 @@ public class StudentPaymentManager : Manager<StudentPayment>, IStudentPaymentMan
             filteredFees.Add(fee);
         }
         return filteredFees;
+    }
+
+    public async Task<List<DuePayment>> GetPreviousDuesAsync(int? studentId, int? sectionId, int academicClassId)
+    {
+        var allSummery = await _studentPaymentRepository.GetAllStudentsPaymentSummeryAsync();
+        var allClass = await _academicClassManager.GetAllAsync();
+        var allStudents = await _studentManager.GetAllAsync();
+
+        if (academicClassId>0)
+        {
+            allSummery = allSummery.Where(s => s.CurrentClassId == academicClassId).ToList();
+        }
+        if (sectionId!=null && sectionId>0)
+        {
+            allSummery = allSummery.Where(s => s.AcademicSectionId == sectionId).ToList();
+        }
+        if (studentId!=null && studentId>0)
+        {
+            allSummery = allSummery.Where(s => s.StudentId == studentId).ToList();
+        }
+        var duePayments = allSummery.Select(s => new DuePayment
+        {
+            Student = allStudents.FirstOrDefault(st => st.Id == s.StudentId),
+            TotalDue = s.DueAmount
+        }).ToList();
+
+        return duePayments;
     }
 }

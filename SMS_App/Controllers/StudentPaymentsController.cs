@@ -13,6 +13,7 @@ using SchoolManagementSystem;
 using SMS.BLL.Contracts;
 using SMS.Entities;
 using SMS.Entities.AdditionalModels;
+using SMS.Entities.AdditionalModels.Finance;
 using SMS_App.Utilities.MACIPServices;
 using SMS_App.Utilities.Others;
 using SMS_App.Utilities.ShortMessageService;
@@ -400,11 +401,32 @@ public class StudentPaymentsController : Controller
     public async Task<IActionResult> DuePaymentPrevious()
     {
         GlobalUI.PageTitle = "Previous Due Payment List";
-        DuePaymentVM previousDuePaymentVM = new()
+        var allClass = await _academicClassManager.GetAllAsync();
+        DuePaymentPreviousDto previousDuePaymentVM = new()
         {
-            AcademicClassList = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name").ToList()
+            AcademicClassList = new SelectList(allClass.Where(s => s.Status==true), "Id", "Name").ToList()
         };
         ViewBag.isFromPost = false;
+        return View(previousDuePaymentVM);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> DuePaymentPrevious(DuePaymentPreviousDto modelObject)
+    {
+        GlobalUI.PageTitle = "Previous Due Payment List";
+        var allClass = await _academicClassManager.GetAllAsync();
+        DuePaymentPreviousDto previousDuePaymentVM = new()
+        {
+            AcademicClassList = new SelectList(allClass.Where(s => s.Status==true), "Id", "Name").ToList()
+        };
+        ViewBag.isFromPost = true;
+
+        //load institute
+        previousDuePaymentVM.Institute = await _instituteManager.GetFirstOrDefaultAsync();
+
+        //load duepayments
+        previousDuePaymentVM.DuePayments = await _studentPaymentManager.GetPreviousDuesAsync(modelObject.StudentId, modelObject.AcademicSectionId, modelObject.AcademicClassId);
+
         return View(previousDuePaymentVM);
     }
 

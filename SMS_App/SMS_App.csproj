@@ -4,6 +4,7 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<UserSecretsId>aspnet-SchoolManagementSystem-75AC8697-780A-4215-A7FE-E83F96B3C344</UserSecretsId>
 		<GenerateRuntimeConfigurationFiles>True</GenerateRuntimeConfigurationFiles>
+		<Configurations>Release;Debug</Configurations>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -12,6 +13,7 @@
 		<DebugSymbols>true</DebugSymbols>
 	</PropertyGroup>
 
+	<PropertyGroup Condition=" '$(RunConfiguration)' == 'SchoolManagementSystem' " />
 	<ItemGroup>
 		<Compile Remove="FakesAssemblies\**" />
 		<Compile Remove="ViewModels\Students\NewFolder\**" />

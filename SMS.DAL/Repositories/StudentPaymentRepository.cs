@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using SMS.DAL.Contracts;
 using SMS.DAL.Repositories.Base;
 using SMS.DB;
@@ -15,6 +16,7 @@ namespace SMS.DAL.Repositories;
 public class StudentPaymentRepository : Repository<StudentPayment>, IStudentPaymentRepository
 {
     private readonly new ApplicationDbContext _context;
+
     public StudentPaymentRepository(ApplicationDbContext db) : base(db)
     {
         _context = db;
@@ -212,16 +214,17 @@ public class StudentPaymentRepository : Repository<StudentPayment>, IStudentPaym
 
     public async Task<List<PreviouisPaymentDetailsDto>> GetAllStudentsPaymentSummeryAsync()
     {
-        List<PreviouisPaymentDetailsDto> result;
         try
         {
-            result = await _context.PreviousPaymentsSummery.FromSqlRaw("EXEC sp_GetAllStudentsDueSummary").ToListAsync();
+            return await _context.PreviousPaymentsSummery
+                .FromSqlRaw("EXEC sp_GetAllStudentsDueSummary")
+                .ToListAsync();
         }
-        catch (Exception)
+        catch (SqlException ex) when (ex.Number == 2812)
         {
-
-            throw;
+            // Stored procedure not found - return empty list
+            return new List<PreviouisPaymentDetailsDto>();
         }
-        return result;
     }
+
 }

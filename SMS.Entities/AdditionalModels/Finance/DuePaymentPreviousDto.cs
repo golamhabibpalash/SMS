@@ -8,6 +8,7 @@ public class DuePaymentPreviousDto
     public int AcademicClassId { get; set; }
     public int AcademicSectionId { get; set; }
     public int StudentId { get; set; }
+    public string Status { get; set; }
 
     public AcademicClass AcademicClass { get; set; }
     public AcademicSection AcademicSection { get; set; }
@@ -32,4 +33,5 @@ public class PreviouisPaymentDetailsDto
     public double PayableAmount { get; set; }
     public double PaidAmount { get; set; }
     public double DueAmount { get; set; }
+    public bool Status { get; set; }
 }

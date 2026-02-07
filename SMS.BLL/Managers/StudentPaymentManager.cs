@@ -374,7 +374,7 @@ public class StudentPaymentManager : Manager<StudentPayment>, IStudentPaymentMan
         return filteredFees;
     }
 
-    public async Task<List<DuePayment>> GetPreviousDuesAsync(int? studentId, int? sectionId, int academicClassId)
+    public async Task<List<DuePayment>> GetPreviousDuesAsync(int? studentId, int? sectionId, int academicClassId, bool? status)
     {
         var allSummery = await _studentPaymentRepository.GetAllStudentsPaymentSummeryAsync();
         var allClass = await _academicClassManager.GetAllAsync();
@@ -391,6 +391,10 @@ public class StudentPaymentManager : Manager<StudentPayment>, IStudentPaymentMan
         if (studentId!=null && studentId>0)
         {
             allSummery = allSummery.Where(s => s.StudentId == studentId).ToList();
+        }
+        if(status!=null)
+        {
+            allSummery = allSummery.Where(s => s.Status == status).ToList();
         }
         var duePayments = allSummery.Select(s => new DuePayment
         {

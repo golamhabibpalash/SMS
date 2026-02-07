@@ -425,7 +425,20 @@ public class StudentPaymentsController : Controller
         previousDuePaymentVM.Institute = await _instituteManager.GetFirstOrDefaultAsync();
 
         //load duepayments
-        previousDuePaymentVM.DuePayments = await _studentPaymentManager.GetPreviousDuesAsync(modelObject.StudentId, modelObject.AcademicSectionId, modelObject.AcademicClassId);
+        bool? stStatus = null;
+        switch (modelObject.Status)
+        {
+            case "1":
+                stStatus = true;
+                break;
+            case "0":
+                stStatus = false;
+                break;
+            default:
+                stStatus = null;
+                break;
+        }
+        previousDuePaymentVM.DuePayments = await _studentPaymentManager.GetPreviousDuesAsync(modelObject.StudentId, modelObject.AcademicSectionId, modelObject.AcademicClassId, stStatus);
 
         return View(previousDuePaymentVM);
     }

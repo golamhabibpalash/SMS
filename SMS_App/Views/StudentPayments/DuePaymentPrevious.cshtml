@@ -45,7 +45,7 @@
                         <div class="form-group row">
                             <label asp-for="AcademicSectionId" class="col-md-4 col-form-label">Academic Section :</label>
                             <div class="col-md-8">
-                                <select class="form-control" asp-for="AcademicSectionId" >
+                                <select class="form-control" asp-for="AcademicSectionId" asp-items="Model.AcademicSectionList">
                                     <option selected disabled value="">Select Academic Section</option>
                                 </select>
                             </div>
@@ -53,7 +53,7 @@
                         <div class="form-group row">
                             <label asp-for="StudentId" class="col-md-4 col-form-label"></label>
                             <div class="col-md-8">
-                                <select class="form-control" asp-for="StudentId" >
+                                <select class="form-control" asp-for="StudentId" asp-items="Model.StudentList">
                                     <option selected disabled value="">Select Student</option>
                                 </select>
                             </div>
@@ -186,6 +186,78 @@
 
 @section Scripts{
     <script>
+
+        $('#AcademicClassId').change(function () {
+            let id = $('#AcademicClassId option:selected').val();
+            let sessionId = $('#AcademicSessionId option:selected').val();
+
+            $.ajax({
+                url: "/api/academicsections/getbyclasswithsessionId?classId=" + id + "&sessionId=" + sessionId,
+                dataType: "JSON",
+                type: "POST",
+                cache: false,
+                success: function (data) {
+                    $('#AcademicSectionId').empty();
+
+                    if (data != null || data != '') {
+                        var o = '<option disabled selected>Select Section Name</option>';
+                        var o2 = '<option value="">No Section</option>';
+                        $('#AcademicSectionId').append(o);
+                        $('#AcademicSectionId').append(o2);
+                        $.each(data, function (i, obj) {
+                            console.log(obj.name);
+                            var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
+                            $('#AcademicSectionId').append(op);
+                        });
+                    }
+                    else {
+                        var o = '<option disabled selected>Section Not Found</option>';
+                        $('#AcademicSectionId').append(o);
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        });
+
+
+        $('#AcademicSectionId').change(function () {
+            let sessionId = $('#aAcademicSession option:selected').val();
+            let id = $('#AcademicClassId option:selected').val();
+            let sectionId = $('#AcademicSectionId option:selected').val();
+            loadStudentListDropdown(sessionId, id, sectionId);
+        });
+
+        function loadStudentListDropdown(sessionId, classId, sectionId)
+        {
+            $.ajax({
+                url: "/students/GetStudentsBySessionIdClassIdSectionId?academicSessionId=" + sessionId + "&academicClassId=" + classId + "&academicSectionId=" + sectionId,
+                dataType: "JSON",
+                type: "POST",
+                cache: false,
+                success: function (data) {
+                    $('#StudentId').empty();
+                    if (data != null || data != '') {
+                        var o = '<option disabled selected value="">Select Student</option>';
+                        var o2 = '<option value="">All Student</option>';
+                        $('#StudentId').append(o);
+                        $('#StudentId').append(o2);
+                        $.each(data, function (i, obj) {
+                            var op = '<option value="' + obj.id + '">' +obj.classRoll+"-"+ obj.name + '</option>';
+                            $('#StudentId').append(op);
+                        });
+                    }
+                    else {
+                        var o = '<option disabled selected>Student Not Found</option>';
+                        $('#StudentId').append(o);
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        };
 
     </script>
 }

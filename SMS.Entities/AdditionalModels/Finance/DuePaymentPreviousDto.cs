@@ -18,6 +18,8 @@ public class DuePaymentPreviousDto
     public List<DuePayment> DuePayments { get; set; }
 
     public List<SelectListItem> AcademicClassList { get; set; }
+    public List<SelectListItem> AcademicSectionList { get; set; }
+    public List<SelectListItem> StudentList { get; set; }
 }
 public class DuePayment
 {

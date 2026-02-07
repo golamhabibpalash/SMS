@@ -415,9 +415,32 @@ public class StudentPaymentsController : Controller
     {
         GlobalUI.PageTitle = "Previous Due Payment List";
         var allClass = await _academicClassManager.GetAllAsync();
+        List<AcademicSection> sectionList = new List<AcademicSection>();
+        List<Student> studentList = new List<Student>();
+
+        if (modelObject.AcademicSectionId>0)
+        {
+            var section = await _academicSectionManager.GetByIdAsync(modelObject.AcademicSectionId);
+            if (section!=null)
+            {
+                sectionList.Add(section);
+            }
+        }
+
+        if (modelObject.StudentId>0)
+        {
+            var student = await _studentManager.GetByIdAsync(modelObject.StudentId);
+            if (student!=null)
+            {
+                studentList.Add(student);
+            }
+        }
+
         DuePaymentPreviousDto previousDuePaymentVM = new()
         {
-            AcademicClassList = new SelectList(allClass.Where(s => s.Status==true), "Id", "Name").ToList()
+            AcademicClassList = new SelectList(allClass.Where(s => s.Status == true), "Id", "Name", modelObject.AcademicClassId).ToList(),
+            AcademicSectionList = new SelectList(sectionList.Where(s => s.Status == true), "Id", "Name", modelObject.AcademicSectionId).ToList(),
+            StudentList = new SelectList(studentList,"Id","Name",modelObject.StudentId).ToList()
         };
         ViewBag.isFromPost = true;
 

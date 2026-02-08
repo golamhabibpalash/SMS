@@ -112,14 +112,14 @@
             <div class="form-group row mb-0">
                 <div class="col-md-2 mb-2">
                     <select class="form-control" name="attendanceFor" id="userTypeId">
-                        <option selected disabled>User Type</option>
+                        <option disabled selected value="">User Type</option>
                         <option value="employees">Employee</option>
                         <option value="students">Student</option>
                     </select>
                 </div>
                 <div class="col-md-2 sessionArea" style="display:none">
                     <select class="form-control mb-2" name="aSessionId" id="aSessionId">
-                        <option selected disabled>Select Session</option>
+                        <option disabled selected value="">Select Session</option>
                         @foreach (AcademicSession session in academicSessionList)
                         {
                             <option value="@session.Id">@session.Name</option>
@@ -138,9 +138,6 @@
                     </select>
                 </div>
 
-
-
-
                 <div class="col-md-2 dateArea mb-2">
                     <input type="date" class="form-control" placeholder="dd-mmm-yyyy" name="dateTime" value="@datetime" max="@DateTime.Today.ToString("yyyy-MM-dd")" />
                 </div>
@@ -153,7 +150,7 @@
                         }
                         else
                         {
-                            <option selected disabled>Attendance Type</option>
+                            <option selected disabled value="">Attendance Type</option>
                         }
                         <option class="btn-sm" value="all">All</option>
                         <option class="btn-sm" value="attended">Attended</option>
@@ -162,8 +159,8 @@
                 </div>
 
                 <div class="col-md-2" id="submitArea">
-                    <input class="btn-info btn-sm" value="Search" type="submit" />
-                    <button class="btn-outline-warning btn-sm" onclick="window.print()"><i class="fa fa-print"></i></button>
+                    <input class="btn btn-info" value="Search" type="submit" />
+                    <button class="btn btn-outline-info" onclick="window.print()"><i class="fa fa-print"></i></button>
                 </div>
             </div>
         </form>
@@ -298,7 +295,7 @@ else
 }
 
 @section Scripts{
-    <script src="~/js/DataTable/dataTable.js"></script>
+    @* <script src="~/js/DataTable/dataTable.js"></script> *@
     <script>
         $(document).ready(function () {
             let aSessionId = "@ViewBag.aSessionId";

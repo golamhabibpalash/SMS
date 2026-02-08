@@ -475,15 +475,31 @@ public class ReportsController : Controller
         }
 
         // Cross-platform image path
+
+        string defaultInstituteLogo = "smslogo.png";
+        string logoFileName = string.IsNullOrWhiteSpace(institute.Logo)
+            ? defaultInstituteLogo
+            : institute.Logo;
+
         imagePath = Path.Combine(
             _host.WebRootPath,
             "Images",
             "Institute",
-            institute.Logo
+            logoFileName
         );
 
         // Read image file without System.Drawing
-        byte[] imageBytes = await System.IO.File.ReadAllBytesAsync(imagePath);
+        byte[] imageBytes;
+        if (!string.IsNullOrEmpty(imagePath) && System.IO.File.Exists(imagePath))
+        {
+            imageBytes = await System.IO.File.ReadAllBytesAsync(imagePath);
+        }
+        else
+        {
+            // Load default image
+            string defaultImagePath = Path.Combine(_host.WebRootPath, "Images", "Institute", defaultInstituteLogo);
+            imageBytes = await System.IO.File.ReadAllBytesAsync(defaultImagePath);
+        }
         // Convert to base64 for RDLC
         imageParam = "data:image/png;base64," + Convert.ToBase64String(imageBytes);
 

@@ -1,7 +1,6 @@
 using BLL.Managers.Base;
 using SMS.BLL.Contracts;
 using SMS.DAL.Contracts;
-using SMS.DAL.Repositories;
 using SMS.Entities;
 using SMS.Entities.AdditionalModels;
 using SMS.Entities.AdditionalModels.Finance;
@@ -19,7 +18,6 @@ public class StudentPaymentManager : Manager<StudentPayment>, IStudentPaymentMan
     private readonly IStudentRepository _studentRepository;
     private readonly IClassFeeListRepository _classFeeListRepository;
     private readonly IAcademicSessionRepository _academicSessionRepository;
-    private readonly IStudentFeeHeadRepository _studentFeeHeadRepository;
     private readonly IStudentPaymentDetailsRepository _studentPaymentDetailsRepository;
     private readonly IStudentFeeAllocationRepository _studentFeeAllocationRepository;
     private readonly IParamBusConfigManager _paramBusConfigManager;
@@ -31,7 +29,6 @@ public class StudentPaymentManager : Manager<StudentPayment>, IStudentPaymentMan
         IStudentRepository studentRepository,
         IClassFeeListRepository classFeeListRepository,
         IAcademicSessionRepository academicSessionRepository,
-        IStudentFeeHeadRepository studentFeeHeadRepository,
         IStudentPaymentDetailsRepository studentPaymentDetailsRepository,
         IStudentFeeAllocationRepository studentFeeAllocationRepository,
         IParamBusConfigManager paramBusConfigManager,
@@ -43,7 +40,6 @@ public class StudentPaymentManager : Manager<StudentPayment>, IStudentPaymentMan
         _studentRepository = studentRepository;
         _classFeeListRepository = classFeeListRepository;
         _academicSessionRepository = academicSessionRepository;
-        _studentFeeHeadRepository = studentFeeHeadRepository;
         _studentPaymentDetailsRepository = studentPaymentDetailsRepository;
         _studentFeeAllocationRepository = studentFeeAllocationRepository;
         _paramBusConfigManager = paramBusConfigManager;

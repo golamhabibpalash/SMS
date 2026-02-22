@@ -94,7 +94,7 @@ public class ReportsController : Controller
     [Authorize(Policy = "StudentsReportsPolicy")]
     public async Task<IActionResult> StudentsReportExport(string reportType, string fileName, int? academicClassId, int? academicSectionId)
     {
-        AcademicSession aSession = await _academicSessionManager.GetCurrentAcademicSession();
+        AcademicSession aSession = await _academicSessionManager.GetCurrentAcademicSessionAsync();
         if (aSession == null)
         {
             return new JsonResult("Current Session not set");
@@ -475,20 +475,36 @@ public class ReportsController : Controller
         }
 
         // Cross-platform image path
+
+        string defaultInstituteLogo = "smslogo.png";
+        string logoFileName = string.IsNullOrWhiteSpace(institute.Logo)
+            ? defaultInstituteLogo
+            : institute.Logo;
+
         imagePath = Path.Combine(
             _host.WebRootPath,
             "Images",
             "Institute",
-            institute.Logo
+            logoFileName
         );
 
         // Read image file without System.Drawing
-        byte[] imageBytes = await System.IO.File.ReadAllBytesAsync(imagePath);
+        byte[] imageBytes;
+        if (!string.IsNullOrEmpty(imagePath) && System.IO.File.Exists(imagePath))
+        {
+            imageBytes = await System.IO.File.ReadAllBytesAsync(imagePath);
+        }
+        else
+        {
+            // Load default image
+            string defaultImagePath = Path.Combine(_host.WebRootPath, "Images", "Institute", defaultInstituteLogo);
+            imageBytes = await System.IO.File.ReadAllBytesAsync(defaultImagePath);
+        }
         // Convert to base64 for RDLC
         imageParam = "data:image/png;base64," + Convert.ToBase64String(imageBytes);
 
         attendanceFor = attendanceFor == "s" ? "student" : "employees";
-        AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSession();
+        AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSessionAsync();
         var reportData = new List<RptDailyAttendaceVM>();
         reportData = attendanceCategory == "In" ? await _reportManager.GetDailyAttendanceReport(fromDate, academicClassId, academicSectionId, attendanceType, academicSession.Id.ToString(), attendanceFor) : await _reportManager.GetDailyAttendanceReportCheckOut(fromDate, academicClassId,academicSectionId,attendanceFor);
 
@@ -622,7 +638,7 @@ public class ReportsController : Controller
         int monthDays = ViewBag.daysInMonth = DateTime.DaysInMonth(DateTime.Today.Year, monthId);
 
         var attendanceList = await _attendanceMachineManager.GetAttendanceByDateRangeAsync(StartDate, EndDate);
-        AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSession();
+        AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSessionAsync();
         var studentList = await _studentManager.GetStudentsByClassIdAndSessionIdAsync(academicSession.Id, classId);
 
         List<DateTime> monthlyHolidays = await _OffDayManager.GetMonthlyHolidaysAsync(firstDateOfMonth.ToString("MMyyyy"));

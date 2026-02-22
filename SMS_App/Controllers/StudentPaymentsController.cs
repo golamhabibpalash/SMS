@@ -13,6 +13,7 @@ using SchoolManagementSystem;
 using SMS.BLL.Contracts;
 using SMS.Entities;
 using SMS.Entities.AdditionalModels;
+using SMS.Entities.AdditionalModels.Finance;
 using SMS_App.Utilities.MACIPServices;
 using SMS_App.Utilities.Others;
 using SMS_App.Utilities.ShortMessageService;
@@ -113,7 +114,7 @@ public class StudentPaymentsController : Controller
     [Authorize(Policy = "PaymentStudentPaymentsPolicy")]
     public async Task<IActionResult> Payment(StudentPaymentVM paymentObject)
     {
-        paymentObject.CurrentAcademicSession = await _academicSessionManager.GetCurrentAcademicSession();
+        paymentObject.CurrentAcademicSession = await _academicSessionManager.GetCurrentAcademicSessionAsync();
         try
         {
             await ProcessPayment(paymentObject);
@@ -220,7 +221,7 @@ public class StudentPaymentsController : Controller
         }
         var classfeelist = await _classFeeListManager.GetAllByClassIdAsync(studentPayment.Student.AcademicClassId);
         List<StudentFeeHead> feeHeadList = (List<StudentFeeHead>)await _studentFeeHeadManager.GetAllAsync();
-        AcademicSession currentSession = await _academicSessionManager.GetCurrentAcademicSession();
+        AcademicSession currentSession = await _academicSessionManager.GetCurrentAcademicSessionAsync();
 
         feeHeadList = (from f in feeHeadList
                        join t in classfeelist on f.Id equals t.StudentFeeHeadId
@@ -349,7 +350,7 @@ public class StudentPaymentsController : Controller
         Stopwatch stopwatch = Stopwatch.StartNew();
         GlobalUI.PageTitle = "Due Payment List";
 
-        var currentSession = await _academicSessionManager.GetCurrentAcademicSession();
+        var currentSession = await _academicSessionManager.GetCurrentAcademicSessionAsync();
         int sessionId = aSessionId ?? currentSession.Id;
         int classId = academicClassId ?? 0;
         int sectionId = academicSectionId ?? 0;
@@ -400,11 +401,68 @@ public class StudentPaymentsController : Controller
     public async Task<IActionResult> DuePaymentPrevious()
     {
         GlobalUI.PageTitle = "Previous Due Payment List";
-        DuePaymentVM previousDuePaymentVM = new()
+        var allClass = await _academicClassManager.GetAllAsync();
+        DuePaymentPreviousDto previousDuePaymentVM = new()
         {
-            AcademicClassList = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name").ToList()
+            AcademicClassList = new SelectList(allClass.Where(s => s.Status==true), "Id", "Name").ToList()
         };
         ViewBag.isFromPost = false;
+        return View(previousDuePaymentVM);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> DuePaymentPrevious(DuePaymentPreviousDto modelObject)
+    {
+        GlobalUI.PageTitle = "Previous Due Payment List";
+        var allClass = await _academicClassManager.GetAllAsync();
+        List<AcademicSection> sectionList = new List<AcademicSection>();
+        List<Student> studentList = new List<Student>();
+
+        if (modelObject.AcademicSectionId>0)
+        {
+            var section = await _academicSectionManager.GetByIdAsync(modelObject.AcademicSectionId);
+            if (section!=null)
+            {
+                sectionList.Add(section);
+            }
+        }
+
+        if (modelObject.StudentId>0)
+        {
+            var student = await _studentManager.GetByIdAsync(modelObject.StudentId);
+            if (student!=null)
+            {
+                studentList.Add(student);
+            }
+        }
+
+        DuePaymentPreviousDto previousDuePaymentVM = new()
+        {
+            AcademicClassList = new SelectList(allClass.Where(s => s.Status == true), "Id", "Name", modelObject.AcademicClassId).ToList(),
+            AcademicSectionList = new SelectList(sectionList.Where(s => s.Status == true), "Id", "Name", modelObject.AcademicSectionId).ToList(),
+            StudentList = new SelectList(studentList,"Id","Name",modelObject.StudentId).ToList()
+        };
+        ViewBag.isFromPost = true;
+
+        //load institute
+        previousDuePaymentVM.Institute = await _instituteManager.GetFirstOrDefaultAsync();
+
+        //load duepayments
+        bool? stStatus = null;
+        switch (modelObject.Status)
+        {
+            case "1":
+                stStatus = true;
+                break;
+            case "0":
+                stStatus = false;
+                break;
+            default:
+                stStatus = null;
+                break;
+        }
+        previousDuePaymentVM.DuePayments = await _studentPaymentManager.GetPreviousDuesAsync(modelObject.StudentId, modelObject.AcademicSectionId, modelObject.AcademicClassId, stStatus);
+
         return View(previousDuePaymentVM);
     }
 
@@ -540,7 +598,7 @@ public class StudentPaymentsController : Controller
 
     private async Task<StudentPaymentVM> CreateStudentPaymentVM(Student student)
     {
-        var currentAcademicSession = await _academicSessionManager.GetCurrentAcademicSession();
+        var currentAcademicSession = await _academicSessionManager.GetCurrentAcademicSessionAsync();
         var spvm = new StudentPaymentVM
         {
             CurrentAcademicSession = currentAcademicSession,

@@ -62,7 +62,7 @@ public class AcademicExamsController : Controller
             ViewBag.error = TempData["error"].ToString();
         }
         ViewModels.AcademicVM.AcademicExamVM academicExamVM = new ViewModels.AcademicVM.AcademicExamVM();
-        AcademicSession currentSession = await _sessionManager.GetCurrentAcademicSession();
+        AcademicSession currentSession = await _sessionManager.GetCurrentAcademicSessionAsync();
         academicExamVM.AcademicExamGroupList = new SelectList(await _examGroupManager.GetAllAsync(currentSession.Id), "Id", "ExamGroupName").ToList();
         academicExamVM.AcademicClassList = new SelectList(await _classManager.GetAllAsync(), "Id", "Name").ToList();
         List<Employee> emps = (List<Employee>)await _employeeManager.GetAllAsync();

@@ -4,7 +4,10 @@ using SMS.BLL.Contracts;
 using SMS.DAL.Contracts;
 using SMS.Entities;
 using SMS.Entities.AdditionalModels;
+using SMS.Entities.AdditionalModels.StudentVM;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,51 +15,59 @@ namespace SMS.BLL.Managers
 {
     public class StudentManager : Manager<Student>, IStudentManager
     {
-        private readonly IStudentRepository studentRepository;
+        private readonly IStudentRepository _studentRepository;
+        private readonly IAttendanceMachineManager _attendanceMachineManager;
+        private readonly IAcademicSessionManager _academicSessionManager;
+        private readonly IOffDayManager _offDayManager;
+        private readonly IInstituteManager _instituteManager;
 
-        public StudentManager(IStudentRepository studentRepository) : base(studentRepository)
+        public StudentManager(IStudentRepository studentRepository, IAttendanceMachineManager attendanceMachineManager, IAcademicSessionManager academicSessionManager, IOffDayManager offDayManager, IInstituteManager instituteManager) : base(studentRepository)
         {
-            this.studentRepository = studentRepository;
+            _studentRepository = studentRepository;
+            _attendanceMachineManager = attendanceMachineManager;
+            _academicSessionManager = academicSessionManager;
+            _offDayManager = offDayManager;
+            _instituteManager = instituteManager;
         }
 
         public async Task<List<StudentListVM>> GetCurrentStudentListAsync(int? AcademicClassId, int? AcademicSectionId)
         {
-            return await studentRepository.GetCurrentStudentListAsync(AcademicClassId, AcademicSectionId);
+            return await _studentRepository.GetCurrentStudentListAsync(AcademicClassId, AcademicSectionId);
         }
 
         public async Task<Student> GetStudentByClassRollAsync(int classRoll)
         {
-            return await studentRepository.GetStudentByClassRollAsync(classRoll);
+            return await _studentRepository.GetStudentByClassRollAsync(classRoll);
         }
         public async Task<Student> GetStudentByUniqueIdAsync(string uniqueId)
         {
-            return await studentRepository.GetStudentByUniqueIdAsync(uniqueId);
+            return await _studentRepository.GetStudentByUniqueIdAsync(uniqueId);
         }
 
         public async Task<Student> GetStudentByClassRollAsync(int id, int classRoll)
         {
-            return await studentRepository.GetStudentByClassRollAsync(id, classRoll);
+            return await _studentRepository.GetStudentByClassRollAsync(id, classRoll);
         }
 
         public async Task<List<Student>> GetStudentsByClassIdAndSessionIdAsync(int sessionId, int classId)
         {
-            return await studentRepository.GetStudentsByClassIdAndSessionIdAsync(sessionId, classId);
+            return await _studentRepository.GetStudentsByClassIdAndSessionIdAsync(sessionId, classId);
         }
 
         public async Task<List<Student>> GetStudentsByClassSessionSectionAsync(int sessionId, int classId, int sectionId)
         {
-            return await studentRepository.GetStudentsByClassSessionSectionAsync(sessionId, classId, sectionId);
+            return await _studentRepository.GetStudentsByClassSessionSectionAsync(sessionId, classId, sectionId);
         }
         public async Task<string> GetUniqueIdByStudentId(int stuId)
         {
-            Student student = await studentRepository.GetByIdAsync(stuId);
+            Student student = await _studentRepository.GetByIdAsync(stuId);
             return student.UniqueId;
         }
 
         public async Task<List<StudentListVM>> GetStudentsBySearch(string search)
         {
             search = search.Trim().ToLower();
-            var students = await studentRepository.GetAllAsync();
+            var students = await _studentRepository.GetAllAsync();
 
             students = students
                 .Where(s =>

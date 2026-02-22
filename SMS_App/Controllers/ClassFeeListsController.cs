@@ -38,7 +38,7 @@ namespace SMS_App.Controllers
                 msg = TempData["success"].ToString();
                 ViewBag.msg = msg;
             }
-            AcademicSession currentSession = await academicSessionManager.GetCurrentAcademicSession();
+            AcademicSession currentSession = await academicSessionManager.GetCurrentAcademicSessionAsync();
             ViewBag.currentSessionId = currentSession.Id;
             var result = await _classFeeListManager.GetAllAsync();
 

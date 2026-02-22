@@ -146,7 +146,7 @@ public class ExamResultsController : Controller
             ViewBag.IsLoading = true;
             return View();
         }
-        var currentSession = await _sessionManager.GetCurrentAcademicSession();
+        var currentSession = await _sessionManager.GetCurrentAcademicSessionAsync();
         var students = await _studentManager.GetStudentsByClassIdAndSessionIdAsync(currentSession.Id, classId);
         List<ExaminationResultVM> examinationResultVMs = new List<ExaminationResultVM>();
         var institute = await _instituteManager.GetFirstOrDefaultAsync();
@@ -261,7 +261,7 @@ public class ExamResultsController : Controller
     public async Task<ActionResult> ClassWiseResultAfterProcess()
     {
         GlobalUI.PageTitle = GlobalUI.SiteTitle = "Class-Wise Result";
-        var currentSession = await _sessionManager.GetCurrentAcademicSession();
+        var currentSession = await _sessionManager.GetCurrentAcademicSessionAsync();
         var allExamGroups = await _academicExamGroupManager.GetAllAsync();
         allExamGroups = allExamGroups.Where(s => s.AcademicSessionId == currentSession.Id).ToList();
         ViewData["ExamGroupList"] = new SelectList(allExamGroups, "Id", "ExamGroupName");
@@ -385,7 +385,7 @@ public class ExamResultsController : Controller
                 return RedirectToAction("Details", "AcademicExamGroup", new { id = groupId });
             }
             var exams = await _academicExamManager.GetByClassIdExamGroupIdAsync(groupId, classId);
-            var session = await _sessionManager.GetCurrentAcademicSession();
+            var session = await _sessionManager.GetCurrentAcademicSessionAsync();
             var examGroup = await _academicExamGroupManager.GetByIdAsync(groupId);
             List<Student> students = await _studentManager.GetStudentsByClassIdAndSessionIdAsync(session.Id, classId);
             foreach (var student in students)

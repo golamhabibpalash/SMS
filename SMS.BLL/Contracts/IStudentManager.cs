@@ -1,11 +1,8 @@
-﻿//using AutoMapper.Configuration.Conventions;
-using SMS.BLL.Contracts.Base;
+﻿using SMS.BLL.Contracts.Base;
 using SMS.Entities;
 using SMS.Entities.AdditionalModels;
-using System;
+using SMS.Entities.AdditionalModels.StudentVM;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SMS.BLL.Contracts;

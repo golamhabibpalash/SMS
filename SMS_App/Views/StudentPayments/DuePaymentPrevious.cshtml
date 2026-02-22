@@ -1,4 +1,5 @@
-﻿@model SMS_App.ViewModels.PaymentVM.DuePaymentVM
+﻿@using SMS.Entities.AdditionalModels.Finance;
+@model DuePaymentPreviousDto
 @{
     int sl = 0;
     string sectionName = string.Empty;
@@ -25,8 +26,12 @@
         <div class="row">
             <div class="col-md-12">
                 <fieldset class="border-primary p-2 border">
-                    <legend class="w-auto text-primary">Select Criteria</legend>
-                    <form id="studentInfoForm" asp-action="DuePayment">
+                    <legend class="float-none w-auto text-primary px-2"
+                            style="font-size: 1.1rem; position: relative;">
+                        Select Criteria
+                    </legend>
+
+                    <form id="studentInfoForm" asp-action="DuePaymentPrevious">
                         <div class="form-group row">
                             <label asp-for="AcademicClassId" class="col-md-4 col-form-label"></label>
                             <div class="col-md-8">
@@ -42,6 +47,24 @@
                             <div class="col-md-8">
                                 <select class="form-control" asp-for="AcademicSectionId" asp-items="Model.AcademicSectionList">
                                     <option selected disabled value="">Select Academic Section</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label asp-for="StudentId" class="col-md-4 col-form-label"></label>
+                            <div class="col-md-8">
+                                <select class="form-control" asp-for="StudentId" asp-items="Model.StudentList">
+                                    <option selected disabled value="">Select Student</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label asp-for="Status" class="col-md-4 col-form-label"></label>
+                            <div class="col-md-8">
+                                <select class="form-control" asp-for="Status" >
+                                    <option value="-1">All</option>
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
                                 </select>
                             </div>
                         </div>
@@ -80,12 +103,12 @@
 
                             <div class="row">
                                 <div class="col-md-5 text-md-end">
-                                    <img src="~/Images/Institute/@Model.Institute.Logo" alt="Alternate Text" style="width:100px" />
+                                    <img src="~/Images/Institute/@Model.Institute.Logo" alt="Alternate Text" style="width:100px" onerror="this.onerror=null;this.src='/images/institute/smslogo.png';" />
                                 </div>
                                 <div class="col-md-7 text-md-start">
                                     <h2 class="text-info font-weight-bolder"> @Model.Institute.Name</h2>
                                     <h5 class="h5">@Model.Institute.Address</h5>
-                                    <h6 class="font-italic" style="text-decoration:underline">Due Payment (Current)</h6>
+                                    <h6 class="font-italic" style="text-decoration:underline">Due Payment (All Session)</h6>
                                 </div>
                             </div>
                             <div class="row">
@@ -132,11 +155,13 @@
                             <td class="text-right">@item.TotalDue</td>
                             <td class="text-center action">
                                 <span class="btn-group-sm">
-                                    <a class="btn-sm btn-group-sm btn-info " asp-action="StudentPaymentInfoExport" asp-controller="Reports" asp-route-reportType="pdf" asp-route-fileName="payment_report_@item.Student.ClassRoll" asp-route-classRoll="@item.Student.ClassRoll" asp-route-fromDate="@item.Student.AdmissionDate.ToString("dd-MM-yyyy")" asp-route-toDate="@DateTime.Today.ToString("dd-MM-yyyy")" target="_blank">
-                                        <span class="fa fa-file"></span> View
+                                    <a class=" btn-sm btn-group-sm btn-info btn p-1 m-1 rounded" asp-action="StudentPaymentInfoExport" asp-controller="Reports" asp-route-reportType="pdf" asp-route-fileName="payment_report_@item.Student.ClassRoll" asp-route-classRoll="@item.Student.ClassRoll" asp-route-fromDate="@item.Student.AdmissionDate.ToString("dd-MM-yyyy")" asp-route-toDate="@DateTime.Today.ToString("dd-MM-yyyy")" target="_blank" title="View">
+                                        <span class="fa fa-eye"></span> 
                                     </a>
-                                    <a class="btn-sm btn-group-sm btn-primary" asp-action="Details" asp-controller="Students" asp-fragment="financials" asp-route-tabName="financials" asp-route-id="@item.Student.Id">details</a>
-                                    <a class="btn-sm btn-group-sm btn-success" asp-action="Payment" asp-controller="StudentPayments" asp-route-stRoll="@item.Student.ClassRoll">Pay</a>
+                                    <a class=" btn-sm btn-group-sm btn-primary btn p-1 m-1 rounded" asp-action="Details" asp-controller="Students" asp-fragment="financials" asp-route-tabName="financials" asp-route-id="@item.Student.Id" title="Details">
+                                        <span class="fa fa-info"></span>
+                                    </a>
+                                    <a class=" btn-sm btn-group-sm btn-success btn p-1 m-1 rounded" asp-action="Payment" asp-controller="StudentPayments" asp-route-stRoll="@item.Student.ClassRoll" title="Pay">Pay</a>
                                 </span>
                             </td>
                         </tr>
@@ -160,95 +185,7 @@
 
 
 @section Scripts{
-    <script src="~/lib/DataTable/js/jquery-3.7.0.js"></script>
-    <script src="~/lib/DataTable/js/jquery.dataTables.min.js"></script>
-    <script src="~/lib/DataTable/js/dataTables.buttons.min.js"></script>
-    <script src="~/lib/DataTable/js/jszip.min.js"></script>
-    <script src="~/lib/DataTable/js/pdfmake.min.js"></script>
-    <script src="~/lib/DataTable/js/vfs_fonts.js"></script>
-    <script src="~/lib/DataTable/js/buttons.html5.min.js"></script>
-
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.4/xlsx.full.min.js"></script>
     <script>
-        $(document).ready(function () {
-            $('#myTable').dataTable({
-                "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
-                "dom": 'lBfrtip',
-                'columnDefs': [{
-                    'targets': '.no-sort', // column index (start from 0)
-                    'orderable': false, // set orderable false for selected columns
-                }],
-                buttons: ['copy', 'excel', 'pdf'],
-            });
-            let myTable = $('#myTable').DataTable();
-
-            new $.fn.dataTable.Buttons(myTable, {
-                buttons: [
-                    {
-                        extend: 'copy',
-                        exportOptions: {
-                            columns: ':not(.action)'
-                        }
-                    },
-                    {
-                        extend: 'excel',
-                        exportOptions: {
-                            columns: ':not(.action)'
-                        }
-                    },
-                    {
-                        extend: 'pdf',
-                        exportOptions: {
-                            columns: ':not(.action)'
-                        }
-                    },
-                    {
-                        extend: 'print',
-                        exportOptions: {
-                            columns: ':not(.action)'
-                        }
-                    }
-                ]
-            });
-        });
-
-
-
-        document.getElementById('exportExcelButton').addEventListener('click', function () {
-            // Get the table element
-            const table = document.getElementById('myTable');
-
-            // Remove the 'action' column
-            const columnToRemove = 'action';
-            const columnIndex = Array.from(table.querySelectorAll('th')).findIndex(th => th.id === columnToRemove);
-            const rows = Array.from(table.querySelectorAll('tr'));
-            rows.forEach(row => {
-                const cells = Array.from(row.querySelectorAll('td'));
-                cells.splice(columnIndex, 1); // Remove the cell for the 'action' column
-                row.innerHTML = cells.map(cell => cell.outerHTML).join('');
-            });
-
-            // Create the workbook from the modified table
-            const wb = XLSX.utils.table_to_book(table);
-
-            // Save the workbook as an Excel file
-            XLSX.writeFile(wb, 'Due Payment @DateTime.Now.ToString("dd-MM-yyyy")_@ViewBag.ClassName .xlsx');
-        });
-
-
-
-
-        let isPost = '@ViewBag.isFromPost';
-
-        const ePortion = document.getElementById('exportPortion');
-        if (isPost == 'True') {
-            ePortion.style.visibility = 'visible';
-        }
-        else {
-            ePortion.style.visibility = 'hidden';
-        }
-
 
         $('#AcademicClassId').change(function () {
             let id = $('#AcademicClassId option:selected').val();
@@ -264,7 +201,7 @@
 
                     if (data != null || data != '') {
                         var o = '<option disabled selected>Select Section Name</option>';
-                        var o2 = '<option value="0">All Section</option>';
+                        var o2 = '<option value="">No Section</option>';
                         $('#AcademicSectionId').append(o);
                         $('#AcademicSectionId').append(o2);
                         $.each(data, function (i, obj) {
@@ -283,5 +220,44 @@
                 }
             });
         });
+
+
+        $('#AcademicSectionId').change(function () {
+            let sessionId = $('#aAcademicSession option:selected').val();
+            let id = $('#AcademicClassId option:selected').val();
+            let sectionId = $('#AcademicSectionId option:selected').val();
+            loadStudentListDropdown(sessionId, id, sectionId);
+        });
+
+        function loadStudentListDropdown(sessionId, classId, sectionId)
+        {
+            $.ajax({
+                url: "/students/GetStudentsBySessionIdClassIdSectionId?academicSessionId=" + sessionId + "&academicClassId=" + classId + "&academicSectionId=" + sectionId,
+                dataType: "JSON",
+                type: "POST",
+                cache: false,
+                success: function (data) {
+                    $('#StudentId').empty();
+                    if (data != null || data != '') {
+                        var o = '<option disabled selected value="">Select Student</option>';
+                        var o2 = '<option value="">All Student</option>';
+                        $('#StudentId').append(o);
+                        $('#StudentId').append(o2);
+                        $.each(data, function (i, obj) {
+                            var op = '<option value="' + obj.id + '">' +obj.classRoll+"-"+ obj.name + '</option>';
+                            $('#StudentId').append(op);
+                        });
+                    }
+                    else {
+                        var o = '<option disabled selected>Student Not Found</option>';
+                        $('#StudentId').append(o);
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        };
+
     </script>
 }

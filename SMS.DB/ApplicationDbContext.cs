@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SMS.Entities;
 using SMS.Entities.AdditionalModels;
+using SMS.Entities.AdditionalModels.Finance;
 using SMS.Entities.RptModels;
 using SMS.Entities.RptModels.AttendanceVM;
 using SMS.Entities.RptModels.Results;
@@ -169,8 +170,12 @@ namespace SMS.DB
         public DbSet<SubjectWiseMarkSheetVM> SubjectWiseMarkSheetVMs { get; set; }
         [NotMapped]
         public DbSet<StudentWiseMarkSheetVM> StudentWiseMarkSheetVMs { get; set; }
+
         [NotMapped]
         public DbSet<PaidAmountResult> PaidAmountResults { get; set; }
+
+        [NotMapped]
+        public DbSet<PreviouisPaymentDetailsDto> PreviousPaymentsSummery { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -219,6 +224,7 @@ namespace SMS.DB
             builder.Entity<SubjectWiseMarkSheetVM>().ToView(nameof(SubjectWiseMarkSheetVMs)).HasNoKey();
             builder.Entity<StudentWiseMarkSheetVM>().ToView(nameof(StudentWiseMarkSheetVMs)).HasNoKey();
             builder.Entity<PaidAmountResult>().ToView(nameof(PaidAmountResults)).HasNoKey();
+            builder.Entity<PreviouisPaymentDetailsDto>().ToView(nameof(PreviousPaymentsSummery)).HasNoKey();
 
         }
     }

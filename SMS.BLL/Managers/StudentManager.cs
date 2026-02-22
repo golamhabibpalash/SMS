@@ -1,4 +1,5 @@
 ﻿using BLL.Managers.Base;
+using Microsoft.EntityFrameworkCore;
 using SMS.BLL.Contracts;
 using SMS.DAL.Contracts;
 using SMS.Entities;
@@ -91,6 +92,93 @@ namespace SMS.BLL.Managers
                 GuardianPhone = student.GuardianPhone
             }).ToList();
             return studentListVMs;
+        }
+
+        public async Task<ProfileAttendance> GetProfileAttendanceAsync(int id)
+        {
+            Student student = await _studentRepository.GetByIdAsync(id);
+            ProfileAttendance profileAttendance = new ProfileAttendance();
+            var currentSession = await _academicSessionManager.GetCurrentAcademicSessionAsync();
+            profileAttendance.CurrentSession = currentSession;
+            Dictionary<int, int> monthWiseAttendance = new Dictionary<int, int>();
+            var institute = await _instituteManager.GetByIdAsync(1);
+            
+            var currentSessonsAllAttendances = await _attendanceMachineManager.GetSessionWiseAttendanceByStudentUniqueIdAsync(currentSession.Id, student.UniqueId);
+            if (currentSessonsAllAttendances!=null && currentSessonsAllAttendances?.Count>0)
+            {
+                currentSessonsAllAttendances = currentSessonsAllAttendances.DistinctBy(s => s.PunchDatetime.Date).ToList();
+
+                
+                foreach (var attendance in currentSessonsAllAttendances)
+                {
+                    //Late Arrivals
+                    if (attendance.PunchDatetime.TimeOfDay > institute.StartingTime.TimeOfDay)
+                    {
+                        profileAttendance.LateArrivals += 1;
+                    }
+                    int currentMonth = attendance.PunchDatetime.Month;
+                    if (monthWiseAttendance.ContainsKey(currentMonth))
+                    {
+                        monthWiseAttendance[currentMonth]++;
+                    }
+                    else
+                    {
+                        monthWiseAttendance[currentMonth] = 1;
+                    }
+                }
+            }
+            
+
+            //Overall Attendance
+            DateTime currentSessionStartDate = new DateTime(Convert.ToInt32(currentSession.Name.Substring(currentSession.Name.Length-4)), 1,1);
+            int totalDaysInSession = (DateTime.Today - currentSessionStartDate).Days + 1;
+            var sessionWiseTotalOffDays = await _offDayManager.GetYearlyHolidaysAsync(Convert.ToInt32(currentSession.Name.Substring(currentSession.Name.Length - 4)));
+            int totalInstitutionOpendays = totalDaysInSession - sessionWiseTotalOffDays.Count;
+            int totalPresent = Convert.ToInt32(currentSessonsAllAttendances?.Count());
+            profileAttendance.OverallAttendance = (totalPresent * 100) / totalInstitutionOpendays;
+
+            //Days Present
+            profileAttendance.DaysPresent = Convert.ToInt32(currentSessonsAllAttendances?.Count());
+
+            //Days Absent
+            profileAttendance.DaysAbsent = totalInstitutionOpendays - totalPresent;
+
+            //monthWiseAttendance
+            foreach (var item in monthWiseAttendance)
+            {
+                string name = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(item.Key);
+                var monthlyOffDays = sessionWiseTotalOffDays.Where(o => o.OffDayStartingDate.Day == item.Key).Count();
+                var totalDaysInTheMonth = DateTime.DaysInMonth(Convert.ToInt32(currentSession.Name.Substring(currentSession.Name.Length - 4)), item.Key);
+                int totalDays = 0;
+                int percentage = 0;
+                MonthlyAttendance monthlyAttendance = new()
+                {
+                    MonthName = name,
+                    TotalDays =totalDays = totalDaysInTheMonth - monthlyOffDays,
+                    DaysPresent = item.Value,
+                    DaysAbsent = totalDays - item.Value,
+                    LateArrivals = 0,
+                    Percentage = percentage = (item.Value * 100) / (totalDaysInTheMonth - monthlyOffDays),
+                    Status = GetAttendanceStatus(percentage)
+                };
+                profileAttendance.MonthlyAttendances.Add(monthlyAttendance);
+            }
+
+            return profileAttendance;
+        }
+        private string GetAttendanceStatus(int percentage)
+        {
+            if (percentage >= 80) return "Excellent";
+            if (percentage >= 50) return "Good";
+            if (percentage >= 26) return "Average";
+            if (percentage >= 1) return "Poor";
+
+            return "No Data";
+        }
+
+        public async Task<List<Student>> GetAllActiveStudentsAsync()
+        {
+            return await _studentRepository.Table.Where(s => s.Status == true).ToListAsync();
         }
     }
 }

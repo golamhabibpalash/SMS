@@ -3,13 +3,13 @@ using Hangfire.Storage;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using SMS_App.Utilities.EmailServices;
-using SMS_App.Utilities.EmailServices.EmailVM;
-using SMS_App.Utilities.MACIPServices;
-using SMS_App.Utilities.ShortMessageService;
 using SMS.BLL.Contracts;
 using SMS.Entities;
-using SMS.Entities.AdditionalModels;
+using SMS_App.Utilities.EmailServices;
+using SMS_App.Utilities.EmailServices.EmailVM;
+using SMS_App.Utilities.LoggerService;
+using SMS_App.Utilities.MACIPServices;
+using SMS_App.Utilities.ShortMessageService;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -33,9 +33,20 @@ public class HangfireController : ControllerBase
     private readonly IStudentPaymentManager _studentPaymentManager;
     private readonly IParamBusConfigManager _paramBusConfigManager;
     private readonly IWebHostEnvironment _webHostEnvironment;
+    private readonly IAppLogger _appLogger;
 
-    #region Constructor Start =================================================
-    public HangfireController(IStudentManager studentManager, IAttendanceMachineManager attendanceMachineManager, IEmployeeManager employeeManager, IPhoneSMSManager phoneSMSManager, ISetupMobileSMSManager setupMobileSMSManager, IOffDayManager offDayManager, IInstituteManager instituteManager, IStudentPaymentManager studentPaymentManager, IParamBusConfigManager paramBusConfigManager, IWebHostEnvironment webHostEnvironment)
+    public HangfireController(
+        IStudentManager studentManager,
+        IAttendanceMachineManager attendanceMachineManager,
+        IEmployeeManager employeeManager,
+        IPhoneSMSManager phoneSMSManager,
+        ISetupMobileSMSManager setupMobileSMSManager,
+        IOffDayManager offDayManager,
+        IInstituteManager instituteManager,
+        IStudentPaymentManager studentPaymentManager,
+        IParamBusConfigManager paramBusConfigManager,
+        IWebHostEnvironment webHostEnvironment,
+        IAppLogger appLogger = null)
     {
         _studentManager = studentManager;
         _attendanceMachineManager = attendanceMachineManager;
@@ -47,1131 +58,689 @@ public class HangfireController : ControllerBase
         _studentPaymentManager = studentPaymentManager;
         _paramBusConfigManager = paramBusConfigManager;
         _webHostEnvironment = webHostEnvironment;
+        _appLogger = appLogger;
     }
-    #endregion Constructor Finished xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxX
 
+    #region Job Scheduler ======================================================
 
     [HttpGet]
     public async Task<IActionResult> AttendanceBackgroundJob()
     {
-        var jobs = JobStorage.Current.GetConnection().GetRecurringJobs();
-        Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
-        DateTime instituteStartTime = institute.StartingTime;
-        DateTime instituteCloseTime = institute.ClosingTime;
-        DateTime instituteLateTime = institute.LateTime;
-
-        var startTimeHr = instituteStartTime.Hour;
-        var startTimeMn = instituteStartTime.Minute;
-
-        var instituteEndHr = instituteCloseTime.Hour;
-        var instituteEndMn = instituteCloseTime.Minute;
-
-        var lateTimeHr = instituteLateTime.Hour;
-        var lateTimeMn = instituteLateTime.Minute;
-
-        foreach (var item in jobs)
+        // Clear all existing jobs
+        foreach (var job in JobStorage.Current.GetConnection().GetRecurringJobs())
         {
-            BackgroundJob.Delete(item.Id);
-            RecurringJob.RemoveIfExists(item.Id);
+            BackgroundJob.Delete(job.Id);
+            RecurringJob.RemoveIfExists(job.Id);
         }
 
-        SetupMobileSMS setupMobileSMS = await _setupMobileSMSManager.GetByIdAsync(1);
-        if (setupMobileSMS != null)
+        var institute = await _instituteManager.GetFirstOrDefaultAsync();
+        int startTimeHr = institute.StartingTime.Hour;
+        int startTimeMn = institute.StartingTime.Minute;
+        int endTimeHr = institute.ClosingTime.Hour;
+
+        var smsSetup = await _setupMobileSMSManager.GetByIdAsync(1);
+        if (smsSetup == null)
         {
-            if (setupMobileSMS.CheckInSMSSummary == true)
-            {
-                string recurringJobId = "SendCheckinSummarySMS";
-                RecurringJobOptions options = new()
-                {
-                    TimeZone = TimeZoneInfo.Local,
-                };
-                var smsTime = await _paramBusConfigManager.GetByParamSL(7);
-
-                var finalTimeHr = smsTime?.ParamValue.Substring(0, smsTime.ParamValue.IndexOf(':')) ?? (startTimeHr + 1).ToString();
-                var finalTimeMn = smsTime?.ParamValue.Substring(smsTime.ParamValue.IndexOf(':') + 1) ?? (startTimeMn + 5).ToString();
-
-                var cronEx = $"{finalTimeMn} {finalTimeHr} * * 0-4,6";
-                RecurringJob.AddOrUpdate(recurringJobId, () => SMSSendDailyAttendanceSummary(), cronEx, options);
-                //At 11:05 AM, Saturday through Thursday
-            }
-            if (setupMobileSMS.CheckInSMSService == true)
-            {
-                string recurringJobId = "SendCheckinSMS";
-                RecurringJobOptions options = new()
-                {
-                    TimeZone = TimeZoneInfo.Local,
-                };
-                var smsStartTime = await _paramBusConfigManager.GetByParamSL(1);
-                var smsEndStop = await _paramBusConfigManager.GetByParamSL(2);
-
-                var smsStartTimeHr = smsStartTime?.ParamValue.Substring(0, smsStartTime.ParamValue.IndexOf(':')) ?? (startTimeHr - 1).ToString();
-                var smsStartTimeMn = smsStartTime?.ParamValue.Substring(smsStartTime.ParamValue.IndexOf(':') + 1) ?? (startTimeHr - 1).ToString();
-                var smsEndTimeHr = smsEndStop?.ParamValue.Substring(0, smsStartTime.ParamValue.IndexOf(':')) ?? (startTimeHr + 1).ToString();
-                var cronEx = $"*/10 {smsStartTimeHr}-{smsEndTimeHr} * * 0-4,6";
-                RecurringJob.AddOrUpdate(recurringJobId, () => SendCheckInSMS(), cronEx, options);
-                //Every 10 minutes, between 08:00 AM and 09:59 AM, Saturday through Thursday
-            }
-            if (setupMobileSMS.CheckOutSMSService == true)
-            {
-                string recurringJobId = "SendCheckoutSMS";
-                RecurringJobOptions options = new()
-                {
-                    TimeZone = TimeZoneInfo.Local,
-                };
-                var checkOutStartTime = await _paramBusConfigManager.GetByParamSL(3);
-                var checkOutEndTime = await _paramBusConfigManager.GetByParamSL(4);
-
-                int smsStartTime = (startTimeHr + instituteEndHr) / 2;
-                var smsStartTimeHr = checkOutStartTime?.ParamValue.Substring(0, checkOutStartTime.ParamValue.IndexOf(':')) ?? smsStartTime.ToString();
-                int smsEndTime = instituteEndHr + 1;
-                var smsEndTimeHr = checkOutEndTime?.ParamValue.Substring(0, checkOutEndTime.ParamValue.IndexOf(':')) ?? smsEndTime.ToString();
-                var cron = $"*/10 {smsStartTimeHr}-{smsEndTimeHr} * * 0-4,6";
-                RecurringJob.AddOrUpdate(recurringJobId, () => SendCheckOutSMS(), cron, options);
-                //Every 10 minutes, between 12:00 PM and 03:59 PM, Saturday through Thursday
-            }
-            if (setupMobileSMS.AbsentNotification == true)
-            {
-                string recurringJobId = "AbsentNotificationSMS";
-                RecurringJobOptions options = new()
-                {
-                    TimeZone = TimeZoneInfo.Local,
-                };
-                var absentStudentNotifiactionTime = await _paramBusConfigManager.GetByParamSL(8);
-                int smsTimeHr = startTimeHr + 2;
-                var notificationTimeHr = absentStudentNotifiactionTime?.ParamValue.Substring(0, absentStudentNotifiactionTime.ParamValue.IndexOf(':')) ?? smsTimeHr.ToString();
-                var notificationTimeMn = absentStudentNotifiactionTime?.ParamValue.Substring(absentStudentNotifiactionTime.ParamValue.IndexOf(':') + 1) ?? "1";
-                var cron = $"{notificationTimeMn} {notificationTimeHr} * * 0-4,6";
-                RecurringJob.AddOrUpdate(recurringJobId, () => SendAbsentNotificationSMS(), cron, options);
-                //At 10:00:01 AM, Saturday through Thursday
-            }
-            if (setupMobileSMS.DailyCollectionSMSService == true)
-            {
-                string recurringJobId = "DailyCollectionSummerySMS";
-                RecurringJobOptions options = new()
-                {
-                    TimeZone = TimeZoneInfo.Local
-                };
-                var dailyCollectionSummmeryNotificationTime = await _paramBusConfigManager.GetByParamSL(9);
-                var smsTimeHr = "18";
-                var smsTimeMn = "1";
-                string[] timeParts = dailyCollectionSummmeryNotificationTime?.ParamValue.Split(':');
-                var notificationTimeHr = timeParts[0] ?? smsTimeHr.ToString();
-                var notifucationTimeMn = timeParts[1] ?? smsTimeMn.ToString();
-
-                var cron = $"{notifucationTimeMn} {notificationTimeHr} * * 0-4,6";
-                RecurringJob.AddOrUpdate(recurringJobId, () => SendDailyCollectionSMS(), cron, options);
-                //At 6:00 pm, saturday through Thursday
-                //0 18 ? *SUN,MON,TUE,WED,THU,SAT *
-            }
+            await _appLogger.WarningAsync("SMS setup not found. No jobs scheduled.");
+            return RedirectToAction("SMSControl", "Setup");
         }
+
+        var localOptions = new RecurringJobOptions { TimeZone = TimeZoneInfo.Local };
+        if (!smsSetup.SMSService)
+        {
+            await _appLogger.InfoAsync("SMS Service is inactive. No jobs scheduled.");
+        }
+
+        // 1. CheckIn Summary SMS
+        if (smsSetup.CheckInSMSSummary)
+        {
+            var (summaryHr, summaryMn) = await LoadTimeConfigAsync(7,
+                defaultHour: (startTimeHr + 1).ToString(),
+                defaultMinute: (startTimeMn + 5).ToString());
+
+            RecurringJob.AddOrUpdate<HangfireController>(
+                "SendCheckinSummarySMS",
+                x => x.SMSSendDailyAttendanceSummary(),
+                $"{summaryMn} {summaryHr} * * 0-4,6",
+                localOptions);
+        }
+
+        // 2. CheckIn SMS
+        if (smsSetup.CheckInSMSService)
+        {
+            var (checkInStartHr, _) = await LoadTimeConfigAsync(1,
+                defaultHour: (startTimeHr - 1).ToString(),
+                defaultMinute: "00");
+
+            var (checkInEndHr, _) = await LoadTimeConfigAsync(2,
+                defaultHour: (startTimeHr + 1).ToString(),
+                defaultMinute: "00");
+
+            string checkInCron = $"*/10 {checkInStartHr}-{checkInEndHr} * * 0-4,6";
+            await _appLogger.InfoAsync($"CheckIn SMS scheduled. Cron: [{checkInCron}]");
+
+            RecurringJob.AddOrUpdate<HangfireController>(
+                "SendCheckinSMS",
+                x => x.SendCheckInSMSAsync(),
+                checkInCron,
+                localOptions);
+        }
+
+        // 3. CheckOut SMS
+        if (smsSetup.CheckOutSMSService)
+        {
+            var (checkOutStartHr, _) = await LoadTimeConfigAsync(3,
+                defaultHour: ((startTimeHr + endTimeHr) / 2).ToString(),
+                defaultMinute: "00");
+
+            var (checkOutEndHr, _) = await LoadTimeConfigAsync(4,
+                defaultHour: (endTimeHr + 1).ToString(),
+                defaultMinute: "00");
+
+            RecurringJob.AddOrUpdate<HangfireController>(
+                "SendCheckoutSMS",
+                x => x.SendCheckOutSMSAsync(),
+                $"*/10 {checkOutStartHr}-{checkOutEndHr} * * 0-4,6",
+                localOptions);
+        }
+
+        // 4. Absent Notification SMS
+        if (smsSetup.AbsentNotification)
+        {
+            var (absentHr, absentMn) = await LoadTimeConfigAsync(8,
+                defaultHour: (startTimeHr + 2).ToString(),
+                defaultMinute: "1");
+
+            RecurringJob.AddOrUpdate<HangfireController>(
+                "AbsentNotificationSMS",
+                x => x.SendAbsentNotificationSMSAsync(),
+                $"{absentMn} {absentHr} * * 0-4,6",
+                localOptions);
+        }
+
+        // 5. Daily Collection SMS
+        if (smsSetup.DailyCollectionSMSService)
+        {
+            var (collectionHr, collectionMn) = await LoadTimeConfigAsync(9,
+                defaultHour: "18",
+                defaultMinute: "1");
+
+            RecurringJob.AddOrUpdate<HangfireController>(
+                "DailyCollectionSummerySMS",
+                x => x.SendDailyCollectionSMSAsync(),
+                $"{collectionMn} {collectionHr} * * 0-4,6",
+                localOptions);
+        }
+
         return RedirectToAction("SMSControl", "Setup");
     }
 
-    #region CheckIn SMS Section Start===========================================
-    public async Task<string> SendCheckInSMS()
+    /// <summary>
+    /// Loads time config from DB by paramSL and parses it safely.
+    /// </summary>
+    private async Task<(string Hour, string Minute)> LoadTimeConfigAsync(
+        int paramSL, string defaultHour, string defaultMinute)
     {
-        string msg = string.Empty;
-        var currentMonthHolidays = await _offDayManager.GetMonthlyHolidaysAsync(DateTime.Now.ToString("MMyyyy"));
-        if (currentMonthHolidays != null && currentMonthHolidays.Count > 0)
+        var config = await _paramBusConfigManager.GetByParamSL(paramSL);
+        return ParseTimeConfig(config?.ParamValue, defaultHour, defaultMinute);
+    }
+
+    private static (string Hour, string Minute) ParseTimeConfig(
+        string paramValue, string defaultHour, string defaultMinute)
+    {
+        if (string.IsNullOrWhiteSpace(paramValue) || !paramValue.Contains(':'))
+            return (defaultHour, defaultMinute);
+
+        int idx = paramValue.IndexOf(':');
+        string hour = paramValue[..idx].Trim();
+        string minute = paramValue[(idx + 1)..].Trim();
+
+        if (!int.TryParse(hour, out int h) || h < 0 || h > 23) hour = defaultHour;
+        if (!int.TryParse(minute, out int m) || m < 0 || m > 59) minute = defaultMinute;
+
+        return (hour, minute);
+    }
+
+    #endregion
+
+    #region Holiday Check ======================================================
+
+    private async Task<bool> IsTodayHolidayAsync()
+    {
+        var holidays = await _offDayManager
+            .GetMonthlyHolidaysAsync(DateTime.Today.ToString("MMyyyy"));
+
+        if (holidays == null || holidays.Count == 0)
+            return false;
+
+        string today = DateTime.Today.ToString("ddMMyyyy");
+        return holidays.Any(h => h.ToString("ddMMyyyy") == today);
+    }
+
+    #endregion
+
+    #region CheckIn SMS ========================================================
+
+    [DisableConcurrentExecution(timeoutInSeconds: 300)]
+    public async Task SendCheckInSMSAsync()
+    {
+        if (await IsTodayHolidayAsync())
         {
-            foreach (var holiday in currentMonthHolidays)
-            {
-                if (holiday.ToString("ddMMyyyy") == DateTime.Now.ToString("ddMMyyyy"))
-                {
-                    msg = "Today is offday";
-                    return msg;
-                }
-            }
+            await _appLogger.InfoAsync("Today is a holiday. CheckIn SMS skipped.");
+            return;
         }
 
+        var smsSetup = await _setupMobileSMSManager.GetByIdAsync(1);
+        if (smsSetup == null || !smsSetup.SMSService || !smsSetup.CheckInSMSService)
+        {
+            await _appLogger.InfoAsync("CheckIn SMS Service is inactive or setup missing.");
+            return;
+        }
 
-        SetupMobileSMS setupMobileSMS = await _setupMobileSMSManager.GetByIdAsync(1);
-        if (setupMobileSMS != null)
+        var todaysAttendance = await _attendanceMachineManager
+            .GetAllAttendanceByDateAsync(DateTime.Today);
+
+        if (todaysAttendance == null || todaysAttendance.Count == 0)
+        {
+            await _appLogger.InfoAsync("No attendance records found for today.");
+            return;
+        }
+
+        var allActiveStudents = await _studentManager.GetAllActiveStudentsAsync();
+
+        if (smsSetup.CheckInSMSServiceForEmployees)
+            await ProcessCheckInForEmployeesAsync(todaysAttendance);
+
+        if (smsSetup.CheckInSMSServiceForMaleStudent)
+            await ProcessAttendanceForGenderAsync(todaysAttendance, allActiveStudents, GenderType.Male, "CheckIn");
+
+        if (smsSetup.CheckInSMSServiceForGirlsStudent)
+            await ProcessAttendanceForGenderAsync(todaysAttendance, allActiveStudents, GenderType.Female, "CheckIn");
+
+        await _appLogger.InfoAsync("CheckIn SMS processing completed.");
+    }
+
+    private async Task ProcessCheckInForEmployeesAsync(IList<Tran_MachineRawPunch> attendanceRecords)
+    {
+        const string smsType = "CheckIn";
+        string today = DateTime.Today.ToString("dd-MM-yyyy");
+
+        foreach (var att in attendanceRecords)
         {
             try
             {
-                if (setupMobileSMS.SMSService == true)
-                {
-                    if (setupMobileSMS.CheckInSMSService == true)
-                    {
-                        if (setupMobileSMS.CheckInSMSServiceForEmployees == true)
-                        {
-                            await CheckInSMSSendDailyAttendanceEmployee();
-                        }
-                        if (setupMobileSMS.CheckInSMSServiceForGirlsStudent == true)
-                        {
-                            await CheckInSMSSendDailyAttendanceStudentGirls();
-                        }
-                        if (setupMobileSMS.CheckInSMSServiceForMaleStudent == true)
-                        {
-                            await CheckInSMSSendDailyAttendanceStudentBoys();
-                        }
-                        msg = "CheckIn SMS Service has been started.";
-                    }
-                }
-                else
-                {
-                    msg = "SMS Service is Off";
-                }
-            }
-            catch (Exception)
-            {
+                if (!int.TryParse(att.CardNo?.Trim(), out int empId))
+                    continue;
 
-                throw;
+                var employee = await _employeeManager.GetByIdAsync(empId);
+                if (!IsEligibleEmployee(employee))
+                    continue;
+
+                string phoneNumber = employee.Phone;
+                if (string.IsNullOrEmpty(phoneNumber) || !PhoneNumberValidate(phoneNumber))
+                    continue;
+
+                if (await _phoneSMSManager.IsSMSSendForAttendance(phoneNumber, smsType, today))
+                    continue;
+
+                string name = GetEmployeeName(employee);
+                string smsText = GenerateCheckInSMSText(name, att.PunchDatetime.ToString("hh:mm tt"));
+
+                if (await MobileSMS.SendSMS(phoneNumber, smsText))
+                    await SaveSMSRecordAsync(phoneNumber, smsText, smsType);
+            }
+            catch (Exception ex)
+            {
+                await _appLogger.ErrorAsync(
+                    $"Error processing CheckIn SMS for Employee CardNo: {att.CardNo}", ex.Message);
             }
         }
-        return msg;
     }
 
-    private async Task<IActionResult> CheckInSMSSendDailyAttendanceStudentBoys()
-    {
-        var attendanceSMSSetup = await _setupMobileSMSManager.GetByIdAsync(1);
-        if (attendanceSMSSetup.CheckInSMSService == false)
-        {
-            return Ok("CheckIn SMS Service is Inactive");
-        }
-        if (attendanceSMSSetup.CheckInSMSServiceForMaleStudent == false)
-        {
-            return Ok("CheckIn SMS Service for Boys is Inactive");
-        }
-        if (attendanceSMSSetup.CheckInSMSServiceForMaleStudent == true)
-        {
-            List<Tran_MachineRawPunch> todaysAllCheckInAttendance = await _attendanceMachineManager.GetAllAttendanceByDateAsync(DateTime.Today);
+    #endregion
 
+    #region CheckOut SMS =======================================================
+
+    [DisableConcurrentExecution(timeoutInSeconds: 300)]
+    public async Task SendCheckOutSMSAsync()
+    {
+        if (await IsTodayHolidayAsync())
+        {
+            await _appLogger.InfoAsync("Today is a holiday. CheckOut SMS skipped.");
+            return;
+        }
+
+        var smsSetup = await _setupMobileSMSManager.GetByIdAsync(1);
+        if (smsSetup == null || !smsSetup.CheckOutSMSService)
+        {
+            await _appLogger.InfoAsync("CheckOut SMS Service is inactive.");
+            return;
+        }
+
+        var todaysCheckOut = await _attendanceMachineManager
+            .GetCheckOutDataByDateAsync(DateTime.Today.ToString("dd-MM-yyyy"));
+
+        if (todaysCheckOut == null || todaysCheckOut.Count == 0)
+        {
+            await _appLogger.InfoAsync("No checkout records found for today.");
+            return;
+        }
+
+        var allActiveStudents = await _studentManager.GetAllActiveStudentsAsync();
+
+        if (smsSetup.CheckOutSMSServiceForEmployees)
+            await ProcessCheckOutForEmployeesAsync(todaysCheckOut);
+
+        if (smsSetup.CheckOutSMSServiceForMaleStudent)
+            await ProcessAttendanceForGenderAsync(todaysCheckOut, allActiveStudents, GenderType.Male, "CheckOut");
+
+        if (smsSetup.CheckOutSMSServiceForGirlsStudent)
+            await ProcessAttendanceForGenderAsync(todaysCheckOut, allActiveStudents, GenderType.Female, "CheckOut");
+
+        await _appLogger.InfoAsync("CheckOut SMS processing completed.");
+    }
+
+    private async Task ProcessCheckOutForEmployeesAsync(IList<Tran_MachineRawPunch> attendanceRecords)
+    {
+        const string smsType = "CheckOut";
+        string today = DateTime.Today.ToString("dd-MM-yyyy");
+
+        foreach (var att in attendanceRecords)
+        {
             try
             {
-                if (todaysAllCheckInAttendance != null || todaysAllCheckInAttendance.Count > 0)
-                {
-                    foreach (Tran_MachineRawPunch attendance in todaysAllCheckInAttendance)
-                    {
-                        Student student = await _studentManager.GetStudentByUniqueIdAsync(attendance.CardNo.Trim());
+                if (!int.TryParse(att.CardNo?.Trim(), out int empId))
+                    continue;
 
-                        if (student == null || student.GenderId != 1 || student.Status == false || student.SMSService == false)
-                        {
-                            continue;
-                        }
-                        else
-                        {
-                            string smsType = "CheckIn";
-                            string phoneNumber = student.GuardianPhone != null ? student.GuardianPhone : student.PhoneNo != null ? student.PhoneNo : string.Empty;
-                            if (string.IsNullOrEmpty(phoneNumber))
-                            {
-                                continue;
-                            }
-                            else
-                            {
-                                bool isAlreadySMSSent = await _phoneSMSManager.IsSMSSendForAttendance(phoneNumber, smsType, DateTime.Now.ToString("dd-MM-yyyy"));
-                                if (isAlreadySMSSent)
-                                {
-                                    continue;
-                                }
-                                else
-                                {
-                                    string studentName = !string.IsNullOrEmpty(student.NameBangla) ? student.NameBangla : student.Name;
-                                    string smsText = GenerateCheckInSMSText(studentName, attendance.PunchDatetime.ToString("hh:mm tt"));
-                                    if (PhoneNumberValidate(phoneNumber) == false)
-                                    {
-                                        continue;
-                                    }
+                var employee = await _employeeManager.GetByIdAsync(empId);
+                if (!IsEligibleEmployee(employee))
+                    continue;
 
-                                    bool isSMSSent = await MobileSMS.SendSMS(phoneNumber, smsText);
-                                    if (isSMSSent)
-                                    {
-                                        PhoneSMS phoneSMS = new PhoneSMS()
-                                        {
-                                            Text = smsText,
-                                            MobileNumber = phoneNumber,
-                                            SMSType = smsType,
-                                            CreatedBy = "Automation",
-                                            CreatedAt = DateTime.Now,
-                                            EditedBy = "Automation",
-                                            EditedAt = DateTime.Now,
-                                            MACAddress = MACService.GetMAC()
-                                        };
-                                        bool isSave = await _phoneSMSManager.AddAsync(phoneSMS);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                string phoneNumber = employee.Phone;
+                if (string.IsNullOrEmpty(phoneNumber) || !PhoneNumberValidate(phoneNumber))
+                    continue;
+
+                if (await _phoneSMSManager.IsSMSSendForAttendance(phoneNumber, smsType, today))
+                    continue;
+
+                string name = GetEmployeeName(employee);
+                string smsText = GenerateCheckOutSMSText(name, att.PunchDatetime.ToString("hh:mm tt"));
+
+                if (await MobileSMS.SendSMS(phoneNumber, smsText))
+                    await SaveSMSRecordAsync(phoneNumber, smsText, smsType);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                await _appLogger.ErrorAsync(
+                    $"Error processing CheckOut SMS for Employee CardNo: {att.CardNo}", ex.Message);
             }
         }
-
-
-        return Ok();
     }
 
-    private async Task<IActionResult> CheckInSMSSendDailyAttendanceStudentGirls()
+    #endregion
+
+    #region Shared Student Attendance Processing ================================
+
+    private async Task ProcessAttendanceForGenderAsync(
+        IList<Tran_MachineRawPunch> attendanceRecords,
+        IEnumerable<Student> allActiveStudents,
+        GenderType gender,
+        string smsType)
     {
+        var studentLookup = allActiveStudents
+            .Where(s => s.Status == true && s.SMSService == true && s.GenderId == (int)gender)
+            .ToDictionary(s => s.UniqueId.Trim(), s => s);
 
-        var attendanceSMSSetup = await _setupMobileSMSManager.GetByIdAsync(1);
-        if (attendanceSMSSetup.CheckInSMSService == false)
-        {
-            return Ok("CheckIn SMS Service is Inactive");
-        }
-        if (attendanceSMSSetup.CheckInSMSServiceForGirlsStudent == false)
-        {
-            return Ok("CheckIn SMS Service for Girls is Inactive");
-        }
-        if (attendanceSMSSetup.CheckInSMSServiceForGirlsStudent == true)
-        {
-            var todaysAllCheckInAttendance = await _attendanceMachineManager.GetAllAttendanceByDateAsync(DateTime.Today);
-            try
-            {
-                if (todaysAllCheckInAttendance != null || todaysAllCheckInAttendance.Count > 0)
-                {
-                    foreach (Tran_MachineRawPunch attendance in todaysAllCheckInAttendance)
-                    {
-                        Student student = await _studentManager.GetStudentByUniqueIdAsync(attendance.CardNo.Trim());
-
-                        if (student == null || student.GenderId != 2 || student.Status == false || student.SMSService != true)
-                        {
-                            continue;
-                        }
-                        else
-                        {
-                            string smsType = "CheckIn";
-                            string phoneNumber = student.GuardianPhone ?? (student.PhoneNo != null ? student.PhoneNo : string.Empty);
-                            if (string.IsNullOrEmpty(phoneNumber))
-                            {
-                                continue;
-                            }
-                            else
-                            {
-                                bool isAlreadySMSSent = await _phoneSMSManager.IsSMSSendForAttendance(phoneNumber, smsType, DateTime.Now.ToString("dd-MM-yyyy"));
-                                if (isAlreadySMSSent)
-                                {
-                                    continue;
-                                }
-                                else
-                                {
-                                    string studentName = !string.IsNullOrEmpty(student.NameBangla) ? student.NameBangla : student.Name;
-                                    string smsText = GenerateCheckInSMSText(studentName, attendance.PunchDatetime.ToString("hh:mm tt"));
-                                    if (PhoneNumberValidate(phoneNumber) == false)
-                                    {
-                                        continue;
-                                    }
-                                    bool isAlreadySMSSent2nd = await _phoneSMSManager.IsSMSSendForAttendance(phoneNumber, smsType, DateTime.Now.ToString("dd-MM-yyyy"));
-                                    if (isAlreadySMSSent2nd) { continue; }
-                                    bool isSMSSent = await MobileSMS.SendSMS(phoneNumber, smsText);
-                                    if (isSMSSent)
-                                    {
-                                        PhoneSMS phoneSMS = new PhoneSMS()
-                                        {
-                                            Text = smsText,
-                                            MobileNumber = phoneNumber,
-                                            SMSType = smsType,
-                                            CreatedBy = "Automation",
-                                            CreatedAt = DateTime.Now,
-                                            EditedBy = "Automation",
-                                            EditedAt = DateTime.Now,
-                                            MACAddress = MACService.GetMAC()
-                                        };
-                                        bool isSave = await _phoneSMSManager.AddAsync(phoneSMS);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception)
-            {
-            }
-        }
-        return Ok();
+        foreach (var attendance in attendanceRecords)
+            await ProcessSingleStudentSMSAsync(attendance, studentLookup, smsType);
     }
 
-    private async Task<IActionResult> CheckInSMSSendDailyAttendanceEmployee()
+    private async Task ProcessSingleStudentSMSAsync(
+        Tran_MachineRawPunch attendance,
+        Dictionary<string, Student> studentLookup,
+        string smsType)
     {
-        var attendanceSMSSetup = await _setupMobileSMSManager.GetByIdAsync(1);
-        if (attendanceSMSSetup.CheckInSMSService == false)
-        {
-            return Ok("CheckIn SMS Service is Inactive");
-        }
-        if (attendanceSMSSetup.CheckInSMSServiceForEmployees == false)
-        {
-            return Ok("CheckIn SMS Service for Employees is Inactive");
-        }
-        if (attendanceSMSSetup.CheckInSMSServiceForEmployees == true)
-        {
-            var todaysAllAttendance = await _attendanceMachineManager.GetEmpCheckinDataByDateAsync(DateTime.Now.ToString("dd-MM-yyyy"));
-
-            if (todaysAllAttendance.Count > 0)
-            {
-
-                try
-                {
-                    string phoneNumber = string.Empty;
-                    string smsText = string.Empty;
-                    string smsType = "CheckIn";
-                    string employeeName = string.Empty;
-                    string attTime = string.Empty;
-                    foreach (var att in todaysAllAttendance)
-                    {
-                        Employee empObject = await _employeeManager.GetByIdAsync(Convert.ToInt32(att.CardNo.Trim()));
-                        if (empObject == null)
-                        {
-                            continue;
-                        }
-                        if (empObject != null || empObject.Status != false)
-                        {
-                            phoneNumber = empObject.Phone;
-
-                            bool isSMSAlredySent = await _phoneSMSManager.IsSMSSendForAttendance(phoneNumber, smsType, DateTime.Now.ToString("dd-MM-yyyy"));
-                            if (isSMSAlredySent)
-                            {
-                                continue;
-                            }
-                            else
-                            {
-                                employeeName = !string.IsNullOrEmpty(empObject.EmployeeNameBangla) ? empObject.EmployeeNameBangla : empObject.EmployeeName;
-                                attTime = att.PunchDatetime.ToString("hh:mm tt");
-                                smsText = GenerateCheckInSMSText(employeeName, attTime);
-
-                                if (PhoneNumberValidate(phoneNumber) == false)
-                                {
-                                    continue;
-                                }
-                                bool isSend = await MobileSMS.SendSMS(phoneNumber, smsText);
-                                if (isSend)
-                                {
-                                    PhoneSMS phoneSMS = new PhoneSMS()
-                                    {
-                                        Text = smsText,
-                                        CreatedAt = DateTime.Now,
-                                        CreatedBy = "Automation",
-                                        EditedAt = DateTime.Now,
-                                        EditedBy = "Automation",
-                                        MobileNumber = phoneNumber,
-                                        MACAddress = MACService.GetMAC(),
-                                        SMSType = smsType
-                                    };
-                                    await _phoneSMSManager.AddAsync(phoneSMS);
-                                }
-                            }
-                        }
-                    }
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-                return Ok();
-            }
-        }
-
-        return Ok("No Data");
-
-    }
-    #endregion CheckIn SMS Section Finished xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
-    #region CheckOut SMS Section Start =========================================
-    public async Task<IActionResult> SendCheckOutSMS()
-    {
-        string msg = string.Empty;
-        var currentMonthHolidays = await _offDayManager.GetMonthlyHolidaysAsync(DateTime.Now.ToString("MMyyyy"));
-        if (currentMonthHolidays != null && currentMonthHolidays.Count > 0)
-        {
-            foreach (var holiday in currentMonthHolidays)
-            {
-                if (holiday.ToString("ddMMyyyy") == DateTime.Now.ToString("ddMMyyyy"))
-                {
-                    msg = "Today is offday";
-                    return BadRequest(msg);
-                }
-            }
-        }
-
-        SetupMobileSMS setupMobileSMS = await _setupMobileSMSManager.GetByIdAsync(1);
-        if (setupMobileSMS.CheckOutSMSService == true)
-        {
-            if (setupMobileSMS.CheckOutSMSServiceForEmployees == true)
-            {
-                await CheckOutSMSSendDailyAttendanceEmployees();
-            }
-            if (setupMobileSMS.CheckOutSMSServiceForGirlsStudent == true)
-            {
-                await CheckOutSMSSendDailyAttendanceGirls();
-            }
-            if (setupMobileSMS.CheckOutSMSServiceForMaleStudent == true)
-            {
-                await CheckOutSMSSendDailyAttendanceBoys();
-            }
-        }
-        return Ok("Send Chechout sms completed");
-    }
-    private async Task<IActionResult> CheckOutSMSSendDailyAttendanceBoys()
-    {
-        DateTime date = DateTime.Today;
-        List<Tran_MachineRawPunch> todaysCheckOutAttendances = new List<Tran_MachineRawPunch>();
-        todaysCheckOutAttendances = await _attendanceMachineManager.GetCheckOutDataByDateAsync(date.ToString("dd-MM-yyyy"));
         try
         {
-            if (todaysCheckOutAttendances != null || todaysCheckOutAttendances.Count > 0)
-            {
-                foreach (Tran_MachineRawPunch attendance in todaysCheckOutAttendances)
-                {
-                    //if (attendance.CardNo.Length != 8)
-                    //{
-                    //    continue;
-                    //}
-                    Student student = await _studentManager.GetStudentByUniqueIdAsync(attendance.CardNo.Trim());
-                    if (student == null)
-                    {
-                        continue;
-                    }
-                    if (student.GenderId != 1 || student.Status == false)
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        string phoneNumber = !string.IsNullOrEmpty(student.GuardianPhone) ? student.GuardianPhone : !string.IsNullOrEmpty(student.PhoneNo) ? student.PhoneNo : string.Empty;
-                        if (string.IsNullOrEmpty(phoneNumber))
-                        {
-                            continue;
-                        }
-                        else
-                        {
-                            string smsType = "CheckOut";
-                            bool isAlreadySent = await _phoneSMSManager.IsSMSSendForAttendance(phoneNumber, smsType, date.ToString("dd-MM-yyyy"));
-                            if (isAlreadySent)
-                            {
-                                continue;
-                            }
-                            else
-                            {
-                                string studentName = !string.IsNullOrEmpty(student.NameBangla) ? student.NameBangla : student.Name;
-                                string smsText = GenerateCheckOutSMSText(studentName, attendance.PunchDatetime.ToString("hh:mm tt"));
-                                bool isSMSSent = await MobileSMS.SendSMS(phoneNumber, smsText);
-                                if (isSMSSent)
-                                {
-                                    PhoneSMS phoneSMS = new PhoneSMS()
-                                    {
-                                        Text = smsText,
-                                        MobileNumber = phoneNumber,
-                                        SMSType = smsType,
-                                        CreatedBy = "Automation",
-                                        CreatedAt = DateTime.Now,
-                                        MACAddress = MACService.GetMAC()
-                                    };
-                                    bool isSaved = await _phoneSMSManager.AddAsync(phoneSMS);
-                                    continue;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        catch (Exception)
-        {
+            string cardNo = attendance.CardNo?.Trim();
+            if (string.IsNullOrEmpty(cardNo) || !studentLookup.TryGetValue(cardNo, out var student))
+                return;
 
+            string phoneNumber = GetStudentPhoneNumber(student);
+            if (string.IsNullOrEmpty(phoneNumber) || !PhoneNumberValidate(phoneNumber))
+                return;
+
+            string today = DateTime.Today.ToString("dd-MM-yyyy");
+            if (await _phoneSMSManager.IsSMSSendForAttendance(phoneNumber, smsType, today))
+                return;
+
+            string name = GetStudentName(student);
+            string time = attendance.PunchDatetime.ToString("hh:mm tt");
+            string smsText = smsType == "CheckIn"
+                ? GenerateCheckInSMSText(name, time)
+                : GenerateCheckOutSMSText(name, time);
+
+            if (await MobileSMS.SendSMS(phoneNumber, smsText))
+                await SaveSMSRecordAsync(phoneNumber, smsText, smsType);
         }
-        return Ok();
+        catch (Exception ex)
+        {
+            await _appLogger.ErrorAsync(
+                $"Error processing {smsType} SMS for CardNo: {attendance.CardNo}", ex.Message);
+        }
     }
 
-    private async Task<IActionResult> CheckOutSMSSendDailyAttendanceGirls()
-    {
-        DateTime date = DateTime.Today;
-        List<Tran_MachineRawPunch> todaysCheckOutAttendances;
-        todaysCheckOutAttendances = await _attendanceMachineManager.GetCheckOutDataByDateAsync(date.ToString("dd-MM-yyyy"));
-        try
-        {
-            if (todaysCheckOutAttendances != null)
-            {
-                foreach (Tran_MachineRawPunch attendance in todaysCheckOutAttendances)
-                {
-                    //if (attendance.CardNo.Length != 8)
-                    //{
-                    //    continue;
-                    //}
-                    Student student = await _studentManager.GetStudentByUniqueIdAsync(attendance.CardNo.Trim());
-                    if (student == null)
-                    {
-                        continue;
-                    }
-                    if (student.GenderId == 1)
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        string phoneNumber = !string.IsNullOrEmpty(student.GuardianPhone) ? student.GuardianPhone : !string.IsNullOrEmpty(student.PhoneNo) ? student.PhoneNo : string.Empty;
-                        if (string.IsNullOrEmpty(phoneNumber))
-                        {
-                            continue;
-                        }
-                        else
-                        {
-                            string smsType = "CheckOut";
-                            bool isAlreadySent = await _phoneSMSManager.IsSMSSendForAttendance(phoneNumber, smsType, date.ToString("dd-MM-yyyy"));
-                            if (isAlreadySent)
-                            {
-                                continue;
-                            }
-                            else
-                            {
-                                string studentName = !string.IsNullOrEmpty(student.NameBangla) ? student.NameBangla : student.Name;
-                                string smsText = GenerateCheckOutSMSText(studentName, attendance.PunchDatetime.ToString("hh:mm tt"));
-                                bool isSMSSent = await MobileSMS.SendSMS(phoneNumber, smsText);
-                                if (isSMSSent)
-                                {
-                                    PhoneSMS phoneSMS = new PhoneSMS()
-                                    {
-                                        Text = smsText,
-                                        MobileNumber = phoneNumber,
-                                        SMSType = smsType,
-                                        CreatedBy = "Automation",
-                                        CreatedAt = DateTime.Now,
-                                        MACAddress = MACService.GetMAC()
-                                    };
-                                    bool isSaved = await _phoneSMSManager.AddAsync(phoneSMS);
-                                    continue;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        catch (Exception)
-        {
+    #endregion
 
-            throw;
+    #region Absent Notification SMS ============================================
+
+    [DisableConcurrentExecution(timeoutInSeconds: 300)]
+    public async Task SendAbsentNotificationSMSAsync()
+    {
+        if (await IsTodayHolidayAsync())
+        {
+            await _appLogger.InfoAsync("Today is a holiday. Absent notification skipped.");
+            return;
         }
-        return Ok();
+
+        string today = DateTime.Today.ToString("dd-MM-yyyy");
+        var allCheckIn = await _attendanceMachineManager.GetCheckinDataByDateAsync(today);
+
+        // Only send absent notifications if machine has meaningful data (>10 records)
+        if (allCheckIn == null || allCheckIn.Count <= 10)
+        {
+            await _appLogger.InfoAsync("Insufficient check-in data. Absent notification skipped.");
+            return;
+        }
+
+        var smsSetup = await _setupMobileSMSManager.GetByIdAsync(1);
+        if (smsSetup == null || !smsSetup.AbsentNotification)
+            return;
+
+        if (smsSetup.AbsentNotificationStudent)
+            await ProcessAbsentStudentSMSAsync(today);
+
+        if (smsSetup.AbsentNotificationEmployee)
+            await ProcessAbsentEmployeeSMSAsync(today);
     }
 
-    private async Task<IActionResult> CheckOutSMSSendDailyAttendanceEmployees()
+    private async Task ProcessAbsentStudentSMSAsync(string date)
     {
-        DateTime date = DateTime.Today;
-        List<Tran_MachineRawPunch> todaysCheckOutAttendances = new List<Tran_MachineRawPunch>();
-        todaysCheckOutAttendances = await _attendanceMachineManager.GetCheckOutDataByDateAsync(date.ToString("dd-MM-yyyy"));
-        try
-        {
-            if (todaysCheckOutAttendances != null || todaysCheckOutAttendances.Count > 0)
-            {
-                foreach (Tran_MachineRawPunch attendance in todaysCheckOutAttendances)
-                {
-                    Employee objEmployee = await _employeeManager.GetByIdAsync(Convert.ToInt32(attendance.CardNo.Trim()));
+        var absentStudents = await _attendanceMachineManager.GetTodaysAbsentStudentAsync(date);
+        if (absentStudents == null || absentStudents.Count == 0)
+            return;
 
-                    if (objEmployee == null || objEmployee.Status != true)
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        string phoneNumber = objEmployee.Phone;
-                        string smsType = "CheckOut";
-                        bool isAlreadySent = await _phoneSMSManager.IsSMSSendForAttendance(phoneNumber, smsType, date.ToString("dd-MM-yyyy"));
-                        if (isAlreadySent)
-                        {
-                            continue;
-                        }
-                        else
-                        {
-                            string empName = !string.IsNullOrEmpty(objEmployee.EmployeeNameBangla) ? objEmployee.EmployeeNameBangla : objEmployee.EmployeeName;
-                            string smsText = GenerateCheckOutSMSText(empName, attendance.PunchDatetime.ToString("hh:mm tt"));
-                            bool isSent = await MobileSMS.SendSMS(phoneNumber, smsText);
-                            if (isSent)
-                            {
-                                PhoneSMS phoneSMS = new PhoneSMS()
-                                {
-                                    Text = smsText,
-                                    MobileNumber = phoneNumber,
-                                    SMSType = smsType,
-                                    CreatedBy = "Automation",
-                                    CreatedAt = DateTime.Now,
-                                    MACAddress = MACService.GetMAC()
-                                };
-                                bool isSaved = await _phoneSMSManager.AddAsync(phoneSMS);
-                                continue;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        catch (Exception)
-        {
+        const string smsType = "absent";
 
-
-        }
-
-        return Ok();
-    }
-    #endregion CheckOut SMS Finished XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-    #region Summary SMS Region Start Here ======================================
-
-    public async Task<IActionResult> SMSSendDailyAttendanceSummary()
-    {
-        var currentMonthHolidays = await _offDayManager.GetMonthlyHolidaysAsync(DateTime.Now.ToString("MMyyyy"));
-        if (currentMonthHolidays != null && currentMonthHolidays.Count > 0)
-        {
-            foreach (var holiday in currentMonthHolidays)
-            {
-                if (holiday.ToString("ddMMyyyy") == DateTime.Now.ToString("ddMMyyyy"))
-                {
-                    return BadRequest("Today is offday");
-                }
-            }
-        }
-
-        SetupMobileSMS setupMobileSMS = await _setupMobileSMSManager.GetByIdAsync(1);
-        if (setupMobileSMS.CheckInSMSSummary == false)
-        {
-            return BadRequest();
-        }
-        if (setupMobileSMS.CheckInSMSSummary == true)
-        {
-            int totalEmployee = 0;
-            int totalStudent = 0;
-            int totalGirlsStudent = 0;
-            int totalBoysStudent = 0;
-            try
-            {
-                DateTime tDate = DateTime.Today;
-                var allCheckInAttendance = await _attendanceMachineManager.GetCheckinDataByDateAsync(tDate.ToString("dd-MM-yyyy"));
-                if (allCheckInAttendance != null || allCheckInAttendance.Count() > 0)
-                {
-                    var students = await _studentManager.GetAllAsync();
-                    var employees = await _employeeManager.GetAllAsync();
-
-                    totalGirlsStudent = (from a in allCheckInAttendance
-                                         join s in students
-                                             .Where(s => s.Status == true && s.GenderId == 2)
-                                             on int.Parse(a.CardNo.Trim()) equals int.Parse(s.UniqueId.Trim())
-                                         select a).Count();
-
-                    totalBoysStudent = (from a in allCheckInAttendance
-                                        join s in students.Where(s => s.Status == true) on int.Parse(a.CardNo.Trim()) equals int.Parse(s.UniqueId.Trim())
-                                        where s.GenderId == 1
-                                        select a).Count();
-
-                    totalStudent = totalBoysStudent + totalGirlsStudent;
-
-                    var paddedEmployeeIds = employees
-                        .Select(e => e.Id.ToString().PadLeft(8, '0'))
-                        .ToHashSet();
-
-                    totalEmployee = allCheckInAttendance
-                        .Count(a => paddedEmployeeIds.Contains(a.CardNo.Trim()));
-
-                    string msgText = string.Empty;
-                    var instituteInfo = await _instituteManager.GetAllAsync();
-                    msgText = $"Attendance Summary ({DateTime.Today.ToString("dd MMM yyyy")}):\n" +
-                        $"Employees: {totalEmployee} \n" +
-                        $"Students:({totalBoysStudent}+{totalGirlsStudent})= {totalStudent} \n" +
-                        $"-" + instituteInfo.FirstOrDefault().ShortName;
-
-                    if (totalStudent <= 0)
-                    {
-                        msgText = "Your attendance machine is off or disconnected!";
-                    }
-
-                    //Email Send
-                    string toEmailString = await _paramBusConfigManager.GetValueByParamSL(11);
-                    if (toEmailString != null)
-                    {
-                        string[] toEmail = toEmailString.Split(',');
-                        // string emailSubject = "Todays attended report summary";
-                        string mailBody = msgText;
-                        int i = 0;
-
-                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Images","Institute");
-                        var attendanceSummary = new AttendanceSummary()
-                        {                            
-                            BackgroundImageUrl = Path.Combine(filePath, instituteInfo.FirstOrDefault().Logo),
-                            InstituteName = instituteInfo.FirstOrDefault().Name,
-                            AttendanceDate = DateTime.Now.Date.ToString("dd MMM yyyy"),
-                            BoysCount = totalBoysStudent.ToString(),
-                            GirlsCount = totalGirlsStudent.ToString(),
-                            TotalCount = (totalBoysStudent+totalGirlsStudent).ToString(),
-                            EmployeesCount = totalEmployee.ToString(),
-                        };
-                        foreach (var item in toEmail)
-                        {
-                            var isSendEmail = EmailService.SendAttendanceEmail(toEmail[i], $"Todays({DateTime.Today.ToString("dd MMM yyyy")}) attended report summary",attendanceSummary);
-                            i++;
-                        }
-                    }
-
-                    //Phone SMS Send
-                    string phoneNumberString = await _paramBusConfigManager.GetValueByParamSL(10);
-                    if (phoneNumberString != null)
-                    {
-                        string[] phoneNumber = phoneNumberString.Split(',');
-                        string smsType = "CheckIn Summary";
-                        if (phoneNumber.Length > 0)
-                        {
-                            foreach (var num in phoneNumber)
-                            {
-                                bool isAlreadySent = await _phoneSMSManager.IsSMSSendForAttendance(num, smsType, DateTime.Today.ToString("dd-MM-yyyy"));
-                                if (isAlreadySent)
-                                {
-                                    continue;
-                                }
-                                bool isSend = await MobileSMS.SendSMS(num, msgText);
-                                if (isSend)
-                                {
-                                    PhoneSMS phoneSMS = new()
-                                    {
-                                        Text = msgText,
-                                        CreatedAt = DateTime.Now,
-                                        CreatedBy = "Automation",
-                                        EditedBy = "Automation",
-                                        EditedAt = DateTime.Now,
-                                        MobileNumber = num,
-                                        MACAddress = MACService.GetMAC(),
-                                        SMSType = smsType
-                                    };
-                                    try
-                                    {
-                                        await _phoneSMSManager.AddAsync(phoneSMS);
-                                    }
-                                    catch (Exception)
-                                    {
-                                        throw;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        return Ok();
-
-    }
-    #endregion Summary SMS Region Finished Here XXXXXXXXXXXXXXXXXXXXXXX
-
-
-    #region Absent Student Notification by SMS Start here ======================
-    public async Task<IActionResult> SendAbsentNotificationSMS()
-    {
-
-        string msg = string.Empty;
-        var currentMonthHolidays = await _offDayManager.GetMonthlyHolidaysAsync(DateTime.Now.ToString("MMyyyy"));
-        if (currentMonthHolidays != null && currentMonthHolidays.Count > 0)
-        {
-            foreach (var holiday in currentMonthHolidays)
-            {
-                if (holiday.ToString("ddMMyyyy") == DateTime.Now.ToString("ddMMyyyy"))
-                {
-                    msg = "Today is offday";
-                    return BadRequest(msg);
-                }
-            }
-        }
-
-        DateTime tDate = DateTime.Today;
-        var allCheckInAttendance = await _attendanceMachineManager.GetCheckinDataByDateAsync(tDate.ToString("dd-MM-yyyy"));
-
-        if (allCheckInAttendance != null && allCheckInAttendance.Count > 10)
-        {
-            SetupMobileSMS setupMobileSMS = await _setupMobileSMSManager.GetByIdAsync(1);
-            if (setupMobileSMS.AbsentNotification == true)
-            {
-                if (setupMobileSMS.AbsentNotificationStudent == true)
-                {
-                    await AbsentStudentSendSMS();
-                }
-                if (setupMobileSMS.AbsentNotificationEmployee == true)
-                {
-                    await AbsentEmployeeSendSMS();
-                }
-            }
-        }
-        return Ok(msg);
-    }
-
-    private async Task<IActionResult> AbsentStudentSendSMS()
-    {
-        string date = DateTime.Now.ToString("dd-MM-yyyy");
-        List<Student> absentStudents = await _attendanceMachineManager.GetTodaysAbsentStudentAsync(date);
-        List<Student> totalStudent = (List<Student>)await _studentManager.GetAllAsync();
-
-        if (absentStudents == null || absentStudents.Count <= 0)
-        {
-            return null;
-        }
-        else
+        foreach (var student in absentStudents)
         {
             try
             {
-                foreach (Student student in absentStudents)
-                {
-                    if (student.Status == false)
-                    {
-                        continue;
-                    }
-                    string phoneNumber = student.GuardianPhone != null ? student.GuardianPhone : student.PhoneNo != null ? student.PhoneNo : string.Empty;
+                if (student.Status == false) continue;
 
-                    if (string.IsNullOrEmpty(phoneNumber))
-                    {
-                        continue;
-                    }
-                    string studentName = student.NameBangla != null ? student.NameBangla : student.Name != null ? student.Name : string.Empty;
-                    string smsType = "absent";
-                    bool isAlreadySMSSent = await _phoneSMSManager.IsSMSSendForAttendance(phoneNumber, smsType, date);
-                    if (isAlreadySMSSent)
-                    {
-                        continue;
-                    }
-                    string smsText = GenerateAbsentNotificationText(studentName, "student", 1);
-                    bool isSMSSent = await MobileSMS.SendSMS(phoneNumber, smsText);
-                    if (isSMSSent)
-                    {
-                        PhoneSMS phoneSMS = new PhoneSMS()
-                        {
-                            Text = smsText,
-                            CreatedAt = DateTime.Now,
-                            CreatedBy = "Automation",
-                            MobileNumber = phoneNumber,
-                            MACAddress = MACService.GetMAC(),
-                            SMSType = smsType
-                        };
-                        await _phoneSMSManager.AddAsync(phoneSMS);
-                    }
-                }
+                string phoneNumber = GetStudentPhoneNumber(student);
+                if (string.IsNullOrEmpty(phoneNumber)) continue;
+
+                if (await _phoneSMSManager.IsSMSSendForAttendance(phoneNumber, smsType, date))
+                    continue;
+
+                string name = GetStudentName(student);
+                string smsText = GenerateAbsentNotificationText(name, "student", 1);
+
+                if (await MobileSMS.SendSMS(phoneNumber, smsText))
+                    await SaveSMSRecordAsync(phoneNumber, smsText, smsType);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                await _appLogger.ErrorAsync(
+                    $"Error sending absent SMS for student: {student.Name}", ex.Message);
             }
         }
-        return Ok();
     }
-    #endregion Absent Student Notification by SMS Finished here xxxxxxxxxxxxxxxxxxx
 
-    #region Absent Employee Notification
-    private async Task<IActionResult> AbsentEmployeeSendSMS()
+    private async Task ProcessAbsentEmployeeSMSAsync(string date)
     {
-        string date = DateTime.Now.ToString("dd-MM-yyyy");
-        List<Employee> absentEmployees = await _attendanceMachineManager.GetTodaysAbsentEmployeeAsync(date);
-        if (absentEmployees == null || absentEmployees.Count <= 0)
-        {
-            return null;
-        }
-        else
+        var absentEmployees = await _attendanceMachineManager.GetTodaysAbsentEmployeeAsync(date);
+        if (absentEmployees == null || absentEmployees.Count == 0)
+            return;
+
+        const string smsType = "absent";
+
+        foreach (var employee in absentEmployees)
         {
             try
             {
-                foreach (var employee in absentEmployees)
-                {
-                    if (employee.Status != true)
-                    {
-                        continue;
-                    }
+                if (employee.Status != true) continue;
 
-                    string phoneNumber = employee.Phone;
-                    if (string.IsNullOrEmpty(phoneNumber))
-                    {
-                        continue;
-                    }
-                    string employeeName = employee.EmployeeName;
-                    if (string.IsNullOrEmpty(employeeName))
-                    {
-                        continue;
-                    }
-                    string smsType = "absent";
-                    bool isAlreadySMSSent = await _phoneSMSManager.IsSMSSendForAttendance(phoneNumber, smsType, date);
-                    if (isAlreadySMSSent)
-                    {
-                        continue;
-                    }
-                    string smsText = GenerateAbsentNotificationText(employeeName, "employee", 1);
-                    bool isSMSSent = await MobileSMS.SendSMS(phoneNumber, smsText);
-                    if (isSMSSent)
-                    {
-                        PhoneSMS phoneSMS = new PhoneSMS()
-                        {
-                            Text = smsText,
-                            CreatedAt = DateTime.Now,
-                            CreatedBy = "Automation",
-                            EditedAt = DateTime.Now,
-                            EditedBy = "Automation",
-                            MobileNumber = phoneNumber,
-                            MACAddress = MACService.GetMAC(),
-                            SMSType = smsType
-                        };
-                        await _phoneSMSManager.AddAsync(phoneSMS);
-                    }
-                }
+                string phoneNumber = employee.Phone;
+                if (string.IsNullOrEmpty(phoneNumber)) continue;
+
+                if (await _phoneSMSManager.IsSMSSendForAttendance(phoneNumber, smsType, date))
+                    continue;
+
+                string name = GetEmployeeName(employee);
+                string smsText = GenerateAbsentNotificationText(name, "employee", 1);
+
+                if (await MobileSMS.SendSMS(phoneNumber, smsText))
+                    await SaveSMSRecordAsync(phoneNumber, smsText, smsType);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                await _appLogger.ErrorAsync(
+                    $"Error sending absent SMS for employee: {employee.EmployeeName}", ex.Message);
             }
         }
-        return Ok();
     }
-    #endregion Absent Employee Notification
 
-    #region SMS Generate Section Start Here ====================================
-    private string GenerateCheckInSMSText(string name, string attendanceTime)
+    #endregion
+
+    #region Summary SMS ========================================================
+
+    [DisableConcurrentExecution(timeoutInSeconds: 300)]
+    public async Task SMSSendDailyAttendanceSummary()
     {
-        string msg = string.Empty;
-        if (!string.IsNullOrEmpty(attendanceTime) && !string.IsNullOrEmpty(name))
+        if (await IsTodayHolidayAsync())
         {
-            try
-            {
-                msg = name + " আজ " + attendanceTime + " মিনিটে স্কুলে উপস্থিত হয়েছে। -নোবেল ।";
-                var tLength = msg.Length;
-            }
-            catch (Exception)
-            {
+            await _appLogger.InfoAsync("Today is a holiday. Summary SMS skipped.");
+            return;
+        }
 
-                throw;
+        var smsSetup = await _setupMobileSMSManager.GetByIdAsync(1);
+        if (smsSetup == null || !smsSetup.CheckInSMSSummary)
+            return;
+
+        string today = DateTime.Today.ToString("dd-MM-yyyy");
+        var allCheckIn = await _attendanceMachineManager.GetCheckinDataByDateAsync(today);
+        if (allCheckIn == null || !allCheckIn.Any())
+            return;
+
+        var students = await _studentManager.GetAllAsync();
+        var employees = await _employeeManager.GetAllAsync();
+        var institute = (await _instituteManager.GetAllAsync()).FirstOrDefault();
+
+        int boysCount = CountAttendance(allCheckIn, students, GenderType.Male);
+        int girlsCount = CountAttendance(allCheckIn, students, GenderType.Female);
+        int totalStudents = boysCount + girlsCount;
+
+        var paddedEmployeeIds = employees
+            .Select(e => e.Id.ToString().PadLeft(8, '0'))
+            .ToHashSet();
+        int totalEmployees = allCheckIn.Count(a => paddedEmployeeIds.Contains(a.CardNo.Trim()));
+
+        string summaryMsg = totalStudents <= 0
+            ? "Your attendance machine is off or disconnected!"
+            : $"Attendance Summary ({DateTime.Today:dd MMM yyyy}):\n" +
+              $"Employees: {totalEmployees}\n" +
+              $"Students: ({boysCount}+{girlsCount})= {totalStudents}\n" +
+              $"-{institute?.ShortName}";
+
+        // Send Email
+        string toEmailString = await _paramBusConfigManager.GetValueByParamSL(11);
+        if (!string.IsNullOrEmpty(toEmailString))
+        {
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Images", "Institute");
+            var summaryVM = new AttendanceSummary
+            {
+                BackgroundImageUrl = Path.Combine(filePath, institute?.Logo ?? ""),
+                InstituteName = institute?.Name,
+                AttendanceDate = DateTime.Today.ToString("dd MMM yyyy"),
+                BoysCount = boysCount.ToString(),
+                GirlsCount = girlsCount.ToString(),
+                TotalCount = totalStudents.ToString(),
+                EmployeesCount = totalEmployees.ToString()
+            };
+
+            foreach (var email in toEmailString.Split(','))
+                EmailService.SendAttendanceEmail(
+                    email.Trim(),
+                    $"Today's ({DateTime.Today:dd MMM yyyy}) attendance summary",
+                    summaryVM);
+        }
+
+        // Send SMS
+        string phoneNumberString = await _paramBusConfigManager.GetValueByParamSL(10);
+        if (!string.IsNullOrEmpty(phoneNumberString))
+        {
+            const string smsType = "CheckIn Summary";
+            foreach (var num in phoneNumberString.Split(','))
+            {
+                string trimmedNum = num.Trim();
+                if (await _phoneSMSManager.IsSMSSendForAttendance(trimmedNum, smsType, DateTime.Today.ToString("dd-MM-yyyy")))
+                    continue;
+
+                if (await MobileSMS.SendSMS(trimmedNum, summaryMsg))
+                    await SaveSMSRecordAsync(trimmedNum, summaryMsg, smsType);
             }
         }
-        return msg;
+
+        await _appLogger.InfoAsync("Attendance summary SMS completed.");
     }
-    private string GenerateCheckOutSMSText(string name, string attendanceTime)
+
+    private static int CountAttendance(
+        IEnumerable<Tran_MachineRawPunch> attendance,
+        IEnumerable<Student> students,
+        GenderType gender)
     {
-        string msg = string.Empty;
-        if (!string.IsNullOrEmpty(attendanceTime) && !string.IsNullOrEmpty(name))
-        {
-            try
-            {
-                msg = name + " স্কুল থেকে " + attendanceTime + " মিনিটে প্রস্থান করেছে। -নোবেল ।";
-            }
-            catch (Exception)
-            {
+        var studentIds = students
+            .Where(s => s.Status == true && s.GenderId == (int)gender)
+            .Select(s => s.UniqueId.Trim())
+            .ToHashSet();
 
-                throw;
-            }
-        }
-        return msg;
+        return attendance.Count(a => studentIds.Contains(a.CardNo.Trim()));
     }
 
-    private string GenerateAbsentNotificationText(string name, string smsFor, int absentDayCount)
+    #endregion
+
+    #region Daily Collection SMS ===============================================
+
+    [DisableConcurrentExecution(timeoutInSeconds: 300)]
+    public async Task SendDailyCollectionSMSAsync()
     {
-        string msg = string.Empty;
-        if (absentDayCount == 1)
+        if (await IsTodayHolidayAsync())
         {
-            string dateTime = DateTime.Now.ToString("dd MMM yyyy");
-            if (smsFor == "employee")
-            {
-                msg = name + " is not in school today.";
-            }
-            else
-            {
-                msg = name + " আজ (" + dateTime + ") স্কুলে আসেনি । -নোবেল।";
-            }
-        }
-        if (absentDayCount > 1)
-        {
-            msg = name + "গত " + absentDayCount + " দিন থেকে স্কুলে আসছে না । -নোবেল।";
+            await _appLogger.InfoAsync("Today is a holiday. Collection SMS skipped.");
+            return;
         }
 
-        return msg;
+        var smsSetup = await _setupMobileSMSManager.GetByIdAsync(1);
+        if (smsSetup == null || !smsSetup.DailyCollectionSMSService)
+            return;
+
+        var payments = await _studentPaymentManager.GetStudentPaymentSummerySMS_VMsAsync(DateTime.Today);
+        var institute = (await _instituteManager.GetAllAsync()).FirstOrDefault();
+
+        if (payments == null || !payments.Any())
+            return;
+
+        var summary = payments.FirstOrDefault();
+        string phoneNumberString = await _paramBusConfigManager.GetValueByParamSL(12);
+        if (string.IsNullOrEmpty(phoneNumberString))
+            return;
+
+        const string smsType = "Collection_sum";
+        string smsText =
+            $"Payment Collection ({DateTime.Today:dd MMM yyyy}):\n" +
+            $"Residential: {summary.ResidentialPayment}\n" +
+            $"Non-Residential: {summary.NonResidentialPayment}\n" +
+            $"Total = {summary.ResidentialPayment + summary.NonResidentialPayment}\n" +
+            $"-{institute?.Name}";
+
+        foreach (var num in phoneNumberString.Split(','))
+        {
+            string trimmedNum = num.Trim();
+            if (await _phoneSMSManager.IsSMSSendForAttendance(trimmedNum, smsType, DateTime.Today.ToString("dd-MM-yyyy")))
+                continue;
+
+            if (await MobileSMS.SendSMS(trimmedNum, smsText))
+                await SaveSMSRecordAsync(trimmedNum, smsText, smsType);
+        }
+
+        await _appLogger.InfoAsync("Daily collection SMS completed.");
     }
-    #endregion SMS Generate Section Finished Here XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+    #endregion
+
+    #region Shared Helpers =====================================================
+
+    private async Task SaveSMSRecordAsync(string phoneNumber, string smsText, string smsType)
+    {
+        await _phoneSMSManager.AddAsync(new PhoneSMS
+        {
+            Text = smsText,
+            MobileNumber = phoneNumber,
+            SMSType = smsType,
+            CreatedBy = "Automation",
+            CreatedAt = DateTime.Now,
+            EditedBy = "Automation",
+            EditedAt = DateTime.Now,
+            MACAddress = MACService.GetMAC()
+        });
+    }
+
+    private static string GetStudentPhoneNumber(Student student) =>
+        !string.IsNullOrEmpty(student.GuardianPhone)
+            ? student.GuardianPhone
+            : student.PhoneNo ?? string.Empty;
+
+    private static string GetStudentName(Student student) =>
+        !string.IsNullOrEmpty(student.NameBangla) ? student.NameBangla : student.Name;
+
+    private static string GetEmployeeName(Employee employee) =>
+        !string.IsNullOrEmpty(employee.EmployeeNameBangla)
+            ? employee.EmployeeNameBangla
+            : employee.EmployeeName;
+
+    private static bool IsEligibleEmployee(Employee employee) =>
+        employee != null && employee.Status == true;
 
     private bool PhoneNumberValidate(string phoneNumber)
     {
-        long pNumber = Convert.ToInt64(phoneNumber.Trim());
-        if (pNumber >= 01300000000 && pNumber <= 01999999999)
-        {
-            return true;
-        }
-        return false;
+        if (string.IsNullOrWhiteSpace(phoneNumber)) return false;
+        if (!long.TryParse(phoneNumber.Trim(), out long pNumber)) return false;
+        return pNumber >= 01300000000L && pNumber <= 01999999999L;
     }
 
-    #region Income SMS===========================================================
-    #region Daily Student Collection ============================================
+    public enum GenderType { Male = 1, Female = 2 }
 
-    public async Task<IActionResult> SendDailyCollectionSMS()
+    #endregion
+
+    #region SMS Text Generators ================================================
+
+    private string GenerateCheckInSMSText(string name, string time) =>
+        $"{name} আজ {time} মিনিটে স্কুলে উপস্থিত হয়েছে। -নোবেল ।";
+
+    private string GenerateCheckOutSMSText(string name, string time) =>
+        $"{name} স্কুল থেকে {time} মিনিটে প্রস্থান করেছে। -নোবেল ।";
+
+    private string GenerateAbsentNotificationText(string name, string smsFor, int absentDayCount)
     {
-        var currentMonthHolidays = await _offDayManager.GetMonthlyHolidaysAsync(DateTime.Now.ToString("MMyyyy"));
-        if (currentMonthHolidays != null && currentMonthHolidays.Count > 0)
-        {
-            foreach (var holiday in currentMonthHolidays)
-            {
-                if (holiday.ToString("ddMMyyyy") == DateTime.Now.ToString("ddMMyyyy"))
-                {
-                    return BadRequest("Today is offday");
-                }
-            }
-        }
+        if (absentDayCount == 1)
+            return smsFor == "employee"
+                ? $"{name} is not in school today."
+                : $"{name} আজ ({DateTime.Now:dd MMM yyyy}) স্কুলে আসেনি । -নোবেল।";
 
-        SetupMobileSMS setupMobileSMS = await _setupMobileSMSManager.GetByIdAsync(1);
-        if (setupMobileSMS.DailyCollectionSMSService == false)
-        {
-            return BadRequest();
-        }
-        try
-        {
-            if (setupMobileSMS.DailyCollectionSMSService)
-            {
-                var paymentsSummery = await _studentPaymentManager.GetStudentPaymentSummerySMS_VMsAsync(DateTime.Today);
-                if (paymentsSummery != null)
-                {
-                    StudentPaymentSummerySMS_VM studentPaymentSummerySMS_VM = paymentsSummery.FirstOrDefault();
-                    var instituteInfo = await _instituteManager.GetAllAsync();
-
-                    string phoneNumberString = await _paramBusConfigManager.GetValueByParamSL(12);
-                    if (phoneNumberString != null)
-                    {
-                        string[] phoneNumber = phoneNumberString.Split(',');
-                        string smsType = "Collection_sum";
-                        string smsText = $"Payment Collection ({DateTime.Today.ToString("dd MMM yyyy")}):\n" +
-                            $"Residential: {studentPaymentSummerySMS_VM.ResidentialPayment}\n" +
-                            $"Non-Residential:{studentPaymentSummerySMS_VM.NonResidentialPayment} \n" +
-                            $"Total = {studentPaymentSummerySMS_VM.ResidentialPayment + studentPaymentSummerySMS_VM.NonResidentialPayment}\n" +
-                            $"-" + instituteInfo.FirstOrDefault().Name;
-
-                        foreach (var num in phoneNumber)
-                        {
-                            bool isAlreadySent = await _phoneSMSManager.IsSMSSendForAttendance(num, smsType, DateTime.Today.ToString("dd-MM-yyyy"));
-                            if (!isAlreadySent)
-                            {
-                                bool isSend = await MobileSMS.SendSMS(num, smsText);
-                                if (isSend)
-                                {
-                                    PhoneSMS phoneSMS = new()
-                                    {
-                                        Text = smsText,
-                                        CreatedAt = DateTime.Now,
-                                        CreatedBy = "Automation",
-                                        MobileNumber = num,
-                                        MACAddress = MACService.GetMAC(),
-                                        SMSType = smsType
-                                    };
-                                    await _phoneSMSManager.AddAsync(phoneSMS);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-        }
-        catch (Exception)
-        {
-            throw;
-        }
-
-        return null;
+        return $"{name} গত {absentDayCount} দিন থেকে স্কুলে আসছে না । -নোবেল।";
     }
-    #endregion Daily Student Collection XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-    #endregion Income SMS XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-    #region Expense SMS =========================================================
-    #endregion Expense SMS XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    #endregion
 }

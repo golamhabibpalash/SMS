@@ -107,7 +107,29 @@ namespace SMS.BLL.Managers
         public async Task<ProfileAttendance> GetProfileAttendanceAsync(int id)
         {
             Student student = await _studentRepository.GetByIdAsync(id);
+
             ProfileAttendance profileAttendance = new ProfileAttendance();
+
+            var todaysAttendance = await _attendanceMachineManager.GetTodaysAttendanceByUserIdAsync(Convert.ToInt32(student.UniqueId));
+            if (todaysAttendance == null)
+            {
+                profileAttendance.TodaysAttendance = "You are absent today";
+            }
+            else
+            {
+                var instituteInfo = await _instituteManager.GetFirstOrDefaultAsync();
+
+                DateTime schoolLateTime = Convert.ToDateTime(instituteInfo.LateTime);
+                if (todaysAttendance.PunchDatetime.Hour > schoolLateTime.Hour)
+                {
+                    profileAttendance.TodaysAttendance = "You are late today ( " + todaysAttendance.PunchDatetime.ToString("hh:mm tt") + ")";
+                }
+                else
+                {
+                    profileAttendance.TodaysAttendance = "You are attended (" + todaysAttendance.PunchDatetime.ToString("hh:mm tt") + ") today";
+                }
+            }
+
             var currentSession = await _academicSessionManager.GetCurrentAcademicSessionAsync();
             profileAttendance.CurrentSession = currentSession;
             Dictionary<int, int> monthWiseAttendance = new Dictionary<int, int>();

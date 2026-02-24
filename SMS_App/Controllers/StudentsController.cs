@@ -811,25 +811,7 @@ public class StudentsController : Controller
         {
             return NotFound();
         }
-        var todaysAttendance = await _attendanceMachineManager.GetTodaysAttendanceByUserIdAsync(Convert.ToInt32(student.UniqueId));
-        if (todaysAttendance == null)
-        {
-            ViewBag.absent = "You are absent today";
-        }
-        else
-        {
-            var instituteInfo = await _instituteManager.GetFirstOrDefaultAsync();
-
-            DateTime schoolLateTime = Convert.ToDateTime(instituteInfo.LateTime);
-            if (todaysAttendance.PunchDatetime.Hour > schoolLateTime.Hour)
-            {
-                ViewBag.lateAttendance = "You are late today ( " + todaysAttendance.PunchDatetime.ToString("hh:mm tt") + ")";
-            }
-            else
-            {
-                ViewBag.attendance = "You are attended (" + todaysAttendance.PunchDatetime.ToString("hh:mm tt") + ") today";
-            }
-        }
+        
         StudentProfileVM studentProfileVM = new StudentProfileVM();
         studentProfileVM.Student = student;
 

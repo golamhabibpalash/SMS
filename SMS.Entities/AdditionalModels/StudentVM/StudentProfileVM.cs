@@ -33,5 +33,6 @@ public class MonthlyAttendance
     public int LateArrivals { get; set; }
     public int Percentage { get; set; }
     public string Status { get; set; }
+    public string StatusColor { get; set; }
 }
 

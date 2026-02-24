@@ -127,9 +127,9 @@ namespace SMS.BLL.Managers
                         profileAttendance.LateArrivals += 1;
                     }
                     int currentMonth = attendance.PunchDatetime.Month;
-                    if (monthWiseAttendance.ContainsKey(currentMonth))
+                    if (monthWiseAttendance.TryGetValue(currentMonth, out int value))
                     {
-                        monthWiseAttendance[currentMonth]++;
+                        monthWiseAttendance[currentMonth] = ++value;
                     }
                     else
                     {
@@ -157,33 +157,43 @@ namespace SMS.BLL.Managers
             foreach (var item in monthWiseAttendance)
             {
                 string name = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(item.Key);
-                var monthlyOffDays = sessionWiseTotalOffDays.Where(o => o.OffDayStartingDate.Day == item.Key).Count();
+                var monthlyOffDays = sessionWiseTotalOffDays.Where(o => o.OffDayStartingDate.Month == item.Key).Count();
                 var totalDaysInTheMonth = DateTime.DaysInMonth(Convert.ToInt32(currentSession.Name.Substring(currentSession.Name.Length - 4)), item.Key);
+                if (DateTime.Now.Month == item.Key)
+                {
+                    totalDaysInTheMonth = DateTime.Now.Day;
+                }
                 int totalDays = 0;
+                int delay = 0;
                 int percentage = 0;
+                var monthWiseAttendances = currentSessonsAllAttendances.Where(s => s.PunchDatetime.Month == item.Key);
+                if (monthWiseAttendances.Count()>0)
+                {
+                    delay = monthWiseAttendances.Count(s => s.PunchDatetime.TimeOfDay > institute.StartingTime.TimeOfDay);
+                }
                 MonthlyAttendance monthlyAttendance = new()
                 {
                     MonthName = name,
                     TotalDays =totalDays = totalDaysInTheMonth - monthlyOffDays,
                     DaysPresent = item.Value,
                     DaysAbsent = totalDays - item.Value,
-                    LateArrivals = 0,
+                    LateArrivals = delay,
                     Percentage = percentage = (item.Value * 100) / (totalDaysInTheMonth - monthlyOffDays),
-                    Status = GetAttendanceStatus(percentage)
+                    Status = GetAttendanceStatus(percentage).Status,
+                    StatusColor = GetAttendanceStatus(percentage).Color
                 };
                 profileAttendance.MonthlyAttendances.Add(monthlyAttendance);
             }
 
             return profileAttendance;
         }
-        private string GetAttendanceStatus(int percentage)
+        private (string Status, string Color) GetAttendanceStatus(int percentage)
         {
-            if (percentage >= 80) return "Excellent";
-            if (percentage >= 50) return "Good";
-            if (percentage >= 26) return "Average";
-            if (percentage >= 1) return "Poor";
-
-            return "No Data";
+            if (percentage >= 80) return ("Excellent", "Green");
+            if (percentage >= 50) return ("Good", "Blue");
+            if (percentage >= 26) return ("Average", "Orange");
+            if (percentage >= 1) return ("Poor", "Red");
+            return ("No Data", "Gray");
         }
     }
 }

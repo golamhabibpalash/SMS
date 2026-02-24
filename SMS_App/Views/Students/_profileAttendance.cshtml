@@ -1,7 +1,9 @@
 ﻿@model SMS.Entities.AdditionalModels.StudentVM.ProfileAttendance
 
 <div class="tab-pane fade show active" id="attendance" role="tabpanel" aria-labelledby="attendance-tab">
+    <div class="alert alert-info">@Model.TodaysAttendance</div>
     <div class="card shadow-sm mb-4">
+        <br />
         <div class="card-header bg-primary text-white">
             <h5 class="mb-0">Attendance Overview (@Model.CurrentSession.Name)</h5>
         </div>

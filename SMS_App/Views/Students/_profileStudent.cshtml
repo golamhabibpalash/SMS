@@ -28,13 +28,13 @@
                         <td class="fw-bold text-nowrap">
                             <i class="bi bi-telephone me-2 text-primary"></i>Phone
                         </td>
-                        <td class="text-muted">@Model.PhoneNo</td>
+                        <td class="text-muted">@Model.PhoneNo.ToString().PadLeft(11,'0')</td>
                     </tr>
                     <tr class="border-bottom">
                         <td class="fw-bold text-nowrap">
                             <i class="bi bi-telephone me-2 text-primary"></i>Guardian
                         </td>
-                        <td class="text-muted">@Model.GuardianPhone</td>
+                        <td class="text-muted">@Model.GuardianPhone.ToString().PadLeft(11, '0')</td>
                     </tr>
                     <tr class="border-bottom">
                         <td class="fw-bold text-nowrap">

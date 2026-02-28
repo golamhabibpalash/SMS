@@ -1,6 +1,7 @@
 ﻿using SMS.BLL.Contracts.Base;
 using SMS.Entities;
 using SMS.Entities.AdditionalModels;
+using SMS.Entities.AdditionalModels.StudentVM;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -14,4 +15,5 @@ public interface IAcademicExamManager:IManager<AcademicExam>
     Task<AcademicExam> GetAcademicExam(int examGroupId, int classId, int subjectId, string examType, int? sectionId);
     Task<int> GetTotalExamAsync(int examGroupId, int classId);
     Task<List<AcademicClass>> GetAcademicClassListByGroupIdAsync(int groupId);
+    Task<ProfileResult> GetSingleStudentResultDetailForProfile(int studentId);
 }

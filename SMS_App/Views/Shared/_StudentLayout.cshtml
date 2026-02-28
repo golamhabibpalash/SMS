@@ -60,8 +60,7 @@
     <link href="~/lib/bootstrap/bootstrap-5.3.8-dist/css/bootstrap.min.css" rel="stylesheet" />
 
     <!-- Font Awesome -->
-    <link href="~/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
-
+    <link href="~/lib/fontawesome/css/fontawesome.min.css" rel="stylesheet" />
     <!-- NProgress -->
     <link href="~/lib/Theme/css/nprogress.css" rel="stylesheet" />
 
@@ -104,7 +103,8 @@
                         <div class="menu_section">
                             <ul class="nav side-menu">
                                 <li>
-                                    <a asp-controller="Students" asp-action="Details" asp-route-id="@user.ReferenceId"><i class="fa fa-home"></i> Details <span class="fa fa-chevron-down"></span></a>
+                             @*        <a asp-controller="Students" asp-action="Details" asp-route-id="@user.ReferenceId"><i class="fa fa-home"></i> Details <span class="fa fa-chevron-down"></span></a> *@
+                                    <a asp-controller="Students" asp-action="Profile" asp-route-id="@user.ReferenceId"><i class="far fa-address-card"></i></a>
                                 </li>
 
                             </ul>
@@ -267,17 +267,6 @@
 
         $(document).ready(function () {
             menuToggle();
-            //$('#menu_toggle').click();
-            // $("[data-toggle=popover]").popover({
-            //     html: true,
-            //     animation: true,
-            //     delay: { "show": 500, "hide": 100 },
-            //     template: '<div class="popover" role="tooltip"><div class="arrow"></div><h3 class="popover-header"></h3><div class="popover-body"></div></div>',
-            //     content: function () {
-
-            //         return $('#popover-content').html();
-            //     }
-            // });
         });
     </script>
 </body>

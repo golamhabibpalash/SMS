@@ -4,6 +4,7 @@ using SMS.BLL.Contracts;
 using SMS.DAL.Contracts;
 using SMS.Entities;
 using SMS.Entities.AdditionalModels;
+using SMS.Entities.AdditionalModels.StudentVM;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,15 +19,21 @@ public class AcademicExamManager : Manager<AcademicExam>, IAcademicExamManager
     private readonly IAcademicExamGroupRepository _academicExamGroupRepository;
     private readonly IAcademicClassRepository _academicClassRepository;
     private readonly IGradingTableRepository _gradingTableRepository;
+    private readonly IExamResultManager _examResultManager;
     private AcademicExamGroup _cachedExamGroup;
     private List<GradingTable> _cachedGradingTable;
-    public AcademicExamManager(IAcademicExamRepository academicExamRepository, IAcademicSessionRepository academicSessionRepository, IAcademicExamGroupRepository academicExamGroupRepository, IAcademicClassRepository academicClassRepository, IGradingTableRepository gradingTableRepository) : base(academicExamRepository)
+    private readonly IAcademicExamDetailsManager _academicExamDetailsManager;
+
+
+    public AcademicExamManager(IAcademicExamRepository academicExamRepository, IAcademicSessionRepository academicSessionRepository, IAcademicExamGroupRepository academicExamGroupRepository, IAcademicClassRepository academicClassRepository, IGradingTableRepository gradingTableRepository, IAcademicExamDetailsManager academicExamDetailsManager, IExamResultManager examResultManager = null) : base(academicExamRepository)
     {
         _academicExamRepository = academicExamRepository;
         _academicSessionRepository = academicSessionRepository;
         _academicExamGroupRepository = academicExamGroupRepository;
         _academicClassRepository = academicClassRepository;
         _gradingTableRepository = gradingTableRepository;
+        _academicExamDetailsManager = academicExamDetailsManager;
+        _examResultManager = examResultManager;
     }
 
     public async Task<List<AcademicExam>> GetByClassIdExamGroupIdAsync(int examGroupId, int academicClassId)
@@ -460,6 +467,45 @@ public class AcademicExamManager : Manager<AcademicExam>, IAcademicExamManager
         classes = await _repository.Table.Where(s => s.AcademicExamGroupId == groupId).Select(s => s.AcademicClass).DistinctBy(c => c.Id).ToListAsync();
         
         return classes;
+    }
+    public async Task<ProfileResult> GetSingleStudentResultDetailForProfile(int studentId)
+    {
+        ProfileResult profileResult = new();
+        var LastAttendedExamDetail = await _academicExamDetailsManager.GetLastDataFromExamByStudentId(studentId);
+        if (LastAttendedExamDetail!=null)
+        {
+            profileResult.CurrentExamName = LastAttendedExamDetail.AcademicExam.AcademicExamGroup.ExamGroupName;
+
+            var subjectWiseAllResult = await _examResultManager.GetExamResultsByExamGroupNClassId(LastAttendedExamDetail.AcademicExam.AcademicExamGroupId, LastAttendedExamDetail.AcademicExam.AcademicClassId);
+
+            var filterResultByStudent = subjectWiseAllResult.FirstOrDefault(s => s.StudentId == studentId);
+            if (filterResultByStudent!=null)
+            {
+                profileResult.CurrentCGPA = filterResultByStudent.CGPA;
+                profileResult.CurrentClassRank = filterResultByStudent.Rank;
+                profileResult.CurrentGrade = filterResultByStudent.FinalGrade;
+                profileResult.CurrentObtainMarks = filterResultByStudent.TotalObtainMarks;
+                profileResult.CurrentTotalFail = filterResultByStudent.TotalFails;
+            }
+
+            var subjectWiseAllExams =await _academicExamDetailsManager.GetAllByExamGroupAndStudentId(LastAttendedExamDetail.AcademicExam.AcademicExamGroupId,studentId);
+            foreach (var item in subjectWiseAllExams)
+            {
+                var subjectWiseResult = filterResultByStudent.ExamResultDetails.FirstOrDefault(c => c.AcademicSubjectId == item.AcademicExam.AcademicSubjectId);
+                CurrentExamDetail currentExamDetail = new()
+                {
+                    SubjectName = item.AcademicExam.AcademicSubject?.SubjectName,
+                    SubjectCode = item.AcademicExam.AcademicSubject.SubjectCode?.ToString(),
+                    TotalMark = item.AcademicExam.TotalMarks,
+                    TotalObtainMark = subjectWiseResult.ObtainMark,
+                    Grade = subjectWiseResult.Grade,
+                    GPA = subjectWiseResult.GPA
+                };
+                profileResult.CurrentExamDetails.Add(currentExamDetail);
+            }
+
+        }
+        return profileResult;
     }
 
 }

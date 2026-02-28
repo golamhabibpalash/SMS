@@ -28,12 +28,12 @@ namespace SMS.DAL.Repositories
         {
             try
             {
-                //var pExamGroupId = new SqlParameter("examGroupId", examGroupId);
-                //var pStudentId = new SqlParameter("date", studentId);
-                //var examDetails = await _dbContext.AcademicExamDetails.FromSqlInterpolated($"sp_get_examdetails_by_examGroupId_studentId {pExamGroupId},{pStudentId}").ToListAsync();
                 var examDetails = await _dbContext.AcademicExamDetails
                     .Include(s => s.AcademicExam)
+                        .ThenInclude(e => e.AcademicExamGroup)
                     .Include(s => s.Student)
+                    .Include(s => s.AcademicExam)
+                        .ThenInclude(c => c.AcademicSubject)
                     .Where( s=> s.AcademicExam.AcademicExamGroupId == examGroupId && s.StudentId == studentId)
                     .ToListAsync();
                 return examDetails;

@@ -57,10 +57,11 @@ public class StudentsController : Controller
     private readonly IStudentFeeAllocationManager _studentFeeAllocationManager;
     private readonly IAppliedStudentManager _appliedStudentManager;
     private readonly IAppLogger _appLogger;
+    private readonly IAcademicExamManager _academicExamManager;
     #endregion
 
     #region Constructor
-    public StudentsController(IStudentManager studentManager, IAcademicClassManager academicClassManager, IWebHostEnvironment host, IMapper mapper, IAcademicSessionManager academicSessionManager, IStudentPaymentManager studentPaymentManager, IDistrictManager districtManager, IUpazilaManager upazilaManager, IAcademicSectionManager academicSectionManager, IBloodGroupManager bloodGroupManager, IDivisionManager divisionManager, INationalityManager nationalityManager, IGenderManager genderManager, IReligionManager religionManager, IStudentFeeHeadManager studentFeeHeadManager, IClassFeeListManager classFeeListManager, UserManager<ApplicationUser> userManager, IPhoneSMSManager phoneSMSManager, IAttendanceMachineManager attendanceMachineManager, IInstituteManager instituteManager, IStudentActivateHistManager studentActivateHistManager, IOffDayManager offDayManager, IStudentFeeAllocationManager studentFeeAllocationManager, IAppliedStudentManager appliedStudentManager, IAppLogger appLogger)
+    public StudentsController(IStudentManager studentManager, IAcademicClassManager academicClassManager, IWebHostEnvironment host, IMapper mapper, IAcademicSessionManager academicSessionManager, IStudentPaymentManager studentPaymentManager, IDistrictManager districtManager, IUpazilaManager upazilaManager, IAcademicSectionManager academicSectionManager, IBloodGroupManager bloodGroupManager, IDivisionManager divisionManager, INationalityManager nationalityManager, IGenderManager genderManager, IReligionManager religionManager, IStudentFeeHeadManager studentFeeHeadManager, IClassFeeListManager classFeeListManager, UserManager<ApplicationUser> userManager, IPhoneSMSManager phoneSMSManager, IAttendanceMachineManager attendanceMachineManager, IInstituteManager instituteManager, IStudentActivateHistManager studentActivateHistManager, IOffDayManager offDayManager, IStudentFeeAllocationManager studentFeeAllocationManager, IAppliedStudentManager appliedStudentManager, IAppLogger appLogger, IAcademicExamManager academicExamManager = null)
     {
         _academicClassManager = academicClassManager;
         _host = host;
@@ -87,6 +88,7 @@ public class StudentsController : Controller
         _studentFeeAllocationManager = studentFeeAllocationManager;
         _appliedStudentManager = appliedStudentManager;
         _appLogger = appLogger;
+        _academicExamManager = academicExamManager;
     }
     #endregion Constructor
 
@@ -818,8 +820,10 @@ public class StudentsController : Controller
         //Attendance
         var attendance = await _studentManager.GetProfileAttendanceAsync(student.Id);
         studentProfileVM.Attendances = attendance;
-        //Results
 
+        //Results
+        var result = await _academicExamManager.GetSingleStudentResultDetailForProfile(student.Id);
+        studentProfileVM.Results = result;
         //Payment
 
         //Documents

@@ -37,15 +37,18 @@ public class ProfileResult {
     public double CurrentCGPA { get; set; }
     public double LastSemesterCGPA { get; set; }
     public int CurrentClassRank { get; set; }
-    public string CurrentExamName { get; set; }
+    public string CurrentExamName { get; set; } = "Default Exam Name";
+    public string CurrentGrade { get; set; } = "N/F";
+    public double CurrentObtainMarks { get; set; }
+    public int CurrentTotalFail { get; set; }
     public List<CurrentExamDetail> CurrentExamDetails { get; set; } = [];
 }
 public class CurrentExamDetail
 {
-    public string SubjectCode { get; set; }
-    public string SubjectName { get; set; }
+    public string SubjectCode { get; set; } = "N/F";
+    public string SubjectName { get; set; } = "N/F";
     public double TotalMark { get; set; }
-    public string Grade { get; set; }
+    public string Grade { get; set; } = "N/F";
     public double GPA { get; set; }
     public double TotalObtainMark { get; set; }
 }

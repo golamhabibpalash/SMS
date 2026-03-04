@@ -43,6 +43,14 @@
 		<None Remove="wwwroot\Reports\NewFolder\**" />
 		<None Remove="wwwroot\Reports\ReportData\**" />
 		<None Remove="wwwroot\Reports\Versioning\**" />
+		<Content Remove="wwwroot\lib\Theme\src\html\.tsconfig.json" />
+		<Content Remove="wwwroot\lib\Theme\src\html\.prettierrc.js" />
+		<Content Remove="wwwroot\lib\Theme\src\html\.eslintrc.json" />
+		<None Remove="wwwroot\lib\MultiSelect\js\bootstrap-3.3.2.min.js" />
+		<None Remove="wwwroot\lib\MultiSelect\js\jquery-2.1.3.min.js" />
+		<None Remove="wwwroot\lib\MultiSelect\js\prettify.min.js" />
+		<None Remove="wwwroot\lib\MultiSelect\js\require-2.3.5.min.js" />
+		<Content Remove="wwwroot\lib\Select2\css\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -119,19 +127,13 @@
 		<Folder Include="wwwroot\Images\Student\Photo\" />
 		<Folder Include="wwwroot\js\CoreUI\" />
 		<Folder Include="wwwroot\js\Upazila\" />
-		<Folder Include="wwwroot\lib\jquery\j1.10.2\" />
-		<Folder Include="wwwroot\lib\jquery\jquery3.7\" />
-		<Folder Include="wwwroot\lib\jspdf\" />
+		<Folder Include="wwwroot\lib\Select2\css\" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<None Include="Views\AcademicExamType\Delete.cshtml" />
 		<!-- <None Include="Views\Shared\_layout.cshtml" /> -->
 		<!-- <None Include="Views\Shared\_LayoutAdminLte.cshtml" /> -->
-		<None Include="wwwroot\lib\MultiSelect\js\bootstrap-3.3.2.min.js" />
-		<None Include="wwwroot\lib\MultiSelect\js\jquery-2.1.3.min.js" />
-		<None Include="wwwroot\lib\MultiSelect\js\prettify.min.js" />
-		<None Include="wwwroot\lib\MultiSelect\js\require-2.3.5.min.js" />
 	</ItemGroup>
 
 	<ItemGroup>

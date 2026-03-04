@@ -245,7 +245,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content text-center">
             <div class="modal-header text-center">
-                <h4 class="text-center">Select Student</h4>
+                <h4 class="text-center">Select User</h4>
             </div>
             <div class="modal-body">
                 <form action="/" method="post">
@@ -261,7 +261,7 @@
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -269,8 +269,6 @@
 
 @section Scripts{
     <script>
-        
-
         $('#ddUserId').change(function () {
             let cRoll = $('#ddUserId option:selected').val();
             $('#UserIdInput').val(cRoll);

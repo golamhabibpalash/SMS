@@ -70,38 +70,37 @@
     @await RenderSectionAsync("Styles", required: false)
     <!-- END HEAD -->
 
-    <body class="page-header-fixed sidemenu-closed-hidelogo page-content-white page-md header-white dark-sidebar-color logo-indigo">
-        <div class="page-wrapper">
+<body class="page-header-fixed sidemenu-closed-hidelogo page-content-white page-md header-white dark-sidebar-color logo-indigo">
+    <div class="page-wrapper">
 
-            <!-- start header -->
-            <div class="page-header navbar navbar-fixed-top">
-                <div class="page-header-inner ">
+        <!-- start header -->
+        <div class="page-header navbar navbar-fixed-top">
+            <div class="page-header-inner ">
 
 
 
-                    <!-- logo start -->
-                    <div class="page-logo p-2">
-                        <a class="" asp-action="index" asp-controller="Home">
+                <!-- logo start -->
+                <div class="page-logo p-2">
+                    <a class="" asp-action="index" asp-controller="Home">
 
                         <img class="logo-icon material-icons"
-                            src="~/Images/Institute/@instituteLogo"
-                            style="max-width:50px;max-height:50px"
-                            onerror="this.onerror=null;this.src='/images/institute/smslogo.png';" 
-                            />
-                        
-                            <span class="logo-default fs-1 hidden-516"
-                                style="font-size:12px !important; line-height:0.7 !important">@GlobalUI.InstituteName</span>
+                             src="~/Images/Institute/@instituteLogo"
+                             style="max-width:50px;max-height:50px"
+                             onerror="this.onerror=null;this.src='/images/institute/smslogo.png';" />
+
+                        <span class="logo-default fs-1 hidden-516"
+                              style="font-size:12px !important; line-height:0.7 !important">@GlobalUI.InstituteName</span>
                         </a>
                     </div>
                     <!-- logo end -->
                     <ul class="nav navbar-nav navbar-left in">
                         <li>
-                            <a href="#" class="menu-toggler sidebar-toggler" data-bs-toggle="collapse"data-bs-target=".sidemenu-container">
+                            <a href="#" class="menu-toggler sidebar-toggler" data-bs-toggle="collapse" data-bs-target=".sidemenu-container">
                                 <i class="icon-menu"></i>@(GlobalUI.PageTitle ?? "Dashboard")
                             </a>
                         </li>
 
-                            
+
                     </ul>
                     <form class="search-form-opened" action="#" method="GET">
                         <div class="input-group">
@@ -124,30 +123,30 @@
                             <li class="hidden-320"><a class="fullscreen-btn"><i data-feather="maximize"></i></a></li>
                             <!-- start language menu -->
                             @* <li class="dropdown language-switch">
-                                <a class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <img src="~/lib/theme/smart/assets/img/flags/gb.png" class="position-left" alt="">
-                                    English
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <a class="german"><img src="~/lib/theme/smart/assets/img/flags/de.png" alt="">
-                                            German</a>
-                                    </li>
-                                    <li>
-                                        <a class="french"><img src="~/lib/theme/smart/assets/img/flags/fr.png" alt="">
-                                            French</a>
-                                    </li>
-                                    <li>
-                                        <a class="english"><img src="~/lib/theme/smart/assets/img/flags/gb.png" alt="">
-                                            English</a>
-                                    </li>
-                                </ul>
-                            </li> *@
+                                    <a class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <img src="~/lib/theme/smart/assets/img/flags/gb.png" class="position-left" alt="">
+                                        English
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a class="german"><img src="~/lib/theme/smart/assets/img/flags/de.png" alt="">
+                                                German</a>
+                                        </li>
+                                        <li>
+                                            <a class="french"><img src="~/lib/theme/smart/assets/img/flags/fr.png" alt="">
+                                                French</a>
+                                        </li>
+                                        <li>
+                                            <a class="english"><img src="~/lib/theme/smart/assets/img/flags/gb.png" alt="">
+                                                English</a>
+                                        </li>
+                                    </ul>
+                                </li> *@
                             <!-- end language menu -->
                             <!-- start notification dropdown -->
                             <li class="dropdown dropdown-extended dropdown-notification" id="header_notification_bar">
                                 <a class="dropdown-toggle" data-bs-toggle="dropdown" data-hover="dropdown"
-                                    data-close-others="true">
+                                   data-close-others="true">
                                     <i data-feather="bell"></i>
                                     <span class="badge headerBadgeColor1"> 6 </span>
                                 </a>
@@ -233,7 +232,7 @@
                             <!-- start message dropdown -->
                             <li class="dropdown dropdown-extended dropdown-inbox" id="header_inbox_bar">
                                 <a class="dropdown-toggle" data-bs-toggle="dropdown" data-hover="dropdown"
-                                    data-close-others="true">
+                                   data-close-others="true">
                                     <i data-feather="mail"></i>
                                     <span class="badge headerBadgeColor2"> 2 </span>
                                 </a>
@@ -248,7 +247,7 @@
                                                 <a href="#">
                                                     <span class="photo">
                                                         <img src="~/lib/theme/smart/assets/img/user/user2.jpg"
-                                                            class="img-circle" alt="">
+                                                             class="img-circle" alt="">
                                                     </span>
                                                     <span class="subject">
                                                         <span class="from"> Sarah Smith </span>
@@ -261,7 +260,7 @@
                                                 <a href="#">
                                                     <span class="photo">
                                                         <img src="~/lib/theme/smart/assets/img/user/user3.jpg"
-                                                            class="img-circle" alt="">
+                                                             class="img-circle" alt="">
                                                     </span>
                                                     <span class="subject">
                                                         <span class="from"> John Deo </span>
@@ -277,7 +276,7 @@
                                                 <a href="#">
                                                     <span class="photo">
                                                         <img src="~/lib/theme/smart/assets/img/user/user1.jpg"
-                                                            class="img-circle" alt="">
+                                                             class="img-circle" alt="">
                                                     </span>
                                                     <span class="subject">
                                                         <span class="from"> Rajesh </span>
@@ -290,7 +289,7 @@
                                                 <a href="#">
                                                     <span class="photo">
                                                         <img src="~/lib/theme/smart/assets/img/user/user8.jpg"
-                                                            class="img-circle" alt="">
+                                                             class="img-circle" alt="">
                                                     </span>
                                                     <span class="subject">
                                                         <span class="from"> Lina Smith </span>
@@ -303,7 +302,7 @@
                                                 <a href="#">
                                                     <span class="photo">
                                                         <img src="~/lib/theme/smart/assets/img/user/user5.jpg"
-                                                            class="img-circle" alt="">
+                                                             class="img-circle" alt="">
                                                     </span>
                                                     <span class="subject">
                                                         <span class="from"> Jacob Ryan </span>
@@ -323,7 +322,7 @@
                             <!-- start manage user dropdown -->
                             <li class="dropdown dropdown-user">
                                 <a class="dropdown-toggle" data-bs-toggle="dropdown" data-hover="dropdown"
-                                    data-close-others="true">
+                                   data-close-others="true">
                                     <img alt="" class="img-circle " src="@userImage" />
                                     <!--      <span class="username username-hide-on-mobile"> @userName</span> -->
                                 </a>
@@ -351,9 +350,9 @@
                                     </li>
                                     <li>
                                         <form asp-action="Logout" asp-controller="Accounts" method="post"
-                                            style="display:inline;">
+                                              style="display:inline;">
                                             <button type="submit" class="dropdown-item"
-                                                style="background:none; border:none; padding:6px 20px; width:100%; text-align:left;">
+                                                    style="background:none; border:none; padding:6px 20px; width:100%; text-align:left;">
                                                 <i class="icon-logout"></i> Log Out
                                             </button>
                                         </form>
@@ -362,17 +361,16 @@
                             </li>
                             <!-- end manage user dropdown -->
                             @* <li class="dropdown dropdown-quick-sidebar-toggler">
-                                <a id="headerSettingButton" class="mdl-button mdl-js-button mdl-button--icon pull-right"
-                                    data-upgraded=",MaterialButton">
-                                    <i class="material-icons">more_vert</i>
-                                </a>
-                            </li> *@
+                                    <a id="headerSettingButton" class="mdl-button mdl-js-button mdl-button--icon pull-right"
+                                        data-upgraded=",MaterialButton">
+                                        <i class="material-icons">more_vert</i>
+                                    </a>
+                                </li> *@
                         </ul>
                     </div>
                 </div>
             </div>
             <!-- end header -->
-
             <!-- start color quick setting -->
             <div class="settingSidebar">
                 <a href="javascript:void(0)" class="settingPanelToggle">
@@ -475,7 +473,6 @@
                 </div>
             </div>
             <!-- end color quick setting -->
-
             <!-- start page container -->
             <div class="page-container">
                 <!-- start sidebar menu -->
@@ -494,9 +491,10 @@
 
                                 @await Component.InvokeAsync("Navigation")
                                 <li class="position-fixed bottom-0">
-                                    <span class="alert">Version:
+                                    <span class="alert">
+                                        Version:
                                         <span class="btn btn-sm p-0 m-0 text-light" data-bs-toggle="modal"
-                                            data-bs-target="#versionModal">
+                                              data-bs-target="#versionModal">
                                             1.2.3
                                         </span>
                                     </span>
@@ -536,17 +534,17 @@
                         <div class="tab-content">
                             <!-- Start Doctor Chat -->
                             <div class="tab-pane active chat-sidebar-chat in active show" role="tabpanel"
-                                id="quick_sidebar_tab_1">
+                                 id="quick_sidebar_tab_1">
                                 <div class="chat-sidebar-list">
                                     <div class="chat-sidebar-chat-users slimscroll-style" data-rail-color="#ddd"
-                                        data-wrapper-class="chat-sidebar-list">
+                                         data-wrapper-class="chat-sidebar-list">
                                         <div class="chat-header">
                                             <h5 class="list-heading">Online</h5>
                                         </div>
                                         <ul class="media-list list-items">
                                             <li class="media">
                                                 <img class="media-object" src="~/lib/theme/smart/assets/img/user/user5.jpg"
-                                                    width="35" height="35" alt="...">
+                                                     width="35" height="35" alt="...">
                                                 <div class="media-body">
                                                     <h5 class="media-heading">Rajesh</h5>
                                                     <div class="media-heading-sub">Ortho Surgeon</div>
@@ -556,8 +554,8 @@
                                                 <div class="media-status">
                                                     <span class="badge badge-success">8</span>
                                                 </div> <img class="media-object"
-                                                    src="~/lib/theme/smart/assets/img/user/user1.jpg" width="35" height="35"
-                                                    alt="...">
+                                                            src="~/lib/theme/smart/assets/img/user/user1.jpg" width="35" height="35"
+                                                            alt="...">
                                                 <div class="media-body">
                                                     <h5 class="media-heading">Jacob Ryan</h5>
                                                     <div class="media-heading-sub">Ortho Surgeon</div>
@@ -565,7 +563,7 @@
                                             </li>
                                             <li class="media">
                                                 <img class="media-object" src="~/lib/theme/smart/assets/img/user/user4.jpg"
-                                                    width="35" height="35" alt="...">
+                                                     width="35" height="35" alt="...">
                                                 <div class="media-body">
                                                     <h5 class="media-heading">Sarah Smith</h5>
                                                     <div class="media-heading-sub">Anatomy</div>
@@ -575,8 +573,8 @@
                                                 <div class="media-status">
                                                     <span class="badge badge-danger">3</span>
                                                 </div> <img class="media-object"
-                                                    src="~/lib/theme/smart/assets/img/user/user2.jpg" width="35" height="35"
-                                                    alt="...">
+                                                            src="~/lib/theme/smart/assets/img/user/user2.jpg" width="35" height="35"
+                                                            alt="...">
                                                 <div class="media-body">
                                                     <h5 class="media-heading">John Deo</h5>
                                                     <div class="media-heading-sub">Dentist</div>
@@ -584,7 +582,7 @@
                                             </li>
                                             <li class="media">
                                                 <img class="media-object" src="~/lib/theme/smart/assets/img/user/user3.jpg"
-                                                    width="35" height="35" alt="...">
+                                                     width="35" height="35" alt="...">
                                                 <div class="media-body">
                                                     <h5 class="media-heading">Genelia James</h5>
                                                     <div class="media-heading-sub">Cardiology</div>
@@ -599,8 +597,8 @@
                                                 <div class="media-status">
                                                     <span class="badge badge-warning">4</span>
                                                 </div> <img class="media-object"
-                                                    src="~/lib/theme/smart/assets/img/user/user6.jpg" width="35" height="35"
-                                                    alt="...">
+                                                            src="~/lib/theme/smart/assets/img/user/user6.jpg" width="35" height="35"
+                                                            alt="...">
                                                 <div class="media-body">
                                                     <h5 class="media-heading">Jennifer Maklen</h5>
                                                     <div class="media-heading-sub">Neurology</div>
@@ -609,7 +607,7 @@
                                             </li>
                                             <li class="media">
                                                 <img class="media-object" src="~/lib/theme/smart/assets/img/user/user7.jpg"
-                                                    width="35" height="35" alt="...">
+                                                     width="35" height="35" alt="...">
                                                 <div class="media-body">
                                                     <h5 class="media-heading">Lina Smith</h5>
                                                     <div class="media-heading-sub">Ortho Surgeon</div>
@@ -620,8 +618,8 @@
                                                 <div class="media-status">
                                                     <span class="badge badge-success">9</span>
                                                 </div> <img class="media-object"
-                                                    src="~/lib/theme/smart/assets/img/user/user8.jpg" width="35" height="35"
-                                                    alt="...">
+                                                            src="~/lib/theme/smart/assets/img/user/user8.jpg" width="35" height="35"
+                                                            alt="...">
                                                 <div class="media-body">
                                                     <h5 class="media-heading">Jeff Adam</h5>
                                                     <div class="media-heading-sub">Anatomy</div>
@@ -630,7 +628,7 @@
                                             </li>
                                             <li class="media">
                                                 <img class="media-object" src="~/lib/theme/smart/assets/img/user/user9.jpg"
-                                                    width="35" height="35" alt="...">
+                                                     width="35" height="35" alt="...">
                                                 <div class="media-body">
                                                     <h5 class="media-heading">Anjelina Cardella</h5>
                                                     <div class="media-heading-sub">Physiology</div>
@@ -652,8 +650,7 @@
                                         <div class="settings-item">
                                             <div class="settings-name">Sidebar Position</div>
                                             <div class="settings-value">
-                                                <select
-                                                    class="sidebar-pos-option form-control input-inline input-sm input-small ">
+                                                <select class="sidebar-pos-option form-control input-inline input-sm input-small ">
                                                     <option value="left" selected="selected">Left</option>
                                                     <option value="right">Right</option>
                                                 </select>
@@ -662,8 +659,7 @@
                                         <div class="settings-item">
                                             <div class="settings-name">Header Position</div>
                                             <div class="settings-value">
-                                                <select
-                                                    class="page-header-option form-control input-inline input-sm input-small ">
+                                                <select class="page-header-option form-control input-inline input-sm input-small ">
                                                     <option value="fixed" selected="selected">Fixed</option>
                                                     <option value="default">Default</option>
                                                 </select>
@@ -672,8 +668,7 @@
                                         <div class="settings-item">
                                             <div class="settings-name">Sidebar Style </div>
                                             <div class="settings-value">
-                                                <select
-                                                    class="sidebar-style-option form-control input-inline input-sm input-small ">
+                                                <select class="sidebar-style-option form-control input-inline input-sm input-small ">
                                                     <option value="default" selected="selected">Default</option>
                                                     <option value="compact">Compact</option>
                                                 </select>
@@ -682,8 +677,7 @@
                                         <div class="settings-item">
                                             <div class="settings-name">Layout Type</div>
                                             <div class="settings-value">
-                                                <select
-                                                    class="layout-option form-control input-inline input-sm input-small ">
+                                                <select class="layout-option form-control input-inline input-sm input-small ">
                                                     <option value="fluid" selected="selected">Fluid</option>
                                                     <option value="boxed">Boxed</option>
                                                 </select>
@@ -747,7 +741,6 @@
                 <!-- end chat sidebar -->
             </div>
             <!-- end page container -->
-
             <!-- start footer -->
             <div class="page-footer text-bs-light">
                 <footer class="py-3 mt-auto">
@@ -779,23 +772,11 @@
             </div>
 
 
-            <!-- 
-                <div class="page-footer">
-                    <div class="page-footer-inner">
-                        @@DateTime.Today.Year &copy; EIMS! Developed By
-                        <a href="mailto:golamhabibpalash@gmail.com" target="_top" class="makerCss">G H Palash</a>
-                    </div>
-                    <div class="scroll-to-top">
-                        <i class="icon-arrow-up"></i>
-                    </div>
-                </div>
-            -->
-            <!-- end footer -->
         </div>
 
         <!-- Modal -->
         <div class="modal fade" id="versionModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+             aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -814,40 +795,6 @@
         </div>
 
 
-
-
-        <!-- start js include path -->
-        <script src="~/lib/theme/smart/assets/plugins/jquery/jquery.min.js"></script>
-
-        <!-- Select2 JS -->
-        <!-- <script src="~/lib/select2/js/select2.min.js"></script>-->
-
-        <script src="~/lib/theme/smart/assets/plugins/popper/popper.js"></script>
-        <script src="~/lib/theme/smart/assets/plugins/jquery-blockui/jquery.blockui.min.js"></script>
-        <script src="~/lib/theme/smart/assets/plugins/jquery-slimscroll/jquery.slimscroll.js"></script>
-        <!-- bootstrap -->
-        <script src="~/lib/theme/smart/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
-        @*<script src="~/lib/theme/smart/assets/plugins/bootstrap-switch/js/bootstrap-switch.min.js"></script>
-        <script src="~/lib/theme/smart/assets/js/pages/sparkline/sparkline-data.js"></script>*@
-        <script src="~/lib/theme/smart/assets/plugins/sparkline/jquery.sparkline.min.js"></script>
-        <!-- Common js-->
-        <script src="~/lib/theme/smart/assets/js/app.js"></script>
-        <script src="~/lib/theme/smart/assets/js/layout.js"></script>
-        <script src="~/lib/theme/smart/assets/js/theme-color.js"></script>
-        <!-- material -->
-        <script src="~/lib/theme/smart/assets/plugins/material/material.min.js"></script>
-        <!-- dropzone -->
-        <script src="~/lib/theme/smart/assets/plugins/dropzone/dropzone.js"></script>
-        <script src="~/lib/theme/smart/assets/plugins/dropzone/dropzone-call.js"></script>
-        <!-- animation -->
-        @* <script src="~/lib/theme/smart/assets/js/pages/ui/animations.js"></script>*@
-        <!-- end js include path -->
-        <!-- Feather icon -->
-        <script src="~/lib/theme/smart/assets/plugins/feather/feather.min.js"></script>
-        <script src="~/lib/alertify/alertify.min.js"></script>
-        <script>
-            feather.replace();
-        </script>
 
         @await RenderSectionAsync("Scripts", required: false)
     </body>

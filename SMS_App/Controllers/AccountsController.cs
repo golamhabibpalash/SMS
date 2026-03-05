@@ -331,6 +331,7 @@ public class AccountsController : Controller
             }
 
             var user = await _userManager.FindByNameAsync(username);
+
             if (user == null)
             {
                 ViewBag.msg = "please insert a varified user name";
@@ -361,11 +362,12 @@ public class AccountsController : Controller
                 int randomNumber = rnd.Next(100000, 999999);
                 HttpContext.Session.SetString("randomNumber", randomNumber.ToString());
                 var instituteInfo = await _instituteManager.GetAllAsync();
-                string text = "Your OTP is:" + randomNumber + " -" + instituteInfo.FirstOrDefault().Name;
+                string text = "You are trying to reset your password. Your OTP is:" + randomNumber + " -" + instituteInfo.FirstOrDefault().Name;
 
                 await _appLogger.WarningAsync($"{model.Email} user OTP is {randomNumber}");
                 if (model.VerificationBy == "SMS")
                 {
+                    await _appLogger.InfoAsync($"Before SMS Send; user = {model.Email}; phone number = {user.PhoneNumber}");
                     bool smsSend = await MobileSMS.SendSMS(user.PhoneNumber, text);
                     if (smsSend == false)
                     {
@@ -398,6 +400,7 @@ public class AccountsController : Controller
                 }
                 else if (model.VerificationBy == "Email")
                 {
+                    HttpContext.Session.SetString("randomNumber", randomNumber.ToString());
                     bool isSend = EmailService.SendOTP(model.Email,"One time password",DateTime.Now,randomNumber.ToString());
                     if (isSend)
                     {

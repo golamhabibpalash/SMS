@@ -20,6 +20,12 @@
                 <tbody>
                     <tr class="border-bottom">
                         <td class="fw-bold text-nowrap" style="width:40%">
+                            <i class="bi bi-envelope me-2 text-primary"></i>Class Roll
+                        </td>
+                        <td class="text-muted">@Model.ClassRoll</td>
+                    </tr>
+                    <tr class="border-bottom">
+                        <td class="fw-bold text-nowrap" style="width:40%">
                             <i class="bi bi-envelope me-2 text-primary"></i>Email
                         </td>
                         <td class="text-muted">@Model.Email</td>
@@ -28,7 +34,7 @@
                         <td class="fw-bold text-nowrap">
                             <i class="bi bi-telephone me-2 text-primary"></i>Phone
                         </td>
-                        <td class="text-muted">@Model.PhoneNo.ToString().PadLeft(11,'0')</td>
+                        <td class="text-muted">@Model.PhoneNo.ToString().PadLeft(11, '0')</td>
                     </tr>
                     <tr class="border-bottom">
                         <td class="fw-bold text-nowrap">
@@ -60,6 +66,14 @@
                         </td>
                         <td class="fw-bold @(studentStatus == "Active" ? "text-success" : "text-danger")">
                             @studentStatus
+                        </td>
+                    </tr>
+                    <tr class="border-bottom">
+                        <td class="fw-bold text-nowrap">
+                            <i class="bi bi-mortarboard me-2 text-primary"></i>Address
+                        </td>
+                        <td class="">
+                            @Model.PresentAddressArea,@Model.PresentAddressPO, @Model.PresentDistrict, @Model.PresentDivision
                         </td>
                     </tr>
                 </tbody>

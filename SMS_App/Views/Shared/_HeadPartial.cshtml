@@ -20,7 +20,8 @@
 
     <!--bootstrap -->
     <link href="~/lib/bootstrap/bootstrap-5.3.8-dist/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-    @* <link href="./assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" /> *@
+
+
 
     <!-- Material Design Lite CSS -->
     <link rel="stylesheet" href="~/lib/theme/smart/assets/plugins/material/material.min.css">
@@ -33,38 +34,146 @@
     <link href="~/lib/theme/smart/assets/css/responsive.css" rel="stylesheet" type="text/css" />
     <link href="~/lib/theme/smart/assets/css/theme/light/theme-color.css" rel="stylesheet" type="text/css" />
 
+    <!-- Select2 Bootstrap 5 Theme CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+
     <!-- dropzone -->
     <link href="~/lib/theme/smart/assets/plugins/dropzone/dropzone.css" rel="stylesheet" media="screen">
 
     <!-- Date Time item CSS -->
     <link rel="stylesheet" href="~/lib/theme/smart/assets/plugins/flatpicker/css/flatpickr.min.css" />
 
-    <!-- Select2 CSS -->
-    <link href="~/lib/select2/css/select2.min.css" rel="stylesheet" />
-
     <!-- favicon -->
     <link rel="icon" type="image/x-icon" href="~/Images/Institute/favicon.ico">
     <link href="~/lib/theme/smart/assets/css/theme/light/login.css" rel="stylesheet" />
+
+    <!-- Select2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
+
     <!--Custom Css-->
     <link href="~/css/custom.css" rel="stylesheet" />
     <link href="~/lib/alertify/css/alertify.min.css" rel="stylesheet" />
     <style>
-        .select2-container {
-            width: 100% !important;
+
+        /* Fix for select2 search input */
+        .select2-container--bootstrap-5 .select2-search--dropdown .select2-search__field {
+            background-color: #fff !important;
+            color: #333 !important;
+            border: 1px solid #ced4da !important;
+            padding: 0.375rem 0.75rem !important;
+            border-radius: 0.25rem !important;
+            outline: none !important;
         }
 
-            .select2-container .select2-selection--single {
-                height: 38px;
-                border: 1px solid #ced4da;
-                border-radius: 4px;
+            .select2-container--bootstrap-5 .select2-search--dropdown .select2-search__field:focus {
+                border-color: #86b7fe !important;
+                box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
             }
 
-        .select2-container--default .select2-selection--single .select2-selection__rendered {
-            line-height: 38px;
+        /* Fix for modal focus issues */
+        .modal .select2-container--bootstrap-5 .select2-selection--single,
+        .modal .select2-container--bootstrap-5 .select2-selection--multiple {
+            pointer-events: auto !important;
         }
 
-        .select2-container--default .select2-selection--single .select2-selection__arrow {
-            height: 38px;
+        /* Fix for Select2 dropdown behind modal */
+        .select2-container--bootstrap-5.select2-container--open {
+            z-index: 9999 !important;
+        }
+
+        /* Ensure dropdown is above modal */
+        .select2-container--bootstrap-5 .select2-dropdown {
+            z-index: 9999 !important;
+        }
+
+        /* Fix for search input in modal */
+        .modal .select2-container--bootstrap-5 .select2-selection--single,
+        .modal .select2-container--bootstrap-5 .select2-selection--multiple {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Ensure dropdown container is above everything */
+        .select2-container {
+            z-index: 9999 !important;
         }
     </style>
+
+    <!-- start js include path -->
+    <script src="~/lib/theme/smart/assets/plugins/jquery/jquery.min.js"></script>
+
+    <script src="~/lib/theme/smart/assets/plugins/popper/popper.js"></script>
+    <script src="~/lib/theme/smart/assets/plugins/jquery-blockui/jquery.blockui.min.js"></script>
+    <script src="~/lib/theme/smart/assets/plugins/jquery-slimscroll/jquery.slimscroll.js"></script>
+
+    <!-- bootstrap -->
+    <script src="~/lib/theme/smart/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+
+    <script src="~/lib/theme/smart/assets/plugins/sparkline/jquery.sparkline.min.js"></script>
+
+    <!-- Common js-->
+    <script src="~/lib/theme/smart/assets/js/app.js"></script>
+    <script src="~/lib/theme/smart/assets/js/layout.js"></script>
+    <script src="~/lib/theme/smart/assets/js/theme-color.js"></script>
+
+    <!-- material -->
+    <script src="~/lib/theme/smart/assets/plugins/material/material.min.js"></script>
+
+    <!-- dropzone -->
+    <script src="~/lib/theme/smart/assets/plugins/dropzone/dropzone.js"></script>
+    <script src="~/lib/theme/smart/assets/plugins/dropzone/dropzone-call.js"></script>
+
+    <!-- LAST SCRIPT -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <!-- Feather icon -->
+    <script src="~/lib/theme/smart/assets/plugins/feather/feather.min.js"></script>
+    <script src="~/lib/alertify/alertify.min.js"></script>
+    <script>feather.replace();</script>
+
+    <script>
+        $(document).ready(function () {
+            // Initialize all select2 elements
+            $('.select2').each(function () {
+                $(this).select2({
+                    theme: 'bootstrap-5',
+                    width: '100%',
+                    dropdownParent: $(this).parent(), // or specify a specific parent
+                    allowClear: true,
+                    placeholder: $(this).data('placeholder') || 'Select an option'
+                });
+            });
+
+            // Special handling for select2 inside modals
+            $(document).on('shown.bs.modal', '.modal', function () {
+                $(this).find('.select2').each(function () {
+                    // Destroy and reinitialize select2 with modal as dropdown parent
+                    var $this = $(this);
+                    var select2Id = $this.attr('id');
+
+                    if ($this.data('select2')) {
+                        $this.select2('destroy');
+                    }
+
+                    $this.select2({
+                        theme: 'bootstrap-5',
+                        width: '100%',
+                        dropdownParent: $(this).closest('.modal'),
+                        allowClear: true,
+                        placeholder: $this.data('placeholder') || 'Select an option'
+                    });
+                });
+            });
+
+            // Clean up select2 when modal is hidden
+            $(document).on('hidden.bs.modal', '.modal', function () {
+                $(this).find('.select2').each(function () {
+                    if ($(this).data('select2')) {
+                        $(this).select2('destroy');
+                    }
+                });
+            });
+        });
+    </script>
+
 </head>

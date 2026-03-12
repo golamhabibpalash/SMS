@@ -487,6 +487,10 @@ public class AcademicExamManager : Manager<AcademicExam>, IAcademicExamManager
                 profileResult.CurrentObtainMarks = filterResultByStudent.TotalObtainMarks;
                 profileResult.CurrentTotalFail = filterResultByStudent.TotalFails;
             }
+            else
+            {
+                return profileResult;
+            }
 
             var subjectWiseAllExams =await _academicExamDetailsManager.GetAllByExamGroupAndStudentId(LastAttendedExamDetail.AcademicExam.AcademicExamGroupId,studentId);
             foreach (var item in subjectWiseAllExams)

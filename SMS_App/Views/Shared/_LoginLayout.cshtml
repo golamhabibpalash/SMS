@@ -11,8 +11,7 @@
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <title>@ViewBag.Title</title>
     <style>
-        body
-        {
+        body {
             background-image: url('/images/institute/bg_animated_last.gif');
             background-position: center center;
             background-repeat: no-repeat;
@@ -21,8 +20,7 @@
             background-color: #EEEEEE;
         }
 
-        #loginPortion
-        {
+        #loginPortion {
             height: 100vh;
             width: 20%;
             background-color: rgb(114, 146, 171,0.5);
@@ -30,8 +28,7 @@
             left: 80%;
         }
 
-        #loginInputDiv
-        {
+        #loginInputDiv {
             background-color: #346689;
             opacity: 1;
             position: absolute;
@@ -40,66 +37,53 @@
             width: 85%;
         }
 
-        @@media only screen and (min-width:1287px) and (max-width:1539px)
-        {
-            #loginPortion
-            {
+        @@media only screen and (min-width:1287px) and (max-width:1539px) {
+            #loginPortion {
                 width: 23%;
                 left: 77%;
             }
 
-            #loginInputDiv
-            {
+            #loginInputDiv {
                 width: 85%;
             }
         }
 
-        @@media only screen and (min-width:771px) and (max-width:1286px)
-        {
-            #loginPortion
-            {
+        @@media only screen and (min-width:771px) and (max-width:1286px) {
+            #loginPortion {
                 width: 50%;
                 left: 25%;
-                background:none;
+                background: none;
             }
 
-            #loginInputDiv
-            {
+            #loginInputDiv {
                 width: 85%;
-                opacity:0.8;
+                opacity: 0.8;
             }
 
-                #loginInputDiv:hover, #loginInputDiv>input
-                {
+                #loginInputDiv:hover, #loginInputDiv > input {
                     opacity: 1;
                 }
         }
 
-        @@media only screen and (min-width:481px) and (max-width:770px)
-        {
-            #loginPortion
-            {
+        @@media only screen and (min-width:481px) and (max-width:770px) {
+            #loginPortion {
                 width: 60%;
                 left: 20%;
                 background: none;
             }
 
-            #loginInputDiv
-            {
+            #loginInputDiv {
                 width: 85%;
             }
         }
 
-        @@media only screen and (max-device-width: 480px)
-        {
+        @@media only screen and (max-device-width: 480px) {
             /* styles for mobile browsers smaller than 480px; (iPhone) */
-            body
-            {
+            body {
                 background-image: none;
             }
 
-            #loginPortion
-            {
+            #loginPortion {
                 height: 100%;
                 width: 100%;
                 background-color: #7193AC;
@@ -107,8 +91,7 @@
                 left: 0;
             }
 
-            #loginInputDiv
-            {
+            #loginInputDiv {
                 background-color: #346689;
                 opacity: 1;
                 position: relative;
@@ -118,6 +101,9 @@
         }
     </style>
     @await RenderSectionAsync("Styles", required: false)
+    <!-- Select2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
+
 </head>
 
 <body>
@@ -130,6 +116,15 @@
     </div>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
+    <!-- LAST SCRIPT -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>$(document).ready(function () {
+            $('.select2').select2({
+                theme: 'bootstrap-5',
+                width: '100%'
+            });
+        });</script>
 
     @await RenderSectionAsync("Scripts", required: false);
 </body>

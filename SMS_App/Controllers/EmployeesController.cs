@@ -253,6 +253,24 @@ public class EmployeesController : Controller
                 return RedirectToAction(nameof(Index));
             }
         }
+        if(!ModelState.IsValid)
+        {
+            var firstError = ModelState
+                .Where(ms => ms.Value.Errors.Count > 0)
+                .Select(ms => new { Field = ms.Key, Error = ms.Value.Errors.First().ErrorMessage })
+                .FirstOrDefault();
+
+            if (firstError != null)
+            {
+                TempData["deleted"] = $"{firstError.Field}: {firstError.Error}";
+            }
+            else
+            {
+                TempData["deleted"] = "Validation error.";
+            }
+            ViewBag.msg = $"Validation error. {firstError?.Error}";
+            await _appLogger.InfoAsync($"Validation error: {firstError?.Field} - {firstError?.Error}");
+        }
         return View(employee1);
     }
 

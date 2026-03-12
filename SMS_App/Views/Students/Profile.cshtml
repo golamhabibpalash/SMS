@@ -11,7 +11,7 @@
 <div class="container-fluid py-4">
     <div class="row">
         <!-- Profile Sidebar -->
-        <div class="col-lg-3 mb-4">
+        <div class="col-lg-3 mb-4 profile-sidebar">
             <partial name="_profileStudent" model="Model.Student" />
         </div>
 
@@ -86,6 +86,15 @@
 
         .card-header h5 {
             font-weight: 600;
+        }
+
+        /* make sidebar sticky on desktop */
+        @@media (min-width: 992px) {
+            .profile-sidebar {
+                position: -webkit-sticky;
+                position: sticky;
+                top: 20px; /* adjust as needed to account for fixed navbars/header */
+            }
         }
     </style>
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace SMS.Entities.AdditionalModels.StudentVM;
 
@@ -52,6 +53,28 @@ public class CurrentExamDetail
     public double GPA { get; set; }
     public double TotalObtainMark { get; set; }
 }
-public class ProfilePayment { }
+public class ProfilePayment
+{
+    public double TotalFees { get; set; }
+    public double TotalPaid { get; set; }
+    public double TotalDue { get; set; }
+    public DateTime LastPaymentDate { get; set; }
+    public List<PaymentDetail> PaymentDetails { get; set; } = new List<PaymentDetail>();
+    public List<UpcommingPayment> UpcomingPayments { get; set; } = new List<UpcommingPayment>();
+}
+public class PaymentDetail
+{
+    public string PaymentDate { get; set; }
+    public string Description { get; set; }
+    public double Amount { get; set; }
+    public string Method { get; set; }
+    public string TransactionId { get; set; }
+}
+public class UpcommingPayment
+{
+    public DateTime DueDate { get; set; }
+    public double Amount { get; set; }
+    public string Description { get; set; }
+}
 public class ProfileDocument { }
 

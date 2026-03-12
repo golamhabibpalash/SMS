@@ -825,7 +825,8 @@ public class StudentsController : Controller
         var result = await _academicExamManager.GetSingleStudentResultDetailForProfile(student.Id);
         studentProfileVM.Results = result;
         //Payment
-
+        var payment = await _studentPaymentManager.GetProfilePaymentAsync(student.Id);
+        studentProfileVM.Payments = payment;
         //Documents
 
         return View(studentProfileVM);

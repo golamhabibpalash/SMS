@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SMS.Entities.AdditionalModels.StudentVM;
 
 namespace SMS.BLL.Managers;
 
@@ -400,4 +401,58 @@ public class StudentPaymentManager : Manager<StudentPayment>, IStudentPaymentMan
 
         return duePayments;
     }
+
+    public async Task<ProfilePayment> GetProfilePaymentAsync(int studentId)
+    {
+        var student = await _studentRepository.GetByIdAsync(studentId);
+        if (student == null) return null;
+
+        ProfilePayment profilePayment = new ProfilePayment();
+        //Last Update Date
+        var lastPayment = (await _studentPaymentRepository.GetAllByStudentIdAsync(studentId)).OrderByDescending(p => p.PaidDate).FirstOrDefault();
+        profilePayment.LastPaymentDate = lastPayment?.PaidDate ?? DateTime.MinValue;
+
+        // Get total payable fees, 
+        var currentSession = await _academicSessionRepository.GetCurrentAcademicSession();
+        var classFees = await _classFeeListRepository.GetAllBySessionIdClassIdAsync(currentSession.Id, student.AcademicClassId, student.IsResidential);
+        var allocations = await _studentFeeAllocationRepository.GetStudentFeeAllocationByUniqueIdSessionId(student.UniqueId, currentSession.Id);
+        profilePayment.TotalFees = classFees.Where(s => s.StudentFeeHead.IsResidential == student.IsResidential).Sum(c => allocations.FirstOrDefault(a => a.ClassFeeListId == c.Id)?.AllocatedAmount ?? c.Amount);
+
+        // total paid,
+        profilePayment.TotalPaid = await GetStudentTotalPaidAmountBySession(currentSession.Id, student.UniqueId);
+
+        // total due
+        profilePayment.TotalDue = profilePayment.TotalFees - profilePayment.TotalPaid;
+
+        // payment details
+        var paymentDetails = await _studentPaymentDetailsRepository.GetAllByStudentAsync(student.UniqueId);
+        profilePayment.PaymentDetails = paymentDetails.Where(s => s.StudentPayment.AcademicSessionId == currentSession.Id).Select(d => new PaymentDetail
+        {
+            PaymentDate = d.CreatedAt.ToString("dd MMM yyyy"),
+            Description = d.StudentFeeHead.Name,
+            Amount = d.PaidAmount,
+            Method = "Cash",
+            TransactionId = d.StudentPayment.ReceiptNo
+        }).ToList();
+
+        //Upcoming payments
+        var monthlyFees = classFees.Where(c => c.StudentFeeHead.SL is >= 1 and <= 12 && ShouldIncludeFeeForMonth(c, student.AdmissionDate)).ToList();
+        var monthlyAllocations = allocations.Where(a => a.StudentFeeHead.SL is >= 1 and <= 12).ToList();
+        foreach (var fee in monthlyFees)
+        {            var totalAmount = monthlyAllocations.FirstOrDefault(s => s.ClassFeeListId == fee.Id)?.AllocatedAmount ?? fee.Amount;
+            var paidAmount = paymentDetails.Where(d => d.ClassFeeId == fee.Id).Sum(s => s.PaidAmount);
+            var dueAmount = totalAmount - paidAmount;                                
+            if (dueAmount > 0)
+            {
+                profilePayment.UpcomingPayments.Add(new UpcommingPayment
+                {
+                    DueDate = DateTime.Now.AddDays(7), // Assuming due date is 7 days from now, adjust as needed
+                    Amount = dueAmount,
+                    Description = fee.StudentFeeHead.Name
+                });
+            }
+        }
+        return profilePayment;
+    }
+    
 }

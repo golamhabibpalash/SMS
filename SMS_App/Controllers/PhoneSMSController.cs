@@ -155,17 +155,19 @@ namespace SMS_App.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Policy = "GetAPIDataPhoneSMSPolicy")]
         public IActionResult GetAPIData()
         {
             return View();
         }
 
         [HttpGet]
+        [Authorize(Policy = "GetAPIDataPhoneSMSPolicy")]
         public async Task<IActionResult> GetSmsData()
         {
 
             var result = await _smsApiService.GetSmsDashboardData();
-            return Content(result, "application/json");
+            return Json(result);
         }
         
         [AllowAnonymous]

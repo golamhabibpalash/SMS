@@ -71,7 +71,7 @@ public class AttendanceMachinesController : Controller
                 attendanceVMs.Add(item);
             }
         }            
-        return View(attendanceVMs.OrderByDescending(m => m.PunchTime.Length).ThenBy(n => n.PunchTime.Substring(0,2)));
+        return View(attendanceVMs.OrderBy(a => a.Class_Designation).ThenBy(n => n.PunchTime.Substring(0,2)));
     }
 
 

@@ -239,6 +239,7 @@ public class AuthorizationPolicies
         //Phone SMS
         options.AddPolicy("IndexPhoneSMSPolicy", policy => policy.RequireClaim("View Phone SMS"));
         options.AddPolicy("CreatePhoneSMSPolicy", policy => policy.RequireClaim("Create Phone SMS"));
+        options.AddPolicy("GetAPIDataPhoneSMSPolicy", policy => policy.RequireClaim("View SMS API Data"));
 
         //Question Banks
         options.AddPolicy("IndexQuestionBanksPolicy", policy => policy.RequireClaim("View Question Banks"));

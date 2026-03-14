@@ -414,6 +414,8 @@ public class StudentPaymentManager : Manager<StudentPayment>, IStudentPaymentMan
 
         // Get total payable fees, 
         var currentSession = await _academicSessionRepository.GetCurrentAcademicSession();
+        profilePayment.CurrentSession = currentSession?.Name;
+
         var classFees = await _classFeeListRepository.GetAllBySessionIdClassIdAsync(currentSession.Id, student.AcademicClassId, student.IsResidential);
         var allocations = await _studentFeeAllocationRepository.GetStudentFeeAllocationByUniqueIdSessionId(student.UniqueId, currentSession.Id);
         profilePayment.TotalFees = classFees.Where(s => s.StudentFeeHead.IsResidential == student.IsResidential).Sum(c => allocations.FirstOrDefault(a => a.ClassFeeListId == c.Id)?.AllocatedAmount ?? c.Amount);

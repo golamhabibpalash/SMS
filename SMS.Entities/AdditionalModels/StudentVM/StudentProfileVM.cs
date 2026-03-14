@@ -55,6 +55,7 @@ public class CurrentExamDetail
 }
 public class ProfilePayment
 {
+    public string CurrentSession { get; set; }
     public double TotalFees { get; set; }
     public double TotalPaid { get; set; }
     public double TotalDue { get; set; }
@@ -76,5 +77,14 @@ public class UpcommingPayment
     public double Amount { get; set; }
     public string Description { get; set; }
 }
-public class ProfileDocument { }
+public class ProfileDocument 
+{
+    public List<DocInfo> Documents { get; set; }
+}
 
+public class DocInfo
+{
+    public string DocumentName { get; set; }
+    public string DocUrl { get; set; }
+    public string DocType { get; set; }
+}

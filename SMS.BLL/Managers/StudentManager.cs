@@ -209,6 +209,28 @@ namespace SMS.BLL.Managers
 
             return profileAttendance;
         }
+
+        public async Task<ProfileDocument> GetStudentProfileDocuments(int id)
+        {
+            var student = await _studentRepository.GetByIdAsync(id);
+            if (student== null)
+            {
+                return new ProfileDocument();
+            }
+            var profileDocument = new ProfileDocument();
+            if(student.BirthCertificateImage!=null)
+            {
+                DocInfo birthCertificate = new DocInfo()
+                {
+                    DocumentName = "Birth Certificate",
+                    DocUrl = student.BirthCertificateImage,
+                    DocType = ""
+                };
+                profileDocument.Documents.Add(birthCertificate);
+            }
+            return profileDocument;
+        }
+
         private (string Status, string Color) GetAttendanceStatus(int percentage)
         {
             if (percentage >= 80) return ("Excellent", "Green");

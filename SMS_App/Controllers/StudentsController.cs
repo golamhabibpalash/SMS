@@ -289,14 +289,18 @@ public class StudentsController : Controller
         {
             return NotFound();
         }
-        #region Payment==========================================================================================
+        StudentDetailsVM sd = new();
+        //personal details
+        sd.PersonalDetails = GetPersonalData(student);
+
+        #region Payment==========================================================================
         var stuPayments = await _studentPaymentManager.GetAllByStudentIdAsync((int)id);
 
         List<StudentPaymentScheduleVM> paymentSchedule = await _studentPaymentManager.GetStudentPaymentSchedule(student.Id);
 
         paymentSchedule = paymentSchedule.Where(s => s.IsResidential == student.IsResidential && s.Amount>0).ToList();
         List<StudentPaymentSchedulePaidVM> studentPaymentSchedulePaidVMs = await _studentPaymentManager.GetStudentPaymentSchedulePaid(student.Id);
-        StudentDetailsVM sd = new();
+        
         sd.StudentPayments = stuPayments;
         sd.Student = student;
 
@@ -306,6 +310,7 @@ public class StudentsController : Controller
         sd.TotalDue = await _studentPaymentManager.GetStudentCurrentDue(student.Id); /* await GetTotalDue(student.Id);*/
         sd.CurrentDue = await _studentPaymentManager.GetStudentCurrentDue(student.Id);
         #endregion Payment============================================================================
+        
         #region Attendance =============================================================================
         try
         {
@@ -827,8 +832,10 @@ public class StudentsController : Controller
         //Payment
         var payment = await _studentPaymentManager.GetProfilePaymentAsync(student.Id);
         studentProfileVM.Payments = payment;
-        //Documents
 
+        //Documents
+        var documents = await _studentManager.GetStudentProfileDocuments(student.Id);
+        studentProfileVM.Documents = documents;
         return View(studentProfileVM);
     }
     #endregion
@@ -1186,9 +1193,30 @@ public class StudentsController : Controller
         DateTime today = DateTime.Today;
         return File(Encoding.UTF8.GetBytes(builder.ToString()), "text/csv", today.ToString("yyMMdd") + "Student List_.csv");
     }
+    
+    private PersonalDetails GetPersonalData(Student student)
+    {
+        var personalDetails = new PersonalDetails()
+        {
+            StudentName = student.Name,
+            Gender = student.Gender.Name,
+            DateOfBirth = student.DOB,
+            Nationality = student.Nationality.Name,
+            Religion = student.Religion.Name,
+            BloodGroup = student.BloodGroup.Name,
+            Phone = student.PhoneNo,
+            Email = student.Email,
+            FatherName = student.FatherName,
+            MotherName = student.MotherName,
+            GuardianPhone = student.GuardianPhone,
+            PresentAddress = $"{student.PresentAddressArea}, {student.PresentUpazila.Name}, {student.PresentDistrict.Name}, {student.PresentDivision.Name}",
+            PermanentAddress = $"{student.PermanentAddressArea}, {student.PermanentUpazila.Name}, {student.PermanentDistrict.Name}, {student.PermanentDivision.Name}"
+        };
+        return personalDetails;
+    }
     #endregion Other's
 
-    #region Application
+        #region Application
     public async Task<IActionResult> ApplicationList()
     {
         var appliedStudents = await _appliedStudentManager.GetAllAsync();

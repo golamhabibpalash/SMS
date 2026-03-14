@@ -18,6 +18,7 @@
 		<Compile Remove="FakesAssemblies\**" />
 		<Compile Remove="ViewModels\Students\NewFolder\**" />
 		<Compile Remove="Views\Reports\RPT\**" />
+		<Compile Remove="Views\Students\NewFolder\**" />
 		<Compile Remove="wwwroot\FA\**" />
 		<Compile Remove="wwwroot\Reports\NewFolder\**" />
 		<Compile Remove="wwwroot\Reports\ReportData\**" />
@@ -25,6 +26,7 @@
 		<Content Remove="FakesAssemblies\**" />
 		<Content Remove="ViewModels\Students\NewFolder\**" />
 		<Content Remove="Views\Reports\RPT\**" />
+		<Content Remove="Views\Students\NewFolder\**" />
 		<Content Remove="wwwroot\FA\**" />
 		<Content Remove="wwwroot\Reports\NewFolder\**" />
 		<Content Remove="wwwroot\Reports\ReportData\**" />
@@ -32,6 +34,7 @@
 		<EmbeddedResource Remove="FakesAssemblies\**" />
 		<EmbeddedResource Remove="ViewModels\Students\NewFolder\**" />
 		<EmbeddedResource Remove="Views\Reports\RPT\**" />
+		<EmbeddedResource Remove="Views\Students\NewFolder\**" />
 		<EmbeddedResource Remove="wwwroot\FA\**" />
 		<EmbeddedResource Remove="wwwroot\Reports\NewFolder\**" />
 		<EmbeddedResource Remove="wwwroot\Reports\ReportData\**" />
@@ -39,6 +42,7 @@
 		<None Remove="FakesAssemblies\**" />
 		<None Remove="ViewModels\Students\NewFolder\**" />
 		<None Remove="Views\Reports\RPT\**" />
+		<None Remove="Views\Students\NewFolder\**" />
 		<None Remove="wwwroot\FA\**" />
 		<None Remove="wwwroot\Reports\NewFolder\**" />
 		<None Remove="wwwroot\Reports\ReportData\**" />

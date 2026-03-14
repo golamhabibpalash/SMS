@@ -18,4 +18,5 @@ public interface IStudentManager : IManager<Student>
     Task<string> GetUniqueIdByStudentId(int stuId);
     Task<List<StudentListVM>> GetStudentsBySearch(string search);
     Task<ProfileAttendance> GetProfileAttendanceAsync(int id);
+    Task<ProfileDocument> GetStudentProfileDocuments(int id);
 }

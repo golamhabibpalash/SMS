@@ -1,4 +1,11 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -7,24 +14,17 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NodaTime;
+using SMS.BLL.Contracts;
+using SMS.Entities;
+using SMS.Entities.AdditionalModels;
+using SMS.Entities.AdditionalModels.StudentVM;
+using SMS.Entities.Enums;
+using SMS_App.Utilities.LoggerService;
 using SMS_App.Utilities.MACIPServices;
 using SMS_App.Utilities.Pagination;
 using SMS_App.Utilities.ShortMessageService;
 using SMS_App.ViewModels;
 using SMS_App.ViewModels.Students;
-using SMS.BLL.Contracts;
-using SMS.Entities;
-using SMS.Entities.AdditionalModels;
-using SMS.Entities.Enums;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SMS_App.Utilities.LoggerService;
-using SMS.Entities.AdditionalModels.StudentVM;
 
 namespace SMS_App.Controllers;
 
@@ -58,10 +58,11 @@ public class StudentsController : Controller
     private readonly IAppliedStudentManager _appliedStudentManager;
     private readonly IAppLogger _appLogger;
     private readonly IAcademicExamManager _academicExamManager;
+    private readonly IAttachDocManager _attachDocManager;
     #endregion
 
     #region Constructor
-    public StudentsController(IStudentManager studentManager, IAcademicClassManager academicClassManager, IWebHostEnvironment host, IMapper mapper, IAcademicSessionManager academicSessionManager, IStudentPaymentManager studentPaymentManager, IDistrictManager districtManager, IUpazilaManager upazilaManager, IAcademicSectionManager academicSectionManager, IBloodGroupManager bloodGroupManager, IDivisionManager divisionManager, INationalityManager nationalityManager, IGenderManager genderManager, IReligionManager religionManager, IStudentFeeHeadManager studentFeeHeadManager, IClassFeeListManager classFeeListManager, UserManager<ApplicationUser> userManager, IPhoneSMSManager phoneSMSManager, IAttendanceMachineManager attendanceMachineManager, IInstituteManager instituteManager, IStudentActivateHistManager studentActivateHistManager, IOffDayManager offDayManager, IStudentFeeAllocationManager studentFeeAllocationManager, IAppliedStudentManager appliedStudentManager, IAppLogger appLogger, IAcademicExamManager academicExamManager = null)
+    public StudentsController(IStudentManager studentManager, IAcademicClassManager academicClassManager, IWebHostEnvironment host, IMapper mapper, IAcademicSessionManager academicSessionManager, IStudentPaymentManager studentPaymentManager, IDistrictManager districtManager, IUpazilaManager upazilaManager, IAcademicSectionManager academicSectionManager, IBloodGroupManager bloodGroupManager, IDivisionManager divisionManager, INationalityManager nationalityManager, IGenderManager genderManager, IReligionManager religionManager, IStudentFeeHeadManager studentFeeHeadManager, IClassFeeListManager classFeeListManager, UserManager<ApplicationUser> userManager, IPhoneSMSManager phoneSMSManager, IAttendanceMachineManager attendanceMachineManager, IInstituteManager instituteManager, IStudentActivateHistManager studentActivateHistManager, IOffDayManager offDayManager, IStudentFeeAllocationManager studentFeeAllocationManager, IAppliedStudentManager appliedStudentManager, IAppLogger appLogger, IAcademicExamManager academicExamManager = null, IAttachDocManager attachDocManager)
     {
         _academicClassManager = academicClassManager;
         _host = host;
@@ -89,6 +90,7 @@ public class StudentsController : Controller
         _appliedStudentManager = appliedStudentManager;
         _appLogger = appLogger;
         _academicExamManager = academicExamManager;
+        _attachDocManager = attachDocManager;
     }
     #endregion Constructor
 
@@ -290,17 +292,21 @@ public class StudentsController : Controller
             return NotFound();
         }
         StudentDetailsVM sd = new();
+
         //personal details
         sd.PersonalDetails = GetPersonalData(student);
+
+        //documents details
+        sd.PersonalDetails = await _attachDocManager.
 
         #region Payment==========================================================================
         var stuPayments = await _studentPaymentManager.GetAllByStudentIdAsync((int)id);
 
         List<StudentPaymentScheduleVM> paymentSchedule = await _studentPaymentManager.GetStudentPaymentSchedule(student.Id);
 
-        paymentSchedule = paymentSchedule.Where(s => s.IsResidential == student.IsResidential && s.Amount>0).ToList();
+        paymentSchedule = paymentSchedule.Where(s => s.IsResidential == student.IsResidential && s.Amount > 0).ToList();
         List<StudentPaymentSchedulePaidVM> studentPaymentSchedulePaidVMs = await _studentPaymentManager.GetStudentPaymentSchedulePaid(student.Id);
-        
+
         sd.StudentPayments = stuPayments;
         sd.Student = student;
 
@@ -310,7 +316,7 @@ public class StudentsController : Controller
         sd.TotalDue = await _studentPaymentManager.GetStudentCurrentDue(student.Id); /* await GetTotalDue(student.Id);*/
         sd.CurrentDue = await _studentPaymentManager.GetStudentCurrentDue(student.Id);
         #endregion Payment============================================================================
-        
+
         #region Attendance =============================================================================
         try
         {
@@ -476,11 +482,11 @@ public class StudentsController : Controller
                     if (DOBFile != null && DOBFile.Length > 0)
                     {
                         //Allowed extensions
-                        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png",".pdf" };
+                        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".pdf" };
 
                         //Get extension in lowercase
                         string fileExt = Path.GetExtension(DOBFile.FileName).ToLowerInvariant();
-                        
+
                         // Validate extension
                         if (!allowedExtensions.Contains(fileExt))
                         {
@@ -496,7 +502,7 @@ public class StudentsController : Controller
 
                         string root = _host.WebRootPath;
                         string folder = "Images/Student/";
-                        
+
                         // Ensure folder exists
                         string fullFolderPath = Path.Combine(root, folder);
                         if (!Directory.Exists(fullFolderPath))
@@ -583,7 +589,7 @@ public class StudentsController : Controller
             }
             catch (Exception e)
             {
-                await _appLogger.ErrorAsync(e.Message,e.StackTrace);
+                await _appLogger.ErrorAsync(e.Message, e.StackTrace);
                 throw;
             }
         }
@@ -818,7 +824,7 @@ public class StudentsController : Controller
         {
             return NotFound();
         }
-        
+
         StudentProfileVM studentProfileVM = new StudentProfileVM();
         studentProfileVM.Student = student;
 
@@ -1193,7 +1199,7 @@ public class StudentsController : Controller
         DateTime today = DateTime.Today;
         return File(Encoding.UTF8.GetBytes(builder.ToString()), "text/csv", today.ToString("yyMMdd") + "Student List_.csv");
     }
-    
+
     private PersonalDetails GetPersonalData(Student student)
     {
         var personalDetails = new PersonalDetails()
@@ -1216,7 +1222,7 @@ public class StudentsController : Controller
     }
     #endregion Other's
 
-        #region Application
+    #region Application
     public async Task<IActionResult> ApplicationList()
     {
         var appliedStudents = await _appliedStudentManager.GetAllAsync();
@@ -1391,7 +1397,7 @@ public class StudentsController : Controller
         bool isExist = false;
         var newRoll = await CreateRoll(sessionId, classId, roll);
         var existingStudent = await _studentManager.GetStudentByClassRollAsync(newRoll);
-        if (existingStudent!=null)
+        if (existingStudent != null)
         {
             isExist = true;
         }

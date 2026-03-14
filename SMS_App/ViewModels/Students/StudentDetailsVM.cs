@@ -1,13 +1,16 @@
-﻿using SMS.Entities;
-using SMS.Entities.AdditionalModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using SMS.Entities;
+using SMS.Entities.AdditionalModels;
+using SMS.Entities.AdditionalModels.StudentVM;
 
 namespace SMS_App.ViewModels.Students;
 
 public class StudentDetailsVM
 {
     public PersonalDetails PersonalDetails { get; set; }
+
+    public ProfileDocument Documents { get; set; } = new ProfileDocument();
     public Student Student { get; set; }
     public IReadOnlyCollection<StudentPayment> StudentPayments { get; set; }
     public double TotalDue { get; set; }
@@ -26,7 +29,8 @@ public class AttendanceIndivisualVM
     public int PresentPercentage { get; set; }
 }
 
-public class PersonalDetails {
+public class PersonalDetails
+{
     // Personal Information
     public string StudentName { get; set; }
     public string Gender { get; set; }

@@ -1,0 +1,127 @@
+@{
+    ViewData["Title"] = "SMS Dashboard";
+}
+
+<div class="container mt-4">
+
+    <h3 class="mb-4">SMS Dashboard</h3>
+
+    <div class="row g-3">
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center">
+                    <h6>Balance</h6>
+                    <h3 id="balance">0</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center">
+                    <h6>SMS Rate</h6>
+                    <h3 id="rate">0</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center">
+                    <h6>Total SMS</h6>
+                    <h3 id="totalsms">0</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center">
+                    <h6>Token SMS</h6>
+                    <h3 id="tokensms">0</h3>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="row mt-4">
+
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    Monthly SMS
+                </div>
+
+                <div class="card-body">
+                    <canvas id="smsChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    Account Expiry
+                </div>
+
+                <div class="card-body text-center">
+                    <h4 id="expiry"></h4>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+
+        $(document).ready(function () {
+
+            loadSmsDashboard();
+
+        });
+
+        function loadSmsDashboard() {
+
+            $.get("/PhoneSMS/GetSmsData", function (data) {
+
+                $("#balance").text(data.balance);
+                $("#rate").text(data.rate);
+                $("#totalsms").text(data.totalsms);
+                $("#tokensms").text(data.tokensms);
+                $("#expiry").text(data.expiry);
+
+                createChart(data);
+
+            });
+
+        }
+
+
+        function createChart(data) {
+
+            new Chart(document.getElementById("smsChart"), {
+
+                type: 'bar',
+
+                data: {
+                    labels: ['Monthly SMS', 'Token Monthly SMS'],
+
+                    datasets: [{
+                        label: 'SMS Usage',
+                        data: [data.monthlysms, data.tokenmonthlysms]
+                    }]
+                }
+
+            });
+
+        }
+
+    </script>
+}

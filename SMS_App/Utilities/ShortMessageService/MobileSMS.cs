@@ -27,7 +27,7 @@ public class MobileSMS
                 {"message", message }
             };
             var content = new FormUrlEncodedContent(values);
-            //var response = await client.PostAsync("http://api..greenweb.com.bd/api.php?", content);
+            
             var response = await client.PostAsync(vendorAPILink, content);
             var responseString = await response.Content.ReadAsStringAsync();
 

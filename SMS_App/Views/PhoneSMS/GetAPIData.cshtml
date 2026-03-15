@@ -89,51 +89,50 @@
 
         function loadSmsDashboard() {
 
-    $.ajax({
-        url: "/PhoneSMS/GetSmsData",
-        type: "GET",
-        success: function (data) {
+            $.ajax({
+                url: "/PhoneSMS/GetSmsData",
+                type: "GET",
+                success: function (data) {
 
-            var result = typeof data === "string" ? JSON.parse(data) : data;
+                    var result = typeof data === "string" ? JSON.parse(data) : data;
 
-            var smsData = {};
+                    var smsData = {};
 
-            result.forEach(function (item) {
+                    result.forEach(function (item) {
 
-                if (item.action.includes("balance"))
-                    smsData.balance = item.response;
+                        if (item.action.includes("balance"))
+                            smsData.balance = item.response;
 
-                if (item.action.includes("rate"))
-                    smsData.rate = item.response;
+                        if (item.action.includes("rate"))
+                            smsData.rate = item.response;
 
-                if (item.action.includes("totalsms"))
-                    smsData.totalsms = item.response;
+                        if (item.action.includes("totalsms"))
+                            smsData.totalsms = item.response;
 
-                if (item.action.includes("tokensms"))
-                    smsData.tokensms = item.response;
+                        if (item.action.includes("tokensms"))
+                            smsData.tokensms = item.response;
 
-                if (item.action.includes("expiry"))
-                    smsData.expiry = item.response;
+                        if (item.action.includes("expiry"))
+                            smsData.expiry = item.response;
 
-                if (item.action.includes("monthlysms"))
-                    smsData.monthlysms = item.response;
+                        if (item.action.includes("monthlysms"))
+                            smsData.monthlysms = item.response;
 
-                if (item.action.includes("tokenmonthlysms"))
-                    smsData.tokenmonthlysms = item.response;
+                        if (item.action.includes("tokenmonthlysms"))
+                            smsData.tokenmonthlysms = item.response;
 
+                    });
+
+                    $("#balance").text(smsData.balance+" BDT");
+                    $("#rate").text(smsData.rate);
+                    $("#totalsms").text(smsData.totalsms);
+                    $("#tokensms").text(smsData.tokensms);
+                    $("#expiry").text(smsData.expiry);
+
+                    createChart(smsData);
+                }
             });
-
-            $("#balance").text(smsData.balance+" BDT");
-            $("#rate").text(smsData.rate);
-            $("#totalsms").text(smsData.totalsms);
-            $("#tokensms").text(smsData.tokensms);
-            $("#expiry").text(smsData.expiry);
-
-            createChart(smsData);
         }
-    });
-
-}
 
 
         function createChart(data) {

@@ -10,7 +10,7 @@ namespace SMS.BLL.Contracts
     public interface IAttendanceMachineManager : IManager<Tran_MachineRawPunch>
     {
         Task<List<Tran_MachineRawPunch>> GetAllAttendanceByDateAsync(DateTime dateTime);
-        Task<IEnumerable<AttendanceVM>> GetAttendanceByDateAsync(string attendanceFor, string date, string attendanceType, int? aSessionId, int? aClassId);
+        Task<IEnumerable<AttendanceVM>> GetAttendanceByDateAsync(string attendanceFor, string date, string attendanceType, int? aSessionId, int? aClassId, int? aSectionId);
 
         Task<Tran_MachineRawPunch> GetTodaysAttendanceByUserIdAsync(int attendanceId);
         Task<List<Tran_MachineRawPunch>> GetCheckinDataByDateAsync(string date);

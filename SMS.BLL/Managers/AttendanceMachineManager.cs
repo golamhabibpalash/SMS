@@ -28,9 +28,16 @@ namespace SMS.BLL.Managers
             return await _attendanceMachineRepository.GetAllAttendanceByDateAsync(dateTime);
         }
 
-        public async Task<IEnumerable<AttendanceVM>> GetAttendanceByDateAsync(string attendanceFor, string date, string attendanceType, int? aSessionId, int? aClassId)
+        public async Task<IEnumerable<AttendanceVM>> GetAttendanceByDateAsync(string attendanceFor, string date, string attendanceType, int? aSessionId, int? aClassId, int? aSectionId)
         {
             var result = await _attendanceMachineRepository.GetAttendanceByDateAsync(attendanceFor, date, attendanceType, aSessionId, aClassId);
+            if(attendanceFor == "students")
+            {
+                if(aSectionId != null)
+                {
+                    result = result.Where(r => r.SectionId == aSectionId).ToList();
+                }
+            }
             return result.OrderByDescending(m => m.CardNo);
         }
 

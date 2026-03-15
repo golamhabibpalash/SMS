@@ -42,7 +42,7 @@ public class AttendanceMachinesController : Controller
     }
     // GET: AttendanceMachinesController
     [Authorize(Policy = "IndexAttendanceMachinesPolicy")]
-    public async Task<ActionResult> Index(string attendanceFor, DateTime dateTime, string attendanceType,  int? aSessionId, int? aClassId)
+    public async Task<ActionResult> Index(string attendanceFor, DateTime dateTime, string attendanceType,  int? aSessionId, int? aClassId, int? aSectionId)
     {
         string date = dateTime.ToString("yyyy-MM-dd");
         
@@ -58,7 +58,7 @@ public class AttendanceMachinesController : Controller
             ViewBag.attendanceType = attendanceType;
             ViewBag.aSessionId =aSessionId!=null? aSessionId:null;
             ViewBag.aClassId = aClassId!=null? aClassId:null;
-            var result = await _attendanceMachineManager.GetAttendanceByDateAsync(attendanceFor, date, attendanceType, aSessionId, aClassId);
+            var result = await _attendanceMachineManager.GetAttendanceByDateAsync(attendanceFor, date, attendanceType, aSessionId, aClassId, aSectionId);
             foreach (var item in result)
             {
                 if (!string.IsNullOrEmpty(item.CardNo))

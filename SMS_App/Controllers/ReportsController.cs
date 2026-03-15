@@ -1362,7 +1362,7 @@ public class ReportsController : Controller
         report.Refresh();
         try
         {
-            report.DataSources.Add(new ReportDataSource("dsStudentPayment", sPayment));
+            report.DataSources.Add(new ReportDataSource("dsStudentPayment", sPayment.OrderBy(s=> s.ClassRoll)));
             var parameters = new[] {
                 new ReportParameter("InstituteName", institute.Name),
                 new ReportParameter("Location", institute.Address),

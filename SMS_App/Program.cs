@@ -15,6 +15,7 @@ using SMS.DB;
 using SMS.Entities;
 using SMS_App.Configurations;
 using SMS_App.Utilities.Automation.Hangfire;
+using SMS_App.Utilities.ShortMessageService;
 using SMS_App.ViewModels.ModuleSubModuleVM;
 using System;
 using System.IO;
@@ -92,7 +93,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 // Fix Auto Logout Issue
 builder.Services.Configure<SecurityStampValidatorOptions>(options =>
 {
-    options.ValidationInterval = TimeSpan.FromHours(24);
+    options.ValidationInterval = TimeSpan.FromHours(48);
 });
 
 // MVC + JSON
@@ -119,6 +120,9 @@ builder.Services.AddSession(options =>
     options.Cookie.MaxAge = TimeSpan.FromHours(24);    // Important!
     options.Cookie.SameSite = SameSiteMode.Lax;        // Fix Chrome issues
 });
+
+// SMS API Service
+builder.Services.AddHttpClient<SmsApiService>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {

@@ -127,7 +127,7 @@
                     </select>
                 </div>
                 <div class="col-md-2 classArea" style="display:none">
-                    <select class="form-control mb-2" name="aClassId" id="aClassId">
+                    <select class="form-control mb-2" name="aClassId" id="aClassId" onchange="classChanged()">
                         <option selected disabled>Select Class</option>
                         <option value="">All Class</option>
                         @foreach (AcademicClass academicClass in academicClassList)
@@ -135,6 +135,13 @@
                             <option value="@academicClass.Id">@academicClass.Name</option>
 
                         }
+                    </select>
+                </div>
+                <div class="col-md-2 sectionArea" style="display:none">
+                    <select class="form-control mb-2" name="aSectionId" id="aSectionId">
+                        <option selected disabled>Select Section</option>
+                        <option value="">All Section</option>
+                        
                     </select>
                 </div>
 
@@ -317,9 +324,7 @@ else
             if (attendanceType != null) {
                 $('#attendanceType').val(attendanceType).change();
             }
-
-
-
+            
             $('#userTypeId').change(function () {
                 let uType = $('#userTypeId option:selected').val();
 
@@ -327,13 +332,50 @@ else
                     $('.designationArea').css("display", "none");
                     $('.sessionArea').css("display", "block");
                     $('.classArea').css("display", "block");
+                    $('.sectionArea').css("display", "block");
                 }
                 else {
                     $('.designationArea').css("display", "block");
                     $('.sessionArea').css("display", "none");
                     $('.classArea').css("display", "none");
+                    $('.sectionArea').css("display", "block");
                 }
             });
+            
+            $('#aClassId').change(function () {
+                let id = $('#aClassId option:selected').val();
+                let sessionId = $('#aSessionId option:selected').val();
+
+                $.ajax({
+                    url: "/api/academicsections/getbyclasswithsessionId?classId=" + id + "&sessionId=" + sessionId,
+                    dataType: "JSON",
+                    type: "POST",
+                    cache: false,
+                    success: function (data) {
+                        $('#aSectionId').empty();
+
+                        if (data != null || data != '') {
+                            var o = '<option disabled selected>Select Section Name</option>';
+                            var o2 = '<option value="">No Section</option>';
+                            $('#aSectionId').append(o);
+                            $('#aSectionId').append(o2);
+                            $.each(data, function (i, obj) {
+                                console.log(obj.name);
+                                var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
+                                $('#aSectionId').append(op);
+                            });
+                        }
+                        else {
+                            var o = '<option disabled selected>Section Not Found</option>';
+                            $('#aSectionId').append(o);
+                        }
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                });
+            });
+
         });
     </script>
 }

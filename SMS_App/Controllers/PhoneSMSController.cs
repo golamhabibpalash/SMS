@@ -22,12 +22,14 @@ namespace SMS_App.Controllers
         private readonly IPhoneSMSManager _phoneSMSManager;
         private readonly IEmployeeManager _employeeManager;
         private readonly IStudentManager _studentManager;
+        private readonly SmsApiService _smsApiService;
 
-        public PhoneSMSController(IPhoneSMSManager phoneSMSManager, IEmployeeManager employeeManager, IStudentManager studentManager)
+        public PhoneSMSController(IPhoneSMSManager phoneSMSManager, IEmployeeManager employeeManager, IStudentManager studentManager, SmsApiService smsApiService)
         {
             _phoneSMSManager = phoneSMSManager;
             _employeeManager = employeeManager;
             _studentManager = studentManager;
+            _smsApiService = smsApiService;
         }
 
         [Authorize(Policy = "IndexPhoneSMSPolicy")]
@@ -152,6 +154,21 @@ namespace SMS_App.Controllers
             }
             return RedirectToAction("Index");
         }
+
+        [Authorize(Policy = "GetAPIDataPhoneSMSPolicy")]
+        public IActionResult GetAPIData()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        [Authorize(Policy = "GetAPIDataPhoneSMSPolicy")]
+        public async Task<IActionResult> GetSmsData()
+        {
+
+            var result = await _smsApiService.GetSmsDashboardData();
+            return Json(result);
+        }
         
         [AllowAnonymous]
         public async Task<JsonResult> GetPhoneNumbers(string smsType, int? designationId, int? sessionId, int? classId)
@@ -215,6 +232,7 @@ namespace SMS_App.Controllers
             return Json(phoneNumbers);
         }
 
+        
 
     }
 }

@@ -121,9 +121,6 @@ builder.Services.AddSession(options =>
     options.Cookie.SameSite = SameSiteMode.Lax;        // Fix Chrome issues
 });
 
-// SMS API Service
-builder.Services.AddHttpClient<SmsApiService>();
-
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.HttpOnly = true;

@@ -1,20 +1,18 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using BLL.Managers.Base;
 using Microsoft.EntityFrameworkCore;
 using SMS.BLL.Contracts;
 using SMS.DAL.Contracts;
-using SMS.DAL.Contracts.Base;
 using SMS.Entities;
 using SMS.Entities.AdditionalModels.StudentVM;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SMS.BLL.Managers;
 
 public class AttachDocManager : Manager<AttachDoc>, IAttachDocManager
 {
     private readonly IAttachDocRepository _attachDocRepository;
-    public AttachDocManager(IRepository<AttachDoc> repository, IAttachDocRepository attachDocRepository) : base(repository)
+    public AttachDocManager( IAttachDocRepository attachDocRepository) : base(attachDocRepository)
     {
         _attachDocRepository = attachDocRepository;
     }

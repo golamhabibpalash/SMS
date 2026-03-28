@@ -16,7 +16,7 @@
                         <div class="form-group row">
                             <label class="col-sm-3 col-form-label">Exam Type</label>
                             <div class="col-sm-9">
-                                <select id="ExamTypeId" class="form-control" asp-items="ViewBag.ExamType">
+                                <select id="ExamTypeId" name="examTypeId" class="form-control" asp-items="ViewBag.ExamType">
                                     <option disabled selected>-Select Exam Type-</option>
                                 </select>
                             </div>
@@ -75,6 +75,8 @@
                     <input type="hidden" id="exportAcademicClassId" name="academicClassId" />
                     <input type="hidden" id="exportAcademicSectionId" name="academicSectionId" />
                     <input type="hidden" id="exportMonthId" name="monthId" />
+                    <input type="hidden" id="exportExamTypeId" name="examTypeId" />
+
                     <div class="btn-group btn-sm mr-2 " role="group" aria-label="First group">
                         <input type="hidden" name="fileName" value="Admit Cards" />
                         <button type="submit" name="reportType" value="pdf" class="btn-sm btn btn-danger" data-toggle="tooltip" title="Export PDF" data-placement="left"><i class="fas fa-file-pdf"></i></button>
@@ -100,10 +102,12 @@
                 let aSection = '0';
                 let academicClassId = '0';
                 let monthId = '0';
+                let examTypeId = '0';
 
                 academicClassId = $('#AcademicClassId option:selected').val();
                 aSection = $('#AcademicSectionId option:selected').val();
                 monthId = $('#monthId option:selected').val();
+                examTypeId = $('#ExamTypeId option:selected').val();
 
                 if (academicClassId <= '0') {
                     $('#InvalidForm').show();
@@ -115,8 +119,17 @@
                     $('#exportAcademicClassId').attr('value', academicClassId);
                     $('#exportAcademicSectionId').attr('value', aSection);
                     $('#exportMonthId').attr('value', monthId);
+                    $('#exportExamTypeId').attr('value', examTypeId);
 
-                    $('#myIframe').attr('src', '/Reports/AdmitCardExport?reportType=' + reportType + '&&academicClassId=' + academicClassId + '&&academicSectionId=' + aSection + '&&monthId=' + monthId);
+                    console.log('Exam Type: ' + examTypeId);
+                    
+                    $('#myIframe').attr('src',
+                        '/Reports/AdmitCardExport?reportType=' + reportType +
+                        '&academicClassId=' + academicClassId +
+                        '&academicSectionId=' + aSection +
+                        '&monthId=' + monthId +
+                        '&examTypeId=' + examTypeId
+                    );
 
                     var iframe = document.getElementById('myIframe');
                     $('#loading').show();

@@ -28,34 +28,27 @@ namespace SMS.DAL.Repositories.Reports
             _context = context;
         }
 
-        public async Task<List<RptAdmitCardVM>> GetAdmitCard(int monthId, int academicClassId, int academicSectionId)
+        public async Task<List<RptAdmitCardVM>> GetAdmitCard(int monthId, int academicClassId, int academicSectionId, int examTypeId)
         {
-            string query = string.Empty;
-            if (academicClassId<=0)
+            var query = new StringBuilder(@"SELECT t.* FROM vw_rpt_Admit_Card_Info t WHERE t.monthId = {0} AND t.ExamTypeId = {1}");
+            var parameters = new List<object> { monthId, examTypeId };
+            int paramIndex = 2;
+
+            if (academicClassId > 0)
             {
-                if (academicSectionId<=0)
-                {
-                    query = @"select t.* from vw_rpt_Admit_Card_Info t where t.monthId = " + monthId +"";
-                }
-                else
-                {
-                    query = @"select t.* from vw_rpt_Admit_Card_Info t where t.monthId = " + monthId + " and t.AcademicSectionId =" + academicSectionId + "";
-                }
-            }
-            else
-            {
-                if (academicSectionId<=0)
-                {
-                    query = @"select t.* from vw_rpt_Admit_Card_Info t where t.monthId = " + monthId + " and t.academicClassId = " + academicClassId + "";
-                }
-                else
-                {
-                    query = @"select t.* from vw_rpt_Admit_Card_Info t where t.monthId = " + monthId + " and t.academicClassId = " + academicClassId + " and t.AcademicSectionId =" + academicSectionId + "";
-                }
+                query.Append($" AND t.academicClassId = {{{paramIndex++}}}");
+                parameters.Add(academicClassId);
             }
 
-            List<RptAdmitCardVM> result = await _context.RptAdmitCardVMs.FromSqlRaw(query).ToListAsync();
-            return result;
+            if (academicSectionId > 0)
+            {
+                query.Append($" AND t.AcademicSectionId = {{{paramIndex++}}}");
+                parameters.Add(academicSectionId);
+            }
+
+            return await _context.RptAdmitCardVMs
+                .FromSqlRaw(query.ToString(), parameters.ToArray())
+                .ToListAsync();
         }
 
         public async Task<List<rptStudentPaymentsVM>> GetStudentPaymentsByRoll(int classRoll,string fromDate, string toDate)

@@ -1459,7 +1459,7 @@ public class ReportsController : Controller
 
     #region Admit Card Reports
     [Authorize(Policy = "AdmitCardReportsPolicy")]
-    public async Task<IActionResult> AdmitCardExport(string reportType, string fileName, int monthId, string academicClassId, string academicSectionId)
+    public async Task<IActionResult> AdmitCardExport(string reportType, string fileName, int monthId, string academicClassId, string academicSectionId, int examTypeId)
     {
         // Step 1: Fetch Institute Info
         var institute = await _instituteManager.GetByIdAsync(1);
@@ -1520,7 +1520,7 @@ public class ReportsController : Controller
         int.TryParse(academicSectionId, out int aSectionId);
 
         // Step 7: Fetch Admit Card Data
-        var admitCardList = await _reportManager.GetAdmitCard(monthId, aClassId, aSectionId);
+        var admitCardList = await _reportManager.GetAdmitCard(monthId, aClassId, aSectionId,examTypeId);
         admitCardList = admitCardList.Where(s => s.StudentStauts == true).ToList();
 
         if (!admitCardList.Any())

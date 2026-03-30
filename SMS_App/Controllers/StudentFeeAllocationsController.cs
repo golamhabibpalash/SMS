@@ -157,7 +157,8 @@ public class StudentFeeAllocationsController : Controller
         if (ModelState.IsValid)
         {
             //check condition is duplicate or not?
-            var existingFeeAllocation = await _studentFeeAllocationManager.GetStudentFeeAllocationByUniqueIdFeeHeadId(studentFeeAllocation.UniqueId, studentFeeAllocation.StudentFeeHeadId);
+            var existingFeeAllocation = await _studentFeeAllocationManager.GetStudentFeeAllocationByUniqueIdClassFeeId(studentFeeAllocation.UniqueId, (int)studentFeeAllocation.ClassFeeListId);
+
             if (existingFeeAllocation != null)
             {
                 var exStudent = await _student.GetStudentByUniqueIdAsync(existingFeeAllocation.UniqueId);

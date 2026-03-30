@@ -354,21 +354,53 @@ public class StudentPaymentManager : Manager<StudentPayment>, IStudentPaymentMan
         return StudentPaymentStatus.Paid.ToString();
     }
 
-    private List<ClassFeeList> FilterFeesByAdmissionAndSession(List<ClassFeeList> classFees, string admissionYear, string sessionYear, List<StudentFeeAllocation> allocations, bool isResidential, int admissionMonth)
+    private List<ClassFeeList> FilterFeesByAdmissionAndSession(
+    List<ClassFeeList> classFees,
+    string admissionYear,
+    string sessionYear,
+    List<StudentFeeAllocation> allocations,
+    bool isResidential,
+    int admissionMonth)
     {
-        var filteredFees = new List<ClassFeeList>();
-        foreach (var fee in classFees.Where(f => f.StudentFeeHead.IsResidential == isResidential))
-        {
-            bool isAdmissionYear = admissionYear == sessionYear;
-            if (isAdmissionYear && fee.SL is >= 1 and <= 12 && fee.SL < admissionMonth) continue;
-            if (!isAdmissionYear && fee.StudentFeeHead.Name == "Admission Fee") continue;
-            if (isAdmissionYear && fee.StudentFeeHead.Name == "Session Fee") continue;
+        bool isAdmissionYear = admissionYear == sessionYear;
 
-            var allocation = allocations.FirstOrDefault(s => s.StudentFeeHeadId == fee.StudentFeeHeadId);
-            if (allocation != null) fee.Amount = allocation.AllocatedAmount;
-            filteredFees.Add(fee);
-        }
-        return filteredFees;
+        return classFees
+            .Where(fee => fee.StudentFeeHead.IsResidential == isResidential)
+            .Where(fee => !ShouldExcludeFee(fee, isAdmissionYear, admissionMonth))
+            .Select(fee => ApplyAllocationIfExists(fee, allocations))
+            .ToList();
+    }
+
+    private bool ShouldExcludeFee(ClassFeeList fee, bool isAdmissionYear, int admissionMonth)
+    {
+        if (isAdmissionYear && IsMonthlyFeeBeforeAdmission(fee, admissionMonth))
+            return true;
+
+        if (!isAdmissionYear && IsAdmissionFee(fee.StudentFeeHead.Name))
+            return true;
+
+        if (isAdmissionYear && IsSessionFee(fee.StudentFeeHead.Name))
+            return true;
+
+        return false;
+    }
+
+    private bool IsMonthlyFeeBeforeAdmission(ClassFeeList fee, int admissionMonth)
+        => fee.SL is >= 1 and <= 12 && fee.SL < admissionMonth;
+
+    private bool IsAdmissionFee(string feeHeadName)
+        => feeHeadName is "Admission Fee" or "Admission Fee Residential";
+
+    private bool IsSessionFee(string feeHeadName)
+        => feeHeadName is "Session Fee" or "Session Fee Residential";
+
+    private ClassFeeList ApplyAllocationIfExists(ClassFeeList fee, List<StudentFeeAllocation> allocations)
+    {
+        var allocation = allocations.FirstOrDefault(a => a.StudentFeeHeadId == fee.StudentFeeHeadId);
+        if (allocation != null)
+            fee.Amount = allocation.AllocatedAmount;
+
+        return fee;
     }
 
     public async Task<List<DuePayment>> GetPreviousDuesAsync(int? studentId, int? sectionId, int academicClassId, bool? status)

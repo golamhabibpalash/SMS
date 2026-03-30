@@ -11,5 +11,6 @@ namespace SMS_App.ViewModels.Students
         public SelectList FeeList { get; set; }
         public SelectList AcademicClassList { get; set; }
         public SelectList AcademicSectionList { get; set; }
+        public Dictionary<string, string> UsersDictionary { get; set; } = new Dictionary<string, string>();
     }
 }

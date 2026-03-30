@@ -132,13 +132,13 @@
                                 </td>
                                 <td>
                                     @{
-                                        ApplicationUser aUser = await _userManager.FindByIdAsync(item.EditedBy);
-                                        if (aUser != null)
+                                        string displayUser = string.Empty;
+                                        if (Model.UsersDictionary != null && !string.IsNullOrEmpty(item.EditedBy) && Model.UsersDictionary.ContainsKey(item.EditedBy))
                                         {
-                                            lastEditedUser = aUser.UserName;
+                                            displayUser = Model.UsersDictionary[item.EditedBy];
                                         }
                                     }
-                                    @lastEditedUser <br />
+                                    @displayUser <br />
                                     @item.EditedAt.ToString("dd MMM yyyy hh:mm tt")
                                 </td>
                             </tr>

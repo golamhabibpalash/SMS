@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SMS_App.Utilities.MACIPServices;
@@ -24,11 +25,12 @@ public class StudentFeeAllocationsController : Controller
     private readonly IStudentManager _student;
     private readonly IClassFeeListManager _classFeeListManager;
     private readonly IAcademicSessionManager _academicSessionManager;
+    private readonly UserManager<ApplicationUser> _userManager;
 
     #endregion Fields
 
     #region Constructor
-    public StudentFeeAllocationsController(IStudentFeeAllocationManager studentFeeAllocationManager, IStudentFeeHeadManager studentFeeHeadManager, IAcademicClassManager academicClassManager, IStudentManager student, IClassFeeListManager classFeeListManager, IAcademicSessionManager academicSessionManager = null)
+    public StudentFeeAllocationsController(IStudentFeeAllocationManager studentFeeAllocationManager, IStudentFeeHeadManager studentFeeHeadManager, IAcademicClassManager academicClassManager, IStudentManager student, IClassFeeListManager classFeeListManager, IAcademicSessionManager academicSessionManager = null, UserManager<ApplicationUser> userManager = null)
     {
         _studentFeeAllocationManager = studentFeeAllocationManager;
         _studentFeeHeadManager = studentFeeHeadManager;
@@ -36,6 +38,7 @@ public class StudentFeeAllocationsController : Controller
         _student = student;
         _classFeeListManager = classFeeListManager;
         _academicSessionManager = academicSessionManager;
+        _userManager = userManager;
     }
     #endregion Constructor
 
@@ -47,7 +50,26 @@ public class StudentFeeAllocationsController : Controller
     {
         StudentFeeAllocationVM studentFeeAllocationVM = new StudentFeeAllocationVM();
         studentFeeAllocationVM.StudentFeeAllocations = (List<StudentFeeAllocation>)await _studentFeeAllocationManager.GetAllAsync();
-        //studentFeeAllocationVM.FeeList = new SelectList(await _studentFeeHeadManager.GetAllAsync(), "Id", "Name");
+        
+        // Pre-load all users to avoid N+1 queries
+        if (_userManager != null && studentFeeAllocationVM.StudentFeeAllocations.Count > 0)
+        {
+            var userIds = studentFeeAllocationVM.StudentFeeAllocations
+                .Select(s => s.EditedBy)
+                .Distinct()
+                .Where(id => !string.IsNullOrEmpty(id))
+                .ToList();
+
+            foreach (var userId in userIds)
+            {
+                var user = await _userManager.FindByIdAsync(userId);
+                if (user != null && !studentFeeAllocationVM.UsersDictionary.ContainsKey(userId))
+                {
+                    studentFeeAllocationVM.UsersDictionary[userId] = user.UserName;
+                }
+            }
+        }
+
         var allClasses = await _academicClassManager.GetAllAsync();
         studentFeeAllocationVM.AcademicClassList = new SelectList(allClasses.Where(s => s.Status == true), "Id", "Name");
 

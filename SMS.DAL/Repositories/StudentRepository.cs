@@ -140,5 +140,34 @@ namespace SMS.DAL.Repositories
             }
             return students;
         }
+
+        public async Task<List<Student>> GetStudentsWithSectionBySectionIdAsync(int academicSectionId, int? classId = null, int? sessionId = null, bool? isResidential = null)
+        {
+            var students = _context.Student
+                .Include(s => s.AcademicSection)
+                .Where(s => s.AcademicSectionId == academicSectionId);
+
+            if (classId.HasValue)
+                students = students.Where(s => s.AcademicClassId == classId.Value);
+
+            if (sessionId.HasValue)
+                students = students.Where(s => s.AcademicSessionId == sessionId.Value);
+
+            if (isResidential.HasValue)
+                students = students.Where(s => s.IsResidential == isResidential.Value);
+
+            return await students.OrderBy(s => s.ClassRoll).ToListAsync();
+        }
+
+        public async Task<List<Student>> GetStudentsWithSectionByClassSessionResidentialAsync(int classId, int sessionId, bool isResidential)
+        {
+            return await _context.Student
+                .Include(s => s.AcademicSection)
+                .Where(s => s.AcademicClassId == classId
+                    && s.AcademicSessionId == sessionId
+                    && s.IsResidential == isResidential)
+                .OrderBy(s => s.ClassRoll)
+                .ToListAsync();
+        }
     }
 }

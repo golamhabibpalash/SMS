@@ -231,6 +231,16 @@ namespace SMS.BLL.Managers
             return profileDocument;
         }
 
+        public async Task<List<Student>> GetStudentsWithSectionBySectionIdAsync(int academicSectionId, int? classId = null, int? sessionId = null, bool? isResidential = null)
+        {
+            return await _studentRepository.GetStudentsWithSectionBySectionIdAsync(academicSectionId, classId, sessionId, isResidential);
+        }
+
+        public async Task<List<Student>> GetStudentsWithSectionByClassSessionResidentialAsync(int classId, int sessionId, bool isResidential)
+        {
+            return await _studentRepository.GetStudentsWithSectionByClassSessionResidentialAsync(classId, sessionId, isResidential);
+        }
+
         private (string Status, string Color) GetAttendanceStatus(int percentage)
         {
             if (percentage >= 80) return ("Excellent", "Green");

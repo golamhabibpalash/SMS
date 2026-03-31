@@ -1384,11 +1384,17 @@ public class StudentsController : Controller
 
     #region API
     [HttpGet]
-    public async Task<JsonResult> GetAllStudentBySectionId(int academicSectionId)
+    public async Task<JsonResult> GetAllStudentBySectionId(int academicSectionId, int? classId = null, int? sessionId = null, bool? isResidential = null)
     {
-        var allStudents = await _studentManager.GetAllAsync();
-        var result = allStudents.Where(s => s.AcademicSectionId == academicSectionId);
-        return new JsonResult(result.OrderBy(s => s.ClassRoll));
+        var students = await _studentManager.GetStudentsWithSectionBySectionIdAsync(academicSectionId, classId, sessionId, isResidential);
+        return new JsonResult(students.OrderBy(s => s.ClassRoll));
+    }
+
+    [HttpGet]
+    public async Task<JsonResult> GetAllStudentsByClassSessionResidential(int classId, int sessionId, bool isResidential)
+    {
+        var students = await _studentManager.GetStudentsWithSectionByClassSessionResidentialAsync(classId, sessionId, isResidential);
+        return new JsonResult(students.OrderBy(s => s.ClassRoll));
     }
 
     [HttpGet]

@@ -19,4 +19,6 @@ public interface IStudentManager : IManager<Student>
     Task<List<StudentListVM>> GetStudentsBySearch(string search);
     Task<ProfileAttendance> GetProfileAttendanceAsync(int id);
     Task<ProfileDocument> GetStudentProfileDocuments(int id);
+    Task<List<Student>> GetStudentsWithSectionBySectionIdAsync(int academicSectionId, int? classId = null, int? sessionId = null, bool? isResidential = null);
+    Task<List<Student>> GetStudentsWithSectionByClassSessionResidentialAsync(int classId, int sessionId, bool isResidential);
 }

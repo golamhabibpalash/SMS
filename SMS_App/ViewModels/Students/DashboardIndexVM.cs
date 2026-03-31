@@ -1,26 +1,44 @@
-﻿using SMS_App.ViewModels.AttendanceVM;
-using SMS.Entities;
-using System;
+﻿using SMS.Entities;
+using SMS.Entities.AdditionalModels;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SMS_App.ViewModels.Students
 {
     public class DashboardIndexVM
     {
-        public ICollection<Student> Students { get; set; }
-        public ICollection<Employee> Employees { get; set; }
+        public int TotalStudents { get; set; }
+        public int TotalEmployees { get; set; }
+        public int TotalClasses { get; set; }
+        public int TotalSections { get; set; }
 
-        public ICollection<TodaysAttendanceEmpVM> TodaysAttendanceEmpVMs { get; set; }
-        public ICollection<TodaysAttendanceStuVM> TodaysAttendanceStuVMs { get; set; }
-        public ICollection<PaymentCollection> MonthlyCollections { get; set; }
-        public ICollection<PaymentCollection> DailyCollections { get; set; }=new List<PaymentCollection>();
+        public int TodayPresentStudents { get; set; }
+        public int TodayAbsentStudents { get; set; }
+        public int TodayPresentEmployees { get; set; }
+        public int TodayAbsentEmployees { get; set; }
+
+        public decimal TodayCollection { get; set; }
+        public decimal MonthlyCollection { get; set; }
+        public decimal TotalDueAmount { get; set; }
+
+        public string CurrentSessionName { get; set; }
+        public AcademicSession CurrentSession { get; set; }
+
+        public ICollection<StudentPaymentSummeryVM> TodayCollections { get; set; } = new List<StudentPaymentSummeryVM>();
+        public ICollection<ClassWiseStudentCount> ClassWiseStudentCounts { get; set; } = new List<ClassWiseStudentCount>();
+        public ICollection<ClassWiseCollection> ClassWiseCollections { get; set; } = new List<ClassWiseCollection>();
+        public ICollection<Student> RecentStudents { get; set; } = new List<Student>();
+        public ICollection<Student> TodayAbsentStudentList { get; set; } = new List<Student>();
     }
-    public class PaymentCollection
+
+    public class ClassWiseStudentCount
     {
-        public string AcademicClassName { get; set; }
-        public double Amount { get; set; } 
+        public string ClassName { get; set; }
+        public int StudentCount { get; set; }
     }
-    
+
+    public class ClassWiseCollection
+    {
+        public string ClassName { get; set; }
+        public decimal Amount { get; set; }
+    }
 }

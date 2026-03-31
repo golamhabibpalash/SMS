@@ -1,6 +1,376 @@
 
+@model SMS_App.ViewModels.Students.DashboardIndexVM
 @{
-        ViewData["Title"] = "Dashboard";
-        GlobalUI.PageTitle = ViewData["Title"].ToString();
+    ViewData["Title"] = "Dashboard";
+    GlobalUI.PageTitle = ViewData["Title"].ToString();
 }
-<h2>Hello, Welcome</h2>
+
+<style>
+    .stat-card {
+        border-radius: 10px;
+        transition: transform 0.2s, box-shadow 0.2s;
+        border: none;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+    .stat-icon {
+        font-size: 2.5rem;
+        opacity: 0.8;
+    }
+    .counter {
+        font-size: 2rem;
+        font-weight: 700;
+    }
+    .table-hover tbody tr:hover {
+        background-color: rgba(0,123,255,0.05);
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-12">
+        <h4 class="page-title">
+            <i class="fa fa-calendar-alt"></i> Academic Session: <span class="text-primary">@Model.CurrentSessionName</span>
+        </h4>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-lg-3 col-md-6 col-sm-6 mb-4">
+        <div class="card stat-card bg-gradient-primary text-dark shadow">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase mb-1">Total Students</h6>
+                        <h2 class="counter mb-0">@Model.TotalStudents</h2>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fa fa-users"></i>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <small>Present: <span class="font-weight-bold">@Model.TodayPresentStudents</span> | Absent: <span class="font-weight-bold">@Model.TodayAbsentStudents</span></small>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent border-0">
+                <a asp-controller="Students" asp-action="Index" class="text-dark text-decoration-none">
+                    <i class="fa fa-arrow-circle-right"></i> View All
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 col-sm-6 mb-4">
+        <div class="card stat-card bg-gradient-success text-dark shadow">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase mb-1">Total Employees</h6>
+                        <h2 class="counter mb-0">@Model.TotalEmployees</h2>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fa fa-user-tie"></i>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <small>Present: <span class="font-weight-bold">@Model.TodayPresentEmployees</span> | Absent: <span class="font-weight-bold">@Model.TodayAbsentEmployees</span></small>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent border-0">
+                <a asp-controller="Employees" asp-action="Index" class="text-dark text-decoration-none">
+                    <i class="fa fa-arrow-circle-right"></i> View All
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 col-sm-6 mb-4">
+        <div class="card stat-card bg-gradient-info text-dark shadow">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase mb-1">Today Collection</h6>
+                        <h2 class="counter mb-0">@Model.TodayCollection.ToString("N2")</h2>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fa fa-money-bill-wave"></i>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <small>Monthly: <span class="font-weight-bold">@Model.MonthlyCollection.ToString("N2")</span></small>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent border-0">
+                <a asp-controller="StudentPayments" asp-action="Index" class="text-dark text-decoration-none">
+                    <i class="fa fa-arrow-circle-right"></i> View All
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 col-sm-6 mb-4">
+        <div class="card stat-card bg-gradient-warning text-dark shadow">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase mb-1">Classes & Sections</h6>
+                        <h2 class="counter mb-0">@Model.TotalClasses</h2>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fa fa-school"></i>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <small>Sections: <span class="font-weight-bold">@Model.TotalSections</span></small>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent border-0">
+                <a asp-controller="AcademicClasses" asp-action="Index" class="text-dark text-decoration-none">
+                    <i class="fa fa-arrow-circle-right"></i> View All
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow">
+            <div class="card-header bg-navy-blue text-white">
+                <h5 class="mb-0"><i class="fa fa-chart-bar"></i> Class-wise Student Distribution</h5>
+            </div>
+            <div class="card-body">
+                @if (Model.ClassWiseStudentCounts.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Class</th>
+                                    <th class="text-center">Students</th>
+                                    <th class="text-center">Percentage</th>
+                                    <th>Distribution</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.ClassWiseStudentCounts)
+                                {
+                                    var percentage = Model.TotalStudents > 0 ? (item.StudentCount * 100.0 / Model.TotalStudents) : 0;
+                                    <tr>
+                                        <td><strong>@item.ClassName</strong></td>
+                                        <td class="text-center">@item.StudentCount</td>
+                                        <td class="text-center">@percentage.ToString("N1")%</td>
+                                        <td>
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar bg-primary" role="progressbar" style="width: @percentage%">
+                                                    @percentage.ToString("N0")%
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center text-muted py-4">
+                        <i class="fa fa-info-circle fa-2x"></i>
+                        <p class="mt-2">No student data available</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow">
+            <div class="card-header bg-navy-blue text-white">
+                <h5 class="mb-0"><i class="fa fa-coins"></i> Today's Collection by Class</h5>
+            </div>
+            <div class="card-body">
+                @if (Model.ClassWiseCollections.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Class</th>
+                                    <th class="text-right">Amount</th>
+                                    <th>Collection</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.ClassWiseCollections)
+                                {
+                                    var percentage = Model.TodayCollection > 0 ? (double)((item.Amount * 100) / Model.TodayCollection) : 0;
+                                    <tr>
+                                        <td><strong>@item.ClassName</strong></td>
+                                        <td class="text-right font-weight-bold">@item.Amount.ToString("N2")</td>
+                                        <td>
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar bg-success" role="progressbar" style="width: @percentage%">
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot class="bg-light">
+                                <tr>
+                                    <td><strong>Total</strong></td>
+                                    <td class="text-right font-weight-bold text-success">@Model.TodayCollection.ToString("N2")</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center text-muted py-4">
+                        <i class="fa fa-info-circle fa-2x"></i>
+                        <p class="mt-2">No collection data available today</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow">
+            <div class="card-header bg-navy-blue text-white">
+                <h5 class="mb-0"><i class="fa fa-user-graduate"></i> Recently Added Students</h5>
+            </div>
+            <div class="card-body p-0">
+                @if (Model.RecentStudents.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Roll</th>
+                                    <th>Name</th>
+                                    <th>Class</th>
+                                    <th>Section</th>
+                                    <th>Type</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var student in Model.RecentStudents)
+                                {
+                                    <tr>
+                                        <td>@student.ClassRoll</td>
+                                        <td>
+                                            <strong>@student.Name</strong>
+                                            <br><small class="text-muted">@student.UniqueId</small>
+                                        </td>
+                                        <td>@student.AcademicClass?.Name</td>
+                                        <td>@student.AcademicSection?.Name</td>
+                                        <td>
+                                            @if (student.IsResidential)
+                                            {
+                                                <span class="badge badge-success">Residential</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge badge-info">Day</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center text-muted py-4">
+                        <i class="fa fa-user-slash fa-2x"></i>
+                        <p class="mt-2">No recent students</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="fa fa-user-times"></i> Today's Absent Students</h5>
+            </div>
+            <div class="card-body p-0">
+                @if (Model.TodayAbsentStudentList.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Roll</th>
+                                    <th>Name</th>
+                                    <th>Class</th>
+                                    <th>Section</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var student in Model.TodayAbsentStudentList)
+                                {
+                                    <tr>
+                                        <td>@student.ClassRoll</td>
+                                        <td>
+                                            <strong>@student.Name</strong>
+                                            <br><small class="text-muted">@student.UniqueId</small>
+                                        </td>
+                                        <td>@student.AcademicClass?.Name</td>
+                                        <td>@student.AcademicSection?.Name</td>
+                                        <td class="text-center">
+                                            <a asp-controller="Students" asp-action="Details" asp-route-id="@student.Id" class="btn btn-sm btn-outline-primary">
+                                                <i class="fa fa-eye"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        @if (Model.TodayAbsentStudents > 10)
+                        {
+                            <div class="card-footer text-center">
+                                <small class="text-muted">Showing 10 of @Model.TodayAbsentStudents absent students</small>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center text-success py-4">
+                        <i class="fa fa-check-circle fa-3x"></i>
+                        <p class="mt-2 font-weight-bold">All students are present today!</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.counter').each(function () {
+                $(this).prop('Counter', 0).animate({
+                    Counter: $(this).text()
+                }, {
+                    duration: 1000,
+                    easing: 'swing',
+                    step: function (now) {
+                        $(this).text(Math.ceil(now));
+                    }
+                });
+            });
+        });
+    </script>
+}

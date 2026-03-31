@@ -16,6 +16,7 @@ using SMS.Entities;
 using SMS_App.Configurations;
 using SMS_App.Utilities.Automation.Hangfire;
 using SMS_App.Utilities.ShortMessageService;
+using SMS_App.Utilities.AutoMapperConfiguration;
 using SMS_App.ViewModels.ModuleSubModuleVM;
 using System;
 using System.IO;
@@ -153,7 +154,9 @@ builder.Services.AddAuthorization(o =>
 // MVC / Views / Automapper
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
-builder.Services.AddAutoMapper(typeof(Program));
+	builder.Services.AddAutoMapper(cfg => {
+		cfg.AddProfile<AutoMapperProfile>();
+	});
 builder.Services.Addservices();
 
 // SiteMap loader

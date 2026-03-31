@@ -40,8 +40,11 @@ namespace SMS.DAL.Repositories
 
         public async Task<List<Tran_MachineRawPunch>> GetAttendanceByDateRangeAsync(string StartDate, string EndDate)
         {
-            string sql = @"select t.* from Tran_MachineRawPunch t where Format(t.PunchDatetime,'yyyy-MM-dd') between convert(datetime,'" + StartDate + "') and convert(datetime,'" + EndDate + "')";
-            var attendanceList = await _context.Tran_MachineRawPunch.FromSqlRaw(sql).ToListAsync();
+            var startDateParam = new SqlParameter("StartDate", StartDate);
+            var endDateParam = new SqlParameter("EndDate", EndDate);
+            var attendanceList = await _context.Tran_MachineRawPunch
+                .FromSqlInterpolated($"select t.* from Tran_MachineRawPunch t where Format(t.PunchDatetime,'yyyy-MM-dd') between convert(datetime, {startDateParam}) and convert(datetime, {endDateParam})")
+                .ToListAsync();
             return attendanceList;
         }
 

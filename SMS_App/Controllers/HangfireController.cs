@@ -240,7 +240,7 @@ public class HangfireController : ControllerBase
 
             try
             {
-                if (todaysAllCheckInAttendance != null || todaysAllCheckInAttendance.Count > 0)
+                if (todaysAllCheckInAttendance != null && todaysAllCheckInAttendance.Count > 0)
                 {
                     foreach (Tran_MachineRawPunch attendance in todaysAllCheckInAttendance)
                     {
@@ -322,7 +322,7 @@ public class HangfireController : ControllerBase
             var todaysAllCheckInAttendance = await _attendanceMachineManager.GetAllAttendanceByDateAsync(DateTime.Today);
             try
             {
-                if (todaysAllCheckInAttendance != null || todaysAllCheckInAttendance.Count > 0)
+                if (todaysAllCheckInAttendance != null && todaysAllCheckInAttendance.Count > 0)
                 {
                     foreach (Tran_MachineRawPunch attendance in todaysAllCheckInAttendance)
                     {

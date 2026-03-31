@@ -165,7 +165,7 @@ public class ReportsController : Controller
         return File(pdf, mediaType);
     }
 
-    public IActionResult StudentDynamicReport()
+    public async Task<IActionResult> StudentDynamicReport()
     {
         var columnMap = new Dictionary<string, string>
         {
@@ -193,8 +193,8 @@ public class ReportsController : Controller
 
         var reportModel = new RptStudentDynamicReportVM
         {
-            AcademicClassList = new SelectList(_academicClassManager.GetAllAsync().Result, "Id", "Name").ToList(),
-            AcademicSessionList = new SelectList(_academicSessionManager.GetAllAsync().Result, "Id", "Name").ToList(),
+            AcademicClassList = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name").ToList(),
+            AcademicSessionList = new SelectList(await _academicSessionManager.GetAllAsync(), "Id", "Name").ToList(),
 
             // Set the ColumnMap dictionary
             ColumnMap = columnMap

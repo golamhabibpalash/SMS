@@ -8,8 +8,10 @@ namespace SMS_App.Utilities.EmailServices;
 
 public static class EmailService
 {
-    private static readonly string FromEmail = "nobleschoolbd@gmail.com";
-    private static readonly string FromEmailPassword = "qaycmjyyxgrgtvqa";
+    private static readonly string FromEmail = Environment.GetEnvironmentVariable("SMTP_EMAIL") 
+        ?? throw new InvalidOperationException("SMTP_EMAIL environment variable is not set.");
+    private static readonly string FromEmailPassword = Environment.GetEnvironmentVariable("SMTP_PASSWORD") 
+        ?? throw new InvalidOperationException("SMTP_PASSWORD environment variable is not set.");
     private static readonly string TemplateDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "EmailTemplates");
 
     public static bool SendAttendanceEmail(string toEmail, string subject, AttendanceSummary attendanceSummaryVM)

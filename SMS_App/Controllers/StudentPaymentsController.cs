@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using SchoolManagementSystem;
 using SMS.BLL.Contracts;
 using SMS.Entities;
@@ -40,11 +41,12 @@ public class StudentPaymentsController : Controller
     private readonly IAcademicSectionManager _academicSectionManager;
     private readonly IStudentFeeAllocationManager _studentFeeAllocationManager;
     private readonly HttpClient _httpClient;
+    private readonly ILogger<StudentPaymentsController> _logger;
 
     #endregion Fields
 
     #region ctor
-    public StudentPaymentsController(IStudentPaymentManager studentPaymentManager, IStudentManager studentManager, IClassFeeListManager classFeeListManager, IAcademicClassManager academicClassManager, IStudentFeeHeadManager studentFeeHeadManager, IStudentPaymentDetailsManager studentPaymentDetailsManager, ISetupMobileSMSManager setupMobileSMSManager, IPhoneSMSManager phoneSMSManager, IInstituteManager instituteManager, IAcademicSessionManager academicSessionManager, IAcademicSectionManager academicSectionManager, IStudentFeeAllocationManager studentFeeAllocationManager, HttpClient httpClient)
+    public StudentPaymentsController(IStudentPaymentManager studentPaymentManager, IStudentManager studentManager, IClassFeeListManager classFeeListManager, IAcademicClassManager academicClassManager, IStudentFeeHeadManager studentFeeHeadManager, IStudentPaymentDetailsManager studentPaymentDetailsManager, ISetupMobileSMSManager setupMobileSMSManager, IPhoneSMSManager phoneSMSManager, IInstituteManager instituteManager, IAcademicSessionManager academicSessionManager, IAcademicSectionManager academicSectionManager, IStudentFeeAllocationManager studentFeeAllocationManager, HttpClient httpClient, ILogger<StudentPaymentsController> logger)
     {
         _studentPaymentManager = studentPaymentManager;
         _studentManager = studentManager;
@@ -59,6 +61,7 @@ public class StudentPaymentsController : Controller
         _academicSectionManager = academicSectionManager;
         _studentFeeAllocationManager = studentFeeAllocationManager;
         _httpClient = httpClient;
+        _logger = logger;
     }
 
     #endregion ctor
@@ -74,9 +77,9 @@ public class StudentPaymentsController : Controller
             SetTempDataMessages();
             ViewData["AcademicClassList"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name");
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-
+            _logger.LogError(ex, "Error loading StudentPayments Index");
             throw;
         }
 
@@ -119,10 +122,9 @@ public class StudentPaymentsController : Controller
         {
             await ProcessPayment(paymentObject);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            // Log the exception
-            throw ex.InnerException;
+            throw;
         }
 
         var student = await _studentManager.GetByIdAsync(paymentObject.StudentPayment.StudentId);
@@ -689,7 +691,7 @@ public class StudentPaymentsController : Controller
     private async Task ProcessPayment(StudentPaymentVM paymentObject)
     {
         paymentObject.StudentPayment.ReceiptNo = await GetReceiptNo(paymentObject.StudentPayment.StudentId, paymentObject.ClassFeeHeadId);
-        var studentPaymentObject = CreateStudentPaymentObject(paymentObject);
+        var studentPaymentObject = await CreateStudentPaymentObject(paymentObject);
 
         if (paymentObject.StudentPayment.StudentPaymentDetails != null)
         {
@@ -717,7 +719,7 @@ public class StudentPaymentsController : Controller
         }
     }
 
-    private StudentPayment CreateStudentPaymentObject(StudentPaymentVM paymentObject)
+    private async Task<StudentPayment> CreateStudentPaymentObject(StudentPaymentVM paymentObject)
     {
         return new StudentPayment
         {
@@ -726,7 +728,7 @@ public class StudentPaymentsController : Controller
             PaidDate = paymentObject.StudentPayment.PaidDate,
             Remarks = paymentObject.StudentPayment.Remarks,
             AcademicSessionId = paymentObject.CurrentAcademicSession.Id,
-            UniqueId = _studentManager.GetUniqueIdByStudentId(paymentObject.StudentPayment.StudentId).Result,
+            UniqueId = await _studentManager.GetUniqueIdByStudentId(paymentObject.StudentPayment.StudentId),
             ReceiptNo = paymentObject.StudentPayment.ReceiptNo,
             CreatedAt = DateTime.Now,
             CreatedBy = HttpContext.Session.GetString("UserId"),

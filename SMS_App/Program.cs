@@ -24,8 +24,10 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // AES Key/IV
-byte[] key = Encoding.UTF8.GetBytes("1234567890123456");
-byte[] iv = Encoding.UTF8.GetBytes("1234567890123456");
+string aesKey = Environment.GetEnvironmentVariable("AES_KEY") ?? "1234567890123456";
+string aesIv = Environment.GetEnvironmentVariable("AES_IV") ?? "1234567890123456";
+byte[] key = Encoding.UTF8.GetBytes(aesKey);
+byte[] iv = Encoding.UTF8.GetBytes(aesIv);
 
 // Decrypt connection string
 var connectionString =

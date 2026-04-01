@@ -359,13 +359,11 @@ public class StudentPaymentsController : Controller
 
         var students = await _studentManager.GetStudentsByClassSessionSectionAsync(sessionId, classId, sectionId);
 
-        // Filter: Residential
         students = FilterByResidentialStatus(students, isResidential);
-
-        // Filter: Active/Inactive
         students = FilterByStatus(students, status);
 
-        // Prepare view model
+        var duePayments = await _studentPaymentManager.GetBulkDuePaymentsAsync(sessionId, students);
+
         var viewModel = new DuePaymentVM
         {
             ShowCount = students.Count,
@@ -376,19 +374,13 @@ public class StudentPaymentsController : Controller
             AcademicSectionList = await GetSectionListAsync(classId, sessionId, sectionId),
             StudentStatusSelectList = GetStudentStatusSelectList(status),
             StudentCategorySelectList = GetStudentCategorySelectList(isResidential),
-            DuePayments = new List<DuePaymentDetailsVM>()
-        };
-
-        foreach (var student in students)
-        {
-            double due = await _studentPaymentManager.GetStudentCurrentDue(student.Id);
-            viewModel.DuePayments.Add(new DuePaymentDetailsVM
+            DuePayments = duePayments.Select(d => new DuePaymentDetailsVM
             {
-                StudentId = student.Id,
-                Student = student,
-                TotalDue = due
-            });
-        }
+                StudentId = d.StudentId,
+                Student = d.Student,
+                TotalDue = d.TotalDue
+            }).ToList()
+        };
 
         viewModel.GrandTotal = viewModel.DuePayments.Sum(x => x.TotalDue);
         stopwatch.Stop();

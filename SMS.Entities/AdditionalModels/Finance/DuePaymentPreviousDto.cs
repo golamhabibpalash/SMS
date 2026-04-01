@@ -37,3 +37,12 @@ public class PreviouisPaymentDetailsDto
     public double DueAmount { get; set; }
     public bool Status { get; set; }
 }
+
+public class DuePaymentBulkResult
+{
+    public List<Student> Students { get; set; }
+    public List<ClassFeeList> ClassFees { get; set; }
+    public List<StudentFeeAllocation> Allocations { get; set; }
+    public List<StudentPayment> Payments { get; set; }
+    public AcademicSession CurrentSession { get; set; }
+}

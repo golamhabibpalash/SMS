@@ -19,4 +19,5 @@ public interface IStudentPaymentRepository : IRepository<StudentPayment>
     Task<IEnumerable<StudentPayment>> GetAllByStudentUniqueIdAsync(string uniqueId);
     Task<List<PaidAmountResult>> GetPaidAmountByFeeHead(string uniqueId, int sessionId, int isResidential, int classId, int feeHeadId);
     Task<List<PreviouisPaymentDetailsDto>> GetAllStudentsPaymentSummeryAsync();
+    Task<DuePaymentBulkResult> GetBulkDuePaymentsAsync(int sessionId, List<int> studentIds);
 }

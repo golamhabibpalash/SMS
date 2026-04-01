@@ -227,4 +227,42 @@ public class StudentPaymentRepository : Repository<StudentPayment>, IStudentPaym
         }
     }
 
+    public async Task<DuePaymentBulkResult> GetBulkDuePaymentsAsync(int sessionId, List<int> studentIds)
+    {
+        var result = new DuePaymentBulkResult();
+
+        var uniqueIds = await _context.Student
+            .Where(s => studentIds.Contains(s.Id))
+            .Select(s => s.UniqueId)
+            .ToListAsync();
+
+        result.CurrentSession = await _context.AcademicSession.FirstOrDefaultAsync(s => s.Id == sessionId);
+
+        var classIds = await _context.Student
+            .Where(s => studentIds.Contains(s.Id))
+            .Select(s => s.AcademicClassId)
+            .Distinct()
+            .ToListAsync();
+
+        result.ClassFees = await _context.ClassFeeList
+            .Include(c => c.StudentFeeHead)
+            .Include(c => c.AcademicSession)
+            .Where(c => c.AcademicSessionId == sessionId && classIds.Contains(c.AcademicClassId))
+            .ToListAsync();
+
+        var classFeeIds = result.ClassFees.Select(c => c.Id).ToList();
+
+        result.Allocations = await _context.StudentFeeAllocations
+            .Include(a => a.StudentFeeHead)
+            .Where(a => a.UniqueId != null && uniqueIds.Contains(a.UniqueId) && a.IsActive && a.ClassFeeListId.HasValue && classFeeIds.Contains(a.ClassFeeListId.Value))
+            .ToListAsync();
+
+        result.Payments = await _context.StudentPayment
+            .Include(p => p.StudentPaymentDetails)
+            .Where(p => uniqueIds.Contains(p.UniqueId) && p.AcademicSessionId == sessionId)
+            .ToListAsync();
+
+        return result;
+    }
+
 }

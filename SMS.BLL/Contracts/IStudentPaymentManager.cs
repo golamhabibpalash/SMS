@@ -24,5 +24,13 @@ namespace SMS.BLL.Contracts
         Task<StudentPaymentDetailVM> GetAllDetailPaymentByUniqueId(string studentUniqueId);
         Task<List<DuePayment>> GetPreviousDuesAsync(int? studentId, int? sectionId, int academicClassId, bool? status);
         Task<ProfilePayment> GetProfilePaymentAsync(int studentId);
+        Task<List<DuePaymentDetails>> GetBulkDuePaymentsAsync(int sessionId, List<Student> students);
     }
+}
+
+public class DuePaymentDetails
+{
+    public int StudentId { get; set; }
+    public Student Student { get; set; }
+    public double TotalDue { get; set; }
 }

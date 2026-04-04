@@ -13,8 +13,10 @@ using SMS_App.Utilities.MACIPServices;
 using SMS_App.Utilities.ShortMessageService;
 using SMS_App.ViewModels.Employees;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 
@@ -69,6 +71,132 @@ public class EmployeesController : Controller
     {
         var empList = await _employeeManager.GetAllAsync();
         return View(empList.OrderByDescending(e => e.Status).ThenBy(e => e.JoiningDate));
+    }
+
+    [Authorize(Roles = "SuperAdmin, Admin")]
+    [Authorize(Policy = "IndexEmployeesPolicy")]
+    public async Task<IActionResult> Export(string fields, string status = "all")
+    {
+        var employees = await _employeeManager.GetAllAsync();
+
+        if (status == "active")
+            employees = employees.Where(e => e.Status).ToList();
+        else if (status == "inactive")
+            employees = employees.Where(e => !e.Status).ToList();
+
+        var selectedFields = string.IsNullOrEmpty(fields) 
+            ? new List<string>() 
+            : fields.Split(',').ToList();
+
+        var exportList = employees.Select(e => new EmployeeExportVM
+        {
+            EmployeeId = e.Id,
+            EmployeeName = selectedFields.Contains("EmployeeName") ? e.EmployeeName : null,
+            EmployeeNameBangla = selectedFields.Contains("EmployeeNameBangla") ? e.EmployeeNameBangla : null,
+            Phone = selectedFields.Contains("Phone") ? e.Phone : null,
+            Email = selectedFields.Contains("Email") ? e.Email : null,
+            Designation = selectedFields.Contains("Designation") ? e.Designation?.DesignationName : null,
+            EmpType = selectedFields.Contains("EmpType") ? e.EmpType?.Name : null,
+            Gender = selectedFields.Contains("Gender") ? e.Gender?.Name : null,
+            BloodGroup = selectedFields.Contains("BloodGroup") ? e.BloodGroup?.Name : null,
+            Religion = selectedFields.Contains("Religion") ? e.Religion?.Name : null,
+            DOB = selectedFields.Contains("DOB") ? e.DOB.ToString("yyyy-MM-dd") : null,
+            NIDNo = selectedFields.Contains("NIDNo") ? e.NIDNo.ToString() : null,
+            JoiningDate = selectedFields.Contains("JoiningDate") ? e.JoiningDate.ToString("yyyy-MM-dd") : null,
+            PresentAddress = selectedFields.Contains("PresentAddress") ? e.PresentAddress : null,
+            PermanentAddress = selectedFields.Contains("PermanentAddress") ? e.PermanentAddress : null,
+            Nominee = selectedFields.Contains("Nominee") ? e.Nominee : null,
+            NomineePhone = selectedFields.Contains("NomineePhone") ? e.NomineePhone.ToString() : null,
+            Status = selectedFields.Contains("Status") ? (e.Status ? "Active" : "Inactive") : null
+        }).ToList();
+
+        ViewBag.SelectedFields = selectedFields;
+        ViewBag.FieldsList = new List<string>
+        {
+            "EmployeeName", "EmployeeNameBangla", "Phone", "Email", "Designation",
+            "EmpType", "Gender", "BloodGroup", "Religion", "DOB", "NIDNo",
+            "JoiningDate", "PresentAddress", "PermanentAddress", "Nominee", "NomineePhone", "Status"
+        };
+        ViewBag.Status = status;
+
+        return View(exportList);
+    }
+
+    [Authorize(Roles = "SuperAdmin, Admin")]
+    [Authorize(Policy = "IndexEmployeesPolicy")]
+    [HttpPost]
+    public async Task<IActionResult> DownloadCsv(string fields, string status = "all")
+    {
+        var employees = await _employeeManager.GetAllAsync();
+
+        if (status == "active")
+            employees = employees.Where(e => e.Status).ToList();
+        else if (status == "inactive")
+            employees = employees.Where(e => !e.Status).ToList();
+
+        var selectedFields = string.IsNullOrEmpty(fields) 
+            ? new List<string>() 
+            : fields.Split(',').ToList();
+
+        var builder = new StringBuilder();
+        
+        var headers = new List<string>();
+        if (selectedFields.Contains("EmployeeName")) headers.Add("Employee Name");
+        if (selectedFields.Contains("EmployeeNameBangla")) headers.Add("Name (Bangla)");
+        if (selectedFields.Contains("Phone")) headers.Add("Phone");
+        if (selectedFields.Contains("Email")) headers.Add("Email");
+        if (selectedFields.Contains("Designation")) headers.Add("Designation");
+        if (selectedFields.Contains("EmpType")) headers.Add("Employee Type");
+        if (selectedFields.Contains("Gender")) headers.Add("Gender");
+        if (selectedFields.Contains("BloodGroup")) headers.Add("Blood Group");
+        if (selectedFields.Contains("Religion")) headers.Add("Religion");
+        if (selectedFields.Contains("DOB")) headers.Add("Date of Birth");
+        if (selectedFields.Contains("NIDNo")) headers.Add("NID No");
+        if (selectedFields.Contains("JoiningDate")) headers.Add("Joining Date");
+        if (selectedFields.Contains("PresentAddress")) headers.Add("Present Address");
+        if (selectedFields.Contains("PermanentAddress")) headers.Add("Permanent Address");
+        if (selectedFields.Contains("Nominee")) headers.Add("Nominee");
+        if (selectedFields.Contains("NomineePhone")) headers.Add("Nominee Phone");
+        if (selectedFields.Contains("Status")) headers.Add("Status");
+
+        builder.AppendLine(string.Join(",", headers));
+
+        foreach (var e in employees)
+        {
+            var values = new List<string>();
+            if (selectedFields.Contains("EmployeeName")) values.Add(EscapeCsvValue(e.EmployeeName));
+            if (selectedFields.Contains("EmployeeNameBangla")) values.Add(EscapeCsvValue(e.EmployeeNameBangla));
+            if (selectedFields.Contains("Phone")) values.Add(EscapeCsvValue(e.Phone));
+            if (selectedFields.Contains("Email")) values.Add(EscapeCsvValue(e.Email));
+            if (selectedFields.Contains("Designation")) values.Add(EscapeCsvValue(e.Designation?.DesignationName));
+            if (selectedFields.Contains("EmpType")) values.Add(EscapeCsvValue(e.EmpType?.Name));
+            if (selectedFields.Contains("Gender")) values.Add(EscapeCsvValue(e.Gender?.Name));
+            if (selectedFields.Contains("BloodGroup")) values.Add(EscapeCsvValue(e.BloodGroup?.Name));
+            if (selectedFields.Contains("Religion")) values.Add(EscapeCsvValue(e.Religion?.Name));
+            if (selectedFields.Contains("DOB")) values.Add(e.DOB.ToString("yyyy-MM-dd"));
+            if (selectedFields.Contains("NIDNo")) values.Add(e.NIDNo.ToString());
+            if (selectedFields.Contains("JoiningDate")) values.Add(e.JoiningDate.ToString("yyyy-MM-dd"));
+            if (selectedFields.Contains("PresentAddress")) values.Add(EscapeCsvValue(e.PresentAddress));
+            if (selectedFields.Contains("PermanentAddress")) values.Add(EscapeCsvValue(e.PermanentAddress));
+            if (selectedFields.Contains("Nominee")) values.Add(EscapeCsvValue(e.Nominee));
+            if (selectedFields.Contains("NomineePhone")) values.Add(e.NomineePhone.ToString());
+            if (selectedFields.Contains("Status")) values.Add(e.Status ? "Active" : "Inactive");
+
+            builder.AppendLine(string.Join(",", values));
+        }
+
+        DateTime today = DateTime.Today;
+        return File(Encoding.UTF8.GetBytes(builder.ToString()), "text/csv", today.ToString("yyMMdd") + "_Employee_List.csv");
+    }
+
+    private static string EscapeCsvValue(string value)
+    {
+        if (string.IsNullOrEmpty(value)) return "";
+        if (value.Contains(",") || value.Contains("\"") || value.Contains("\n"))
+        {
+            return $"\"{value.Replace("\"", "\"\"")}\"";
+        }
+        return value;
     }
 
     [Authorize(Roles = "SuperAdmin, Admin,Teacher")]

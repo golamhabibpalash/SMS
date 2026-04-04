@@ -7,6 +7,8 @@ public class EmployeeExportVM
     public int EmployeeId { get; set; }
     public string EmployeeName { get; set; }
     public string EmployeeNameBangla { get; set; }
+    public string FatherName { get; set; }
+    public string MotherName { get; set; }
     public string Phone { get; set; }
     public string Email { get; set; }
     public string Designation { get; set; }

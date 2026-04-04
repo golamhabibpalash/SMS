@@ -72,6 +72,14 @@
                         {
                             <th>Name (Bangla)</th>
                         }
+                        @if (selectedFields.Contains("FatherName"))
+                        {
+                            <th>Father Name</th>
+                        }
+                        @if (selectedFields.Contains("MotherName"))
+                        {
+                            <th>Mother Name</th>
+                        }
                         @if (selectedFields.Contains("Phone"))
                         {
                             <th>Phone</th>
@@ -145,6 +153,14 @@
                             @if (selectedFields.Contains("EmployeeNameBangla"))
                             {
                                 <td>@item.EmployeeNameBangla</td>
+                            }
+                            @if (selectedFields.Contains("FatherName"))
+                            {
+                                <td>@item.FatherName</td>
+                            }
+                            @if (selectedFields.Contains("MotherName"))
+                            {
+                                <td>@item.MotherName</td>
                             }
                             @if (selectedFields.Contains("Phone"))
                             {

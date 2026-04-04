@@ -16,6 +16,12 @@ public class EmployeeEditVM
     [Display(Name = "Emp. Name (Bangla)"), Required, StringLength(100)]
     public required string EmployeeNameBangla { get; set; }
 
+    [Display(Name = "Father's Name"), StringLength(100)]
+    public string? FatherName { get; set; }
+
+    [Display(Name = "Mother's Name"), StringLength(100)]
+    public string? MotherName { get; set; }
+
     [DataType(DataType.Date)]
     [Required, Display(Name = "Date of Birth")]
     public DateTime DOB { get; set; }

@@ -93,6 +93,8 @@ public class EmployeesController : Controller
             EmployeeId = e.Id,
             EmployeeName = selectedFields.Contains("EmployeeName") ? e.EmployeeName : null,
             EmployeeNameBangla = selectedFields.Contains("EmployeeNameBangla") ? e.EmployeeNameBangla : null,
+            FatherName = selectedFields.Contains("FatherName") ? e.FatherName : null,
+            MotherName = selectedFields.Contains("MotherName") ? e.MotherName : null,
             Phone = selectedFields.Contains("Phone") ? e.Phone : null,
             Email = selectedFields.Contains("Email") ? e.Email : null,
             Designation = selectedFields.Contains("Designation") ? e.Designation?.DesignationName : null,
@@ -113,7 +115,7 @@ public class EmployeesController : Controller
         ViewBag.SelectedFields = selectedFields;
         ViewBag.FieldsList = new List<string>
         {
-            "EmployeeName", "EmployeeNameBangla", "Phone", "Email", "Designation",
+            "EmployeeName", "EmployeeNameBangla", "FatherName", "MotherName", "Phone", "Email", "Designation",
             "EmpType", "Gender", "BloodGroup", "Religion", "DOB", "NIDNo",
             "JoiningDate", "PresentAddress", "PermanentAddress", "Nominee", "NomineePhone", "Status"
         };
@@ -143,6 +145,8 @@ public class EmployeesController : Controller
         var headers = new List<string>();
         if (selectedFields.Contains("EmployeeName")) headers.Add("Employee Name");
         if (selectedFields.Contains("EmployeeNameBangla")) headers.Add("Name (Bangla)");
+        if (selectedFields.Contains("FatherName")) headers.Add("Father Name");
+        if (selectedFields.Contains("MotherName")) headers.Add("Mother Name");
         if (selectedFields.Contains("Phone")) headers.Add("Phone");
         if (selectedFields.Contains("Email")) headers.Add("Email");
         if (selectedFields.Contains("Designation")) headers.Add("Designation");
@@ -166,6 +170,8 @@ public class EmployeesController : Controller
             var values = new List<string>();
             if (selectedFields.Contains("EmployeeName")) values.Add(EscapeCsvValue(e.EmployeeName));
             if (selectedFields.Contains("EmployeeNameBangla")) values.Add(EscapeCsvValue(e.EmployeeNameBangla));
+            if (selectedFields.Contains("FatherName")) values.Add(EscapeCsvValue(e.FatherName));
+            if (selectedFields.Contains("MotherName")) values.Add(EscapeCsvValue(e.MotherName));
             if (selectedFields.Contains("Phone")) values.Add(EscapeCsvValue(e.Phone));
             if (selectedFields.Contains("Email")) values.Add(EscapeCsvValue(e.Email));
             if (selectedFields.Contains("Designation")) values.Add(EscapeCsvValue(e.Designation?.DesignationName));
@@ -240,7 +246,7 @@ public class EmployeesController : Controller
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "SuperAdmin, Admin")]
     [Authorize(Policy = "CreateEmployeesPolicy")]
-    public async Task<IActionResult> Create([Bind("Id,EmployeeName,EmployeeNameBangla,DOB,Image,GenderId,ReligionId,NationalityId,NIDNo,NIDCard,Phone,Email,Nominee,NomineePhone,EmpTypeId,DesignationId,JoiningDate,PresentAddress,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddress,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,CreatedBy,CreatedAt,EditedBy,EditedAt,Status,BloodGroupId")] EmployeeCreateVM employeeVM, IFormFile empImage, IFormFile nidCard)
+    public async Task<IActionResult> Create([Bind("Id,EmployeeName,EmployeeNameBangla,FatherName,MotherName,DOB,Image,GenderId,ReligionId,NationalityId,NIDNo,NIDCard,Phone,Email,Nominee,NomineePhone,EmpTypeId,DesignationId,JoiningDate,PresentAddress,PresentUpazilaId,PresentDistrictId,PresentDivisionId,PermanentAddress,PermanentUpazilaId,PermanentDistrictId,PermanentDivisionId,CreatedBy,CreatedAt,EditedBy,EditedAt,Status,BloodGroupId")] EmployeeCreateVM employeeVM, IFormFile empImage, IFormFile nidCard)
     {
         var employee1 = employeeVM;
         var bloodGroupList = await _bloodGroupManager.GetAllAsync();

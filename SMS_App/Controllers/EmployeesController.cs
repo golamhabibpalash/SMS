@@ -84,13 +84,15 @@ public class EmployeesController : Controller
         else if (status == "inactive")
             employees = employees.Where(e => !e.Status).ToList();
 
+        employees = employees.OrderBy(e => e.Designation?.SortingOrder ?? 99999).ThenBy(e => e.EmployeeName).ToList();
+
         var selectedFields = string.IsNullOrEmpty(fields) 
             ? new List<string>() 
             : fields.Split(',').ToList();
 
         var exportList = employees.Select(e => new EmployeeExportVM
         {
-            EmployeeId = e.Id,
+            EmployeeId = e.Id.ToString("D5"),
             EmployeeName = selectedFields.Contains("EmployeeName") ? e.EmployeeName : null,
             EmployeeNameBangla = selectedFields.Contains("EmployeeNameBangla") ? e.EmployeeNameBangla : null,
             FatherName = selectedFields.Contains("FatherName") ? e.FatherName : null,
@@ -136,13 +138,15 @@ public class EmployeesController : Controller
         else if (status == "inactive")
             employees = employees.Where(e => !e.Status).ToList();
 
+        employees = employees.OrderBy(e => e.Designation?.SortingOrder ?? 99999).ThenBy(e => e.EmployeeName).ToList();
+
         var selectedFields = string.IsNullOrEmpty(fields) 
             ? new List<string>() 
             : fields.Split(',').ToList();
 
         var builder = new StringBuilder();
         
-        var headers = new List<string>();
+        var headers = new List<string> { "Employee Id" };
         if (selectedFields.Contains("EmployeeName")) headers.Add("Employee Name");
         if (selectedFields.Contains("EmployeeNameBangla")) headers.Add("Name (Bangla)");
         if (selectedFields.Contains("FatherName")) headers.Add("Father Name");
@@ -167,7 +171,7 @@ public class EmployeesController : Controller
 
         foreach (var e in employees)
         {
-            var values = new List<string>();
+            var values = new List<string> { e.Id.ToString("D5") };
             if (selectedFields.Contains("EmployeeName")) values.Add(EscapeCsvValue(e.EmployeeName));
             if (selectedFields.Contains("EmployeeNameBangla")) values.Add(EscapeCsvValue(e.EmployeeNameBangla));
             if (selectedFields.Contains("FatherName")) values.Add(EscapeCsvValue(e.FatherName));

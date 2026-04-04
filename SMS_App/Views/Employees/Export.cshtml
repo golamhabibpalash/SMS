@@ -64,6 +64,7 @@
             <table class="table table-striped table-hover table-bordered mb-0">
                 <thead class="table-dark position-sticky top-0">
                     <tr>
+                        <th>Employee Id</th>
                         @if (selectedFields.Contains("EmployeeName"))
                         {
                             <th>Name</th>
@@ -146,6 +147,7 @@
                     @foreach (var item in Model)
                     {
                         <tr>
+                            <td><strong>@item.EmployeeId</strong></td>
                             @if (selectedFields.Contains("EmployeeName"))
                             {
                                 <td>@item.EmployeeName</td>

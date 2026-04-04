@@ -4,7 +4,7 @@ namespace SMS_App.ViewModels.Employees;
 
 public class EmployeeExportVM
 {
-    public int EmployeeId { get; set; }
+    public string EmployeeId { get; set; }
     public string EmployeeName { get; set; }
     public string EmployeeNameBangla { get; set; }
     public string FatherName { get; set; }

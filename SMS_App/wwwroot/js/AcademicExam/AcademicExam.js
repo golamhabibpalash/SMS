@@ -1,15 +1,18 @@
 ﻿
 $(document).ready(function () {
-    $('.lockBtn').click(function () {
-        if (confirm("Are you sure you want to unlock this?")) {
-            let btnId = $(this).prop('id');
-            unlockExam($(this).data("id"), btnId);
-        }
-        else {
-            console.log("No");
-            return false;
-        }
-    });
+// Select2 initialization will be handled by the global initialization in _HeadPartial.cshtml
+// This ensures consistent configuration across all select2 elements
+
+$('.lockBtn').click(function () {
+    if (confirm("Are you sure you want to unlock this?")) {
+        let btnId = $(this).prop('id');
+        unlockExam($(this).data("id"), btnId);
+    }
+    else {
+        console.log("No");
+        return false;
+    }
+});
 
     $('.unLockBtn').click(function () {
         if (confirm("Are you sure you want to unlock this?")) {
@@ -101,19 +104,49 @@ $('#AcademicClassId').change(function () {
         type: "POST",
         cache: false,
         success: function (data) {
-            $('#AcademicSectionId').empty();
+            var $sel = $('#AcademicSectionId');
+            $sel.empty();
 
             if (data && data.length > 0) {
-                var o2 = '<option value="">All Section</option>';
-                $('#AcademicSectionId').append(o2);
+                // Don't add an empty "All Section" option for multiselect
                 $.each(data, function (i, obj) {
                     var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
-                    $('#AcademicSectionId').append(op);
+                    $sel.append(op);
                 });
             } else {
                 var o = '<option disabled selected>Section Not Found</option>';
-                $('#AcademicSectionId').append(o);
+                $sel.append(o);
             }
+
+            // Ensure multiple attribute is present
+            $sel.prop('multiple', true);
+
+            // Fully destroy any previous Select2 instance and its container
+            try {
+                if ($sel.data('select2')) {
+                    $sel.select2('destroy');
+                    $sel.next('.select2-container').remove();
+                }
+            } catch (ex) {
+                console.warn('Error destroying select2:', ex);
+            }
+
+            // Use modal .modal-content as dropdown parent for better positioning
+            var dropdownParent = $('#createUpdateModal .modal-content');
+
+            // Reinitialize Select2 after populating options
+            $sel.select2({
+                theme: 'bootstrap-5',
+                placeholder: 'Select Section(s)',
+                allowClear: true,
+                width: '100%',
+                dropdownParent: dropdownParent.length ? dropdownParent : null,
+                multiple: true
+            });
+
+            // Trigger update
+            $sel.trigger('change.select2');
+            console.log('AcademicSectionId reinitialized with', $sel.find('option').length, 'options');
         },
         error: function (err) {
             console.log(err);
@@ -190,49 +223,78 @@ function ExamAddBtnClick() {
         let subjectid = subjectidOption.value;
         let subjectIdText = subjectidOption.text;
 
-        let sectionIdElement = document.getElementById('AcademicSectionId');
-        let sectionIdOption = sectionIdElement.options[sectionIdElement.selectedIndex];
-        let sectionId = sectionIdOption.value;
-        let sectionIdText = sectionIdOption.text;
+        // Get all selected sections from Select2
+        let selectedSectionIds = $('#AcademicSectionId').val() || [];
+        if (!Array.isArray(selectedSectionIds)) {
+            selectedSectionIds = [selectedSectionIds];
+        }
 
         let teacherIdElement = document.getElementById('EmployeeId');
         let teacherIdOption = teacherIdElement.options[teacherIdElement.selectedIndex];
         let teacherId = teacherIdOption.value;
         let teacherIdText = teacherIdOption.text;
 
-        //let status = document.getElementById('Status').value;
-
         let tableBody = document.getElementById('tableBodyId');
         var indexCount = $("#detailsTable > tbody").children().length;
 
-        let rowCount = indexCount + 1; 
+        // Add a row for each selected section
+        selectedSectionIds.forEach((sectionId, idx) => {
+            let sectionIdElement = document.getElementById('AcademicSectionId');
+            let sectionIdOption = Array.from(sectionIdElement.options).find(opt => opt.value === sectionId);
+            let sectionIdText = sectionIdOption ? sectionIdOption.text : 'All Section';
 
-        let serial_td = '<td><input type="hidden" name="AcademicExams[' + indexCount + '].AcademicExamGroupId" value="' + groupId + '" />' + rowCount + '</td>'
-        let subject_td = '<td>  <input type="hidden" name="AcademicExams[' + indexCount + '].AcademicSubjectId" value="' + subjectid + '" />' + subjectIdText + '</td>';
-        let examCategory_td = '<td><input type="hidden" name="AcademicExams[' + indexCount + '].ExamCategory" value="' + examCategory.value + '" /> ' + examCategory.value + '</td>';
-        let class_td = '<td> <input type="hidden" name="AcademicExams[' + indexCount + '].AcademicClassId" value="' + classId + '" />' + classIdText + '</td>';
-        let section_td = '<td> <input type="hidden" name="AcademicExams[' + indexCount + '].AcademicSectionId" value="' + sectionId + '" />' + sectionIdText + '</td>';
-        let teacher_td = '<td> <input type="hidden" name="AcademicExams[' + indexCount + '].EmployeeId" value="' + teacherId + '" />' + teacherIdText + '</td>';
-        let marks_td = '<td class="text-end"> <input type="hidden" name="AcademicExams[' + indexCount + '].TotalMarks" value="' + marks + '" />' + marks + '</td>';
-        //let status_td = '<td> <input type="hidden" name="AcademicExam[' + indexCount + '].Status" value="' + status + '" />' + status + '</td>';
-        let action_td = '<td><button onclick="removeRow(this)" class="removeBtn btn btn-sm btn-warning" value="Remove">Remove</button></td>';
-        let tr = '<tr>' + serial_td + subject_td + examCategory_td + class_td + section_td + teacher_td + marks_td /*+ status_td*/ + action_td+ '</tr>';
-        tableBody.innerHTML +=tr;
+            let rowCount = indexCount + idx + 1;
+
+            let serial_td = '<td><input type="hidden" name="AcademicExams[' + (indexCount + idx) + '].AcademicExamGroupId" value="' + groupId + '" />' + rowCount + '</td>'
+            let subject_td = '<td>  <input type="hidden" name="AcademicExams[' + (indexCount + idx) + '].AcademicSubjectId" value="' + subjectid + '" />' + subjectIdText + '</td>';
+            let examCategory_td = '<td><input type="hidden" name="AcademicExams[' + (indexCount + idx) + '].ExamCategory" value="' + examCategory.value + '" /> ' + examCategory.value + '</td>';
+            let class_td = '<td> <input type="hidden" name="AcademicExams[' + (indexCount + idx) + '].AcademicClassId" value="' + classId + '" />' + classIdText + '</td>';
+            let section_td = '<td> <input type="hidden" name="AcademicExams[' + (indexCount + idx) + '].AcademicSectionId" value="' + sectionId + '" />' + sectionIdText + '</td>';
+            let teacher_td = '<td> <input type="hidden" name="AcademicExams[' + (indexCount + idx) + '].EmployeeId" value="' + teacherId + '" />' + teacherIdText + '</td>';
+            let marks_td = '<td class="text-end"> <input type="hidden" name="AcademicExams[' + (indexCount + idx) + '].TotalMarks" value="' + marks + '" />' + marks + '</td>';
+            let action_td = '<td><button onclick="removeRow(this)" class="removeBtn btn btn-sm btn-warning" value="Remove">Remove</button></td>';
+            let tr = '<tr>' + serial_td + subject_td + examCategory_td + class_td + section_td + teacher_td + marks_td + action_td + '</tr>';
+            tableBody.innerHTML += tr;
+        });
     }
 }
 
 $('#submitBtn').click(function () {
-
-    showLoader()
-    $('#submitForm').submit(function () {
-            $('#createUpdateModal').modal('hide');
-        document.getElementById("loading").style.display = "block";
-        setTimeout(function () {
-
-            document.getElementById("myForm").reset();
-        }, 2000);
-
+    showLoader();
+    $('#submitForm').off('submit').on('submit', function (e) {
+        e.preventDefault();
+        
+        // Submit the form
+        $.ajax({
+            type: 'POST',
+            url: $(this).attr('action') || '/AcademicExams/Create',
+            data: $(this).serialize(),
+            success: function (response) {
+                $('#createUpdateModal').modal('hide');
+                document.getElementById("loading").style.display = "block";
+                
+                // Clear the table
+                $("#detailsTable > tbody").empty();
+                
+                // Reset the form
+                $('#submitForm')[0].reset();
+                $('#AcademicSectionId').val([]).trigger('change.select2');
+                
+                setTimeout(function () {
+                    hideLoader();
+                    document.getElementById("loading").style.display = "none";
+                    location.reload();
+                }, 1500);
+            },
+            error: function (xhr, status, error) {
+                hideLoader();
+                document.getElementById("loading").style.display = "none";
+                alertify.error('Error submitting form. Please try again.');
+            }
+        });
     });
+    
+    $(this).closest('form').submit();
 });
 function DeleteExam(id) {
     var result = confirm("Are you sure you want to proceed to delete?");
@@ -268,7 +330,11 @@ async function EditExamClick(id) {
 
     //Now safely set dependent dropdowns
     let sectionId = $('#editBtn_' + id).data('sectionid');
-    $('#AcademicSectionId').val(sectionId).trigger('change');
+    
+    // For Select2, we need to set value differently for multiple selects
+    if (sectionId) {
+        $('#AcademicSectionId').val([sectionId]).trigger('change.select2');
+    }
 
     let subjectid = $('#editBtn_' + id).data('subjectid');
     $('#AcademicSubjectId').val(subjectid).trigger('change');
@@ -323,6 +389,17 @@ function examinationAddButtonClicked(groupId) {
         dropdown.value = groupId; // set selected value
     }
     dropdown.dispatchEvent(new Event('change'));
+    
+    // Reset form fields
+    document.getElementById('AcademicSubjectId').value = '';
+    document.getElementById('TotalMarks').value = '';
+    document.getElementById('EmployeeId').value = '';
+    document.getElementById('ExamCategory').value = '';
+    document.getElementById('Id').value = '';
+    
+    // Reset Select2 value (for multiple select)
+    $('#AcademicSectionId').val([]).trigger('change.select2');
+    
     let examAddBtn = document.getElementById('examAddBtn');
     examAddBtn.style.display = 'block';
 

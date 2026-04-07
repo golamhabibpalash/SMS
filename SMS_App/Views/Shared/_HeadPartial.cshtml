@@ -78,12 +78,12 @@
 
         /* Fix for Select2 dropdown behind modal */
         .select2-container--bootstrap-5.select2-container--open {
-            z-index: 9999 !important;
+            z-index: 10000 !important;
         }
 
         /* Ensure dropdown is above modal */
         .select2-container--bootstrap-5 .select2-dropdown {
-            z-index: 9999 !important;
+            z-index: 10000 !important;
         }
 
         /* Fix for search input in modal */
@@ -95,12 +95,48 @@
 
         /* Ensure dropdown container is above everything */
         .select2-container {
-            z-index: 9999 !important;
+            z-index: 10000 !important;
+        }
+
+        /* Fix for Select2 within modals - ensure proper dropdown rendering */
+        .modal .select2-results__options {
+            max-height: 300px !important;
+            overflow-y: auto !important;
+        }
+
+        /* Ensure Select2 dropdown doesn't get hidden */
+        .select2-container--bootstrap-5 .select2-dropdown {
+            display: block !important;
+            position: absolute !important;
+            visibility: visible !important;
+        }
+
+        /* Multiple select styling */
+        .select2-container--bootstrap-5 .select2-selection--multiple {
+            min-height: 38px !important;
+        }
+
+        /* Override any conflicting theme styles */
+        .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice {
+            background-color: #e7f1ff !important;
+            border-color: #86b7fe !important;
+        }
+
+        /* Fix for dropdown list appearing as inline instead of dropdown */
+        .select2-container--bootstrap-5.select2-container--open .select2-dropdown {
+            border-top: 1px solid #dee2e6 !important;
+        }
+
+        /* Remove any overflow hidden that might be hiding the dropdown */
+        .select2-container {
+            overflow: visible !important;
         }
     </style>
 
     <!-- start js include path -->
+    <!-- Ensure jQuery is loaded before Select2 -->
     <script src="~/lib/theme/smart/assets/plugins/jquery/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script src="~/lib/theme/smart/assets/plugins/popper/popper.js"></script>
     <script src="~/lib/theme/smart/assets/plugins/jquery-blockui/jquery.blockui.min.js"></script>
@@ -123,9 +159,6 @@
     <script src="~/lib/theme/smart/assets/plugins/dropzone/dropzone.js"></script>
     <script src="~/lib/theme/smart/assets/plugins/dropzone/dropzone-call.js"></script>
 
-    <!-- LAST SCRIPT -->
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
     <!-- Feather icon -->
     <script src="~/lib/theme/smart/assets/plugins/feather/feather.min.js"></script>
     <script src="~/lib/alertify/alertify.min.js"></script>
@@ -133,21 +166,25 @@
 
     <script>
         $(document).ready(function () {
-            // Initialize all select2 elements
+            // Initialize all select2 elements with proper configuration
             $('.select2').each(function () {
-                $(this).select2({
+                var $this = $(this);
+                var isMultiple = $this.prop('multiple');
+                
+                $this.select2({
                     theme: 'bootstrap-5',
                     width: '100%',
-                    dropdownParent: $(this).parent(), // or specify a specific parent
+                    dropdownParent: $(this).parent(),
                     allowClear: true,
-                    placeholder: $(this).data('placeholder') || 'Select an option'
+                    placeholder: $this.data('placeholder') || 'Select an option',
+                    matcher: matchStart
                 });
             });
 
             // Special handling for select2 inside modals
             $(document).on('shown.bs.modal', '.modal', function () {
-                $(this).find('.select2').each(function () {
-                    // Destroy and reinitialize select2 with modal as dropdown parent
+                var $modal = $(this);
+                $modal.find('.select2').each(function () {
                     var $this = $(this);
                     var select2Id = $this.attr('id');
 
@@ -158,11 +195,15 @@
                     $this.select2({
                         theme: 'bootstrap-5',
                         width: '100%',
-                        dropdownParent: $(this).closest('.modal'),
+                        dropdownParent: $modal,
                         allowClear: true,
-                        placeholder: $this.data('placeholder') || 'Select an option'
+                        placeholder: $this.data('placeholder') || 'Select an option',
+                        matcher: matchStart
                     });
                 });
+                
+                // Focus the first select2 if needed
+                $modal.find('.select2').first().select2('focus');
             });
 
             // Clean up select2 when modal is hidden
@@ -173,6 +214,29 @@
                     }
                 });
             });
+
+            // Custom matcher for case-insensitive search
+            function matchStart(params, data) {
+                // If there are no search terms, return all of the data
+                if ($.trim(params.term) === '') {
+                    return data;
+                }
+
+                // Do not display the item if there is no 'text' property
+                if (typeof data.text === 'undefined') {
+                    return null;
+                }
+
+                // `params.term` should be the term that is used for searching
+                // `data.text` is the text that is displayed for the data object
+                if (data.text.toLowerCase().indexOf(params.term.toLowerCase()) > -1) {
+                    var modifiedData = $.extend({}, data, true);
+                    return modifiedData;
+                }
+
+                // Return `null` if the term does not match
+                return null;
+            }
         });
     </script>
 

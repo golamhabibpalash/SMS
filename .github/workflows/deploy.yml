@@ -83,10 +83,20 @@ jobs:
           rm -f ./publish/appsettings*.json
           echo "✓ Removed appsettings*.json files"
 
-          # Remove entire wwwroot folder
+          # Clean wwwroot folder but keep css, js, Reports folders
           if [ -d "./publish/wwwroot" ]; then
-            rm -rf ./publish/wwwroot
-            echo "✓ Removed wwwroot folder"
+            # Remove all files in wwwroot
+            find ./publish/wwwroot -type f -delete
+            # Remove all subdirectories except css, js, Reports
+            for dir in ./publish/wwwroot/*/; do
+              if [ -d "$dir" ]; then
+                dir_name=$(basename "$dir")
+                if [[ "$dir_name" != "css" && "$dir_name" != "js" && "$dir_name" != "Reports" ]]; then
+                  rm -rf "$dir"
+                fi
+              fi
+            done
+            echo "✓ Cleaned wwwroot folder, kept css, js, Reports"
           fi
 
           # Remove debug symbols

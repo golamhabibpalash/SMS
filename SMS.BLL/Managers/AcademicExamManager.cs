@@ -512,4 +512,14 @@ public class AcademicExamManager : Manager<AcademicExam>, IAcademicExamManager
         return profileResult;
     }
 
+    public async Task<bool> IsDuplicateAsync(int examGroupId, int classId, int subjectId, int? sectionId, string examCategory)
+    {
+        return await _academicExamRepository.IsDuplicateAsync(examGroupId, classId, subjectId, sectionId, examCategory);
+    }
+
+    public async Task<List<(int SectionId, bool IsDuplicate)>> CheckDuplicatesBulkAsync(int examGroupId, int classId, int subjectId, string examCategory, List<int> sectionIds)
+    {
+        return await _academicExamRepository.CheckDuplicatesBulkAsync(examGroupId, classId, subjectId, examCategory, sectionIds);
+    }
+
 }

@@ -12,5 +12,6 @@ namespace SMS.DAL.Contracts
     {
         Task<List<ExamResult>> GetExamResultsByExamGroupNClassId(int examGroupId, int classId);
         bool IsResultProcessedAsync(int examGroupId, int classId);
+        Task<Dictionary<(int ExamGroupId, int ClassId), bool>> GetResultProcessedStatusBulkAsync(IEnumerable<(int ExamGroupId, int ClassId)> examGroupAndClassPairs);
     }
 }

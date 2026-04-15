@@ -203,7 +203,7 @@ function removeRow(button) {
 }
 
 
-function ExamAddBtnClick() {
+async function ExamAddBtnClick() {
     let isValidate = validateForm();
     if (isValidate) {
         let marks = document.getElementById('TotalMarks').value;
@@ -229,6 +229,11 @@ function ExamAddBtnClick() {
             selectedSectionIds = [selectedSectionIds];
         }
 
+        if (selectedSectionIds.length === 0) {
+            alertify.error('Please select at least one section.');
+            return;
+        }
+
         let teacherIdElement = document.getElementById('EmployeeId');
         let teacherIdOption = teacherIdElement.options[teacherIdElement.selectedIndex];
         let teacherId = teacherIdOption.value;
@@ -236,6 +241,70 @@ function ExamAddBtnClick() {
 
         let tableBody = document.getElementById('tableBodyId');
         var indexCount = $("#detailsTable > tbody").children().length;
+
+        // Validate duplicate against existing rows in table
+        let existingRows = $("#detailsTable > tbody tr");
+        let duplicatesInTable = [];
+        
+        selectedSectionIds.forEach((sectionId, idx) => {
+            let isDuplicate = false;
+            existingRows.each(function() {
+                let row = $(this);
+                let rowGroupId = row.find('input[name$=".AcademicExamGroupId"]').val();
+                let rowClassId = row.find('input[name$=".AcademicClassId"]').val();
+                let rowSubjectId = row.find('input[name$=".AcademicSubjectId"]').val();
+                let rowSectionId = row.find('input[name$=".AcademicSectionId"]').val();
+                let rowCategory = row.find('input[name$=".ExamCategory"]').val();
+                
+                if (rowGroupId == groupId && rowClassId == classId && rowSubjectId == subjectid && rowSectionId == sectionId && rowCategory == examCategory.value) {
+                    isDuplicate = true;
+                    return false;
+                }
+            });
+            
+            if (isDuplicate) {
+                duplicatesInTable.push(sectionId);
+            }
+        });
+
+        if (duplicatesInTable.length > 0) {
+            alertify.error('Duplicate entry exists in pending table for selected section(s).');
+            return;
+        }
+
+        // Server-side validation for duplicates in database
+        try {
+            const response = await $.ajax({
+                url: '/AcademicExams/CheckDuplicates',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    ExamGroupId: parseInt(groupId),
+                    ClassId: parseInt(classId),
+                    SubjectId: parseInt(subjectid),
+                    ExamCategory: examCategory.value,
+                    SectionIds: selectedSectionIds.map(id => parseInt(id))
+                })
+            });
+
+            if (response.results) {
+                const duplicates = response.results.filter(r => r.isDuplicate);
+                if (duplicates.length > 0) {
+                    const dupSectionNames = duplicates.map(d => {
+                        const sectionOpt = Array.from(document.getElementById('AcademicSectionId').options).find(opt => opt.value === d.sectionId.toString());
+                        return sectionOpt ? sectionOpt.text : 'Section ' + d.sectionId;
+                    });
+                    alertify.error('Duplicate exam(s) already exist for: ' + dupSectionNames.join(', '));
+                    return;
+                }
+            } else if (response.isDuplicate) {
+                alertify.error('Duplicate exam already exists in database for this combination.');
+                return;
+            }
+        } catch (xhr) {
+            console.error('Error checking duplicates:', xhr);
+            // Continue without blocking if API fails
+        }
 
         // Add a row for each selected section
         selectedSectionIds.forEach((sectionId, idx) => {
@@ -256,6 +325,8 @@ function ExamAddBtnClick() {
             let tr = '<tr>' + serial_td + subject_td + examCategory_td + class_td + section_td + teacher_td + marks_td + action_td + '</tr>';
             tableBody.innerHTML += tr;
         });
+        
+        alertify.success('Exam(s) added successfully.');
     }
 }
 

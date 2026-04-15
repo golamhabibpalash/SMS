@@ -69,6 +69,46 @@ namespace SMS.DAL.Repositories
             return exams;
         }
 
+        public async Task<bool> IsDuplicateAsync(int examGroupId, int classId, int subjectId, int? sectionId, string examCategory)
+        {
+            var query = _context.AcademicExams
+                .Where(e => e.AcademicExamGroupId == examGroupId 
+                         && e.AcademicClassId == classId 
+                         && e.AcademicSubjectId == subjectId 
+                         && e.ExamCategory == examCategory);
+
+            if (sectionId.HasValue)
+            {
+                query = query.Where(e => e.AcademicSectionId == sectionId.Value);
+            }
+            else
+            {
+                query = query.Where(e => e.AcademicSectionId == null);
+            }
+
+            return await query.AnyAsync();
+        }
+
+        public async Task<List<(int SectionId, bool IsDuplicate)>> CheckDuplicatesBulkAsync(int examGroupId, int classId, int subjectId, string examCategory, List<int> sectionIds)
+        {
+            var results = new List<(int SectionId, bool IsDuplicate)>();
+            var existingExams = await _context.AcademicExams
+                .Where(e => e.AcademicExamGroupId == examGroupId
+                         && e.AcademicClassId == classId
+                         && e.AcademicSubjectId == subjectId
+                         && e.ExamCategory == examCategory)
+                .Select(e => e.AcademicSectionId)
+                .ToListAsync();
+
+            foreach (var sectionId in sectionIds)
+            {
+                bool isDuplicate = existingExams.Contains(sectionId);
+                results.Add((sectionId, isDuplicate));
+            }
+
+            return results;
+        }
+
         
     }
 }

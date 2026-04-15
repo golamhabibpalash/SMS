@@ -49,5 +49,21 @@ namespace SMS.DAL.Repositories
             return isExist;
         }
 
+        public async Task<Dictionary<(int ExamGroupId, int ClassId), bool>> GetResultProcessedStatusBulkAsync(IEnumerable<(int ExamGroupId, int ClassId)> examGroupAndClassPairs)
+        {
+            var pairs = examGroupAndClassPairs.ToList();
+            if (!pairs.Any()) return new Dictionary<(int, int), bool>();
+
+            var existingPairs = await _dbContext.ExamResults
+                .Select(s => new { s.AcademicExamGroupId, s.AcademicClassId })
+                .ToListAsync();
+
+            var existingSet = existingPairs
+                .Select(s => (s.AcademicExamGroupId, s.AcademicClassId))
+                .ToHashSet();
+
+            return pairs.ToDictionary(p => p, p => existingSet.Contains(p));
+        }
+
     }
 }

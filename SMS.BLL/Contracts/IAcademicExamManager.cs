@@ -16,4 +16,6 @@ public interface IAcademicExamManager:IManager<AcademicExam>
     Task<int> GetTotalExamAsync(int examGroupId, int classId);
     Task<List<AcademicClass>> GetAcademicClassListByGroupIdAsync(int groupId);
     Task<ProfileResult> GetSingleStudentResultDetailForProfile(int studentId);
+    Task<bool> IsDuplicateAsync(int examGroupId, int classId, int subjectId, int? sectionId, string examCategory);
+    Task<List<(int SectionId, bool IsDuplicate)>> CheckDuplicatesBulkAsync(int examGroupId, int classId, int subjectId, string examCategory, List<int> sectionIds);
 }

@@ -581,4 +581,38 @@ public class AcademicExamsController : Controller
         }
         return Json(result);
     }
+
+    [HttpPost]
+    public async Task<IActionResult> CheckDuplicates([FromBody] DuplicateCheckRequest request)
+    {
+        if (request.SectionIds == null || !request.SectionIds.Any())
+        {
+            var isDuplicate = await _examManager.IsDuplicateAsync(
+                request.ExamGroupId,
+                request.ClassId,
+                request.SubjectId,
+                request.SectionId,
+                request.ExamCategory);
+            return Json(new { isDuplicate });
+        }
+
+        var results = await _examManager.CheckDuplicatesBulkAsync(
+            request.ExamGroupId,
+            request.ClassId,
+            request.SubjectId,
+            request.ExamCategory,
+            request.SectionIds);
+
+        return Json(new { results });
+    }
+
+    public class DuplicateCheckRequest
+    {
+        public int ExamGroupId { get; set; }
+        public int ClassId { get; set; }
+        public int SubjectId { get; set; }
+        public int? SectionId { get; set; }
+        public string ExamCategory { get; set; }
+        public List<int> SectionIds { get; set; }
+    }
 }

@@ -37,4 +37,9 @@ public class ExamResultManager : Manager<ExamResult>, IExamResultManager
     {
         return _examResultRepository.IsResultProcessedAsync(examGroupId, classId);
     }
+
+    public async Task<Dictionary<(int ExamGroupId, int ClassId), bool>> GetResultProcessedStatusBulkAsync(IEnumerable<(int ExamGroupId, int ClassId)> examGroupAndClassPairs)
+    {
+        return await _examResultRepository.GetResultProcessedStatusBulkAsync(examGroupAndClassPairs);
+    }
 }

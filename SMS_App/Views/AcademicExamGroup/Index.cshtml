@@ -196,11 +196,12 @@
     <script>
         
 
-        function createExamName() {
-            let academicExamType = $("#academicExamTypeId option:selected").text();
+function createExamName() {
+            let academicExamType = $("#AcademicExamTypeId option:selected").text();
             let sessionName = $("#AcademicSessionId option:selected").text();
             let monthName = $("#ExamMonthId option:selected").text();
-            let examName = academicExamType + " (" + monthName + ") " + sessionName.substr(-4);
+            let year = sessionName.slice(-4);
+            let examName = academicExamType + " (" + monthName + ") " + year;
             $('#ExamGroupName').val(examName);
         }
 

@@ -553,48 +553,55 @@ public class AcademicExamsController : Controller
     }
 
     [HttpPost]
-    [ValidateAntiForgeryToken]
     [Authorize(Policy = "ExamMarkSubmitAcademicExamPolicy")]
     public async Task<ActionResult> ExmaMarkSubmitMerged([FromBody] List<MergedExamDetailItem> examDetails)
     {
-        if (examDetails == null || !examDetails.Any())
+        try
         {
-            TempData["error"] = "No data found to save";
-            return RedirectToAction("Index");
-        }
-
-        int updatedCount = 0;
-        int skippedCount = 0;
-
-        foreach (var item in examDetails)
-        {
-            var existingDetails = await _academicExamDetailsManager.GetByIdAsync(item.ExamDetailId);
-            if (existingDetails != null)
+            if (examDetails == null || !examDetails.Any())
             {
-                if (existingDetails.ObtainMark != item.ObtainMark || 
-                    existingDetails.Remarks != item.Remarks || 
-                    existingDetails.Status != item.Status)
+                return Json(new { success = false, message = "No data found to save" });
+            }
+
+            int updatedCount = 0;
+            int skippedCount = 0;
+
+            var examDetailIds = examDetails.Select(x => x.ExamDetailId).ToList();
+            var existingDetailsList = await _academicExamDetailsManager.FindAllAsync(x => examDetailIds.Contains(x.Id));
+            var existingDetailsDict = existingDetailsList.ToDictionary(x => x.Id);
+
+            foreach (var item in examDetails)
+            {
+                if (existingDetailsDict.TryGetValue(item.ExamDetailId, out var existingDetails))
                 {
-                    existingDetails.ObtainMark = item.ObtainMark;
-                    existingDetails.Remarks = item.Remarks;
-                    existingDetails.Status = item.Status;
-                    existingDetails.MACAddress = MACService.GetMAC();
-                    existingDetails.EditedAt = DateTime.Now;
-                    existingDetails.EditedBy = HttpContext.Session.GetString("UserId");
-                    await _academicExamDetailsManager.UpdateAsync(existingDetails);
-                    updatedCount++;
-                }
-                else
-                {
-                    skippedCount++;
+                    if (existingDetails.ObtainMark != item.ObtainMark || 
+                        existingDetails.Remarks != item.Remarks || 
+                        existingDetails.Status != item.Status)
+                    {
+                        existingDetails.ObtainMark = item.ObtainMark;
+                        existingDetails.Remarks = item.Remarks;
+                        existingDetails.Status = item.Status;
+                        existingDetails.MACAddress = MACService.GetMAC();
+                        existingDetails.EditedAt = DateTime.Now;
+                        existingDetails.EditedBy = HttpContext.Session.GetString("UserId");
+                        await _academicExamDetailsManager.UpdateAsync(existingDetails);
+                        updatedCount++;
+                    }
+                    else
+                    {
+                        skippedCount++;
+                    }
                 }
             }
-        }
 
-        TempData["success"] = $"Updated: {updatedCount}, Skipped (no changes): {skippedCount}";
-        
-        int primaryExamId = examDetails.First().ExamId;
-        return RedirectToAction("Details", new { id = primaryExamId, mergeMode = true });
+            int primaryExamId = examDetails.First().ExamId;
+            var redirectUrl = Url.Action("Details", new { id = primaryExamId, mergeMode = true });
+            return Json(new { success = true, redirectUrl = redirectUrl, message = $"Updated: {updatedCount}, Skipped (no changes): {skippedCount}" });
+        }
+        catch (Exception ex)
+        {
+            return Json(new { success = false, message = "Error: " + ex.Message });
+        }
     }
 
     [HttpPost]

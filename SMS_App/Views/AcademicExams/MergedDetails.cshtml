@@ -140,7 +140,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in Model.MergedExamDetails.OrderBy(x => x.SectionName).ThenBy(x => x.ClassRoll))
+                        @foreach (var item in Model.MergedExamDetails.OrderBy(x => x.ClassRoll))
                         {
                             if (!string.IsNullOrEmpty(item.EditedBy))
                             {
@@ -238,7 +238,7 @@
                     }
                     else
                     {
-                        <button type="button" class="btn btn-info" onclick="submitMergedForm()">
+                        <button type="button" id="submitAllBtn" class="btn btn-info" onclick="submitMergedForm()">
                             <i class="fa fa-save"></i> Submit All Marks
                         </button>
                     }
@@ -426,22 +426,33 @@
                 });
             });
 
+            var $btn = $('#submitAllBtn');
+            var originalText = $btn.html();
+            $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Saving...');
+
             $.ajax({
                 type: 'POST',
                 url: '/AcademicExams/ExmaMarkSubmitMerged',
                 data: JSON.stringify(formData),
                 contentType: 'application/json',
                 dataType: 'json',
-                beforeSend: function(xhr) {
-                    xhr.setRequestHeader("RequestVerificationToken", 
-                        document.querySelector('input[name="__RequestVerificationToken"]').value);
-                },
+                timeout: 30000,
                 success: function (response) {
-                    window.location.href = response.redirectUrl || '/AcademicExams/Index';
+                    if (response.success) {
+                        window.location.href = response.redirectUrl || '/AcademicExams/Index';
+                    } else {
+                        $btn.prop('disabled', false).html(originalText);
+                        alert(response.message || 'Error saving marks. Please try again.');
+                    }
                 },
-                error: function (error) {
-                    alert('Error saving marks. Please try again.');
-                    console.error('Error:', error);
+                error: function (xhr, status, error) {
+                    $btn.prop('disabled', false).html(originalText);
+                    var errorMsg = 'Error saving marks. Please try again.';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMsg = xhr.responseJSON.message;
+                    }
+                    alert(errorMsg);
+                    console.error('Error:', xhr, status, error);
                 }
             });
         }

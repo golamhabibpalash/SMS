@@ -34,6 +34,7 @@ namespace SMS.DAL.Repositories
                 .Include(s => s.AcademicSection)
                 .Include(s => s.Employee)
                 .Include(s => s.AcademicExamDetails)
+                    .ThenInclude(d => d.Student)
                 .ToListAsync();
             return result;
         }

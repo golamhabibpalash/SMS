@@ -593,4 +593,26 @@ public class AcademicExamManager : Manager<AcademicExam>, IAcademicExamManager
         return await _academicExamRepository.CheckDuplicatesBulkAsync(examGroupId, classId, subjectId, examCategory, sectionIds);
     }
 
+    public async Task<List<AcademicExam>> GetMergedExamsAsync(int examId)
+    {
+        var primaryExam = await _repository.GetByIdAsync(examId);
+        if (primaryExam == null)
+            return new List<AcademicExam>();
+
+        var allExams = await _repository.GetAllAsync();
+
+        var mergedExams = allExams
+            .Where(e =>
+                e.AcademicExamGroupId == primaryExam.AcademicExamGroupId &&
+                e.AcademicClassId == primaryExam.AcademicClassId &&
+                e.AcademicSubjectId == primaryExam.AcademicSubjectId &&
+                e.ExamCategory == primaryExam.ExamCategory &&
+                e.Id != primaryExam.Id)
+            .ToList();
+
+        mergedExams.Insert(0, primaryExam);
+
+        return mergedExams;
+    }
+
 }

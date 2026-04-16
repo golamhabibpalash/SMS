@@ -121,7 +121,7 @@ public class AcademicExamsController : Controller
 
     // GET: AcademicExamsController/Details/5
     [Authorize(Policy = "DetailsAcademicExamPolicy")]
-    public async Task<ActionResult> Details(int id)
+    public async Task<ActionResult> Details(int id, bool mergeMode = false)
     {
 
         var exam = await _examManager.GetByIdAsync(id);
@@ -130,6 +130,27 @@ public class AcademicExamsController : Controller
             TempData["error"] = "Data not found";
             return RedirectToAction("index");
         }
+
+        var user = await _userManager.GetUserAsync(User);
+        var roles = await _userManager.GetRolesAsync(user);
+        bool isAdminUser = roles.Any(r => r.Contains("Admin") || r.Contains("SuperAdmin"));
+        
+        if (user.UserType == 'e')
+        {
+            if (user.ReferenceId != exam.EmployeeId)
+            {
+                if (isAdminUser == false)
+                {
+                    return RedirectToAction("AccessDenied", "Accounts");
+                }
+            }
+        }
+
+        if (mergeMode)
+        {
+            return await GetMergedExamDetails(id);
+        }
+
         var academicExamDetailVM = new AcademicExamDetailVM();
         academicExamDetailVM = _mapper.Map<AcademicExamDetailVM>(exam);
         var allStudents = await _studentManager.GetStudentsByClassIdAndSessionIdAsync(exam.AcademicExamGroup.AcademicSessionId, exam.AcademicClassId);
@@ -167,27 +188,6 @@ public class AcademicExamsController : Controller
             Text = s.Name + "-(" + s.ClassRoll + ")"
         }).ToList();
 
-        var user = await _userManager.GetUserAsync(User);
-        var roles = await _userManager.GetRolesAsync(user);
-        bool isAdminUser = false;
-        foreach (var item in roles)
-        {
-            if (item.Contains("Admin") || item.Contains("SuperAdmin"))
-            {
-                isAdminUser = true;
-                break;
-            }
-        }
-        if (user.UserType == 'e')
-        {
-            if (user.ReferenceId != exam.EmployeeId)
-            {
-                if (isAdminUser == false)
-                {
-                    return RedirectToAction("AccessDenied", "Accounts");
-                }
-            }
-        }
         var academicExamVM = new ViewModels.AcademicVM.AcademicExamVM
         {
             AcademicExamGroup = exam.AcademicExamGroup,
@@ -202,6 +202,99 @@ public class AcademicExamsController : Controller
         };
 
         return View(academicExamDetailVM);
+    }
+
+    private async Task<ActionResult> GetMergedExamDetails(int primaryExamId)
+    {
+        var primaryExam = await _examManager.GetByIdAsync(primaryExamId);
+        if (primaryExam == null)
+        {
+            TempData["error"] = "Data not found";
+            return RedirectToAction("index");
+        }
+
+        var mergedExams = await _examManager.GetMergedExamsAsync(primaryExamId);
+        if (mergedExams == null || mergedExams.Count == 0)
+        {
+            TempData["error"] = "No exams found to merge";
+            return RedirectToAction("Details", new { id = primaryExamId });
+        }
+
+        var mergedVM = new MergedExamDetailVM
+        {
+            IsMergedView = true,
+            PrimaryExamId = primaryExamId,
+            TotalMarks = primaryExam.TotalMarks,
+            ExamGroupName = primaryExam.AcademicExamGroup.ExamGroupName,
+            SubjectName = primaryExam.AcademicSubject.SubjectName,
+            SubjectCode = primaryExam.AcademicSubject.SubjectCode?.ToString() ?? string.Empty,
+            ExamCategory = primaryExam.ExamCategory,
+            ClassName = primaryExam.AcademicClass.Name,
+            ClassId = primaryExam.AcademicClassId,
+            SessionName = primaryExam.AcademicExamGroup.AcademicSession.Name,
+            MonthName = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(primaryExam.AcademicExamGroup.ExamMonthId),
+            TeacherName = primaryExam.Employee.EmployeeName,
+            IsLocked = mergedExams.All(e => e.Status)
+        };
+
+        foreach (var exam in mergedExams)
+        {
+            mergedVM.MergedExams.Add(new MergedExamInfo
+            {
+                ExamId = exam.Id,
+                SectionName = exam.AcademicSection?.Name ?? "All Sections",
+                SectionId = exam.AcademicSectionId,
+                TotalStudents = exam.AcademicExamDetails.Count,
+                Status = exam.Status
+            });
+
+            foreach (var detail in exam.AcademicExamDetails.Where(d => d.Student != null && d.Student.Status == true).OrderBy(d => d.Student.ClassRoll).ToList())
+            {
+                mergedVM.MergedExamDetails.Add(new MergedExamDetailItem
+                {
+                    ExamDetailId = detail.Id,
+                    ExamId = exam.Id,
+                    StudentId = detail.StudentId,
+                    StudentName = detail.Student.Name,
+                    ClassRoll = detail.Student.ClassRoll,
+                    SectionName = exam.AcademicSection?.Name ?? "All Sections",
+                    SectionId = exam.AcademicSectionId,
+                    ObtainMark = detail.ObtainMark,
+                    Status = detail.Status,
+                    Remarks = detail.Remarks,
+                    EditedBy = detail.EditedBy
+                });
+            }
+        }
+
+        var allStudents = await _studentManager.GetStudentsByClassIdAndSessionIdAsync(
+            primaryExam.AcademicExamGroup.AcademicSessionId, primaryExam.AcademicClassId);
+        
+        var existingStudentIds = mergedExams
+            .SelectMany(e => e.AcademicExamDetails)
+            .Select(d => d.StudentId)
+            .Distinct()
+            .ToHashSet();
+
+        var missingStudents = allStudents.Where(s => !existingStudentIds.Contains(s.Id) && s.Status == true).ToList();
+
+        mergedVM.StudentList = allStudents.Where(s => existingStudentIds.Contains(s.Id) && s.Status == true)
+            .OrderBy(s => s.ClassRoll)
+            .Select(s => new SelectListItem
+            {
+                Value = s.Id.ToString(),
+                Text = s.Name + "-(" + s.ClassRoll + ")"
+            }).ToList();
+
+        mergedVM.MissingStudentList = missingStudents.OrderBy(s => s.ClassRoll)
+            .Select(s => new SelectListItem
+            {
+                Value = s.Id.ToString(),
+                Text = s.Name + "-(" + s.ClassRoll + ")"
+            }).ToList();
+
+        ViewData["MergedExamVM"] = mergedVM;
+        return View("MergedDetails", mergedVM);
     }
 
 
@@ -460,6 +553,51 @@ public class AcademicExamsController : Controller
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Policy = "ExamMarkSubmitAcademicExamPolicy")]
+    public async Task<ActionResult> ExmaMarkSubmitMerged([FromBody] List<MergedExamDetailItem> examDetails)
+    {
+        if (examDetails == null || !examDetails.Any())
+        {
+            TempData["error"] = "No data found to save";
+            return RedirectToAction("Index");
+        }
+
+        int updatedCount = 0;
+        int skippedCount = 0;
+
+        foreach (var item in examDetails)
+        {
+            var existingDetails = await _academicExamDetailsManager.GetByIdAsync(item.ExamDetailId);
+            if (existingDetails != null)
+            {
+                if (existingDetails.ObtainMark != item.ObtainMark || 
+                    existingDetails.Remarks != item.Remarks || 
+                    existingDetails.Status != item.Status)
+                {
+                    existingDetails.ObtainMark = item.ObtainMark;
+                    existingDetails.Remarks = item.Remarks;
+                    existingDetails.Status = item.Status;
+                    existingDetails.MACAddress = MACService.GetMAC();
+                    existingDetails.EditedAt = DateTime.Now;
+                    existingDetails.EditedBy = HttpContext.Session.GetString("UserId");
+                    await _academicExamDetailsManager.UpdateAsync(existingDetails);
+                    updatedCount++;
+                }
+                else
+                {
+                    skippedCount++;
+                }
+            }
+        }
+
+        TempData["success"] = $"Updated: {updatedCount}, Skipped (no changes): {skippedCount}";
+        
+        int primaryExamId = examDetails.First().ExamId;
+        return RedirectToAction("Details", new { id = primaryExamId, mergeMode = true });
+    }
+
+    [HttpPost]
     public async Task<JsonResult> ExamMarkSubmitAjax([FromBody] AcademicExamDetail examDetail)
     {
         AcademicExamDetail existingDetails = new();
@@ -487,6 +625,48 @@ public class AcademicExamsController : Controller
         }
 
         return Json(existingDetails);
+    }
+
+    [HttpPost]
+    public async Task<JsonResult> UpdateExamDetailStatus([FromBody] ExamDetailStatusUpdate statusUpdate)
+    {
+        if (statusUpdate == null)
+        {
+            return Json(new { success = false, message = "Invalid data" });
+        }
+
+        var existingDetails = await _academicExamDetailsManager.GetByIdAsync(statusUpdate.Id);
+        if (existingDetails != null)
+        {
+            existingDetails.Status = statusUpdate.Status;
+            existingDetails.MACAddress = MACService.GetMAC();
+            existingDetails.EditedAt = DateTime.Now;
+            existingDetails.EditedBy = HttpContext.Session.GetString("UserId");
+            await _academicExamDetailsManager.UpdateAsync(existingDetails);
+            return Json(new { success = true, message = "Status updated" });
+        }
+        return Json(new { success = false, message = "Record not found" });
+    }
+
+    [HttpPost]
+    public async Task<JsonResult> UpdateExamDetailRemarks([FromBody] ExamDetailRemarksUpdate remarksUpdate)
+    {
+        if (remarksUpdate == null)
+        {
+            return Json(new { success = false, message = "Invalid data" });
+        }
+
+        var existingDetails = await _academicExamDetailsManager.GetByIdAsync(remarksUpdate.Id);
+        if (existingDetails != null)
+        {
+            existingDetails.Remarks = remarksUpdate.Remarks;
+            existingDetails.MACAddress = MACService.GetMAC();
+            existingDetails.EditedAt = DateTime.Now;
+            existingDetails.EditedBy = HttpContext.Session.GetString("UserId");
+            await _academicExamDetailsManager.UpdateAsync(existingDetails);
+            return Json(new { success = true, message = "Remarks updated" });
+        }
+        return Json(new { success = false, message = "Record not found" });
     }
 
     [Authorize(Policy = "AdmitCardAcademicExamPolicy")]
@@ -630,5 +810,17 @@ public class AcademicExamsController : Controller
         public int? SectionId { get; set; }
         public string ExamCategory { get; set; }
         public List<int> SectionIds { get; set; }
+    }
+
+    public class ExamDetailStatusUpdate
+    {
+        public int Id { get; set; }
+        public bool Status { get; set; }
+    }
+
+    public class ExamDetailRemarksUpdate
+    {
+        public int Id { get; set; }
+        public string Remarks { get; set; }
     }
 }

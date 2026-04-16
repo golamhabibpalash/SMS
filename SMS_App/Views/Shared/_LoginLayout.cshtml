@@ -6,6 +6,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="icon" type="image/x-icon" href="~/Images/Institute/favicon.ico">
+
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
     <!-- Bootstrap CSS -->
 
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -101,8 +105,6 @@
         }
     </style>
     @await RenderSectionAsync("Styles", required: false)
-    <!-- Select2 CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
 
 </head>
 
@@ -114,7 +116,9 @@
             @RenderBody()
         </div>
     </div>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <!-- <script src="~/lib/jquery/dist/jquery.min.js"></script>-->
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- LAST SCRIPT -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>

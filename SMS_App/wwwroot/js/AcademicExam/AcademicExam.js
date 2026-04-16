@@ -1,4 +1,4 @@
-﻿
+
 $(document).ready(function () {
 // Select2 initialization will be handled by the global initialization in _HeadPartial.cshtml
 // This ensures consistent configuration across all select2 elements
@@ -373,16 +373,23 @@ function DeleteExam(id) {
         $.ajax({
             url: '/AcademicExams/Delete?Id=' + id,
             method: 'Post',
-            type: 'JSON',
-            success: function (data) {
-                location.reload();
+            success: function (response) {
+                if (response && response.success) {
+                    var row = $('button[data-id="' + id + '"]').closest('tr');
+                    if (row.length) {
+                        row.fadeOut(300, function() {
+                            $(this).remove();
+                        });
+                    }
+                    alertify.success(response.message);
+                } else {
+                    alertify.error(response ? response.message : "Failed to delete");
+                }
             },
-            error: function () { }
+            error: function () {
+                alertify.error("Error occurred while deleting.");
+            }
         });
-
-    } else {
-        // User clicked "Cancel"
-        // Handle cancel action or do nothing
     }
 }
 

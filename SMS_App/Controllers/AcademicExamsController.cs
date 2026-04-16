@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -9,6 +9,7 @@ using SMS_App.ViewModels.ExamVM;
 using SMS.BLL.Contracts;
 using SMS.Entities;
 using SMS.Entities.Enums;
+using SMS.Entities.AdditionalModels;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -62,45 +63,60 @@ public class AcademicExamsController : Controller
             ViewBag.error = TempData["error"].ToString();
         }
         ViewModels.AcademicVM.AcademicExamVM academicExamVM = new ViewModels.AcademicVM.AcademicExamVM();
-        AcademicSession currentSession = await _sessionManager.GetCurrentAcademicSessionAsync();
-        academicExamVM.AcademicExamGroupList = new SelectList(await _examGroupManager.GetAllAsync(currentSession.Id), "Id", "ExamGroupName").ToList();
-        academicExamVM.AcademicClassList = new SelectList(await _classManager.GetAllAsync(), "Id", "Name").ToList();
-        List<Employee> emps = (List<Employee>)await _employeeManager.GetAllAsync();
-        academicExamVM.TeacherList = new SelectList(emps.Where(e => e.Status == true).OrderBy(e => e.JoiningDate).ThenBy(e => e.EmployeeName), "Id", "EmployeeName").ToList();
+
+        var currentSession = await _sessionManager.GetCurrentAcademicSessionAsync();
+        var examGroups = await _examGroupManager.GetAllAsync(currentSession.Id);
+        var classes = await _classManager.GetAllAsync();
+        var employees = (List<Employee>)await _employeeManager.GetAllAsync();
+        var sessionWiseExams = await _examManager.GetExaminationListLiteAsync();
+
+        academicExamVM.AcademicExamGroupList = new SelectList(examGroups, "Id", "ExamGroupName").ToList();
+        academicExamVM.AcademicClassList = new SelectList(classes, "Id", "Name").ToList();
+        academicExamVM.TeacherList = new SelectList(employees.Where(e => e.Status == true).OrderBy(e => e.JoiningDate).ThenBy(e => e.EmployeeName), "Id", "EmployeeName").ToList();
         academicExamVM.ExamCategoryList =  new List<SelectListItem>();
         foreach (var category in Enum.GetValues(typeof(ExamCategory)))
         {
             var newSelectListItem = new SelectListItem { Value = category.ToString(), Text = category.ToString() };
             academicExamVM.ExamCategoryList.Add(newSelectListItem);
         }
-        var exams = await _examManager.GetAllAsync();
-        if (exams != null)
-        {
-            academicExamVM.AcademicExams = (List<AcademicExam>)exams;
-        }
-        var sessionWiseExams = await _examManager.GetExaminationListAsync();
+
         if (sessionWiseExams!=null)
         {
+            var user = await _userManager.GetUserAsync(User);
+            var roles = await _userManager.GetRolesAsync(user);
+            bool isAdminUser = roles.Any(r => r.Contains("Admin") || r.Contains("SuperAdmin"));
+
+            if (!isAdminUser)
+            {
+                sessionWiseExams = FilterExamsByUser(sessionWiseExams, user.ReferenceId);
+            }
+
             academicExamVM.ExamSessionVM = sessionWiseExams.OrderByDescending(s => s.SessionName.Substring(s.SessionName.Length-4)).ToList() ;
         }
 
-        bool isAdminUser = false;
-        var user = await _userManager.GetUserAsync(User);
-        var roles = await _userManager.GetRolesAsync(user);
-        foreach (var item in roles)
+        return View(academicExamVM);
+    }
+
+    private List<ExamSessionDto> FilterExamsByUser(List<ExamSessionDto> exams, int userReferenceId)
+    {
+        var filtered = new List<ExamSessionDto>();
+        foreach (var session in exams)
         {
-            if (item.Contains("Admin") || item.Contains("SuperAdmin"))
+            var groupsWithUserExams = session.ExamGroupDtos?
+                .Where(g => g.ExaminationDtos?.Any(e => e.ExaminationDetailsDtos?.Any(d => d.EmployeeId == userReferenceId) == true) == true)
+                .ToList();
+
+            if (groupsWithUserExams?.Any() == true)
             {
-                isAdminUser = true;
-                break;
+                filtered.Add(new ExamSessionDto
+                {
+                    Id = session.Id,
+                    SessionName = session.SessionName,
+                    ExamGroupDtos = groupsWithUserExams
+                });
             }
         }
-        if (isAdminUser != true)
-        {
-            exams = exams.Where(m => m.EmployeeId == user.ReferenceId).ToList();
-        }
-
-        return View(academicExamVM);
+        return filtered;
     }
 
     // GET: AcademicExamsController/Details/5
@@ -398,25 +414,25 @@ public class AcademicExamsController : Controller
     [Authorize(Policy = "DeleteAcademicExamPolicy")]
     public async Task<JsonResult> Delete(int id)
     {
-        AcademicExam academicExam = await _examManager.GetByIdAsync(id);
         try
         {
+            var academicExam = await _examManager.GetByIdAsync(id);
+            if (academicExam == null)
+            {
+                return Json(new { success = false, message = "Exam not found." });
+            }
+
             bool isRemoved = await _examManager.RemoveAsync(academicExam);
             if (isRemoved)
             {
-                TempData["created"] = "Data deleted successfully.";
+                return Json(new { success = true, message = "Data deleted successfully." });
             }
-            else
-            {
-                TempData["error"] = "Failed to delete";
-            }
-            return Json("ok");
+            return Json(new { success = false, message = "Failed to delete" });
         }
         catch (Exception ex)
         {
-            TempData["error"] = "Exception:" + ex.Message;
+            return Json(new { success = false, message = "Exception: " + ex.Message });
         }
-        return Json("");
     }
 
     [HttpPost]

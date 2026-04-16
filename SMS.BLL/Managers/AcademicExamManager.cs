@@ -1,4 +1,4 @@
-﻿using BLL.Managers.Base;
+using BLL.Managers.Base;
 using Microsoft.EntityFrameworkCore;
 using SMS.BLL.Contracts;
 using SMS.DAL.Contracts;
@@ -57,7 +57,6 @@ public class AcademicExamManager : Manager<AcademicExam>, IAcademicExamManager
                 ExamGroupDtos = new List<ExamGroupDto>()
             };
 
-            // Group exams by ExamGroupId
             var examsForSession = allExaminations
                 .Where(e => e.AcademicExamGroup.AcademicSessionId == session.Id)
                 .GroupBy(e => e.AcademicExamGroupId);
@@ -76,6 +75,78 @@ public class AcademicExamManager : Manager<AcademicExam>, IAcademicExamManager
         }
 
         return result;
+    }
+
+    public async Task<List<ExamSessionDto>> GetExaminationListLiteAsync()
+    {
+        var allSessions = await _academicSessionRepository.GetAllAsync();
+        var allExaminations = await _academicExamRepository.GetAllLiteAsync();
+
+        var result = new List<ExamSessionDto>();
+
+        foreach (var session in allSessions)
+        {
+            var sessionDto = new ExamSessionDto
+            {
+                Id = session.Id,
+                SessionName = session.Name,
+                ExamGroupDtos = new List<ExamGroupDto>()
+            };
+
+            var examsForSession = allExaminations
+                .Where(e => e.AcademicExamGroup.AcademicSessionId == session.Id)
+                .GroupBy(e => e.AcademicExamGroupId);
+
+            foreach (var examGroup in examsForSession)
+            {
+                var targetedExams = allExaminations.Where(s => s.AcademicExamGroupId == examGroup.Key);
+                ExamGroupDto examGroupDto = new ExamGroupDto();
+                examGroupDto.Id = examGroup.Key;
+                examGroupDto.Name = examGroup.FirstOrDefault().AcademicExamGroup.ExamGroupName;
+                examGroupDto.ExaminationDtos = targetedExams.Select(s => MapToExaminationDtoLite(s)).ToList();
+                sessionDto.ExamGroupDtos.Add(examGroupDto);
+            }
+
+            if (sessionDto.ExamGroupDtos.Any())
+            {
+                result.Add(sessionDto);
+            }
+        }
+
+        return result;
+    }
+
+    private ExaminationDto MapToExaminationDtoLite(AcademicExam exam)
+    {
+        return new ExaminationDto
+        {
+            Id = exam.Id,
+            ClassName = exam.AcademicClass?.Name,
+            ClassId = exam.AcademicClassId,
+            ExamGroupVMId = exam.AcademicExamGroupId,
+            ExamCategory = exam.ExamCategory,
+            ExamGroupDto = new ExamGroupDto
+            {
+                Id = exam.AcademicExamGroupId,
+                Name = exam.AcademicExamGroup?.ExamGroupName
+            },
+            ExaminationDetailsDtos = new List<ExaminationDetailsDto>
+            {
+                new ExaminationDetailsDto
+                {
+                    Id = exam.Id,
+                    SubjectName = exam.AcademicSubject?.SubjectName,
+                    SubjectId = exam.AcademicSubjectId,
+                    SectionName = exam.AcademicSection?.Name,
+                    SectionId = exam.AcademicSectionId,
+                    EmployeeName = exam.Employee?.EmployeeName,
+                    EmployeeId = exam.EmployeeId,
+                    TotalStudents = 0,
+                    TotalMarks = exam.TotalMarks,
+                    IsLocked = false
+                }
+            }
+        };
     }
     public async Task<LiveResultVM> GetLiveResultByGroupIdClassIdSectionId(int academicGroupId, int academiClassId, int? academicSectionId)
     {

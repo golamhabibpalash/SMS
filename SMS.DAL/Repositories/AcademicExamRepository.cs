@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using SMS.DAL.Contracts;
 using SMS.DAL.Repositories.Base;
@@ -109,6 +109,16 @@ namespace SMS.DAL.Repositories
             return results;
         }
 
-        
+        public async Task<List<AcademicExam>> GetAllLiteAsync()
+        {
+            return await _context.AcademicExams
+                .Include(s => s.AcademicClass)
+                .Include(s => s.AcademicExamGroup)
+                    .ThenInclude(g => g.AcademicSession)
+                .Include(s => s.AcademicSubject)
+                .Include(s => s.AcademicSection)
+                .Include(s => s.Employee)
+                .ToListAsync();
+        }
     }
 }

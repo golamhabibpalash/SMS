@@ -1,4 +1,4 @@
-﻿using SMS.DAL.Contracts.Base;
+using SMS.DAL.Contracts.Base;
 using SMS.Entities;
 using System;
 using System.Collections.Generic;
@@ -13,5 +13,6 @@ namespace SMS.DAL.Contracts
         Task<List<AcademicExam>> GetByClassIdExamGroupId(int examGroupId, int academicClassId);
         Task<bool> IsDuplicateAsync(int examGroupId, int classId, int subjectId, int? sectionId, string examCategory);
         Task<List<(int SectionId, bool IsDuplicate)>> CheckDuplicatesBulkAsync(int examGroupId, int classId, int subjectId, string examCategory, List<int> sectionIds);
+        Task<List<AcademicExam>> GetAllLiteAsync();
     }
 }

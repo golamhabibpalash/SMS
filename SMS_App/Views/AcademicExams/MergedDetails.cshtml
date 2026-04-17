@@ -262,8 +262,77 @@
                 }
             }
             
+            // Set tabindex on mark inputs and make other elements not focusable via tab
+            setupTabNavigation();
+            
             highlightSectionHeaders();
         });
+
+        function setupTabNavigation() {
+            var markInputs = document.querySelectorAll('.markInput:not([disabled])');
+            
+            // Set tabindex on mark inputs
+            markInputs.forEach(function(input, index) {
+                input.setAttribute('tabindex', index + 1);
+            });
+            
+            // Make other inputs (checkbox, remarks) not focusable via Tab
+            var statusCheckboxes = document.querySelectorAll('input[type="checkbox"][name*="Status"]');
+            statusCheckboxes.forEach(function(cb) {
+                cb.setAttribute('tabindex', '-1');
+            });
+            
+            var remarksInputs = document.querySelectorAll('input[name*="Remarks"]:not([disabled])');
+            remarksInputs.forEach(function(input) {
+                input.setAttribute('tabindex', '-1');
+            });
+            
+            // Handle Enter key to move to next mark input
+            markInputs.forEach(function(input, index) {
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        // Save current mark first
+                        handleInputChange(this);
+                        
+                        // Move to next mark input
+                        var nextInput = markInputs[index + 1];
+                        if (nextInput) {
+                            nextInput.focus();
+                            // Select the text for easy overwrite
+                            nextInput.select();
+                        } else {
+                            // If last input, submit
+                            submitMergedForm();
+                        }
+                    }
+                    // Handle Tab to skip non-mark inputs
+                    if (e.key === 'Tab' && !e.shiftKey) {
+                        // Let default tab behavior work, but ensure we only land on mark inputs
+                    }
+                });
+                
+                // Handle arrow keys for quick navigation
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+                        e.preventDefault();
+                        var nextInput = markInputs[index + 1];
+                        if (nextInput) {
+                            nextInput.focus();
+                            nextInput.select();
+                        }
+                    }
+                    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        var prevInput = markInputs[index - 1];
+                        if (prevInput) {
+                            prevInput.focus();
+                            prevInput.select();
+                        }
+                    }
+                });
+            });
+        }
 
         function highlightSectionHeaders() {
             var rows = document.querySelectorAll('#markTable tbody tr');

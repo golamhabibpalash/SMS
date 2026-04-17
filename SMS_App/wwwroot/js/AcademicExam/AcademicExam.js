@@ -107,6 +107,9 @@ $('#AcademicClassId').change(function () {
             var $sel = $('#AcademicSectionId');
             $sel.empty();
 
+            // Add "All Sections" as default option
+            $sel.append('<option value="0">All Sections</option>');
+
             if (data && data.length > 0) {
                 // Don't add an empty "All Section" option for multiselect
                 $.each(data, function (i, obj) {
@@ -144,6 +147,9 @@ $('#AcademicClassId').change(function () {
                 multiple: true
             });
 
+            // Set "All Sections" (value 0) as default selection
+            $sel.val(['0']).trigger('change.select2');
+
             // Trigger update
             $sel.trigger('change.select2');
             console.log('AcademicSectionId reinitialized with', $sel.find('option').length, 'options');
@@ -164,8 +170,8 @@ function validateForm() {
     let groupId = document.getElementById('AcademicExamGroupId').value;
     let classId = document.getElementById('AcademicClassId').value;
     let subjectid = document.getElementById('AcademicSubjectId').value;
-    let sectionId = document.getElementById('AcademicSectionId').value;
     let teacherId = document.getElementById('EmployeeId').value;
+    let selectedSectionId = $('#AcademicSectionId').val();
     if (groupId <= 0) {
         alert("Please Select Academic Exam Group");
         document.getElementById('AcademicExamGroupId').focus();
@@ -181,12 +187,17 @@ function validateForm() {
         document.getElementById('AcademicSubjectId').focus();
         return false;
     }
+    else if (!selectedSectionId || selectedSectionId.length === 0) {
+        alert("Please select Section(s)");
+        document.getElementById('AcademicSectionId').focus();
+        return false;
+    }
     else if (teacherId <= 0) {
         alert("Please select Teacher from list");
         document.getElementById('EmployeeId').focus();
         return false;
     }
-    else if (marks < 10 || marks > 100) {
+    else if (marks < 1 || marks > 100) {
         alert("Total Marks Field is not valid");
         document.getElementById('TotalMarks').focus();
         return false;
@@ -223,16 +234,8 @@ async function ExamAddBtnClick() {
         let subjectid = subjectidOption.value;
         let subjectIdText = subjectidOption.text;
 
-        // Get all selected sections from Select2
-        let selectedSectionIds = $('#AcademicSectionId').val() || [];
-        if (!Array.isArray(selectedSectionIds)) {
-            selectedSectionIds = [selectedSectionIds];
-        }
-
-        if (selectedSectionIds.length === 0) {
-            alertify.error('Please select at least one section.');
-            return;
-        }
+        // Get selected section from Select2
+        let selectedSectionId = $('#AcademicSectionId').val();
 
         let teacherIdElement = document.getElementById('EmployeeId');
         let teacherIdOption = teacherIdElement.options[teacherIdElement.selectedIndex];
@@ -242,49 +245,58 @@ async function ExamAddBtnClick() {
         let tableBody = document.getElementById('tableBodyId');
         var indexCount = $("#detailsTable > tbody").children().length;
 
+        // If value is "0" or empty, treat as "All Sections"
+        let isAllSections = !selectedSectionId || selectedSectionId.length === 0 || selectedSectionId.includes('0');
+        let sectionIdToUse = isAllSections ? '' : selectedSectionId[0];
+        let sectionDisplayText = isAllSections ? 'All Sections' : (Array.from(document.getElementById('AcademicSectionId').options).find(opt => opt.value === selectedSectionId[0])?.text || 'Unknown');
+
         // Validate duplicate against existing rows in table
         let existingRows = $("#detailsTable > tbody tr");
-        let duplicatesInTable = [];
+        let isDuplicate = false;
         
-        selectedSectionIds.forEach((sectionId, idx) => {
-            let isDuplicate = false;
-            existingRows.each(function() {
-                let row = $(this);
-                let rowGroupId = row.find('input[name$=".AcademicExamGroupId"]').val();
-                let rowClassId = row.find('input[name$=".AcademicClassId"]').val();
-                let rowSubjectId = row.find('input[name$=".AcademicSubjectId"]').val();
-                let rowSectionId = row.find('input[name$=".AcademicSectionId"]').val();
-                let rowCategory = row.find('input[name$=".ExamCategory"]').val();
-                
-                if (rowGroupId == groupId && rowClassId == classId && rowSubjectId == subjectid && rowSectionId == sectionId && rowCategory == examCategory.value) {
+        existingRows.each(function() {
+            let row = $(this);
+            let rowGroupId = row.find('input[name$=".AcademicExamGroupId"]').val();
+            let rowClassId = row.find('input[name$=".AcademicClassId"]').val();
+            let rowSubjectId = row.find('input[name$=".AcademicSubjectId"]').val();
+            let rowSectionId = row.find('input[name$=".AcademicSectionId"]').val();
+            let rowCategory = row.find('input[name$=".ExamCategory"]').val();
+            
+            // Check for duplicate: same group, class, subject, category AND (both are all sections OR same section)
+            let rowIsAllSections = rowSectionId === '' || rowSectionId === '0' || rowSectionId === null;
+            if (rowGroupId == groupId && rowClassId == classId && rowSubjectId == subjectid && rowCategory == examCategory.value) {
+                if ((isAllSections && rowIsAllSections) || rowSectionId == sectionIdToUse) {
                     isDuplicate = true;
                     return false;
                 }
-            });
-            
-            if (isDuplicate) {
-                duplicatesInTable.push(sectionId);
             }
         });
 
-        if (duplicatesInTable.length > 0) {
-            alertify.error('Duplicate entry exists in pending table for selected section(s).');
+        if (isDuplicate) {
+            alertify.error('Duplicate entry exists in pending table for this combination.');
             return;
         }
 
         // Server-side validation for duplicates in database
         try {
+            let duplicateCheckData = {
+                ExamGroupId: parseInt(groupId),
+                ClassId: parseInt(classId),
+                SubjectId: parseInt(subjectid),
+                ExamCategory: examCategory.value
+            };
+
+            if (isAllSections) {
+                duplicateCheckData.SectionId = null;
+            } else {
+                duplicateCheckData.SectionIds = [parseInt(selectedSectionId[0])];
+            }
+
             const response = await $.ajax({
                 url: '/AcademicExams/CheckDuplicates',
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify({
-                    ExamGroupId: parseInt(groupId),
-                    ClassId: parseInt(classId),
-                    SubjectId: parseInt(subjectid),
-                    ExamCategory: examCategory.value,
-                    SectionIds: selectedSectionIds.map(id => parseInt(id))
-                })
+                data: JSON.stringify(duplicateCheckData)
             });
 
             if (response.results) {
@@ -306,43 +318,52 @@ async function ExamAddBtnClick() {
             // Continue without blocking if API fails
         }
 
-        // Add a row for each selected section
-        selectedSectionIds.forEach((sectionId, idx) => {
-            let sectionIdElement = document.getElementById('AcademicSectionId');
-            let sectionIdOption = Array.from(sectionIdElement.options).find(opt => opt.value === sectionId);
-            let sectionIdText = sectionIdOption ? sectionIdOption.text : 'All Section';
-
-            let rowCount = indexCount + idx + 1;
-
-            let serial_td = '<td><input type="hidden" name="AcademicExams[' + (indexCount + idx) + '].AcademicExamGroupId" value="' + groupId + '" />' + rowCount + '</td>'
-            let subject_td = '<td>  <input type="hidden" name="AcademicExams[' + (indexCount + idx) + '].AcademicSubjectId" value="' + subjectid + '" />' + subjectIdText + '</td>';
-            let examCategory_td = '<td><input type="hidden" name="AcademicExams[' + (indexCount + idx) + '].ExamCategory" value="' + examCategory.value + '" /> ' + examCategory.value + '</td>';
-            let class_td = '<td> <input type="hidden" name="AcademicExams[' + (indexCount + idx) + '].AcademicClassId" value="' + classId + '" />' + classIdText + '</td>';
-            let section_td = '<td> <input type="hidden" name="AcademicExams[' + (indexCount + idx) + '].AcademicSectionId" value="' + sectionId + '" />' + sectionIdText + '</td>';
-            let teacher_td = '<td> <input type="hidden" name="AcademicExams[' + (indexCount + idx) + '].EmployeeId" value="' + teacherId + '" />' + teacherIdText + '</td>';
-            let marks_td = '<td class="text-end"> <input type="hidden" name="AcademicExams[' + (indexCount + idx) + '].TotalMarks" value="' + marks + '" />' + marks + '</td>';
-            let action_td = '<td><button onclick="removeRow(this)" class="removeBtn btn btn-sm btn-warning" value="Remove">Remove</button></td>';
-            let tr = '<tr>' + serial_td + subject_td + examCategory_td + class_td + section_td + teacher_td + marks_td + action_td + '</tr>';
-            tableBody.innerHTML += tr;
-        });
+        // Add a single row for "All Sections" or selected section
+        let serial_td = '<td><input type="hidden" name="AcademicExams[' + indexCount + '].AcademicExamGroupId" value="' + groupId + '" />' + (indexCount + 1) + '</td>';
+        let subject_td = '<td>  <input type="hidden" name="AcademicExams[' + indexCount + '].AcademicSubjectId" value="' + subjectid + '" />' + subjectIdText + '</td>';
+        let examCategory_td = '<td><input type="hidden" name="AcademicExams[' + indexCount + '].ExamCategory" value="' + examCategory.value + '" /> ' + examCategory.value + '</td>';
+        let class_td = '<td> <input type="hidden" name="AcademicExams[' + indexCount + '].AcademicClassId" value="' + classId + '" />' + classIdText + '</td>';
+        let section_td = '<td> <input type="hidden" name="AcademicExams[' + indexCount + '].AcademicSectionId" value="' + sectionIdToUse + '" /><span class="badge bg-info">' + sectionDisplayText + '</span></td>';
+        let teacher_td = '<td> <input type="hidden" name="AcademicExams[' + indexCount + '].EmployeeId" value="' + teacherId + '" />' + teacherIdText + '</td>';
+        let marks_td = '<td class="text-end"> <input type="hidden" name="AcademicExams[' + indexCount + '].TotalMarks" value="' + marks + '" />' + marks + '</td>';
+        let action_td = '<td><button onclick="removeRow(this)" class="removeBtn btn btn-sm btn-warning" value="Remove">Remove</button></td>';
+        let tr = '<tr>' + serial_td + subject_td + examCategory_td + class_td + section_td + teacher_td + marks_td + action_td + '</tr>';
+        tableBody.innerHTML += tr;
         
-        alertify.success('Exam(s) added successfully.');
+        alertify.success(isAllSections ? 'Exam added for All Sections.' : 'Exam added successfully.');
     }
 }
 
 $('#submitBtn').click(function () {
     showLoader();
+    
+    // Start progress animation
+    let progress = 0;
+    let progressInterval = setInterval(function() {
+        progress += Math.random() * 15;
+        if (progress > 90) progress = 90;
+        $('#loading-progress').css('width', progress + '%');
+        $('#loading-count').text(Math.round(progress) + '%');
+    }, 500);
+    
     $('#submitForm').off('submit').on('submit', function (e) {
         e.preventDefault();
         
-        // Submit the form
+        // Hide modal immediately and show loading
+        $('#createUpdateModal').modal('hide');
+        document.getElementById("loading").style.display = "block";
+        $('#loading-status').text('Creating exam records for students...');
+        
+        // Submit the form via AJAX
         $.ajax({
             type: 'POST',
             url: $(this).attr('action') || '/AcademicExams/Create',
             data: $(this).serialize(),
             success: function (response) {
-                $('#createUpdateModal').modal('hide');
-                document.getElementById("loading").style.display = "block";
+                clearInterval(progressInterval);
+                $('#loading-progress').css('width', '100%');
+                $('#loading-count').text('100%');
+                $('#loading-status').text('Exam created successfully!');
                 
                 // Clear the table
                 $("#detailsTable > tbody").empty();
@@ -355,9 +376,10 @@ $('#submitBtn').click(function () {
                     hideLoader();
                     document.getElementById("loading").style.display = "none";
                     location.reload();
-                }, 1500);
+                }, 1000);
             },
             error: function (xhr, status, error) {
+                clearInterval(progressInterval);
                 hideLoader();
                 document.getElementById("loading").style.display = "none";
                 alertify.error('Error submitting form. Please try again.');
@@ -475,8 +497,8 @@ function examinationAddButtonClicked(groupId) {
     document.getElementById('ExamCategory').value = '';
     document.getElementById('Id').value = '';
     
-    // Reset Select2 value (for multiple select)
-    $('#AcademicSectionId').val([]).trigger('change.select2');
+    // Set "All Sections" (value 0) as default selection
+    $('#AcademicSectionId').val('0').trigger('change.select2');
     
     let examAddBtn = document.getElementById('examAddBtn');
     examAddBtn.style.display = 'block';

@@ -313,6 +313,12 @@ public class AcademicExamsController : Controller
             {
                 foreach (AcademicExam exam in AcademicExams)
                 {
+                    // Normalize AcademicSectionId: treat empty/0 as null (all sections)
+                    if (exam.AcademicSectionId == null || exam.AcademicSectionId == 0)
+                    {
+                        exam.AcademicSectionId = null;
+                    }
+
                     var isExist = await _examManager.GetAcademicExam(exam.AcademicExamGroupId, exam.AcademicClassId, exam.AcademicSubjectId, exam.ExamCategory, exam.AcademicSectionId);
 
                     if (isExist != null)

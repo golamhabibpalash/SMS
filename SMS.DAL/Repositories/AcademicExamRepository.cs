@@ -57,7 +57,7 @@ namespace SMS.DAL.Repositories
         }
         public async Task<List<AcademicExam>> GetByClassIdExamGroupId(int examGroupId, int academicClassId)
         {
-            var exams = await _context.AcademicExams
+            var allExams = await _context.AcademicExams
                 .Where(s => s.AcademicClassId == academicClassId && s.AcademicExamGroupId == examGroupId)
                 .Include(s => s.AcademicClass)
                 .Include(s => s.AcademicSection)
@@ -66,6 +66,17 @@ namespace SMS.DAL.Repositories
                 .Include(s => s.AcademicExamDetails)
                     .ThenInclude(m => m.Student)
                 .ToListAsync();
+
+            var uniqueSubjectIds = allExams
+                .Select(e => e.AcademicSubjectId)
+                .Distinct()
+                .ToHashSet();
+
+            var exams = allExams
+                .Where(e => uniqueSubjectIds.Contains(e.AcademicSubjectId))
+                .GroupBy(e => e.AcademicSubjectId)
+                .Select(g => g.First())
+                .ToList();
 
             return exams;
         }

@@ -1,4 +1,4 @@
-﻿@model SMS.Entities.Institute
+@model SMS.Entities.Institute
 
 @{
     ViewData["Title"] = "Institute information";
@@ -136,7 +136,7 @@
                     <td>
                         <div class="col-sm-12 col-md-12 text-md-end text-sm-center">
                             @*<a asp-action="Edit" asp-controller="Institutes" asp-route-id="@Model.Id" class="btn btn-sm btn-success"><i class="fa fa-edit"></i> Edit Info</a>*@
-                            <button type="button" class="btn btn-sm btn-navy-blue" data-toggle="modal" data-target=".bd-example-modal-lg"><i class="fas fa-edit"></i> Edit</button>
+                            <button type="button" class="btn btn-sm btn-navy-blue" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg"><i class="fas fa-edit"></i> Edit</button>
                         </div>
                     </td>
                 </tr>
@@ -150,133 +150,116 @@
         <div class="modal-content">
             <div class="row">
                 <div class="col-md-12 card p-0">
-                    <form asp-action="edit" method="post" enctype="multipart/form-data">
+                    <form asp-action="Edit" asp-controller="Institutes" method="post" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
                         <div class="card-header bg-navy-blue">
                             <span class="h4 text-light">Update General Information</span>
+                            <button type="button" class="btn-close float-end" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="card-body">
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                             <input type="hidden" asp-for="Id" />
-                            <div class="form-group row">
-                                <label asp-for="Name" class="control-label col-form-label col-md-2 text-md-end"></label>
+                            <div class="row mb-2">
+                                <label asp-for="Name" class="col-md-2 col-form-label text-md-end"></label>
                                 <div class="col-md-10">
-                                    <input spellcheck="true" asp-for="Name" class="form-control inputClass rounded" />
-                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                    <input spellcheck="true" asp-for="Name" class="form-control" />
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <label asp-for="ShortName" class="control-label col-form-label col-md-2 text-md-end"></label>
+                            <div class="row mb-2">
+                                <label asp-for="ShortName" class="col-md-2 col-form-label text-md-end"></label>
                                 <div class="col-md-4">
-                                    <input spellcheck="true" asp-for="ShortName" class="form-control inputClass rounded" />
-                                    <span asp-validation-for="ShortName" class="text-danger"></span>
+                                    <input spellcheck="true" asp-for="ShortName" class="form-control" />
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <label asp-for="EIIN" class="control-label col-form-label col-md-2 text-md-end"></label>
+                            <div class="row mb-2">
+                                <label asp-for="EIIN" class="col-md-2 col-form-label text-md-end"></label>
                                 <div class="col-md-4">
-                                    <input asp-for="EIIN" class="form-control inputClass rounded" />
-                                    <span asp-validation-for="EIIN" class="text-danger"></span>
+                                    <input asp-for="EIIN" class="form-control" />
                                 </div>
 
-                                <label asp-for="BranchName" class="control-label col-form-label col-md-2 text-md-end"></label>
+                                <label asp-for="BranchName" class="col-md-2 col-form-label text-md-end"></label>
                                 <div class="col-md-4">
-                                    <input asp-for="BranchName" class="form-control inputClass rounded col-form-label" />
-                                    <span asp-validation-for="BranchName" class="text-danger"></span>
+                                    <input asp-for="BranchName" class="form-control" />
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <label asp-for="Phone1" class="control-label col-form-label col-md-2 text-md-end"></label>
+                            <div class="row mb-2">
+                                <label asp-for="Phone1" class="col-md-2 col-form-label text-md-end"></label>
                                 <div class="col-md-4">
-                                    <input asp-for="Phone1" class="form-control inputClass rounded" />
-                                    <span asp-validation-for="Phone1" class="text-danger"></span>
+                                    <input asp-for="Phone1" class="form-control" />
                                 </div>
 
-                                <label asp-for="Phone2" class="control-label col-form-label col-md-2 text-md-end"></label>
+                                <label asp-for="Phone2" class="col-md-2 col-form-label text-md-end"></label>
                                 <div class="col-md-4">
-                                    <input asp-for="Phone2" class="form-control inputClass rounded col-form-label" />
-                                    <span asp-validation-for="Phone2" class="text-danger"></span>
+                                    <input asp-for="Phone2" class="form-control" />
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <label asp-for="Email" class="control-label col-form-label col-md-2 text-md-end"></label>
+                            <div class="row mb-2">
+                                <label asp-for="Email" class="col-md-2 col-form-label text-md-end"></label>
                                 <div class="col-md-4">
-                                    <input asp-for="Email" class="form-control inputClass rounded" />
-                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                    <input asp-for="Email" class="form-control" />
                                 </div>
 
-                                <label asp-for="Slogan" class="control-label col-form-label col-md-2 text-md-end"></label>
+                                <label asp-for="Slogan" class="col-md-2 col-form-label text-md-end"></label>
                                 <div class="col-md-4">
-                                    <input asp-for="Slogan" class="form-control inputClass rounded col-form-label" />
-                                    <span asp-validation-for="Slogan" class="text-danger"></span>
+                                    <input asp-for="Slogan" class="form-control" />
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <label asp-for="Address" class="control-label col-form-label col-md-2 text-md-end"></label>
+                            <div class="row mb-2">
+                                <label asp-for="Address" class="col-md-2 col-form-label text-md-end"></label>
                                 <div class="col-md-10">
-                                    <input asp-for="Address" class="form-control inputClass" />
-                                    <span asp-validation-for="Address" class="text-danger"></span>
+                                    <input asp-for="Address" class="form-control" />
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <label asp-for="StartingTime" class="control-label col-form-label col-md-2 text-md-end"></label>
+                            <div class="row mb-2">
+                                <label asp-for="StartingTime" class="col-md-2 col-form-label text-md-end"></label>
                                 <div class="col-md-4">
-                                    <input type="time" asp-for="StartingTime" class="form-control inputClass rounded" />
-                                    <span asp-validation-for="StartingTime" class="text-danger"></span>
+                                    <input type="time" asp-for="StartingTime" class="form-control" />
                                 </div>
 
-                                <label asp-for="ClosingTime" class="control-label col-form-label col-md-2 text-md-end"></label>
+                                <label asp-for="ClosingTime" class="col-md-2 col-form-label text-md-end"></label>
                                 <div class="col-md-4">
-                                    <input type="time" asp-for="ClosingTime" class="form-control inputClass rounded" />
-                                    <span asp-validation-for="ClosingTime" class="text-danger"></span>
+                                    <input type="time" asp-for="ClosingTime" class="form-control" />
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <label asp-for="LateTime" class="control-label col-form-label col-md-2 text-md-end"></label>
+                            <div class="row mb-2">
+                                <label asp-for="LateTime" class="col-md-2 col-form-label text-md-end"></label>
                                 <div class="col-md-4">
-                                    <input type="time" asp-for="LateTime" class="form-control inputClass rounded" />
-                                    <span asp-validation-for="LateTime" class="text-danger"></span>
+                                    <input type="time" asp-for="LateTime" class="form-control" />
                                 </div>
 
-                                <label asp-for="Banner" class="control-label col-form-label col-md-2 text-md-end"></label>
+                                <label asp-for="Banner" class="col-md-2 col-form-label text-md-end"></label>
                                 <div class="col-md-4">
                                     <input type="hidden" asp-for="Banner" />
-                                    <input type="file" name="banner" class="col-form-label imageClass" id="BannerId" />
-                                    <span asp-validation-for="Banner" class="text-danger"></span>
+                                    <input type="file" name="banner" class="form-control" id="BannerId" />
 
-                                    <div id="newBannerDiv" style="display:none">
-                                        <img class="img-fluid" id="sBannerId" src="#" alt="Logo" style="height:130px;" />
+                                    <div id="newBannerDiv" class="mt-2" style="display:none">
+                                        <img class="img-fluid" id="sBannerId" src="#" alt="Banner" style="height:100px;" />
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <label asp-for="Logo" class="control-label col-form-label col-md-2 text-md-end"></label>
+                            <div class="row mb-2">
+                                <label asp-for="Logo" class="col-md-2 col-form-label text-md-end"></label>
                                 <div class="col-md-4">
-
-                                    <input hidden asp-for="Logo" class="col-form-label" />
-                                    <input type="file" name="logo" class="imageClass col-form-label" id="inputGroupFile02" />
-                                    @*<input type="file" asp-for="Logo" class="col-form-label inputClass" />*@
-                                    <span asp-validation-for="Logo" class="text-danger"></span>
-
-                                    <div id="newLogoDiv" style="display:none">
-                                        <img class="img-fluid" id="sLogoId" src="#" alt="Logo" style="height:130px;" />
+                                    <input hidden asp-for="Logo" />
+                                    <input type="file" name="logo" class="form-control" id="inputGroupFile02" />
+                                    <div id="newLogoDiv" class="mt-2" style="display:none">
+                                        <img class="img-fluid" id="sLogoId" src="#" alt="Logo" style="height:100px;" />
                                     </div>
                                 </div>
 
-                                <label asp-for="FavIcon" class="control-label col-form-label col-md-2 text-md-end"></label>
+                                <label asp-for="FavIcon" class="col-md-2 col-form-label text-md-end"></label>
                                 <div class="col-md-4">
                                     <input asp-for="FavIcon" type="hidden" />
-                                    <input type="file" accept="ico/png" name="fav_Icon" id="fav_Icon" class="col-form-label inputClass" />
-                                    <span asp-validation-for="FavIcon" class="text-danger"></span>
-
-                                    <div id="fav_Icon_Div" style="display:none">
-                                        <img class="img-fluid" id="fav_IconId" src="#" alt="Logo" style="height:130px;" />
+                                    <input type="file" accept="ico/png" name="fav_Icon" id="fav_Icon" class="form-control" />
+                                    <div id="fav_Icon_Div" class="mt-2" style="display:none">
+                                        <img class="img-fluid" id="fav_IconId" src="#" alt="Favicon" style="height:100px;" />
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="card-footer text-center">
-                            <button id="editButton" class="btn-sm btn-navy-blue" title="Update" data-toggle="tooltip" data-placement="right"><i class="fa fa-edit"></i> Update</button>
-                            <button type="button" class="btn-sm btn btn-secondary" data-dismiss="modal"> Close</button>
+                            <button type="submit" id="editButton" class="btn-sm btn-navy-blue" title="Update" data-bs-toggle="tooltip" data-bs-placement="right"><i class="fa fa-edit"></i> Update</button>
+                            <button type="button" class="btn-sm btn btn-secondary" data-bs-dismiss="modal"> Close</button>
                         </div>
                     </form>
                 </div>

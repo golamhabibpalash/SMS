@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SMS_App.ViewModels.ExamResult.ExaminationResultVM>
+@model IEnumerable<SMS_App.ViewModels.ExamResult.ExaminationResultVM>
 @using System.Globalization;
 @{
     int sl = 0;
@@ -39,32 +39,57 @@
         }
     </style>
 }
-<div class="row">
-    <div class="col-md-12">
-        <form asp-action="ClassWiseResult" asp-controller="ExamResults" method="post">
-            <div class="form-row">
-                <div class="col-md-2">
-                    <select class="form-control select2" asp-items="ViewBag.ExamGroupList" name="examGroupId" id="examGroupId">
-                        <option selected disabled>Select Exam Group</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <select class="form-control" asp-items="ViewBag.AcademicClassList" name="classId" id="AcademicClassId">
-                        <option selected disabled>Select Academic Class</option>
-                    </select>
-                </div>
-                <div>
-                    <input type="submit" class="btn btn-info btn-sm" value="Search" onclick="reloadData()">
-                </div>
-                <div>
-                    @if (ViewBag.IsLoading == true)
+<div class="row mb-2">
+    <div class="col-12">
+        <form asp-action="ClassWiseResult" asp-controller="ExamResults" method="post" id="searchForm">
+            <select class="form-control d-inline-block" name="sessionId" id="sessionId" style="width: 180px; vertical-align: middle;" required>
+                <option value="" selected disabled>Session</option>
+                @if (ViewBag.SessionList != null)
+                {
+                    @foreach (var item in (SelectList)ViewBag.SessionList)
                     {
-                        <a style="display:none" class="btn btn-sm btn-success processResultBtn" asp-controller="ExamResults" asp-action="ProcessResult" asp-route-classId="ViewBag.classId" data-classId="ViewBag.classId" asp-route-groupId="ViewBag.examGroupId" data-groupId="ViewBag.examGroupId" onclick="reloadData()">Process Result</a>
-
-                        <a style="display:none" class="btn btn-sm btn-danger deleteResultBtn" asp-controller="ExamResults" asp-action="DeleteResult" asp-route-classId="ViewBag.classId" data-classId="ViewBag.classId" asp-route-groupId="ViewBag.examGroupId" data-groupId="ViewBag.examGroupId" onclick="reloadData()">Delete Result</a>
+                        <option value="@item.Value" selected="@item.Selected">@item.Text</option>
                     }
-                </div>
-            </div>
+                }
+            </select>
+            <select class="form-control d-inline-block" name="examGroupId" id="examGroupId" style="width: 240px; vertical-align: middle;" required>
+                <option value="" selected disabled>Exam Group</option>
+                @if (ViewBag.ExamGroupList != null)
+                {
+                    @foreach (var item in (SelectList)ViewBag.ExamGroupList)
+                    {
+                        <option value="@item.Value" selected="@item.Selected">@item.Text</option>
+                    }
+                }
+            </select>
+            <select class="form-control d-inline-block" name="classId" id="AcademicClassId" style="width: 160px; vertical-align: middle;" required>
+                <option value="" selected disabled>Class</option>
+                @if (ViewBag.AcademicClassList != null)
+                {
+                    @foreach (var item in (SelectList)ViewBag.AcademicClassList)
+                    {
+                        <option value="@item.Value" selected="@item.Selected">@item.Text</option>
+                    }
+                }
+            </select>
+            <select class="form-control d-inline-block" name="sectionId" id="sectionId" style="width: 160px; vertical-align: middle;">
+                <option value="">Section</option>
+                @if (ViewBag.SectionList != null)
+                {
+                    @foreach (var item in (SelectList)ViewBag.SectionList)
+                    {
+                        <option value="@item.Value" selected="@item.Selected">@item.Text</option>
+                    }
+                }
+            </select>
+            <button type="submit" class="btn btn-info d-inline-flex align-items-center" style="height: 38px; vertical-align: middle;" onclick="showLoadingImage()">
+                <i class="fas fa-search"></i>
+            </button>
+            @if (ViewBag.IsLoading == true)
+            {
+                <a style="display:none" class="btn btn-success processResultBtn" asp-controller="ExamResults" asp-action="ProcessResult" asp-route-classId="ViewBag.classId" data-classId="ViewBag.classId" asp-route-groupId="ViewBag.examGroupId" data-groupId="ViewBag.examGroupId" onclick="showLoadingImage()">Process</a>
+                <a style="display:none" class="btn btn-danger deleteResultBtn" asp-controller="ExamResults" asp-action="DeleteResult" asp-route-classId="ViewBag.classId" data-classId="ViewBag.classId" asp-route-groupId="ViewBag.examGroupId" data-groupId="ViewBag.examGroupId" onclick="showLoadingImage()">Delete</a>
+            }
         </form>
     </div>
 </div>
@@ -200,13 +225,6 @@
 
 
     <script>
-
-        let dataLoaded = false;
-        $(document).on("dataLoaded", function () {
-            // Set the flag variable to true.
-            dataLoaded = true;
-        });
-
         function showLoadingImage() {
             document.getElementById("loadingImage").style.display = "block";
             $("#loadingContainer").fadeIn(200);
@@ -218,108 +236,123 @@
             $("#loadingContainer").fadeOut(200);
             document.getElementById("myTable").style.display = "block";
         }
-
-        // Example function to simulate data reloading
-        function reloadData() {
-            showLoadingImage();
-            // Perform your data reloading here
-            if (dataLoaded) {
-                hideLoadingImage();
-            }
-        }
     </script>
     <script>
-        // Wait for the DOM to be fully loaded
         document.addEventListener("DOMContentLoaded", function () {
-
-            //Code for Table Header/Heading
-            // Get the <th> and <tr> elements
             var headerTh = document.getElementById("headerTh");
             var headerTr = document.getElementById("headerTr");
 
             if (headerTr) {
-                // Calculate the number of <td> elements
                 var tdCount = headerTr.getElementsByTagName("td").length;
-
-                // Set the rowspan attribute of <th>
                 headerTh.setAttribute("colspan", tdCount);
-            } else {
-                console.error("headerTr is null. Check the selector or DOM.");
             }
 
-
-
-            // Get the <td> elements within the table
             var tdElements = document.querySelectorAll("#myTable td");
-
-            // Iterate through each <td> element
             tdElements.forEach(function (td) {
-                // Check if inner text is 'F'
                 if (td.innerText.trim() === "F") {
-                    // Set background color to 'salmon'
                     td.style.backgroundColor = "salmon";
                 }
             });
         });
 
         $(document).ready(function () {
-            $('#examGroupId').change(function () {
-                let id = $('#examGroupId option:selected').val();
-                $.ajax({
-                    url: "/AcademicExams/GetAcademicClassByExamGrId?examGroupId=" + id,
-                    dataType: "JSON",
-                    type: "POST",
-                    cache: false,
-                    success: function (data) {
-                        $('#AcademicClassId').empty();
-                        var o = '<option disabled selected>Select Class</option>';
-                        $('#AcademicClassId').append(o);
+            $('#sessionId').change(function () {
+                var sessionId = $(this).val();
+                if (sessionId) {
+                    $('#examGroupId').empty();
+                    $('#examGroupId').append('<option value="" selected disabled>Loading...</option>');
+                    $.get("/api/GetExamGroupsBySession", { sessionId: sessionId }, function (data) {
+                        $('#examGroupId').empty();
+                        $('#examGroupId').append('<option value="" selected disabled>Select Exam Group</option>');
                         $.each(data, function (i, obj) {
-                            console.log(obj.name);
+                            var op = '<option value="' + obj.id + '">' + obj.examGroupName + '</option>';
+                            $('#examGroupId').append(op);
+                        });
+                        $('#AcademicClassId').empty();
+                        $('#AcademicClassId').append('<option value="" selected disabled>Select Class</option>');
+                        $('#sectionId').empty();
+                        $('#sectionId').append('<option value="" selected>Select Section (Optional)</option>');
+                    }).fail(function (err) {
+                        console.log("Error loading exam groups:", err);
+                        $('#examGroupId').empty();
+                        $('#examGroupId').append('<option value="" selected disabled>Select Exam Group</option>');
+                    });
+                }
+            });
+
+            $('#examGroupId').change(function () {
+                var groupId = $(this).val();
+                var sessionId = $('#sessionId').val();
+                if (groupId && sessionId) {
+                    $('#AcademicClassId').empty();
+                    $('#AcademicClassId').append('<option value="" selected disabled>Loading...</option>');
+                    $.get("/api/GetAcademicClassByExamGrId", { examGroupId: groupId }, function (data) {
+                        $('#AcademicClassId').empty();
+                        $('#AcademicClassId').append('<option value="" selected disabled>Select Class</option>');
+                        $.each(data, function (i, obj) {
                             var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
                             $('#AcademicClassId').append(op);
                         });
-                    },
-                    error: function (err) {
-                        console.log(err);
-                    }
-                });
+                        $('#sectionId').empty();
+                        $('#sectionId').append('<option value="" selected>Select Section (Optional)</option>');
+                    }).fail(function (err) {
+                        console.log("Error loading classes:", err);
+                        $('#AcademicClassId').empty();
+                        $('#AcademicClassId').append('<option value="" selected disabled>Select Class</option>');
+                    });
+                }
+            });
+
+            $('#AcademicClassId').change(function () {
+                var classId = $(this).val();
+                var examGroupId = $('#examGroupId').val();
+                if (classId && examGroupId) {
+                    $.get("/api/GetSectionsByExamGroupClass", { examGroupId: examGroupId, classId: classId }, function (data) {
+                        $('#sectionId').empty();
+                        $('#sectionId').append('<option value="" selected>Select Section (Optional)</option>');
+                        $.each(data, function (i, obj) {
+                            var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
+                            $('#sectionId').append(op);
+                        });
+                    }).fail(function (err) {
+                        console.log("Error loading sections:", err);
+                    });
+                }
             });
         });
     </script>
 
     <script>
-        // Call the functions based on your conditions
         window.onload = function () {
             var processButtons = document.querySelectorAll('.processResultBtn');
             processButtons.forEach(function (button) {
                 var classId = button.getAttribute('data-classId');
                 var groupId = button.getAttribute('data-groupId');
 
-                $.ajax({
-                    url: '/ExamResults/IsResultProcessed',
-                    data: { groupId: groupId, classId: classId },
-                    cache: false,
-                    type: 'POST',
-                    dataType: 'json',
-                    success: function (d) {
-                        if (d) {
-                            button.style.display = 'none';
-                            var otherBtn = button.nextElementSibling;
-                            otherBtn.style.display = 'block';
+                if (classId && groupId) {
+                    $.ajax({
+                        url: '/ExamResults/IsResultProcessed',
+                        data: { groupId: groupId, classId: classId },
+                        cache: false,
+                        type: 'POST',
+                        dataType: 'json',
+                        success: function (d) {
+                            if (d) {
+                                button.style.display = 'none';
+                                var otherBtn = button.nextElementSibling;
+                                otherBtn.style.display = 'inline-block';
+                            } else {
+                                button.style.display = 'inline-block';
+                                var otherBtn = button.nextElementSibling;
+                                otherBtn.style.display = 'none';
+                            }
+                        },
+                        error: function (err) {
+                            console.log(err);
                         }
-                        else {
-                            button.style.display = 'block';
-                            var otherBtn = button.nextElementSibling;
-                            otherBtn.style.display = 'none';
-                        }
-                    },
-                    error: function (err) {
-                        console.log(err);
-                    }
-                });
+                    });
+                }
             });
-
         };
     </script>
 }

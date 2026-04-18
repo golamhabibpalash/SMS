@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -119,23 +119,32 @@ public class ExamResultsController : Controller
     public async Task<ActionResult> ClassWiseResult()
     {
         GlobalUI.PageTitle = GlobalUI.SiteTitle = "Class-Wise Result";
-        ViewData["ExamGroupList"] = new SelectList(await _academicExamGroupManager.GetAllAsync(), "Id", "ExamGroupName");
+        var sessions = await _sessionManager.GetAllAsync();
+        var currentSession = await _sessionManager.GetCurrentAcademicSessionAsync();
+        ViewData["SessionList"] = new SelectList(sessions, "Id", "Name", currentSession?.Id);
+        ViewData["ExamGroupList"] = new SelectList(await _academicExamGroupManager.GetAllAsync(currentSession?.Id ?? 0), "Id", "ExamGroupName");
         ViewData["AcademicClassList"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name");
 
+        ViewBag.sessionId = currentSession?.Id;
         ViewBag.IsLoading = false;
         return View();
     }
 
     [HttpPost]
     [Authorize(Policy = "ClassWiseResultExamResultsPolicy")]
-    public async Task<ActionResult> ClassWiseResult(int examGroupId, int classId)
+    public async Task<ActionResult> ClassWiseResult(int examGroupId, int classId, int? sectionId, int sessionId)
     {
         GlobalUI.PageTitle = "Class-Wise Result";
 
         ViewBag.examGroupId = examGroupId;
         ViewBag.classId = classId;
+        ViewBag.sectionId = sectionId;
+        ViewBag.sessionId = sessionId;
 
-        ViewData["ExamGroupList"] = new SelectList(await _academicExamGroupManager.GetAllAsync(), "Id", "ExamGroupName", examGroupId);
+        var sessions = await _sessionManager.GetAllAsync();
+        var examGroups = sessionId > 0 ? await _academicExamGroupManager.GetAllAsync(sessionId) : await _academicExamGroupManager.GetAllAsync();
+        ViewData["SessionList"] = new SelectList(sessions, "Id", "Name", sessionId);
+        ViewData["ExamGroupList"] = new SelectList(examGroups, "Id", "ExamGroupName", examGroupId);
         ViewData["AcademicClassList"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", classId);
 
         var examList = await _academicExamManager.GetByClassIdExamGroupIdAsync(examGroupId, classId);

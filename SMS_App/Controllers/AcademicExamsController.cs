@@ -816,6 +816,9 @@ public class AcademicExamsController : Controller
         return Json(results);
     }
 
+    [HttpGet]
+    [Route("api/GetAcademicClassByExamGrId")]
+    [AllowAnonymous]
     public async Task<JsonResult> GetAcademicClassByExamGrId(int examGroupId)
     {
         var examGroup = await _examGroupManager.GetByIdAsync(examGroupId);
@@ -823,6 +826,9 @@ public class AcademicExamsController : Controller
         return Json(results);
     }
 
+    [HttpGet]
+    [Route("api/GetAcademicSectionByExamGrId_ClassId")]
+    [AllowAnonymous]
     public async Task<JsonResult> GetAcademicSectionByExamGrId_ClassId(int examGroupId,int classId)
     {
         var sections = new List<AcademicSection>();
@@ -835,6 +841,34 @@ public class AcademicExamsController : Controller
                     .ToList();
         }
 
+        return Json(sections);
+    }
+
+    [HttpGet]
+    [Route("api/GetExamGroupsBySession")]
+    [AllowAnonymous]
+    public async Task<JsonResult> GetExamGroupsBySession(int sessionId)
+    {
+        var examGroups = await _examGroupManager.GetAllAsync(sessionId);
+        return Json(examGroups);
+    }
+
+    [HttpGet]
+    [Route("api/GetSectionsByExamGroupClass")]
+    [AllowAnonymous]
+    public async Task<JsonResult> GetSectionsByExamGroupClass(int examGroupId, int classId)
+    {
+        var sections = new List<AcademicSection>();
+        var exams = await _examManager.GetByClassIdExamGroupIdAsync(examGroupId, classId);
+        if (exams.Count > 0)
+        {
+            sections = exams
+                .Where(e => e.AcademicSection != null)
+                .Select(e => e.AcademicSection)
+                .DistinctBy(s => s.Id)
+                .ToList();
+            sections.Insert(0, new AcademicSection { Id = 0, Name = "All" });
+        }
         return Json(sections);
     }
 

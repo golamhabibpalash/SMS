@@ -1,4 +1,41 @@
 
+// Global Delete function
+function DeleteExam(id) {
+    if (!id) {
+        alertify.error('Invalid exam ID');
+        return false;
+    }
+    
+    if (!confirm("Are you sure you want to delete this exam?")) {
+        return false;
+    }
+    
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    
+    $.ajax({
+        url: '/AcademicExams/Delete?Id=' + id,
+        type: 'POST',
+        success: function (response) {
+            if (response && response.success) {
+                var $row = $('button[data-id="' + id + '"]').closest('tr');
+                $row.fadeOut(300, function() {
+                    $(this).remove();
+                });
+                alertify.success(response.message);
+            } else {
+                alertify.error(response?.message || "Failed to delete");
+            }
+        },
+        error: function (xhr) {
+            alertify.error(xhr.responseJSON?.message || "Error deleting exam");
+        }
+    });
+    return false;
+}
+
 $(document).ready(function () {
 // Select2 initialization will be handled by the global initialization in _HeadPartial.cshtml
 // This ensures consistent configuration across all select2 elements
@@ -247,33 +284,50 @@ async function ExamAddBtnClick() {
 
         // If value is "0" or empty, treat as "All Sections"
         let isAllSections = !selectedSectionId || selectedSectionId.length === 0 || selectedSectionId.includes('0');
-        let sectionIdToUse = isAllSections ? '' : selectedSectionId[0];
-        let sectionDisplayText = isAllSections ? 'All Sections' : (Array.from(document.getElementById('AcademicSectionId').options).find(opt => opt.value === selectedSectionId[0])?.text || 'Unknown');
-
-        // Validate duplicate against existing rows in table
-        let existingRows = $("#detailsTable > tbody tr");
-        let isDuplicate = false;
         
-        existingRows.each(function() {
-            let row = $(this);
-            let rowGroupId = row.find('input[name$=".AcademicExamGroupId"]').val();
-            let rowClassId = row.find('input[name$=".AcademicClassId"]').val();
-            let rowSubjectId = row.find('input[name$=".AcademicSubjectId"]').val();
-            let rowSectionId = row.find('input[name$=".AcademicSectionId"]').val();
-            let rowCategory = row.find('input[name$=".ExamCategory"]').val();
-            
-            // Check for duplicate: same group, class, subject, category AND (both are all sections OR same section)
-            let rowIsAllSections = rowSectionId === '' || rowSectionId === '0' || rowSectionId === null;
-            if (rowGroupId == groupId && rowClassId == classId && rowSubjectId == subjectid && rowCategory == examCategory.value) {
-                if ((isAllSections && rowIsAllSections) || rowSectionId == sectionIdToUse) {
-                    isDuplicate = true;
-                    return false;
+        let sectionsToAdd = [];
+        if (isAllSections) {
+            sectionsToAdd.push({ id: '', text: 'All Sections' });
+        } else {
+            selectedSectionId.forEach(sectionId => {
+                if (sectionId !== '0') {
+                    let sectionOption = Array.from(document.getElementById('AcademicSectionId').options).find(opt => opt.value === sectionId);
+                    sectionsToAdd.push({ id: sectionId, text: sectionOption ? sectionOption.text : 'Unknown' });
                 }
+            });
+        }
+
+        // Validate duplicates against existing rows in table for all selected sections
+        let existingRows = $("#detailsTable > tbody tr");
+        let duplicateSections = [];
+        
+        sectionsToAdd.forEach(section => {
+            let isDuplicate = false;
+            existingRows.each(function() {
+                let row = $(this);
+                let rowGroupId = row.find('input[name$=".AcademicExamGroupId"]').val();
+                let rowClassId = row.find('input[name$=".AcademicClassId"]').val();
+                let rowSubjectId = row.find('input[name$=".AcademicSubjectId"]').val();
+                let rowSectionId = row.find('input[name$=".AcademicSectionId"]').val();
+                let rowCategory = row.find('input[name$=".ExamCategory"]').val();
+                
+                let rowIsAllSections = rowSectionId === '' || rowSectionId === '0' || rowSectionId === null;
+                let currentIsAllSections = section.id === '' || section.id === '0';
+                
+                if (rowGroupId == groupId && rowClassId == classId && rowSubjectId == subjectid && rowCategory == examCategory.value) {
+                    if ((currentIsAllSections && rowIsAllSections) || rowSectionId == section.id) {
+                        isDuplicate = true;
+                        return false;
+                    }
+                }
+            });
+            if (isDuplicate) {
+                duplicateSections.push(section.text);
             }
         });
 
-        if (isDuplicate) {
-            alertify.error('Duplicate entry exists in pending table for this combination.');
+        if (duplicateSections.length > 0) {
+            alertify.error('Duplicate entry exists in pending table for: ' + duplicateSections.join(', '));
             return;
         }
 
@@ -289,7 +343,7 @@ async function ExamAddBtnClick() {
             if (isAllSections) {
                 duplicateCheckData.SectionId = null;
             } else {
-                duplicateCheckData.SectionIds = [parseInt(selectedSectionId[0])];
+                duplicateCheckData.SectionIds = selectedSectionId.filter(s => s !== '0').map(s => parseInt(s));
             }
 
             const response = await $.ajax({
@@ -315,26 +369,30 @@ async function ExamAddBtnClick() {
             }
         } catch (xhr) {
             console.error('Error checking duplicates:', xhr);
-            // Continue without blocking if API fails
         }
 
-        // Add a single row for "All Sections" or selected section
-        let serial_td = '<td><input type="hidden" name="AcademicExams[' + indexCount + '].AcademicExamGroupId" value="' + groupId + '" />' + (indexCount + 1) + '</td>';
-        let subject_td = '<td>  <input type="hidden" name="AcademicExams[' + indexCount + '].AcademicSubjectId" value="' + subjectid + '" />' + subjectIdText + '</td>';
-        let examCategory_td = '<td><input type="hidden" name="AcademicExams[' + indexCount + '].ExamCategory" value="' + examCategory.value + '" /> ' + examCategory.value + '</td>';
-        let class_td = '<td> <input type="hidden" name="AcademicExams[' + indexCount + '].AcademicClassId" value="' + classId + '" />' + classIdText + '</td>';
-        let section_td = '<td> <input type="hidden" name="AcademicExams[' + indexCount + '].AcademicSectionId" value="' + sectionIdToUse + '" /><span class="badge bg-info">' + sectionDisplayText + '</span></td>';
-        let teacher_td = '<td> <input type="hidden" name="AcademicExams[' + indexCount + '].EmployeeId" value="' + teacherId + '" />' + teacherIdText + '</td>';
-        let marks_td = '<td class="text-end"> <input type="hidden" name="AcademicExams[' + indexCount + '].TotalMarks" value="' + marks + '" />' + marks + '</td>';
-        let action_td = '<td><button onclick="removeRow(this)" class="removeBtn btn btn-sm btn-warning" value="Remove">Remove</button></td>';
-        let tr = '<tr>' + serial_td + subject_td + examCategory_td + class_td + section_td + teacher_td + marks_td + action_td + '</tr>';
-        tableBody.innerHTML += tr;
+        // Add a row for each selected section
+        sectionsToAdd.forEach(section => {
+            let serial_td = '<td><input type="hidden" name="AcademicExams[' + indexCount + '].AcademicExamGroupId" value="' + groupId + '" />' + (indexCount + 1) + '</td>';
+            let subject_td = '<td>  <input type="hidden" name="AcademicExams[' + indexCount + '].AcademicSubjectId" value="' + subjectid + '" />' + subjectIdText + '</td>';
+            let examCategory_td = '<td><input type="hidden" name="AcademicExams[' + indexCount + '].ExamCategory" value="' + examCategory.value + '" /> ' + examCategory.value + '</td>';
+            let class_td = '<td> <input type="hidden" name="AcademicExams[' + indexCount + '].AcademicClassId" value="' + classId + '" />' + classIdText + '</td>';
+            let section_td = '<td> <input type="hidden" name="AcademicExams[' + indexCount + '].AcademicSectionId" value="' + section.id + '" /><span class="badge bg-info">' + section.text + '</span></td>';
+            let teacher_td = '<td> <input type="hidden" name="AcademicExams[' + indexCount + '].EmployeeId" value="' + teacherId + '" />' + teacherIdText + '</td>';
+            let marks_td = '<td class="text-end"> <input type="hidden" name="AcademicExams[' + indexCount + '].TotalMarks" value="' + marks + '" />' + marks + '</td>';
+            let action_td = '<td><button onclick="removeRow(this)" class="removeBtn btn btn-sm btn-warning" value="Remove">Remove</button></td>';
+            let tr = '<tr>' + serial_td + subject_td + examCategory_td + class_td + section_td + teacher_td + marks_td + action_td + '</tr>';
+            tableBody.innerHTML += tr;
+            indexCount++;
+        });
         
-        alertify.success(isAllSections ? 'Exam added for All Sections.' : 'Exam added successfully.');
+        alertify.success(sectionsToAdd.length > 1 ? 'Exams added for ' + sectionsToAdd.length + ' sections.' : (isAllSections ? 'Exam added for All Sections.' : 'Exam added successfully.'));
     }
 }
 
-$('#submitBtn').click(function () {
+$('#submitBtn').click(function (e) {
+    e.preventDefault();
+    e.stopPropagation();
     showLoader();
     
     // Start progress animation
@@ -346,73 +404,87 @@ $('#submitBtn').click(function () {
         $('#loading-count').text(Math.round(progress) + '%');
     }, 500);
     
-    $('#submitForm').off('submit').on('submit', function (e) {
-        e.preventDefault();
-        
-        // Hide modal immediately and show loading
-        $('#createUpdateModal').modal('hide');
-        document.getElementById("loading").style.display = "block";
-        $('#loading-status').text('Creating exam records for students...');
-        
-        // Submit the form via AJAX
-        $.ajax({
-            type: 'POST',
-            url: $(this).attr('action') || '/AcademicExams/Create',
-            data: $(this).serialize(),
-            success: function (response) {
-                clearInterval(progressInterval);
-                $('#loading-progress').css('width', '100%');
-                $('#loading-count').text('100%');
-                $('#loading-status').text('Exam created successfully!');
-                
-                // Clear the table
-                $("#detailsTable > tbody").empty();
-                
-                // Reset the form
-                $('#submitForm')[0].reset();
-                $('#AcademicSectionId').val([]).trigger('change.select2');
-                
-                setTimeout(function () {
-                    hideLoader();
-                    document.getElementById("loading").style.display = "none";
-                    location.reload();
-                }, 1000);
-            },
-            error: function (xhr, status, error) {
-                clearInterval(progressInterval);
+    var $form = $('#submitForm');
+    
+    // Get selected sections (multiple select)
+    var selectedSections = $('#AcademicSectionId').val() || [];
+    var formData = $form.serializeArray();
+    
+    // Add sections as JSON string
+    if (selectedSections.length > 0 && selectedSections[0] != "0") {
+        formData.push({ name: 'AcademicExams[0].AcademicSectionIdList', value: JSON.stringify(selectedSections) });
+    }
+    
+    // Hide modal immediately and show loading
+    $('#createUpdateModal').modal('hide');
+    document.getElementById("loading").style.display = "block";
+    $('#loading-status').text('Creating exam records for students...');
+    
+    // Submit the form via AJAX
+    $.ajax({
+        type: 'POST',
+        url: $form.attr('action') || '/AcademicExams/Create',
+        data: formData,
+        success: function (response) {
+            clearInterval(progressInterval);
+            $('#loading-progress').css('width', '100%');
+            $('#loading-count').text('100%');
+            $('#loading-status').text('Exam created successfully!');
+            
+            // Clear the table
+            $("#detailsTable > tbody").empty();
+            
+            // Reset the form
+            $form[0].reset();
+            $('#AcademicSectionId').val([]).trigger('change.select2');
+            
+            setTimeout(function () {
                 hideLoader();
                 document.getElementById("loading").style.display = "none";
-                alertify.error('Error submitting form. Please try again.');
-            }
-        });
+                location.reload();
+            }, 1000);
+        },
+        error: function (xhr, status, error) {
+            clearInterval(progressInterval);
+            hideLoader();
+            document.getElementById("loading").style.display = "none";
+            alertify.error('Error submitting form. Please try again.');
+        }
     });
-    
-    $(this).closest('form').submit();
 });
 function DeleteExam(id) {
-    var result = confirm("Are you sure you want to proceed to delete?");
+    if (!id) {
+        console.log('No ID provided');
+        alertify.error('Invalid exam ID');
+        return false;
+    }
+    
+    var result = confirm("Are you sure you want to delete this exam?");
     if (result) {
+        console.log('Deleting exam id:', id);
         $.ajax({
             url: '/AcademicExams/Delete?Id=' + id,
-            method: 'Post',
+            type: 'POST',
             success: function (response) {
+                console.log('Delete response:', response);
                 if (response && response.success) {
-                    var row = $('button[data-id="' + id + '"]').closest('tr');
-                    if (row.length) {
-                        row.fadeOut(300, function() {
-                            $(this).remove();
-                        });
-                    }
+                    $('button[data-id="' + id + '"]').closest('tr').hide();
                     alertify.success(response.message);
+                    setTimeout(function() {
+                        location.reload();
+                    }, 1000);
                 } else {
-                    alertify.error(response ? response.message : "Failed to delete");
+                    alertify.error(response?.message || "Failed to delete");
                 }
             },
-            error: function () {
-                alertify.error("Error occurred while deleting.");
+            error: function (xhr) {
+                console.log('Delete error:', xhr);
+                var msg = xhr.responseJSON?.message || "Error deleting exam";
+                alertify.error(msg);
             }
         });
     }
+    return false;
 }
 
 async function EditExamClick(id) {
@@ -511,4 +583,208 @@ function showLoader() {
 }
 function hideLoader() {
     document.getElementById('loading').classList.add('d-none');
+}
+
+// ============================================
+// OCR Mark Import Functions
+// ============================================
+
+async function processOCRImage() {
+    const fileInput = document.getElementById('ocrImageInput');
+    const file = fileInput.files[0];
+    
+    if (!file) {
+        alertify.error('Please select an image file first');
+        return;
+    }
+    
+    const examType = document.getElementById('ocrExamType').value;
+    const examId = document.querySelector('input[name="Id"]').value;
+    
+    // Show progress
+    const progressDiv = document.getElementById('ocrProgress');
+    const progressBar = document.getElementById('ocrProgressBar');
+    const statusText = document.getElementById('ocrStatus');
+    
+    progressDiv.style.display = 'block';
+    progressBar.style.width = '0%';
+    progressBar.textContent = '0%';
+    statusText.textContent = 'Initializing OCR...';
+    
+    try {
+        // Initialize Tesseract worker
+        progressBar.style.width = '10%';
+        progressBar.textContent = '10%';
+        statusText.textContent = 'Loading OCR engine...';
+        
+        const worker = await Tesseract.createWorker('eng', 1, {
+            logger: m => {
+                if (m.status === 'recognizing text') {
+                    const percent = Math.round(m.progress * 80 + 10);
+                    progressBar.style.width = percent + '%';
+                    progressBar.textContent = percent + '%';
+                    statusText.textContent = 'Processing image: ' + Math.round(m.progress * 100) + '%';
+                }
+            }
+        });
+        
+        progressBar.style.width = '20%';
+        progressBar.textContent = '20%';
+        statusText.textContent = 'Recognizing text...';
+        
+        // Perform OCR
+        const { data: { text } } = await worker.recognize(file);
+        
+        await worker.terminate();
+        
+        progressBar.style.width = '90%';
+        progressBar.textContent = '90%';
+        statusText.textContent = 'Parsing results...';
+        
+        // Log raw OCR text for debugging
+        console.log('Raw OCR Text:', text);
+        console.log('Lines found:', text.split('\n').length);
+        
+        // Parse the OCR text to extract roll numbers and marks
+        const extractedData = parseOCRText(text);
+        
+        console.log('Extracted Data:', extractedData);
+        
+        if (extractedData.length === 0) {
+            // Show raw text in alert for debugging
+            console.log('Full OCR output:', text);
+            alertify.warning('No marks could be extracted. Check browser console (F12) for raw OCR text.');
+            statusText.textContent = 'Extracted: 0 rows - see console for debug';
+            return;
+        }
+        
+        // Auto-fill marks in the table
+        const filledCount = autoFillMarksFromOCR(extractedData, examType);
+        
+        progressBar.style.width = '100%';
+        progressBar.textContent = '100%';
+        statusText.textContent = 'Completed! ' + filledCount + ' marks filled.';
+        
+        alertify.success(filledCount + ' marks filled successfully from OCR');
+        
+    } catch (error) {
+        console.error('OCR Error:', error);
+        statusText.textContent = 'Error: ' + error.message;
+        alertify.error('OCR processing failed: ' + error.message);
+    }
+}
+
+function parseOCRText(text) {
+    const results = [];
+    const lines = text.split('\n');
+    
+    for (let i = 0; i < lines.length; i++) {
+        let line = lines[i].trim();
+        if (!line) continue;
+        
+        // Skip header lines and short lines
+        if (line.match(/^(Class)?Roll/i) || line.match(/Student\s*Name/i) || 
+            line.match(/^CQ/i) || line.match(/^MCQ/i) || line.match(/^Prac/i) ||
+            line.match(/^Total/i) || line.match(/^---/) || line.length < 5) {
+            continue;
+        }
+        
+        // Extract all numbers from the line
+        const numbers = line.match(/\d+/g);
+        
+        if (!numbers) continue;
+        
+        // Format: rollNumber StudentName mark 
+        // e.g., "2608001 Jamil Mia 15" -> numbers: [2608001, 15]
+        if (numbers.length >= 2) {
+            // First number is roll (could be 5-7 digits like 2608001)
+            const roll = parseInt(numbers[0]);
+            
+            // Allow larger roll numbers (school code + roll)
+            if (roll > 0 && roll < 100000) {
+                // Find last number as mark (most likely)
+                const mark = parseInt(numbers[numbers.length - 1]);
+                
+                if (mark >= 0 && mark <= 100) {
+                    results.push({ roll: roll, mark: mark });
+                }
+            }
+        }
+    }
+    
+    return results;
+}
+
+function autoFillMarksFromOCR(extractedData, examType) {
+    let filledCount = 0;
+    
+    const firstInput = document.querySelector('.markInput');
+    const totalMarks = firstInput ? parseInt(firstInput.getAttribute('max')) || 100 : 100;
+    
+    const markInputs = document.querySelectorAll('.markInput:not([disabled])');
+    
+    console.log('Mark inputs found:', markInputs.length);
+    
+    // Use approach: try to fill by row index if roll matching fails
+    // Create array of inputs in order
+    const inputsArray = Array.from(markInputs);
+    
+    // Try matching by roll from table
+    const rollInputMap = {};
+    
+    inputsArray.forEach((input, index) => {
+        const row = input.closest('tr');
+        // Get the roll from first td in the row (it shows roll number as text)
+        const firstTd = row.querySelector('td:nth-child(2)');
+        if (firstTd) {
+            // Text content only, exclude hidden input values
+            const text = firstTd.textContent.trim();
+            const roll = parseInt(text);
+            if (roll) {
+                rollInputMap[roll] = input;
+            }
+        }
+    });
+    
+    console.log('Roll map:', rollInputMap);
+    console.log('OCR data:', extractedData);
+    
+    // Now fill marks
+    extractedData.forEach((data, idx) => {
+        if (!data.roll || data.mark === undefined || data.mark === null) return;
+        
+        const ocrRoll = data.roll;
+        const markValue = data.mark;
+        
+        // Direct match
+        let matchedInput = rollInputMap[ocrRoll];
+        
+        // Try suffix match (e.g., 2608001 -> 1)
+        if (!matchedInput && ocrRoll > 1000) {
+            const lastDigits = parseInt(ocrRoll.toString().slice(-2));
+            if (lastDigits && rollInputMap[lastDigits]) {
+                matchedInput = rollInputMap[lastDigits];
+                console.log('Matched suffix:', ocrRoll, '->', lastDigits);
+            }
+        }
+        
+        // Fallback: use index order - assume OCR and table have same student order
+        if (!matchedInput && idx < inputsArray.length) {
+            matchedInput = inputsArray[idx];
+            console.log('Using index fallback:', idx, 'for roll', ocrRoll);
+        }
+        
+        if (matchedInput) {
+            if (markValue <= totalMarks) {
+                matchedInput.value = markValue;
+                matchedInput.dispatchEvent(new Event('change', { bubbles: true }));
+                filledCount++;
+                console.log('Filled roll', ocrRoll, 'mark', markValue);
+            } else {
+                console.log('Mark > total:', markValue, '>', totalMarks);
+            }
+        }
+    });
+    
+    return filledCount;
 }

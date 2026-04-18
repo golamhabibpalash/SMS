@@ -125,6 +125,40 @@
             @Html.AntiForgeryToken()
             <input type="hidden" name="PrimaryExamId" value="@Model.PrimaryExamId" />
             
+            <div class="row mb-2">
+                <div class="col-md-12">
+                    <div class="card bg-light">
+                        <div class="card-body p-2">
+                            <h5 class="card-title">OCR Mark Import</h5>
+                            <p class="card-text small mb-2">Upload an image of handwritten marksheet to auto-fill marks. Expected format: ClassRoll | CQ | MCQ | Prac columns</p>
+                            <div class="row align-items-center">
+                                <div class="col-md-4">
+                                    <input type="file" class="form-control form-control-sm" id="ocrImageInput" accept="image/*" />
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-select form-select-sm" id="ocrExamType">
+                                        <option value="CQ">CQ (Written)</option>
+                                        <option value="MCQ">MCQ</option>
+                                        <option value="Prac">Practical</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="button" class="btn btn-primary btn-sm" onclick="processOCRImage()">Process OCR</button>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <div class="progress" id="ocrProgress" style="display: none;">
+                                        <div class="progress-bar" role="progressbar" style="width: 0%" id="ocrProgressBar">0%</div>
+                                    </div>
+                                    <small id="ocrStatus" class="text-muted"></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <div class="table-responsive">
                 <table class="table table-sm table-striped table-bordered merged-table" id="markTable">
                     <thead class="table-info font-weight-bolder">
@@ -524,6 +558,186 @@
                     console.error('Error:', xhr, status, error);
                 }
             });
+        }
+
+        // ============================================
+        // OCR Mark Import Functions
+        // ============================================
+
+        async function processOCRImage() {
+            var fileInput = document.getElementById('ocrImageInput');
+            var file = fileInput.files[0];
+            
+            if (!file) {
+                alertify.error('Please select an image file first');
+                return;
+            }
+            
+            var examType = document.getElementById('ocrExamType').value;
+            
+            // Show progress
+            var progressDiv = document.getElementById('ocrProgress');
+            var progressBar = document.getElementById('ocrProgressBar');
+            var statusText = document.getElementById('ocrStatus');
+            
+            progressDiv.style.display = 'block';
+            progressBar.style.width = '0%';
+            progressBar.textContent = '0%';
+            statusText.textContent = 'Initializing OCR...';
+            
+            try {
+                progressBar.style.width = '10%';
+                progressBar.textContent = '10%';
+                statusText.textContent = 'Loading OCR engine...';
+                
+                var worker = await Tesseract.createWorker('eng', 1, {
+                    logger: function(m) {
+                        if (m.status === 'recognizing text') {
+                            var percent = Math.round(m.progress * 80 + 10);
+                            progressBar.style.width = percent + '%';
+                            progressBar.textContent = percent + '%';
+                            statusText.textContent = 'Processing image: ' + Math.round(m.progress * 100) + '%';
+                        }
+                    }
+                });
+                
+                progressBar.style.width = '20%';
+                progressBar.textContent = '20%';
+                statusText.textContent = 'Recognizing text...';
+                
+                var result = await worker.recognize(file);
+                
+                await worker.terminate();
+                
+                progressBar.style.width = '90%';
+                progressBar.textContent = '90%';
+                statusText.textContent = 'Parsing results...';
+                
+                console.log('Raw OCR Text:', result.data.text);
+                console.log('Lines:', result.data.text.split('\n').length);
+                
+                var extractedData = parseOCRText(result.data.text);
+                
+                console.log('Extracted Data:', extractedData);
+                
+                if (extractedData.length === 0) {
+                    console.log('Full OCR:', result.data.text);
+                    alertify.warning('No marks extracted. Check browser console for raw text.');
+                    statusText.textContent = '0 rows - see console';
+                    return;
+                }
+                
+                var filledCount = autoFillMarksFromOCR(extractedData);
+                
+                progressBar.style.width = '100%';
+                progressBar.textContent = '100%';
+                statusText.textContent = 'Completed! ' + filledCount + ' marks filled.';
+                
+                alertify.success(filledCount + ' marks filled successfully from OCR');
+                
+            } catch (error) {
+                console.error('OCR Error:', error);
+                statusText.textContent = 'Error: ' + error.message;
+                alertify.error('OCR processing failed: ' + error.message);
+            }
+        }
+
+        function parseOCRText(text) {
+            var results = [];
+            var lines = text.split('\n');
+            
+            for (var i = 0; i < lines.length; i++) {
+                var line = lines[i].trim();
+                if (!line) continue;
+                
+                // Skip header lines
+                if (line.match(/^(Class)?Roll/i) || line.match(/Student\s*Name/i) || 
+                    line.match(/^CQ/i) || line.match(/^MCQ/i) || line.match(/^Prac/i) ||
+                    line.match(/^Total/i) || line.match(/^---/) || line.length < 5) {
+                    continue;
+                }
+                
+                var numbers = line.match(/\d+/g);
+                
+                if (!numbers) continue;
+                if (numbers.length >= 2) {
+                    var roll = parseInt(numbers[0]);
+                    
+                    if (roll > 0 && roll < 100000) {
+                        var mark = parseInt(numbers[numbers.length - 1]);
+                        
+                        if (mark >= 0 && mark <= 100) {
+                            results.push({ roll: roll, mark: mark });
+                        }
+                    }
+                }
+            }
+            
+            return results;
+        }
+
+        function autoFillMarksFromOCR(extractedData) {
+            var filledCount = 0;
+            
+            var firstInput = document.querySelector('.markInput');
+            var totalMarks = firstInput ? parseInt(firstInput.getAttribute('max')) || 100 : 100;
+            
+            var markInputs = document.querySelectorAll('.markInput:not([disabled])');
+            
+            console.log('Inputs found:', markInputs.length);
+            
+            var inputsArray = Array.from(markInputs);
+            
+            var rollInputMap = {};
+            
+            inputsArray.forEach(function(input, index) {
+                var row = input.closest('tr');
+                var firstTd = row.querySelector('td:nth-child(2)');
+                if (firstTd) {
+                    var text = firstTd.textContent.trim();
+                    var roll = parseInt(text);
+                    if (roll) {
+                        rollInputMap[roll] = input;
+                    }
+                }
+            });
+            
+            console.log('Roll map:', rollInputMap);
+            console.log('OCR data:', extractedData);
+            
+            extractedData.forEach(function(data, idx) {
+                if (!data.roll || data.mark === undefined || data.mark === null) return;
+                
+                var ocrRoll = data.roll;
+                var markValue = data.mark;
+                var matchedInput = rollInputMap[ocrRoll];
+                
+                // Suffix match
+                if (!matchedInput && ocrRoll > 1000) {
+                    var lastDigits = parseInt(ocrRoll.toString().slice(-2));
+                    if (lastDigits && rollInputMap[lastDigits]) {
+                        matchedInput = rollInputMap[lastDigits];
+                        console.log('Matched suffix:', ocrRoll, '->', lastDigits);
+                    }
+                }
+                
+                // Index fallback
+                if (!matchedInput && idx < inputsArray.length) {
+                    matchedInput = inputsArray[idx];
+                    console.log('Index fallback:', idx);
+                }
+                
+                if (matchedInput) {
+                    if (markValue <= totalMarks) {
+                        matchedInput.value = markValue;
+                        matchedInput.dispatchEvent(new Event('change', { bubbles: true }));
+                        filledCount++;
+                        console.log('Filled:', ocrRoll, '=', markValue);
+                    }
+                }
+            });
+            
+            return filledCount;
         }
     </script>
 }

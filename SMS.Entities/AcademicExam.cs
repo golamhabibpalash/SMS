@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SMS.Entities;
 
@@ -25,4 +26,7 @@ public class AcademicExam : CommonProps
     public bool Status { get; set; }
     public string ExamCategory { get; set; } //Written,MCQ,Practical
     public virtual List<AcademicExamDetail> AcademicExamDetails { get; set; }
+    
+    [NotMapped]
+    public List<int> AcademicSectionIdList { get; set; }
 }

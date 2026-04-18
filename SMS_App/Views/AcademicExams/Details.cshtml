@@ -126,6 +126,40 @@
                 <small class="text-muted">Enable to input marks for all sections of the same exam at once</small>
             </div>
         </div>
+        
+        <div class="row mb-2">
+            <div class="col-md-12">
+                <div class="card bg-light">
+                    <div class="card-body p-2">
+                        <h5 class="card-title">OCR Mark Import</h5>
+                        <p class="card-text small mb-2">Upload an image of handwritten marksheet to auto-fill marks. Expected format: ClassRoll | CQ | MCQ | Prac columns</p>
+                        <div class="row align-items-center">
+                            <div class="col-md-4">
+                                <input type="file" class="form-control form-control-sm" id="ocrImageInput" accept="image/*" />
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-select form-select-sm" id="ocrExamType">
+                                    <option value="CQ">CQ (Written)</option>
+                                    <option value="MCQ">MCQ</option>
+                                    <option value="Prac">Practical</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-primary btn-sm" id="processOcrBtn" onclick="processOCRImage()">Process OCR</button>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-12">
+                                <div class="progress" id="ocrProgress" style="display: none;">
+                                    <div class="progress-bar" role="progressbar" style="width: 0%" id="ocrProgressBar">0%</div>
+                                </div>
+                                <small id="ocrStatus" class="text-muted"></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <form asp-action="ExmaMarkSubmit" asp-controller="AcademicExams" method="post" id="myForm">
             <input asp-for="Id" type="hidden" />
             <table class="table table-sm table-responsive-sm table-striped table-bordered">

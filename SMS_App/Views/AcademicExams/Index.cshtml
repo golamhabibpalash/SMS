@@ -106,12 +106,12 @@
                                                                             <a class="btn btn-sm examEditBtn" id="editBtn_@exam.Id" data-examid="@exam.Id" data-groupid="@itemByGroup.Id" data-classid="@exam.ClassId" data-subjectid="@row.SubjectId" data-sectionid="@row.SectionId" data-employeeid="@row.EmployeeId" data-status="@row.IsLocked" data-marks="@row.TotalMarks" data-category="@row.ExaminationDto?.ExamCategory" data-bs-toggle="modal" data-bs-target="#createUpdateModal" onclick="EditExamClick(@exam.Id)"><i class="fas fa-edit text-dark"></i> </a>
                                                                             }
                                                                             <a class="btn btn-sm mr-1" asp-action="Details" asp-route-id="@exam.Id" data-bs-toggle="tooltip" data-placement="top" title="Details"><i class="fas fa-info-circle text-info"></i> </a>
-                                                                            @if (User.IsInRole("SuperAdmin"))
-                                                                            {
-                                                                                <button class="btn btn-group-sm" data-id="@exam.Id" data-bs-toggle="tooltip" data-placement="right" title="Delete" onclick="DeleteExam(@exam.Id)">
-                                                                                    <i class="fas fa-trash text-danger"></i>
-                                                                                </button>
-                                                                            }
+@if (User.IsInRole("SuperAdmin"))
+                                                                             {
+                                                                                 <button type="button" class="btn btn-group-sm" data-id="@exam.Id" data-bs-toggle="tooltip" data-placement="right" title="Delete" onclick="DeleteExam(@exam.Id); return false;">
+                                                                                     <i class="fas fa-trash text-danger"></i>
+                                                                                 </button>
+                                                                             }
                                                                         </div>
                                                                     </td>
                                                                 </tr>
@@ -172,10 +172,10 @@
                         </div>
                         <label class="col-md-2 col-form-label text-md-end" asp-for="AcademicSectionId"></label>
                         <div class="col-md-4">
-                            <select id="AcademicSectionId" name="AcademicSectionId" class="form-control select2" data-placeholder="Select Section(s)">
+                            <select id="AcademicSectionId" name="AcademicSectionId" multiple="multiple" class="form-control select2" data-placeholder="Select Section(s)">
                                 <option value="0">All Sections (Default)</option>
                             </select>
-                            <small class="text-muted">Select "All Sections" to include all sections</small>
+                            <small class="text-muted">Select specific sections or "All Sections"</small>
                         </div>
                     </div>
                     <div class="form-group row">

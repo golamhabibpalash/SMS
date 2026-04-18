@@ -313,6 +313,70 @@ public class AcademicExamsController : Controller
             {
                 foreach (AcademicExam exam in AcademicExams)
                 {
+                    // Handle multiple sections - get the list of section IDs
+                    List<int> selectedSections = new List<int>();
+                    
+                    // Try to parse AcademicSectionIdList if it's sent as JSON string
+                    if (exam.AcademicSectionIdList != null && exam.AcademicSectionIdList.Count > 0)
+                    {
+                        selectedSections = exam.AcademicSectionIdList;
+                    }
+                    else if (Request.Form.ContainsKey("AcademicExams[0].AcademicSectionIdList"))
+                    {
+                        var jsonStr = Request.Form["AcademicExams[0].AcademicSectionIdList"].ToString();
+                        if (!string.IsNullOrEmpty(jsonStr))
+                        {
+                            try {
+                                selectedSections = System.Text.Json.JsonSerializer.Deserialize<List<int>>(jsonStr) ?? new List<int>();
+                            } catch { selectedSections = new List<int>(); }
+                        }
+                    }
+                    
+                    // If AcademicSectionIdList has valid sections (not 0, not null), create exam for each section
+                    if (selectedSections.Count > 0 && !selectedSections.Contains(0))
+                    {
+                        // Remove duplicates from selectedSections
+                        selectedSections = selectedSections.Distinct().ToList();
+                        
+                        foreach (var sectionId in selectedSections)
+                        {
+                            // Check if exam already exists for this section
+                            var isExistForSection = await _examManager.GetAcademicExam(
+                                exam.AcademicExamGroupId, 
+                                exam.AcademicClassId, 
+                                exam.AcademicSubjectId, 
+                                exam.ExamCategory, 
+                                sectionId);
+                            
+                            if (isExistForSection != null)
+                            {
+                                failed++;
+                                continue; // Skip duplicate
+                            }
+                            
+                            var examForSection = new AcademicExam
+                            {
+                                AcademicExamGroupId = exam.AcademicExamGroupId,
+                                AcademicClassId = exam.AcademicClassId,
+                                AcademicSubjectId = exam.AcademicSubjectId,
+                                EmployeeId = exam.EmployeeId,
+                                TotalMarks = exam.TotalMarks,
+                                ExamCategory = exam.ExamCategory,
+                                AcademicSectionId = sectionId,
+                                CreatedAt = DateTime.Now,
+                                CreatedBy = HttpContext.Session.GetString("UserId"),
+                                MACAddress = MACService.GetMAC()
+                            };
+                            
+                            var isSaved = await SaveAcademicExamWithDetails(examForSection);
+                            if (isSaved) success++;
+                            else failed++;
+                        }
+                        // Stop here - don't process single section case
+                        TempData["success"] = "Success: " + success + " Failed: " + failed;
+                        return RedirectToAction("index");
+                    }
+                    
                     // Normalize AcademicSectionId: treat empty/0 as null (all sections)
                     if (exam.AcademicSectionId == null || exam.AcademicSectionId == 0)
                     {
@@ -326,55 +390,14 @@ public class AcademicExamsController : Controller
                         failed++;
                         continue;
                     }
-                    AcademicSubject academicSubject = await _academicSubjectManager.GetByIdAsync(exam.AcademicSubjectId);
-                    exam.CreatedAt = DateTime.Now;
-                    exam.CreatedBy = HttpContext.Session.GetString("UserId");
-                    exam.MACAddress = MACService.GetMAC();
-                    exam.ExamCategory = exam.ExamCategory;
-                    bool isSaved = await _examManager.AddAsync(exam);
-                    if (isSaved)
-                    {
-                        success++;
-                        AcademicExamGroup academicExamGroup = await _examGroupManager.GetByIdAsync(exam.AcademicExamGroupId);
-                        var students = await _studentManager.GetStudentsByClassIdAndSessionIdAsync(academicExamGroup.AcademicSessionId, exam.AcademicClassId);
-                        students = students.Where(s => s.Status == true).ToList();
-                        foreach (Student student in students.Where(s => s.Status = true))
-                        {
-                            if (exam.AcademicSectionId != null || exam.AcademicSectionId > 0)
-                            {
-                                if (student.AcademicSectionId != exam.AcademicSectionId)
-                                {
-                                    continue;
-                                }
-                            }
-                            if (academicSubject.ReligionId != null || academicSubject.ReligionId >= 0)
-                            {
-                                if (student.ReligionId != academicSubject.ReligionId)
-                                {
-                                    continue;
-                                }
-                            }
-                            AcademicExamDetail academicExamDetail = new AcademicExamDetail();
-                            academicExamDetail.AcademicExamId = exam.Id;
-                            academicExamDetail.ObtainMark = 0;
-                            academicExamDetail.StudentId = student.Id;
-                            academicExamDetail.Status = true;
-                            academicExamDetail.CreatedAt = DateTime.Now;
-                            academicExamDetail.CreatedBy = HttpContext.Session.GetString("UserId");
-                            academicExamDetail.MACAddress = MACService.GetMAC();
-                            await _academicExamDetailsManager.AddAsync(academicExamDetail);
-                        }
-                    }
-                    else
-                    {
-                        failed++;
-                    }
+                    await SaveAcademicExamWithDetails(exam);
+                    success++;
                 }
-                TempData["success"] = "Success:" + success + " added & Failed: " + failed;
+                TempData["success"] = "Success: " + success + " Failed: " + failed;
             }
             else
             {
-                TempData["success"] = "No data found to add";
+                TempData["success"] = "No data found to create";
             }
         }
         catch (Exception ex)
@@ -382,6 +405,49 @@ public class AcademicExamsController : Controller
             TempData["error"] = "Exception: " + ex.Message;
         }
         return RedirectToAction("index");
+    }
+    
+    private async Task<bool> SaveAcademicExamWithDetails(AcademicExam exam)
+    {
+        AcademicSubject academicSubject = await _academicSubjectManager.GetByIdAsync(exam.AcademicSubjectId);
+        exam.CreatedAt = DateTime.Now;
+        exam.CreatedBy = HttpContext.Session.GetString("UserId");
+        exam.MACAddress = MACService.GetMAC();
+        bool isSaved = await _examManager.AddAsync(exam);
+        if (isSaved)
+        {
+            AcademicExamGroup academicExamGroup = await _examGroupManager.GetByIdAsync(exam.AcademicExamGroupId);
+            var students = await _studentManager.GetStudentsByClassIdAndSessionIdAsync(academicExamGroup.AcademicSessionId, exam.AcademicClassId);
+            students = students.Where(s => s.Status == true).ToList();
+            foreach (Student student in students)
+            {
+                if (exam.AcademicSectionId != null && exam.AcademicSectionId > 0)
+                {
+                    if (student.AcademicSectionId != exam.AcademicSectionId)
+                    {
+                        continue;
+                    }
+                }
+                if (academicSubject.ReligionId != null && academicSubject.ReligionId > 0)
+                {
+                    if (student.ReligionId != academicSubject.ReligionId)
+                    {
+                        continue;
+                    }
+                }
+                AcademicExamDetail academicExamDetail = new AcademicExamDetail();
+                academicExamDetail.AcademicExamId = exam.Id;
+                academicExamDetail.ObtainMark = 0;
+                academicExamDetail.StudentId = student.Id;
+                academicExamDetail.Status = true;
+                academicExamDetail.CreatedAt = DateTime.Now;
+                academicExamDetail.CreatedBy = HttpContext.Session.GetString("UserId");
+                academicExamDetail.MACAddress = MACService.GetMAC();
+                await _academicExamDetailsManager.AddAsync(academicExamDetail);
+            }
+            return true;
+        }
+        return false;
     }
 
     [HttpPost]

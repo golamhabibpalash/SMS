@@ -1,4 +1,4 @@
-﻿using AspNetCore.Reporting;
+using AspNetCore.Reporting;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -952,6 +952,13 @@ public class ReportsController : Controller
         ViewBag.ClassList = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name").ToList();
         ViewBag.ExamGroupList = new SelectList(await _academicExamGroupManager.GetAllAsync(), "Id", "ExamGroupName").ToList();
         return View();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetSectionsByExamGroup(int examGroupId, int classId, int sessionId)
+    {
+        var sections = await _academicSectionManager.GetAllByExamGroupId(examGroupId, classId, sessionId);
+        return Json(sections.Select(s => new { s.Id, s.Name }));
     }
 
     [Authorize(Policy = "StudentWiseMarkSheetReportsPolicy")]

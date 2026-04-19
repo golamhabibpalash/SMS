@@ -1,4 +1,4 @@
-﻿
+
 <div class="row">
     <div class="col-md-4">
         <div class="row">
@@ -244,15 +244,52 @@
                     console.log(err);
                 }
             });
+
+            let classId = $('#aAcademicClass option:selected').val();
+            let sessionId = $('#aAcademicSession option:selected').val();
+            if (classId && sessionId && id) {
+                loadSectionsByExamGroup(id, classId, sessionId);
+            }
         });
+
+        function loadSectionsByExamGroup(examGroupId, classId, sessionId) {
+            $.ajax({
+                url: "/Reports/GetSectionsByExamGroup?examGroupId=" + examGroupId + "&classId=" + classId + "&sessionId=" + sessionId,
+                dataType: "JSON",
+                type: "GET",
+                cache: false,
+                success: function (data) {
+                    $('#aAcademicSection').empty();
+                    $('#aStudentId').empty();
+                    if (data != null || data != '') {
+                        var o = '<option disabled selected value="">Select Section Name</option>';
+                        var o2 = '<option value="">All Section</option>';
+                        $('#aAcademicSection').append(o);
+                        $('#aAcademicSection').append(o2);
+                        $.each(data, function (i, obj) {
+                            var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
+                            $('#aAcademicSection').append(op);
+                        });
+                    }
+                    else {
+                        var o = '<option disabled selected>Section Not Found</option>';
+                        $('#aAcademicSection').append(o);
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        }
 
         $('#aAcademicClass').change(function () {
             let id = $('#aAcademicClass option:selected').val();
             let sessionId = $('#aAcademicSession option:selected').val();
+            let examGroupId = $('#aExamGroup option:selected').val();
             $.ajax({
-                url: "/api/academicsections/getbyclasswithsessionId?classId=" + id + "&sessionId=" + sessionId,
+                url: "/Reports/GetSectionsByExamGroup?examGroupId=" + examGroupId + "&classId=" + id + "&sessionId=" + sessionId,
                 dataType: "JSON",
-                type: "POST",
+                type: "GET",
                 cache: false,
                 success: function (data) {
                     $('#aAcademicSection').empty();

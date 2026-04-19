@@ -218,9 +218,11 @@
 
             let id = $('#aExamGroup option:selected').val();
             $.ajax({
-                url: "/AcademicExams/GetAcademicClassByExamGrId?examGroupId=" + id,
+                url: '/api/GetAcademicClassByExamGrId',
+                type: 'GET',
+                data: { examGroupId: id },
                 dataType: "JSON",
-                type: "POST",
+                type: "get",
                 cache: false,
                 success: function (data) {
                     $('#aAcademicClass').empty();

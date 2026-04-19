@@ -1,4 +1,4 @@
-﻿using SMS.BLL.Contracts.Reports;
+using SMS.BLL.Contracts.Reports;
 using SMS.DAL.Contracts.Reports;
 using SMS.Entities;
 using SMS.Entities.RptModels;
@@ -89,51 +89,8 @@ namespace SMS.BLL.Managers.Reports
             var result = await _reportRepository.GetStudentWiseMarkSheet(examGroupId, classId);
 
             var fResult = result
-            .GroupBy(g => new { g.ClassRoll, g.SubjectName })
-            .Select(g =>
-            {
-                var first = g.First(); // Take the first row to keep all columns
-                return new StudentWiseMarkSheetVM
-                {
-                    // Keep all columns as is
-                    ExamGroupName = first.ExamGroupName,
-                    ClassName = first.ClassName,
-                    StudentName = first.StudentName,
-                    FatherName = first.FatherName,
-                    MotherName = first.MotherName,
-                    ClassRoll = first.ClassRoll,
-                    SectionName = first.SectionName,
-                    AcademicSectionId = first.AcademicSectionId,
-                    GenderName = first.GenderName,
-                    SubjectName = first.SubjectName,
-
-                    // Sum the marks for the group
-                    TotalMark = g.Sum(x => x.TotalMark),
-                    ObtainMark = g.Sum(x => x.ObtainMark),
-                    //Need to calculate
-                    GPA = first.GPA,
-                    //Need to calculate
-                    Grade = first.Grade,
-                    MaxNumber = first.MaxNumber,
-                    //Need to Calculate
-                    FinalGPA = first.FinalGPA,
-
-                    //Need to Calculate
-                    FinalGrade = first.FinalGrade,
-
-                    AttendancePercentage = first.AttendancePercentage,
-                    TotalObtainMarks = first.TotalObtainMarks,
-                    TotalFails = first.TotalFails,
-                    MeritPosition = first.MeritPosition,
-                    GradeComments = first.GradeComments,
-                    ExamGroupId = first.ExamGroupId,
-                    AcademicClassId = first.AcademicClassId,
-                    StudentId = first.StudentId,
-                    DOB = first.DOB,
-                    ReligionName = first.ReligionName,
-                    CreatedAt = first.CreatedAt
-                };
-            })
+            .GroupBy(g => new { g.ExamGroupId, g.StudentId, g.SubjectName })
+            .Select(g => g.First())
             .OrderBy(x => x.ClassRoll)
             .ThenBy(x => x.SubjectName)
             .ToList();

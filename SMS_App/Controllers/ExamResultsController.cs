@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static System.Collections.Specialized.BitVector32;
 
 namespace SMS_App.Controllers;
 
@@ -149,10 +150,22 @@ public class ExamResultsController : Controller
         ViewData["SessionList"] = new SelectList(sessions, "Id", "Name", sessionId);
         ViewData["ExamGroupList"] = new SelectList(examGroups, "Id", "ExamGroupName", examGroupId);
         ViewData["AcademicClassList"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", classId);
+        var examList = new List<AcademicExam>();
+        if (sectionId>0)
+        {
+            examList = await _academicExamManager.GetByClassIdExamGroupIdSectionIdAsync(examGroupId, classId, (int)sectionId);
+        }
+        else
+        {
+            examList = await _academicExamManager.GetByClassIdExamGroupIdAsync(examGroupId, classId);
+        }
 
-        var examList = await _academicExamManager.GetByClassIdExamGroupIdAsync(examGroupId, classId);
-        var sectionsInExam = examList.Where(e => e.AcademicSectionId != null).Select(e => e.AcademicSection).DistinctBy(s => s.Id).ToList();
-        sectionsInExam.Insert(0, new AcademicSection { Id = 0, Name = "All" });
+        var sectionsInExam = (List<AcademicSection>)await _academicSectionManager.GetAllByExamGroupIdClassIdSessionId(examGroupId, classId, sessionId);
+        if (sectionsInExam.Count > 0)
+        {
+            sectionsInExam.Insert(0, new AcademicSection { Id = 0, Name = "All" });
+        }
+
         ViewBag.SectionList = new SelectList(sectionsInExam, "Id", "Name", sectionId);
         if (sectionId > 0)
         {
@@ -835,4 +848,6 @@ public class ExamResultsController : Controller
         bool isExist = _examResultManager.IsResultProcessedAsync(groupId, classId);
         return new JsonResult(isExist);
     }
+
+
 }

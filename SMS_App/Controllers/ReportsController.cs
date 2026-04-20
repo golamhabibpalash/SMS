@@ -957,7 +957,7 @@ public class ReportsController : Controller
     [HttpGet]
     public async Task<IActionResult> GetSectionsByExamGroup(int examGroupId, int classId, int sessionId)
     {
-        var sections = await _academicSectionManager.GetAllByExamGroupId(examGroupId, classId, sessionId);
+        var sections = await _academicSectionManager.GetAllByExamGroupIdClassIdSessionId(examGroupId, classId, sessionId);
         return Json(sections.Select(s => new { s.Id, s.Name }));
     }
 

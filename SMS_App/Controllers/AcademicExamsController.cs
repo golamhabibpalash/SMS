@@ -862,7 +862,7 @@ public class AcademicExamsController : Controller
         var exams = await _examManager.GetByClassIdExamGroupIdAsync(examGroupId, classId);
         if (exams.Count > 0)
         {
-            sections = (List<AcademicSection>)await _academicSectionManager.GetAllByExamGroupId(examGroupId, classId, sessionId);
+            sections = (List<AcademicSection>)await _academicSectionManager.GetAllByExamGroupIdClassIdSessionId(examGroupId, classId, sessionId);
             if (sections.Count > 0)
             {
                 sections.Insert(0, new AcademicSection { Id = 0, Name = "All" });

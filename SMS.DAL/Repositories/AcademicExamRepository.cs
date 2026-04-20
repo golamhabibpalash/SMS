@@ -80,6 +80,31 @@ namespace SMS.DAL.Repositories
 
             return exams;
         }
+        public async Task<List<AcademicExam>> GetByClassIdExamGroupIdSectionId(int examGroupId, int academicClassId, int sectionId)
+        {
+            var allExams = await _context.AcademicExams
+                .Where(s => s.AcademicClassId == academicClassId && s.AcademicExamGroupId == examGroupId && s.AcademicSectionId == sectionId)
+                .Include(s => s.AcademicClass)
+                .Include(s => s.AcademicSection)
+                .Include(s => s.AcademicExamGroup)
+                .Include(s => s.AcademicSubject)
+                .Include(s => s.AcademicExamDetails)
+                    .ThenInclude(m => m.Student)
+                .ToListAsync();
+
+            var uniqueSubjectIds = allExams
+                .Select(e => e.AcademicSubjectId)
+                .Distinct()
+                .ToHashSet();
+
+            var exams = allExams
+                .Where(e => uniqueSubjectIds.Contains(e.AcademicSubjectId))
+                .GroupBy(e => e.AcademicSubjectId)
+                .Select(g => g.First())
+                .ToList();
+
+            return exams;
+        }
 
         public async Task<bool> IsDuplicateAsync(int examGroupId, int classId, int subjectId, int? sectionId, string examCategory)
         {

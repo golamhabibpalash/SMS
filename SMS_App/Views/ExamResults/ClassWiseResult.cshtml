@@ -306,8 +306,9 @@
             $('#AcademicClassId').change(function () {
                 var classId = $(this).val();
                 var examGroupId = $('#examGroupId').val();
-                if (classId && examGroupId) {
-                    $.get("/api/GetSectionsByExamGroupClass", { examGroupId: examGroupId, classId: classId }, function (data) {
+                var sessionId = $('#sessionId').val();
+                if (classId && examGroupId && sessionId) {
+                    $.get("/api/GetSectionsByExamGroupClass", { examGroupId: examGroupId, classId: classId, sessionId: sessionId }, function (data) {
                         $('#sectionId').empty();
                         $('#sectionId').append('<option value="" selected>Select Section (Optional)</option>');
                         $.each(data, function (i, obj) {

@@ -856,18 +856,17 @@ public class AcademicExamsController : Controller
     [HttpGet]
     [Route("api/GetSectionsByExamGroupClass")]
     [AllowAnonymous]
-    public async Task<JsonResult> GetSectionsByExamGroupClass(int examGroupId, int classId)
+    public async Task<JsonResult> GetSectionsByExamGroupClass(int examGroupId, int classId, int sessionId)
     {
         var sections = new List<AcademicSection>();
         var exams = await _examManager.GetByClassIdExamGroupIdAsync(examGroupId, classId);
         if (exams.Count > 0)
         {
-            sections = exams
-                .Where(e => e.AcademicSection != null)
-                .Select(e => e.AcademicSection)
-                .DistinctBy(s => s.Id)
-                .ToList();
-            sections.Insert(0, new AcademicSection { Id = 0, Name = "All" });
+            sections = (List<AcademicSection>)await _academicSectionManager.GetAllByExamGroupId(examGroupId, classId, sessionId);
+            if (sections.Count > 0)
+            {
+                sections.Insert(0, new AcademicSection { Id = 0, Name = "All" });
+            }
         }
         return Json(sections);
     }

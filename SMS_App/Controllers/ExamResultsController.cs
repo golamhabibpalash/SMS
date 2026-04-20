@@ -33,7 +33,8 @@ public class ExamResultsController : Controller
     private readonly IAttendanceMachineManager _attendanceMachineManager;
     private readonly IOffDayManager _OffDayManager;
     private readonly IAcademicExamDetailsManager _academicExamDetailsManager;
-    public ExamResultsController(IExamResultManager examResultManager, IAcademicExamManager academicExamManager, UserManager<ApplicationUser> userManager, IStudentManager studentManager, IAcademicExamTypeManager academicExamTypeManager, IAcademicClassManager academicClassManager, IAcademicExamGroupManager academicExamGroupManager, IAcademicSessionManager sessionManager, IGradingTableManager gradingTableManager, IInstituteManager instituteManager, IAttendanceMachineManager attendanceMachineManager, IOffDayManager offDayManager, IAcademicExamDetailsManager academicExamDetailsManager)
+    private readonly IAcademicSectionManager _academicSectionManager;
+    public ExamResultsController(IExamResultManager examResultManager, IAcademicExamManager academicExamManager, UserManager<ApplicationUser> userManager, IStudentManager studentManager, IAcademicExamTypeManager academicExamTypeManager, IAcademicClassManager academicClassManager, IAcademicExamGroupManager academicExamGroupManager, IAcademicSessionManager sessionManager, IGradingTableManager gradingTableManager, IInstituteManager instituteManager, IAttendanceMachineManager attendanceMachineManager, IOffDayManager offDayManager, IAcademicExamDetailsManager academicExamDetailsManager, IAcademicSectionManager academicSectionManager)
     {
         _examResultManager = examResultManager;
         _academicExamManager = academicExamManager;
@@ -48,6 +49,7 @@ public class ExamResultsController : Controller
         _attendanceMachineManager = attendanceMachineManager;
         _OffDayManager = offDayManager;
         _academicExamDetailsManager = academicExamDetailsManager;
+        _academicSectionManager = academicSectionManager;
     }
     // GET: ExamResultsController
     [Authorize(Policy = "IndexExamResultsPolicy")]
@@ -124,6 +126,7 @@ public class ExamResultsController : Controller
         ViewData["SessionList"] = new SelectList(sessions, "Id", "Name", currentSession?.Id);
         ViewData["ExamGroupList"] = new SelectList(await _academicExamGroupManager.GetAllAsync(currentSession?.Id ?? 0), "Id", "ExamGroupName");
         ViewData["AcademicClassList"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name");
+        ViewBag.SectionList = new SelectList(new List<AcademicSection>(), "Id", "Name");
 
         ViewBag.sessionId = currentSession?.Id;
         ViewBag.IsLoading = false;
@@ -148,14 +151,30 @@ public class ExamResultsController : Controller
         ViewData["AcademicClassList"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", classId);
 
         var examList = await _academicExamManager.GetByClassIdExamGroupIdAsync(examGroupId, classId);
+        var sectionsInExam = examList.Where(e => e.AcademicSectionId != null).Select(e => e.AcademicSection).DistinctBy(s => s.Id).ToList();
+        sectionsInExam.Insert(0, new AcademicSection { Id = 0, Name = "All" });
+        ViewBag.SectionList = new SelectList(sectionsInExam, "Id", "Name", sectionId);
+        if (sectionId > 0)
+        {
+            examList = examList.Where(e => e.AcademicSectionId == sectionId).ToList();
+        }
         if (examList == null || examList.Count <= 0)
         {
             TempData["failed"] = "Exam Not Found";
             ViewBag.IsLoading = true;
             return View();
         }
-        var currentSession = await _sessionManager.GetCurrentAcademicSessionAsync();
-        var students = await _studentManager.GetStudentsByClassIdAndSessionIdAsync(currentSession.Id, classId);
+        List<Student> students;
+        if (sectionId > 0)
+        {
+            students = await _studentManager.GetStudentsByClassSessionSectionAsync(sessionId, classId, sectionId.Value);
+        }
+        else
+        {
+            var studentIdsInExam = examList.SelectMany(e => e.AcademicExamDetails).Select(d => d.StudentId).Distinct().ToList();
+            var allStudents = await _studentManager.GetStudentsByClassIdAndSessionIdAsync(sessionId, classId);
+            students = allStudents.Where(s => studentIdsInExam.Contains(s.Id)).ToList();
+        }
         List<ExaminationResultVM> examinationResultVMs = new List<ExaminationResultVM>();
         var institute = await _instituteManager.GetFirstOrDefaultAsync();
         var examGroup = await _academicExamGroupManager.GetByIdAsync(examGroupId);

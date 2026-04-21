@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -49,31 +49,74 @@ public class StudentFeeAllocationsController : Controller
     public async Task<ActionResult> Index()
     {
         StudentFeeAllocationVM studentFeeAllocationVM = new StudentFeeAllocationVM();
-        studentFeeAllocationVM.StudentFeeAllocations = (List<StudentFeeAllocation>)await _studentFeeAllocationManager.GetAllAsync();
-        
-        // Pre-load all users to avoid N+1 queries
-        if (_userManager != null && studentFeeAllocationVM.StudentFeeAllocations.Count > 0)
-        {
-            var userIds = studentFeeAllocationVM.StudentFeeAllocations
-                .Select(s => s.EditedBy)
-                .Distinct()
-                .Where(id => !string.IsNullOrEmpty(id))
-                .ToList();
-
-            foreach (var userId in userIds)
-            {
-                var user = await _userManager.FindByIdAsync(userId);
-                if (user != null && !studentFeeAllocationVM.UsersDictionary.ContainsKey(userId))
-                {
-                    studentFeeAllocationVM.UsersDictionary[userId] = user.UserName;
-                }
-            }
-        }
 
         var allClasses = await _academicClassManager.GetAllAsync();
         studentFeeAllocationVM.AcademicClassList = new SelectList(allClasses.Where(s => s.Status == true), "Id", "Name");
 
         return View(studentFeeAllocationVM);
+    }
+
+    [HttpGet]
+    [Route("GetDataTableData")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetDataTableData([FromQuery] int draw, [FromQuery] int start, [FromQuery] int length,
+        [FromQuery] string searchValue, [FromQuery] string orderColumn, [FromQuery] string orderDirection)
+    {
+        if (string.IsNullOrEmpty(orderColumn))
+            orderColumn = "classroll";
+        if (string.IsNullOrEmpty(orderDirection))
+            orderDirection = "asc";
+
+        try
+        {
+            var result = await _studentFeeAllocationManager.GetDataTableDataAsync(
+                searchValue, orderColumn, orderDirection, start, length);
+
+            var response = new
+            {
+                draw = draw,
+                recordsTotal = result.totalRecord,
+                recordsFiltered = result.filteredRecord,
+                data = result.data.Select(s => new
+                {
+                    id = s.Id,
+                    studentId = s.StudentId,
+                    student = s.Student != null ? new
+                    {
+                        id = s.Student.Id,
+                        name = s.Student.Name,
+                        classRoll = s.Student.ClassRoll,
+                        academicClassId = s.Student.AcademicClassId
+                    } : null,
+                    studentFeeHeadId = s.StudentFeeHeadId,
+                    studentFeeHead = s.StudentFeeHead != null ? new
+                    {
+                        id = s.StudentFeeHead.Id,
+                        name = s.StudentFeeHead.Name
+                    } : null,
+                    allocatedAmount = s.AllocatedAmount,
+                    isActive = s.IsActive,
+                    feeAllocationApplication = s.FeeAllocationApplication,
+                    editedAt = s.EditedAt,
+                    editedBy = s.EditedBy,
+                    classFeeList = s.ClassFeeList != null ? new
+                    {
+                        id = s.ClassFeeList.Id,
+                        academicSession = s.ClassFeeList.AcademicSession != null ? new
+                        {
+                            id = s.ClassFeeList.AcademicSession.Id,
+                            name = s.ClassFeeList.AcademicSession.Name
+                        } : null
+                    } : null
+                }).ToList()
+            };
+
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { error = ex.Message, stackTrace = ex.StackTrace });
+        }
     }
 
     [Authorize(Policy = "GroupStudentFeeAllocationsPolicy")]

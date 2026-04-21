@@ -1,4 +1,4 @@
-﻿using BLL.Managers.Base;
+using BLL.Managers.Base;
 using Microsoft.EntityFrameworkCore;
 using SMS.BLL.Contracts;
 using SMS.DAL.Contracts;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SMS.BLL.Managers
 {
-    public class StudentFeeAllocationManager : Manager<StudentFeeAllocation>, IStudentFeeAllocationManager
+public class StudentFeeAllocationManager : Manager<StudentFeeAllocation>, IStudentFeeAllocationManager
     {
         private readonly IStudentFeeAllocationRepository _feeAllocationRepository;
         public StudentFeeAllocationManager(IStudentFeeAllocationRepository repository) : base(repository)
@@ -26,7 +26,13 @@ namespace SMS.BLL.Managers
         {
             return await _feeAllocationRepository.GetStudentFeeAllocationByUniqueIdFeeHeadId(uniqueId, feeHeadId);
         }
-         
+
+        public async Task<(int totalRecord, int filteredRecord, List<StudentFeeAllocation> data)> GetDataTableDataAsync(
+            string searchValue, string orderColumn, string orderDirection, int start, int length)
+        {
+            return await _feeAllocationRepository.GetDataTableDataAsync(searchValue, orderColumn, orderDirection, start, length);
+        }
+
         public override async Task<IReadOnlyCollection<StudentFeeAllocation>> GetAllAsync()
         {
             return await _feeAllocationRepository.Table

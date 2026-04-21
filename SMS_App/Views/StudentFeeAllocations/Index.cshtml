@@ -1,160 +1,37 @@
-﻿@model SMS_App.ViewModels.Students.StudentFeeAllocationVM
+@model SMS_App.ViewModels.Students.StudentFeeAllocationVM
 
 @inject UserManager<ApplicationUser> _userManager;
 
 @{
     GlobalUI.PageTitle = "Student Fee Allocation";
-    int sl = 0;
-    string lastEditedUser = string.Empty;
 }
 
 @section Styles{
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <style>
-        #searchContainer {
-            margin-bottom: 15px;
-        }
-
-        #studentRollSearch {
-            max-width: 300px;
-        }
-
-        .search-info {
-            font-size: 0.9rem;
-            color: #6c757d;
-            margin-top: 5px;
-        }
-
-        .search-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .search-wrapper > div:first-child {
-            flex: 0 0 auto;
-        }
-
-        #searchResultCount {
-            flex: 0 0 auto;
-            padding: 0.5rem 0.75rem;
-            font-size: 0.95rem;
-            white-space: nowrap;
-        }
-
-        .no-results {
-            display: none;
-        }
-
-            .no-results.show {
-                display: block;
-                text-align: center;
-                padding: 20px;
-                color: #dc3545;
-                font-weight: 500;
-            }
-    </style>
 }
-
-<div id="searchDiv">
-    <div id="searchContainer" class="form-group">
-        <div class="search-wrapper">
-            <div>
-                <input type="text" id="studentRollSearch" class="form-control" placeholder="Enter student roll number..." autocomplete="off" />
-            </div>
-            <div id="searchResultCount" class="badge badge-info p-3" style="display: none;">
-                Total 0 allocations found
-            </div>
-        </div>
-    </div>
-</div>
 
 <div class="row">
     <div class="col-md-8" style="overflow:scroll">
-        @if (Model.StudentFeeAllocations != null && Model.StudentFeeAllocations.Count() > 0)
-            {
-                <div id="noResultsMessage" class="no-results">
-                    <h4>No matching records found <span class="fas fa-search"></span></h4>
-                </div>
-                <table class="table table-striped table-bordered rounded table-responsive-sm" id="studentFeeAllocationTable">
-                    <thead class="bg-navy-blue text-light">
-                        <tr>
-                            <td>#</td>
-                            <td>Class Roll</td>
-                            <td width="35%">Student</td>
-                            <td width="30%">Fee Type</td>
-                            <td width="10%">Session</td>
-                            <td width="5%" class="text-right">Amount</td>
-                            <td width="5%" class="text-center">Documents</td>
-                            <td width="3%" class="text-center">Status</td>
-                            <td width="5%" class="text-center">Action</td>
-                            <td width="10%" class="text-center">Last updated</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.StudentFeeAllocations.OrderBy(s => s.Student.AcademicClassId).ThenBy(s => s.Student.ClassRoll))
-                        {
-                        <tr class="fee-allocation-row" data-class-roll="@item.Student.ClassRoll" data-student-id="@item.StudentId">
-                                <td>@(++sl)</td>
-                                <td>@item.Student.ClassRoll</td>
-                                <td>@item.Student.Name.ToUpperInvariant()</td>
-                                <td>@item.StudentFeeHead.Name</td>
-                                <td width="10%">@item.ClassFeeList?.AcademicSession?.Name</td>
-                                <td class="text-right">@item.AllocatedAmount</td>
-                                <td class="text-center">
-                                    @if (string.IsNullOrEmpty(item.FeeAllocationApplication))
-                                    {
-                                        <span>None</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="fas fa-file-pdf text-danger fa-2x " role="button"></span>
-                                    }
-                                </td>
-                                <td>
-                                    @if (item.IsActive)
-                                    {
-                                        <span class="fas fa-check text-info fa-2x"></span>
-                                    }
-                                    else
-                                    {
-                                        <span class="">Inactive</span>
-                                    }
-                                </td>
-                                <td class="text-center">
-                                    <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-                                        <button type="button" class="btn btn-sm btn-warning updateBtn" data-id="@item.Id" data-studentId="@item.StudentId" data-classId="@item.Student.AcademicClassId" data-amount="@item.AllocatedAmount" data-feeType="@item.StudentFeeHeadId" data-isActive="@item.IsActive" data-refDoc="@item.FeeAllocationApplication"><i class="fas fa-edit"></i> </button>
-
-                                        <button id="deleteBtnId" type="submit" class="btn btn-danger deleteBtn" data-studentName="@item.Student.Name" data-classRoll="@item.Student.ClassRoll" data-feeTypeName="@item.StudentFeeHead.Name" data-item="@item" data-id="@item.Id" data-studentId="@item.StudentId" data-classId="@item.Student.AcademicClassId" data-amount="@item.AllocatedAmount" data-feeType="@item.StudentFeeHeadId" data-isActive="@item.IsActive" data-refDoc="@item.FeeAllocationApplication" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                                <td>
-                                    @{
-                                        string displayUser = string.Empty;
-                                        if (Model.UsersDictionary != null && !string.IsNullOrEmpty(item.EditedBy) && Model.UsersDictionary.ContainsKey(item.EditedBy))
-                                        {
-                                            displayUser = Model.UsersDictionary[item.EditedBy];
-                                        }
-                                    }
-                                    @displayUser <br />
-                                    @item.EditedAt.ToString("dd MMM yyyy hh:mm tt")
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                    <tfoot>
-                    </tfoot>
-                </table>
-            }
-            else
-            {
-                <div class="jumbotron text-center mb-0">
-                    <h2>Data not found! <span class="fas fa-sad-tear text-warning"></span></h2><br />
-                </div>
-            }
-
+        <table class="table table-striped table-bordered rounded table-responsive-sm" id="studentFeeAllocationTable">
+            <thead class="bg-navy-blue text-light">
+                <tr>
+                    <td>#</td>
+                    <td>Class Roll</td>
+                    <td width="35%">Student</td>
+                    <td width="30%">Fee Type</td>
+                    <td width="10%">Session</td>
+                    <td width="5%" class="text-right">Amount</td>
+                    <td width="5%" class="text-center">Documents</td>
+                    <td width="3%" class="text-center">Status</td>
+                    <td width="5%" class="text-center">Action</td>
+                    <td width="10%" class="text-center">Last updated</td>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+            <tfoot>
+            </tfoot>
+        </table>
     </div>
     <div class="col-md-4 p-2" style=" position:relative" id="studentFeeAllocationCreatePortion">
         <fieldset class="border-primary p-2 border" id="createFieldSetId" style="background-color:antiquewhite;position:sticky;top:50px;right:5px">
@@ -163,9 +40,17 @@
             <form asp-action="Create" method="post" id="createUpdateForm">
                 <input type="hidden" asp-for="SFAllocation.Id" />
                 <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-end">Academic Session</label>
+                    <div class="col-md-8">
+                        <select class="form-control" id="academicSessionListId" onchange="academicSessionIdChange()">
+                            <option selected disabled>-Select Session-</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
                     <label class="col-md-4 col-form-label text-end">Academic Class</label>
                     <div class="col-md-8">
-                        <select class="form-control" asp-items="Model.AcademicClassList" id="academicClassListId" onchange="academicClassIdChange()" asp-for="SFAllocation.ClassFeeListId">
+                        <select class="form-control" id="academicClassListId" onchange="academicClassIdChange()">
                             <option selected disabled>-Select Class-</option>
                         </select>
                     </div>
@@ -173,19 +58,19 @@
                 <div class="form-group row">
                     <label class="col-md-4 col-form-label text-end">Student</label>
                     <div class="col-md-8">
-                        <select class="form-control" asp-for="SFAllocation.StudentId" onchange="handleStudentIdChange()">
+                        <select class="form-control" id="studentId" onchange="handleStudentIdChange()">
                             <option selected disabled>-Select student-</option>
                         </select>
-                        <input type="hidden" asp-for="SFAllocation.UniqueId" />
+                        <input type="hidden" asp-for="SFAllocation.UniqueId" id="uniqueId" />
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-md-4 col-form-label text-end">Fee Name</label>
                     <div class="col-md-8">
-                        <select class="form-control" asp-for="SFAllocation.StudentFeeHeadId" asp-items="Model.FeeList" onchange="handleFeeHeadIdChange()">
+                        <select class="form-control" id="studentFeeHeadId" onchange="handleFeeHeadIdChange()">
                             <option selected disabled>-Select type-</option>
                         </select>
-                        <input type="hidden" asp-for="SFAllocation.ClassFeeListId"  />
+                        <input type="hidden" asp-for="SFAllocation.ClassFeeListId" id="classFeeListId" />
                     </div>
                 </div>
                 <div class="form-group row">
@@ -264,129 +149,14 @@
 
 @section Scripts{
     <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
-    @* <script src="~/js/DataTable/dataTable.js"></script> *@
 
     <script>
-        async function academicClassIdChange() {
-            return new Promise((resolve, reject) => {
-                let classId = $('#academicClassListId option:selected').val();
-                $.ajax({
-                    url: '/api/Students/getbyclasswithsessionId',
-                    data: { academicSessionId: null, academicClassId: classId },
-                    cache: false,
-                    type: 'POST',
-                    dataType: 'json',
-                    success: function (data) {
-                        $('#SFAllocation_StudentId').empty();
-                        var op1 = '<option value="" selected disabled> -Select Student - </option>';
-                        $('#SFAllocation_StudentId').append(op1);
-                        $.each(data, function (i, obj) {
-                            var op = '<option value="' + obj.id + '">' + obj.classRoll + '-' + obj.name + '</option>';
-                            $('#SFAllocation_StudentId').append(op);
-                        });
-                        $("#SFAllocation_StudentId").trigger('change');
-                        resolve(); // Resolve the promise when the AJAX call is successful
-                    },
-                    error: function (err) {
-                        console.log(err);
-                        reject(err); // Reject the promise if there is an error
-                    }
-                });
-            });
-        }
+        $(document).ready(async function () {
+            await loadAcademicSessions();
+            await loadAcademicClasses();
+            initializeDataTable();
 
-        function formUIChange() {
-            let form = document.getElementById('createUpdateForm');
-            form.action = "/StudentFeeAllocations/Edit";
-            document.getElementById('studentFeeAllocationCreatePortion').style.backgroundColor = '#2A3F54';
-
-            var fieldSet = document.getElementById('createFieldSetId');
-            fieldSet.classList.remove('border-primary');
-
-
-            var legendData = document.getElementById('create_update_title_id');
-            legendData.innerText = "Update Student Allocation";
-            legendData.classList.remove('text-primary');
-
-            document.getElementById('create_update_title_id').style.color = "#fff";
-            document.getElementById('studentFeeAllocationCreatePortion').style.color = '#fff';
-            document.getElementById('submitId').value = 'Update';
-
-            let rDoc = document.getElementById('SFAllocation_FeeAllocationApplication');
-        }
-
-
-
-        // Real-time search functionality
-        function initializeSearch() {
-            const searchInput = $('#studentRollSearch');
-            const noResultsMessage = $('#noResultsMessage');
-            const searchResultCount = $('#searchResultCount');
-            const table = $('#studentFeeAllocationTable');
-
-            if (table.length === 0) {
-                return;
-            }
-
-            // Get total count of rows on initialization
-            const totalRows = $('#studentFeeAllocationTable tbody tr.fee-allocation-row').length;
-
-            searchInput.on('keyup', function () {
-                const searchTerm = $(this).val().toLowerCase().trim();
-                const tableRows = $('#studentFeeAllocationTable tbody tr.fee-allocation-row');
-                let visibleRowCount = 0;
-
-                tableRows.each(function () {
-                    const classRoll = $(this).data('class-roll');
-                    
-                    if (classRoll) {
-                        const rollStr = String(classRoll).toLowerCase();
-                        if (searchTerm === '' || rollStr.includes(searchTerm)) {
-                            $(this).show();
-                            visibleRowCount++;
-                        } else {
-                            $(this).hide();
-                        }
-                    }
-                });
-
-                // Update count display
-                if (searchTerm === '') {
-                    // Show total count when search is empty
-                    searchResultCount.text('Total ' + totalRows + ' allocations found').show();
-                } else {
-                    // Show filtered count
-                    searchResultCount.text('Total ' + visibleRowCount + ' allocation' + (visibleRowCount !== 1 ? 's' : '') + ' found').show();
-                }
-
-                // Show/hide no results message
-                if (visibleRowCount === 0 && searchTerm !== '') {
-                    if (noResultsMessage.length > 0) {
-                        noResultsMessage.addClass('show');
-                    }
-                } else {
-                    if (noResultsMessage.length > 0) {
-                        noResultsMessage.removeClass('show');
-                    }
-                }
-            });
-
-            // Show initial count
-            searchResultCount.text('Total ' + totalRows + ' allocations found').show();
-
-            // Clear search on refresh
-            searchInput.val('');
-        }
-
-        $(document).ready(function () {
-            // Initialize search with delay to ensure DOM is ready
-            setTimeout(function () {
-                initializeSearch();
-            }, 500);
-
-            @* $('#myTable').DataTable(); *@
-            // Add a click event listener to the button
-            $(".updateBtn").click(async function () {
+            $(document).on('click', '.updateBtn', async function () {
                 formUIChange();
                 var classId = $(this).data("classid");
                 var studentId = $(this).data("studentid");
@@ -399,10 +169,10 @@
                 $("#academicClassListId").val(classId);
 
                 try {
-                    await academicClassIdChange(); // Wait for the dropdown to be populated
-                    $("#SFAllocation_StudentId").val(studentId); // Set the selected student
+                    await academicClassIdChange();
+                    $("#studentId").val(studentId);
                     await handleStudentIdChange();
-                    $("#SFAllocation_StudentFeeHeadId").val(feeType);
+                    $("#studentFeeHeadId").val(feeType);
                 } catch (error) {
                     console.error("An error occurred:", error);
                 }
@@ -417,7 +187,7 @@
                 }
             });
 
-            $('.deleteBtn').click(function () {
+            $(document).on('click', '.deleteBtn', function () {
                 var stName = $(this).data('studentname');
                 var stClassRoll = $(this).data('classroll');
                 var feeTypeName = $(this).data('feetypename');
@@ -434,35 +204,114 @@
                 $('#deleteClassRoll').html(stClassRoll);
                 $('#deletePaymentType').html(feeTypeName);
                 $('#deleteAmount').html(amount);
-
             });
         });
-        async function handleFeeHeadIdChange() {
-            let feeheadId = $('#SFAllocation_StudentFeeHeadId option:selected').val();
-            let studentId = $('#SFAllocation_StudentId option:selected').val();
-            let classId = $('#academicClassListId option:selected').val();
-            console.log(classId);
 
+        async function loadAcademicSessions() {
+            return $.ajax({
+                url: '/api/AcademicSessions/GetAllActive',
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    $('#academicSessionListId').empty();
+                    $('#academicSessionListId').append('<option value="" selected disabled>-Select Session-</option>');
+                    $.each(data, function (i, obj) {
+                        $('#academicSessionListId').append('<option value="' + obj.id + '">' + obj.name + '</option>');
+                    });
+                },
+                error: function (err) {
+                    console.error('Error loading sessions:', err);
+                }
+            });
         }
+
+        async function loadAcademicClasses() {
+            return $.ajax({
+                url: '/api/AcademicClasses/GetAllActive',
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    $('#academicClassListId').empty();
+                    $('#academicClassListId').append('<option value="" selected disabled>-Select Class-</option>');
+                    $.each(data, function (i, obj) {
+                        $('#academicClassListId').append('<option value="' + obj.id + '">' + obj.name + '</option>');
+                    });
+                },
+                error: function (err) {
+                    console.error('Error loading classes:', err);
+                }
+            });
+        }
+
+        async function academicSessionIdChange() {
+            var sessionId = $('#academicSessionListId option:selected').val();
+            var classId = $('#academicClassListId option:selected').val();
+            if (sessionId && classId) {
+                await loadStudentsByClassAndSession(sessionId, classId);
+            }
+        }
+
+        async function academicClassIdChange() {
+            var sessionId = $('#academicSessionListId option:selected').val();
+            var classId = $('#academicClassListId option:selected').val();
+            if (sessionId && classId) {
+                await loadStudentsByClassAndSession(sessionId, classId);
+            }
+        }
+
+        async function loadStudentsByClassAndSession(sessionId, classId) {
+            return $.ajax({
+                url: '/api/Students/getbyclasswithsessionId',
+                data: { academicSessionId: sessionId, academicClassId: classId },
+                type: 'POST',
+                dataType: 'json',
+                success: function (data) {
+                    $('#studentId').empty();
+                    $('#studentId').append('<option value="" selected disabled>-Select Student-</option>');
+                    $.each(data, function (i, obj) {
+                        $('#studentId').append('<option value="' + obj.id + '">' + obj.classRoll + '-' + obj.name + '</option>');
+                    });
+                },
+                error: function (err) {
+                    console.error('Error loading students:', err);
+                }
+            });
+        }
+
         async function handleStudentIdChange() {
-            let studentId = $('#SFAllocation_StudentId option:selected').val();
+            var studentId = $('#studentId option:selected').val();
+            var sessionId = $('#academicSessionListId option:selected').val();
+            if (!studentId || !sessionId) return;
 
             try {
-                // Get Unique ID by Student ID
-                let uniqueId = await getUniqueIdByStudentId(studentId);
+                var uniqueId = await getUniqueIdByStudentId(studentId);
+                $('#uniqueId').val(uniqueId);
 
-                // Set the unique ID to the input field
-                $('#SFAllocation_UniqueId').val(uniqueId);
-
-                // Get and populate fee heads based on unique ID
-                let feeData = await getClassListByUniqueId(uniqueId);
-                populateStudentFeeHeadDropdown(feeData);
+                await loadFeeHeadsBySessionAndStudent(uniqueId, sessionId);
             } catch (error) {
                 console.error("An error occurred:", error);
             }
         }
 
-        // Function to get Unique ID by Student ID
+        async function loadFeeHeadsBySessionAndStudent(uniqueId, sessionId) {
+            return $.ajax({
+                url: '/ClassFeeLists/GetClassListByUniqueId',
+                data: { uniqueId: uniqueId },
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    $('#studentFeeHeadId').empty();
+                    $('#studentFeeHeadId').append('<option value="" selected disabled>-Select type-</option>');
+                    $.each(data, function (i, obj) {
+                        $('#studentFeeHeadId').append('<option value="' + obj.studentFeeHead.id + '">' + obj.studentFeeHead.name + '</option>');
+                    });
+                },
+                error: function (err) {
+                    console.error('Error loading fee heads:', err);
+                }
+            });
+        }
+
         function getUniqueIdByStudentId(studentId) {
             return $.ajax({
                 url: '/api/Students/GetUniqueIdByStudentId',
@@ -473,30 +322,90 @@
             });
         }
 
-        // Function to get class list by unique ID
-        function getClassListByUniqueId(uniqueId) {
+        function initializeDataTable() {
+            $('#studentFeeAllocationTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: '/api/StudentFeeAllocationApi/GetDataTableData',
+                    type: 'GET',
+                    data: function (d) {
+                        d.draw = d.draw;
+                        d.start = d.start;
+                        d.length = d.length;
+                        d.searchValue = d.search ? d.search.value : '';
+                        d.orderColumn = d.order && d.order.length > 0 ? d.columns[d.order[0].column].data : '';
+                        d.orderDirection = d.order && d.order.length > 0 ? d.order[0].dir : '';
+                    },
+                    error: function (xhr, error, thrown) {
+                        console.error('Ajax Error:', xhr.status, xhr.responseText);
+                    }
+                },
+                columns: [
+                    { data: null, render: function(data, type, row, meta) { return meta.row + 1; }, orderable: false },
+                    { data: 'student.classRoll' },
+                    { data: 'student.name' },
+                    { data: 'studentFeeHead.name' },
+                    { data: 'classFeeList.academicSession.name' },
+                    { data: 'allocatedAmount' },
+                    { data: 'feeAllocationApplication' },
+                    { data: 'isActive' },
+                    { data: null, orderable: false },
+                    { data: 'editedAt' }
+                ]
+            });
+        }
+
+        async function academicClassIdChange() {
+            var sessionId = $('#academicSessionListId option:selected').val();
+            var classId = $('#academicClassListId option:selected').val();
+            if (sessionId && classId) {
+                await loadStudentsByClassAndSession(sessionId, classId);
+            }
+        }
+
+        function formUIChange() {
+            let form = document.getElementById('createUpdateForm');
+            form.action = "/StudentFeeAllocations/Edit";
+            document.getElementById('studentFeeAllocationCreatePortion').style.backgroundColor = '#2A3F54';
+
+            var fieldSet = document.getElementById('createFieldSetId');
+            fieldSet.classList.remove('border-primary');
+
+            var legendData = document.getElementById('create_update_title_id');
+            legendData.innerText = "Update Student Allocation";
+            legendData.classList.remove('text-primary');
+
+            document.getElementById('create_update_title_id').style.color = "#fff";
+            document.getElementById('studentFeeAllocationCreatePortion').style.color = '#fff';
+            document.getElementById('submitId').value = 'Update';
+        }
+
+        async function handleFeeHeadIdChange() {
+            let feeHeadId = $('#studentFeeHeadId option:selected').val();
+            let studentId = $('#studentId option:selected').val();
+            let classId = $('#academicClassListId option:selected').val();
+            console.log('Fee Head:', feeHeadId, 'Student:', studentId, 'Class:', classId);
+        }
+
+        function getUniqueIdByStudentId(studentId) {
             return $.ajax({
-                url: 'ClassFeeLists/GetClassListByUniqueId',
-                data: { uniqueId: uniqueId },
+                url: '/api/Students/GetUniqueIdByStudentId',
+                data: { id: studentId },
                 cache: false,
                 type: 'GET',
                 dataType: 'JSON',
             });
         }
 
-        // Function to populate the Student Fee Head dropdown
-        function populateStudentFeeHeadDropdown(feeData) {
-            const $feeHeadDropdown = $('#SFAllocation_StudentFeeHeadId');
-            $feeHeadDropdown.empty();
-
-            // Add default option
-            $feeHeadDropdown.append('<option value="" selected disabled> -Select type - </option>');
-
-            // Append options from feeData
-            $.each(feeData, function (i, obj) {
-                $feeHeadDropdown.append(`<option value="${obj.studentFeeHead.id}">${obj.studentFeeHead.name}</option>`);
+        function getClassListByUniqueId(uniqueId) {
+            return $.ajax({
+                url: '/ClassFeeLists/GetClassListByUniqueId',
+                data: { uniqueId: uniqueId },
+                cache: false,
+                type: 'GET',
+                dataType: 'JSON',
             });
         }
-
     </script>
 }

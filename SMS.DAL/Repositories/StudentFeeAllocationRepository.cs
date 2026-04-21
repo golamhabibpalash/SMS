@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SMS.DAL.Contracts;
 using SMS.DAL.Repositories.Base;
 using SMS.DB;
@@ -43,6 +43,68 @@ namespace SMS.DAL.Repositories
         {
             var results = await _context.StudentFeeAllocations.Include(s => s.StudentFeeHead).Where(s => s.UniqueId == uniqueId && s.ClassFeeList.AcademicSessionId == sessionId).ToListAsync();
             return results;
+        }
+
+        public async Task<(int totalRecord, int filteredRecord, List<StudentFeeAllocation> data)> GetDataTableDataAsync(
+            string searchValue, string orderColumn, string orderDirection, int start, int length)
+        {
+            var query = _context.StudentFeeAllocations
+                .Include(s => s.Student)
+                .ThenInclude(s => s.AcademicClass)
+                .Include(s => s.Student.AcademicSession)
+                .Include(s => s.StudentFeeHead)
+                .Include(s => s.ClassFeeList)
+                .ThenInclude(c => c.AcademicSession)
+                .AsQueryable();
+
+            var totalRecord = await query.CountAsync();
+
+            if (!string.IsNullOrEmpty(searchValue))
+            {
+                query = query.Where(s =>
+                    (s.Student != null && s.Student.ClassRoll.ToString().ToLower().Contains(searchValue.ToLower())) ||
+                    (s.Student != null && s.Student.Name.ToLower().Contains(searchValue.ToLower())) ||
+                    (s.StudentFeeHead != null && s.StudentFeeHead.Name.ToLower().Contains(searchValue.ToLower())));
+            }
+
+            var filteredRecord = await query.CountAsync();
+
+            var orderColumnLower = orderColumn?.ToLower() ?? "classroll";
+            if (orderColumnLower.Contains("."))
+            {
+                orderColumnLower = orderColumnLower.Split('.').Last().ToLower();
+            }
+            var orderDirectionLower = orderDirection?.ToLower() ?? "asc";
+
+            query = orderColumnLower switch
+            {
+                "classroll" => orderDirectionLower == "asc"
+                    ? query.OrderBy(s => s.Student.ClassRoll)
+                    : query.OrderByDescending(s => s.Student.ClassRoll),
+                "name" when orderColumnLower.Contains("student") => orderDirectionLower == "asc"
+                    ? query.OrderBy(s => s.Student.Name)
+                    : query.OrderByDescending(s => s.Student.Name),
+                "studentname" => orderDirectionLower == "asc"
+                    ? query.OrderBy(s => s.Student.Name)
+                    : query.OrderByDescending(s => s.Student.Name),
+                "feetypename" => orderDirectionLower == "asc"
+                    ? query.OrderBy(s => s.StudentFeeHead.Name)
+                    : query.OrderByDescending(s => s.StudentFeeHead.Name),
+                "allocatedamount" => orderDirectionLower == "asc"
+                    ? query.OrderBy(s => s.AllocatedAmount)
+                    : query.OrderByDescending(s => s.AllocatedAmount),
+                "isactive" => orderDirectionLower == "asc"
+                    ? query.OrderBy(s => s.IsActive)
+                    : query.OrderByDescending(s => s.IsActive),
+                "editedat" => orderDirectionLower == "asc"
+                    ? query.OrderBy(s => s.EditedAt)
+                    : query.OrderByDescending(s => s.EditedAt),
+                _ => query.OrderBy(s => s.Student.ClassRoll)
+            };
+
+            var data = await query.Skip(start).Take(length).ToListAsync();
+
+            return (totalRecord, filteredRecord, data);
         }
     }
 }

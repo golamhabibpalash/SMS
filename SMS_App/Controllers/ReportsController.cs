@@ -1090,35 +1090,18 @@ public class ReportsController : Controller
         if (results.Count == 0)
             return new JsonResult("Result not found");
 
-
         // Get institute info
         Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
+        string imageParam = await LoadInstituteLogoAsync(institute.Logo);
 
-        // Prepare institute logo (cross-platform)
-        var logoFileName = string.IsNullOrWhiteSpace(institute.Logo) ? "smslogo.png" : institute.Logo; 
-        
-        var instituteLogoPath = Path.Combine(_host.WebRootPath, "Images", "Institute", logoFileName); 
-        
-        if (!System.IO.File.Exists(instituteLogoPath))
-        { 
-            // fallback to default logo if the given one is missing
-            instituteLogoPath = Path.Combine( _host.WebRootPath, "Images", "Institute", "smslogo.png"); 
-        }
-        
-        string imageParam = string.Empty;
-        if (System.IO.File.Exists(instituteLogoPath))
-        {
-            byte[] imageBytes = await System.IO.File.ReadAllBytesAsync(instituteLogoPath);
-            imageParam = "data:image/png;base64," + Convert.ToBase64String(imageBytes);
-        }
 
-            // 5️⃣ Prepare RDLC report path (cross-platform)
-            var reportPath = Path.Combine(
-                _host.WebRootPath,
-                "Reports",
-                "ExamResult",
-                "Rpt_MarkSheet.rdlc"
-            );
+        // 5️⃣ Prepare RDLC report path (cross-platform)
+        var reportPath = Path.Combine(
+            _host.WebRootPath,
+            "Reports",
+            "ExamResult",
+            "Rpt_MarkSheet.rdlc"
+        );
 
         if (!System.IO.File.Exists(reportPath))
             return new JsonResult($"RDLC file not found at: {reportPath}");
@@ -1135,7 +1118,7 @@ public class ReportsController : Controller
         {
             new ReportParameter("InstituteName", institute.Name),
             new ReportParameter("Address", institute.Address),
-            new ReportParameter("InstituteLogo", imageParam),
+            new ReportParameter("InstituteLogo", StripDataUriPrefix(imageParam)),
             new ReportParameter("EIINNo", institute.EIIN),
             new ReportParameter("ExamName", results.Select(s => s.ExamGroupName).FirstOrDefault()),
             new ReportParameter("ClassName", results.Select(s => s.ClassName).FirstOrDefault()),
@@ -1269,7 +1252,7 @@ public class ReportsController : Controller
             new ReportParameter("RptName", "Payments Summary Report"),
             new ReportParameter("ClassRoll", classRoll.ToString()),
             new ReportParameter("AmountInWord", numberToWord),
-            new ReportParameter("Logo", imageParam),
+            new ReportParameter("Logo", StripDataUriPrefix(imageParam)),
             new ReportParameter("EIINNo", institute.EIIN)
         };
         report.ReportPath = path;

@@ -1402,7 +1402,7 @@ public class ReportsController : Controller
     }
 
     [Authorize(Policy = "ReceiptPaymentReportsPolicy")]
-    public async Task<IActionResult> ReceiptPaymentExport(string reportType, int paymentId, string myFileName)
+    public async Task<IActionResult> ReceiptPaymentExportOld(string reportType, int paymentId, string myFileName)
     {
         Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
         if (institute == null)
@@ -1457,6 +1457,38 @@ public class ReportsController : Controller
         }
         return File(pdf, mediaType);
     }
+
+    [Authorize(Policy = "ReceiptPaymentReportsPolicy")]
+    public async Task<IActionResult> ReceiptPaymentExport(string reportType, int paymentId, string myFileName)
+    {
+        // 1. Validate institute
+        var institute = await _instituteManager.GetFirstOrDefaultAsync();
+        if (institute == null)
+            return NotFound("Institute information not found.");
+
+        // 2. Build report path (cross-platform)
+        var reportPath = Path.Combine(_host.WebRootPath, "Reports", "Accounts", "Rpt_Payment_Receipt.rdlc");
+        if (!System.IO.File.Exists(reportPath))
+            return NotFound("Report template not found.");
+
+        // 3. Load logo (cross-platform, with fallback)
+        var logoBase64 = await LoadInstituteLogoAsync();
+
+        // 4. Fetch report data
+        var receiptData = await _reportManager.GetPaymentReceiptReport(paymentId);
+        if (receiptData == null || receiptData.Count == 0)
+            return NotFound("No payment receipt data found for the given payment ID.");
+
+        // 5. Convert amount to words
+        var amountInWords = NumberToWords.ConvertAmount(receiptData.First().TotalPayment);
+
+        // 6. Build and render report
+        var pdf = RenderReceiptReport(reportPath, receiptData, institute, logoBase64, amountInWords);
+
+        // 7. Return file
+        return BuildFileResult(pdf, reportType, myFileName);
+    }
+
     #endregion Student Payment Reports
 
     #region Admit Card Reports
@@ -1655,5 +1687,85 @@ public class ReportsController : Controller
         using var ms = new MemoryStream();
         image.Save(ms, new PngEncoder());
         return Convert.ToBase64String(ms.ToArray());
+    }
+
+  
+    /// <summary>
+    /// Loads the institute logo as a Base64-encoded data URI.
+    /// Tries institute-specific images first (jpeg/jpg/png),
+    /// then falls back to the default smsLogo.png in the same directory.
+    /// Returns empty string if no image is found at all.
+    /// </summary>
+    private async Task<string> LoadInstituteLogoAsync()
+    {
+        var imageDirectory = Path.Combine(_host.WebRootPath, "Images", "Institute");
+
+        var candidates = new[]
+        {
+        ("institute.jpeg", "image/jpeg"),
+        ("institute.jpg",  "image/jpeg"),
+        ("institute.png",  "image/png"),
+        ("smsLogo.png",    "image/png"),   // default fallback
+    };
+
+        foreach (var (fileName, mimeType) in candidates)
+        {
+            var imagePath = Path.Combine(imageDirectory, fileName);
+            if (!System.IO.File.Exists(imagePath)) continue;
+
+            var imageBytes = await System.IO.File.ReadAllBytesAsync(imagePath);
+            return $"data:{mimeType};base64,{Convert.ToBase64String(imageBytes)}";
+        }
+
+        return string.Empty;
+    }
+
+    /// <summary>
+    /// Configures and renders the RDLC report to a PDF byte array.
+    /// </summary>
+    private byte[] RenderReceiptReport(
+        string reportPath,
+        List<RptPaymentReceiptVM> data,
+        Institute institute,
+        string logoBase64,
+        string amountInWords)
+    {
+        using var report = new LocalReport();
+
+        report.ReportPath = reportPath;
+        report.DataSources.Add(new ReportDataSource("Payment_Receipt_DataSet", data));
+
+        report.SetParameters(new[]
+        {
+        new ReportParameter("InstituteName",    institute.Name    ?? string.Empty),
+        new ReportParameter("InstituteAddress", institute.Address ?? string.Empty),
+        new ReportParameter("Logo", StripDataUriPrefix(logoBase64)),
+        new ReportParameter("ReportName",       "Payment Receipt"),
+        new ReportParameter("AmountInWord",     amountInWords     ?? string.Empty),
+    });
+
+        return report.Render("PDF");
+    }
+
+    /// <summary>
+    /// Returns the appropriate FileResult based on whether a download filename was provided.
+    /// </summary>
+    private IActionResult BuildFileResult(byte[] pdf, string reportType, string myFileName)
+    {
+        const string PdfMimeType = "application/pdf";
+        const string OctetMimeType = MediaTypeNames.Application.Octet;
+
+        if (!string.IsNullOrWhiteSpace(myFileName))
+            return File(pdf, OctetMimeType, GetReportName(myFileName, reportType));
+
+        return File(pdf, PdfMimeType);
+    }
+
+    private static string StripDataUriPrefix(string dataUri)
+    {
+        if (string.IsNullOrEmpty(dataUri)) return string.Empty;
+
+        var commaIndex = dataUri.IndexOf(',');
+        return commaIndex >= 0 ? dataUri[(commaIndex + 1)..] : dataUri;
     }
 }

@@ -7,6 +7,16 @@ using System.Linq;
 
 namespace SMS_App.Controllers.Api
 {
+    public class DataTableRequest
+    {
+        public int draw { get; set; }
+        public int start { get; set; }
+        public int length { get; set; }
+        public string searchValue { get; set; }
+        public string orderColumn { get; set; }
+        public string orderDirection { get; set; }
+    }
+
     [Route("api/[controller]")]
     [ApiController]
     public class StudentFeeAllocationApiController : ControllerBase
@@ -18,10 +28,19 @@ namespace SMS_App.Controllers.Api
             _studentFeeAllocationManager = studentFeeAllocationManager;
         }
 
-        [HttpGet("GetDataTableData")]
-        public IActionResult GetDataTableData([FromQuery] int draw, [FromQuery] int start, [FromQuery] int length,
-            [FromQuery] string searchValue, [FromQuery] string orderColumn, [FromQuery] string orderDirection)
+        [HttpPost("GetDataTableData")]
+        public IActionResult GetDataTableData([FromBody] DataTableRequest request)
         {
+            if (request == null)
+                return BadRequest("Invalid request");
+
+            int draw = request.draw;
+            int start = request.start;
+            int length = request.length;
+            string searchValue = request.searchValue ?? "";
+            string orderColumn = request.orderColumn;
+            string orderDirection = request.orderDirection;
+
             if (string.IsNullOrEmpty(orderColumn))
                 orderColumn = "classroll";
             if (string.IsNullOrEmpty(orderDirection))

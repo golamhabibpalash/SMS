@@ -328,14 +328,17 @@
                 serverSide: true,
                 ajax: {
                     url: '/api/StudentFeeAllocationApi/GetDataTableData',
-                    type: 'GET',
+                    type: 'POST',
+                    contentType: 'application/json',
                     data: function (d) {
-                        d.draw = d.draw;
-                        d.start = d.start;
-                        d.length = d.length;
-                        d.searchValue = d.search ? d.search.value : '';
-                        d.orderColumn = d.order && d.order.length > 0 ? d.columns[d.order[0].column].data : '';
-                        d.orderDirection = d.order && d.order.length > 0 ? d.order[0].dir : '';
+                        return JSON.stringify({
+                            draw: d.draw,
+                            start: d.start,
+                            length: d.length,
+                            searchValue: d.search ? d.search.value : '',
+                            orderColumn: d.order && d.order.length > 0 ? d.columns[d.order[0].column].data : '',
+                            orderDirection: d.order && d.order.length > 0 ? d.order[0].dir : ''
+                        });
                     },
                     error: function (xhr, error, thrown) {
                         console.error('Ajax Error:', xhr.status, xhr.responseText);

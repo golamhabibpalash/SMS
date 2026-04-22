@@ -1,4 +1,4 @@
-﻿using GHPEncryptDecript;
+using GHPEncryptDecript;
 using Hangfire;
 using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Authorization;
@@ -206,6 +206,9 @@ else
 {
     Console.WriteLine("Hangfire Disabled by configuration.");
 }
+
+// API controllers (attribute-routed)
+app.MapControllers();
 
 // AREA routing
 app.MapControllerRoute(

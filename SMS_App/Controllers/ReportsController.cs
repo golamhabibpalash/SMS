@@ -6,31 +6,28 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Reporting.NETCore;
 using SchoolManagementSystem;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
-using SMS_App.Utilities.Others;
-using SMS_App.ViewModels.AttendanceVM;
-using SMS_App.ViewModels.ReportVM;
-using SMS_App.ViewModels.ReportVM.MarkSheet;
 using SMS.BLL.Contracts;
 using SMS.BLL.Contracts.Reports;
 using SMS.Entities;
 using SMS.Entities.RptModels.AttendanceVM;
 using SMS.Entities.RptModels.StudentPayment;
+using SMS_App.Utilities.LoggerService;
+using SMS_App.Utilities.Others;
+using SMS_App.ViewModels.AttendanceVM;
+using SMS_App.ViewModels.ReportVM;
+using SMS_App.ViewModels.ReportVM.MarkSheet;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.IO;
-using File =System.IO;
 using System.Linq;
 using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 using LocalReport = Microsoft.Reporting.NETCore.LocalReport;
-using Microsoft.Extensions.Logging;
-using SMS_App.Utilities.LoggerService;
 
 namespace SMS_App.Controllers;
 
@@ -998,12 +995,10 @@ public class ReportsController : Controller
 
         string imageParam = "";
 
-        using (var image = SixLabors.ImageSharp.Image.Load(instituteLogoPath)) // ImageSharp cross-platform
-        using (var ms = new MemoryStream())
+        if (System.IO.File.Exists(instituteLogoPath))
         {
-            image.Save(ms, image.Metadata.DecodedImageFormat); 
-            byte[] imageBytes = ms.ToArray();
-            imageParam = Convert.ToBase64String(imageBytes);
+            byte[] imageBytes = await System.IO.File.ReadAllBytesAsync(instituteLogoPath);
+            imageParam = "data:image/png;base64," + Convert.ToBase64String(imageBytes);
         }
 
         StringBuilder stringBuilderMediaType = new StringBuilder();

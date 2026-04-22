@@ -1472,7 +1472,7 @@ public class ReportsController : Controller
             return NotFound("Report template not found.");
 
         // 3. Load logo (cross-platform, with fallback)
-        var logoBase64 = await LoadInstituteLogoAsync();
+        var logoBase64 = await LoadInstituteLogoAsync(institute.Logo);
 
         // 4. Fetch report data
         var receiptData = await _reportManager.GetPaymentReceiptReport(paymentId);
@@ -1696,12 +1696,13 @@ public class ReportsController : Controller
     /// then falls back to the default smsLogo.png in the same directory.
     /// Returns empty string if no image is found at all.
     /// </summary>
-    private async Task<string> LoadInstituteLogoAsync()
+    private async Task<string> LoadInstituteLogoAsync(string imageName)
     {
         var imageDirectory = Path.Combine(_host.WebRootPath, "Images", "Institute");
 
         var candidates = new[]
         {
+        (imageName, "iamge/png"),
         ("institute.jpeg", "image/jpeg"),
         ("institute.jpg",  "image/jpeg"),
         ("institute.png",  "image/png"),

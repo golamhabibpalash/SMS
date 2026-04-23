@@ -442,7 +442,8 @@ public class ExamResultsController : Controller
             }
             foreach (var student in students)
             {
-                if (student.Status == false)
+                var selectedExams = exams.Where(s => s.AcademicSectionId == null || s.AcademicSectionId == student.AcademicSectionId).ToList();
+                if (selectedExams.Count <= 0)
                 {
                     continue;
                 }
@@ -466,11 +467,7 @@ public class ExamResultsController : Controller
                 }
                 List<ExamResultDetail> examResultDetails = new List<ExamResultDetail>();
 
-                var selectedExams = exams.Where(s => s.AcademicSectionId == student.AcademicSectionId).ToList();
-                if (selectedExams.Count<=0)
-                {
-                    continue;
-                }
+                
                 foreach (var exam in selectedExams)
                 {
                     double gotMarks = exam.AcademicExamDetails.Where(s => s.StudentId == student.Id).Select(s => s.ObtainMark).FirstOrDefault();

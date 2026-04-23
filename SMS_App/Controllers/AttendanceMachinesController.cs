@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SMS.BLL.Contracts;
-using SMS.BLL.Managers;
 using SMS.Entities;
 using SMS.Entities.AdditionalModels;
 using SMS_App.Utilities.MACIPServices;

@@ -39,13 +39,14 @@ public class AcademicExamGroupController : Controller
     [Authorize(Policy = "IndexAcademicExamGroupPolicy")]
     public async Task<ActionResult> Index()
     {
-        AcademicExamGroupVM academicExamGroupVM = new AcademicExamGroupVM();
+        AcademicExamGroupVM academicExamGroupVM = new();
         try
         {
             var examGroupList = await _examGroupManager.GetAllAsync();
 
             var examGroupAndClassPairs = examGroupList
-                .SelectMany(item => item.AcademicExams.Select(exa => (ExamGroupId: item.Id, ClassId: exa.AcademicClassId)))
+                .SelectMany(item => item.AcademicExams
+                    .Select(exa => (ExamGroupId: item.Id, ClassId: exa.AcademicClassId)))
                 .Distinct()
                 .ToList();
 
@@ -54,23 +55,23 @@ public class AcademicExamGroupController : Controller
             foreach (var item in examGroupList)
             {
                 AcademicExamGroupIndexVM e = _mapper.Map<AcademicExamGroupIndexVM>(item);
-                int resultProcessed = item.AcademicExams.Count(exa => resultStatusDict.GetValueOrDefault((item.Id, exa.AcademicClassId), false));
-                e.NumberOfProcessResults = resultProcessed;
+                e.NumberOfProcessResults = item.AcademicExams
+                    .Count(exa => resultStatusDict.GetValueOrDefault((item.Id, exa.AcademicClassId), false));
                 academicExamGroupVM.AcademicExamGroupIndexVMList.Add(e);
             }
 
-            var sessionsTask = _academicSessionManager.GetAllAsync();
-            var examTypesTask = _academicExamTypeManager.GetAllAsync();
+            // ✅ Sequential await instead of Task.WhenAll
+            var sessions = await _academicSessionManager.GetAllAsync();
+            var examTypes = await _academicExamTypeManager.GetAllAsync();
 
-            await Task.WhenAll(sessionsTask, examTypesTask);
-
-            academicExamGroupVM.AcademicSessionList = new SelectList(sessionsTask.Result, "Id", "Name").ToList();
-            academicExamGroupVM.ExamTypeList = new SelectList(examTypesTask.Result, "Id", "ExamTypeName").ToList();
+            academicExamGroupVM.AcademicSessionList = new SelectList(sessions, "Id", "Name").ToList();
+            academicExamGroupVM.ExamTypeList = new SelectList(examTypes, "Id", "ExamTypeName").ToList();
         }
-        catch (System.Exception)
+        catch (Exception ex)
         {
             throw;
         }
+
         return View(academicExamGroupVM);
     }
 

@@ -4,6 +4,14 @@
     GlobalUI.PageTitle = ViewData["Title"].ToString();
 }
 
+@if (ViewBag.Warning != null)
+{
+    <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
+        <i class="fa fa-exclamation-triangle me-2"></i>@ViewBag.Warning
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
 <style>
     :root {
         --primary-blue: #1e3a8a;
@@ -21,18 +29,17 @@
     }
 
     body {
-        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-        min-height: 100vh;
+        background: #f8f9fa;
     }
 
     .dashboard-header {
         background: linear-gradient(135deg, var(--primary-blue) 0%, #1e40af 50%, #3730a3 100%);
         padding: 35px 40px;
-        border-radius: 20px;
+        border-radius: 16px;
         color: white;
         position: relative;
         overflow: hidden;
-        box-shadow: 0 20px 60px rgba(30, 58, 138, 0.3);
+        box-shadow: 0 10px 40px rgba(30, 58, 138, 0.25);
     }
 
     .dashboard-header::before {
@@ -120,13 +127,9 @@
     }
 
     .stat-number {
-        font-size: 2.8rem;
+        font-size: 2.5rem;
         font-weight: 800;
         line-height: 1;
-        background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
     }
 
     .stat-label {
@@ -400,16 +403,16 @@
         </div>
     </div>
 
-    <div class="row">
+    <div class="row g-4">
         <div class="col-xl-3 col-lg-6 col-md-6 mb-4 animate-1">
-            <div class="card stat-card" style="--card-gradient: linear-gradient(135deg, #3b82f6, #1d4ed8); --card-gradient: linear-gradient(135deg, #3b82f6, #1d4ed8);">
-                <div class="card-body" style="background: linear-gradient(135deg, #eff6ff, #dbeafe);">
+            <div class="card stat-card h-100" style="--card-gradient: linear-gradient(135deg, #007c03, #015902);">
+                <div class="card-body" style="background: linear-gradient(135deg, #e8f5e9, #c8e6c9);">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <p class="stat-label">Total Students</p>
-                            <h2 class="stat-number" data-target="@Model.TotalStudents">0</h2>
+                            <p class="stat-label text-success">Total Students</p>
+                            <h2 class="stat-number" style="color: #007c03;" data-target="@Model.TotalStudents">0</h2>
                         </div>
-                        <div class="stat-icon-wrap" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white;">
+                        <div class="stat-icon-wrap" style="background: linear-gradient(135deg, #007c03, #015902); color: white;">
                             <i class="fa fa-users"></i>
                         </div>
                     </div>
@@ -440,14 +443,14 @@
         </div>
 
         <div class="col-xl-3 col-lg-6 col-md-6 mb-4 animate-2">
-            <div class="card stat-card" style="--card-gradient: linear-gradient(135deg, #0d9488, #0f766e);">
-                <div class="card-body" style="background: linear-gradient(135deg, #f0fdfa, #ccfbf1);">
+            <div class="card stat-card h-100" style="--card-gradient: linear-gradient(135deg, #d6336c, #a82658);">
+                <div class="card-body" style="background: linear-gradient(135deg, #fce4ec, #f8bbd9);">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <p class="stat-label">Total Employees</p>
-                            <h2 class="stat-number" data-target="@Model.TotalEmployees">0</h2>
+                            <p class="stat-label" style="color: #d6336c;">Total Employees</p>
+                            <h2 class="stat-number" style="color: #d6336c;" data-target="@Model.TotalEmployees">0</h2>
                         </div>
-                        <div class="stat-icon-wrap" style="background: linear-gradient(135deg, #0d9488, #0f766e); color: white;">
+                        <div class="stat-icon-wrap" style="background: linear-gradient(135deg, #d6336c, #a82658); color: white;">
                             <i class="fa fa-user-tie"></i>
                         </div>
                     </div>
@@ -478,14 +481,14 @@
         </div>
 
         <div class="col-xl-3 col-lg-6 col-md-6 mb-4 animate-3">
-            <div class="card stat-card" style="--card-gradient: linear-gradient(135deg, #7c3aed, #5b21b6);">
-                <div class="card-body" style="background: linear-gradient(135deg, #f5f3ff, #ede9fe);">
+            <div class="card stat-card h-100" style="--card-gradient: linear-gradient(135deg, #0d6efd, #0a58ca);">
+                <div class="card-body" style="background: linear-gradient(135deg, #e7f1ff, #bbd4f8);">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <p class="stat-label">Today's Collection</p>
-                            <h2 class="stat-number" data-prefix="৳ " data-target="@Model.TodayCollection">0</h2>
+                            <p class="stat-label text-primary">Today's Collection</p>
+                            <h2 class="stat-number text-primary" data-prefix="৳ " data-target="@Model.TodayCollection">0</h2>
                         </div>
-                        <div class="stat-icon-wrap" style="background: linear-gradient(135deg, #7c3aed, #5b21b6); color: white;">
+                        <div class="stat-icon-wrap" style="background: linear-gradient(135deg, #0d6efd, #0a58ca); color: white;">
                             <i class="fa fa-money-bill-wave"></i>
                         </div>
                     </div>
@@ -504,14 +507,14 @@
         </div>
 
         <div class="col-xl-3 col-lg-6 col-md-6 mb-4 animate-4">
-            <div class="card stat-card" style="--card-gradient: linear-gradient(135deg, #d97706, #b45309);">
-                <div class="card-body" style="background: linear-gradient(135deg, #fffbeb, #fef3c7);">
+            <div class="card stat-card h-100" style="--card-gradient: linear-gradient(135deg, #fd7e14, #d63384);">
+                <div class="card-body" style="background: linear-gradient(135deg, #fff3e0, #ffe0b2);">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <p class="stat-label">Classes</p>
-                            <h2 class="stat-number" data-target="@Model.TotalClasses">0</h2>
+                            <p class="stat-label" style="color: #fd7e14;">Classes</p>
+                            <h2 class="stat-number" style="color: #fd7e14;" data-target="@Model.TotalClasses">0</h2>
                         </div>
-                        <div class="stat-icon-wrap" style="background: linear-gradient(135deg, #d97706, #b45309); color: white;">
+                        <div class="stat-icon-wrap" style="background: linear-gradient(135deg, #fd7e14, #d63384); color: white;">
                             <i class="fa fa-school"></i>
                         </div>
                     </div>

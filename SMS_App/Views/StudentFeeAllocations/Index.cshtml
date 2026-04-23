@@ -256,20 +256,23 @@
         }
 
         async function academicClassIdChange() {
-            var sessionId = $('#academicSessionListId option:selected').val();
+            var sessionId = @Model.CurrentSession.Id;
             var classId = $('#academicClassListId option:selected').val();
             if (sessionId && classId) {
-                await loadStudentsByClassAndSession(6, classId);
+                console.log(sessionId,'=sesssion & classId = ', classId);
+                await loadStudentsByClassAndSession(sessionId, classId);
             }
         }
 
         async function loadStudentsByClassAndSession(sessionId, classId) {
+            console.log('before call to ajax');
             return $.ajax({
                 url: '/api/Students/getbyclasswithsessionId',
                 data: { academicSessionId: sessionId, academicClassId: classId },
                 type: 'POST',
                 dataType: 'json',
                 success: function (data) {
+                    console.log('success and return from ajax : ',data);
                     $('#studentId').empty();
                     $('#studentId').append('<option value="" selected disabled>-Select Student-</option>');
                     $.each(data, function (i, obj) {

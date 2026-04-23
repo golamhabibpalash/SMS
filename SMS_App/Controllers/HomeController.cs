@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -51,73 +51,98 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index()
     {
-        HttpContext.Session.SetString("macAddress", MACService.GetMAC());
-        var user = await _userManager.GetUserAsync(User);
-        HttpContext.Session.SetString("UserId", user.Id);
+        try
+        {
+            HttpContext.Session.SetString("macAddress", MACService.GetMAC());
+            var user = await _userManager.GetUserAsync(User);
+            
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Accounts");
+            }
+            
+            HttpContext.Session.SetString("UserId", user.Id);
 
-        Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
-        ViewBag.InstituteLogo = institute.Logo;
-        ViewBag.InstituteName = institute.Name;
+            var institute = await _instituteManager.GetFirstOrDefaultAsync();
+            ViewBag.InstituteLogo = institute?.Logo;
+            ViewBag.InstituteName = institute?.Name;
 
-        DashboardIndexVM dashboard = new DashboardIndexVM();
+            var dashboard = new DashboardIndexVM();
 
-        var currentSession = await _academicSessionManager.GetCurrentAcademicSessionAsync();
-        dashboard.CurrentSession = currentSession;
-        dashboard.CurrentSessionName = currentSession?.Name;
+            var currentSession = await _academicSessionManager.GetCurrentAcademicSessionAsync();
+            
+            if (currentSession == null)
+            {
+                dashboard.CurrentSessionName = "No Active Session";
+                ViewBag.Warning = "No active academic session found. Please create one.";
+                return View(dashboard);
+            }
+            
+            dashboard.CurrentSession = currentSession;
+            dashboard.CurrentSessionName = currentSession.Name;
 
-        var allStudents = await _studentManager.GetAllAsync();
-        var sessionStudents = allStudents.Where(s => s.AcademicSessionId == currentSession?.Id && s.Status).ToList();
+            var allStudents = await _studentManager.GetAllAsync();
+            var sessionStudents = allStudents.Where(s => s.AcademicSessionId == currentSession.Id && s.Status).ToList();
 
-        var allEmployees = await _employeeManager.GetAllAsync();
-        var activeEmployees = allEmployees.Where(e => e.Status).ToList();
+            var allEmployees = await _employeeManager.GetAllAsync();
+            var activeEmployees = allEmployees.Where(e => e.Status).ToList();
 
-        var allClasses = await _academicClassManager.GetAllAsync();
-        var activeClasses = allClasses.Where(c => c.Status).ToList();
+            var allClasses = await _academicClassManager.GetAllAsync();
+            var activeClasses = allClasses.Where(c => c.Status).ToList();
 
-        var allSections = await _academicSectionManager.GetAllAsync();
-        var activeSections = allSections.Where(s => s.Status).ToList();
+            var allSections = await _academicSectionManager.GetAllAsync();
+            var activeSections = allSections.Where(s => s.Status).ToList();
 
-        dashboard.TotalStudents = sessionStudents.Count;
-        dashboard.TotalEmployees = activeEmployees.Count;
-        dashboard.TotalClasses = activeClasses.Count;
-        dashboard.TotalSections = activeSections.Count;
+            dashboard.TotalStudents = sessionStudents.Count;
+            dashboard.TotalEmployees = activeEmployees.Count;
+            dashboard.TotalClasses = activeClasses.Count;
+            dashboard.TotalSections = activeSections.Count;
+        
+            var today = DateTime.Today.ToString("yyyy-MM-dd");
+            var todayAbsentStudents = await _attendanceMachineManager.GetTodaysAbsentStudentAsync(today);
+            var todayAbsentEmployees = await _attendanceMachineManager.GetTodaysAbsentEmployeeAsync(today);
 
-        var today = DateTime.Today.ToString("yyyy-MM-dd");
-        var todayAbsentStudents = await _attendanceMachineManager.GetTodaysAbsentStudentAsync(today);
-        var todayAbsentEmployees = await _attendanceMachineManager.GetTodaysAbsentEmployeeAsync(today);
+            dashboard.TodayAbsentStudents = todayAbsentStudents?.Count ?? 0;
+            dashboard.TodayPresentStudents = dashboard.TotalStudents - dashboard.TodayAbsentStudents;
+            dashboard.TodayAbsentEmployees = todayAbsentEmployees?.Count ?? 0;
+            dashboard.TodayPresentEmployees = dashboard.TotalEmployees - dashboard.TodayAbsentEmployees;
 
-        dashboard.TodayAbsentStudents = todayAbsentStudents?.Count ?? 0;
-        dashboard.TodayPresentStudents = dashboard.TotalStudents - dashboard.TodayAbsentStudents;
-        dashboard.TodayAbsentEmployees = todayAbsentEmployees?.Count ?? 0;
-        dashboard.TodayPresentEmployees = dashboard.TotalEmployees - dashboard.TodayAbsentEmployees;
+            dashboard.TodayAbsentStudentList = todayAbsentStudents?.Take(10).ToList() ?? new List<Student>();
 
-        dashboard.TodayAbsentStudentList = todayAbsentStudents?.Take(10).ToList() ?? new List<Student>();
+            var todayCollections = await _studentPaymentManager.GetPaymentSummeryByDate(today);
+            dashboard.TodayCollection = (decimal)(todayCollections?.Sum(c => c.Payments) ?? 0);
+            dashboard.TodayCollections = todayCollections?.ToList() ?? new List<StudentPaymentSummeryVM>();
 
-        var todayCollections = await _studentPaymentManager.GetPaymentSummeryByDate(today);
-        dashboard.TodayCollection = (decimal)(todayCollections?.Sum(c => c.Payments) ?? 0);
-        dashboard.TodayCollections = todayCollections?.ToList() ?? new List<StudentPaymentSummeryVM>();
+            var monthYear = DateTime.Today.ToString("yyyy-MM");
+            var monthlyCollections = await _studentPaymentManager.GetPaymentSummeryByMonthYear(monthYear);
+            dashboard.MonthlyCollection = (decimal)(monthlyCollections?.Sum(c => c.Payments) ?? 0);
 
-        var monthYear = DateTime.Today.ToString("yyyy-MM");
-        var monthlyCollections = await _studentPaymentManager.GetPaymentSummeryByMonthYear(monthYear);
-        dashboard.MonthlyCollection = (decimal)(monthlyCollections?.Sum(c => c.Payments) ?? 0);
+            dashboard.ClassWiseStudentCounts = sessionStudents
+                .GroupBy(s => s.AcademicClass?.Name ?? "N/A")
+                .Select(g => new ClassWiseStudentCount { ClassName = g.Key, StudentCount = g.Count() })
+                .OrderBy(c => c.ClassName)
+                .ToList();
 
-        dashboard.ClassWiseStudentCounts = sessionStudents
-            .GroupBy(s => s.AcademicClass?.Name ?? "N/A")
-            .Select(g => new ClassWiseStudentCount { ClassName = g.Key, StudentCount = g.Count() })
-            .OrderBy(c => c.ClassName)
-            .ToList();
+            dashboard.ClassWiseCollections = todayCollections
+                .Select(c => new ClassWiseCollection { ClassName = c.AcademicClassName, Amount = (decimal)c.Payments })
+                .OrderByDescending(c => c.Amount)
+                .ToList();
 
-        dashboard.ClassWiseCollections = todayCollections
-            .Select(c => new ClassWiseCollection { ClassName = c.AcademicClassName, Amount = (decimal)c.Payments })
-            .OrderByDescending(c => c.Amount)
-            .ToList();
+            dashboard.RecentStudents = sessionStudents
+                .OrderByDescending(s => s.CreatedAt)
+                .Take(5)
+                .ToList();
 
-        dashboard.RecentStudents = sessionStudents
-            .OrderByDescending(s => s.CreatedAt)
-            .Take(5)
-            .ToList();
-
-        return View(dashboard);
+            return View(dashboard);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading dashboard");
+            var dashboard = new DashboardIndexVM();
+            dashboard.CurrentSessionName = "Error";
+            ViewBag.Error = "Error loading dashboard data: " + ex.Message;
+            return View(dashboard);
+        }
     }
 
     public IActionResult Privacy()
@@ -131,4 +156,3 @@ public class HomeController : Controller
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }
-

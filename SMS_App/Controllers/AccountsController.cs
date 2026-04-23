@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -248,7 +248,94 @@ public class AccountsController : Controller
     [AllowAnonymous]
     public IActionResult LockScreen()
     {
+        var user = _userManager.GetUserAsync(User).Result;
+        if (user != null)
+        {
+            ViewBag.UserName = user.UserName;
+            ViewBag.UserImage = GetUserImage(user);
+        }
         return View();
+    }
+
+    [HttpPost]
+    [AllowAnonymous]
+    public async Task<IActionResult> UnLock(string password)
+    {
+        try
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Json(new { success = false, message = "Session expired. Please login again." });
+            }
+
+            var isValidPassword = await _userManager.CheckPasswordAsync(user, password);
+            if (isValidPassword)
+            {
+                await _signInManager.RefreshSignInAsync(user);
+                return Json(new { success = true, redirectUrl = "/Home" });
+            }
+
+            return Json(new { success = false, message = "Invalid password" });
+        }
+        catch (Exception ex)
+        {
+            await _appLogger.ErrorAsync($"Unlock error: {ex.Message}", ex.Message);
+            return Json(new { success = false, message = "An error occurred" });
+        }
+    }
+
+    private string GetUserImage(ApplicationUser user)
+    {
+        if (user == null) return "/Images/Employee/maleEmployee.png";
+        
+        try
+        {
+            if (user.UserType == 's')
+            {
+                var student = _studentManager.GetByIdAsync(user.ReferenceId).Result;
+                if (student != null && !string.IsNullOrEmpty(student.Photo))
+                    return $"/Images/Student/Photo/{student.Photo}";
+            }
+            else if (user.UserType == 'e')
+            {
+                var employee = _employeeManager.GetByIdAsync(user.ReferenceId).Result;
+                if (employee != null)
+                {
+                    if (!string.IsNullOrEmpty(employee.Image))
+                        return $"/Images/Employee/Photo/{employee.Image}";
+                    
+                    if (employee.GenderId == 2)
+                        return "/Images/Employee/femaleEmployee.png";
+                }
+            }
+        }
+        catch { }
+        
+        return "/Images/Employee/maleEmployee.png";
+    }
+
+    private string GetUserGender(ApplicationUser user)
+    {
+        if (user == null) return "male";
+        
+        try
+        {
+            if (user.UserType == 's')
+            {
+                // Students may not have gender, default to male
+                return "male";
+            }
+            else if (user.UserType == 'e')
+            {
+                var employee = _employeeManager.GetByIdAsync(user.ReferenceId).Result;
+                if (employee != null && employee.GenderId == 2)
+                    return "female";
+            }
+        }
+        catch { }
+        
+        return "male";
     }
 
     [Authorize(Roles = "SuperAdmin")]

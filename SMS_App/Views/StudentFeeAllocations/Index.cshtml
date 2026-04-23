@@ -4,6 +4,7 @@
 
 @{
     GlobalUI.PageTitle = "Student Fee Allocation";
+    
 }
 
 @section Styles{
@@ -39,14 +40,7 @@
                         style="font-size: 1.1rem; position: relative;" id="create_update_title_id">Create New Allocation</legend>
             <form asp-action="Create" method="post" id="createUpdateForm">
                 <input type="hidden" asp-for="SFAllocation.Id" />
-                <div class="form-group row">
-                    <label class="col-md-4 col-form-label text-end">Academic Session</label>
-                    <div class="col-md-8">
-                        <select class="form-control" id="academicSessionListId" onchange="academicSessionIdChange()">
-                            <option selected disabled>-Select Session-</option>
-                        </select>
-                    </div>
-                </div>
+
                 <div class="form-group row">
                     <label class="col-md-4 col-form-label text-end">Academic Class</label>
                     <div class="col-md-8">
@@ -62,6 +56,16 @@
                             <option selected disabled>-Select student-</option>
                         </select>
                         <input type="hidden" asp-for="SFAllocation.UniqueId" id="uniqueId" />
+                    </div>
+                </div>
+                <hr  style="border: 1px solid #0d6efd; margin: 10px 0;" />
+
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-end">Academic Session</label>
+                    <div class="col-md-8">
+                        <select class="form-control" id="academicSessionListId" onchange="academicSessionIdChange()">
+                            <option selected disabled>-Select Session-</option>
+                        </select>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -244,7 +248,7 @@
         }
 
         async function academicSessionIdChange() {
-            var sessionId = $('#academicSessionListId option:selected').val();
+            var sessionId = @Model.CurrentSession.Id;
             var classId = $('#academicClassListId option:selected').val();
             if (sessionId && classId) {
                 await loadStudentsByClassAndSession(sessionId, classId);
@@ -255,7 +259,7 @@
             var sessionId = $('#academicSessionListId option:selected').val();
             var classId = $('#academicClassListId option:selected').val();
             if (sessionId && classId) {
-                await loadStudentsByClassAndSession(sessionId, classId);
+                await loadStudentsByClassAndSession(6, classId);
             }
         }
 
@@ -363,7 +367,7 @@
             var sessionId = $('#academicSessionListId option:selected').val();
             var classId = $('#academicClassListId option:selected').val();
             if (sessionId && classId) {
-                await loadStudentsByClassAndSession(sessionId, classId);
+                await loadStudentsByClassAndSession(6, classId);
             }
         }
 

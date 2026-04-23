@@ -52,6 +52,7 @@ public class StudentFeeAllocationsController : Controller
 
         var allClasses = await _academicClassManager.GetAllAsync();
         studentFeeAllocationVM.AcademicClassList = new SelectList(allClasses.Where(s => s.Status == true), "Id", "Name");
+        studentFeeAllocationVM.CurrentSession = await _academicSessionManager.GetCurrentAcademicSessionAsync();
 
         return View(studentFeeAllocationVM);
     }

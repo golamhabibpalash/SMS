@@ -450,10 +450,8 @@ public class ReportsController : Controller
         }
 
         string mediaType = "application/pdf";
-        var path = _host.WebRootPath + "\\Reports\\Attendance\\Rpt_Daily_Attendance.rdlc";
+        var path = Path.Combine(_host.WebRootPath, "Reports", "Attendance", "Rpt_Daily_Attendance.rdlc");
 
-        string imageParam = "";
-        var imagePath = _host.WebRootPath + "\\Images\\Institute\\" + institute.Logo;
 
         var reportName = "Students Daily Attendance Report (Check In)";
         if (attendanceCategory == "In")
@@ -477,29 +475,8 @@ public class ReportsController : Controller
         string logoFileName = string.IsNullOrWhiteSpace(institute.Logo)
             ? defaultInstituteLogo
             : institute.Logo;
-
-        imagePath = Path.Combine(
-            _host.WebRootPath,
-            "Images",
-            "Institute",
-            logoFileName
-        );
-
-        // Read image file without System.Drawing
-        byte[] imageBytes;
-        if (!string.IsNullOrEmpty(imagePath) && System.IO.File.Exists(imagePath))
-        {
-            imageBytes = await System.IO.File.ReadAllBytesAsync(imagePath);
-        }
-        else
-        {
-            // Load default image
-            string defaultImagePath = Path.Combine(_host.WebRootPath, "Images", "Institute", defaultInstituteLogo);
-            imageBytes = await System.IO.File.ReadAllBytesAsync(defaultImagePath);
-        }
-        // Convert to base64 for RDLC
-        imageParam = "data:image/png;base64," + Convert.ToBase64String(imageBytes);
-
+        string imageParam = await LoadInstituteLogoAsync(logoFileName);
+        
         attendanceFor = attendanceFor == "s" ? "student" : "employees";
         AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSessionAsync();
         var reportData = new List<RptDailyAttendaceVM>();
@@ -507,8 +484,7 @@ public class ReportsController : Controller
 
         if (attendanceFor == "employees")
         {
-            path = _host.WebRootPath + "\\Reports\\Attendance\\Rpt_Daily_Attendance_Employee.rdlc";
-
+            path = Path.Combine(_host.WebRootPath, "Reports", "Attendance", "Rpt_Daily_Attendance_Employee.rdlc");
             reportName = "Employees Daily Attendance Report";
         }
         using var report = new Microsoft.Reporting.NETCore.LocalReport();
@@ -545,7 +521,7 @@ public class ReportsController : Controller
             new ReportParameter("InstituteName", institute.Name),
             new ReportParameter("Location", institute.Address),
             new ReportParameter("EIINNo", institute.EIIN),
-            new ReportParameter("Logo", imageParam),
+            new ReportParameter("Logo", StripDataUriPrefix(imageParam)),
             new ReportParameter("ReportName", reportName),
             new ReportParameter("AttendanceDate", fromDate),
             new ReportParameter("ReportDate", DateTime.Now.ToString("dd MMM yyyy hh:mm tt")),
@@ -562,6 +538,7 @@ public class ReportsController : Controller
         return File(pdf, mediaType);
 
     }
+
     //Monthly Attendance Report
     [Authorize(Policy = "AttendanceReportsPolicy")]
     public async Task<IActionResult> AttendanceReport()

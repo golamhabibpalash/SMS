@@ -21,4 +21,5 @@ public interface IAcademicExamManager:IManager<AcademicExam>
     Task<bool> IsDuplicateAsync(int examGroupId, int classId, int subjectId, int? sectionId, string examCategory);
     Task<List<(int SectionId, bool IsDuplicate)>> CheckDuplicatesBulkAsync(int examGroupId, int classId, int subjectId, string examCategory, List<int> sectionIds);
     Task<List<AcademicExam>> GetMergedExamsAsync(int examId);
+    Task<List<Student>> GetStudentsByExamIdAsync(int examId);
 }

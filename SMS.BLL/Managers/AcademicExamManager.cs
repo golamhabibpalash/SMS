@@ -42,14 +42,11 @@ public class AcademicExamManager : Manager<AcademicExam>, IAcademicExamManager
         return result;
     }
 
-
     public async Task<List<AcademicExam>> GetByClassIdExamGroupIdSectionIdAsync(int examGroupId, int academicClassId, int sectionId)
     {
         var result = await _academicExamRepository.GetByClassIdExamGroupIdSectionId(examGroupId, academicClassId, sectionId);
         return result;
     }
-
-
 
     public async Task<List<ExamSessionDto>> GetExaminationListAsync()
     {
@@ -364,6 +361,7 @@ public class AcademicExamManager : Manager<AcademicExam>, IAcademicExamManager
         }
         return types;
     }
+    
     private double GetPassMark(double totalMark)
     {
         double passMark = 0;
@@ -374,6 +372,7 @@ public class AcademicExamManager : Manager<AcademicExam>, IAcademicExamManager
         }
         return passMark + 1;
     }
+    
     private List<LiveResultSubjectWise> GetLiveResultSubjectWise(int studentId)
     {
         var liveResultSubjectWise = new List<LiveResultSubjectWise>();
@@ -534,7 +533,11 @@ public class AcademicExamManager : Manager<AcademicExam>, IAcademicExamManager
     public async Task<int> GetTotalExamAsync(int examGroupId, int classId)
     {
         int totalExamsCount = 0;
-        var totalExams = await _repository.Table.Where(s => s.AcademicExamGroupId == examGroupId && s.AcademicClassId == classId).ToListAsync();
+        var totalExams = await _repository.Table
+            .Where(s => s.AcademicExamGroupId == examGroupId && s.AcademicClassId == classId)
+            .GroupBy(e => e.AcademicSubjectId)
+            .Select(g => g.First())
+            .ToListAsync();
         if (totalExams.Any())
         {
             totalExamsCount = totalExams.Count;
@@ -625,4 +628,8 @@ public class AcademicExamManager : Manager<AcademicExam>, IAcademicExamManager
         return mergedExams;
     }
 
+    public Task<List<Student>> GetStudentsByExamIdAsync(int examId)
+    {
+        throw new NotImplementedException();
+    }
 }

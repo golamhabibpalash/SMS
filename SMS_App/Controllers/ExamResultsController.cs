@@ -11,6 +11,7 @@ using SMS_App.Utilities.MACIPServices;
 using SMS_App.ViewModels.ExamResult;
 using SMS_App.ViewModels.ExamVM;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -151,7 +152,7 @@ public class ExamResultsController : Controller
         ViewData["ExamGroupList"] = new SelectList(examGroups, "Id", "ExamGroupName", examGroupId);
         ViewData["AcademicClassList"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name", classId);
         var examList = new List<AcademicExam>();
-        if (sectionId>0)
+        if (sectionId > 0)
         {
             examList = await _academicExamManager.GetByClassIdExamGroupIdSectionIdAsync(examGroupId, classId, (int)sectionId);
         }
@@ -427,13 +428,20 @@ public class ExamResultsController : Controller
             var exams = await _academicExamManager.GetByClassIdExamGroupIdAsync(groupId, classId);
             var session = await _sessionManager.GetCurrentAcademicSessionAsync();
             var examGroup = await _academicExamGroupManager.GetByIdAsync(groupId);
-            List<Student> students = await _studentManager.GetStudentsByClassIdAndSessionIdAsync(session.Id, classId);
+
+            List<Student> students = exams?
+                .Where(e => e.AcademicExamDetails != null)
+                .SelectMany(e => e.AcademicExamDetails)
+                .Select(d => d.Student)
+                .DistinctBy(s => s.Id)
+                .ToList() ?? new();
+
+            if (students.Count <= 0)
+            {
+                return Json("Student Not Found");
+            }
             foreach (var student in students)
             {
-                if (student.ClassRoll == 2609097)
-                {
-                    Console.WriteLine("Got it");
-                }
                 if (student.Status == false)
                 {
                     continue;

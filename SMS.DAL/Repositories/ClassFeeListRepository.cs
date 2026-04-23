@@ -74,15 +74,17 @@ namespace SMS.DAL.Repositories
             List<ClassFeeList> results = new();
             try
             {
-                results = await (from t in _context.ClassFeeList.Where(s => s.AcademicSessionId == sessionId)
-                                 join h in _context.StudentFeeHead on t.StudentFeeHeadId equals h.Id into joinFeedHead
-                                 from h in joinFeedHead.DefaultIfEmpty()
-                                 join s in _context.Student on t.AcademicClassId equals s.AcademicClassId
-                                 where s.Id == studentId && h.IsResidential == s.IsResidential && t.AcademicSessionId == s.AcademicSessionId
-                                 select t)
-                                 .Include(s => s.StudentFeeHead)
-                                 .Include(s => s.AcademicSession)
-                                 .ToListAsync();
+                var student = await _context.Student.FindAsync(studentId);
+                if (student == null) return results;
+
+                results = await (from t in _context.ClassFeeList
+                              where t.AcademicSessionId == sessionId && t.AcademicClassId == classId
+                              join h in _context.StudentFeeHead on t.StudentFeeHeadId equals h.Id
+                              where h.IsResidential == student.IsResidential
+                              select t)
+                              .Include(s => s.StudentFeeHead)
+                              .Include(s => s.AcademicSession)
+                              .ToListAsync();
             }
             catch (Exception)
             {

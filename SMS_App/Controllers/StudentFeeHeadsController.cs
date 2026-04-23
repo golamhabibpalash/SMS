@@ -243,6 +243,7 @@ namespace SMS_App.Controllers
             }
             return Json(classFeeList);
         }
+        
         public async Task<JsonResult> GetFeeHeads(string isResidential)
         {
             var allFeeHeads = await _studentFeeHeadManager.GetAllAsync();
@@ -267,6 +268,14 @@ namespace SMS_App.Controllers
             }
 
             return Json(allFeeHeads.OrderBy(s => s.SL));
+        }
+
+        [HttpGet]
+        [Route("StudentFeeHeads/GetFeeHeadsBySessionIdClassIdStudentIdAsync")]
+        public async Task<JsonResult> GetFeeHeadsBySessionIdClassIdStudentIdAsync(int sessionId, int classId, int studentId)
+        {
+                var feeHeads = await _studentFeeHeadManager.GetAllByClassIdSessionIdStudentIdAsync(classId, sessionId, studentId);
+                return Json(feeHeads);
         }
     }
 }

@@ -4,10 +4,10 @@
 
 @{
     GlobalUI.PageTitle = "Student Fee Allocation";
-    
+
 }
 
-@section Styles{
+@section Styles {
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 }
 
@@ -34,10 +34,13 @@
             </tfoot>
         </table>
     </div>
+    
     <div class="col-md-4 p-2" style=" position:relative" id="studentFeeAllocationCreatePortion">
         <fieldset class="border-primary p-2 border" id="createFieldSetId" style="background-color:antiquewhite;position:sticky;top:50px;right:5px">
-            <legend  class="float-none w-auto text-primary px-2"
-                        style="font-size: 1.1rem; position: relative;" id="create_update_title_id">Create New Allocation</legend>
+            <legend class="float-none w-auto text-primary px-2"
+                    style="font-size: 1.1rem; position: relative;" id="create_update_title_id">
+                Create New Allocation
+            </legend>
             <form asp-action="Create" method="post" id="createUpdateForm">
                 <input type="hidden" asp-for="SFAllocation.Id" />
 
@@ -52,13 +55,13 @@
                 <div class="form-group row">
                     <label class="col-md-4 col-form-label text-end">Student</label>
                     <div class="col-md-8">
-                        <select class="form-control" id="studentId" onchange="handleStudentIdChange()">
+                        <select class="form-control" asp-for="SFAllocation.StudentId" onchange="handleStudentIdChange()">
                             <option selected disabled>-Select student-</option>
                         </select>
-                        <input type="hidden" asp-for="SFAllocation.UniqueId" id="uniqueId" />
+                        <input type="hidden" asp-for="SFAllocation.UniqueId" />
                     </div>
                 </div>
-                <hr  style="border: 1px solid #0d6efd; margin: 10px 0;" />
+                <hr style="border: 1px solid #0d6efd; margin: 10px 0;" />
 
                 <div class="form-group row">
                     <label class="col-md-4 col-form-label text-end">Academic Session</label>
@@ -71,10 +74,10 @@
                 <div class="form-group row">
                     <label class="col-md-4 col-form-label text-end">Fee Name</label>
                     <div class="col-md-8">
-                        <select class="form-control" id="studentFeeHeadId" onchange="handleFeeHeadIdChange()">
+                        <select class="form-control" asp-for="SFAllocation.StudentFeeHeadId"  onchange="handleFeeHeadIdChange()">
                             <option selected disabled>-Select type-</option>
                         </select>
-                        <input type="hidden" asp-for="SFAllocation.ClassFeeListId" id="classFeeListId" />
+                        <input type="hidden" asp-for="SFAllocation.ClassFeeListId" />
                     </div>
                 </div>
                 <div class="form-group row">
@@ -118,7 +121,7 @@
                 <table class="table card">
 
                     <tr>
-                        <td  width="20%" >Student</td>
+                        <td width="20%">Student</td>
                         <td width="10%">:</td>
                         <td width="70%" id="deleteStudentName" class="font-weight-bold"></td>
                     </tr>
@@ -151,7 +154,7 @@
 </div>
 
 
-@section Scripts{
+@section Scripts {
     <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
 
     <script>
@@ -174,9 +177,9 @@
 
                 try {
                     await academicClassIdChange();
-                    $("#studentId").val(studentId);
+                    $("#SFAllocation_StudentId").val(studentId);
                     await handleStudentIdChange();
-                    $("#studentFeeHeadId").val(feeType);
+                    $("#SFAllocation_StudentFeeHeadId").val(feeType);
                 } catch (error) {
                     console.error("An error occurred:", error);
                 }
@@ -212,16 +215,32 @@
         });
 
         async function loadAcademicSessions() {
+            var currentSessionId = @Model.CurrentSession.Id;
             return $.ajax({
                 url: '/api/AcademicSessions/GetAllActive',
                 type: 'GET',
                 dataType: 'json',
                 success: function (data) {
-                    $('#academicSessionListId').empty();
-                    $('#academicSessionListId').append('<option value="" selected disabled>-Select Session-</option>');
+                    const $select = $('#academicSessionListId');
+                    $select.empty();
+                    $select.append('<option value="" selected disabled>-Select Session-</option>');
+
                     $.each(data, function (i, obj) {
-                        $('#academicSessionListId').append('<option value="' + obj.id + '">' + obj.name + '</option>');
+                        $select.append(
+                            $('<option>', {
+                                value: obj.id,
+                                text: obj.name
+                            })
+                        );
                     });
+
+                    // Set AFTER all options are appended
+                    $select.val(currentSessionId);
+
+                    // Optional: verify it matched
+                    if ($select.val() === null) {
+                        console.warn('No option matched currentSessionId:', currentSessionId);
+                    }
                 },
                 error: function (err) {
                     console.error('Error loading sessions:', err);
@@ -248,35 +267,45 @@
         }
 
         async function academicSessionIdChange() {
-            var sessionId = @Model.CurrentSession.Id;
+            var sessionId = $('#academicSessionListId option:selected').val();
             var classId = $('#academicClassListId option:selected').val();
-            if (sessionId && classId) {
-                await loadStudentsByClassAndSession(sessionId, classId);
+            var studentId = $('#SFAllocation_StudentId option:selected').val();
+            if (!sessionId || !classId || !studentId) {
+                if (!sessionId || !classId) return;
+                $('#SFAllocation_StudentFeeHeadId').empty().append('<option value="" selected disabled>-Select type-</option>');
+                return;
+            }
+
+            try {
+                await loadFeeHeadsBySessionClassAndStudent(sessionId, classId, studentId);
+            } catch (error) {
+                console.error("An error occurred:", error);
             }
         }
 
         async function academicClassIdChange() {
-            var sessionId = @Model.CurrentSession.Id;
+            var sessionId = $('#academicSessionListId option:selected').val() || @Model.CurrentSession.Id;
             var classId = $('#academicClassListId option:selected').val();
+
             if (sessionId && classId) {
-                console.log(sessionId,'=sesssion & classId = ', classId);
                 await loadStudentsByClassAndSession(sessionId, classId);
+                $('#SFAllocation_StudentFeeHeadId').empty().append('<option value="" selected disabled>-Select type-</option>');
             }
         }
 
         async function loadStudentsByClassAndSession(sessionId, classId) {
-            console.log('before call to ajax');
+
             return $.ajax({
                 url: '/api/Students/getbyclasswithsessionId',
                 data: { academicSessionId: sessionId, academicClassId: classId },
                 type: 'POST',
                 dataType: 'json',
                 success: function (data) {
-                    console.log('success and return from ajax : ',data);
-                    $('#studentId').empty();
-                    $('#studentId').append('<option value="" selected disabled>-Select Student-</option>');
+
+                    $('#SFAllocation_StudentId').empty();
+                    $('#SFAllocation_StudentId').append('<option value="" selected disabled>-Select Student-</option>');
                     $.each(data, function (i, obj) {
-                        $('#studentId').append('<option value="' + obj.id + '">' + obj.classRoll + '-' + obj.name + '</option>');
+                        $('#SFAllocation_StudentId').append('<option value="' + obj.id + '">' + obj.classRoll + '-' + obj.name + '</option>');
                     });
                 },
                 error: function (err) {
@@ -286,46 +315,48 @@
         }
 
         async function handleStudentIdChange() {
-            var studentId = $('#studentId option:selected').val();
-            var sessionId = $('#academicSessionListId option:selected').val();
-            if (!studentId || !sessionId) return;
+            var studentId = $('#SFAllocation_StudentId option:selected').val();
+            var sessionId = $('#academicSessionListId option:selected').val() || @Model.CurrentSession.Id;
+            var classId = $('#academicClassListId option:selected').val();
+
+            var uniqueId = await getUniqueIdByStudentId(studentId);
+            if(uniqueId){
+                $('#SFAllocation_UniqueId').val(uniqueId);
+            }
+
+            if (!studentId || !sessionId || !classId) return;
 
             try {
-                var uniqueId = await getUniqueIdByStudentId(studentId);
-                $('#uniqueId').val(uniqueId);
 
-                await loadFeeHeadsBySessionAndStudent(uniqueId, sessionId);
+                await loadFeeHeadsBySessionClassAndStudent(sessionId, classId, studentId);
             } catch (error) {
                 console.error("An error occurred:", error);
             }
         }
 
-        async function loadFeeHeadsBySessionAndStudent(uniqueId, sessionId) {
+        async function loadFeeHeadsBySessionClassAndStudent(sessionId, classId, studentId) {
+            console.log('befor call ajax- studentId:',studentId,'; classId:',classId,'sessionId:',sessionId);
             return $.ajax({
-                url: '/ClassFeeLists/GetClassListByUniqueId',
-                data: { uniqueId: uniqueId },
+                url: '/StudentFeeHeads/GetFeeHeadsBySessionIdClassIdStudentIdAsync',
                 type: 'GET',
                 dataType: 'json',
+                data: { sessionId, classId, studentId },
                 success: function (data) {
-                    $('#studentFeeHeadId').empty();
-                    $('#studentFeeHeadId').append('<option value="" selected disabled>-Select type-</option>');
+                    const $select = $('#SFAllocation_StudentFeeHeadId');
+                    $select.empty().append('<option value="" selected disabled>-Select type-</option>');
+
                     $.each(data, function (i, obj) {
-                        $('#studentFeeHeadId').append('<option value="' + obj.studentFeeHead.id + '">' + obj.studentFeeHead.name + '</option>');
+                        $select.append(
+                            $('<option>', {
+                                value: obj.id,
+                                text: obj.name
+                            })
+                        );
                     });
                 },
                 error: function (err) {
                     console.error('Error loading fee heads:', err);
                 }
-            });
-        }
-
-        function getUniqueIdByStudentId(studentId) {
-            return $.ajax({
-                url: '/api/Students/GetUniqueIdByStudentId',
-                data: { id: studentId },
-                cache: false,
-                type: 'GET',
-                dataType: 'JSON',
             });
         }
 
@@ -366,14 +397,6 @@
             });
         }
 
-        async function academicClassIdChange() {
-            var sessionId = $('#academicSessionListId option:selected').val();
-            var classId = $('#academicClassListId option:selected').val();
-            if (sessionId && classId) {
-                await loadStudentsByClassAndSession(6, classId);
-            }
-        }
-
         function formUIChange() {
             let form = document.getElementById('createUpdateForm');
             form.action = "/StudentFeeAllocations/Edit";
@@ -392,10 +415,15 @@
         }
 
         async function handleFeeHeadIdChange() {
-            let feeHeadId = $('#studentFeeHeadId option:selected').val();
-            let studentId = $('#studentId option:selected').val();
+            let feeHeadId = $('#SFAllocation_StudentFeeHeadId option:selected').val();
             let classId = $('#academicClassListId option:selected').val();
-            console.log('Fee Head:', feeHeadId, 'Student:', studentId, 'Class:', classId);
+            var sessionId = $('#academicSessionListId option:selected').val() || @Model.CurrentSession.Id;
+
+            var classFeeList = await GetClassFeeListBySessionIdFeeHeadIdAndClassId(sessionId,classId,feeHeadId);
+            if(classFeeList)
+            {
+                $('#SFAllocation_ClassFeeListId').val(classFeeList.id);
+            }
         }
 
         function getUniqueIdByStudentId(studentId) {
@@ -412,6 +440,16 @@
             return $.ajax({
                 url: '/ClassFeeLists/GetClassListByUniqueId',
                 data: { uniqueId: uniqueId },
+                cache: false,
+                type: 'GET',
+                dataType: 'JSON',
+            });
+        }
+
+        function GetClassFeeListBySessionIdFeeHeadIdAndClassId(sessionId,classId,feeHeadId){
+            return $.ajax({
+                url: '/ClassFeeLists/GetClassFeeListBySessionIdFeeHeadIdAndClassId',
+                data: { sessionId: sessionId, feeHeadId:feeHeadId, classId:classId},
                 cache: false,
                 type: 'GET',
                 dataType: 'JSON',

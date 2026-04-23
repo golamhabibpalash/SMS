@@ -9,6 +9,7 @@ using SMS.Entities;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Reflection.Metadata.Ecma335;
 
 namespace SMS_App.Controllers
 {
@@ -256,6 +257,12 @@ namespace SMS_App.Controllers
         {
             var result = await _classFeeListManager.GetAllBySessionClassTypeAsync(academicSessionId, academicClassId, isResidential);
             return new JsonResult(result.OrderBy(s => s.SL));
+        }
+        public async Task<JsonResult> GetClassFeeListBySessionIdFeeHeadIdAndClassId(int sessionId,int feeHeadId, int classId)
+        {
+            var result = await _classFeeListManager.GetByClassIdAndFeeHeadIdAsync(classId, feeHeadId, sessionId);
+
+            return new JsonResult(result);
         }
     }
 }

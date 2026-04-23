@@ -258,6 +258,10 @@ public class StudentFeeAllocationsController : Controller
                 {
                     TempData["created"] = "New Fee allocation added successfully";
                 }
+                else
+                {
+                    TempData["error"] = "There have some issue, try again";
+                }
             }
             catch (Exception)
             {

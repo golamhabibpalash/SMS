@@ -808,35 +808,53 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
+            // Animate counter numbers
             $('.stat-number').each(function () {
                 var $this = $(this);
                 var target = parseInt($this.data('target')) || 0;
                 var prefix = $this.data('prefix') || '';
                 
-                $this.prop('Counter', 0).animate({
-                    Counter: target
-                }, {
-                    duration: 1800,
-                    easing: 'easeOutCubic',
-                    step: function (now) {
+                if (target > 0) {
+                    var duration = 1500;
+                    var startTime = Date.now();
+                    
+                    function animateCounter() {
+                        var now = Date.now();
+                        var elapsed = now - startTime;
+                        var progress = Math.min(elapsed / duration, 1);
+                        var easeProgress = 1 - Math.pow(1 - progress, 3);
+                        var current = Math.floor(easeProgress * target);
+                        
                         if (prefix) {
-                            $(this).text(prefix + Math.ceil(now).toLocaleString('en-IN'));
+                            $this.text(prefix + current.toLocaleString('en-IN'));
                         } else {
-                            $(this).text(Math.ceil(now).toLocaleString('en-IN'));
+                            $this.text(current.toLocaleString('en-IN'));
+                        }
+                        
+                        if (progress < 1) {
+                            requestAnimationFrame(animateCounter);
                         }
                     }
-                });
+                    
+                    requestAnimationFrame(animateCounter);
+                } else {
+                    if (prefix) {
+                        $this.text(prefix + '0');
+                    } else {
+                        $this.text('0');
+                    }
+                }
             });
 
+            // Animate progress bars
             $('.progress-bar-fill').each(function () {
                 var $this = $(this);
                 var width = $this.data('width');
                 setTimeout(function () {
                     $this.animate({ width: width + '%' }, {
-                        duration: 1200,
-                        easing: 'easeOutCubic'
+                        duration: 1000
                     });
-                }, 600);
+                }, 500);
             });
         });
     </script>

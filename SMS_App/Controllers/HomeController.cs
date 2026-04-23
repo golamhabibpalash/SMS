@@ -71,6 +71,8 @@ public class HomeController : Controller
 
             var currentSession = await _academicSessionManager.GetCurrentAcademicSessionAsync();
             
+            _logger.LogInformation("Current Session: {Session}", currentSession?.Name);
+            
             if (currentSession == null)
             {
                 dashboard.CurrentSessionName = "No Active Session";
@@ -81,8 +83,18 @@ public class HomeController : Controller
             dashboard.CurrentSession = currentSession;
             dashboard.CurrentSessionName = currentSession.Name;
 
+            _logger.LogInformation("Fetching students for session: {SessionId}", currentSession.Id);
+            
             var allStudents = await _studentManager.GetAllAsync();
-            var sessionStudents = allStudents.Where(s => s.AcademicSessionId == currentSession.Id && s.Status).ToList();
+            _logger.LogInformation("Total students in DB: {Count}", allStudents.Count);
+            
+            // Get students in current session - count ALL students in session (both active and inactive for dashboard)
+            var sessionStudents = allStudents.Where(s => s.AcademicSessionId == currentSession.Id).ToList();
+            _logger.LogInformation("Students in current session (all): {Count}", sessionStudents.Count);
+            
+            // Active students only
+            var activeSessionStudents = sessionStudents.Where(s => s.Status).ToList();
+            _logger.LogInformation("Active students in current session: {Count}", activeSessionStudents.Count);
 
             var allEmployees = await _employeeManager.GetAllAsync();
             var activeEmployees = allEmployees.Where(e => e.Status).ToList();
@@ -93,12 +105,14 @@ public class HomeController : Controller
             var allSections = await _academicSectionManager.GetAllAsync();
             var activeSections = allSections.Where(s => s.Status).ToList();
 
-            dashboard.TotalStudents = sessionStudents.Count;
+            dashboard.TotalStudents = activeSessionStudents.Count;
             dashboard.TotalEmployees = activeEmployees.Count;
             dashboard.TotalClasses = activeClasses.Count;
             dashboard.TotalSections = activeSections.Count;
         
             var today = DateTime.Today.ToString("yyyy-MM-dd");
+            _logger.LogInformation("Today's date: {Date}", today);
+            
             var todayAbsentStudents = await _attendanceMachineManager.GetTodaysAbsentStudentAsync(today);
             var todayAbsentEmployees = await _attendanceMachineManager.GetTodaysAbsentEmployeeAsync(today);
 
@@ -109,15 +123,33 @@ public class HomeController : Controller
 
             dashboard.TodayAbsentStudentList = todayAbsentStudents?.Take(10).ToList() ?? new List<Student>();
 
+            // Get Today's Collection
             var todayCollections = await _studentPaymentManager.GetPaymentSummeryByDate(today);
-            dashboard.TodayCollection = (decimal)(todayCollections?.Sum(c => c.Payments) ?? 0);
+            decimal todayTotal = 0;
+            if (todayCollections != null && todayCollections.Any())
+            {
+                foreach (var item in todayCollections)
+                {
+                    todayTotal += Convert.ToDecimal(item.Payments);
+                }
+            }
+            dashboard.TodayCollection = todayTotal;
             dashboard.TodayCollections = todayCollections?.ToList() ?? new List<StudentPaymentSummeryVM>();
 
+            // Get Monthly Collection
             var monthYear = DateTime.Today.ToString("yyyy-MM");
             var monthlyCollections = await _studentPaymentManager.GetPaymentSummeryByMonthYear(monthYear);
-            dashboard.MonthlyCollection = (decimal)(monthlyCollections?.Sum(c => c.Payments) ?? 0);
+            decimal monthTotal = 0;
+            if (monthlyCollections != null && monthlyCollections.Any())
+            {
+                foreach (var item in monthlyCollections)
+                {
+                    monthTotal += Convert.ToDecimal(item.Payments);
+                }
+            }
+            dashboard.MonthlyCollection = monthTotal;
 
-            dashboard.ClassWiseStudentCounts = sessionStudents
+            dashboard.ClassWiseStudentCounts = activeSessionStudents
                 .GroupBy(s => s.AcademicClass?.Name ?? "N/A")
                 .Select(g => new ClassWiseStudentCount { ClassName = g.Key, StudentCount = g.Count() })
                 .OrderBy(c => c.ClassName)
@@ -128,7 +160,7 @@ public class HomeController : Controller
                 .OrderByDescending(c => c.Amount)
                 .ToList();
 
-            dashboard.RecentStudents = sessionStudents
+            dashboard.RecentStudents = activeSessionStudents
                 .OrderByDescending(s => s.CreatedAt)
                 .Take(5)
                 .ToList();

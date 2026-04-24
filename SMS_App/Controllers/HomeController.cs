@@ -71,30 +71,19 @@ public class HomeController : Controller
 
             var currentSession = await _academicSessionManager.GetCurrentAcademicSessionAsync();
             
-            _logger.LogInformation("Current Session: {Session}", currentSession?.Name);
-            
             if (currentSession == null)
             {
                 dashboard.CurrentSessionName = "No Active Session";
-                ViewBag.Warning = "No active academic session found. Please create one.";
+                ViewBag.Warning = "No active academic session found.";
                 return View(dashboard);
             }
             
             dashboard.CurrentSession = currentSession;
             dashboard.CurrentSessionName = currentSession.Name;
 
-            _logger.LogInformation("Fetching students for session: {SessionId}", currentSession.Id);
-            
             var allStudents = await _studentManager.GetAllAsync();
-            _logger.LogInformation("Total students in DB: {Count}", allStudents.Count);
-            
-            // Get students in current session - count ALL students in session (both active and inactive for dashboard)
             var sessionStudents = allStudents.Where(s => s.AcademicSessionId == currentSession.Id).ToList();
-            _logger.LogInformation("Students in current session (all): {Count}", sessionStudents.Count);
-            
-            // Active students only
             var activeSessionStudents = sessionStudents.Where(s => s.Status).ToList();
-            _logger.LogInformation("Active students in current session: {Count}", activeSessionStudents.Count);
 
             var allEmployees = await _employeeManager.GetAllAsync();
             var activeEmployees = allEmployees.Where(e => e.Status).ToList();
@@ -109,57 +98,63 @@ public class HomeController : Controller
             dashboard.TotalEmployees = activeEmployees.Count;
             dashboard.TotalClasses = activeClasses.Count;
             dashboard.TotalSections = activeSections.Count;
-        
-            var today = DateTime.Today.ToString("yyyy-MM-dd");
-            _logger.LogInformation("Today's date: {Date}", today);
             
-            var todayAbsentStudents = await _attendanceMachineManager.GetTodaysAbsentStudentAsync(today);
-            var todayAbsentEmployees = await _attendanceMachineManager.GetTodaysAbsentEmployeeAsync(today);
-
-            dashboard.TodayAbsentStudents = todayAbsentStudents?.Count ?? 0;
-            dashboard.TodayPresentStudents = dashboard.TotalStudents - dashboard.TodayAbsentStudents;
-            dashboard.TodayAbsentEmployees = todayAbsentEmployees?.Count ?? 0;
-            dashboard.TodayPresentEmployees = dashboard.TotalEmployees - dashboard.TodayAbsentEmployees;
-
-            dashboard.TodayAbsentStudentList = todayAbsentStudents?.Take(10).ToList() ?? new List<Student>();
-
-            // Get Today's Collection
-            var todayCollections = await _studentPaymentManager.GetPaymentSummeryByDate(today);
-            decimal todayTotal = 0;
-            if (todayCollections != null && todayCollections.Any())
+            // Attendance data
+            var today = DateTime.Today.ToString("yyyy-MM-dd");
+            
+            try
             {
-                foreach (var item in todayCollections)
-                {
-                    todayTotal += Convert.ToDecimal(item.Payments);
-                }
-            }
-            dashboard.TodayCollection = todayTotal;
-            dashboard.TodayCollections = todayCollections?.ToList() ?? new List<StudentPaymentSummeryVM>();
+                var todayAbsentStudents = await _attendanceMachineManager.GetTodaysAbsentStudentAsync(today);
+                var todayAbsentEmployees = await _attendanceMachineManager.GetTodaysAbsentEmployeeAsync(today);
 
-            // Get Monthly Collection
-            var monthYear = DateTime.Today.ToString("yyyy-MM");
-            var monthlyCollections = await _studentPaymentManager.GetPaymentSummeryByMonthYear(monthYear);
-            decimal monthTotal = 0;
-            if (monthlyCollections != null && monthlyCollections.Any())
+                dashboard.TodayAbsentStudents = todayAbsentStudents?.Count ?? 0;
+                dashboard.TodayPresentStudents = dashboard.TotalStudents - dashboard.TodayAbsentStudents;
+                dashboard.TodayAbsentEmployees = todayAbsentEmployees?.Count ?? 0;
+                dashboard.TodayPresentEmployees = dashboard.TotalEmployees - dashboard.TodayAbsentEmployees;
+                dashboard.TodayAbsentStudentList = todayAbsentStudents?.Take(10).ToList() ?? new List<Student>();
+            }
+            catch
             {
-                foreach (var item in monthlyCollections)
-                {
-                    monthTotal += Convert.ToDecimal(item.Payments);
-                }
+                dashboard.TodayAbsentStudents = 0;
+                dashboard.TodayPresentStudents = dashboard.TotalStudents;
+                dashboard.TodayAbsentEmployees = 0;
+                dashboard.TodayPresentEmployees = dashboard.TotalEmployees;
+                dashboard.TodayAbsentStudentList = new List<Student>();
             }
-            dashboard.MonthlyCollection = monthTotal;
 
+            // Today's Collection
+            try
+            {
+                var todayCollections = await _studentPaymentManager.GetPaymentSummeryByDate(today);
+                dashboard.TodayCollection = todayCollections != null ? (decimal)todayCollections.Sum(c => c.Payments) : 0;
+                dashboard.TodayCollections = todayCollections?.ToList() ?? new List<StudentPaymentSummeryVM>();
+            }
+            catch
+            {
+                dashboard.TodayCollection = 0;
+                dashboard.TodayCollections = new List<StudentPaymentSummeryVM>();
+            }
+
+            // Monthly Collection
+            try
+            {
+                var monthYear = DateTime.Today.ToString("yyyy-MM");
+                var monthlyCollections = await _studentPaymentManager.GetPaymentSummeryByMonthYear(monthYear);
+                dashboard.MonthlyCollection = monthlyCollections != null ? (decimal)monthlyCollections.Sum(c => c.Payments) : 0;
+            }
+            catch
+            {
+                dashboard.MonthlyCollection = 0;
+            }
+
+            // Class-wise student counts
             dashboard.ClassWiseStudentCounts = activeSessionStudents
                 .GroupBy(s => s.AcademicClass?.Name ?? "N/A")
                 .Select(g => new ClassWiseStudentCount { ClassName = g.Key, StudentCount = g.Count() })
                 .OrderBy(c => c.ClassName)
                 .ToList();
 
-            dashboard.ClassWiseCollections = todayCollections
-                .Select(c => new ClassWiseCollection { ClassName = c.AcademicClassName, Amount = (decimal)c.Payments })
-                .OrderByDescending(c => c.Amount)
-                .ToList();
-
+            // Recent students
             dashboard.RecentStudents = activeSessionStudents
                 .OrderByDescending(s => s.CreatedAt)
                 .Take(5)
@@ -172,7 +167,7 @@ public class HomeController : Controller
             _logger.LogError(ex, "Error loading dashboard");
             var dashboard = new DashboardIndexVM();
             dashboard.CurrentSessionName = "Error";
-            ViewBag.Error = "Error loading dashboard data: " + ex.Message;
+            ViewBag.Error = "Error: " + ex.Message;
             return View(dashboard);
         }
     }

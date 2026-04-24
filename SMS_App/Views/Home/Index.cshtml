@@ -690,8 +690,15 @@
                                             <td>
                                                 <div class="student-chip">
                                                     <div class="student-avatar" style="background: @gradients[colorIdx];">
-                                                        @{ var names = student.Name.Split(' '); }
-                                                        @(names[0][0])@(names.Length > 1 ? names.Last()[0] : "")
+                                                        @{
+                                                            var names = (string.IsNullOrEmpty(student.Name) ? new string[0] : student.Name.Split(' '));
+                                                            var initials = names.Length > 0 ? names[0].Length > 0 ? names[0][0].ToString() : "" : "";
+                                                            if (names.Length > 1 && !string.IsNullOrEmpty(names.Last()) && names.Last().Length > 0)
+                                                            {
+                                                                initials += names.Last()[0];
+                                                            }
+                                                        }
+                                                        @initials
                                                     </div>
                                                     <div class="student-info">
                                                         <strong>@student.Name</strong>
@@ -764,8 +771,15 @@
                                             <td>
                                                 <div class="student-chip">
                                                     <div class="student-avatar" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
-                                                        @{ var names = student.Name.Split(' '); }
-                                                        @(names[0][0])@(names.Length > 1 ? names.Last()[0] : "")
+                                                        @{
+                                                            var absentNames = (string.IsNullOrEmpty(student.Name) ? new string[0] : student.Name.Split(' '));
+                                                            var absentInitials = absentNames.Length > 0 && !string.IsNullOrEmpty(absentNames[0]) ? absentNames[0][0].ToString() : "";
+                                                            if (absentNames.Length > 1 && !string.IsNullOrEmpty(absentNames.Last()) && absentNames.Last().Length > 0)
+                                                            {
+                                                                absentInitials += absentNames.Last()[0];
+                                                            }
+                                                        }
+                                                        @absentInitials
                                                     </div>
                                                     <div class="student-info">
                                                         <strong>@student.Name</strong>

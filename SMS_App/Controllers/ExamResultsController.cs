@@ -600,21 +600,30 @@ public class ExamResultsController : Controller
     public async Task<IActionResult> LiveResult(LiveResultVM model)
     {
         var sessions = await _sessionManager.GetAllAsync();
-        var currentSession = await _sessionManager.GetCurrentAcademicSessionAsync();
         
-        // Use current session if no session selected
-        var selectedSessionId = model.AcademicSessionId > 0 ? model.AcademicSessionId : (currentSession?.Id ?? 0);
-        var examGroups = await _academicExamGroupManager.GetAllAsync(selectedSessionId);
+        // Use selected session from query param only
+        var selectedSessionId = model.AcademicSessionId;
+        var examGroups = selectedSessionId > 0 
+            ? await _academicExamGroupManager.GetAllAsync(selectedSessionId)
+            : new List<AcademicExamGroup>();
 
         // Early return for missing parameters
         if (model.AcademicClassId == 0 || model.ExamGroupId == 0)
         {
-            return View(new LiveResultVM
+            var vm = new LiveResultVM
             {
-                AcademicSessionId = selectedSessionId,
-                AcademicSessionList = new SelectList(sessions, "Id", "Name", selectedSessionId).ToList(),
-                AcademicExamGroupList = new SelectList(examGroups, "Id", "ExamGroupName").ToList()
-            });
+                AcademicSessionList = sessions.Select(s => new SelectListItem 
+                { 
+                    Value = s.Id.ToString(), 
+                    Text = s.Name 
+                }).ToList(),
+                AcademicExamGroupList = examGroups.Select(eg => new SelectListItem 
+                { 
+                    Value = eg.Id.ToString(), 
+                    Text = eg.ExamGroupName 
+                }).ToList()
+            };
+            return View(vm);
         }
         if (model.AcademicSectionId == 0)
         {
@@ -653,20 +662,29 @@ public class ExamResultsController : Controller
         );
 
         // Build ViewModel
-        liveResult.AcademicSessionId = model.AcademicSessionId > 0 ? model.AcademicSessionId : (currentSession?.Id ?? 0);
-        liveResult.AcademicSessionList = new SelectList(sessions, "Id", "Name", liveResult.AcademicSessionId).ToList();
+        liveResult.AcademicSessionId = model.AcademicSessionId;
+        liveResult.AcademicSessionList = sessions.Select(s => new SelectListItem 
+        { 
+            Value = s.Id.ToString(), 
+            Text = s.Name 
+        }).ToList();
+        liveResult.AcademicExamGroupList = examGroups.Select(eg => new SelectListItem 
+        { 
+            Value = eg.Id.ToString(), 
+            Text = eg.ExamGroupName 
+        }).ToList();
 
-        liveResult.AcademicExamGroupList = new SelectList(
-            examGroups, "Id", "ExamGroupName", model.ExamGroupId
-        ).ToList();
+        liveResult.AcademicClassList = classList.Select(c => new SelectListItem 
+        { 
+            Value = c.Id.ToString(), 
+            Text = c.Name 
+        }).ToList();
 
-        liveResult.AcademicClassList = new SelectList(
-            classList, "Id", "Name", model.AcademicClassId
-        ).ToList();
-
-        liveResult.AcademicSectionList = new SelectList(
-            sectionList, "Id", "Name", model.AcademicSectionId
-        ).ToList();
+        liveResult.AcademicSectionList = sectionList.Select(s => new SelectListItem 
+        { 
+            Value = s.Id.ToString(), 
+            Text = s.Name 
+        }).ToList();
 
         liveResult.AcademicClassId = model.AcademicClassId;
         liveResult.ExamGroupId = model.ExamGroupId;

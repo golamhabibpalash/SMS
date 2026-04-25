@@ -4,18 +4,19 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using SMS_App.Utilities.MACIPServices;
-using SMS_App.ViewModels.ExamVM;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.EntityFrameworkCore;
 using SMS.BLL.Contracts;
 using SMS.Entities;
-using SMS.Entities.Enums;
 using SMS.Entities.AdditionalModels;
+using SMS.Entities.Enums;
+using SMS_App.Utilities.MACIPServices;
+using SMS_App.ViewModels.ExamVM;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace SMS_App.Controllers;
 
@@ -57,7 +58,7 @@ public class AcademicExamsController : Controller
     [Authorize(Policy = "IndexAcademicExamPolicy")]
     public async Task<ActionResult> Index()
     {
-        if (TempData["error"]!=null)
+        if (TempData["error"] != null)
         {
             ViewBag.error = TempData["error"].ToString();
         }
@@ -72,14 +73,14 @@ public class AcademicExamsController : Controller
         academicExamVM.AcademicExamGroupList = new SelectList(examGroups, "Id", "ExamGroupName").ToList();
         academicExamVM.AcademicClassList = new SelectList(classes, "Id", "Name").ToList();
         academicExamVM.TeacherList = new SelectList(employees.Where(e => e.Status == true).OrderBy(e => e.JoiningDate).ThenBy(e => e.EmployeeName), "Id", "EmployeeName").ToList();
-        academicExamVM.ExamCategoryList =  new List<SelectListItem>();
+        academicExamVM.ExamCategoryList = new List<SelectListItem>();
         foreach (var category in Enum.GetValues(typeof(ExamCategory)))
         {
             var newSelectListItem = new SelectListItem { Value = category.ToString(), Text = category.ToString() };
             academicExamVM.ExamCategoryList.Add(newSelectListItem);
         }
 
-        if (sessionWiseExams!=null)
+        if (sessionWiseExams != null)
         {
             var user = await _userManager.GetUserAsync(User);
             var roles = await _userManager.GetRolesAsync(user);
@@ -90,7 +91,7 @@ public class AcademicExamsController : Controller
                 sessionWiseExams = FilterExamsByUser(sessionWiseExams, user.ReferenceId);
             }
 
-            academicExamVM.ExamSessionVM = sessionWiseExams.OrderByDescending(s => s.SessionName.Substring(s.SessionName.Length-4)).ToList() ;
+            academicExamVM.ExamSessionVM = sessionWiseExams.OrderByDescending(s => s.SessionName.Substring(s.SessionName.Length - 4)).ToList();
         }
 
         return View(academicExamVM);
@@ -133,7 +134,7 @@ public class AcademicExamsController : Controller
         var user = await _userManager.GetUserAsync(User);
         var roles = await _userManager.GetRolesAsync(user);
         bool isAdminUser = roles.Any(r => r.Contains("Admin") || r.Contains("SuperAdmin"));
-        
+
         if (user.UserType == 'e')
         {
             if (user.ReferenceId != exam.EmployeeId)
@@ -268,7 +269,7 @@ public class AcademicExamsController : Controller
 
         var allStudents = await _studentManager.GetStudentsByClassIdAndSessionIdAsync(
             primaryExam.AcademicExamGroup.AcademicSessionId, primaryExam.AcademicClassId);
-        
+
         var existingStudentIds = mergedExams
             .SelectMany(e => e.AcademicExamDetails)
             .Select(d => d.StudentId)
@@ -314,7 +315,7 @@ public class AcademicExamsController : Controller
                 {
                     // Handle multiple sections - get the list of section IDs
                     List<int> selectedSections = new List<int>();
-                    
+
                     // Try to parse AcademicSectionIdList if it's sent as JSON string
                     if (exam.AcademicSectionIdList != null && exam.AcademicSectionIdList.Count > 0)
                     {
@@ -325,34 +326,36 @@ public class AcademicExamsController : Controller
                         var jsonStr = Request.Form["AcademicExams[0].AcademicSectionIdList"].ToString();
                         if (!string.IsNullOrEmpty(jsonStr))
                         {
-                            try {
+                            try
+                            {
                                 selectedSections = System.Text.Json.JsonSerializer.Deserialize<List<int>>(jsonStr) ?? new List<int>();
-                            } catch { selectedSections = new List<int>(); }
+                            }
+                            catch { selectedSections = new List<int>(); }
                         }
                     }
-                    
+
                     // If AcademicSectionIdList has valid sections (not 0, not null), create exam for each section
                     if (selectedSections.Count > 0 && !selectedSections.Contains(0))
                     {
                         // Remove duplicates from selectedSections
                         selectedSections = selectedSections.Distinct().ToList();
-                        
+
                         foreach (var sectionId in selectedSections)
                         {
                             // Check if exam already exists for this section
                             var isExistForSection = await _examManager.GetAcademicExam(
-                                exam.AcademicExamGroupId, 
-                                exam.AcademicClassId, 
-                                exam.AcademicSubjectId, 
-                                exam.ExamCategory, 
+                                exam.AcademicExamGroupId,
+                                exam.AcademicClassId,
+                                exam.AcademicSubjectId,
+                                exam.ExamCategory,
                                 sectionId);
-                            
+
                             if (isExistForSection != null)
                             {
                                 failed++;
                                 continue; // Skip duplicate
                             }
-                            
+
                             var examForSection = new AcademicExam
                             {
                                 AcademicExamGroupId = exam.AcademicExamGroupId,
@@ -366,7 +369,7 @@ public class AcademicExamsController : Controller
                                 CreatedBy = HttpContext.Session.GetString("UserId"),
                                 MACAddress = MACService.GetMAC()
                             };
-                            
+
                             var isSaved = await SaveAcademicExamWithDetails(examForSection);
                             if (isSaved) success++;
                             else failed++;
@@ -375,7 +378,7 @@ public class AcademicExamsController : Controller
                         TempData["success"] = "Success: " + success + " Failed: " + failed;
                         return RedirectToAction("index");
                     }
-                    
+
                     // Normalize AcademicSectionId: treat empty/0 as null (all sections)
                     if (exam.AcademicSectionId == null || exam.AcademicSectionId == 0)
                     {
@@ -405,7 +408,7 @@ public class AcademicExamsController : Controller
         }
         return RedirectToAction("index");
     }
-    
+
     private async Task<bool> SaveAcademicExamWithDetails(AcademicExam exam)
     {
         AcademicSubject academicSubject = await _academicSubjectManager.GetByIdAsync(exam.AcademicSubjectId);
@@ -498,7 +501,7 @@ public class AcademicExamsController : Controller
             return RedirectToAction("index");
         }
         //Checking, is already exist!
-        AcademicExam existingExam = await _examManager.GetAcademicExam(academicExam.AcademicExamGroupId, academicExam.AcademicClassId, academicExam.AcademicSubjectId, academicExam.ExamCategory,academicExam.AcademicSectionId);
+        AcademicExam existingExam = await _examManager.GetAcademicExam(academicExam.AcademicExamGroupId, academicExam.AcademicClassId, academicExam.AcademicSubjectId, academicExam.ExamCategory, academicExam.AcademicSectionId);
 
         if (existingExam != null)
         {
@@ -645,8 +648,8 @@ public class AcademicExamsController : Controller
             {
                 if (existingDetailsDict.TryGetValue(item.ExamDetailId, out var existingDetails))
                 {
-                    if (existingDetails.ObtainMark != item.ObtainMark || 
-                        existingDetails.Remarks != item.Remarks || 
+                    if (existingDetails.ObtainMark != item.ObtainMark ||
+                        existingDetails.Remarks != item.Remarks ||
                         existingDetails.Status != item.Status)
                     {
                         existingDetails.ObtainMark = item.ObtainMark;
@@ -821,11 +824,16 @@ public class AcademicExamsController : Controller
     public async Task<JsonResult> GetAcademicClassByExamGrId(int examGroupId)
     {
         var examGroup = await _examGroupManager.GetByIdAsync(examGroupId);
-        if (examGroup?.AcademicExams == null || !examGroup.AcademicExams.Any())
-        {
-            return Json(new List<AcademicClass>());
+        if (examGroup?.AcademicExams == null || !examGroup.AcademicExams.Any()) 
+        { 
+            return Json(new List<AcademicClass>()); 
         }
-        var results = examGroup.AcademicExams.Where(e => e.AcademicClass != null).Select(e => e.AcademicClass).DistinctBy(c => c.Id).ToList();
+        var results = examGroup.AcademicExams
+            .Where(e => e.AcademicClass != null)
+            .Select(e => e.AcademicClass)
+            .DistinctBy(c => c.Id)
+            .ToList();
+
         return Json(results);
     }
 
@@ -840,14 +848,14 @@ public class AcademicExamsController : Controller
             {
                 return Json(new List<AcademicExamGroup>());
             }
-            
+
             // Get all exam groups (includes AcademicSession due to repository's GetAllAsync)
             var examGroups = await _examGroupManager.GetAllAsync();
             var filtered = examGroups
                 .Where(g => g.AcademicSessionId == sessionId)
                 .OrderByDescending(g => g.ExamMonthId)
                 .ToList();
-            
+
             return Json(filtered);
         }
         catch (Exception ex)
@@ -859,11 +867,11 @@ public class AcademicExamsController : Controller
     [HttpGet]
     [Route("api/GetAcademicSectionByExamGrId_ClassId")]
     [AllowAnonymous]
-    public async Task<JsonResult> GetAcademicSectionByExamGrId_ClassId(int examGroupId,int classId)
+    public async Task<JsonResult> GetAcademicSectionByExamGrId_ClassId(int examGroupId, int classId)
     {
         var sections = new List<AcademicSection>();
         var exams = await _examManager.GetByClassIdExamGroupIdAsync(examGroupId, classId);
-        if (exams.Count>0)
+        if (exams.Count > 0)
         {
             sections = exams
                     .Select(e => e.AcademicSection ?? new AcademicSection { Id = 0, Name = "All" })
@@ -904,8 +912,8 @@ public class AcademicExamsController : Controller
     public async Task<JsonResult> RemoveExamDetailsFromExam(int examDetailId)
     {
         bool result = false;
-        var examDetail =await _academicExamDetailsManager.GetByIdAsync(examDetailId);
-        if (examDetail!=null)
+        var examDetail = await _academicExamDetailsManager.GetByIdAsync(examDetailId);
+        if (examDetail != null)
         {
             var ss = await _academicExamDetailsManager.RemoveAsync(examDetail);
             if (ss)

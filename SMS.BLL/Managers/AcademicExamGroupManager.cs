@@ -29,6 +29,10 @@ namespace SMS.BLL.Managers
                     .ThenInclude(e => e.AcademicSubject)
                 .Include(g => g.AcademicExams)
                     .ThenInclude(e => e.Employee)
+                .Include(g => g.AcademicExams)
+                    .ThenInclude(e => e.AcademicSection)
+                .Include(g => g.AcademicExams)
+                    .ThenInclude(e => e.AcademicExamDetails)
                 .FirstOrDefaultAsync(g => g.Id == id);
 
 
@@ -49,8 +53,12 @@ namespace SMS.BLL.Managers
         }
         public async Task<IReadOnlyCollection<AcademicExamGroup>> GetAllAsync(int SessionId)
         {
-            var allExamGroup = await _academicExamGroupRepository.GetAllAsync();
-            var result = allExamGroup.Where(s => s.AcademicSessionId == SessionId).ToList();
+            var result = await _academicExamGroupRepository.Table
+                .Where(s => s.AcademicSessionId == SessionId)
+                .Include(g => g.AcademicSession)
+                .Include(c => c.AcademicExamType)
+                .AsNoTracking()
+                .ToListAsync();
 
             return result;
         }

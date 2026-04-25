@@ -14,5 +14,6 @@ namespace SMS.BLL.Contracts
         bool IsResultProcessedAsync(int examGroupId, int classId);
         Task<Dictionary<(int ExamGroupId, int ClassId), bool>> GetResultProcessedStatusBulkAsync(IEnumerable<(int ExamGroupId, int ClassId)> examGroupAndClassPairs);
         Task<string> GetHighestMarksOfTheClassAsync(int examGroupId, int classId);
+        Task<Dictionary<int, int>> GetPreviousRanksByStudentIdsAsync(int examGroupId, List<int> studentIds);
     }
 }

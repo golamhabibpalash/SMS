@@ -42,4 +42,40 @@ public class ExamResultManager : Manager<ExamResult>, IExamResultManager
     {
         return await _examResultRepository.GetResultProcessedStatusBulkAsync(examGroupAndClassPairs);
     }
+
+    public async Task<Dictionary<int, int>> GetPreviousRanksByStudentIdsAsync(int examGroupId, List<int> studentIds)
+    {
+        var currentExamGroup = await _examResultRepository.Table
+            .Where(e => e.AcademicExamGroupId == examGroupId)
+            .Select(e => e.AcademicExamGroup)
+            .FirstOrDefaultAsync();
+
+        if (currentExamGroup == null)
+            return new Dictionary<int, int>();
+
+        var sessionId = currentExamGroup.AcademicSessionId;
+        var currentMonthId = currentExamGroup.ExamMonthId;
+
+        var previousExamGroupId = await _examResultRepository.Table
+            .Where(e => e.AcademicExamGroup.AcademicSessionId == sessionId 
+                     && e.AcademicExamGroup.ExamMonthId < currentMonthId)
+            .Select(e => e.AcademicExamGroupId)
+            .Distinct()
+            .OrderByDescending(id => 
+                _examResultRepository.Table
+                    .Where(er => er.AcademicExamGroupId == id)
+                    .Select(er => er.AcademicExamGroup.ExamMonthId)
+                    .First())
+            .FirstOrDefaultAsync();
+
+        if (previousExamGroupId == 0)
+            return new Dictionary<int, int>();
+
+        var previousResults = await _examResultRepository.Table
+            .Where(e => e.AcademicExamGroupId == previousExamGroupId 
+                     && studentIds.Contains(e.StudentId))
+            .ToListAsync();
+
+        return previousResults.ToDictionary(r => r.StudentId, r => r.Rank);
+    }
 }

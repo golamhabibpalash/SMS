@@ -10,6 +10,8 @@ public class LiveResultVM
     public int ExamGroupId { get; set; }
     public int AcademicClassId { get; set; }
     public int? AcademicSectionId { get; set; }
+    public int AcademicSessionId { get; set; }
+    public List<SelectListItem> AcademicSessionList { get; set; } = new List<SelectListItem>();
     public List<SelectListItem> AcademicExamGroupList { get; set; } = new List<SelectListItem>();
     public List<SelectListItem> AcademicClassList { get; set; } = new List<SelectListItem>();
     public List<SelectListItem> AcademicSectionList { get; set; } = new List<SelectListItem>();

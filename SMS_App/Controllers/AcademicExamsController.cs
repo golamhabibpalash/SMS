@@ -20,7 +20,6 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 namespace SMS_App.Controllers;
 
 [Authorize]
-//Need to add exam module permission
 public class AcademicExamsController : Controller
 {
     private readonly IAcademicExamManager _examManager;
@@ -822,8 +821,39 @@ public class AcademicExamsController : Controller
     public async Task<JsonResult> GetAcademicClassByExamGrId(int examGroupId)
     {
         var examGroup = await _examGroupManager.GetByIdAsync(examGroupId);
-        var results = examGroup.AcademicExams.Select(e => e.AcademicClass).DistinctBy(c => c.Id).ToList();
+        if (examGroup?.AcademicExams == null || !examGroup.AcademicExams.Any())
+        {
+            return Json(new List<AcademicClass>());
+        }
+        var results = examGroup.AcademicExams.Where(e => e.AcademicClass != null).Select(e => e.AcademicClass).DistinctBy(c => c.Id).ToList();
         return Json(results);
+    }
+
+    [HttpGet]
+    [Route("api/GetExamGroupsBySessionId")]
+    [AllowAnonymous]
+    public async Task<JsonResult> GetExamGroupsBySessionId(int sessionId)
+    {
+        try
+        {
+            if (sessionId <= 0)
+            {
+                return Json(new List<AcademicExamGroup>());
+            }
+            
+            // Get all exam groups (includes AcademicSession due to repository's GetAllAsync)
+            var examGroups = await _examGroupManager.GetAllAsync();
+            var filtered = examGroups
+                .Where(g => g.AcademicSessionId == sessionId)
+                .OrderByDescending(g => g.ExamMonthId)
+                .ToList();
+            
+            return Json(filtered);
+        }
+        catch (Exception ex)
+        {
+            return Json(new { error = ex.Message, stackTrace = ex.StackTrace });
+        }
     }
 
     [HttpGet]

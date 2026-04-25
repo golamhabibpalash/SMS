@@ -32,6 +32,11 @@
         <div class="form-row">
             <div class="row">
                 <div class="col-md-2">
+                    <select class="form-control form-control-sm" asp-items="Model.AcademicSessionList" asp-for="AcademicSessionId" onchange="sessionChanged()">
+                        <option selected disabled>Select Session</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
                     <select class="form-control form-control-sm" asp-items="Model.AcademicExamGroupList" asp-for="ExamGroupId" onchange="examGroupChanged()">
                         <option selected disabled>Select Exam Group</option>
                     </select>
@@ -140,26 +145,69 @@
 @section Scripts{
     <script>
         var examList;
+        function sessionChanged() {
+            var sessionId = $("#AcademicSessionId").val();
+
+            if (!sessionId) return;
+
+            $.ajax({
+                url: '/AcademicExamGroup/GetExamGroupsBySession',
+                type: 'GET',
+                data: { sessionId: sessionId },
+                success: function (data) {
+                    if (data.error) {
+                        console.error("Server error:", data.error);
+                        alert("Error: " + data.error);
+                        return;
+                    }
+                    var examGroupDropdown = $("#ExamGroupId");
+                    examGroupDropdown.empty();
+                    examGroupDropdown.append('<option selected disabled>Select Exam Group</option>');
+
+                    $.each(data, function (i, item) {
+                        examGroupDropdown.append($('<option>', {
+                            value: item.id,
+                            text: item.examGroupName
+                        }));
+                    });
+
+                    // Clear class and section dropdowns
+                    $("#AcademicClassId").empty().append('<option selected disabled>Select Academic Class</option>');
+                    $("#AcademicSectionId").empty().append('<option selected disabled>Select Academic Section</option>');
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error loading exam groups:", error);
+                    console.error("Response:", xhr.responseText);
+                }
+            });
+        }
+
         function examGroupChanged() {
             var examGroupId = $("#ExamGroupId").val();
 
             if (!examGroupId) return;
 
             $.ajax({
-                url: '/AcademicExams/GetAcademicClassByExamGrId', 
+                url: '/api/GetAcademicClassByExamGrId',
                 type: 'GET',
                 data: { examGroupId: examGroupId },
+                dataType: "JSON",
+                type: "get",
+                cache: false,
                 success: function (data) {
                     var classDropdown = $("#AcademicClassId");
-                    classDropdown.empty(); // clear previous options
+                    classDropdown.empty();
                     classDropdown.append('<option selected disabled>Select Academic Class</option>');
 
                     $.each(data, function (i, item) {
                         classDropdown.append($('<option>', {
-                            value: item.id, // ensure your JSON returns { value: , text: }
+                            value: item.id,
                             text: item.name
                         }));
                     });
+
+                    // Clear section dropdown
+                    $("#AcademicSectionId").empty().append('<option selected disabled>Select Academic Section</option>');
                 },
                 error: function (xhr, status, error) {
                     console.error("Error loading academic classes:", error);
@@ -170,28 +218,33 @@
         function academicClassDropDownChanged(){
             var academicClassId = $("#AcademicClassId").val();
             var examGroupId = $("#ExamGroupId").val();
+            var sessionId = $("#AcademicSessionId").val();
             if(!academicClassId) return;
             $.ajax({
-                url: '/AcademicExams/GetAcademicSectionByExamGrId_ClassId', 
+                url: '/Reports/GetSectionsByExamGroup',
                 type: 'GET',
-                data: { examGroupId: examGroupId,classId:academicClassId },
+                data: { examGroupId: examGroupId,classId:academicClassId,sessionId:sessionId },
                 success: function (data) {
                     
-                    var classDropdown = $("#AcademicSectionId");
-                    classDropdown.empty(); // clear previous options
-                    classDropdown.append('<option selected disabled>Select Academic Section</option>');
+                    var sectionDropdown = $("#AcademicSectionId");
+                    sectionDropdown.empty();
+                    sectionDropdown.append('<option selected disabled>Select Academic Section</option>');
 
                     $.each(data, function (i, item) {
-                        classDropdown.append($('<option>', {
-                            value: item.id, // ensure your JSON returns { value: , text: }
+                        sectionDropdown.append($('<option>', {
+                            value: item.id,
                             text: item.name
                         }));
                     });
                 },
                 error: function (xhr, status, error) {
-                    console.error("Error loading academic classes:", error);
+                    console.error("Error loading academic sections:", error);
                 }
             });
         }
+            
+
     </script>
 }
+
+

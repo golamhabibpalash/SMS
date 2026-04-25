@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -472,30 +473,53 @@ public class ExamResultsController : Controller
                     examResult.TotalFails = await GetTotalFailFromExam(groupId, student.Id, student.AcademicClassId);
                 }
                 
-                
                 List<ExamResultDetail> examResultDetails = new List<ExamResultDetail>();
 
-                
-                foreach (var exam in selectedExams)
+
+                var subjectWiseExams = selectedExams.DistinctBy(s => s.AcademicSubjectId);
+                foreach (var item in subjectWiseExams)
                 {
-                    double gotMarks = exam.AcademicExamDetails.Where(s => s.StudentId == student.Id).Select(s => s.ObtainMark).FirstOrDefault();
-                    double gotPoint = await GetGradePointByNumber((gotMarks * 100) / exam.TotalMarks);
-                    ExamResultDetail examResultDetail = new ExamResultDetail()
+                    ExamResultDetail examResultDetail = new()
                     {
                         CreatedAt = DateTime.Now,
                         CreatedBy = HttpContext.Session.GetString("UserId"),
                         MACAddress = MACService.GetMAC(),
                         ExamResultId = examResult.Id,
-                        AcademicSubjectId = exam.AcademicSubjectId,
-                        ObtainMark = gotMarks,
-                        TotalMark = exam.TotalMarks,
-                        GPA = gotPoint,
-                        Grade = await GetGradeByPoint(gotPoint)
+                        AcademicSubjectId = item.AcademicSubjectId,
                     };
-                    examResultDetails.Add(examResultDetail);
+                    var targetedExams = selectedExams.Where(s => s.AcademicSubjectId == item.AcademicSubjectId);
+
+                    double subWiseObtainMark = 0;
+                    double subWiseTotalMark = 0;
+                    bool isPass = true;
+                    foreach (var ex in targetedExams)
+                    {
+                        double gotMarks = ex.AcademicExamDetails.Where(s => s.StudentId == student.Id).Select(s => s.ObtainMark).FirstOrDefault(); 
+                        var gotPointSinglePortion = await GetGradePointByNumber(( gotMarks* 100) / ex.TotalMarks);
+                        if (gotPointSinglePortion<=0)
+                        {
+                            isPass = false;
+                        }
+                        subWiseObtainMark += gotMarks;
+                        subWiseTotalMark += ex.TotalMarks;
+                    };
+                    examResultDetail.ObtainMark = subWiseObtainMark;
+                    examResultDetail.TotalMark = subWiseTotalMark;
+                    if (isPass)
+                    {
+                        double gotPoint = await GetGradePointByNumber((subWiseObtainMark * 100) / subWiseTotalMark);
+                        examResultDetail.GPA = gotPoint;
+                        examResultDetail.Grade = await GetGradeByPoint(gotPoint);
+                    }
+                    else
+                    {
+                        examResultDetail.GPA = 0;
+                        examResultDetail.Grade = "F";
+                    }
+                        examResultDetails.Add(examResultDetail);
                 }
-                double totalGPA = examResultDetails.Sum(e => e.GPA);
-                double cGPA = totalGPA / examResultDetails.Count;
+                
+
 
                 string monthYear = examGroup.ExamMonthId.ToString().PadLeft(2, '0') + DateTime.Now.Year;
                 var monthlyAttendance = await _attendanceMachineManager.GetAttendanceByMonthSingleStudent(student.Id, monthYear);

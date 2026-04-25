@@ -74,7 +74,7 @@ namespace SMS.DAL.Repositories
 
             var exams = allExams
                 .Where(e => uniqueSubjectIds.Contains(e.AcademicSubjectId))
-                .GroupBy(e => new { e.AcademicSubjectId, e.AcademicSectionId })
+                .GroupBy(e => new { e.AcademicSubjectId, e.AcademicSectionId, e.ExamCategory })
                 .Select(g => g.First())
                 .ToList();
 

@@ -90,7 +90,7 @@
                                     <tr>
                                         <td>@(++exSl)</td>
                                         <td class="w-25">@item2.AcademicSubject?.SubjectName</td>
-                                        <td class="w-25">@item2.ExamCategory</td>
+                                        <td class="w-25">@(string.IsNullOrEmpty(item2.ExamCategory) ? "Not Selected" : item2.ExamCategory)</td>
                                         <td>
                                             @if (item2.AcademicSection == null)
                                             {

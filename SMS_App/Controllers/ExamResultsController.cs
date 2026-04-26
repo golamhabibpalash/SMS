@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -447,6 +448,10 @@ public class ExamResultsController : Controller
                 {
                     continue;
                 }
+                if (student.ClassRoll == 2610001)
+                {
+                    Console.Write("Got it");
+                }
                 ExamResult examResult = new ExamResult();
                 examResult.CreatedAt = DateTime.Now;
                 examResult.CreatedBy = HttpContext.Session.GetString("UserId");
@@ -456,6 +461,8 @@ public class ExamResultsController : Controller
                 examResult.StudentId = student.Id;
                 examResult.AcademicClassId = classId;
                 examResult.TotalObtainMarks = await GetTotalObtainMarkFromExam(groupId, student.Id);
+                
+                
                 string gpa = (await GetCgpaPointFromExam(groupId, student.Id, student.AcademicClassId)).ToString("F2");
                 examResult.CGPA = Convert.ToDouble(gpa);
                 examResult.FinalGrade = await GetGradeByPoint(examResult.CGPA);
@@ -465,27 +472,55 @@ public class ExamResultsController : Controller
                 {
                     examResult.TotalFails = await GetTotalFailFromExam(groupId, student.Id, student.AcademicClassId);
                 }
+                
                 List<ExamResultDetail> examResultDetails = new List<ExamResultDetail>();
 
-                
-                foreach (var exam in selectedExams)
+
+                var subjectWiseExams = selectedExams.DistinctBy(s => s.AcademicSubjectId);
+                foreach (var item in subjectWiseExams)
                 {
-                    double gotMarks = exam.AcademicExamDetails.Where(s => s.StudentId == student.Id).Select(s => s.ObtainMark).FirstOrDefault();
-                    double gotPoint = await GetGradePointByNumber((gotMarks * 100) / exam.TotalMarks);
-                    ExamResultDetail examResultDetail = new ExamResultDetail()
+                    ExamResultDetail examResultDetail = new()
                     {
                         CreatedAt = DateTime.Now,
                         CreatedBy = HttpContext.Session.GetString("UserId"),
                         MACAddress = MACService.GetMAC(),
                         ExamResultId = examResult.Id,
-                        AcademicSubjectId = exam.AcademicSubjectId,
-                        ObtainMark = gotMarks,
-                        TotalMark = exam.TotalMarks,
-                        GPA = gotPoint,
-                        Grade = await GetGradeByPoint(gotPoint)
+                        AcademicSubjectId = item.AcademicSubjectId,
                     };
-                    examResultDetails.Add(examResultDetail);
+                    var targetedExams = selectedExams.Where(s => s.AcademicSubjectId == item.AcademicSubjectId);
+
+                    double subWiseObtainMark = 0;
+                    double subWiseTotalMark = 0;
+                    bool isPass = true;
+                    foreach (var ex in targetedExams)
+                    {
+                        double gotMarks = ex.AcademicExamDetails.Where(s => s.StudentId == student.Id).Select(s => s.ObtainMark).FirstOrDefault(); 
+                        var gotPointSinglePortion = await GetGradePointByNumber(( gotMarks* 100) / ex.TotalMarks);
+                        if (gotPointSinglePortion<=0)
+                        {
+                            isPass = false;
+                        }
+                        subWiseObtainMark += gotMarks;
+                        subWiseTotalMark += ex.TotalMarks;
+                    };
+                    examResultDetail.ObtainMark = subWiseObtainMark;
+                    examResultDetail.TotalMark = subWiseTotalMark;
+                    if (isPass)
+                    {
+                        double gotPoint = await GetGradePointByNumber((subWiseObtainMark * 100) / subWiseTotalMark);
+                        examResultDetail.GPA = gotPoint;
+                        examResultDetail.Grade = await GetGradeByPoint(gotPoint);
+                    }
+                    else
+                    {
+                        examResultDetail.GPA = 0;
+                        examResultDetail.Grade = "F";
+                    }
+                        examResultDetails.Add(examResultDetail);
                 }
+                
+
+
                 string monthYear = examGroup.ExamMonthId.ToString().PadLeft(2, '0') + DateTime.Now.Year;
                 var monthlyAttendance = await _attendanceMachineManager.GetAttendanceByMonthSingleStudent(student.Id, monthYear);
                 if (monthlyAttendance.Count > 0)
@@ -588,15 +623,31 @@ public class ExamResultsController : Controller
     [Authorize(Policy = "LiveResultExamResultsPolicy")]
     public async Task<IActionResult> LiveResult(LiveResultVM model)
     {
-        var examGroups = await _academicExamGroupManager.GetAllAsync();
+        var sessions = await _sessionManager.GetAllAsync();
+        
+        // Use selected session from query param only
+        var selectedSessionId = model.AcademicSessionId;
+        var examGroups = selectedSessionId > 0 
+            ? await _academicExamGroupManager.GetAllAsync(selectedSessionId)
+            : new List<AcademicExamGroup>();
 
         // Early return for missing parameters
         if (model.AcademicClassId == 0 || model.ExamGroupId == 0)
         {
-            return View(new LiveResultVM
+            var vm = new LiveResultVM
             {
-                AcademicExamGroupList = new SelectList(examGroups, "Id", "ExamGroupName").ToList()
-            });
+                AcademicSessionList = sessions.Select(s => new SelectListItem 
+                { 
+                    Value = s.Id.ToString(), 
+                    Text = s.Name 
+                }).ToList(),
+                AcademicExamGroupList = examGroups.Select(eg => new SelectListItem 
+                { 
+                    Value = eg.Id.ToString(), 
+                    Text = eg.ExamGroupName 
+                }).ToList()
+            };
+            return View(vm);
         }
         if (model.AcademicSectionId == 0)
         {
@@ -635,20 +686,36 @@ public class ExamResultsController : Controller
         );
 
         // Build ViewModel
-        liveResult.AcademicExamGroupList = new SelectList(
-            examGroups, "Id", "ExamGroupName", model.ExamGroupId
-        ).ToList();
+        liveResult.AcademicSessionId = model.AcademicSessionId;
+        liveResult.AcademicSessionList = sessions.Select(s => new SelectListItem 
+        { 
+            Value = s.Id.ToString(), 
+            Text = s.Name 
+        }).ToList();
+        liveResult.AcademicExamGroupList = examGroups.Select(eg => new SelectListItem 
+        { 
+            Value = eg.Id.ToString(), 
+            Text = eg.ExamGroupName 
+        }).ToList();
 
-        liveResult.AcademicClassList = new SelectList(
-            classList, "Id", "Name", model.AcademicClassId
-        ).ToList();
+        liveResult.AcademicClassList = classList.Select(c => new SelectListItem 
+        { 
+            Value = c.Id.ToString(), 
+            Text = c.Name 
+        }).ToList();
 
-        liveResult.AcademicSectionList = new SelectList(
-            sectionList, "Id", "Name", model.AcademicSectionId
-        ).ToList();
+        liveResult.AcademicSectionList = sectionList.Select(s => new SelectListItem 
+        { 
+            Value = s.Id.ToString(), 
+            Text = s.Name 
+        }).ToList();
 
         liveResult.AcademicClassId = model.AcademicClassId;
         liveResult.ExamGroupId = model.ExamGroupId;
+
+        ViewBag.classId = model.AcademicClassId;
+        ViewBag.examGroupId = model.ExamGroupId;
+        ViewBag.IsLoading = true;
 
         return View(liveResult);
     }
@@ -751,30 +818,44 @@ public class ExamResultsController : Controller
     }
     private async Task<double> GetCgpaPointFromExam(int examGroupId, int studentId, int academicClassId)
     {
-        double cgpaPoint = 0;
-        int totalSubject = await _academicExamManager.GetTotalExamAsync(examGroupId, academicClassId);
-        double totalGPA = 0;
         var eDetails = await _academicExamDetailsManager.GetAllByExamGroupAndStudentId(examGroupId, studentId);
-        int totalAttendedSub = 0;
-        if (eDetails.Count() > 0)
+        if (!eDetails.Any()) return 0;
+
+        // Aggregate marks per subject
+        Dictionary<int, double> subWiseNumber = [];
+        Dictionary<int, double> subWiseMark = [];
+
+        foreach (var e in eDetails)
         {
-            foreach (var e in eDetails)
+            int subjectId = e.AcademicExam.AcademicSubjectId;
+            double percentage = (e.ObtainMark * 100) / e.AcademicExam.TotalMarks;
+
+            if (await GetGradePointByNumber(percentage) <= 0) return 0;
+
+            if (subWiseNumber.ContainsKey(subjectId))
             {
-                totalAttendedSub++;
-                double gpa = await GetGradePointByNumber((e.ObtainMark * 100) / e.AcademicExam.TotalMarks);
-                if (gpa <= 0)
-                {
-                    cgpaPoint = 0;
-                    return cgpaPoint;
-                }
-                totalGPA += gpa;
+                subWiseNumber[subjectId] += e.ObtainMark;
+                subWiseMark[subjectId] += e.AcademicExam.TotalMarks;
             }
-            if (totalAttendedSub == totalSubject)
+            else
             {
-                cgpaPoint = totalGPA / totalSubject;
+                subWiseNumber.Add(subjectId, e.ObtainMark);
+                subWiseMark.Add(subjectId, e.AcademicExam.TotalMarks);
             }
         }
-        return cgpaPoint;
+
+        // Calculate total GPA across subjects
+        double totalGPA = 0;
+        foreach (var (subjectId, obtainMark) in subWiseNumber)
+        {
+            double gpa = await GetGradePointByNumber((obtainMark * 100) / subWiseMark[subjectId]);
+            if (gpa <= 0) return 0;
+            totalGPA += gpa;
+        }
+
+        // Return CGPA only if student attended all subjects
+        int totalSubject = await _academicExamManager.GetTotalExamAsync(examGroupId, academicClassId);
+        return subWiseNumber.Count == totalSubject ? totalGPA / totalSubject : 0;
     }
     private async Task<int> GetTotalFailFromExam(int examGroupId, int studentId, int academicClassId)
     {
@@ -782,11 +863,14 @@ public class ExamResultsController : Controller
         var examDetails = await _academicExamDetailsManager
             .GetAllByExamGroupAndStudentId(examGroupId, studentId);
 
+        //Get Unique Subjects
+        var totoalUniqueExamDeatilsCount = examDetails?.GroupBy(s => s.AcademicExam.AcademicSubjectId).Count()??0;
+
         var totalExams = await _academicExamManager
             .GetTotalExamAsync(examGroupId, academicClassId);
 
         // Calculate missing exams (if no details, all are missing)
-        int missingExams = totalExams - (examDetails?.Count ?? 0);
+        int missingExams = totalExams - totoalUniqueExamDeatilsCount;
 
         // Start fail count with missing exams
         int totalFail = missingExams;

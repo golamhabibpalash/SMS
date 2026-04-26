@@ -20,12 +20,24 @@ public class AcademicExamManager : Manager<AcademicExam>, IAcademicExamManager
     private readonly IAcademicClassRepository _academicClassRepository;
     private readonly IGradingTableRepository _gradingTableRepository;
     private readonly IExamResultManager _examResultManager;
+    private readonly IAttendanceMachineManager _attendanceMachineManager;
+    private readonly IOffDayManager _offDayManager;
     private AcademicExamGroup _cachedExamGroup;
     private List<GradingTable> _cachedGradingTable;
     private readonly IAcademicExamDetailsManager _academicExamDetailsManager;
+    private int _cachedExamMonthId;
 
 
-    public AcademicExamManager(IAcademicExamRepository academicExamRepository, IAcademicSessionRepository academicSessionRepository, IAcademicExamGroupRepository academicExamGroupRepository, IAcademicClassRepository academicClassRepository, IGradingTableRepository gradingTableRepository, IAcademicExamDetailsManager academicExamDetailsManager, IExamResultManager examResultManager = null) : base(academicExamRepository)
+    public AcademicExamManager(
+        IAcademicExamRepository academicExamRepository,
+        IAcademicSessionRepository academicSessionRepository,
+        IAcademicExamGroupRepository academicExamGroupRepository,
+        IAcademicClassRepository academicClassRepository,
+        IGradingTableRepository gradingTableRepository,
+        IAcademicExamDetailsManager academicExamDetailsManager,
+        IExamResultManager examResultManager,
+        IAttendanceMachineManager attendanceMachineManager,
+        IOffDayManager offDayManager) : base(academicExamRepository)
     {
         _academicExamRepository = academicExamRepository;
         _academicSessionRepository = academicSessionRepository;
@@ -34,6 +46,8 @@ public class AcademicExamManager : Manager<AcademicExam>, IAcademicExamManager
         _gradingTableRepository = gradingTableRepository;
         _academicExamDetailsManager = academicExamDetailsManager;
         _examResultManager = examResultManager;
+        _attendanceMachineManager = attendanceMachineManager;
+        _offDayManager = offDayManager;
     }
 
     public async Task<List<AcademicExam>> GetByClassIdExamGroupIdAsync(int examGroupId, int academicClassId)
@@ -184,6 +198,7 @@ public class AcademicExamManager : Manager<AcademicExam>, IAcademicExamManager
         }
         _cachedGradingTable = (List<GradingTable>)await _gradingTableRepository.GetAllAsync();
         _cachedExamGroup = examGroup;
+        _cachedExamMonthId = examGroup.ExamMonthId;
         var existingExams = examGroup.AcademicExams.Where(s => s.AcademicClassId == academiClassId).ToList();
         if (existingExams == null || existingExams.Count <= 0)
         {
@@ -196,6 +211,13 @@ public class AcademicExamManager : Manager<AcademicExam>, IAcademicExamManager
         if (existingStudents != null)
         {
             var countOfExam = _cachedExamGroup.AcademicExams.DistinctBy(s => s.AcademicSubjectId).Count();
+            var studentIds = existingStudents.Select(s => s.Id).ToList();
+            var previousRanks = new Dictionary<int, int>();
+            if (_examResultManager != null)
+            {
+                previousRanks = await _examResultManager.GetPreviousRanksByStudentIdsAsync(academicGroupId, studentIds);
+            }
+
             foreach (var student in existingStudents)
             {
                 var liveResultSubjectWises = GetLiveResultSubjectWise(student.Id);
@@ -214,6 +236,7 @@ public class AcademicExamManager : Manager<AcademicExam>, IAcademicExamManager
                     TotalMarks = GetTotalMarks(student.Id),
                     Attendance = GetAttendance(student.Id, academicGroupId),
                     Rank = 0,
+                    PreviousRank = previousRanks.ContainsKey(student.Id) ? previousRanks[student.Id] : 0,
                     Fails = totalFails,
                     Status = rStatus,
                     LiveResultSubjectWises = liveResultSubjectWises
@@ -232,10 +255,10 @@ public class AcademicExamManager : Manager<AcademicExam>, IAcademicExamManager
             liveResultVM.TotalColumn = 10 + (totalSubjects.Count * 2) + totalExamTypes;
         }
 
-        //Calculation Ranking
-        // Calculate Ranking
+        // Calculate Ranking - Order by: fails (ascending), then GPA (desc), then TotalMarks (desc), then Attendance (desc)
         var orderedResults = liveResultVM.ResultDetails
-            .OrderByDescending(r => r.FinalGPA)
+            .OrderBy(r => r.Fails)
+            .ThenByDescending(r => r.FinalGPA)
             .ThenByDescending(r => r.TotalMarks)
             .ThenByDescending(r => r.Attendance)
             .ThenBy(r => r.ClassRoll)
@@ -253,37 +276,50 @@ public class AcademicExamManager : Manager<AcademicExam>, IAcademicExamManager
     private string GetFinalGradeByGPA(double gpa, out string status)
     {
         var grade = "";
-        var gradingTableRow = _cachedGradingTable.Where(s => (double)s.GradePoint >= gpa).OrderBy(g => g.GradePoint).FirstOrDefault();
+        var gradingTableRow = _cachedGradingTable?.Where(s => (double)s.GradePoint >= gpa).OrderBy(g => g.GradePoint).FirstOrDefault();
         if (gradingTableRow != null)
         {
             grade = gradingTableRow.LetterGrade ?? "";
-            status = gradingTableRow.gradeComments;
+            status = gradingTableRow.gradeComments ?? "";
         }
         else
         {
-
+            status = "";
         }
-        status = gradingTableRow.gradeComments;
         return grade;
     }
 
-    private int GetFinalRank(int studentId, int? sectionId, int classId, int examGroupId)
+    private double GetAttendance(int studentId, int academicGroupId)
     {
-        var expectedResult = _cachedExamGroup.AcademicExams.Where(e => e.AcademicClassId == classId && e.AcademicSectionId == sectionId);
-        //Rank by GPA
+        try
+        {
+            if (_cachedExamMonthId <= 0)
+                return 0;
 
-        //Rank by Total Number
+            int year = DateTime.Now.Year;
+            int monthId = _cachedExamMonthId;
 
-        //Rank by Attendance
+            DateTime startDate = new DateTime(year, monthId, 1);
+            DateTime endDate = startDate.AddMonths(1).AddDays(-1);
 
-        var result = 3;
-        return result;
-    }
+            string monthYear = monthId.ToString().PadLeft(2, '0') + year.ToString();
 
-    private double GetAttendance(int id, int academicGroupId)
-    {
-        var result = 87.44;
-        return result;
+            var attendanceList = _attendanceMachineManager.GetAttendanceByMonthSingleStudent(studentId, monthYear).Result;
+            var monthlyHolidays = _offDayManager.GetMonthlyHolidaysAsync(startDate.ToString("MMyyyy")).Result;
+
+            int totalDaysInMonth = DateTime.DaysInMonth(year, monthId);
+            int totalActiveDays = totalDaysInMonth - monthlyHolidays.Count;
+
+            if (totalActiveDays <= 0)
+                return 0;
+
+            int totalPresent = attendanceList?.Count ?? 0;
+            return Math.Round((totalPresent * 100.0) / totalActiveDays, 2);
+        }
+        catch
+        {
+            return 0;
+        }
     }
 
     private double GetTotalMarks(int id)

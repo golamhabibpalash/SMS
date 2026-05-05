@@ -304,3 +304,113 @@ $('.modalViewId').click(function () {
     };
 
 });
+
+// Session change handler - Update fee heads when session changes
+$('#sessionDropdown').change(function () {
+    let sessionId = $(this).val();
+    let classId = $('#classDropdown').val();
+    let isResidential = $('#studentIsResidential').val();
+
+    // Update hidden field for form submission
+    $('#selectedSessionId').val(sessionId);
+    $('#academicSessionId').val(sessionId);
+
+    // If session is current, set class to student's original class
+    // Otherwise, keep the selected class (user can change it)
+    if (sessionId == currentSessionId) {
+        let originalClassId = $('#originalClassId').val();
+        $('#classDropdown').val(originalClassId);
+        classId = originalClassId;
+        $('#selectedClassId').val(originalClassId);
+    } else {
+        // For previous sessions, update class dropdown based on session
+        updateClassDropdownForSession(sessionId);
+    }
+
+    loadFeeHeads(sessionId, classId, isResidential);
+});
+
+// Class change handler - Update fee heads when class changes
+$('#classDropdown').change(function () {
+    let sessionId = $('#sessionDropdown').val();
+    let classId = $(this).val();
+    let isResidential = $('#studentIsResidential').val();
+
+    // Update hidden field for form submission
+    $('#selectedClassId').val(classId);
+    $('#academicClassId').val(classId);
+
+    loadFeeHeads(sessionId, classId, isResidential);
+});
+
+// Function to load fee heads based on session and class
+function loadFeeHeads(sessionId, classId, isResidential) {
+    // Clear current selection and amount
+    $('#feeHeadDropdown').empty();
+    $('#feeHeadDropdown').append('<option selected disabled>Select Payment</option>');
+    $('#StudentPayment_StudentPaymentDetails_0__PaidAmount').val('');
+    $('#StudentPayment_TotalPayment').val('');
+
+    // Load fee heads for selected session and class
+    $.ajax({
+        url: '/StudentFeeHeads/GetClassFeeListBySession',
+        data: { sessionId: sessionId, classId: classId, isResidential: isResidential },
+        cache: false,
+        type: 'GET',
+        dataType: 'json',
+        success: function (data) {
+            if (data && data.length > 0) {
+                $.each(data, function (i, item) {
+                    var op = '<option value="' + item.studentFeeHeadId + '" data-amount="' + item.amount + '" data-classFeeId="' + item.id + '">' + item.studentFeeHead.name + ' - ' + item.amount + '</option>';
+                    $('#feeHeadDropdown').append(op);
+                });
+            } else {
+                var op = '<option disabled>No fee heads found</option>';
+                $('#feeHeadDropdown').append(op);
+            }
+        },
+        error: function (err) {
+            console.log('Error loading fee heads:', err);
+        }
+    });
+}
+
+// Function to update class dropdown when session changes to previous session
+function updateClassDropdownForSession(sessionId) {
+    // For previous sessions, show all classes so user can select which class to collect fee for
+    $('#classDropdown').empty();
+
+    if (availableClasses && availableClasses.length > 0) {
+        $.each(availableClasses, function (i, item) {
+            var op = '<option value="' + item.id + '">' + item.name + '</option>';
+            $('#classDropdown').append(op);
+        });
+    }
+}
+
+// Update amount when fee head is selected
+$('#feeHeadDropdown').change(function () {
+    var selectedOption = $(this).find('option:selected');
+    var amount = selectedOption.data('amount');
+    var classFeeId = selectedOption.data('classfeeid');
+
+    $('#StudentPayment_StudentPaymentDetails_0__PaidAmount').val(amount);
+    $('#StudentPayment_StudentPaymentDetails_0__ClassFeeId').val(classFeeId);
+    $('#StudentPayment_TotalPayment').val(amount);
+
+    // Update amount text
+    $.ajax({
+        url: '/StudentPayments/GetTextByAmount',
+        data: { amount: amount },
+        cache: false,
+        type: 'POST',
+        dataType: 'json',
+        success: function (d) {
+            $('#amountText').html(d);
+            $('#totalAmountText').html(d);
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    });
+});

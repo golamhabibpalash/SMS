@@ -277,5 +277,13 @@ namespace SMS_App.Controllers
                 var feeHeads = await _studentFeeHeadManager.GetAllByClassIdSessionIdStudentIdAsync(classId, sessionId, studentId);
                 return Json(feeHeads);
         }
+
+        [HttpGet]
+        [Route("StudentFeeHeads/GetClassFeeListBySession")]
+        public async Task<JsonResult> GetClassFeeListBySession(int sessionId, int classId, bool isResidential)
+        {
+            var classFeeList = await _classFeeListManager.GetAllBySessionClassTypeAsync(sessionId, classId, isResidential);
+            return Json(classFeeList.OrderBy(s => s.StudentFeeHead.SL));
+        }
     }
 }

@@ -117,7 +117,14 @@ public class StudentPaymentsController : Controller
     [Authorize(Policy = "PaymentStudentPaymentsPolicy")]
     public async Task<IActionResult> Payment(StudentPaymentVM paymentObject)
     {
-        paymentObject.CurrentAcademicSession = await _academicSessionManager.GetCurrentAcademicSessionAsync();
+        if (paymentObject.SelectedSessionId > 0)
+        {
+            paymentObject.CurrentAcademicSession = await _academicSessionManager.GetByIdAsync(paymentObject.SelectedSessionId);
+        }
+        else
+        {
+            paymentObject.CurrentAcademicSession = await _academicSessionManager.GetCurrentAcademicSessionAsync();
+        }
         try
         {
             await ProcessPayment(paymentObject);
@@ -593,9 +600,16 @@ public class StudentPaymentsController : Controller
     private async Task<StudentPaymentVM> CreateStudentPaymentVM(Student student)
     {
         var currentAcademicSession = await _academicSessionManager.GetCurrentAcademicSessionAsync();
+        var allSessions = await _academicSessionManager.GetAllAsync();
+        var allClasses = await _academicClassManager.GetAllAsync();
+
         var spvm = new StudentPaymentVM
         {
             CurrentAcademicSession = currentAcademicSession,
+            SelectedSessionId = currentAcademicSession.Id,
+            SelectedClassId = student.AcademicClassId,
+            AvailableSessions = allSessions.OrderByDescending(s => s.Name).ToList(),
+            AvailableClasses = allClasses.OrderBy(c => c.ClassSerial).ToList(),
             StudentPayment = new StudentPayment
             {
                 UniqueId = student.UniqueId,
@@ -608,7 +622,7 @@ public class StudentPaymentsController : Controller
             ClassFeeLists = await GetClassFeeList(student)
         };
 
-        var feeHeadList = await GetFeeHeadList(student);
+        var feeHeadList = await GetFeeHeadList(student, currentAcademicSession.Id);
         //check admission fee or session fee
         StudentFeeHead removeStudentFeeHead;
         var sessionYear = currentAcademicSession.Name.Substring(currentAcademicSession.Name.Length - 4, 4).ToString();
@@ -650,22 +664,24 @@ public class StudentPaymentsController : Controller
         return spvm;
     }
 
-    private async Task<List<ClassFeeList>> GetClassFeeList(Student student)
+    private async Task<List<ClassFeeList>> GetClassFeeList(Student student, int? sessionId = null)
     {
+        var sessionToUse = sessionId ?? student.AcademicSessionId;
         var allFees = await _classFeeListManager.GetAllByClassIdAsync(student.AcademicClassId);
-        allFees = allFees.Where(s => s.AcademicSessionId == student.AcademicSessionId).ToList();
+        allFees = allFees.Where(s => s.AcademicSessionId == sessionToUse).ToList();
 
         return allFees;
     }
 
-    private async Task<List<StudentFeeHead>> GetFeeHeadList(Student student)
+    private async Task<List<StudentFeeHead>> GetFeeHeadList(Student student, int? sessionId = null)
     {
+        var sessionToUse = sessionId ?? student.AcademicSessionId;
         var feeHeadList = (List<StudentFeeHead>)await _studentFeeHeadManager.GetAllAsync();
-        var classfeelist = await GetClassFeeList(student);
+        var classfeelist = await GetClassFeeList(student, sessionToUse);
 
         feeHeadList = (from f in feeHeadList
                        join t in classfeelist on f.Id equals t.StudentFeeHeadId
-                       where t.AcademicSessionId == student.AcademicSessionId
+                       where t.AcademicSessionId == sessionToUse
                        select f).ToList();
 
         if (student.IsResidential)

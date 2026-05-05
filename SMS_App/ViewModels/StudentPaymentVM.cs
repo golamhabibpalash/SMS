@@ -9,13 +9,17 @@ namespace SMS_App.ViewModels
     {
         public int Id { get; set; }
         public StudentPayment StudentPayment { get; set; }
-        public List<StudentPayment> StudentCurrentPayments { get; set; } = new List<StudentPayment>(); // Session wise Current Payments
-        public List<StudentPayment> StudentPreviousPayments { get; set; } = new List<StudentPayment>(); // Session wise Previous Payments
+        public List<StudentPayment> StudentCurrentPayments { get; set; } = new List<StudentPayment>();
+        public List<StudentPayment> StudentPreviousPayments { get; set; } = new List<StudentPayment>();
         public List<ClassFeeList> ClassFeeLists { get; set; }
         public int ClassFeeHeadId { get; set; }
         public int StudentId { get; set; }
         public bool IsSMSSend { get; set; }
         public AcademicSession CurrentAcademicSession { get; set; }
+        public int SelectedSessionId { get; set; }
+        public int SelectedClassId { get; set; }
+        public List<AcademicSession> AvailableSessions { get; set; } = new List<AcademicSession>();
+        public List<AcademicClass> AvailableClasses { get; set; } = new List<AcademicClass>();
 
         public StudentPaymentDetailVM PaymentVM { get; set; } = new StudentPaymentDetailVM();
     }

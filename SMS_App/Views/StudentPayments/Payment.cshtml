@@ -163,26 +163,30 @@
 @if (Model != null)
 {
     <div class="row text-white pt-1 pb-1" id="paymentDiv">
-        <div class="col-md-6 mh-100 ">
+        <div class="col-md-5 mh-100 ">
             <partial name="_StudentInfoPortion" model="@Model" />
         </div>
-        <div class="col-md-6 mh-100">
+        <div class="col-md-7 mh-100">
 
             <div class="panel bg-navy-blue " id="inputPanel" style="min-height:300px;">
                 <div class="form-horizontal pt-3">
                     <form asp-action="payment" asp-controller="StudentPayments" method="post" id="studentPaymentFormId">
-                        <input type="hidden" id="academicSessionId" value="@Model.StudentPayment.Student.AcademicSessionId" />
+                        <input type="hidden" id="academicSessionId" value="@Model.SelectedSessionId" />
                         <input type="hidden" asp-for="StudentPayment.StudentId" value="@Model.StudentId" />
                         <input type="hidden" asp-for="StudentPayment.ReceiptNo" />
                         <input type="hidden" asp-for="StudentPayment.Id" />
                         <input type="hidden" asp-for="Id" />
                         <input type="hidden" asp-for="StudentPayment.UniqueId" />
                         <input type="hidden" asp-for="StudentPayment.StudentPaymentDetails[0].Id" />
+                        <input type="hidden" id="selectedSessionId" name="SelectedSessionId" value="@Model.SelectedSessionId" />
+                        <input type="hidden" id="selectedClassId" name="SelectedClassId" value="@Model.SelectedClassId" />
+                        <input type="hidden" id="studentIsResidential" value="@Model.StudentPayment.Student.IsResidential" />
+                        <input type="hidden" id="originalClassId" value="@Model.StudentPayment.Student.AcademicClassId" />
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group row pt-2">
-                                    <label class="col-md-3 col-form-label text-md-end">Date </label>
-                                    <div class="col-md-3">
+                                    <label class="col-md-2 col-form-label text-md-end">Date </label>
+                                    <div class="col-md-4">
                                         <input type="date"
                                                asp-for="StudentPayment.PaidDate"
                                                class="form-control form-control-sm"
@@ -192,44 +196,85 @@
                                         <span asp-validation-for="StudentPayment.PaidDate" class="text-danger col-form-label"></span>
                                     </div>
 
-                                    <label class="col-md-3 col-form-label text-md-end text-left">Payment For </label>
-                                    <div class="col-md-3">
-                                        <select class="form-control" asp-items="ViewBag.FeeList" asp-for="StudentPayment.StudentPaymentDetails[0].StudentFeeHeadId">
+                                    <label class="col-md-2 col-form-label text-md-end text-left">Session</label>
+                                    <div class="col-md-4">
+                                        <select class="form-control" id="sessionDropdown">
+                                            @if (Model.AvailableSessions != null)
+                                            {
+                                                @foreach (var session in Model.AvailableSessions)
+                                                {
+                                                    if (session.Id == Model.SelectedSessionId)
+                                                    {
+                                                        <option value="@session.Id" selected>@session.Name</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@session.Id">@session.Name</option>
+                                                    }
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row pt-2">
+                                    <label class="col-md-2 col-form-label text-md-end text-left">Class</label>
+                                    <div class="col-md-4">
+                                        <select class="form-control" id="classDropdown">
+                                            @if (Model.AvailableClasses != null)
+                                            {
+                                                @foreach (var acaClass in Model.AvailableClasses)
+                                                {
+                                                    if (acaClass.Id == Model.SelectedClassId)
+                                                    {
+                                                        <option value="@acaClass.Id" selected>@acaClass.Name</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@acaClass.Id">@acaClass.Name</option>
+                                                    }
+                                                }
+                                            }
+                                        </select>
+                                    </div>                               
+
+                                    <label class="col-md-2 col-form-label text-md-end text-left">Payment For </label>
+                                    <div class="col-md-4">
+                                        <select class="form-control" id="feeHeadDropdown" asp-items="ViewBag.FeeList" asp-for="StudentPayment.StudentPaymentDetails[0].StudentFeeHeadId">
                                             <option selected disabled>Select Payment</option>
                                         </select>
                                         <span asp-validation-for="ClassFeeHeadId" class="text-danger col-form-label"></span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label class="col-md-3 col-form-label text-md-end text-left">Amount</label>
-                                    <div class="col-md-3">
+                                    <label class="col-md-2 col-form-label text-md-end text-left">Amount</label>
+                                    <div class="col-md-4">
                                         <input class="form-control form-control-sm text-dark font-weight-bolder text-right" placeholder="Amount" asp-for="StudentPayment.StudentPaymentDetails[0].PaidAmount" />
                                         <input type="hidden" id="academicClassId" value="@Model.StudentPayment.Student.AcademicClassId" />
                                         <input type="hidden" asp-for="StudentPayment.StudentPaymentDetails[0].ClassFeeId" />
                                     </div>
-                                    <label class="col-md-3 col-form-label text-md-end text-left">Total</label>
-                                    <div class="col-md-3">
+                                    <label class="col-md-2 col-form-label text-md-end text-left">Total</label>
+                                    <div class="col-md-4">
                                         <input asp-for="StudentPayment.TotalPayment" class="form-control form-control-sm text-right text-dark font-weight-bolder" />
                                     </div>
                                     <span asp-validation-for="StudentPayment.TotalPayment" class="text-danger col-form-label"></span>
                                 </div>
                                 <div class="form-group row">
-                                    <label class="col-md-3 col-form-label text-md-end text-left">Remark</label>
-                                    <div class="col-md-3">
+                                    <label class="col-md-2 col-form-label text-md-end text-left">Remark</label>
+                                    <div class="col-md-4">
                                         <input asp-for="StudentPayment.Remarks" class="form-control form-control-sm" />
                                         <span asp-validation-for="StudentPayment.Remarks" class="text-danger col-form-label"></span>
                                     </div>
 
-                                    <label asp-for="IsSMSSend" class="offset-md-3 col-md-3 col-form-label"><input asp-for="IsSMSSend" checked="checked" /> Send SMS Notification</label>
+                                    <label asp-for="IsSMSSend" class="offset-md-2 col-md-4 col-form-label"><input asp-for="IsSMSSend" checked="checked" /> Send SMS Notification</label>
                                     <span asp-validation-for="IsSMSSend" class="text-danger col-form-label"></span>
                                 </div>
                                 <div class="form-group row">
-                                    <div class="col-md-8 offset-md-3">
-                                        <input type="submit" class="btn-block btn btn-info" value="Submit" id="submitBtn" />
+                                    <div class="col-md-12 offset-md-4">
+                                        <input type="submit" class="btn-block btn btn-info col-md-4" value="Submit" id="submitBtn" />
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <div class="col-md-8 offset-md-3 text-center">
+                                    <div class="col-md-12 text-center">
                                         <span class="text-warning font-italic">[Please try to input separate payment according to payment type]</span>
                                     </div>
                                 </div>
@@ -410,6 +455,11 @@
                 alertify.message('Updated Successfully');
             }
         });
+    </script>
+    <script>
+        // Global variable for available classes
+        var availableClasses = @Html.Raw(Json.Serialize(Model.AvailableClasses));
+        var currentSessionId = @Model.CurrentAcademicSession?.Id ?? 0;
     </script>
     <script src="~/js/StudentPayments/Payment.js">
 

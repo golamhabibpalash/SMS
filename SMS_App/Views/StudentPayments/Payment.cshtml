@@ -27,8 +27,9 @@
         GlobalUI.PageTitle = "Student Payment";
     }
     string createdBy = string.Empty;
-    //double finalBalance = 0.0;
-    //int collapsCount = 1;
+    
+    var isResidential = Model.StudentPayment.Student.IsResidential;
+   
 }
 
 @section Styles{
@@ -180,7 +181,7 @@
                         <input type="hidden" asp-for="StudentPayment.StudentPaymentDetails[0].Id" />
                         <input type="hidden" id="selectedSessionId" name="SelectedSessionId" value="@Model.SelectedSessionId" />
                         <input type="hidden" id="selectedClassId" name="SelectedClassId" value="@Model.SelectedClassId" />
-                        <input type="hidden" id="studentIsResidential" value="@Model.StudentPayment.Student.IsResidential" />
+                        <input type="hidden" id="studentIsResidential" value="@Model.StudentPayment.Student.IsResidential.ToString()" />
                         <input type="hidden" id="originalClassId" value="@Model.StudentPayment.Student.AcademicClassId" />
                         <div class="row">
                             <div class="col-md-12">
@@ -239,7 +240,7 @@
 
                                     <label class="col-md-2 col-form-label text-md-end text-left">Payment For </label>
                                     <div class="col-md-4">
-                                        <select class="form-control" id="feeHeadDropdown" asp-items="ViewBag.FeeList" asp-for="StudentPayment.StudentPaymentDetails[0].StudentFeeHeadId">
+                                        <select class="form-control" id="feeHeadDropdown"  asp-for="StudentPayment.StudentPaymentDetails[0].StudentFeeHeadId">
                                             <option selected disabled>Select Payment</option>
                                         </select>
                                         <span asp-validation-for="ClassFeeHeadId" class="text-danger col-form-label"></span>
@@ -461,8 +462,17 @@
         var availableClasses = @Html.Raw(Json.Serialize(Model.AvailableClasses));
         var currentSessionId = @Model.CurrentAcademicSession?.Id ?? 0;
     </script>
+    <script>
+        $(document).ready(function () {
+            // Call loadFeeHeads after page loads with initial values
+            let sessionId = $('#selectedSessionId').val();
+            let classId = $('#originalClassId').val();
+            let isResidential = $('#studentIsResidential').val();
+
+            loadFeeHeads(sessionId, classId, isResidential);
+        });
+    </script>
     <script src="~/js/StudentPayments/Payment.js">
 
     </script>
-
 }

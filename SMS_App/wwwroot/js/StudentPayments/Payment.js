@@ -33,11 +33,13 @@ $('#modalAcademicClassId').change(function () {
         }
     });
 });
+
 $('#studentListId').change(function () {
     let cRoll = $('#studentListId option:selected').val();
     $('#rollInput').val(cRoll);
     $('#frmSearchByRollId').submit();
 });
+
 //Payment Details Option Changed
 $('#StudentPayment_StudentPaymentDetails_0__PaidAmount').on('input', function () {
     var paidAmount = $(this).val();
@@ -59,6 +61,7 @@ $('#StudentPayment_StudentPaymentDetails_0__PaidAmount').on('input', function ()
     });
 
 });
+
 $('#StudentPayment_TotalPayment').change('input', function () {
     var paidAmount = $(this).val();
     $('#StudentPayment_TotalPayment').val(paidAmount);
@@ -79,6 +82,7 @@ $('#StudentPayment_TotalPayment').change('input', function () {
     });
 
 });
+
 //Payment for select list option chooose
 $('#StudentPayment_StudentPaymentDetails_0__StudentFeeHeadId').change(function () {
     let id = $('#StudentPayment_StudentPaymentDetails_0__StudentFeeHeadId option:selected').val();
@@ -168,6 +172,7 @@ jQuery('#minusButton').click(function () {
 
     });
 });
+
 //Plus Button Click
 jQuery('#plusButton').click(function () {
     let id = $('#feeSelectId').val();

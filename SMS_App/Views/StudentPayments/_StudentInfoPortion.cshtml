@@ -1,6 +1,7 @@
 ﻿@model SMS_App.ViewModels.StudentPaymentVM
-@{ 
+@{
     string studentPhoto = !string.IsNullOrEmpty(Model.StudentPayment.Student.Photo) ? Model.StudentPayment.Student.Photo : "noimage.jpg";
+    string studentType = "Residential";
 }
 <div class="panel bg-navy-blue" style="min-height:300px;">
     <div class="row p-4">
@@ -48,6 +49,17 @@
                     <td>Admission Date</td>
                     <td>:</td>
                     <td>@Model.StudentPayment.Student.AdmissionDate.ToString("dd MMM yyyy")</td>
+                </tr>
+                <tr>
+                    <td>Type</td>
+                    <td>:</td>
+                    <td>
+                        
+                        @{
+                            studentType = Model.StudentPayment.Student.IsResidential==true? studentType:"Non-Residential";
+                        }
+                        @studentType
+                    </td>
                 </tr>
             </table>
         </div>

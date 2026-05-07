@@ -462,17 +462,38 @@
         var availableClasses = @Html.Raw(Json.Serialize(Model.AvailableClasses));
         var currentSessionId = @Model.CurrentAcademicSession?.Id ?? 0;
     </script>
+    <script src="@Url.Content("~/js/StudentPayments/Payment.js")"></script>
     <script>
+        function loadFeeHeadsByStudent(sessionId, classId, studentId) {
+            $.ajax({
+                url: '/ClassFeeLists/GetClassFeeWithHeadBySessionClassStudentId',
+                data: { sessionId: sessionId, classId: classId, studentId: studentId },
+                cache: false,
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data);
+                    if (data && data.length > 0) {
+                        $.each(data, function (i, item) {
+                            var op = '<option value="' + item.studentFeeHeadId + '" data-amount="' + item.amount + '" data-classFeeId="' + item.id + '">' + item.studentFeeHead.name + ' - ' + item.amount + '</option>';
+                            $('#feeHeadDropdown').append(op);
+                        });
+                    } else {
+                        var op = '<option disabled>No fee heads found</option>';
+                        $('#feeHeadDropdown').append(op);
+                    }
+                },
+                error: function (err) {
+                    console.log('Error loading fee heads:', err);
+                }
+            });
+        }
+
         $(document).ready(function () {
-            // Call loadFeeHeads after page loads with initial values
             let sessionId = $('#selectedSessionId').val();
             let classId = $('#originalClassId').val();
-            let isResidential = $('#studentIsResidential').val();
-
-            loadFeeHeads(sessionId, classId, isResidential);
+            let studentId = $('#StudentPayment_StudentId').val();
+            loadFeeHeadsByStudent(sessionId, classId, studentId);
         });
-    </script>
-    <script src="~/js/StudentPayments/Payment.js">
-
     </script>
 }

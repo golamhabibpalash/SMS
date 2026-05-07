@@ -11,5 +11,6 @@ namespace SMS.BLL.Contracts
         Task<StudentFeeAllocation> GetStudentFeeAllocationByUniqueIdClassFeeId(string uniqueId, int classfeeId);
         Task<(int totalRecord, int filteredRecord, List<StudentFeeAllocation> data)> GetDataTableDataAsync(
             string searchValue, string orderColumn, string orderDirection, int start, int length);
+        Task<List<StudentFeeAllocation>> GetStudentFeeAllocationsByStudentId(int studentId);
     }
 }

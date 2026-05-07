@@ -264,5 +264,11 @@ namespace SMS_App.Controllers
 
             return new JsonResult(result);
         }
+
+        public async Task<JsonResult> GetClassFeeWithHeadBySessionClassStudentId(int sessionId, int classId, int studentId)
+        {
+            var result =await _classFeeListManager.GetByClassIdSessionIdStudentIdAsync(classId, sessionId, studentId);
+            return new JsonResult(result);
+        }
     }
 }

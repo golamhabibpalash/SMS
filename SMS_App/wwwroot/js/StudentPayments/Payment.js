@@ -1,4 +1,4 @@
-﻿/////////////////////// 2nd time(Current) created code
+////////////////////// 2nd time(Current) created code
 
 
 $('#modalAcademicClassId').change(function () {
@@ -332,7 +332,9 @@ $('#sessionDropdown').change(function () {
         updateClassDropdownForSession(sessionId);
     }
 
-    loadFeeHeads(sessionId, classId, isResidential);
+    //loadFeeHeads(sessionId, classId, isResidential);
+    let studentId = $('#StudentPayment.StudentId').val();
+    loadFeeHeadsByStudent(sessionId, classId, studentId);
 });
 
 // Class change handler - Update fee heads when class changes
@@ -345,7 +347,9 @@ $('#classDropdown').change(function () {
     $('#selectedClassId').val(classId);
     $('#academicClassId').val(classId);
 
-    loadFeeHeads(sessionId, classId, isResidential);
+    //loadFeeHeads(sessionId, classId, isResidential);
+    let studentId = $('#StudentPayment.StudentId').val();
+    loadFeeHeadsByStudent(sessionId, classId, studentId);
 });
 
 // Function to load fee heads based on session and class
@@ -419,3 +423,28 @@ $('#feeHeadDropdown').change(function () {
         }
     });
 });
+
+function loadFeeHeadsByStudent(sessionId, classId, studentId) {
+    // Load fee heads for selected session and class
+    $.ajax({
+        url: '/StudentFeeHeads/GetFeeHeadsBySessionIdClassIdStudentIdAsync',
+        data: { sessionId: sessionId, classId: classId, studentId: studentId },
+        cache: false,
+        type: 'GET',
+        dataType: 'json',
+        success: function (data) {
+            if (data && data.length > 0) {
+                $.each(data, function (i, item) {
+                    var op = '<option value="' + item.studentFeeHeadId + '" data-amount="' + item.amount + '" data-classFeeId="' + item.id + '">' + item.studentFeeHead.name + ' - ' + item.amount + '</option>';
+                    $('#feeHeadDropdown').append(op);
+                });
+            } else {
+                var op = '<option disabled>No fee heads found</option>';
+                $('#feeHeadDropdown').append(op);
+            }
+        },
+        error: function (err) {
+            console.log('Error loading fee heads:', err);
+        }
+    });
+}

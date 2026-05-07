@@ -15,12 +15,14 @@ public class ClassFeeListManager : Manager<ClassFeeList>, IClassFeeListManager
     private readonly IClassFeeListRepository _classFeeListRepository;
     private readonly IStudentManager _studentManager;
     private readonly IAcademicSessionManager _sessionManager;
+    private readonly IStudentFeeAllocationManager _studentFeeAllocationManager;
 
-    public ClassFeeListManager(IClassFeeListRepository classFeeListRepository, IStudentManager studentManager, IAcademicSessionManager sessionManager) : base(classFeeListRepository)
+    public ClassFeeListManager(IClassFeeListRepository classFeeListRepository, IStudentManager studentManager, IAcademicSessionManager sessionManager, IStudentFeeAllocationManager studentFeeAllocationManager) : base(classFeeListRepository)
     {
         _classFeeListRepository = classFeeListRepository;
         _studentManager = studentManager;
         _sessionManager = sessionManager;
+        _studentFeeAllocationManager = studentFeeAllocationManager;
     }
 
     public async Task<List<ClassFeeList>> GetAllByClassIdAsync(int classId)
@@ -43,8 +45,23 @@ public class ClassFeeListManager : Manager<ClassFeeList>, IClassFeeListManager
 
     public async Task<List<ClassFeeList>> GetByClassIdSessionIdStudentIdAsync(int classId, int sessionId, int studentId)
     {
-        var result = await _classFeeListRepository.GetByClassIdSessionIdStudentIdAsync(classId, sessionId, studentId);
-        return result;
+        var allClassFeeLists = await _classFeeListRepository.GetByClassIdSessionIdStudentIdAsync(classId, sessionId, studentId);
+
+        // find and set all allocations
+        var studentAllAllocations =  await _studentFeeAllocationManager.GetStudentFeeAllocationsByStudentId(studentId);
+
+        if (studentAllAllocations!=null && studentAllAllocations.Count>0)
+        {
+            foreach (var cfl in allClassFeeLists)
+            {
+                var feeAllocatedAmount = studentAllAllocations.Where(s => s.StudentId == studentId && s.StudentFeeHeadId == cfl.StudentFeeHeadId)?.Sum(c => c.AllocatedAmount);
+                if (feeAllocatedAmount>0)
+                {
+                    cfl.Amount = (double)feeAllocatedAmount;
+                }
+            }
+        }
+        return allClassFeeLists;
     }
 
     public async Task<List<ClassFeeList>> GetClassFeeListByClassIdFeeHeadIdSessionIdAsync(int classId, int feeHeadId, int sessionId)
@@ -67,6 +84,7 @@ public class ClassFeeListManager : Manager<ClassFeeList>, IClassFeeListManager
     {
         var allListByClass = await _classFeeListRepository.GetAllBySessionIdClassIdAsync(sessionId, classId);
         var result = allListByClass.Where(s => s.StudentFeeHead.IsResidential == isResidential).ToList();
+        
         return result;
     }    
 }

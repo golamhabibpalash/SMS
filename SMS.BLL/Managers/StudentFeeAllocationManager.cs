@@ -43,5 +43,17 @@ public class StudentFeeAllocationManager : Manager<StudentFeeAllocation>, IStude
                 .Include(c => c.StudentFeeHead)
                 .ToListAsync();
         }
+
+        public async Task<List<StudentFeeAllocation>> GetStudentFeeAllocationsByStudentId(int studentId)
+        {
+            return await _feeAllocationRepository.Table
+                .Where(c => c.StudentId == studentId)
+                .Include(s => s.ClassFeeList)
+                    .ThenInclude(m => m.AcademicSession)
+                .Include(c => c.Student)
+                    .ThenInclude(l => l.AcademicClass)
+                .Include(c => c.StudentFeeHead)
+                .ToListAsync();
+        }
     }
 }

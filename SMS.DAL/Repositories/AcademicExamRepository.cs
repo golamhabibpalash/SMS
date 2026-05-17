@@ -67,14 +67,8 @@ namespace SMS.DAL.Repositories
                     .ThenInclude(m => m.Student)
                 .ToListAsync();
 
-            var uniqueSubjectIds = allExams
-                .Select(e => e.AcademicSubjectId)
-                .Distinct()
-                .ToHashSet();
-
             var exams = allExams
-                .Where(e => uniqueSubjectIds.Contains(e.AcademicSubjectId))
-                .GroupBy(e => new { e.AcademicSubjectId, e.AcademicSectionId, e.ExamCategory })
+                .GroupBy(e => new { e.AcademicSubjectId, e.ExamCategory })
                 .Select(g => g.First())
                 .ToList();
 

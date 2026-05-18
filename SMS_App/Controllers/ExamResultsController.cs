@@ -426,8 +426,8 @@ public class ExamResultsController : Controller
                 TempData[""] = TempData["failed"] = "This Result is already processed";
                 return RedirectToAction("Details", "AcademicExamGroup", new { id = groupId });
             }
-            var exams = await _academicExamManager.GetByClassIdExamGroupIdAsync(groupId, classId);
-            var session = await _sessionManager.GetCurrentAcademicSessionAsync();
+        var exams = await _academicExamManager.GetAllByClassIdExamGroupIdAsync(groupId, classId);
+        var session = await _sessionManager.GetCurrentAcademicSessionAsync();
             var examGroup = await _academicExamGroupManager.GetByIdAsync(groupId);
 
             List<Student> students = exams?

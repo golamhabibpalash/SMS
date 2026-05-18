@@ -56,6 +56,12 @@ public class AcademicExamManager : Manager<AcademicExam>, IAcademicExamManager
         return result;
     }
 
+    public async Task<List<AcademicExam>> GetAllByClassIdExamGroupIdAsync(int examGroupId, int academicClassId)
+    {
+        var result = await _academicExamRepository.GetAllByClassIdExamGroupId(examGroupId, academicClassId);
+        return result;
+    }
+
     public async Task<List<AcademicExam>> GetByClassIdExamGroupIdSectionIdAsync(int examGroupId, int academicClassId, int sectionId)
     {
         var result = await _academicExamRepository.GetByClassIdExamGroupIdSectionId(examGroupId, academicClassId, sectionId);

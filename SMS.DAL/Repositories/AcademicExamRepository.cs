@@ -74,6 +74,20 @@ namespace SMS.DAL.Repositories
 
             return exams;
         }
+        public async Task<List<AcademicExam>> GetAllByClassIdExamGroupId(int examGroupId, int academicClassId)
+        {
+            var exams = await _context.AcademicExams
+                .Where(s => s.AcademicClassId == academicClassId && s.AcademicExamGroupId == examGroupId)
+                .Include(s => s.AcademicClass)
+                .Include(s => s.AcademicSection)
+                .Include(s => s.AcademicExamGroup)
+                .Include(s => s.AcademicSubject)
+                .Include(s => s.AcademicExamDetails)
+                    .ThenInclude(m => m.Student)
+                .ToListAsync();
+
+            return exams;
+        }
         public async Task<List<AcademicExam>> GetByClassIdExamGroupIdSectionId(int examGroupId, int academicClassId, int sectionId)
         {
             var allExams = await _context.AcademicExams

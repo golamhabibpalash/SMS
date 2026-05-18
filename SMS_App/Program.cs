@@ -24,6 +24,8 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
+
 // AES Key/IV
 string aesKey = Environment.GetEnvironmentVariable("AES_KEY") ?? "1234567890123456";
 string aesIv = Environment.GetEnvironmentVariable("AES_IV") ?? "1234567890123456";

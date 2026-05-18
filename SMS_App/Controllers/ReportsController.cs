@@ -966,92 +966,40 @@ public class ReportsController : Controller
         Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
         string imageParam = await LoadInstituteLogoAsync(institute.Logo);
 
-
-        // 5️⃣ Prepare RDLC report path (cross-platform)
-        var reportPath = Path.Combine(
-            _host.WebRootPath,
-            "Reports",
-            "ExamResult",
-            "Rpt_MarkSheet.rdlc"
-        );
-
-        if (!System.IO.File.Exists(reportPath))
-            return new JsonResult($"RDLC file not found at: {reportPath}");
-
-        // 6️⃣ Create LocalReport
-        using var report = new LocalReport();
-        report.ReportPath = reportPath;
-        report.DataSources.Add(new ReportDataSource("DataSet1", results));
-
         string publicationDate = results.Select(r => r.CreatedAt).FirstOrDefault().ToString("dd MMM yyyy");
+        string examName = results.Select(s => s.ExamGroupName).FirstOrDefault();
+        string className = results.Select(s => s.ClassName).FirstOrDefault();
 
-        // 7️⃣ Set report parameters
-        var parameters = new[]
+        var gradingTables = (await _gradingTableManager.GetAllAsync()).ToList();
+
+        var annualReports = new Dictionary<int, List<SubRerportAnnualReport>>();
+        foreach (var sid in results.Select(r => r.StudentId).Distinct())
         {
-            new ReportParameter("InstituteName", institute.Name),
-            new ReportParameter("Address", institute.Address),
-            new ReportParameter("InstituteLogo", StripDataUriPrefix(imageParam)),
-            new ReportParameter("EIINNo", institute.EIIN),
-            new ReportParameter("ExamName", results.Select(s => s.ExamGroupName).FirstOrDefault()),
-            new ReportParameter("ClassName", results.Select(s => s.ClassName).FirstOrDefault()),
-            new ReportParameter("PublicationDate", publicationDate),
-            new ReportParameter("HighestMarks", highestMarks),
-        };
+            annualReports[sid] = await GetAnnualReportData(sid);
+        }
 
-        report.SetParameters(parameters);
+        var builder = new Utilities.Reports.MarkSheetPdfBuilder(
+            institute,
+            StripDataUriPrefix(imageParam),
+            results,
+            gradingTables,
+            annualReports,
+            examName,
+            className,
+            publicationDate,
+            highestMarks);
 
-        // 8️⃣ Handle subreports
-        TempData["gTables"] = await _gradingTableManager.GetAllAsync();
-        report.SubreportProcessing += SubReportAnnualReportProcessingAsync;
-        report.SubreportProcessing += SubReportGraddingTableProcessingAsync;
+        var reportBytes = builder.Generate();
 
-        // 9️⃣ Determine output format
-        RenderType renderType = !string.IsNullOrEmpty(reportType) ? GetRenderType(reportType) : RenderType.Pdf;
-        string mediaType = renderType switch
-        {
-            RenderType.Pdf => MediaTypeNames.Application.Pdf,
-            RenderType.Excel => "application/vnd.ms-excel",
-            RenderType.Word => "application/msword",
-            _ => MediaTypeNames.Application.Octet
-        };
+        string mediaType = MediaTypeNames.Application.Pdf;
 
-        // 10️⃣ Render report
-        string renderFormat = renderType switch
-        {
-            RenderType.Pdf => "pdf",
-            RenderType.Excel => "excel",
-            RenderType.Word => "word",
-            _ => "pdf"
-        };
-
-        var reportBytes = report.Render(renderFormat);
-
-        // 11️⃣ Return file
         if (!string.IsNullOrEmpty(fileName))
         {
             fileName = fileName + "_" + DateTime.Now.ToString("dd MMM yyyy");
-            return File(reportBytes, mediaType, GetReportName(fileName, reportType));
+            return File(reportBytes, mediaType, GetReportName(fileName, "pdf"));
         }
 
         return File(reportBytes, mediaType);
-    }
-
-    void SubReportGraddingTableProcessingAsync(object sender, SubreportProcessingEventArgs e)
-    {
-        var gTables = TempData["gTables"];
-        ReportDataSource reportDataSource = new ReportDataSource("GradingTable_DataSet", gTables);
-        e.DataSources.Add(reportDataSource);
-    }
-    
-    void SubReportAnnualReportProcessingAsync(object sender, SubreportProcessingEventArgs e)
-    {
-        if (e.ReportPath == "rptAnnualReport")
-        {
-            var stId = int.Parse(e.Parameters["StudentId"].Values[0]);
-            var data = GetAnnualReportData(stId).GetAwaiter().GetResult();
-            ReportDataSource reportDataSource = new ReportDataSource("AnnualReportDS", data);
-            e.DataSources.Add(reportDataSource);
-        }
     }
     #endregion Result or MarkSheet
 

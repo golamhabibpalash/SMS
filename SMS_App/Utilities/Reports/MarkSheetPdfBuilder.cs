@@ -199,57 +199,105 @@ public class MarkSheetPdfBuilder
 
             col.Item().PaddingTop(5).Row(row =>
             {
-                row.RelativeItem().Border(1).Padding(3).Column(c =>
+                row.ConstantItem(170).Table(t =>
                 {
-                    c.Item().Text($"Final Grade: {student.FinalGrade}").Bold();
+                    t.ColumnsDefinition(c =>
+                    {
+                        c.RelativeColumn(3);
+                        c.RelativeColumn(2);
+                    });
+
+                    void Cell(string label, string value)
+                    {
+                        t.Cell().Border(1).Padding(2).Text(label).Bold().FontSize(7);
+                        t.Cell().Border(1).Padding(2).Text(value).FontSize(7);
+                    }
+
+                    Cell("Final Grade", student.FinalGrade);
+                    Cell("Max Total Mark", _highestMarks.ToString());
+                    Cell("Obtain Total Mark", student.TotalObtainMarks.ToString("F2"));
+                    Cell("Merit Position", student.MeritPosition.ToString());
+                    Cell("Total Fails", student.TotalFails.ToString());
+                    Cell("Attendance", $"{student.AttendancePercentage:F1}%");
                 });
-                row.RelativeItem().Border(1).Padding(3).Column(c =>
+
+                row.ConstantItem(8);
+
+                row.RelativeItem().Column(right =>
                 {
-                    c.Item().Text($"Merit Position: {student.MeritPosition}");
-                    c.Item().Text($"Total Fails: {student.TotalFails}");
-                    c.Item().Text($"Attendance: {student.AttendancePercentage:F1}%");
+                    if (_annualReports.TryGetValue(student.StudentId, out var annualData) && annualData.Any())
+                    {
+                        var months = annualData.Where(m => !string.IsNullOrEmpty(m.Month)).ToList();
+                        int half = (int)Math.Ceiling(months.Count / 2.0);
+
+                        right.Item().Border(1).Padding(3).Column(ac =>
+                        {
+                            ac.Item().Text("Annual Progress Report").Bold().FontSize(10).AlignCenter();
+                            ac.Item().PaddingTop(2).Row(ar =>
+                            {
+                                ar.RelativeItem().Table(t =>
+                                {
+                                    t.ColumnsDefinition(c =>
+                                    {
+                                        c.RelativeColumn(2);
+                                        c.RelativeColumn(1);
+                                        c.RelativeColumn(1);
+                                        c.RelativeColumn(1);
+                                    });
+
+                                    t.Header(h =>
+                                    {
+                                        h.Cell().Padding(2).Background(Colors.Grey.Lighten3).Text("Month").Bold().FontSize(8).AlignCenter();
+                                        h.Cell().Padding(2).Background(Colors.Grey.Lighten3).Text("Att").Bold().FontSize(8).AlignCenter();
+                                        h.Cell().Padding(2).Background(Colors.Grey.Lighten3).Text("Pos").Bold().FontSize(8).AlignCenter();
+                                        h.Cell().Padding(2).Background(Colors.Grey.Lighten3).Text("Tot").Bold().FontSize(8).AlignCenter();
+                                    });
+
+                                    foreach (var month in months.Take(half))
+                                    {
+                                        t.Cell().Padding(2).Text(month.Month.Length > 3 ? month.Month[..3] : month.Month).FontSize(8).AlignCenter();
+                                        t.Cell().Padding(2).Text(month.AttendancePercent ?? "-").FontSize(8).AlignCenter();
+                                        t.Cell().Padding(2).Text(month.MeritPosition?.ToString() ?? "-").FontSize(8).AlignCenter();
+                                        t.Cell().Padding(2).Text(month.TotalStudent?.ToString() ?? "-").FontSize(8).AlignCenter();
+                                    }
+                                });
+
+                                ar.RelativeItem().Table(t =>
+                                {
+                                    t.ColumnsDefinition(c =>
+                                    {
+                                        c.RelativeColumn(2);
+                                        c.RelativeColumn(1);
+                                        c.RelativeColumn(1);
+                                        c.RelativeColumn(1);
+                                    });
+
+                                    t.Header(h =>
+                                    {
+                                        h.Cell().Padding(2).Background(Colors.Grey.Lighten3).Text("Month").Bold().FontSize(8).AlignCenter();
+                                        h.Cell().Padding(2).Background(Colors.Grey.Lighten3).Text("Att").Bold().FontSize(8).AlignCenter();
+                                        h.Cell().Padding(2).Background(Colors.Grey.Lighten3).Text("Pos").Bold().FontSize(8).AlignCenter();
+                                        h.Cell().Padding(2).Background(Colors.Grey.Lighten3).Text("Tot").Bold().FontSize(8).AlignCenter();
+                                    });
+
+                                    foreach (var month in months.Skip(half))
+                                    {
+                                        t.Cell().Padding(2).Text(month.Month.Length > 3 ? month.Month[..3] : month.Month).FontSize(8).AlignCenter();
+                                        t.Cell().Padding(2).Text(month.AttendancePercent ?? "-").FontSize(8).AlignCenter();
+                                        t.Cell().Padding(2).Text(month.MeritPosition?.ToString() ?? "-").FontSize(8).AlignCenter();
+                                        t.Cell().Padding(2).Text(month.TotalStudent?.ToString() ?? "-").FontSize(8).AlignCenter();
+                                    }
+                                });
+                            });
+                        });
+                    }
                 });
             });
 
             if (!string.IsNullOrEmpty(student.GradeComments))
             {
-                col.Item().PaddingTop(3).Text($"Comments: {student.GradeComments}").Italic().FontSize(8);
+                col.Item().PaddingTop(3).Text($"Comments: {student.GradeComments}").Bold().FontSize(10);
             }
-
-            if (_annualReports.TryGetValue(student.StudentId, out var annualData) && annualData.Any())
-            {
-                col.Item().PaddingTop(8).Border(1).Padding(3).Column(ac =>
-                {
-                    ac.Item().Text("Annual Progress Report").Bold().FontSize(10);
-                    ac.Item().Table(t =>
-                    {
-                        t.ColumnsDefinition(c =>
-                        {
-                            c.RelativeColumn(2);
-                            c.RelativeColumn(1);
-                            c.RelativeColumn(1);
-                            c.RelativeColumn(1);
-                        });
-
-                        t.Header(h =>
-                        {
-                            h.Cell().Padding(2).Background(Colors.Grey.Lighten3).Text("Month").Bold().FontSize(7);
-                            h.Cell().Padding(2).Background(Colors.Grey.Lighten3).Text("Attendance").Bold().FontSize(7).AlignCenter();
-                            h.Cell().Padding(2).Background(Colors.Grey.Lighten3).Text("Position").Bold().FontSize(7).AlignCenter();
-                            h.Cell().Padding(2).Background(Colors.Grey.Lighten3).Text("Total Std").Bold().FontSize(7).AlignCenter();
-                        });
-
-                        foreach (var month in annualData.Where(m => !string.IsNullOrEmpty(m.Month)))
-                        {
-                            t.Cell().Padding(2).Text(month.Month).FontSize(7);
-                            t.Cell().Padding(2).Text(month.AttendancePercent ?? "-").FontSize(7).AlignCenter();
-                            t.Cell().Padding(2).Text(month.MeritPosition?.ToString() ?? "-").FontSize(7).AlignCenter();
-                            t.Cell().Padding(2).Text(month.TotalStudent?.ToString() ?? "-").FontSize(7).AlignCenter();
-                        }
-                    });
-                });
-            }
-
         });
     }
 
@@ -261,9 +309,8 @@ public class MarkSheetPdfBuilder
             {
                 row.RelativeItem().Column(c =>
                 {
-                    c.Item().LineHorizontal(1).LineColor(Colors.Grey.Darken2);
-                    c.Item().PaddingTop(3).Text("Signature of Guardian").Bold().FontSize(8);
-                    c.Item().Text("(Contact the group teacher before sign here)").FontSize(7).Italic();
+                    c.Item().Text("Signature of Guardian").Bold().FontSize(8);
+                    c.Item().Text("(Contact the group teacher before sign here)").FontSize(7);
                     c.Item().PaddingTop(3).Text($"Date of publication of Result: {_publicationDate}").FontSize(7);
                 });
 
@@ -271,11 +318,11 @@ public class MarkSheetPdfBuilder
                 {
                     if (!string.IsNullOrEmpty(_signatureBase64))
                     {
-                        c.Item().AlignRight().Width(80).Image(
+                        c.Item().AlignRight().Width(70).Image(
                             Convert.FromBase64String(_signatureBase64)).FitArea();
                     }
-                    c.Item().AlignRight().LineHorizontal(1).LineColor(Colors.Grey.Darken2);
-                    c.Item().AlignRight().Text("Controller of Examination").Bold().FontSize(8);
+                    c.Item().PaddingTop(2).AlignRight().Text("Controller of Examination").Bold().FontSize(8);
+                    c.Item().AlignRight().Text($"({_institute.Name})").FontSize(7);
                 });
             });
 

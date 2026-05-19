@@ -66,7 +66,7 @@ public class MarkSheetPdfBuilder
                 {
                     page.Size(PageSizes.A4);
                     page.Margin(20);
-                    page.DefaultTextStyle(x => x.FontSize(9));
+                    page.DefaultTextStyle(x => x.FontSize(11));
 
                     page.Header().Element(h => BuildHeader(h, first));
                     page.Content().Element(c => BuildContent(c, studentGroup.ToList(), first));
@@ -91,29 +91,29 @@ public class MarkSheetPdfBuilder
                 row.RelativeItem().PaddingLeft(10).Column(c =>
                 {
                     c.Item().AlignCenter().Text(_institute.Name ?? "").Bold().FontSize(16);
-                    c.Item().AlignCenter().Text(_institute.Address ?? "").FontSize(9);
+                    c.Item().AlignCenter().Text(_institute.Address ?? "").FontSize(11);
                     if (!string.IsNullOrEmpty(_institute.EIIN))
-                        c.Item().AlignCenter().Text($"EIIN: {_institute.EIIN}").FontSize(9);
+                        c.Item().AlignCenter().Text($"EIIN: {_institute.EIIN}").FontSize(11);
                 });
 
                 row.ConstantItem(130).AlignRight().AlignTop().Column(c =>
                 {
                     c.Item().Border(1).Padding(0).Column(g =>
                     {
-                        g.Item().Background(Colors.Grey.Lighten3).Padding(2).Text("Marks and Grade\nDistribution System").Bold().FontSize(6).AlignCenter();
+                        g.Item().Background(Colors.Grey.Lighten3).Padding(2).Text("Marks and Grade\nDistribution System").Bold().FontSize(8).AlignCenter();
                         g.Item().Row(r =>
                         {
-                            r.ConstantItem(40).Border(1).Padding(1).Background(Colors.Grey.Lighten4).Text("Marks").Bold().FontSize(5).AlignCenter();
-                            r.ConstantItem(40).Border(1).Padding(1).Background(Colors.Grey.Lighten4).Text("Grade").Bold().FontSize(5).AlignCenter();
-                            r.RelativeItem().Border(1).Padding(1).Background(Colors.Grey.Lighten4).Text("Point").Bold().FontSize(5).AlignCenter();
+                            r.ConstantItem(40).Border(1).Padding(1).Background(Colors.Grey.Lighten4).Text("Marks").Bold().FontSize(7).AlignCenter();
+                            r.ConstantItem(40).Border(1).Padding(1).Background(Colors.Grey.Lighten4).Text("Grade").Bold().FontSize(7).AlignCenter();
+                            r.RelativeItem().Border(1).Padding(1).Background(Colors.Grey.Lighten4).Text("Point").Bold().FontSize(7).AlignCenter();
                         });
                         foreach (var gt in _gradingTables.OrderBy(x => x.NumberRangeMin))
                         {
                             g.Item().Row(r =>
                             {
-                                r.ConstantItem(40).Border(1).Padding(1).Text($"{gt.NumberRangeMin}-{gt.NumberRangeMax}").FontSize(5).AlignCenter();
-                                r.ConstantItem(40).Border(1).Padding(1).Text(gt.LetterGrade).FontSize(5).AlignCenter();
-                                r.RelativeItem().Border(1).Padding(1).Text(gt.GradePoint.ToString("F2")).FontSize(5).AlignCenter();
+                                r.ConstantItem(40).Border(1).Padding(1).Text($"{gt.NumberRangeMin}-{gt.NumberRangeMax}").FontSize(7).AlignCenter();
+                                r.ConstantItem(40).Border(1).Padding(1).Text(gt.LetterGrade).FontSize(7).AlignCenter();
+                                r.RelativeItem().Border(1).Padding(1).Text(gt.GradePoint.ToString("F2")).FontSize(7).AlignCenter();
                             });
                         }
                     });
@@ -122,7 +122,7 @@ public class MarkSheetPdfBuilder
 
             col.Item().PaddingVertical(5).LineHorizontal(1).LineColor(Colors.Black);
             col.Item().AlignCenter().Text("ACADEMIC TRANSCRIPT").Bold().FontSize(14);
-            col.Item().AlignCenter().Text($"{_examName} - {_className}").FontSize(10);
+            col.Item().AlignCenter().Text($"{_examName} - {_className}").FontSize(12);
             col.Item().PaddingBottom(5).LineHorizontal(1).LineColor(Colors.Black);
         });
     }
@@ -167,14 +167,14 @@ public class MarkSheetPdfBuilder
 
                 table.Header(h =>
                 {
-                    h.Cell().Border(1).Padding(3).Background(Colors.Grey.Lighten3).Text("Subject").Bold().FontSize(8);
-                    h.Cell().Border(1).Padding(3).Background(Colors.Grey.Lighten3).Text("Total Mark").Bold().FontSize(8).AlignCenter();
-                    h.Cell().Border(1).Padding(3).Background(Colors.Grey.Lighten3).Text("Obtain Mark").Bold().FontSize(8).AlignCenter();
-                    h.Cell().Border(1).Padding(3).Background(Colors.Grey.Lighten3).Text("GPA").Bold().FontSize(8).AlignCenter();
-                    h.Cell().Border(1).Padding(3).Background(Colors.Grey.Lighten3).Text("Grade").Bold().FontSize(8).AlignCenter();
-                    h.Cell().Border(1).Padding(3).Background(Colors.Grey.Lighten3).Text("Max").Bold().FontSize(8).AlignCenter();
-                    h.Cell().Border(1).Padding(3).Background(Colors.Grey.Lighten3).Text("Final Point").Bold().FontSize(8).AlignCenter();
-                    h.Cell().Border(1).Padding(3).Background(Colors.Grey.Lighten3).Text("Final Grade").Bold().FontSize(8).AlignCenter();
+                    h.Cell().Border(1).Padding(3).Background(Colors.Grey.Lighten3).Text("Subject").Bold().FontSize(10);
+                    h.Cell().Border(1).Padding(3).Background(Colors.Grey.Lighten3).Text("Total Mark").Bold().FontSize(10).AlignCenter();
+                    h.Cell().Border(1).Padding(3).Background(Colors.Grey.Lighten3).Text("Obtain Mark").Bold().FontSize(10).AlignCenter();
+                    h.Cell().Border(1).Padding(3).Background(Colors.Grey.Lighten3).Text("GPA").Bold().FontSize(10).AlignCenter();
+                    h.Cell().Border(1).Padding(3).Background(Colors.Grey.Lighten3).Text("Grade").Bold().FontSize(10).AlignCenter();
+                    h.Cell().Border(1).Padding(3).Background(Colors.Grey.Lighten3).Text("Max").Bold().FontSize(10).AlignCenter();
+                    h.Cell().Border(1).Padding(3).Background(Colors.Grey.Lighten3).Text("Final Point").Bold().FontSize(10).AlignCenter();
+                    h.Cell().Border(1).Padding(3).Background(Colors.Grey.Lighten3).Text("Final Grade").Bold().FontSize(10).AlignCenter();
                 });
 
                 for (int i = 0; i < subjects.Count; i++)
@@ -182,17 +182,17 @@ public class MarkSheetPdfBuilder
                     var subj = subjects[i];
                     _maxMarksPerSubject.TryGetValue(subj.SubjectName, out var maxMark);
 
-                    table.Cell().Border(1).Padding(3).Text(subj.SubjectName).FontSize(8);
-                    table.Cell().Border(1).Padding(3).Text(subj.TotalMark.ToString("F2")).FontSize(8).AlignCenter();
-                    table.Cell().Border(1).Padding(3).Text(subj.ObtainMark.ToString("F2")).FontSize(8).AlignCenter();
-                    table.Cell().Border(1).Padding(3).Text(subj.GPA.ToString("F2")).FontSize(8).AlignCenter();
-                    table.Cell().Border(1).Padding(3).Text(subj.Grade).FontSize(8).AlignCenter();
-                    table.Cell().Border(1).Padding(3).Text(maxMark.ToString("F2")).FontSize(8).AlignCenter();
+                    table.Cell().Border(1).Padding(3).Text(subj.SubjectName).FontSize(10);
+                    table.Cell().Border(1).Padding(3).Text(subj.TotalMark.ToString("F2")).FontSize(10).AlignCenter();
+                    table.Cell().Border(1).Padding(3).Text(subj.ObtainMark.ToString("F2")).FontSize(10).AlignCenter();
+                    table.Cell().Border(1).Padding(3).Text(subj.GPA.ToString("F2")).FontSize(10).AlignCenter();
+                    table.Cell().Border(1).Padding(3).Text(subj.Grade).FontSize(10).AlignCenter();
+                    table.Cell().Border(1).Padding(3).Text(maxMark.ToString("F2")).FontSize(10).AlignCenter();
 
                     if (i == 0)
                     {
-                        table.Cell().RowSpan((uint)subjects.Count).Border(1).AlignMiddle().AlignCenter().Text(student.FinalGPA).Bold().FontSize(9);
-                        table.Cell().RowSpan((uint)subjects.Count).Border(1).AlignMiddle().AlignCenter().Text(student.FinalGrade).Bold().FontSize(9);
+                        table.Cell().RowSpan((uint)subjects.Count).Border(1).AlignMiddle().AlignCenter().Text(student.FinalGPA).Bold().FontSize(11);
+                        table.Cell().RowSpan((uint)subjects.Count).Border(1).AlignMiddle().AlignCenter().Text(student.FinalGrade).Bold().FontSize(11);
                     }
                 }
             });
@@ -209,8 +209,8 @@ public class MarkSheetPdfBuilder
 
                     void Cell(string label, string value)
                     {
-                        t.Cell().Border(1).Padding(2).Text(label).Bold().FontSize(7);
-                        t.Cell().Border(1).Padding(2).Text(value).FontSize(7);
+                        t.Cell().Border(1).Padding(2).Text(label).Bold().FontSize(9);
+                        t.Cell().Border(1).Padding(2).Text(value).FontSize(9);
                     }
 
                     Cell("Final Grade", student.FinalGrade);
@@ -232,7 +232,7 @@ public class MarkSheetPdfBuilder
 
                         right.Item().Border(1).Padding(3).Column(ac =>
                         {
-                            ac.Item().Text("Annual Progress Report").Bold().FontSize(10).AlignCenter();
+                            ac.Item().Text("Annual Progress Report").Bold().FontSize(12).AlignCenter();
                             ac.Item().PaddingTop(2).Row(ar =>
                             {
                                 ar.RelativeItem().Table(t =>
@@ -247,18 +247,18 @@ public class MarkSheetPdfBuilder
 
                                     t.Header(h =>
                                     {
-                                        h.Cell().Padding(2).Background(Colors.Grey.Lighten3).Text("Month").Bold().FontSize(8).AlignCenter();
-                                        h.Cell().Padding(2).Background(Colors.Grey.Lighten3).Text("Att").Bold().FontSize(8).AlignCenter();
-                                        h.Cell().Padding(2).Background(Colors.Grey.Lighten3).Text("Pos").Bold().FontSize(8).AlignCenter();
-                                        h.Cell().Padding(2).Background(Colors.Grey.Lighten3).Text("Tot").Bold().FontSize(8).AlignCenter();
+                                        h.Cell().Padding(2).Background(Colors.Grey.Lighten3).Text("Month").Bold().FontSize(10).AlignCenter();
+                                        h.Cell().Padding(2).Background(Colors.Grey.Lighten3).Text("Att").Bold().FontSize(10).AlignCenter();
+                                        h.Cell().Padding(2).Background(Colors.Grey.Lighten3).Text("Pos").Bold().FontSize(10).AlignCenter();
+                                        h.Cell().Padding(2).Background(Colors.Grey.Lighten3).Text("Tot").Bold().FontSize(10).AlignCenter();
                                     });
 
                                     foreach (var month in months.Take(half))
                                     {
-                                        t.Cell().Padding(2).Text(month.Month.Length > 3 ? month.Month[..3] : month.Month).FontSize(8).AlignCenter();
-                                        t.Cell().Padding(2).Text(month.AttendancePercent ?? "-").FontSize(8).AlignCenter();
-                                        t.Cell().Padding(2).Text(month.MeritPosition?.ToString() ?? "-").FontSize(8).AlignCenter();
-                                        t.Cell().Padding(2).Text(month.TotalStudent?.ToString() ?? "-").FontSize(8).AlignCenter();
+                                        t.Cell().Padding(2).Text(month.Month.Length > 3 ? month.Month[..3] : month.Month).FontSize(10).AlignCenter();
+                                        t.Cell().Padding(2).Text(month.AttendancePercent ?? "-").FontSize(10).AlignCenter();
+                                        t.Cell().Padding(2).Text(month.MeritPosition?.ToString() ?? "-").FontSize(10).AlignCenter();
+                                        t.Cell().Padding(2).Text(month.TotalStudent?.ToString() ?? "-").FontSize(10).AlignCenter();
                                     }
                                 });
 
@@ -274,18 +274,18 @@ public class MarkSheetPdfBuilder
 
                                     t.Header(h =>
                                     {
-                                        h.Cell().Padding(2).Background(Colors.Grey.Lighten3).Text("Month").Bold().FontSize(8).AlignCenter();
-                                        h.Cell().Padding(2).Background(Colors.Grey.Lighten3).Text("Att").Bold().FontSize(8).AlignCenter();
-                                        h.Cell().Padding(2).Background(Colors.Grey.Lighten3).Text("Pos").Bold().FontSize(8).AlignCenter();
-                                        h.Cell().Padding(2).Background(Colors.Grey.Lighten3).Text("Tot").Bold().FontSize(8).AlignCenter();
+                                        h.Cell().Padding(2).Background(Colors.Grey.Lighten3).Text("Month").Bold().FontSize(10).AlignCenter();
+                                        h.Cell().Padding(2).Background(Colors.Grey.Lighten3).Text("Att").Bold().FontSize(10).AlignCenter();
+                                        h.Cell().Padding(2).Background(Colors.Grey.Lighten3).Text("Pos").Bold().FontSize(10).AlignCenter();
+                                        h.Cell().Padding(2).Background(Colors.Grey.Lighten3).Text("Tot").Bold().FontSize(10).AlignCenter();
                                     });
 
                                     foreach (var month in months.Skip(half))
                                     {
-                                        t.Cell().Padding(2).Text(month.Month.Length > 3 ? month.Month[..3] : month.Month).FontSize(8).AlignCenter();
-                                        t.Cell().Padding(2).Text(month.AttendancePercent ?? "-").FontSize(8).AlignCenter();
-                                        t.Cell().Padding(2).Text(month.MeritPosition?.ToString() ?? "-").FontSize(8).AlignCenter();
-                                        t.Cell().Padding(2).Text(month.TotalStudent?.ToString() ?? "-").FontSize(8).AlignCenter();
+                                        t.Cell().Padding(2).Text(month.Month.Length > 3 ? month.Month[..3] : month.Month).FontSize(10).AlignCenter();
+                                        t.Cell().Padding(2).Text(month.AttendancePercent ?? "-").FontSize(10).AlignCenter();
+                                        t.Cell().Padding(2).Text(month.MeritPosition?.ToString() ?? "-").FontSize(10).AlignCenter();
+                                        t.Cell().Padding(2).Text(month.TotalStudent?.ToString() ?? "-").FontSize(10).AlignCenter();
                                     }
                                 });
                             });
@@ -296,7 +296,7 @@ public class MarkSheetPdfBuilder
 
             if (!string.IsNullOrEmpty(student.GradeComments))
             {
-                col.Item().PaddingTop(3).Text($"Comments: {student.GradeComments}").Bold().FontSize(10);
+                col.Item().PaddingTop(3).Text($"Comments: {student.GradeComments}").Bold().FontSize(12);
             }
         });
     }
@@ -309,9 +309,9 @@ public class MarkSheetPdfBuilder
             {
                 row.RelativeItem().Column(c =>
                 {
-                    c.Item().Text("Signature of Guardian").Bold().FontSize(8);
-                    c.Item().Text("(Contact the group teacher before sign here)").FontSize(7);
-                    c.Item().PaddingTop(3).Text($"Date of publication of Result: {_publicationDate}").FontSize(7);
+                    c.Item().Text("Signature of Guardian").Bold().FontSize(10);
+                    c.Item().Text("(Contact the group teacher before sign here)").FontSize(9);
+                    c.Item().PaddingTop(3).Text($"Date of publication of Result: {_publicationDate}").FontSize(9);
                 });
 
                 row.RelativeItem().Column(c =>
@@ -321,15 +321,15 @@ public class MarkSheetPdfBuilder
                         c.Item().AlignRight().Width(70).Image(
                             Convert.FromBase64String(_signatureBase64)).FitArea();
                     }
-                    c.Item().PaddingTop(2).AlignRight().Text("Controller of Examination").Bold().FontSize(8);
-                    c.Item().AlignRight().Text($"({_institute.Name})").FontSize(7);
+                    c.Item().PaddingTop(2).AlignRight().Text("Controller of Examination").Bold().FontSize(10);
+                    c.Item().AlignRight().Text($"({_institute.Name})").FontSize(9);
                 });
             });
 
             col.Item().PaddingTop(5).AlignCenter().Text(t =>
             {
-                t.Span("Generated on: ").FontSize(7);
-                t.Span($"{DateTime.Now:dd MMM yyyy HH:mm}").FontSize(7).Light();
+                t.Span("Generated on: ").FontSize(9);
+                t.Span($"{DateTime.Now:dd MMM yyyy HH:mm}").FontSize(9).Light();
             });
         });
     }

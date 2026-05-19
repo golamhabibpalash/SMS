@@ -21,11 +21,13 @@ public class MarkSheetPdfBuilder
     private readonly string _className;
     private readonly string _publicationDate;
     private readonly string _highestMarks;
+    private readonly string _signatureBase64;
     private readonly Dictionary<string, double> _maxMarksPerSubject;
 
     public MarkSheetPdfBuilder(
         Institute institute,
         string logoBase64,
+        string signatureBase64,
         List<StudentWiseMarkSheetVM> results,
         List<GradingTable> gradingTables,
         Dictionary<int, List<SubRerportAnnualReport>> annualReports,
@@ -36,6 +38,7 @@ public class MarkSheetPdfBuilder
     {
         _institute = institute;
         _logoBase64 = logoBase64;
+        _signatureBase64 = signatureBase64;
         _results = results;
         _gradingTables = gradingTables;
         _annualReports = annualReports;
@@ -252,10 +255,35 @@ public class MarkSheetPdfBuilder
 
     void BuildFooter(IContainer container, StudentWiseMarkSheetVM student)
     {
-        container.AlignCenter().Text(t =>
+        container.Column(col =>
         {
-            t.Span("Generated on: ").FontSize(7);
-            t.Span($"{DateTime.Now:dd MMM yyyy HH:mm}").FontSize(7).Light();
+            col.Item().Row(row =>
+            {
+                row.RelativeItem().Column(c =>
+                {
+                    c.Item().LineHorizontal(1).LineColor(Colors.Grey.Darken2);
+                    c.Item().PaddingTop(3).Text("Signature of Guardian").Bold().FontSize(8);
+                    c.Item().Text("(Contact the group teacher before sign here)").FontSize(7).Italic();
+                    c.Item().PaddingTop(3).Text($"Date of publication of Result: {_publicationDate}").FontSize(7);
+                });
+
+                row.RelativeItem().Column(c =>
+                {
+                    if (!string.IsNullOrEmpty(_signatureBase64))
+                    {
+                        c.Item().AlignRight().Width(80).Image(
+                            Convert.FromBase64String(_signatureBase64)).FitArea();
+                    }
+                    c.Item().AlignRight().LineHorizontal(1).LineColor(Colors.Grey.Darken2);
+                    c.Item().AlignRight().Text("Controller of Examination").Bold().FontSize(8);
+                });
+            });
+
+            col.Item().PaddingTop(5).AlignCenter().Text(t =>
+            {
+                t.Span("Generated on: ").FontSize(7);
+                t.Span($"{DateTime.Now:dd MMM yyyy HH:mm}").FontSize(7).Light();
+            });
         });
     }
 }

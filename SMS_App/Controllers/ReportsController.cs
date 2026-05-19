@@ -966,6 +966,11 @@ public class ReportsController : Controller
         Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
         string imageParam = await LoadInstituteLogoAsync(institute.Logo);
 
+        string signaturePath = Path.Combine(_host.WebRootPath, "Images", "Institute", "signature.jpg");
+        string signatureParam = System.IO.File.Exists(signaturePath)
+            ? Convert.ToBase64String(await System.IO.File.ReadAllBytesAsync(signaturePath))
+            : string.Empty;
+
         string publicationDate = results.Select(r => r.CreatedAt).FirstOrDefault().ToString("dd MMM yyyy");
         string examName = results.Select(s => s.ExamGroupName).FirstOrDefault();
         string className = results.Select(s => s.ClassName).FirstOrDefault();
@@ -981,6 +986,7 @@ public class ReportsController : Controller
         var builder = new Utilities.Reports.MarkSheetPdfBuilder(
             institute,
             StripDataUriPrefix(imageParam),
+            signatureParam,
             results,
             gradingTables,
             annualReports,

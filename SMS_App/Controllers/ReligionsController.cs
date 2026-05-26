@@ -1,5 +1,4 @@
-﻿using SMS.DB;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +16,7 @@ namespace SMS_App.Controllers
     {
         private readonly IReligionManager _religionManager;
 
-        public ReligionsController(ApplicationDbContext context, IReligionManager religionManager)
+        public ReligionsController(IReligionManager religionManager)
         {
             _religionManager = religionManager;
         }

@@ -191,8 +191,8 @@ public class MarkSheetPdfBuilder
 
                     if (i == 0)
                     {
-                        table.Cell().RowSpan((uint)subjects.Count).Border(1).AlignMiddle().AlignCenter().Text(student.FinalGPA).Bold().FontSize(11);
-                        table.Cell().RowSpan((uint)subjects.Count).Border(1).AlignMiddle().AlignCenter().Text(student.FinalGrade).Bold().FontSize(11);
+                        table.Cell().RowSpan((uint)subjects.Count).Border(1).AlignMiddle().AlignCenter().Text(student.FinalGPA!.ToString()).Bold().FontSize(11);
+                        table.Cell().RowSpan((uint)subjects.Count).Border(1).AlignMiddle().AlignCenter().Text(student.FinalGrade!.ToString()).Bold().FontSize(11);
                     }
                 }
             });

@@ -121,7 +121,7 @@
             <a class="nav-link" asp-action="Index" asp-controller="attendancemachines" asp-route-attendanceFor="employees" asp-route-dateTime="@DateTime.Today.ToString("yyyy-MM-dd")"> Employees Attendance</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" asp-controller="employees" asp-action="Leaves" >Leaves</a>
+            <a class="nav-link" asp-controller="employees" asp-action="Index">Leaves</a>
         </li>
 
         <li class="nav-item nav-group">
@@ -190,10 +190,10 @@
 
     <ul class="nav-group-items">
         <li class="nav-item">
-            <a class="nav-link" asp-action="Income" asp-controller="accounts">  Income</a>
+            <a class="nav-link" href="#">  Income</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" asp-action="Expense" asp-controller="accounts">  Expense</a>
+            <a class="nav-link" href="#">  Expense</a>
         </li>
         <li class="nav-item nav-group">
             <a class="nav-link nav-group-toggle">Payroll Management </a>
@@ -251,7 +251,7 @@
     </ul>
     <ul class="nav-group-items">
         <li class="nav-item">
-            <a class="nav-link" asp-action="" asp-controller="DutyRoster"> Duty Roster</a>
+            <a class="nav-link" href="#"> Duty Roster</a>
         </li>
     </ul>
 </li>
@@ -348,7 +348,7 @@
             <a class="nav-link nav-group-toggle"> Residential</a>
             <ul class="nav-group-items">
                 <li class="nav-item">
-                    <a class="nav-link" asp-action="PaymentSchedule" asp-controller="Residential">Payment Structure</a>
+                    <a class="nav-link" href="#">Payment Structure</a>
                 </li>
             </ul>
         </li>
@@ -414,7 +414,7 @@
                     <a class="nav-link" asp-action="ClassWiseResultAfterProcess" asp-controller="ExamResults">Class-Wise Result</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" asp-action="SubjectWiseResltAfterProcess" asp-controller="ExamResults">Subject-Wise Result</a>
+                    <a class="nav-link" asp-action="SubjectWiseResultAfterProcess" asp-controller="ExamResults">Subject-Wise Result</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" asp-action="MarkSheetReport" asp-controller="Reports">Mark Sheet</a>

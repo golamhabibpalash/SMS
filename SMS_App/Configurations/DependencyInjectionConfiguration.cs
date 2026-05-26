@@ -171,6 +171,8 @@ public static class DependencyInjectionConfiguration
         services.AddScoped<IAttachDocManager, AttachDocManager>();
         services.AddScoped<IAttachDocRepository, AttachDocRepository>();
 
+        services.AddScoped<IExpenseTypeRepository, ExpenseTypeRepository>();
+
 
         //Reporing part start here===================================
         services.AddScoped<IReportManager, ReportManager>();

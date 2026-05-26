@@ -15,11 +15,13 @@ namespace SMS.Entities
         [Display(Name = "Emp. Name (Bangla)"),Required,StringLength(100)]
         public string EmployeeNameBangla { get; set; }
 
+#pragma warning disable CS8632
         [Display(Name = "Father's Name"),StringLength(100)]
         public string? FatherName { get; set; }
 
         [Display(Name = "Mother's Name"),StringLength(100)]
         public string? MotherName { get; set; }
+#pragma warning restore CS8632
 
         [DataType(DataType.Date)]
         [Required, Display(Name ="Date of Birth")]

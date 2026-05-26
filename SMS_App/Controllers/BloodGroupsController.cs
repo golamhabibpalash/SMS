@@ -6,9 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SMS.DB;
+using SMS.BLL.Contracts;
 using SMS.Entities;
 
 namespace SMS_App.Controllers
@@ -16,23 +15,21 @@ namespace SMS_App.Controllers
     [Authorize(Roles = "SuperAdmin, Admin")]
     public class BloodGroupsController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        private readonly ILogger<BloodGroupsController> logger;
+        private readonly IBloodGroupManager _bloodGroupManager;
+        private readonly ILogger<BloodGroupsController> _logger;
 
-        public BloodGroupsController(ApplicationDbContext context, ILogger<BloodGroupsController> _logger)
+        public BloodGroupsController(IBloodGroupManager bloodGroupManager, ILogger<BloodGroupsController> logger)
         {
-            _context = context;
-            logger = _logger;
+            _bloodGroupManager = bloodGroupManager;
+            _logger = logger;
         }
 
-        // GET: BloodGroups
         [Authorize(Policy = "IndexBloodGroupsPolicy")]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.BloodGroup.ToListAsync());
+            return View(await _bloodGroupManager.GetAllAsync());
         }
 
-        // GET: BloodGroups/Details/5
         [Authorize(Policy = "DetailsBloodGroupsPolicy")]
         public async Task<IActionResult> Details(int? id)
         {
@@ -41,8 +38,7 @@ namespace SMS_App.Controllers
                 return NotFound();
             }
 
-            var bloodGroup = await _context.BloodGroup
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var bloodGroup = await _bloodGroupManager.GetByIdAsync((int)id);
             if (bloodGroup == null)
             {
                 return NotFound();
@@ -51,7 +47,6 @@ namespace SMS_App.Controllers
             return View(bloodGroup);
         }
 
-        // GET: BloodGroups/Create
         [Authorize(Policy = "CreateBloodGroupsPolicy")]
         public IActionResult Create()
         {
@@ -63,12 +58,11 @@ namespace SMS_App.Controllers
         [Authorize(Policy = "CreateBloodGroupsPolicy")]
         public async Task<IActionResult> Create([Bind("Id,Name,Status,CreatedBy,CreatedAt,EditedBy,EditedAt")] BloodGroup bloodGroup)
         {
-            string msg = "";
-            var existBG =await _context.BloodGroup.FirstOrDefaultAsync(s => s.Name.Trim() == bloodGroup.Name.Trim());
-            if (existBG!=null)
+            var allBloodGroups = await _bloodGroupManager.GetAllAsync();
+            var existBG = allBloodGroups.FirstOrDefault(s => s.Name.Trim() == bloodGroup.Name.Trim());
+            if (existBG != null)
             {
-                msg = bloodGroup.Name + " is already exist.";
-                ViewBag.msg = msg;
+                ViewBag.msg = bloodGroup.Name + " is already exist.";
             }
             else
             {
@@ -77,15 +71,13 @@ namespace SMS_App.Controllers
                     bloodGroup.CreatedAt = DateTime.Now;
                     bloodGroup.CreatedBy = HttpContext.Session.GetString("UserId");
 
-                    _context.Add(bloodGroup);
-                    await _context.SaveChangesAsync();
+                    await _bloodGroupManager.AddAsync(bloodGroup);
                     return RedirectToAction(nameof(Index));
                 }
             }
             return View(bloodGroup);
         }
 
-        // GET: BloodGroups/Edit/5
         [Authorize(Policy = "EditBloodGroupsPolicy")]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -94,7 +86,7 @@ namespace SMS_App.Controllers
                 return NotFound();
             }
 
-            var bloodGroup = await _context.BloodGroup.FindAsync(id);
+            var bloodGroup = await _bloodGroupManager.GetByIdAsync((int)id);
             if (bloodGroup == null)
             {
                 return NotFound();
@@ -116,30 +108,24 @@ namespace SMS_App.Controllers
             {
                 try
                 {
-
                     bloodGroup.EditedAt = DateTime.Now;
                     bloodGroup.EditedBy = HttpContext.Session.GetString("UserId");
 
-                    _context.Update(bloodGroup);
-                    await _context.SaveChangesAsync();
+                    await _bloodGroupManager.UpdateAsync(bloodGroup);
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception)
                 {
                     if (!BloodGroupExists(bloodGroup.Id))
                     {
                         return NotFound();
                     }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
             return View(bloodGroup);
         }
 
-        // GET: BloodGroups/Delete/5
         [Authorize(Policy = "DeleteBloodGroupsPolicy")]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -148,8 +134,7 @@ namespace SMS_App.Controllers
                 return NotFound();
             }
 
-            var bloodGroup = await _context.BloodGroup
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var bloodGroup = await _bloodGroupManager.GetByIdAsync((int)id);
             if (bloodGroup == null)
             {
                 return NotFound();
@@ -158,21 +143,20 @@ namespace SMS_App.Controllers
             return View(bloodGroup);
         }
 
-        // POST: BloodGroups/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "DeleteBloodGroupsPolicy")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var bloodGroup = await _context.BloodGroup.FindAsync(id);
-            _context.BloodGroup.Remove(bloodGroup);
-            await _context.SaveChangesAsync();
+            var bloodGroup = await _bloodGroupManager.GetByIdAsync(id);
+            await _bloodGroupManager.RemoveAsync(bloodGroup);
             return RedirectToAction(nameof(Index));
         }
 
         private bool BloodGroupExists(int id)
         {
-            return _context.BloodGroup.Any(e => e.Id == id);
+            var bloodGroup = _bloodGroupManager.GetByIdAsync(id).Result;
+            return bloodGroup != null;
         }
     }
 }

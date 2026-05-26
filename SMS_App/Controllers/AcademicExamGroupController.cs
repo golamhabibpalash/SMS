@@ -67,7 +67,7 @@ public class AcademicExamGroupController : Controller
             academicExamGroupVM.AcademicSessionList = new SelectList(sessions, "Id", "Name").ToList();
             academicExamGroupVM.ExamTypeList = new SelectList(examTypes, "Id", "ExamTypeName").ToList();
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             throw;
         }

@@ -11,6 +11,7 @@
 @inject IStudentManager _studentManager
 
 @{
+#nullable enable
     var infoTask = _instituteManager.GetAllAsync();
     var info = await infoTask;
     ApplicationUser? user = null;

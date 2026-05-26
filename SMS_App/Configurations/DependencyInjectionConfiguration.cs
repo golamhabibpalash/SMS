@@ -9,6 +9,7 @@ using SMS.DAL.Contracts.Reports;
 using SMS.DAL.Repositories;
 using SMS.DAL.Repositories.Reports;
 using SMS_App.Utilities.LoggerService;
+using SMS_App.Utilities.ShortMessageService;
 
 namespace SMS_App.Configurations;
 
@@ -84,6 +85,7 @@ public static class DependencyInjectionConfiguration
 
         services.AddScoped<IPhoneSMSRepository, PhoneSMSRepository>();
         services.AddScoped<IPhoneSMSManager, PhoneSMSManager>();
+        services.AddHttpClient<SmsApiService>();
 
         services.AddScoped<IAttendanceRepository, AttendanceRepository>();
         services.AddScoped<IAttendanceManager, AttendanceManager>();

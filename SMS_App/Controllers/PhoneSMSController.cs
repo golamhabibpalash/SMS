@@ -40,13 +40,10 @@ namespace SMS_App.Controllers
             
             var allSMS = await _phoneSMSManager.GetAllAsync();
             totalCount = allSMS.Count;
-            if (!string.IsNullOrEmpty(ViewBag.minDate))
+            if (allSMS != null && allSMS.Any())
             {
-                string minDate = ViewBag.minDate = allSMS?.OrderBy(s => s.CreatedAt).Select(s => s.CreatedAt.ToString("yyyy-MM-dd")).FirstOrDefault().ToString();
-            }
-            if (!string.IsNullOrEmpty(ViewBag.maxDate))
-            {
-                string maxDate = ViewBag.maxDate = allSMS.OrderByDescending(s => s.CreatedAt).Select(s => s.CreatedAt.ToString("yyyy-MM-dd")).FirstOrDefault().ToString();
+                ViewBag.minDate = allSMS.OrderBy(s => s.CreatedAt).Select(s => s.CreatedAt.ToString("yyyy-MM-dd")).FirstOrDefault();
+                ViewBag.maxDate = allSMS.OrderByDescending(s => s.CreatedAt).Select(s => s.CreatedAt.ToString("yyyy-MM-dd")).FirstOrDefault();
             }
             if (!string.IsNullOrEmpty(fromDate))
             {
@@ -76,7 +73,7 @@ namespace SMS_App.Controllers
                 allSMS = allSMS.Where(s => s.MobileNumber.Contains(phoneNo)).ToList();
                 totalCount = allSMS.Count;
             }
-                ViewBag.phoneNo = smsText;
+                ViewBag.phoneNo = phoneNo;
             if (rowCount>0)
             {
                 dataCount = rowCount;

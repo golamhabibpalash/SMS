@@ -381,8 +381,21 @@
         }
 
 
+        function submitFilterForm() {
+            var form = document.getElementById('FilterForm');
+            var url = form.getAttribute('action') + '?' + new URLSearchParams(new FormData(form)).toString();
+            document.getElementById('loadingOverlay').style.display = 'block';
+            document.getElementById('loadingSpinner').style.display = 'block';
+            window.location.href = url;
+        }
+
         $(document).ready(function () {
             $("#myTable_info").detach().insertAfter('#myTable_length');
+
+            $('#FilterForm').on('submit', function (e) {
+                e.preventDefault();
+                submitFilterForm();
+            });
 
             $('#aAcademicClassId').change(function () {
                 let id = $('#aAcademicClassId option:selected').val();
@@ -440,11 +453,11 @@
                 });
             });
 
-            //pageSize Dropdown chnage code
+            //pageSize Dropdown change code
             $('#pageSizeDDId').change(function () {
                 let pageSizeDDId = $('#pageSizeDDId').val();
                 $("#pageSizeHiddenId").val(pageSizeDDId);
-                $('#FilterForm').submit();
+                submitFilterForm();
             })
         });
         //Searching filter

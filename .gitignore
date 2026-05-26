@@ -378,3 +378,6 @@ FodyWeavers.xsd
 
 #for_MacBook
 .DS_Store
+
+# Claude
+.claude/

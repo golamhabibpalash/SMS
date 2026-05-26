@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(Get-ChildItem -Path \"D:\\\\Projects\\\\EIMS\" -Force)",
-      "Bash(Select-Object Name, PSIsContainer)"
-    ]
-  }
-}

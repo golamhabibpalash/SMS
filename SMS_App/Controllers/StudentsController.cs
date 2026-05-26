@@ -885,57 +885,71 @@ public class StudentsController : Controller
     [HttpPost]
     public async Task<IActionResult> ChangeStatus(int studentId, string operationDate, bool studentStatus)
     {
-        bool existingStatus = await _studentActivateHistManager.IsStudentActive(studentId, operationDate);
-        if (existingStatus != studentStatus)
+        try
         {
-            bool isStudentUpdated = false;
-            bool isStatusAdded = false;
-            string activeStatus = studentStatus == true ? "Active" : "Inactive";
+            if (string.IsNullOrWhiteSpace(operationDate))
+            {
+                TempData["statusError"] = "Please select an operation date.";
+                return RedirectToAction("Edit", new { id = studentId });
+            }
+
+            DateTime opDate = Convert.ToDateTime(operationDate);
             Student existingStudent = await _studentManager.GetByIdAsync(studentId);
-            if (existingStudent != null)
-            {
-                if (existingStudent.AdmissionDate.Date <= Convert.ToDateTime(operationDate).Date)
-                {
-                    existingStudent.Status = studentStatus;
-                    existingStudent.EditedBy = HttpContext.Session.GetString("UserId");
-                    existingStudent.EditedAt = DateTime.Now;
-                    existingStudent.MACAddress = MACService.GetMAC();
-                    isStudentUpdated = await _studentManager.UpdateAsync(existingStudent);
-                    var user = await _userManager.FindByIdAsync(HttpContext.Session.GetString("UserId"));
-                    await _appLogger.InfoAsync($"{existingStudent.Name} status has been changed to {studentStatus} by {user.Email}");
-                }
-                else
-                {
-                    await _appLogger.WarningAsync("Admission Date is bigger than change status date");
-                }
-            }
-            else
-            {
-                ViewBag.msg = "Falied to update";
-            }
-            if (isStudentUpdated)
-            {
-                StudentActivateHist studentActivateHist = new StudentActivateHist();
-                studentActivateHist.StudentId = studentId;
-                studentActivateHist.IsActive = studentStatus;
-                studentActivateHist.ActionDateTime = Convert.ToDateTime(operationDate);
-                studentActivateHist.CreatedBy = HttpContext.Session.GetString("UserId");
-                studentActivateHist.CreatedAt = DateTime.Now;
-                studentActivateHist.MACAddress = MACService.GetMAC();
-                studentActivateHist.LastAction = "Add";
 
-                isStatusAdded = await _studentActivateHistManager.AddAsync(studentActivateHist);
-
-                if (isStatusAdded)
-                {
-                    TempData["edit"] = "Updated Successfully";
-                    ViewBag.msg = existingStudent.Name + " is " + activeStatus + " now";
-                }
+            if (existingStudent == null)
+            {
+                TempData["statusError"] = "Student not found.";
+                return RedirectToAction("Edit", new { id = studentId });
             }
+
+            if (existingStudent.AdmissionDate.Date > opDate.Date)
+            {
+                TempData["statusError"] = "Operation date cannot be before the admission date.";
+                return RedirectToAction("Edit", new { id = studentId });
+            }
+
+            existingStudent.Status = studentStatus;
+            existingStudent.EditedBy = HttpContext.Session.GetString("UserId");
+            existingStudent.EditedAt = DateTime.Now;
+            existingStudent.MACAddress = MACService.GetMAC();
+
+            bool isUpdated = await _studentManager.UpdateAsync(existingStudent);
+
+            if (!isUpdated)
+            {
+                TempData["statusError"] = "Failed to update student status. Please try again.";
+                return RedirectToAction("Edit", new { id = studentId });
+            }
+
+            StudentActivateHist hist = new()
+            {
+                StudentId = studentId,
+                IsActive = studentStatus,
+                ActionDateTime = opDate,
+                CreatedBy = HttpContext.Session.GetString("UserId"),
+                CreatedAt = DateTime.Now,
+                MACAddress = MACService.GetMAC(),
+                LastAction = "Add"
+            };
+
+            bool isHistAdded = await _studentActivateHistManager.AddAsync(hist);
+
+            if (!isHistAdded)
+            {
+                TempData["statusError"] = "Status updated but history record failed. Please contact support.";
+                return RedirectToAction("Edit", new { id = studentId });
+            }
+
+            string statusLabel = studentStatus ? "activated" : "deactivated";
+            TempData["statusSuccess"] = $"{existingStudent.Name} {statusLabel} successfully.";
+
+            var user = await _userManager.FindByIdAsync(HttpContext.Session.GetString("UserId"));
+            await _appLogger.InfoAsync($"{existingStudent.Name} status changed to {studentStatus} by {user?.Email}");
         }
-        else
+        catch (Exception ex)
         {
-            TempData["edit"] = "Updated Successfully";
+            await _appLogger.ErrorAsync($"Student status change failed", ex.Message);
+            TempData["statusError"] = $"Operation failed: {ex.Message}";
         }
 
         return RedirectToAction("Edit", new { id = studentId });

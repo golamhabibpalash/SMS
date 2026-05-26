@@ -30,7 +30,7 @@
 
 
 <div class="row">
-    <form asp-controller="Students" asp-action="Index" class="" id="FilterForm">
+    <form asp-controller="Students" asp-action="Index" class="" id="FilterForm" method="get">
         <section class="bg-navy-blue p-2 pt-4">
             <input type="hidden" name="pageSize" value="" id="pageSizeHiddenId" />
             <div class="form-group row">
@@ -363,6 +363,8 @@
     <script src="~/js/AlertifyNotify/AlertifyNofify.js"></script>
 
     <script>
+        history.replaceState && history.replaceState(null, '', window.location.href);
+
         let saved = '@TempData["saved"]';
         let deleted = '@TempData["deleted"]';
         let edited = '@TempData["edited"]';

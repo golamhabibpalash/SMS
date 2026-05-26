@@ -81,7 +81,7 @@
             </div>
             <div class="form-group row justify-content-center">
                 <div class="col-md-3 col-sm-4 text-right">
-                    <button type="submit" class="btn btn-sm btn-block form-control btn-light col-md-6"
+                    <button type="button" class="btn btn-sm btn-block form-control btn-light col-md-6"
                         id="findButton"><i class="fa fa-search"></i> Find</button>
                 </div>
                 <div class="col-md-3 col-sm-4 text-right"><a
@@ -392,6 +392,10 @@
         $(document).ready(function () {
             $("#myTable_info").detach().insertAfter('#myTable_length');
 
+            $('#findButton').on('click', function () {
+                submitFilterForm();
+            });
+
             $('#FilterForm').on('submit', function (e) {
                 e.preventDefault();
                 submitFilterForm();
@@ -492,26 +496,19 @@
             $('#searchParameter').html('nothing');
         }
 
-        //Loading code here
-        // Show loading spinner when form is submitted
-        $('#findButton').click(function () {
-            document.getElementById('loadingOverlay').style.display = 'block';
-            document.getElementById('loadingSpinner').style.display = 'block';
-
-        });
         // Show loading spinner when pagination links are clicked
-        document.querySelectorAll('.pagination a').forEach(function (element) {
+        document.querySelectorAll('.pagination a, a.btn-success, a.btn-outline-secondary, a.btn-default').forEach(function (element) {
             element.addEventListener('click', function () {
                 document.getElementById('loadingOverlay').style.display = 'block';
                 document.getElementById('loadingSpinner').style.display = 'block';
             });
         });
 
-        // Hide loading spinner after page load
-        window.onload = function () {
+        // Hide loading spinner after page load (handles both fresh load and Back/forward cache)
+        window.addEventListener('pageshow', function () {
             document.getElementById('loadingOverlay').style.display = 'none';
             document.getElementById('loadingSpinner').style.display = 'none';
-        };
+        });
 
 
     </script>

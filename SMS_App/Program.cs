@@ -1,5 +1,6 @@
 using GHPEncryptDecript;
 using Hangfire;
+using Hangfire.PostgreSql;
 using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -26,18 +27,26 @@ var builder = WebApplication.CreateBuilder(args);
 
 QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
 
-// AES Key/IV
-string aesKey = Environment.GetEnvironmentVariable("AES_KEY") ?? "1234567890123456";
-string aesIv = Environment.GetEnvironmentVariable("AES_IV") ?? "1234567890123456";
-byte[] key = Encoding.UTF8.GetBytes(aesKey);
-byte[] iv = Encoding.UTF8.GetBytes(aesIv);
+// Database provider selection
+string dbProvider = builder.Configuration.GetValue<string>("DatabaseProvider") ?? "SqlServer";
 
-// Decrypt connection string
-var connectionString =
-    AesEncryptionHelper.Decrypt(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
-        key, iv
-    );
+// Connection string
+var rawConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+string connectionString;
+
+if (dbProvider == "PostgreSQL")
+{
+    connectionString = rawConnectionString;
+}
+else
+{
+    string aesKey = Environment.GetEnvironmentVariable("AES_KEY") ?? "1234567890123456";
+    string aesIv = Environment.GetEnvironmentVariable("AES_IV") ?? "1234567890123456";
+    byte[] key = Encoding.UTF8.GetBytes(aesKey);
+    byte[] iv = Encoding.UTF8.GetBytes(aesIv);
+
+    connectionString = AesEncryptionHelper.Decrypt(rawConnectionString, key, iv);
+}
 
 // Hangfire configuration
 bool hangfireEnabled = builder.Configuration.GetValue<bool>("Hangfire:IsEnabled");
@@ -47,11 +56,22 @@ int workerCount = builder.Configuration.GetValue<int>("Hangfire:WorkerCount");
 // DB Context
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseSqlServer(connectionString, sqlOptions =>
+    if (dbProvider == "PostgreSQL")
     {
-        sqlOptions.EnableRetryOnFailure(5);
-        sqlOptions.CommandTimeout(180);
-    });
+        options.UseNpgsql(connectionString, npgsqlOptions =>
+        {
+            npgsqlOptions.EnableRetryOnFailure(5);
+            npgsqlOptions.CommandTimeout(180);
+        });
+    }
+    else
+    {
+        options.UseSqlServer(connectionString, sqlOptions =>
+        {
+            sqlOptions.EnableRetryOnFailure(5);
+            sqlOptions.CommandTimeout(180);
+        });
+    }
 
     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 });
@@ -66,14 +86,28 @@ if (hangfireEnabled)
     {
         config.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
              .UseSimpleAssemblyNameTypeSerializer()
-             .UseRecommendedSerializerSettings()
-             .UseSqlServerStorage(connectionString,
+             .UseRecommendedSerializerSettings();
+
+        if (dbProvider == "PostgreSQL")
+        {
+            config.UsePostgreSqlStorage(c =>
+                c.UseNpgsqlConnection(connectionString),
+                new PostgreSqlStorageOptions
+                {
+                    SchemaName = "hangfire"
+                }
+            );
+        }
+        else
+        {
+            config.UseSqlServerStorage(connectionString,
                 new SqlServerStorageOptions
                 {
                     SchemaName = "hangfire",
                     QueuePollInterval = TimeSpan.FromSeconds(10)
                 }
-             );
+            );
+        }
     });
 
     builder.Services.AddHangfireServer(options =>
@@ -176,6 +210,15 @@ builder.Services.AddDataProtection()
     .SetApplicationName("SMS_App");
 
 var app = builder.Build();
+
+// Seed default admin user
+using (var scope = app.Services.CreateScope())
+{
+    await DbSeeder.SeedAsync(
+        scope.ServiceProvider.GetRequiredService<ApplicationDbContext>(),
+        scope.ServiceProvider
+    );
+}
 
 if (!app.Environment.IsDevelopment())
 {

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -211,14 +212,31 @@ builder.Services.AddDataProtection()
 
 var app = builder.Build();
 
-// Seed default admin user
+// Auto-create database schema and seed on startup
 using (var scope = app.Services.CreateScope())
 {
-    await DbSeeder.SeedAsync(
-        scope.ServiceProvider.GetRequiredService<ApplicationDbContext>(),
-        scope.ServiceProvider
-    );
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    try
+    {
+        var canConnect = await dbContext.Database.CanConnectAsync();
+        if (!canConnect)
+            throw new Exception($"Cannot reach the database. Check the connection string.");
+
+        await dbContext.Database.EnsureCreatedAsync();
+
+        await DbSeeder.SeedAsync(dbContext, scope.ServiceProvider);
+    }
+    catch (Exception ex)
+    {
+        Console.Error.WriteLine($"[STARTUP ERROR] Database initialization failed: {ex.Message}");
+        throw;
+    }
 }
+
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
 
 if (!app.Environment.IsDevelopment())
 {

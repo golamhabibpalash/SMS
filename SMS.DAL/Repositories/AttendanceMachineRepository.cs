@@ -1,5 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SMS.DAL.Contracts;
 using SMS.DAL.Repositories.Base;
 using SMS.DB;
@@ -21,47 +20,106 @@ namespace SMS.DAL.Repositories
 
         public async Task<List<Tran_MachineRawPunch>> GetAllAttendanceByDateAsync(DateTime dateTime)
         {
-            var pDateTime = new SqlParameter("date", dateTime.ToString("dd-MM-yyyy"));
-            List<Tran_MachineRawPunch> allAttendance = await _context.Tran_MachineRawPunch.FromSqlInterpolated($"sp_Get_Checkin_Data {pDateTime}").ToListAsync();
+            List<Tran_MachineRawPunch> allAttendance = await _context.Tran_MachineRawPunch
+                .Where(t => t.PunchDatetime.Date == dateTime.Date)
+                .ToListAsync();
             return allAttendance;
         }
 
         public async Task<IEnumerable<AttendanceVM>> GetAttendanceByDateAsync(string attendanceFor, string date, string attendanceType, int? aSessionId, int? aClassId)
         {
-            //List<Tran_MachineRawPunch> tran_MachineRawPunches =await GetAllAttendanceByDateAsync(date.Date);
-            var pAttendanceFor = new SqlParameter("attendanceFor", attendanceFor);
-            var pDate = new SqlParameter("date", date);
-            var pAttendanceType = new SqlParameter("attendanceType", attendanceType);
-            var pASessionId = aSessionId != null ? new SqlParameter("aSessionId", aSessionId) : null;
-            var pClassId = aClassId != null ? new SqlParameter("aClassId", aClassId) : null;
-            var result = await _context.AttendanceVMs.FromSqlInterpolated($"sp_get_attendance_by_date {pAttendanceFor},{pDate},{pAttendanceType},{pASessionId},{pClassId}").ToArrayAsync();
+            DateTime parsedDate = DateTime.Parse(date);
+            var rawPunches = await _context.Tran_MachineRawPunch
+                .Where(t => t.PunchDatetime.Date == parsedDate.Date)
+                .ToListAsync();
+
+            var result = new List<AttendanceVM>();
+
+            if (attendanceFor == "Student")
+            {
+                var studentsQuery = _context.Student
+                    .Include(s => s.AcademicClass)
+                    .Include(s => s.AcademicSection)
+                    .AsQueryable();
+
+                if (aClassId.HasValue)
+                    studentsQuery = studentsQuery.Where(s => s.AcademicClassId == aClassId.Value);
+
+                var students = await studentsQuery.ToListAsync();
+
+                result = students.Select(s =>
+                {
+                    var punch = rawPunches.FirstOrDefault(r => r.CardNo == s.ClassRoll.ToString());
+                    return new AttendanceVM
+                    {
+                        CardNo = s.ClassRoll.ToString(),
+                        Name = s.Name,
+                        Class_Designation = s.AcademicClass?.Name,
+                        Phone = s.PhoneNo,
+                        GuardianPhone = s.GuardianPhone,
+                        PunchTime = punch?.PunchDatetime.ToString("hh:mm:ss tt"),
+                        SectionId = s.AcademicSectionId
+                    };
+                }).ToList();
+            }
+            else if (attendanceFor == "Employee")
+            {
+                var employees = await _context.Employee
+                    .Include(e => e.Designation)
+                    .ToListAsync();
+
+                result = employees.Select(e =>
+                {
+                    var punch = rawPunches.FirstOrDefault(r => r.CardNo == e.Id.ToString());
+                    return new AttendanceVM
+                    {
+                        CardNo = e.Id.ToString(),
+                        Name = e.EmployeeName,
+                        Class_Designation = e.Designation?.DesignationName,
+                        Phone = e.Phone,
+                        GuardianPhone = "",
+                        PunchTime = punch?.PunchDatetime.ToString("hh:mm:ss tt"),
+                        SectionId = null
+                    };
+                }).ToList();
+            }
+
             return result;
         }
 
         public async Task<List<Tran_MachineRawPunch>> GetAttendanceByDateRangeAsync(string StartDate, string EndDate)
         {
-            var startDateParam = new SqlParameter("StartDate", StartDate);
-            var endDateParam = new SqlParameter("EndDate", EndDate);
+            DateTime start = DateTime.Parse(StartDate);
+            DateTime end = DateTime.Parse(EndDate);
+
             var attendanceList = await _context.Tran_MachineRawPunch
-                .FromSqlInterpolated($"select t.* from Tran_MachineRawPunch t where Format(t.PunchDatetime,'yyyy-MM-dd') between convert(datetime, {startDateParam}) and convert(datetime, {endDateParam})")
+                .Where(t => t.PunchDatetime.Date >= start.Date && t.PunchDatetime.Date <= end.Date)
                 .ToListAsync();
             return attendanceList;
         }
 
         public async Task<List<Tran_MachineRawPunch>> GetAttendanceByMonthSingleStudent(int studentId, string monthYear)
         {
-            var stuId = new SqlParameter("studentId", studentId);
-            var mId = new SqlParameter("monthYear", monthYear);
-            List<Tran_MachineRawPunch> allAttendance = await _context.Tran_MachineRawPunch.FromSqlInterpolated($"sp_get_Attendance_by_Month_SingleStudent {stuId},{mId}").ToListAsync();
-            return allAttendance;
+            if (monthYear.Length >= 6 && int.TryParse(monthYear[..4], out int year) && int.TryParse(monthYear[^2..], out int month))
+            {
+                List<Tran_MachineRawPunch> allAttendance = await _context.Tran_MachineRawPunch
+                    .Where(t => t.PunchDatetime.Year == year && t.PunchDatetime.Month == month
+                        && t.CardNo == studentId.ToString())
+                    .ToListAsync();
+                return allAttendance;
+            }
+
+            return new List<Tran_MachineRawPunch>();
         }
 
         public async Task<List<Tran_MachineRawPunch>> GetCheckinDataByDateAsync(string date)
         {
-            var pDate = new SqlParameter("date", date);
+            DateTime parsedDate = DateTime.Parse(date);
             try
             {
-                var result = await _context.Tran_MachineRawPunch.FromSqlInterpolated($"sp_Get_Checkin_Data {date}").ToListAsync();
+                var result = await _context.Tran_MachineRawPunch
+                    .Where(t => t.PunchDatetime.Date == parsedDate.Date)
+                    .ToListAsync();
                 return result;
             }
             catch (Exception)
@@ -72,10 +130,12 @@ namespace SMS.DAL.Repositories
 
         public async Task<List<Tran_MachineRawPunch>> GetEmpCheckinDataByDateAsync(string date)
         {
-            var pDate = new SqlParameter("date", date);
+            DateTime parsedDate = DateTime.Parse(date);
             try
             {
-                var result = await _context.Tran_MachineRawPunch.FromSqlInterpolated($"sp_Get_Checkin_Data_Emp {date}").ToListAsync();
+                var result = await _context.Tran_MachineRawPunch
+                    .Where(t => t.PunchDatetime.Date == parsedDate.Date)
+                    .ToListAsync();
                 return result;
             }
             catch (Exception)
@@ -86,10 +146,12 @@ namespace SMS.DAL.Repositories
 
         public async Task<List<Tran_MachineRawPunch>> GetCheckOutDataByDateAsync(string date)
         {
-            var pDate = new SqlParameter("date", date);
+            DateTime parsedDate = DateTime.Parse(date);
             try
             {
-                var result = await _context.Tran_MachineRawPunch.FromSqlInterpolated($"sp_Get_CheckOut_Data {date}").ToListAsync();
+                var result = await _context.Tran_MachineRawPunch
+                    .Where(t => t.PunchDatetime.Date == parsedDate.Date)
+                    .ToListAsync();
                 return result;
             }
             catch (Exception)
@@ -100,11 +162,20 @@ namespace SMS.DAL.Repositories
 
         public async Task<List<Employee>> GetTodaysAbsentEmployeeAsync(string date)
         {
-            var pDate = new SqlParameter("date", date);
+            DateTime parsedDate = DateTime.Parse(date);
             try
             {
-                var result = await _context.Employee.FromSqlInterpolated($"sp_get_todays_absent_employees_by_date {date}").ToListAsync();
-                return result;
+                var cardNosWithPunch = await _context.Tran_MachineRawPunch
+                    .Where(t => t.PunchDatetime.Date == parsedDate.Date)
+                    .Select(t => t.CardNo)
+                    .Distinct()
+                    .ToListAsync();
+
+                var absentEmployees = await _context.Employee
+                    .Where(e => !cardNosWithPunch.Contains(e.Id.ToString()))
+                    .ToListAsync();
+
+                return absentEmployees;
             }
             catch (Exception)
             {
@@ -114,11 +185,20 @@ namespace SMS.DAL.Repositories
 
         public async Task<List<Student>> GetTodaysAbsentStudentAsync(string date)
         {
-            var pDate = new SqlParameter("date", date);
+            DateTime parsedDate = DateTime.Parse(date);
             try
             {
-                var result = await _context.Student.FromSqlInterpolated($"sp_get_todays_absent_students_by_date {date}").ToListAsync();
-                return result;
+                var cardNosWithPunch = await _context.Tran_MachineRawPunch
+                    .Where(t => t.PunchDatetime.Date == parsedDate.Date)
+                    .Select(t => t.CardNo)
+                    .Distinct()
+                    .ToListAsync();
+
+                var absentStudents = await _context.Student
+                    .Where(s => s.Status && !cardNosWithPunch.Contains(s.ClassRoll.ToString()))
+                    .ToListAsync();
+
+                return absentStudents;
             }
             catch (Exception)
             {

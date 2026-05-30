@@ -1,12 +1,10 @@
-﻿using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SMS.DAL.Contracts;
 using SMS.DAL.Repositories.Base;
 using SMS.DB;
 using SMS.Entities;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -54,19 +52,17 @@ namespace SMS.DAL.Repositories
         }
         public async Task<double> GetFeeAmountByFeeListSL(string uniquId, int sl)
         {
-            var feeAmountParam = new SqlParameter("@FeeAmount", SqlDbType.Float)
+            var classFeeList = await _context.ClassFeeList
+                .Include(c => c.StudentFeeHead)
+                .Where(c => c.SL == sl)
+                .FirstOrDefaultAsync();
+
+            if (classFeeList != null)
             {
-                Direction = ParameterDirection.Output
-            };
+                return classFeeList.Amount;
+            }
 
-            await _context.Database.ExecuteSqlRawAsync(
-                $"exec sp_get_amount_by_classFee_sl @uniqueId, @sl, @FeeAmount OUTPUT",
-                new SqlParameter("@uniqueId", uniquId),
-                new SqlParameter("@sl", sl),
-                feeAmountParam);
-
-            double feeAmount = Convert.ToDouble(feeAmountParam.Value);
-            return feeAmount;
+            return 0;
         }
 
         public async Task<List<ClassFeeList>> GetByClassIdSessionIdStudentIdAsync(int classId, int sessionId, int studentId)

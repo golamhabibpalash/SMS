@@ -1,5 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SMS.DAL.Contracts;
 using SMS.DAL.Repositories.Base;
 using SMS.DB;
@@ -53,19 +52,43 @@ namespace SMS.DAL.Repositories
 
         public async Task<List<StudentListVM>> GetCurrentStudentListAsync(int? AcademicClassId, int? AcademicSectionId)
         {
-            var pAcademicClassId = new SqlParameter("@academicClassId", (object)AcademicClassId ?? DBNull.Value);
-            var pAcademicSectionId = new SqlParameter("@academicSectionId", (object)AcademicSectionId ?? DBNull.Value);
-            List<StudentListVM> studentListVMs = null;
-            try
-            {
-                studentListVMs = await _context.StudentListVMs
-                    .FromSqlInterpolated($"EXECUTE sp_Get_Current_Student_List {pAcademicClassId}, {pAcademicSectionId}")
-                    .ToListAsync();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            var query = _context.Student
+                .Include(s => s.AcademicClass)
+                .Include(s => s.AcademicSection)
+                .Include(s => s.AcademicSession)
+                .Include(s => s.Gender)
+                .AsQueryable();
+
+            if (AcademicClassId.HasValue)
+                query = query.Where(s => s.AcademicClassId == AcademicClassId.Value);
+
+            if (AcademicSectionId.HasValue)
+                query = query.Where(s => s.AcademicSectionId == AcademicSectionId.Value);
+
+            var studentListVMs = await query
+                .Select(s => new StudentListVM
+                {
+                    Id = s.Id,
+                    ClassRoll = s.ClassRoll,
+                    Photo = s.Photo,
+                    StudentName = s.Name,
+                    NameBangla = s.NameBangla,
+                    ClassName = s.AcademicClass.Name,
+                    SectionName = s.AcademicSection.Name,
+                    PhoneNo = s.PhoneNo,
+                    SessionName = s.AcademicSession.Name,
+                    Gender = s.Gender.Name,
+                    Status = s.Status,
+                    ClassSerial = s.AcademicClass.ClassSerial,
+                    IsResidential = s.IsResidential,
+                    UniqueId = s.UniqueId,
+                    GuardianPhone = s.GuardianPhone,
+                    AcademicSessionId = s.AcademicSessionId
+                })
+                .OrderBy(s => s.ClassSerial)
+                .ThenBy(s => s.ClassRoll)
+                .ToListAsync();
+
             return studentListVMs;
         }
 
@@ -84,7 +107,7 @@ namespace SMS.DAL.Repositories
                 .Include(s => s.AcademicClass)
                 .Include(s => s.AcademicSession)
                 .Include(s => s.AcademicSection)
-                .FirstOrDefaultAsync(s => Convert.ToInt32(s.UniqueId.Trim()).ToString() == (Convert.ToInt32(uniqueId).ToString()).Trim());
+                .FirstOrDefaultAsync(s => s.UniqueId.Trim() == uniqueId.Trim());
             return student;
         }
 

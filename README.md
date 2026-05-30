@@ -4,10 +4,10 @@ A comprehensive school/institute management system built with .NET 8.0.
 
 ## Tech Stack
 
-- **Framework**: ASP.NET Core 8.0 (Razor Pages)
+- **Framework**: ASP.NET Core 8.0 MVC (Controllers + Razor Views)
 - **ORM**: Entity Framework Core 7.0
-- **Database**: MS SQL Server
-- **Authentication**: ASP.NET Core Identity
+- **Database**: MS SQL Server or PostgreSQL (configurable)
+- **Authentication**: ASP.NET Core Identity (claim-based authorization)
 - **Reports**: RDLC / ReportViewer
 - **Background Jobs**: Hangfire
 - **Logging**: Serilog (SQL Server sink)
@@ -19,13 +19,12 @@ A comprehensive school/institute management system built with .NET 8.0.
 
 ```
 SMS/
-├── SMS_App/          # Main web application
-├── SMS.BLL/          # Business Logic Layer
-├── SMS.DAL/          # Data Access Layer
-├── SMS.DB/           # Database context & migrations
-├── SMS.Entities/     # Domain models
-├── SMS.Frameworks/   # Shared utilities & frameworks
-├── Database/         # Database backups
+├── SMS_App/          # Main web application (Controllers, Views, ViewModels)
+├── SMS.BLL/          # Business Logic Layer (Manager classes)
+├── SMS.DAL/          # Data Access Layer (Repository pattern)
+├── SMS.DB/           # EF Core DbContext & migrations
+├── SMS.Entities/     # Domain models, enums, ViewModels
+├── SMS.Frameworks/   # Shared utilities, tag helpers, encryption
 └── Resources/        # Application resources
 ```
 
@@ -96,10 +95,18 @@ SMS/
    dotnet run
    ```
 
-### Connection Strings
+### Database Configuration
 
-The project supports multiple connection string profiles:
-- `DefaultConnection` - Production
+Supports **PostgreSQL** and **SQL Server**, selected via the `DatabaseProvider` setting in `appsettings.json`:
+
+```json
+"DatabaseProvider": "PostgreSQL"  // or "SqlServer"
+```
+
+When using PostgreSQL, the `DefaultConnection` is used as plain text. When using SQL Server, it's AES-decrypted using keys from environment variables `AES_KEY` and `AES_IV`.
+
+Multiple pre-configured connection string profiles (all SQL Server, encrypted):
+- `DefaultConnection` - Production (plain text for PostgreSQL)
 - `Mac_Docker_DefaultConnection` - Docker on Mac
 - `Local_Desktop_DefaultConnection` - Local desktop
 - `Noble_DefaultConnection` - Noble server

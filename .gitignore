@@ -7,8 +7,16 @@
 /SMS.Report/
 
 
-# Ignore changes in the 'SMS.Report' project
+# Ignore changes in the 'SMS.Reports' project
 /SMS.Reports/
+
+# Publish output folders
+publish-output/
+PublishOutput/
+publish/
+
+# Data Protection keys (machine-specific, sensitive)
+SMS_App/Keys/
 
 # User-specific files
 *.rsuser
@@ -375,6 +383,9 @@ FodyWeavers.xsd
 !**/appsettings.Development.json
 !**/appsettings.Production.json
 !**/appsettings.*.local.json
+
+# Build archives
+*.tar.gz
 
 #for_MacBook
 .DS_Store

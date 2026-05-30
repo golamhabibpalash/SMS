@@ -199,7 +199,7 @@ builder.Services.Addservices();
 // SiteMap loader
 builder.Services.AddSingleton<SiteMap>(provider =>
 {
-    var filePath = Path.Combine(builder.Environment.ContentRootPath, "siteMap.config");
+    var filePath = Path.Combine(builder.Environment.ContentRootPath, "SiteMap.Config");
     return SiteMapLoader.Load(filePath);
 });
 

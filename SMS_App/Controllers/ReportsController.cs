@@ -110,58 +110,18 @@ public class ReportsController : Controller
             return new JsonResult("Sorry! Institute Information Not Found");
         }
 
-        string mediaType = "application/pdf";
-
-        // Cross-platform RDLC path
-        var path = Path.Combine(
-            _host.WebRootPath,
-            "Reports",
-            "Academic",
-            "Students",
-            "rptStudent.rdlc"
-        );
-
-        // Cross-platform image path
-        var imagePath = Path.Combine(
-            _host.WebRootPath,
-            "Images",
-            "Institute",
-            institute.Logo
-        );
-
-        // Read image file without System.Drawing
-        byte[] imageBytes = await System.IO.File.ReadAllBytesAsync(imagePath);
-
-        // Convert to base64 for RDLC
-        string imageParam = "data:image/png;base64," + Convert.ToBase64String(imageBytes);
-
-
-        using var report = new Microsoft.Reporting.NETCore.LocalReport();
-        report.DataSources.Add(new ReportDataSource("DataSet1", studens));
-        var parameters = new[] {
-            new ReportParameter("InstituteName", institute.Name),
-            new ReportParameter("ReportName", "Student List"),
-            new ReportParameter("Address", institute.Address),
-            new ReportParameter("EIIN", institute.EIIN),
-            new ReportParameter("Logo", imageParam)
-        };
-        report.ReportPath = path;
-        report.SetParameters(parameters);
-        var pdf = report.Render("pdf");
-        if (!string.IsNullOrEmpty(fileName))
+        string logoBase64 = "";
+        if (!string.IsNullOrEmpty(institute.Logo))
         {
-            if (reportType == "xls")
-            {
-                pdf = report.Render("excel");
-            }
-            if (reportType == "word")
-            {
-                pdf = report.Render("word");
-            }
-            fileName = fileName + "_" + DateTime.Now.ToString("yyyyMMdd");
-            return File(pdf, MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
+            var imagePath = Path.Combine(_host.WebRootPath, "Images", "Institute", institute.Logo);
+            if (System.IO.File.Exists(imagePath))
+                logoBase64 = Convert.ToBase64String(await System.IO.File.ReadAllBytesAsync(imagePath));
         }
-        return File(pdf, mediaType);
+
+        var doc = new StudentListPdfBuilder(institute, logoBase64, studens);
+        var pdf = doc.GeneratePdf();
+        fileName = (string.IsNullOrEmpty(fileName) ? "student_list" : fileName) + "_" + DateTime.Now.ToString("yyyyMMdd");
+        return File(pdf, MediaTypeNames.Application.Octet, $"{fileName}.pdf");
     }
 
     public async Task<IActionResult> StudentDynamicReport()
@@ -252,35 +212,17 @@ public class ReportsController : Controller
         if (!System.IO.File.Exists(reportPath))
             throw new FileNotFoundException("RDLC file not found at: " + reportPath);
 
-        // 9️⃣ Prepare institute logo (cross-platform, async)
-        string imageParam = await GetBase64LogoAsync(institute.Logo);
+        string logoBase64Dynamic = await GetBase64LogoAsync(institute.Logo);
+        var cleanLogo = StripDataUriPrefix(logoBase64Dynamic);
 
+        var colLabels = columnMappings.ToDictionary(k => k.Key, v => v.Value.Label);
+        var dynDoc = new StudentDynamicReportPdfBuilder(institute, cleanLogo, dataTable, columns, colLabels);
+        var finalReport = dynDoc.GeneratePdf();
 
-        // 10 Configure LocalReport
-        using var report = new Microsoft.Reporting.NETCore.LocalReport();
-        report.ReportPath = reportPath;
-        report.DataSources.Add(new ReportDataSource("StudentDynamicReportDataset", dataTable));
-
-        // 11️ Set report parameters
-        var parameters = await GetReportParameters(institute, dynamicColumnMap, columnMappings);
-        report.SetParameters(parameters);
-
-        // 12 Determine render format
-        string renderFormat = reportType?.ToUpper() switch
-        {
-            "EXCEL" => "EXCELOPENXML",
-            "WORD" => "WORDOPENXML",
-            _ => "PDF"
-        };
-
-        // 1️3️ Render the report
-        var finalReport = report.Render(renderFormat);
-
-        // 1️4️ Return file
         if (!string.IsNullOrEmpty(fileName))
         {
             fileName = fileName + "_" + DateTime.Now.ToString("yyMMddhhmm");
-            return File(finalReport, MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
+            return File(finalReport, MediaTypeNames.Application.Octet, $"{fileName}.pdf");
         }
         return File(finalReport, "application/pdf");
     }
@@ -489,7 +431,6 @@ public class ReportsController : Controller
             path = Path.Combine(_host.WebRootPath, "Reports", "Attendance", "Rpt_Daily_Attendance_Employee.rdlc");
             reportName = "Employees Daily Attendance Report";
         }
-        using var report = new Microsoft.Reporting.NETCore.LocalReport();
         if (reportData.Count > 0)
         {
             var allActiveStudents = await _studentManager.GetCurrentStudentListAsync(null, null);
@@ -497,10 +438,7 @@ public class ReportsController : Controller
             foreach (var item in reportData)
             {
                 var isResidential = allActiveStudents.FirstOrDefault(s => s.ClassRoll.ToString() == item.CardNo.Trim())?.IsResidential;
-                if (isResidential == true)
-                {
-                    item.Name = item.Name + " " + "(R)";
-                }
+                if (isResidential == true) item.Name = item.Name + " (R)";
                 item.Name = textInfo.ToTitleCase(item.Name.ToLower());
                 item.Phone = item.Phone.PadLeft(11, '0');
                 item.GuardianPhone = item.GuardianPhone.PadLeft(11, '0');
@@ -508,36 +446,16 @@ public class ReportsController : Controller
         }
         if (!string.IsNullOrEmpty(sms))
         {
-            if (sms=="sms")
-            {
-                reportData = reportData.Where(s => s.SMSSent != "Not Sent").ToList();
-            }
-            else if (sms=="no")
-            {
-                reportData = reportData.Where(s => s.SMSSent == "Not Sent").ToList();
-            }
+            if (sms == "sms") reportData = reportData.Where(s => s.SMSSent != "Not Sent").ToList();
+            else if (sms == "no") reportData = reportData.Where(s => s.SMSSent == "Not Sent").ToList();
         }
-        string totalStudents = reportData.Count.ToString();
-        report.DataSources.Add(new ReportDataSource("AttendanceReportDS", reportData));
-        var parameters = new[] {
-            new ReportParameter("InstituteName", institute.Name),
-            new ReportParameter("Location", institute.Address),
-            new ReportParameter("EIINNo", institute.EIIN),
-            new ReportParameter("Logo", StripDataUriPrefix(imageParam)),
-            new ReportParameter("ReportName", reportName),
-            new ReportParameter("AttendanceDate", fromDate),
-            new ReportParameter("ReportDate", DateTime.Now.ToString("dd MMM yyyy hh:mm tt")),
-            new ReportParameter("TotalStudent",totalStudents)
-        };
-        report.ReportPath = path;
-        report.SetParameters(parameters);
-        if (!string.IsNullOrEmpty(fileName))
-        {
-            var rendereFile = report.Render(reportType);
-            return File(rendereFile, MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
-        }
-        var pdf = report.Render("pdf");
-        return File(pdf, mediaType);
+
+        bool isEmp = attendanceFor == "employees";
+        var dailyDoc = new DailyAttendancePdfBuilder(
+            institute, StripDataUriPrefix(imageParam), reportData, reportName, fromDate, isEmp);
+        var pdf = dailyDoc.GeneratePdf();
+        fileName = (string.IsNullOrEmpty(fileName) ? "attendance" : fileName) + "_" + DateTime.Now.ToString("yyyyMMdd");
+        return File(pdf, MediaTypeNames.Application.Octet, $"{fileName}.pdf");
 
     }
 
@@ -749,26 +667,17 @@ public class ReportsController : Controller
             };
             monthlyAttendance.Add(monthlyAttendanceVM);
         }
-        report.DataSources.Add(new ReportDataSource("DataSet1", monthlyAttendance));
-        var parameters = new[] {
-            new ReportParameter("InstituteName", institute.Name),
-            new ReportParameter("Location", institute.Address),
-            new ReportParameter("EIINNo", institute.EIIN),
-            new ReportParameter("Logo", imageParam),
-            new ReportParameter("ReportName", "Monthly Attendance Report"),
-            new ReportParameter("MonthName",monthName),
-            new ReportParameter("ClassName", "Class 6(Six)"),
-            //new ReportParameter("ReportDate", DateTime.Today.ToString("dd MMM yyyy")),
-            new ReportParameter("TotalDays",lastDateOfMonth.ToString("dd"))
-        };
-        report.ReportPath = path;
-        report.SetParameters(parameters);
-        var pdf = report.Render("pdf");
-        report.ReportPath = path;
-        //if (!string.IsNullOrEmpty("fileName"))
-        //{
-        //    return File(pdf, MediaTypeNames.Application.Octet, GetReportName("fileName", reportType));
-        //}
+        var monthlyLogoBase64 = string.Empty;
+        if (!string.IsNullOrEmpty(institute.Logo))
+        {
+            var mImgPath = Path.Combine(_host.WebRootPath, "Images", "Institute", institute.Logo);
+            if (System.IO.File.Exists(mImgPath))
+                monthlyLogoBase64 = Convert.ToBase64String(await System.IO.File.ReadAllBytesAsync(mImgPath));
+        }
+
+        var monthlyDoc = new MonthlyAttendancePdfBuilder(
+            institute, monthlyLogoBase64, monthlyAttendance, monthName, "Class 6", int.Parse(lastDateOfMonth.ToString("dd")));
+        var pdf = monthlyDoc.GeneratePdf();
         return File(pdf, mediaType);
     }
 
@@ -803,50 +712,27 @@ public class ReportsController : Controller
 
 
         var examDetails = await _reportManager.GetSubjectWiseMarkSheet(examId);
-        if (examDetails == null)
-        {
+        if (examDetails == null || !examDetails.Any())
             return new JsonResult("Nothing Found");
-        }
-        using var report = new Microsoft.Reporting.NETCore.LocalReport();
-        report.DataSources.Add(new ReportDataSource("DataSet1", examDetails.OrderBy(s => s.ClassRoll)));
 
         var examInfo = await _academicExamManager.GetByIdAsync(examId);
         if (examInfo == null)
-        {
             return new JsonResult("Please provide proper information");
-        }
 
-        var parameters = new[] {
-            new ReportParameter("InstituteName", institute.Name),
-            new ReportParameter("Location", institute.Address),
-            new ReportParameter("EIINNo", institute.EIIN),
-            new ReportParameter("Logo", imageParam),
-            new ReportParameter("ReportName", "Subject-wise Mark Sheet"),
-            new ReportParameter("ReportDate", DateTime.Today.ToString("dd MMM yyyy")),
-            new ReportParameter("AcademicClass", examInfo.AcademicClass.Name),
-            new ReportParameter("ExamTeacher", examInfo.Employee.EmployeeName),
-            new ReportParameter("SubjectName", examInfo.AcademicSubject.SubjectName),
-            new ReportParameter("AcademicSession", examInfo.AcademicExamGroup.AcademicSession.Name),
-            new ReportParameter("ExamGroupName", examInfo.AcademicExamGroup.ExamGroupName),
-            new ReportParameter("TotalMarks", examInfo.TotalMarks.ToString()),
-        };
-        report.ReportPath = reportPath;
-        report.SetParameters(parameters);
-        var pdf = report.Render("pdf");
-        if (!string.IsNullOrEmpty(fileName))
-        {
-            if (reportType == "xls")
-            {
-                pdf = report.Render("excel");
-            }
-            if (reportType == "word")
-            {
-                pdf = report.Render("word");
-            }
-            fileName = fileName + "_" + DateTime.Now.ToString("dd MMM yyyy");
-            return File(pdf, MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
-        }
-        return File(pdf, mediaType);
+        var subjectDoc = new SubjectWiseMarkSheetPdfBuilder(
+            institute,
+            StripDataUriPrefix(imageParam),
+            examDetails.OrderBy(s => s.ClassRoll).ToList(),
+            examInfo.AcademicClass?.Name ?? "",
+            examInfo.AcademicSubject?.SubjectName ?? "",
+            examInfo.AcademicExamGroup?.ExamGroupName ?? "",
+            examInfo.Employee?.EmployeeName ?? "",
+            examInfo.AcademicExamGroup?.AcademicSession?.Name ?? "",
+            examInfo.TotalMarks);
+
+        var pdf = subjectDoc.GeneratePdf();
+        fileName = (string.IsNullOrEmpty(fileName) ? "subject_marksheet" : fileName) + "_" + DateTime.Now.ToString("yyyyMMdd");
+        return File(pdf, MediaTypeNames.Application.Octet, $"{fileName}.pdf");
 
     }
 
@@ -873,51 +759,35 @@ public class ReportsController : Controller
 
 
         var examDetails = await _reportManager.GetStudentWiseMarkSheet(examGroupId, classId);
-        if (examDetails == null)
-        {
+        if (examDetails == null || !examDetails.Any())
             return new JsonResult("Nothing Found");
-        }
-        using var report = new LocalReport();
-        var gradingTable = await _gradingTableManager.GetAllAsync();
-        AcademicExamGroup academicExamGroup = await _academicExamGroupManager.GetByIdAsync(examGroupId);
 
-        var parameters = new[] {
-            new ReportParameter("InstituteName", institute.Name),
-            new ReportParameter("Location", institute.Address),
-            new ReportParameter("Logo", imageParam),
-            new ReportParameter("EIINNo", institute.EIIN),
-            new ReportParameter("ExamGroupName", academicExamGroup.ExamGroupName),
-            new ReportParameter("ReportName", "ACADEMIC TRANSCRIPT"),
-            new ReportParameter("Signature", "signature"),
-            new ReportParameter("ReportDate", DateTime.Today.ToString("dd MMM yyyy")),
-        };
-        try
-        {
-            report.ReportPath = reportPath;
-            report.SetParameters(parameters);
-            report.DataSources.Add(new ReportDataSource("DS_Results", examDetails));
-            report.DataSources.Add(new ReportDataSource("GradingTable_DataSet", gradingTable));
-        }
-        catch (Exception)
-        {
-            throw;
-        }
-        var pdf = report.Render("pdf");
+        var gradingTables = (await _gradingTableManager.GetAllAsync()).ToList();
+        var academicExamGroup = await _academicExamGroupManager.GetByIdAsync(examGroupId);
+        string signaturePath2 = Path.Combine(_host.WebRootPath, "Images", "Institute", "signature.jpg");
+        string signatureParam2 = System.IO.File.Exists(signaturePath2)
+            ? Convert.ToBase64String(await System.IO.File.ReadAllBytesAsync(signaturePath2))
+            : string.Empty;
 
-        if (!string.IsNullOrEmpty(fileName))
-        {
-            if (reportType == "xls")
-            {
-                pdf = report.Render("excel");
-            }
-            if (reportType == "word")
-            {
-                pdf = report.Render("word");
-            }
-            fileName = fileName + "_" + DateTime.Now.ToString("dd MMM yyyy");
-            return File(pdf, MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
-        }
-        return File(pdf, mediaType);
+        var annualReports2 = new Dictionary<int, List<SubRerportAnnualReport>>();
+        foreach (var sid in examDetails.Select(r => r.StudentId).Distinct())
+            annualReports2[sid] = await GetAnnualReportData(sid);
+
+        var swBuilder = new Utilities.Reports.MarkSheetPdfBuilder(
+            institute,
+            StripDataUriPrefix(imageParam),
+            signatureParam2,
+            examDetails,
+            gradingTables,
+            annualReports2,
+            academicExamGroup?.ExamGroupName ?? "",
+            examDetails.FirstOrDefault()?.ClassName ?? "",
+            DateTime.Today.ToString("dd MMM yyyy"),
+            examDetails.Max(r => r.TotalObtainMarks).ToString());
+
+        var pdf = swBuilder.Generate();
+        fileName = (string.IsNullOrEmpty(fileName) ? "marksheet" : fileName) + "_" + DateTime.Now.ToString("yyyyMMdd");
+        return File(pdf, MediaTypeNames.Application.Octet, $"{fileName}.pdf");
     }
 
     [Authorize(Policy = "StudentWiseMarkSheetReportsPolicy")]
@@ -1300,16 +1170,10 @@ public class ReportsController : Controller
             return new JsonResult("No data found");
         }
 
-        // Step 8: Bind Dataset to Report
-        localReport.DataSources.Add(new ReportDataSource("DSAdmitCard", admitCardList));
-
-        // Step 9: Render the Report and Return as File
-        var result = localReport.Render(reportType);
-        var contentType = "application/pdf";
-
-        return !string.IsNullOrEmpty(fileName)
-            ? File(result, MediaTypeNames.Application.Octet, GetReportName(fileName, reportType))
-            : File(result, contentType);
+        var admitDoc = new AdmitCardPdfBuilder(institute, StripDataUriPrefix(imageParam), admitCardList);
+        var result = admitDoc.GeneratePdf();
+        fileName = (string.IsNullOrEmpty(fileName) ? "admit_card" : fileName) + "_" + DateTime.Now.ToString("yyyyMMdd");
+        return File(result, MediaTypeNames.Application.Octet, $"{fileName}.pdf");
     }
 
     #endregion Admit Card Reports

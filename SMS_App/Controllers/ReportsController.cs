@@ -17,6 +17,8 @@ using SMS_App.Utilities.LoggerService;
 using SMS_App.Utilities.Others;
 using SMS_App.ViewModels.AttendanceVM;
 using SMS_App.ViewModels.ReportVM;
+using QuestPDF.Fluent;
+using SMS_App.Utilities.Reports;
 using SMS_App.ViewModels.ReportVM.MarkSheet;
 using System;
 using System.Collections.Generic;
@@ -1040,64 +1042,30 @@ public class ReportsController : Controller
             return new JsonResult("Institute Information not found!");
         }
 
-        string mediaType = "application/pdf";
-        var path = Path.Combine(
-            _host.WebRootPath,
-            "Reports",
-            "Accounts",
-            "rptStudentPaymentFullInfo.rdlc"
-        );
-
-        string imageParam = "";
-        var imagePath = Path.Combine(
-            _host.WebRootPath,
-            "Images",
-            "Institute",
-            institute.Logo
-        );
-
-        
-        if (System.IO.File.Exists(imagePath))
+        string logoBase64 = "";
+        if (!string.IsNullOrEmpty(institute.Logo))
         {
-            // Read image bytes directly (cross-platform)
-            byte[] imageBytes = await System.IO.File.ReadAllBytesAsync(imagePath);
-
-            // Convert to Base64 for RDLC or other use
-            imageParam = "data:image/png;base64," + Convert.ToBase64String(imageBytes);
+            var imagePath = Path.Combine(_host.WebRootPath, "Images", "Institute", institute.Logo);
+            if (System.IO.File.Exists(imagePath))
+            {
+                byte[] imageBytes = await System.IO.File.ReadAllBytesAsync(imagePath);
+                logoBase64 = Convert.ToBase64String(imageBytes);
+            }
         }
 
-        using var report = new LocalReport();
-        report.DataSources.Add(new ReportDataSource("DataSet1", studentPayments));
-        var parameters = new[] {
-            new ReportParameter("InstituteName", institute.Name),
-            new ReportParameter("InstituteAddress", institute.Address),
-            new ReportParameter("StudentName", student.Name),
-            new ReportParameter("ClassName", student.AcademicClass.Name),
-            new ReportParameter("Session", student.AcademicSession.Name),
-            new ReportParameter("RptDate", DateTime.Today.ToString("dd MMM yyyy")),
-            new ReportParameter("RptName", "Payments Summary Report"),
-            new ReportParameter("ClassRoll", classRoll.ToString()),
-            new ReportParameter("AmountInWord", numberToWord),
-            new ReportParameter("Logo", StripDataUriPrefix(imageParam)),
-            new ReportParameter("EIINNo", institute.EIIN)
-        };
-        report.ReportPath = path;
-        report.SetParameters(parameters);
-        var pdf = report.Render("pdf");
-        if (!string.IsNullOrEmpty(fileName))
-        {
-            if (reportType == "xls")
-            {
-                pdf = report.Render("excel");
-            }
-            if (reportType == "word")
-            {
-                pdf = report.Render("word");
-            }
-            fileName = fileName + "_" + DateTime.Now.ToString("yyyyMMdd");
-            return File(pdf, MediaTypeNames.Application.Octet, GetReportName(fileName, reportType));
-        }
-        return File(pdf, mediaType);
+        var document = new StudentPaymentInfoPdfBuilder(
+            institute,
+            logoBase64,
+            student,
+            studentPayments,
+            fdate.ToString("dd MMM yyyy"),
+            tdate.ToString("dd MMM yyyy"),
+            numberToWord
+        );
+
+        var pdf = document.GeneratePdf();
+        fileName = (string.IsNullOrEmpty(fileName) ? "payment_info" : fileName) + "_" + DateTime.Now.ToString("yyyyMMdd");
+        return File(pdf, MediaTypeNames.Application.Octet, $"{fileName}.pdf");
     }
     [Authorize(Policy = "StudentPaymentReportsPolicy")]
     public async Task<IActionResult> StudentPaymentReport()

@@ -26,6 +26,8 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
 
 // Database provider selection

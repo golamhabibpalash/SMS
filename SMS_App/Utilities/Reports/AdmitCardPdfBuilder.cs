@@ -35,7 +35,7 @@ public class AdmitCardPdfBuilder : IDocument
         {
             container.Page(page =>
             {
-                page.Size(PageSizes.A5);
+                page.Size(PageSizes.A5.Width, 152.4f);
                 page.Margin(15);
                 page.DefaultTextStyle(x => x.FontSize(8));
                 page.Content().Element(c => ComposeCard(c, student, subjects));

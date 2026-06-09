@@ -36,8 +36,8 @@ public class AdmitCardPdfBuilder : IDocument
             container.Page(page =>
             {
                 page.Size(PageSizes.A5);
-                page.Margin(20);
-                page.DefaultTextStyle(x => x.FontSize(9));
+                page.Margin(15);
+                page.DefaultTextStyle(x => x.FontSize(8));
                 page.Content().Element(c => ComposeCard(c, student, subjects));
             });
         }
@@ -45,74 +45,133 @@ public class AdmitCardPdfBuilder : IDocument
 
     private void ComposeCard(IContainer container, RptAdmitCardVM student, List<RptAdmitCardVM> subjects)
     {
-        container.Border(1).Padding(10).Column(col =>
+        container.Border(1).Padding(8).Column(col =>
         {
             // Header
             col.Item().Row(row =>
             {
                 if (!string.IsNullOrEmpty(_logoBase64))
                 {
-                    try { row.ConstantItem(50).Image(Convert.FromBase64String(_logoBase64)).FitArea(); } catch { }
+                    try { row.ConstantItem(40).Image(Convert.FromBase64String(_logoBase64)).FitArea(); } catch { }
                 }
                 row.RelativeItem().Column(c =>
                 {
-                    c.Item().AlignCenter().Text(_institute.Name ?? "").Bold().FontSize(12);
+                    c.Item().AlignCenter().Text(_institute.Name ?? "").Bold().FontSize(11);
                     if (!string.IsNullOrEmpty(_institute.Address))
-                        c.Item().AlignCenter().Text(_institute.Address).FontSize(8);
+                        c.Item().AlignCenter().Text(_institute.Address).FontSize(7);
                     if (!string.IsNullOrEmpty(_institute.EIIN))
-                        c.Item().AlignCenter().Text($"EIIN: {_institute.EIIN}").FontSize(8);
+                        c.Item().AlignCenter().Text($"EIIN: {_institute.EIIN}").FontSize(7);
                 });
             });
 
-            col.Item().PaddingVertical(4).AlignCenter().Text("ADMIT CARD").Bold().FontSize(12);
-            col.Item().Text($"Exam: {student.ExamTypeName}  |  Session: {student.SessionName}").FontSize(9);
-            col.Item().PaddingVertical(4).LineHorizontal(0.5f);
+            col.Item().PaddingVertical(3).AlignCenter().Text("ADMIT CARD").Bold().FontSize(11);
+            col.Item().Text($"Exam: {student.ExamTypeName}  |  Session: {student.SessionName}").FontSize(8);
+            col.Item().PaddingVertical(3).LineHorizontal(0.5f);
 
-            // Student info
-            col.Item().Table(t =>
+            // Student info - two columns (left / right)
+            col.Item().Row(studentRow =>
             {
-                t.ColumnsDefinition(c => { c.RelativeColumn(); c.RelativeColumn(); });
-                t.Cell().Text("Student Name:").SemiBold(); t.Cell().Text(student.StudentName ?? "");
-                t.Cell().Text("Class:").SemiBold(); t.Cell().Text($"{student.ClassName} - {student.SectionName}");
-                t.Cell().Text("Roll:").SemiBold(); t.Cell().Text(student.ClassRoll.ToString());
-                t.Cell().Text("Father's Name:").SemiBold(); t.Cell().Text(student.FatherName ?? "");
-                t.Cell().Text("Gender:").SemiBold(); t.Cell().Text(student.Gender ?? "");
-                t.Cell().Text("Religion:").SemiBold(); t.Cell().Text(student.Religion ?? "");
+                studentRow.RelativeItem().Column(left =>
+                {
+                    left.Item().Text(t =>
+                    {
+                        t.Span("Student Name: ").SemiBold().FontSize(8);
+                        t.Span(student.StudentName ?? "").FontSize(8);
+                    });
+                    left.Item().Text(t =>
+                    {
+                        t.Span("Father's Name: ").SemiBold().FontSize(8);
+                        t.Span(student.FatherName ?? "").FontSize(8);
+                    });
+                    left.Item().Text(t =>
+                    {
+                        t.Span("Class: ").SemiBold().FontSize(8);
+                        t.Span($"{student.ClassName} - {student.SectionName}").FontSize(8);
+                    });
+                    left.Item().Text(t =>
+                    {
+                        t.Span("Roll: ").SemiBold().FontSize(8);
+                        t.Span(student.ClassRoll.ToString()).FontSize(8);
+                    });
+                });
+
+                studentRow.RelativeItem().Column(right =>
+                {
+                    right.Item().Text(t =>
+                    {
+                        t.Span("Mother's Name: ").SemiBold().FontSize(8);
+                        t.Span(student.MotherName ?? "").FontSize(8);
+                    });
+                    right.Item().Text(t =>
+                    {
+                        t.Span("Gender: ").SemiBold().FontSize(8);
+                        t.Span(student.Gender ?? "").FontSize(8);
+                    });
+                    right.Item().Text(t =>
+                    {
+                        t.Span("Religion: ").SemiBold().FontSize(8);
+                        t.Span(student.Religion ?? "").FontSize(8);
+                    });
+                });
             });
 
-            col.Item().PaddingVertical(6).LineHorizontal(0.5f);
+            col.Item().PaddingVertical(3).LineHorizontal(0.5f);
 
-            // Subjects table
-            col.Item().Text("Subjects:").SemiBold();
-            col.Item().PaddingTop(4).Table(t =>
+            // Subjects - 4 columns per row (code | name | code | name)
+            col.Item().Text("Subjects:").SemiBold().FontSize(8);
+            col.Item().PaddingTop(3).Table(t =>
             {
-                t.ColumnsDefinition(c => { c.ConstantColumn(30); c.RelativeColumn(); });
-                static IContainer H(IContainer c) => c.Background(Colors.Grey.Lighten1).Padding(3);
-                t.Header(h => { h.Cell().Element(H).Text("SL").Bold(); h.Cell().Element(H).Text("Subject").Bold(); });
-
-                int sl = 1;
-                foreach (var sub in subjects)
+                t.ColumnsDefinition(c =>
                 {
-                    var bg = sl % 2 == 0 ? Colors.Grey.Lighten3 : Colors.White;
-                    IContainer D(IContainer c) => c.Background(bg).Padding(3);
-                    t.Cell().Element(D).AlignCenter().Text(sl.ToString());
-                    t.Cell().Element(D).Text(sub.SubjectName ?? "");
-                    sl++;
+                    c.ConstantColumn(25);
+                    c.RelativeColumn();
+                    c.ConstantColumn(25);
+                    c.RelativeColumn();
+                });
+
+                static IContainer H(IContainer c) => c.Background(Colors.Grey.Lighten2).Padding(2);
+                t.Header(h =>
+                {
+                    h.Cell().Element(H).AlignCenter().Text("Code").Bold().FontSize(7);
+                    h.Cell().Element(H).Text("Subject").Bold().FontSize(7);
+                    h.Cell().Element(H).AlignCenter().Text("Code").Bold().FontSize(7);
+                    h.Cell().Element(H).Text("Subject").Bold().FontSize(7);
+                });
+
+                for (int i = 0; i < subjects.Count; i += 2)
+                {
+                    var bg = i % 4 == 0 ? Colors.White : Colors.Grey.Lighten3;
+                    IContainer D(IContainer c) => c.Background(bg).Padding(2);
+
+                    t.Cell().Element(D).AlignCenter().Text(subjects[i].SubjectCode?.ToString() ?? "").FontSize(7);
+                    t.Cell().Element(D).Text(subjects[i].SubjectName ?? "").FontSize(7);
+
+                    if (i + 1 < subjects.Count)
+                    {
+                        t.Cell().Element(D).AlignCenter().Text(subjects[i + 1].SubjectCode?.ToString() ?? "").FontSize(7);
+                        t.Cell().Element(D).Text(subjects[i + 1].SubjectName ?? "").FontSize(7);
+                    }
+                    else
+                    {
+                        t.Cell().Element(D).Text("");
+                        t.Cell().Element(D).Text("");
+                    }
                 }
             });
 
-            col.Item().PaddingTop(20).Row(row =>
+            // Signatures
+            col.Item().PaddingTop(15).Row(sigRow =>
             {
-                row.RelativeItem().AlignCenter().Column(c =>
+                sigRow.RelativeItem().AlignCenter().Column(c =>
                 {
                     c.Item().LineHorizontal(0.5f);
-                    c.Item().AlignCenter().Text("Student Signature").FontSize(8);
+                    c.Item().PaddingTop(2).AlignCenter().Text("Student Signature").FontSize(7);
                 });
-                row.ConstantItem(20);
-                row.RelativeItem().AlignCenter().Column(c =>
+                sigRow.ConstantItem(15);
+                sigRow.RelativeItem().AlignCenter().Column(c =>
                 {
                     c.Item().LineHorizontal(0.5f);
-                    c.Item().AlignCenter().Text("Principal Signature").FontSize(8);
+                    c.Item().PaddingTop(2).AlignCenter().Text("Principal Signature").FontSize(7);
                 });
             });
         });

@@ -1101,18 +1101,14 @@ public class ReportsController : Controller
 
     #region Admit Card Reports
     [Authorize(Policy = "AdmitCardReportsPolicy")]
-    public async Task<IActionResult> AdmitCardExport(string reportType, string fileName, int monthId, string academicClassId, string academicSectionId, int examTypeId)
+    public async Task<IActionResult> AdmitCardExport(string reportType, string fileName, int monthId, string academicClassId, string academicSectionId, int examTypeId, bool download = false)
     {
-        // Step 1: Fetch Institute Info
         var institute = await _instituteManager.GetByIdAsync(1);
         if (institute == null)
         {
             return new JsonResult("Institute information not found!");
         }
 
-        // Step 2: Prepare Image and Signature as Base64 strings
-
-        //Prepare Image/logo
         string defaultInstituteLogo = "smslogo.png";
         string logoFileName = string.IsNullOrWhiteSpace(institute.Logo)
             ? defaultInstituteLogo
@@ -1120,7 +1116,6 @@ public class ReportsController : Controller
 
         string logoPath = Path.Combine(_host.WebRootPath, "Images", "Institute", logoFileName);
 
-        // If the provided logo doesn't exist, fallback to default
         if (!System.IO.File.Exists(logoPath))
         {
             await _appLogger.InfoAsync($"Institute logo not found");
@@ -1129,7 +1124,6 @@ public class ReportsController : Controller
 
         string imageParam = ConvertImageToBase64(logoPath);
 
-        //Prepare signature image
         string signaturePath = Path.Combine(_host.WebRootPath, "Images", "Institute", "signature.jpg");
         if (!System.IO.File.Exists(signaturePath))
         {
@@ -1137,32 +1131,12 @@ public class ReportsController : Controller
         }
         string signatureParam = ConvertImageToBase64(signaturePath);
 
-        // Step 3: Determine Report Format (default is PDF)
         var renderType = string.IsNullOrEmpty(reportType) ? RenderType.Pdf : GetRenderType(reportType);
 
-        // Step 4: Load the RDLC Report
-        var reportPath = Path.Combine(_host.WebRootPath, "Reports\\ExamResult", "Rpt_AdmitCard.rdlc");
-        using var localReport = new Microsoft.Reporting.NETCore.LocalReport
-        {
-            ReportPath = reportPath
-        };
-
-        // Step 5: Prepare Parameters for the RDLC Report
-        var parameters = new Dictionary<string, string>
-        {
-            { "InstituteName", institute.Name },
-            { "EIINNo", institute.EIIN },
-            { "Image", imageParam },
-            { "signature", signatureParam }
-        };
-        localReport.SetParameters(parameters.Select(p => new ReportParameter(p.Key, p.Value)).ToList());
-
-        // Step 6: Parse Class & Section IDs
         int.TryParse(academicClassId, out int aClassId);
         int.TryParse(academicSectionId, out int aSectionId);
 
-        // Step 7: Fetch Admit Card Data
-        var admitCardList = await _reportManager.GetAdmitCard(monthId, aClassId, aSectionId,examTypeId);
+        var admitCardList = await _reportManager.GetAdmitCard(monthId, aClassId, aSectionId, examTypeId);
         admitCardList = admitCardList.Where(s => s.StudentStauts == true).ToList();
 
         if (!admitCardList.Any())
@@ -1173,7 +1147,12 @@ public class ReportsController : Controller
         var admitDoc = new AdmitCardPdfBuilder(institute, StripDataUriPrefix(imageParam), admitCardList);
         var result = admitDoc.GeneratePdf();
         fileName = (string.IsNullOrEmpty(fileName) ? "admit_card" : fileName) + "_" + DateTime.Now.ToString("yyyyMMdd");
-        return File(result, MediaTypeNames.Application.Octet, $"{fileName}.pdf");
+
+        Response.Headers["Content-Disposition"] = download
+            ? $"attachment; filename=\"{fileName}.pdf\""
+            : $"inline; filename=\"{fileName}.pdf\"";
+
+        return File(result, "application/pdf");
     }
 
     #endregion Admit Card Reports

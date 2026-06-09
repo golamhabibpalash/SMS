@@ -71,18 +71,14 @@
         </div>
         <div class="row" id="exportOptions" style="display:none">
             <div class="col-md-12 d-flex justify-content-end">
-                <form asp-action="AdmitCardExport" asp-controller="Reports" method="get">
+                <form asp-action="AdmitCardExport" asp-controller="Reports" method="get" target="_blank">
                     <input type="hidden" id="exportAcademicClassId" name="academicClassId" />
                     <input type="hidden" id="exportAcademicSectionId" name="academicSectionId" />
                     <input type="hidden" id="exportMonthId" name="monthId" />
                     <input type="hidden" id="exportExamTypeId" name="examTypeId" />
-
-                    <div class="btn-group btn-sm mr-2 " role="group" aria-label="First group">
-                        <input type="hidden" name="fileName" value="Admit Cards" />
-                        <button type="submit" name="reportType" value="pdf" class="btn-sm btn btn-danger" data-toggle="tooltip" title="Export PDF" data-placement="left"><i class="fas fa-file-pdf"></i></button>
-                        <button type="submit" name="reportType" value="xls" class="btn-sm btn btn-success" data-toggle="tooltip" title="Export xls" data-placement="top"><i class="fas fa-file-excel"></i></button>
-                        <button type="submit" name="reportType" value="word" class="btn-sm btn btn-primary" data-toggle="tooltip" title="Export doc" data-placement="top"><i class="fas fa-file-word"></i></button>
-                    </div>
+                    <input type="hidden" name="download" value="true" />
+                    <input type="hidden" name="fileName" value="Admit Cards" />
+                    <button type="submit" class="btn-sm btn btn-danger" data-toggle="tooltip" title="Export PDF" data-placement="left"><i class="fas fa-file-pdf"></i> Export PDF</button>
                 </form>
             </div>
         </div>

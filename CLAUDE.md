@@ -11,12 +11,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Framework**: ASP.NET Core 8.0 MVC with Razor Views
 - **Language**: C# / .NET 8.0
 - **ORM**: Entity Framework Core 7.0 (code-first migrations)
-- **Database**: MS SQL Server
+- **Database**: PostgreSQL or MS SQL Server — provider chosen at runtime via the `DatabaseProvider` setting (currently `"PostgreSQL"`)
 - **Auth**: ASP.NET Core Identity with claim-based authorization policies
-- **Background Jobs**: Hangfire (disabled by default)
-- **Logging**: Serilog → SQL Server sink
+- **Background Jobs**: Hangfire (disabled by default; storage matches the active DB provider)
+- **Logging**: Serilog
 - **Mapping**: AutoMapper 15.1.1
-- **External**: GreenWeb SMS API, SMTP email, RDLC ReportViewer
+- **PDF Reports**: QuestPDF (Community license) — builder classes in `SMS_App/Utilities/Reports/`
+- **External**: GreenWeb SMS API, SMTP email
 
 ## Build & Run Commands
 
@@ -27,11 +28,17 @@ dotnet build
 # Run application (default: https://localhost:5001)
 dotnet run --project SMS_App\SMS_App.csproj
 
-# EF Core migrations (run from SMS_App directory)
+# EF Core migrations — run from the SMS.DB directory (DesignTimeDbContextFactory lives there
+# and reads DatabaseProvider + connection string from ../SMS_App/appsettings.json)
 dotnet ef database update
-dotnet ef migrations add <MigrationName>
+dotnet ef migrations add <MigrationName> -o Migrations_SqlServer
 dotnet ef migrations remove
 ```
+
+The SQL Server migration history lives in `SMS.DB/Migrations_SqlServer/`. The PostgreSQL
+database is provisioned from a dump (see `Resources/docker/setup-eims-postgres.ps1`), not from
+code-first migrations. `DesignTimeDbContextFactory` picks the provider and decrypts/loads the
+connection string the same way `Program.cs` does.
 
 ## Architecture — 6-Layer Dependency Chain
 
@@ -73,10 +80,15 @@ Four areas: `API`, `Identity`, `SMSAPP`, `Student` — routed as `{area:exists}/
 
 ## Configuration & Secrets
 
-### Encrypted Connection Strings
-Connection strings in `appsettings.json` are AES-encrypted. Decrypted in `Program.cs` using `AesEncryptionHelper.Decrypt()` with keys from environment variables `AES_KEY` and `AES_IV` (defaults: `"1234567890123456"` if unset).
+### Database Provider Selection
+`Program.cs` reads `DatabaseProvider` (`"PostgreSQL"` or `"SqlServer"`, default `SqlServer`) and configures the matching `DbContext`, Hangfire storage, and migration history schema (`public` vs `dbo`).
+
+### Connection Strings (provider-dependent)
+- **SqlServer**: the `DefaultConnection` value is AES-encrypted, decrypted in `Program.cs` via `AesEncryptionHelper.Decrypt()` with keys from env vars `AES_KEY` / `AES_IV` (defaults `"1234567890123456"`).
+- **PostgreSQL**: the `DefaultConnection` value is used as-is (plain text, no decryption).
 
 ### Key appsettings.json Settings
+- `DatabaseProvider` — `"PostgreSQL"` or `"SqlServer"`
 - `Hangfire.IsEnabled` — set to `true` to enable background jobs; dashboard at `/hangfire`
 - `PhoneSMSSetup` — GreenWeb SMS API token and endpoint
 - `Serilog.MinimumLevel` — default `"Error"`
@@ -107,6 +119,7 @@ Persisted to `SMS_App/Keys/` for shared hosting stability. App name: `"SMS_App"`
 - `QueryTrackingBehavior.NoTracking` by default in `ApplicationDbContext`; use `.AsTracking()` only when updating
 - Avoid N+1 queries: pre-load all related data in the controller via `Dictionary<K,V>` caches or `.Include()`, never query the DB inside a view loop
 - ViewModel naming: `[Entity][Operation]VM` (e.g., `StudentCreateVM`, `StudentListVM`)
+- **Cross-platform (Linux deploy)**: format dates for `<input type="date">` with explicit `yyyy-MM-dd` (a culture-default `ToString()` breaks on Linux). PostgreSQL timestamp handling relies on `Npgsql.EnableLegacyTimestampBehavior` (set in `Program.cs`); be mindful of `DateTime` `Kind` when writing new date/time code.
 
 ## Notable Files
 
@@ -117,6 +130,10 @@ Persisted to `SMS_App/Keys/` for shared hosting stability. App name: `"SMS_App"`
 | `SMS_App/Configurations/AuthorizationPolicies.cs` | All claim-based authorization policies |
 | `SMS_App/appsettings.json` | App configuration (encrypted connection strings) |
 | `SMS_App/GlobalUI.cs` | Global UI constants |
+| `SMS.DB/DesignTimeDbContextFactory.cs` | Provider-aware factory used by `dotnet ef` at design time |
+| `SMS_App/Utilities/Reports/*.cs` | QuestPDF report builders (admit card, mark sheet, attendance, payments, etc.) |
+| `SMS_App/Controllers/ReportsController.cs` | Entry point that invokes the QuestPDF builders |
+| `Resources/docker/setup-eims-postgres.ps1` | Spins up a local PostgreSQL 16 container and restores the DB dump |
 | `SchoolManagementSystem.sln` | Solution file |
 
 ## Reference Documentation

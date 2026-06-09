@@ -132,11 +132,7 @@
             overflow: visible !important;
         }
 
-        /* Fix Select2 dropdown clipped by modal-content overflow */
-        .modal-content:has(.select2),
-        .modal-body:has(.select2) {
-            overflow: visible !important;
-        }
+
     </style>
 
     <!-- Tesseract.js for OCR -->
@@ -183,24 +179,20 @@
             // Initialize all select2 elements with proper configuration
             $('.select2').each(function () {
                 var $this = $(this);
-                var isMultiple = $this.prop('multiple');
                 
                 $this.select2({
                     theme: 'bootstrap-5',
                     width: '100%',
-                    dropdownParent: $(this).parent(),
                     allowClear: true,
                     placeholder: $this.data('placeholder') || 'Select an option',
                     matcher: matchStart
                 });
             });
 
-            // Special handling for select2 inside modals
+            // Re-initialize select2 inside modals on show
             $(document).on('shown.bs.modal', '.modal', function () {
-                var $modal = $(this);
-                $modal.find('.select2').each(function () {
+                $(this).find('.select2').each(function () {
                     var $this = $(this);
-                    var select2Id = $this.attr('id');
 
                     if ($this.data('select2')) {
                         $this.select2('destroy');
@@ -209,15 +201,11 @@
                     $this.select2({
                         theme: 'bootstrap-5',
                         width: '100%',
-                        dropdownParent: $modal,
                         allowClear: true,
                         placeholder: $this.data('placeholder') || 'Select an option',
                         matcher: matchStart
                     });
                 });
-                
-                // Focus the first select2 if needed
-                $modal.find('.select2').first().select2('focus');
             });
 
             // Clean up select2 when modal is hidden

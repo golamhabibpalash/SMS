@@ -159,19 +159,23 @@ public class AdmitCardPdfBuilder : IDocument
                 }
             });
 
-            // Signatures
-            col.Item().PaddingTop(15).Row(sigRow =>
+            // Bottom section: directions (left) + controller signature (right)
+            col.Item().PaddingTop(10).Row(bottomRow =>
             {
-                sigRow.RelativeItem().AlignCenter().Column(c =>
+                bottomRow.RelativeItem().Column(directions =>
                 {
-                    c.Item().LineHorizontal(0.5f);
-                    c.Item().PaddingTop(2).AlignCenter().Text("Student Signature").FontSize(7);
+                    directions.Item().Text("Direction:").SemiBold().FontSize(7);
+                    directions.Item().Text("1. The Examinee must bring the Admit Card in the Examination hall.").FontSize(7);
+                    directions.Item().Text("2. The examinee must sign in the attendance sheet for each subject in the examination hall otherwise will be treated as absent in the respective subject(s).").FontSize(7);
                 });
-                sigRow.ConstantItem(15);
-                sigRow.RelativeItem().AlignCenter().Column(c =>
+
+                bottomRow.ConstantItem(15);
+
+                bottomRow.RelativeItem().AlignCenter().Column(sig =>
                 {
-                    c.Item().LineHorizontal(0.5f);
-                    c.Item().PaddingTop(2).AlignCenter().Text("Principal Signature").FontSize(7);
+                    sig.Item().LineHorizontal(0.5f);
+                    sig.Item().PaddingTop(2).AlignCenter().Text("Controller of Examinations").SemiBold().FontSize(7);
+                    sig.Item().AlignCenter().Text(_institute.Name ?? "").FontSize(7);
                 });
             });
         });

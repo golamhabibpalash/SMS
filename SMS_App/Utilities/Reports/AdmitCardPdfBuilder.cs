@@ -137,10 +137,11 @@ public class AdmitCardPdfBuilder : IDocument
                         {
                             var bg = (i / 3) % 2 == 0 ? Colors.White : Colors.Grey.Lighten3;
                             IContainer D(IContainer c) => c.Background(bg).Padding(2).BorderBottom(0.3f).BorderColor(Colors.Grey.Lighten2);
-                            t.Cell().Element(D).Column(subCol =>
+                            t.Cell().Element(D).AlignCenter().Text(txt =>
                             {
-                                subCol.Item().AlignCenter().Text(subjects[idx].SubjectCode?.ToString() ?? "").SemiBold().FontSize(7);
-                                subCol.Item().AlignCenter().Text(subjects[idx].SubjectName ?? "").FontSize(7);
+                                txt.Span(subjects[idx].SubjectCode?.ToString() ?? "").SemiBold().FontSize(7);
+                                txt.Span(" ").FontSize(7);
+                                txt.Span(subjects[idx].SubjectName ?? "").FontSize(7);
                             });
                         }
                         else

@@ -393,7 +393,6 @@ public class ReportsController : Controller
             return new JsonResult("Institute Information not found!");
         }
 
-        string mediaType = "application/pdf";
         var path = Path.Combine(_host.WebRootPath, "Reports", "Attendance", "Rpt_Daily_Attendance.rdlc");
 
 
@@ -689,7 +688,6 @@ public class ReportsController : Controller
     {
         Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
 
-        string mediaType = "application/pdf";
         var reportPath = Path.Combine(_host.WebRootPath, "Reports", "ExamResult", "Rpt_Subject_Wise_MarkSheet.rdlc");
 
         string imageParam = "";
@@ -741,7 +739,6 @@ public class ReportsController : Controller
     {
         Institute institute = await _instituteManager.GetFirstOrDefaultAsync();
 
-        string mediaType = "application/pdf";
         var reportPath = _host.WebRootPath + "\\Reports\\Rpt_Student_Wise_MarkSheet.rdlc";
 
         string imageParam = "";

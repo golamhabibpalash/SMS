@@ -117,44 +117,36 @@ public class AdmitCardPdfBuilder : IDocument
 
             col.Item().PaddingVertical(3).LineHorizontal(0.5f);
 
-            // Subjects - 4 columns per row (code | name | code | name)
-            col.Item().Text("Subjects:").SemiBold().FontSize(8);
-            col.Item().PaddingTop(3).Table(t =>
+            // Subjects - 3 columns (3 subjects per row, code+name stacked)
+            col.Item().PaddingTop(3).Text("Subjects:").SemiBold().FontSize(8);
+            col.Item().PaddingTop(2).Table(t =>
             {
                 t.ColumnsDefinition(c =>
                 {
-                    c.ConstantColumn(25);
                     c.RelativeColumn();
-                    c.ConstantColumn(25);
+                    c.RelativeColumn();
                     c.RelativeColumn();
                 });
 
-                static IContainer H(IContainer c) => c.Background(Colors.Grey.Lighten2).Padding(2);
-                t.Header(h =>
+                for (int i = 0; i < subjects.Count; i += 3)
                 {
-                    h.Cell().Element(H).AlignCenter().Text("Code").Bold().FontSize(7);
-                    h.Cell().Element(H).Text("Subject").Bold().FontSize(7);
-                    h.Cell().Element(H).AlignCenter().Text("Code").Bold().FontSize(7);
-                    h.Cell().Element(H).Text("Subject").Bold().FontSize(7);
-                });
-
-                for (int i = 0; i < subjects.Count; i += 2)
-                {
-                    var bg = i % 4 == 0 ? Colors.White : Colors.Grey.Lighten3;
-                    IContainer D(IContainer c) => c.Background(bg).Padding(2);
-
-                    t.Cell().Element(D).AlignCenter().Text(subjects[i].SubjectCode?.ToString() ?? "").FontSize(7);
-                    t.Cell().Element(D).Text(subjects[i].SubjectName ?? "").FontSize(7);
-
-                    if (i + 1 < subjects.Count)
+                    for (int j = 0; j < 3; j++)
                     {
-                        t.Cell().Element(D).AlignCenter().Text(subjects[i + 1].SubjectCode?.ToString() ?? "").FontSize(7);
-                        t.Cell().Element(D).Text(subjects[i + 1].SubjectName ?? "").FontSize(7);
-                    }
-                    else
-                    {
-                        t.Cell().Element(D).Text("");
-                        t.Cell().Element(D).Text("");
+                        var idx = i + j;
+                        if (idx < subjects.Count)
+                        {
+                            var bg = (i / 3) % 2 == 0 ? Colors.White : Colors.Grey.Lighten3;
+                            IContainer D(IContainer c) => c.Background(bg).Padding(2).BorderBottom(0.3f).BorderColor(Colors.Grey.Lighten2);
+                            t.Cell().Element(D).Column(subCol =>
+                            {
+                                subCol.Item().AlignCenter().Text(subjects[idx].SubjectCode?.ToString() ?? "").SemiBold().FontSize(7);
+                                subCol.Item().AlignCenter().Text(subjects[idx].SubjectName ?? "").FontSize(7);
+                            });
+                        }
+                        else
+                        {
+                            t.Cell().Text("");
+                        }
                     }
                 }
             });

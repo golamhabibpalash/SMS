@@ -137,7 +137,7 @@ public class AdmitCardPdfBuilder : IDocument
                         {
                             var bg = (i / 3) % 2 == 0 ? Colors.White : Colors.Grey.Lighten3;
                             IContainer D(IContainer c) => c.Background(bg).Padding(2).BorderBottom(0.3f).BorderColor(Colors.Grey.Lighten2);
-                            t.Cell().Element(D).AlignCenter().Text(txt =>
+                            t.Cell().Element(D).AlignLeft().Text(txt =>
                             {
                                 txt.Span(subjects[idx].SubjectCode?.ToString() ?? "").SemiBold().FontSize(7);
                                 txt.Span(" ").FontSize(7);
@@ -155,16 +155,14 @@ public class AdmitCardPdfBuilder : IDocument
             // Bottom section: directions (left) + controller signature (right)
             col.Item().PaddingTop(10).Row(bottomRow =>
             {
-                bottomRow.RelativeItem().Column(directions =>
+                bottomRow.RelativeColumn(3).Column(directions =>
                 {
                     directions.Item().Text("Direction:").SemiBold().FontSize(7);
-                    directions.Item().Text("1. The Examinee must bring the Admit Card in the Examination hall.").FontSize(7);
-                    directions.Item().Text("2. The examinee must sign in the attendance sheet for each subject in the examination hall otherwise will be treated as absent in the respective subject(s).").FontSize(7);
+                    directions.Item().PaddingTop(1).Text("1. The Examinee must bring the Admit Card in the Examination hall.").FontSize(7);
+                    directions.Item().PaddingTop(1).Text("2. The examinee must sign in the attendance sheet for each subject in the examination hall otherwise will be treated as absent in the respective subject(s).").FontSize(7);
                 });
 
-                bottomRow.ConstantItem(15);
-
-                bottomRow.RelativeItem().AlignCenter().Column(sig =>
+                bottomRow.RelativeColumn(2).AlignRight().Column(sig =>
                 {
                     sig.Item().LineHorizontal(0.5f);
                     sig.Item().PaddingTop(2).AlignCenter().Text("Controller of Examinations").SemiBold().FontSize(7);

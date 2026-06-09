@@ -131,6 +131,12 @@
         .select2-container {
             overflow: visible !important;
         }
+
+        /* Fix Select2 dropdown clipped by modal-content overflow */
+        .modal-content:has(.select2),
+        .modal-body:has(.select2) {
+            overflow: visible !important;
+        }
     </style>
 
     <!-- Tesseract.js for OCR -->

@@ -1124,13 +1124,6 @@ public class ReportsController : Controller
 
         string imageParam = ConvertImageToBase64(logoPath);
 
-        string signaturePath = Path.Combine(_host.WebRootPath, "Images", "Institute", "signature.jpg");
-        if (!System.IO.File.Exists(signaturePath))
-        {
-            await _appLogger.InfoAsync($"Signature not found");
-        }
-        string signatureParam = ConvertImageToBase64(signaturePath);
-
         var renderType = string.IsNullOrEmpty(reportType) ? RenderType.Pdf : GetRenderType(reportType);
 
         int.TryParse(academicClassId, out int aClassId);
@@ -1264,10 +1257,20 @@ public class ReportsController : Controller
 
     private string ConvertImageToBase64(string imagePath)
     {
-        using var image = SixLabors.ImageSharp.Image.Load<Rgba32>(imagePath);
-        using var ms = new MemoryStream();
-        image.Save(ms, new PngEncoder());
-        return Convert.ToBase64String(ms.ToArray());
+        if (string.IsNullOrEmpty(imagePath) || !System.IO.File.Exists(imagePath))
+            return string.Empty;
+
+        try
+        {
+            using var image = SixLabors.ImageSharp.Image.Load<Rgba32>(imagePath);
+            using var ms = new MemoryStream();
+            image.Save(ms, new PngEncoder());
+            return Convert.ToBase64String(ms.ToArray());
+        }
+        catch
+        {
+            return string.Empty;
+        }
     }
 
   

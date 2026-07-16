@@ -23,6 +23,7 @@ namespace SMS.Entities.RptModels
         public string SubjectName { get; set; }
         public int AcademicClassId { get; set; }
         public string ExamTypeName { get; set; }
+        public string ExamGroupName { get; set; }
         public string InstituteName { get; set; }
         public string EIIN { get; set; }
         public string Gender { get; set; }

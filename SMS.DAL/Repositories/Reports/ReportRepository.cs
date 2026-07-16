@@ -21,7 +21,7 @@ namespace SMS.DAL.Repositories.Reports
             _context = context;
         }
 
-        public async Task<List<RptAdmitCardVM>> GetAdmitCard(int monthId, int academicClassId, int academicSectionId, int examTypeId)
+        public async Task<List<RptAdmitCardVM>> GetAdmitCard(int monthId, int academicClassId, int academicSectionId, int examTypeId, int examGroupId = 0)
         {
             var query = _context.Student
                 .Include(s => s.AcademicClass)
@@ -31,12 +31,18 @@ namespace SMS.DAL.Repositories.Reports
                 .Include(s => s.Religion)
                 .AsQueryable();
 
-            var exams = await _context.AcademicExams
+            var examsQuery = _context.AcademicExams
                 .Include(e => e.AcademicExamGroup)
                 .Include(e => e.AcademicSubject)
                 .Where(e => e.AcademicExamGroup.ExamMonthId == monthId
-                    && e.AcademicExamGroup.AcademicExamTypeId == examTypeId)
-                .ToListAsync();
+                    && e.AcademicExamGroup.AcademicExamTypeId == examTypeId);
+
+            if (examGroupId > 0)
+            {
+                examsQuery = examsQuery.Where(e => e.AcademicExamGroupId == examGroupId);
+            }
+
+            var exams = await examsQuery.ToListAsync();
 
             if (academicClassId > 0)
             {
@@ -70,10 +76,11 @@ namespace SMS.DAL.Repositories.Reports
                         SectionName = s.AcademicSection?.Name,
                         AcademicSectionId = s.AcademicSectionId,
                         MonthId = monthId,
-                        SubjectCode = e.AcademicSubject?.Id,
+                        SubjectCode = e.AcademicSubject?.SubjectCode,
                         SubjectName = e.AcademicSubject?.SubjectName,
                         AcademicClassId = s.AcademicClassId,
                         ExamTypeName = e.AcademicExamGroup?.AcademicExamType?.ExamTypeName,
+                        ExamGroupName = e.AcademicExamGroup?.ExamGroupName,
                         InstituteName = institute?.Name,
                         EIIN = institute?.EIIN,
                         Gender = s.Gender?.Name,

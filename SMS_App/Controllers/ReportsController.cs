@@ -454,7 +454,8 @@ public class ReportsController : Controller
             institute, StripDataUriPrefix(imageParam), reportData, reportName, fromDate, isEmp);
         var pdf = dailyDoc.GeneratePdf();
         fileName = (string.IsNullOrEmpty(fileName) ? "attendance" : fileName) + "_" + DateTime.Now.ToString("yyyyMMdd");
-        return File(pdf, MediaTypeNames.Application.Octet, $"{fileName}.pdf");
+        Response.Headers["Content-Disposition"] = $"inline; filename=\"{fileName}.pdf\"";
+        return File(pdf, MediaTypeNames.Application.Pdf);
 
     }
 
@@ -932,7 +933,8 @@ public class ReportsController : Controller
 
         var pdf = document.GeneratePdf();
         fileName = (string.IsNullOrEmpty(fileName) ? "payment_info" : fileName) + "_" + DateTime.Now.ToString("yyyyMMdd");
-        return File(pdf, MediaTypeNames.Application.Octet, $"{fileName}.pdf");
+        Response.Headers["Content-Disposition"] = $"inline; filename=\"{fileName}.pdf\"";
+        return File(pdf, MediaTypeNames.Application.Pdf);
     }
     [Authorize(Policy = "StudentPaymentReportsPolicy")]
     public async Task<IActionResult> StudentPaymentReport()
@@ -1002,7 +1004,8 @@ public class ReportsController : Controller
 
         var pdf = document.GeneratePdf();
         fileName = (string.IsNullOrEmpty(fileName) ? "payment_summary" : fileName) + "_" + DateTime.Now.ToString("yyyyMMdd");
-        return File(pdf, MediaTypeNames.Application.Octet, $"{fileName}.pdf");
+        Response.Headers["Content-Disposition"] = $"inline; filename=\"{fileName}.pdf\"";
+        return File(pdf, MediaTypeNames.Application.Pdf);
 
     }
 
@@ -1098,7 +1101,7 @@ public class ReportsController : Controller
 
     #region Admit Card Reports
     [Authorize(Policy = "AdmitCardReportsPolicy")]
-    public async Task<IActionResult> AdmitCardExport(string reportType, string fileName, int monthId, string academicClassId, string academicSectionId, int examTypeId, bool download = false)
+    public async Task<IActionResult> AdmitCardExport(string reportType, string fileName, int monthId, string academicClassId, string academicSectionId, int examTypeId, int examGroupId = 0, bool download = false)
     {
         var institute = await _instituteManager.GetByIdAsync(1);
         if (institute == null)
@@ -1121,12 +1124,17 @@ public class ReportsController : Controller
 
         string imageParam = ConvertImageToBase64(logoPath);
 
+        string signaturePath = Path.Combine(_host.WebRootPath, "Images", "Institute", "signature.jpg");
+        string signatureParam = System.IO.File.Exists(signaturePath)
+            ? Convert.ToBase64String(await System.IO.File.ReadAllBytesAsync(signaturePath))
+            : string.Empty;
+
         var renderType = string.IsNullOrEmpty(reportType) ? RenderType.Pdf : GetRenderType(reportType);
 
         int.TryParse(academicClassId, out int aClassId);
         int.TryParse(academicSectionId, out int aSectionId);
 
-        var admitCardList = await _reportManager.GetAdmitCard(monthId, aClassId, aSectionId, examTypeId);
+        var admitCardList = await _reportManager.GetAdmitCard(monthId, aClassId, aSectionId, examTypeId, examGroupId);
         admitCardList = admitCardList.Where(s => s.StudentStauts == true).ToList();
 
         if (!admitCardList.Any())
@@ -1134,7 +1142,7 @@ public class ReportsController : Controller
             return new JsonResult("No data found");
         }
 
-        var admitDoc = new AdmitCardPdfBuilder(institute, StripDataUriPrefix(imageParam), admitCardList);
+        var admitDoc = new AdmitCardPdfBuilder(institute, StripDataUriPrefix(imageParam), signatureParam, admitCardList);
         var result = admitDoc.GeneratePdf();
         fileName = (string.IsNullOrEmpty(fileName) ? "admit_card" : fileName) + "_" + DateTime.Now.ToString("yyyyMMdd");
 

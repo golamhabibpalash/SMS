@@ -21,9 +21,9 @@ namespace SMS.BLL.Managers.Reports
             _reportRepository = reportRepository;
         }
 
-        public async Task<List<RptAdmitCardVM>> GetAdmitCard(int monthId, int academicClassId, int academicSectionId, int examTypeId)
+        public async Task<List<RptAdmitCardVM>> GetAdmitCard(int monthId, int academicClassId, int academicSectionId, int examTypeId, int examGroupId = 0)
         {
-            var admitCards = await _reportRepository.GetAdmitCard(monthId, academicClassId, academicSectionId, examTypeId);
+            var admitCards = await _reportRepository.GetAdmitCard(monthId, academicClassId, academicSectionId, examTypeId, examGroupId);
 
             List<RptAdmitCardVM> filteredAdmitCards = new List<RptAdmitCardVM>();
             foreach (var admitCard in admitCards)

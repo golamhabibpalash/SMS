@@ -51,6 +51,14 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Exam</label>
+                            <div class="col-sm-9">
+                                <select id="ExamGroupId" name="examGroupId" class="form-control">
+                                    <option value="0">-Select Exam-</option>
+                                </select>
+                            </div>
+                        </div>
                         <div class="text-end">
                             <span id="myButton" class="btn btn-sm btn-info">Load Report</span>
                         </div>
@@ -76,6 +84,7 @@
                     <input type="hidden" id="exportAcademicSectionId" name="academicSectionId" />
                     <input type="hidden" id="exportMonthId" name="monthId" />
                     <input type="hidden" id="exportExamTypeId" name="examTypeId" />
+                    <input type="hidden" id="exportExamGroupId" name="examGroupId" />
                     <input type="hidden" name="download" value="true" />
                     <input type="hidden" name="fileName" value="Admit Cards" />
                     <button type="submit" class="btn-sm btn btn-danger" data-toggle="tooltip" title="Export PDF" data-placement="left"><i class="fas fa-file-pdf"></i> Export PDF</button>
@@ -92,22 +101,60 @@
 
 @section Scripts{
     <script>
+        function loadExamGroups() {
+            let examTypeId = $('#ExamTypeId option:selected').val();
+            let monthId = $('#monthId option:selected').val();
+            let classId = $('#AcademicClassId option:selected').val();
+            let sectionId = $('#AcademicSectionId option:selected').val();
+
+            if (examTypeId > 0 && monthId > 0 && classId > 0 && classId !== 'all') {
+                $.ajax({
+                    url: '/AcademicExams/GetExamGroupsForAdmitCard',
+                    data: { examTypeId: examTypeId, monthId: monthId, classId: classId, sectionId: sectionId },
+                    dataType: "JSON",
+                    type: "POST",
+                    cache: false,
+                    success: function (data) {
+                        $('#ExamGroupId').empty();
+                        $('#ExamGroupId').append('<option value="0">-Select Exam-</option>');
+                        if (data && data.length > 0) {
+                            $.each(data, function (i, obj) {
+                                var selected = i === 0 ? ' selected' : '';
+                                $('#ExamGroupId').append('<option value="' + obj.id + '"' + selected + '>' + obj.examGroupName + '</option>');
+                            });
+                        } else {
+                            $('#ExamGroupId').append('<option value="0" disabled>No exams found.</option>');
+                        }
+                    },
+                    error: function () {
+                        $('#ExamGroupId').empty();
+                        $('#ExamGroupId').append('<option value="0">-Select Exam-</option>');
+                    }
+                });
+            }
+        }
+
         $(document).ready(function () {
+            $('#ExamTypeId, #monthId, #AcademicClassId, #AcademicSectionId').change(function () {
+                loadExamGroups();
+            });
+
             $('#myButton').click(function () {
                 let reportType = 'pdf';
                 let aSection = '0';
                 let academicClassId = '0';
                 let monthId = '0';
                 let examTypeId = '0';
+                let examGroupId = '0';
 
                 academicClassId = $('#AcademicClassId option:selected').val();
                 aSection = $('#AcademicSectionId option:selected').val();
                 monthId = $('#monthId option:selected').val();
                 examTypeId = $('#ExamTypeId option:selected').val();
+                examGroupId = $('#ExamGroupId option:selected').val();
 
-                if (academicClassId <= '0') {
+                if (academicClassId <= '0' || examGroupId <= '0') {
                     $('#InvalidForm').show();
-                    $('#AcademicSessionId').focus();
                     $('#iframe-container').hide();
                     $('#loading').hide();
                 }
@@ -116,33 +163,28 @@
                     $('#exportAcademicSectionId').attr('value', aSection);
                     $('#exportMonthId').attr('value', monthId);
                     $('#exportExamTypeId').attr('value', examTypeId);
+                    $('#exportExamGroupId').attr('value', examGroupId);
 
-                    console.log('Exam Type: ' + examTypeId);
-                    
                     $('#myIframe').attr('src',
                         '/Reports/AdmitCardExport?reportType=' + reportType +
                         '&academicClassId=' + academicClassId +
                         '&academicSectionId=' + aSection +
                         '&monthId=' + monthId +
-                        '&examTypeId=' + examTypeId
+                        '&examTypeId=' + examTypeId +
+                        '&examGroupId=' + examGroupId
                     );
 
                     var iframe = document.getElementById('myIframe');
                     $('#loading').show();
                     $('#iframe-container').hide();
                     $('#InvalidForm').hide();
-                    // Attach a load event handler to the iframe
                     iframe.onload = function () {
-                        console.log('Iframe loaded');
                         $('#loading').hide();
                         $('#exportOptions').show();
                         $('#iframe-container').show();
                     };
-
                 }
             });
-
-
 
             $('#AcademicClassId').change(function () {
                 let id = $('#AcademicClassId option:selected').val();
@@ -155,14 +197,12 @@
                     cache: false,
                     success: function (data) {
                         $('#AcademicSectionId').empty();
-
                         if (data != null || data != '') {
                             var o = '<option disabled selected value="0">Select Section Name</option>';
                             var o2 = '<option value="all">All Section</option>';
                             $('#AcademicSectionId').append(o);
                             $('#AcademicSectionId').append(o2);
                             $.each(data, function (i, obj) {
-                                console.log(obj.name);
                                 var op = '<option value="' + obj.id + '">' + obj.name + '</option>';
                                 $('#AcademicSectionId').append(op);
                             });
@@ -177,8 +217,6 @@
                     }
                 });
             });
-
         });
-
     </script>
 }

@@ -759,6 +759,22 @@ public class AcademicExamsController : Controller
         return View();
     }
 
+    public async Task<JsonResult> GetExamGroupsForAdmitCard(int examTypeId, int monthId, int classId, int sectionId)
+    {
+        var allGroups = await _examGroupManager.GetAllAsync();
+        var examGroups = allGroups
+            .Where(eg => eg.AcademicExamTypeId == examTypeId
+                && eg.ExamMonthId == monthId
+                && (eg.AcademicExams == null || eg.AcademicExams.Any(e =>
+                    e.AcademicClassId == classId
+                    && (sectionId <= 0 || !e.AcademicSectionId.HasValue || e.AcademicSectionId == sectionId))))
+            .OrderByDescending(eg => eg.Id)
+            .Select(eg => new { eg.Id, eg.ExamGroupName })
+            .ToList();
+
+        return Json(examGroups);
+    }
+
     [HttpPost]
     public async Task<JsonResult> UnlockExam(int exId)
     {

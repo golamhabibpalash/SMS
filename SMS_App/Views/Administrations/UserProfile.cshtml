@@ -31,14 +31,11 @@
         <div class="col-md-12 text-center">
             <form id="frmSearchByUserId" asp-action="UserProfile" asp-controller="Administrations" method="get" class="">
                 <div class="row">
-                    <div class="col-md-4 text-start">
-                        <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#employeeSearchModal">
-                            Select User
-                        </button>
-                        @if (ViewBag.UserName != null)
-                        {
-                            <span class="text-light">@ViewBag.UserName</span>
-                        }
+                    <div class="col-md-2 text-start d-flex align-items-center">
+                        <label class="text-light me-2 mb-0">Select User:</label>
+                        <select class="form-control select2" asp-items="ViewBag.UserList" id="ddUserId" data-placeholder="Search user..." style="width:250px">
+                            <option></option>
+                        </select>
                     </div>
                     <div class="col-md-4 offset-md-3" style="visibility:hidden">
                         <div class="input-group mb-3">
@@ -240,36 +237,11 @@
     </div>
 }
 
-<!-- Employee Select Modal -->
-<div class="modal fade" id="employeeSearchModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content text-center">
-            <div class="modal-header text-center">
-                <h4 class="text-center">Select User</h4>
-            </div>
-            <div class="modal-body">
-                <div class="form-group row">
-                    <label class="col-md-4 text-md-end col-form-label">Select User</label>
-                    <div class="col-md-8">
-                        <select class="form-control select2" asp-items="ViewBag.UserList" id="ddUserId" data-placeholder="Search user...">
-                            <option></option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 @section Scripts{
     <script>
         $(document).on('select2:select', '#ddUserId', function (e) {
             var userId = e.params.data.id;
             $('#UserIdInput').val(userId);
-            $('#employeeSearchModal').modal('hide');
             $('#frmSearchByUserId').submit();
         });
 

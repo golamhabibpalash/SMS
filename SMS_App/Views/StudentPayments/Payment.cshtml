@@ -462,6 +462,15 @@
         var availableClasses = @Html.Raw(Json.Serialize(Model.AvailableClasses));
         var currentSessionId = @Model.CurrentAcademicSession?.Id ?? 0;
     </script>
+    <script>
+        function openReport(paymentId) {
+            var iframe = document.getElementById('myIframe');
+            iframe.src = '/Reports/ReceiptPaymentView?paymentId=' + paymentId;
+            document.getElementById('paymentIdExport').value = paymentId;
+            document.getElementById('exportOptions').style.display = 'flex';
+            $('#exampleModalCenter').modal('show');
+        }
+    </script>
     <script src="@Url.Content("~/js/StudentPayments/Payment.js")"></script>
     <script>
         function loadFeeHeadsByStudent(sessionId, classId, studentId) {

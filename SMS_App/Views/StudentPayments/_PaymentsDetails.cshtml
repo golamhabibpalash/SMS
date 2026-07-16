@@ -31,7 +31,7 @@
                 </tr>
             </thead>
             <tbody>
-                @if (Model.SessionWisePaymentVMs.Count > 0)
+                @if (Model.SessionWisePaymentVMs?.Count > 0)
                 {
                     foreach (var item in Model.SessionWisePaymentVMs)
                     {
@@ -41,7 +41,7 @@
                     }
                         <tr class="card-header table-active font-weight-bold" data-bs-toggle="collapse" data-bs-target=".tr_@trCount" area-control="collapse_@trCount" aria-expanded="false">
                             <td>@trCount</td>
-                            <td>@item.FeeHeadName <span class="badge badge-info">@item.SessionWisePaymentDetails.Count</span></td>
+                            <td>@item.FeeHeadName <span class="badge badge-info">@(item.SessionWisePaymentDetails?.Count ?? 0)</span></td>
                             <td class="text-right">@item.Amount</td>
                             <td class="text-right">@item.PaidAmount</td>
                             <td class="text-right">@item.Balance</td>
@@ -70,7 +70,7 @@
                                 }                                                        
                             </td>
                         </tr>
-                        @if (item.SessionWisePaymentDetails.Count > 0)
+                        @if (item.SessionWisePaymentDetails?.Count > 0)
                         {
                             <tr class="collapse tr_@trCount card-body table-sm table-light text-dark" data-bs-parent="#accordion">
                                 <td colspan="7" class="text-center">
@@ -147,22 +147,3 @@
             </tfoot>
         </table>
     </div>
-
-@section Scripts{ 
-<script>
-    function openReport(paymentId) {
-    var iframe = document.getElementById('myIframe');
-    iframe.src = '/Reports/ReceiptPaymentView?paymentId=' + paymentId;
-
-    // Set hidden input field value for exporting
-    document.getElementById('paymentIdExport').value = paymentId;
-
-    // Show export options
-    document.getElementById('exportOptions').style.display = 'flex';
-
-    // Open the modal
-    $('#exampleModalCenter').modal('show');
-}
-
-</script>
-}

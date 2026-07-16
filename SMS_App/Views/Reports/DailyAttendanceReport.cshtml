@@ -94,25 +94,6 @@
         <div class="row" style="height:600px;">
             <iframe id="myIframe" style="width: 100%; height: 100%;"></iframe>
         </div>
-        <div class="row" id="exportOptions" style="display:none">
-            <div class="col-md-12 d-flex justify-content-end">
-                <form asp-action="DailyAttendaceReportExport" asp-controller="Reports" method="get">
-                    <input type="hidden" id="exportFromDate" name="fromDate" />
-                    <input type="hidden" id="exportAcademicClassId" name="academicClassId" />
-                    <input type="hidden" id="exportAcademicSectionId" name="academicSectionId" />
-                    <input type="hidden" id="exportAttendanceType" name="attendanceType" />
-                    <input type="hidden" id="exportAttendanceCategory" name="attendanceCategory" />
-                    <input type="hidden" id="exportAttendanceFor" name="attendanceFor" />
-                    <input type="hidden" id="exportSMS" name="sms" />
-                    <div class="btn-group btn-sm mr-2 " role="group" aria-label="First group">
-                        <input type="hidden" name="fileName" value="Daily Attendance Report_@DateTime.Now.ToString("dd_MM_yyyy")" />
-                        <button type="submit" name="reportType" value="pdf" class="btn-sm btn btn-danger" data-toggle="tooltip" title="Export PDF" data-placement="left"><i class="fas fa-file-pdf"></i></button>
-                        <button type="submit" name="reportType" value="EXCELOPENXML" class="btn-sm btn btn-success" data-toggle="tooltip" title="Export xls" data-placement="top"><i class="fas fa-file-excel"></i></button>
-                        <button type="submit" name="reportType" value="word" class="btn-sm btn btn-primary" data-toggle="tooltip" title="Export doc" data-placement="top"><i class="fas fa-file-word"></i></button>
-                    </div>
-                </form>
-            </div>
-        </div>
     </div>
     <div class="col-md-8 text-center" id="loading" style="display:none">
         <div class="d-flex justify-content-center h-100 align-content-center align-items-center">
@@ -154,26 +135,15 @@
                     $('#loading').hide();
                 }
                 else {
-                    $('#exportAcademicClassId').attr('value', academicClassId);
-                    $('#exportAcademicSectionId').attr('value', aSection);
-                    $('#exportFromDate').attr('value', fromDate);
-                    $('#exportAttendanceType').attr('value', attendanceType);
-                    $('#exportAttendanceCategory').attr('value', attendanceCategory);
-                    $('#exportAttendanceCategory').attr('value', attendanceCategory);
-                    $('#exportAttendanceFor').attr('value', attendanceFor);
-                    $('#exportSMS').attr('value', sms);
-
                     $('#myIframe').attr('src', '/Reports/DailyAttendaceReportExport?reportType=' + reportType + '&&fromDate=' + fromDate + '&&academicClassId=' + academicClassId + '&&academicSectionId=' + aSection + "&&attendanceType=" + attendanceType + "&&fileName=" + fileName + "&&attendanceFor=" + attendanceFor + "&&attendanceCategory=" + attendanceCategory+"&&sms="+sms);
 
                     var iframe = document.getElementById('myIframe');
                     $('#loading').show();
                     $('#iframe-container').hide();
                     $('#InvalidForm').hide();
-                    // Attach a load event handler to the iframe
                     iframe.onload = function () {
                         console.log('Iframe loaded');
                         $('#loading').hide();
-                        $('#exportOptions').show();
                         $('#iframe-container').show();
                     };
 

@@ -226,6 +226,116 @@ namespace SMS.DB
             builder.Entity<PaidAmountResult>().ToView(nameof(PaidAmountResults)).HasNoKey();
             builder.Entity<PreviouisPaymentDetailsDto>().ToView(nameof(PreviousPaymentsSummery)).HasNoKey();
 
+            builder.Entity<Employee>(entity =>
+            {
+                entity.HasOne(e => e.PresentDistrict)
+                    .WithMany()
+                    .HasForeignKey(e => e.PresentDistrictId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.PermanentDistrict)
+                    .WithMany()
+                    .HasForeignKey(e => e.PermanentDistrictId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.PresentDivision)
+                    .WithMany()
+                    .HasForeignKey(e => e.PresentDivisionId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.PermanentDivision)
+                    .WithMany()
+                    .HasForeignKey(e => e.PermanentDivisionId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.PresentUpazila)
+                    .WithMany()
+                    .HasForeignKey(e => e.PresentUpazilaId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.PermanentUpazila)
+                    .WithMany()
+                    .HasForeignKey(e => e.PermanentUpazilaId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            builder.Entity<Student>(entity =>
+            {
+                entity.HasOne(e => e.PresentDistrict)
+                    .WithMany()
+                    .HasForeignKey(e => e.PresentDistrictId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.PermanentDistrict)
+                    .WithMany()
+                    .HasForeignKey(e => e.PermanentDistrictId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.PresentDivision)
+                    .WithMany()
+                    .HasForeignKey(e => e.PresentDivisionId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.PermanentDivision)
+                    .WithMany()
+                    .HasForeignKey(e => e.PermanentDivisionId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.PresentUpazila)
+                    .WithMany()
+                    .HasForeignKey(e => e.PresentUpazilaId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.PermanentUpazila)
+                    .WithMany()
+                    .HasForeignKey(e => e.PermanentUpazilaId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            builder.Entity<AppliedStudent>(entity =>
+            {
+                entity.HasOne(e => e.PresentDistrict)
+                    .WithMany()
+                    .HasForeignKey(e => e.PresentDistrictId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.PermanentDistrict)
+                    .WithMany()
+                    .HasForeignKey(e => e.PermanentDistrictId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.PresentDivision)
+                    .WithMany()
+                    .HasForeignKey(e => e.PresentDivisionId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.PermanentDivision)
+                    .WithMany()
+                    .HasForeignKey(e => e.PermanentDivisionId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.PresentUpazila)
+                    .WithMany()
+                    .HasForeignKey(e => e.PresentUpazilaId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.PermanentUpazila)
+                    .WithMany()
+                    .HasForeignKey(e => e.PermanentUpazilaId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            foreach (var entityType in builder.Model.GetEntityTypes())
+            {
+                foreach (var foreignKey in entityType.GetForeignKeys())
+                {
+                    if (foreignKey.DeleteBehavior == DeleteBehavior.Cascade)
+                    {
+                        foreignKey.DeleteBehavior = DeleteBehavior.Restrict;
+                    }
+                }
+            }
+
         }
     }
 }

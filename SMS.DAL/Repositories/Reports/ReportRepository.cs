@@ -109,7 +109,7 @@ namespace SMS.DAL.Repositories.Reports
                 {
                     ReceiptNo = sp.ReceiptNo,
                     PaidDate = sp.PaidDate.ToString("yyyy-MM-dd"),
-                    PaymentTypeName = "",
+                    PaymentTypeName = string.Join(", ", sp.StudentPaymentDetails.Select(d => d.StudentFeeHead.Name)),
                     TotalPayment = sp.TotalPayment,
                     Remarks = sp.Remarks
                 })

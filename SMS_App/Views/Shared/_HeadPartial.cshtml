@@ -191,7 +191,8 @@
 
             // Re-initialize select2 inside modals on show
             $(document).on('shown.bs.modal', '.modal', function () {
-                $(this).find('.select2').each(function () {
+                var modal = $(this);
+                modal.find('.select2').each(function () {
                     var $this = $(this);
 
                     if ($this.data('select2')) {
@@ -203,7 +204,8 @@
                         width: '100%',
                         allowClear: true,
                         placeholder: $this.data('placeholder') || 'Select an option',
-                        matcher: matchStart
+                        matcher: matchStart,
+                        dropdownParent: modal
                     });
                 });
             });

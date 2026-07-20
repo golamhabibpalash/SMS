@@ -474,6 +474,63 @@ public class AcademicExamsController : Controller
         return RedirectToAction("Details", new { id = model.AcademicExamId });
     }
 
+    [HttpPost]
+    public async Task<JsonResult> AddAllStudentsToExam(int academicExamId)
+    {
+        var exam = await _examManager.GetByIdAsync(academicExamId);
+        if (exam == null)
+        {
+            return Json(new { success = false, message = "Exam not found." });
+        }
+
+        var sessionId = exam.AcademicExamGroup.AcademicSessionId;
+        var classId = exam.AcademicClassId;
+        var sectionId = exam.AcademicSectionId;
+
+        List<Student> allStudents;
+        if (sectionId.HasValue)
+        {
+            allStudents = await _studentManager.GetStudentsByClassSessionSectionAsync(sessionId, classId, sectionId.Value);
+        }
+        else
+        {
+            allStudents = await _studentManager.GetStudentsByClassIdAndSessionIdAsync(sessionId, classId);
+        }
+
+        var existingStudentIds = new HashSet<int>(
+            exam.AcademicExamDetails.Select(d => d.StudentId)
+        );
+
+        var newStudents = allStudents.Where(s => !existingStudentIds.Contains(s.Id) && s.Status == true).ToList();
+        var skippedCount = allStudents.Count(s => existingStudentIds.Contains(s.Id));
+
+        foreach (var student in newStudents)
+        {
+            var newDetail = new AcademicExamDetail
+            {
+                AcademicExamId = exam.Id,
+                StudentId = student.Id,
+                ObtainMark = 0,
+                Status = true,
+                CreatedAt = DateTime.Now,
+                CreatedBy = HttpContext.Session.GetString("UserId"),
+                EditedBy = HttpContext.Session.GetString("UserId")
+            };
+            await _academicExamDetailsManager.AddAsync(newDetail);
+        }
+
+        exam.EditedAt = DateTime.Now;
+        exam.EditedBy = HttpContext.Session.GetString("UserId");
+        await _examManager.UpdateAsync(exam);
+
+        return Json(new
+        {
+            success = true,
+            addedCount = newStudents.Count,
+            skippedCount = skippedCount
+        });
+    }
+
     // POST: AcademicExamsController/Edit/5
     [HttpPost]
     [ValidateAntiForgeryToken]

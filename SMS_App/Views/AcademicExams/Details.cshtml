@@ -291,8 +291,10 @@
                         <div class="form-group row">
                             <div class="col-sm-12 text-right">
                                 <button type="submit" class="btn btn-primary">Submit</button>
+                                <button type="button" class="btn btn-success" onclick="addAllStudents(this)">Add All Students</button>
                             </div>
                         </div>
+                        <div id="bulkResult" class="mt-2" style="display:none;"></div>
                     </form>
                 </div>
             </div>
@@ -452,6 +454,39 @@
 
             // Now, you can submit the form
             document.getElementById("myForm").submit();
+        }
+
+        function addAllStudents(btn) {
+            if (!confirm('Are you sure you want to add all remaining students to this exam?')) return;
+
+            var examId = document.querySelector('input[name="AcademicExamId"]').value;
+            btn.disabled = true;
+            btn.textContent = 'Adding...';
+
+            $.ajax({
+                type: 'POST',
+                url: '/AcademicExams/AddAllStudentsToExam',
+                data: { academicExamId: examId },
+                success: function (response) {
+                    if (response.success) {
+                        var msg = 'Successfully added ' + response.addedCount + ' students.';
+                        if (response.skippedCount > 0) {
+                            msg += ' ' + response.skippedCount + ' students were skipped because they were already added to the exam.';
+                        }
+                        $('#bulkResult').removeClass('alert alert-danger').addClass('alert alert-success').text(msg).show();
+                        setTimeout(function () { location.reload(); }, 2000);
+                    } else {
+                        $('#bulkResult').removeClass('alert alert-success').addClass('alert alert-danger').text(response.message).show();
+                    }
+                },
+                error: function () {
+                    $('#bulkResult').removeClass('alert alert-success').addClass('alert alert-danger').text('An error occurred.').show();
+                },
+                complete: function () {
+                    btn.disabled = false;
+                    btn.textContent = 'Add All Students';
+                }
+            });
         }
 
         function confirmDelete(element) { 

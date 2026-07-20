@@ -162,6 +162,7 @@ namespace SMS.DAL.Repositories
                 .Include(s => s.AcademicSubject)
                 .Include(s => s.AcademicSection)
                 .Include(s => s.Employee)
+                .Include(s => s.AcademicExamDetails)
                 .ToListAsync();
         }
     }

@@ -168,7 +168,7 @@ public class AcademicExamManager : Manager<AcademicExam>, IAcademicExamManager
                     SectionId = exam.AcademicSectionId,
                     EmployeeName = exam.Employee?.EmployeeName,
                     EmployeeId = exam.EmployeeId,
-                    TotalStudents = 0,
+                    TotalStudents = exam.AcademicExamDetails?.Count ?? 0,
                     TotalMarks = exam.TotalMarks,
                     IsLocked = false
                 }

@@ -155,14 +155,6 @@ public class AcademicExamsController : Controller
         academicExamDetailVM = _mapper.Map<AcademicExamDetailVM>(exam);
         var allStudents = await _studentManager.GetStudentsByClassIdAndSessionIdAsync(exam.AcademicExamGroup.AcademicSessionId, exam.AcademicClassId);
 
-        if (exam.AcademicExamDetails.Count > 0)
-        {
-            foreach (var eItem in exam.AcademicExamDetails)
-            {
-                allStudents.Remove(eItem.Student);
-            }
-        }
-
         academicExamDetailVM.StudentList = allStudents.OrderBy(s => s.ClassRoll).Select(s => new SelectListItem
         {
             Value = s.Id.ToString(),
@@ -453,6 +445,7 @@ public class AcademicExamsController : Controller
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<ActionResult> AddStudentToExistingExam(IndividualStudentExamGroup model)
     {
         var existingExam = await _examManager.GetByIdAsync(model.AcademicExamId);

@@ -87,7 +87,7 @@
         </fieldset>
         <div class="row">
             <span class="wall text-center">
-                <button class="btn btn-block btn-info" data-toggle="modal" data-target=".addStudentModal">Add Student</button>
+                <button class="btn btn-block btn-info" data-bs-toggle="modal" data-bs-target=".addStudentModal">Add Student</button>
             </span>
         </div>
         <div class="row">
@@ -266,7 +266,7 @@
                             <div class="col-sm-9">
                                 <select class="form-control select2" name="StudentId">
                                     <option value="">-Select Student-</option>
-                                    @if (Model.StudentList?.Count > 0)
+                                    @if (Model.MissingStudentList?.Count > 0)
                                     {
                                         foreach (var item in Model.MissingStudentList)
                                         {

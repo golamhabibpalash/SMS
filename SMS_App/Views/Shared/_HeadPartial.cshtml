@@ -77,13 +77,13 @@
         }
 
         /* Fix for Select2 dropdown behind modal */
-        .select2-container--bootstrap-5.select2-container--open {
-            z-index: 10000 !important;
+        .select2-container--open {
+            z-index: 99999 !important;
         }
 
-        /* Ensure dropdown is above modal */
-        .select2-container--bootstrap-5 .select2-dropdown {
-            z-index: 10000 !important;
+        /* Ensure dropdown is above modal (works with dropdownParent: body) */
+        .select2-dropdown {
+            z-index: 99999 !important;
         }
 
         /* Fix for search input in modal */
@@ -104,12 +104,7 @@
             overflow-y: auto !important;
         }
 
-        /* Ensure Select2 dropdown doesn't get hidden */
-        .select2-container--bootstrap-5 .select2-dropdown {
-            display: block !important;
-            position: absolute !important;
-            visibility: visible !important;
-        }
+
 
         /* Multiple select styling */
         .select2-container--bootstrap-5 .select2-selection--multiple {
@@ -205,7 +200,7 @@
                         allowClear: true,
                         placeholder: $this.data('placeholder') || 'Select an option',
                         matcher: matchStart,
-                        dropdownParent: modal
+                        dropdownParent: $('body')
                     });
                 });
             });

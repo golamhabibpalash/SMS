@@ -184,6 +184,22 @@
                 });
             });
 
+            // When select2 opens inside a modal, prevent clipping by setting overflow visible
+            $(document).on('select2:open', function (e) {
+                var $modal = $(e.target).closest('.modal');
+                if ($modal.length) {
+                    $modal.css('overflow', 'visible');
+                }
+            });
+
+            // Restore modal overflow when select2 closes
+            $(document).on('select2:close', function (e) {
+                var $modal = $(e.target).closest('.modal');
+                if ($modal.length) {
+                    $modal.css('overflow', '');
+                }
+            });
+
             // Re-initialize select2 inside modals on show
             $(document).on('shown.bs.modal', '.modal', function () {
                 var modal = $(this);
@@ -200,14 +216,16 @@
                         allowClear: true,
                         placeholder: $this.data('placeholder') || 'Select an option',
                         matcher: matchStart,
-                        dropdownParent: $('body')
+                        dropdownParent: modal
                     });
                 });
             });
 
-            // Clean up select2 when modal is hidden
+            // Clean up select2 when modal is hidden and restore overflow
             $(document).on('hidden.bs.modal', '.modal', function () {
-                $(this).find('.select2').each(function () {
+                var modal = $(this);
+                modal.css('overflow', '');
+                modal.find('.select2').each(function () {
                     if ($(this).data('select2')) {
                         $(this).select2('destroy');
                     }

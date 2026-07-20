@@ -127,6 +127,14 @@
             overflow: visible !important;
         }
 
+        /* Fix select2 dropdown hidden behind modal by removing overflow clipping */
+        .modal:has(.select2-container--open),
+        .modal:has(.select2-container--open) .modal-dialog,
+        .modal:has(.select2-container--open) .modal-content,
+        .modal:has(.select2-container--open) .card {
+            overflow: visible !important;
+        }
+
 
     </style>
 

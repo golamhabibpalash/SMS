@@ -53,6 +53,9 @@ jobs:
               echo "username=${{ secrets.NOBLE_FTP_USERNAME }}" >> $GITHUB_OUTPUT
               echo "password=${{ secrets.NOBLE_FTP_PASSWORD }}" >> $GITHUB_OUTPUT
               echo "path=${{ secrets.NOBLE_FTP_PATH }}" >> $GITHUB_OUTPUT
+              echo "ssh_host=${{ secrets.NOBLE_SSH_HOST }}" >> $GITHUB_OUTPUT
+              echo "ssh_user=${{ secrets.NOBLE_SSH_USER }}" >> $GITHUB_OUTPUT
+              echo "ssh_key=${{ secrets.NOBLE_SSH_KEY }}" >> $GITHUB_OUTPUT
               echo "url=https://eims.nobleschoolbd.com" >> $GITHUB_OUTPUT
               echo "client_name=Noble" >> $GITHUB_OUTPUT
               ;;
@@ -61,6 +64,9 @@ jobs:
               echo "username=${{ secrets.MAMI_FTP_USERNAME }}" >> $GITHUB_OUTPUT
               echo "password=${{ secrets.MAMI_FTP_PASSWORD }}" >> $GITHUB_OUTPUT
               echo "path=${{ secrets.MAMI_FTP_PATH }}" >> $GITHUB_OUTPUT
+              echo "ssh_host=${{ secrets.MAMI_SSH_HOST }}" >> $GITHUB_OUTPUT
+              echo "ssh_user=${{ secrets.MAMI_SSH_USER }}" >> $GITHUB_OUTPUT
+              echo "ssh_key=${{ secrets.MAMI_SSH_KEY }}" >> $GITHUB_OUTPUT
               echo "url=https://eims.mamitonnessaghs.edu.bd" >> $GITHUB_OUTPUT
               echo "client_name=Mamitonnesa" >> $GITHUB_OUTPUT
               ;;
@@ -69,6 +75,9 @@ jobs:
               echo "username=${{ secrets.DMCPS_FTP_USERNAME }}" >> $GITHUB_OUTPUT
               echo "password=${{ secrets.DMCPS_FTP_PASSWORD }}" >> $GITHUB_OUTPUT
               echo "path=${{ secrets.DMCPS_FTP_PATH }}" >> $GITHUB_OUTPUT
+              echo "ssh_host=${{ secrets.DMCPS_SSH_HOST }}" >> $GITHUB_OUTPUT
+              echo "ssh_user=${{ secrets.DMCPS_SSH_USER }}" >> $GITHUB_OUTPUT
+              echo "ssh_key=${{ secrets.DMCPS_SSH_KEY }}" >> $GITHUB_OUTPUT
               echo "url=https://eims.mcpsbd.com" >> $GITHUB_OUTPUT
               echo "client_name=DMCPS" >> $GITHUB_OUTPUT
               ;;
@@ -211,6 +220,34 @@ jobs:
             quit
           EOF
           echo "✓ All files deployed successfully"
+
+      - name: Restart application service
+        shell: bash
+        continue-on-error: true
+        env:
+          SSH_HOST: ${{ steps.vars.outputs.ssh_host }}
+          SSH_USER: ${{ steps.vars.outputs.ssh_user }}
+          SSH_KEY: ${{ steps.vars.outputs.ssh_key }}
+          CLIENT: ${{ steps.vars.outputs.client_name }}
+        run: |
+          svc="eims-$(echo "$CLIENT" | tr '[:upper:]' '[:lower:]').service"
+
+          if [ -z "$SSH_HOST" ] || [ -z "$SSH_USER" ] || [ -z "$SSH_KEY" ]; then
+            echo "⚠ SSH credentials not configured. Skipping service restart."
+            echo "  To enable, add *_SSH_HOST, *_SSH_USER, *_SSH_KEY secrets in GitHub."
+            exit 0
+          fi
+
+          echo "Restarting $svc on $SSH_HOST..."
+
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" \
+            "sudo systemctl restart $svc" 2>&1
+
+          echo "✓ Service $svc restarted successfully"
 
       - name: Remove maintenance page
         shell: bash

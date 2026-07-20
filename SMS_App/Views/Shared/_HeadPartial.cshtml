@@ -178,88 +178,49 @@
     <script>feather.replace();</script>
 
     <script>
+        var select2Options = {
+            theme: 'bootstrap-5',
+            width: '100%',
+            allowClear: true,
+            matcher: matchStart,
+            dropdownParent: $('body')
+        };
+
+        function initSelect2($el) {
+            var placeholder = $el.data('placeholder') || 'Select an option';
+            $el.select2($.extend({}, select2Options, { placeholder: placeholder }));
+        }
+
         $(document).ready(function () {
-            // Initialize all select2 elements with proper configuration
             $('.select2').each(function () {
-                var $this = $(this);
-                
-                $this.select2({
-                    theme: 'bootstrap-5',
-                    width: '100%',
-                    allowClear: true,
-                    placeholder: $this.data('placeholder') || 'Select an option',
-                    matcher: matchStart
-                });
+                initSelect2($(this));
             });
 
-            // When select2 opens inside a modal, prevent clipping by setting overflow visible
-            $(document).on('select2:open', function (e) {
-                var $modal = $(e.target).closest('.modal');
-                if ($modal.length) {
-                    $modal.css('overflow', 'visible');
-                }
-            });
-
-            // Restore modal overflow when select2 closes
-            $(document).on('select2:close', function (e) {
-                var $modal = $(e.target).closest('.modal');
-                if ($modal.length) {
-                    $modal.css('overflow', '');
-                }
-            });
-
-            // Re-initialize select2 inside modals on show
+            // Re-initialize select2 inside modals on show (hidden modal breaks select2 sizing)
             $(document).on('shown.bs.modal', '.modal', function () {
-                var modal = $(this);
-                modal.find('.select2').each(function () {
+                $(this).find('.select2').each(function () {
                     var $this = $(this);
-
                     if ($this.data('select2')) {
                         $this.select2('destroy');
                     }
-
-                    $this.select2({
-                        theme: 'bootstrap-5',
-                        width: '100%',
-                        allowClear: true,
-                        placeholder: $this.data('placeholder') || 'Select an option',
-                        matcher: matchStart,
-                        dropdownParent: modal
-                    });
+                    initSelect2($this);
                 });
             });
 
-            // Clean up select2 when modal is hidden and restore overflow
             $(document).on('hidden.bs.modal', '.modal', function () {
-                var modal = $(this);
-                modal.css('overflow', '');
-                modal.find('.select2').each(function () {
+                $(this).find('.select2').each(function () {
                     if ($(this).data('select2')) {
                         $(this).select2('destroy');
                     }
                 });
             });
 
-            // Custom matcher for case-insensitive search
             function matchStart(params, data) {
-                // If there are no search terms, return all of the data
-                if ($.trim(params.term) === '') {
-                    return data;
-                }
-
-                // Do not display the item if there is no 'text' property
-                if (typeof data.text === 'undefined') {
-                    return null;
-                }
-
-                // `params.term` should be the term that is used for searching
-                // `data.text` is the text that is displayed for the data object
+                if ($.trim(params.term) === '') return data;
+                if (typeof data.text === 'undefined') return null;
                 if (data.text.toLowerCase().indexOf(params.term.toLowerCase()) > -1) {
-                    var modifiedData = $.extend({}, data, true);
-                    return modifiedData;
+                    return $.extend({}, data, true);
                 }
-
-                // Return `null` if the term does not match
                 return null;
             }
         });

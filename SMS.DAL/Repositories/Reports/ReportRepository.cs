@@ -401,46 +401,41 @@ namespace SMS.DAL.Repositories.Reports
         }
         public async Task<List<StudentWiseMarkSheetVM>> GetStudentWiseMarkSheet(int examGroupId, int classId)
         {
-            var result = await _context.AcademicExams
-                .Include(e => e.AcademicExamGroup)
-                .Include(e => e.AcademicClass)
-                .Include(e => e.AcademicSection)
-                .Include(e => e.AcademicSubject)
-                .Include(e => e.AcademicExamDetails).ThenInclude(aed => aed.Student).ThenInclude(s => s.Gender)
-                .Include(e => e.AcademicExamDetails).ThenInclude(aed => aed.Student).ThenInclude(s => s.Religion)
-                .Where(e => e.AcademicExamGroupId == examGroupId && e.AcademicClassId == classId)
-                .SelectMany(e => e.AcademicExamDetails.Select(aed => new StudentWiseMarkSheetVM
+            var result = await _context.ExamResults
+                .Where(r => r.AcademicExamGroupId == examGroupId && r.AcademicClassId == classId)
+                .SelectMany(r => r.ExamResultDetails.Select(erd => new StudentWiseMarkSheetVM
                 {
-                    ExamGroupName = e.AcademicExamGroup.ExamGroupName,
-                    ClassName = e.AcademicClass.Name,
-                    StudentName = aed.Student.Name,
-                    FatherName = aed.Student.FatherName,
-                    MotherName = aed.Student.MotherName,
-                    ClassRoll = aed.Student.ClassRoll,
-                    SectionName = aed.Student.AcademicSection.Name,
-                    AcademicSectionId = aed.Student.AcademicSectionId,
-                    GenderName = aed.Student.Gender.Name,
-                    SubjectName = e.AcademicSubject.SubjectName,
-                    TotalMark = e.TotalMarks,
-                    ObtainMark = aed.ObtainMark,
-                    GPA = 0,
-                    Grade = "",
-                    MaxNumber = e.TotalMarks,
-                    FinalGPA = 0,
-                    FinalGrade = "",
-                    AttendancePercentage = 0,
-                    TotalObtainMarks = 0,
-                    TotalFails = 0,
-                    MeritPosition = 0,
-                    GradeComments = "",
+                    ExamGroupName = r.AcademicExamGroup.ExamGroupName,
+                    ClassName = r.AcademicClass.Name,
+                    StudentName = r.Student.Name,
+                    FatherName = r.Student.FatherName,
+                    MotherName = r.Student.MotherName,
+                    ClassRoll = r.Student.ClassRoll,
+                    SectionName = r.Student.AcademicSection.Name,
+                    AcademicSectionId = r.Student.AcademicSectionId,
+                    GenderName = r.Student.Gender.Name,
+                    SubjectName = erd.AcademicSubject.SubjectName,
+                    TotalMark = erd.TotalMark,
+                    ObtainMark = erd.ObtainMark,
+                    GPA = erd.GPA,
+                    Grade = erd.Grade,
+                    MaxNumber = erd.TotalMark,
+                    FinalGPA = r.CGPA,
+                    FinalGrade = r.FinalGrade,
+                    AttendancePercentage = r.AttendancePercentage,
+                    TotalObtainMarks = r.TotalObtainMarks,
+                    TotalFails = r.TotalFails,
+                    MeritPosition = r.Rank,
+                    GradeComments = r.GradeComments,
                     ExamGroupId = examGroupId,
                     AcademicClassId = classId,
-                    StudentId = aed.StudentId,
-                    DOB = aed.Student.DOB,
-                    ReligionName = aed.Student.Religion.Name,
-                    CreatedAt = aed.CreatedAt
+                    StudentId = r.StudentId,
+                    DOB = r.Student.DOB,
+                    ReligionName = r.Student.Religion.Name,
+                    CreatedAt = r.CreatedAt
                 }))
                 .OrderBy(r => r.ClassRoll)
+                .ThenBy(r => r.SubjectName)
                 .ToListAsync();
 
             return result;

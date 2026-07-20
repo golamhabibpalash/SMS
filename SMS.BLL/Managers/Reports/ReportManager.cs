@@ -87,17 +87,7 @@ namespace SMS.BLL.Managers.Reports
         public async Task<List<StudentWiseMarkSheetVM>> GetStudentWiseMarkSheet(int examGroupId, int classId)
         {
             var result = await _reportRepository.GetStudentWiseMarkSheet(examGroupId, classId);
-
-            result = result.Where(x => x.ExamGroupId == examGroupId).ToList();
-
-            var fResult = result
-            .GroupBy(g => new { g.ExamGroupId, g.AcademicSectionId, g.StudentId, g.SubjectName })
-            .Select(g => g.First())
-            .OrderBy(x => x.ClassRoll)
-            .ThenBy(x => x.SubjectName)
-            .ToList();
-
-            return fResult;
+            return result;
         }
 
         public Task<List<RptDailyAttendaceVM>> GetDailyAttendanceReportCheckOut(string fromDate, string AcademicClassId, string AcademicSectionId, string attendanceType, string aSessionId)

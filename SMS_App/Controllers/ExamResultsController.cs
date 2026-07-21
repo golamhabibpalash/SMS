@@ -859,37 +859,43 @@ public class ExamResultsController : Controller
     }
     private async Task<int> GetTotalFailFromExam(int examGroupId, int studentId, int academicClassId)
     {
-        // Fetch exam details and total exams for the class
         var examDetails = await _academicExamDetailsManager
             .GetAllByExamGroupAndStudentId(examGroupId, studentId);
-
-        //Get Unique Subjects
-        var totoalUniqueExamDeatilsCount = examDetails?.GroupBy(s => s.AcademicExam.AcademicSubjectId).Count()??0;
 
         var totalExams = await _academicExamManager
             .GetTotalExamAsync(examGroupId, academicClassId);
 
-        // Calculate missing exams (if no details, all are missing)
-        int missingExams = totalExams - totoalUniqueExamDeatilsCount;
+        if (examDetails == null || examDetails.Count == 0)
+            return totalExams;
 
-        // Start fail count with missing exams
-        int totalFail = missingExams;
+        // Group by subject so we count one fail per failed subject,
+        // not one fail per failed component (MCQ, Written, Practical).
+        var subjectGroups = examDetails
+            .Where(d => d.AcademicExam?.TotalMarks > 0)
+            .GroupBy(d => d.AcademicExam.AcademicSubjectId);
 
-        if (examDetails == null || examDetails?.Count == 0)
-            return totalFail;
+        int totalFail = 0;
 
-        // Check each exam result
-        foreach (var exam in examDetails)
+        foreach (var subjectGroup in subjectGroups)
         {
-            if (exam.AcademicExam?.TotalMarks <= 0)
-                continue; // skip invalid exam data
-
-            double percentage = (exam.ObtainMark * 100.0) / exam.AcademicExam.TotalMarks;
-            double gpa = await GetGradePointByNumber(percentage);
-
-            if (gpa <= 0)
+            bool subjectFailed = false;
+            foreach (var exam in subjectGroup)
+            {
+                double percentage = (exam.ObtainMark * 100.0) / exam.AcademicExam.TotalMarks;
+                double gpa = await GetGradePointByNumber(percentage);
+                if (gpa <= 0)
+                {
+                    subjectFailed = true;
+                    break;
+                }
+            }
+            if (subjectFailed)
                 totalFail++;
         }
+
+        // Subjects with no exam details at all count as fails
+        int subjectsWithDetails = subjectGroups.Count();
+        totalFail += totalExams - subjectsWithDetails;
 
         return totalFail;
     }

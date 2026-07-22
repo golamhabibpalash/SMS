@@ -178,6 +178,15 @@
     <script>feather.replace();</script>
 
     <script>
+        function matchStart(params, data) {
+            if ($.trim(params.term) === '') return data;
+            if (typeof data.text === 'undefined') return null;
+            if (data.text.toLowerCase().indexOf(params.term.toLowerCase()) > -1) {
+                return $.extend({}, data, true);
+            }
+            return null;
+        }
+
         var select2Options = {
             theme: 'bootstrap-5',
             width: '100%',
@@ -214,15 +223,6 @@
                     }
                 });
             });
-
-            function matchStart(params, data) {
-                if ($.trim(params.term) === '') return data;
-                if (typeof data.text === 'undefined') return null;
-                if (data.text.toLowerCase().indexOf(params.term.toLowerCase()) > -1) {
-                    return $.extend({}, data, true);
-                }
-                return null;
-            }
         });
     </script>
 

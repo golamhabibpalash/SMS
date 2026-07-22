@@ -70,6 +70,7 @@ public class AcademicSubjectsController : Controller
     public async Task<IActionResult> Create()
     {
         ViewData["AcademicSubjectTypeId"] = new SelectList(await _academicSubjectTypeManager.GetAllAsync(), "Id", "SubjectTypeName");
+        ViewData["AcademicClassId"] = new SelectList(await _academicClassManager.GetAllAsync(), "Id", "Name");
         ViewData["QuestionFormatId"] = new SelectList(await _questionFormationManager.GetAllAsync(), "Id", "Name");
         ViewData["ReligionList"] = new SelectList(await _religionManager.GetAllAsync(), "Id", "Name");
         return View();

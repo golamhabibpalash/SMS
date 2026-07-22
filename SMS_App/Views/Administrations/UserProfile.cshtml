@@ -31,13 +31,13 @@
         <div class="col-md-12 text-center">
             <form id="frmSearchByUserId" asp-action="UserProfile" asp-controller="Administrations" method="get" class="">
                 <div class="row">
-                    <div class="col-md-2 text-start d-flex align-items-center">
-                        <label class="text-light me-2 mb-0">Select User:</label>
-                        <select class="form-control select2" asp-items="ViewBag.UserList" id="ddUserId" data-placeholder="Search user..." style="width:250px">
+                    <div class="col-md-5 text-start d-flex align-items-center">
+                        <label class="text-light me-2 mb-0 text-nowrap">Select User:</label>
+                        <select class="form-control select2" asp-items="ViewBag.UserList" id="ddUserId" data-placeholder="Search user...">
                             <option></option>
                         </select>
                     </div>
-                    <div class="col-md-4 offset-md-3" style="visibility:hidden">
+                    <div class="col-md-2 offset-md-5" style="visibility:hidden">
                         <div class="input-group mb-3">
                             @if (ViewBag.UserName != null)
                             {

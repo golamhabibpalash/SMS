@@ -178,26 +178,29 @@
     <script>feather.replace();</script>
 
     <script>
+        function matchText(term, text) {
+            return text.toLowerCase().indexOf(term.toLowerCase()) > -1;
+        }
+
         function matchStart(params, data) {
             if ($.trim(params.term) === '') return data;
             if (typeof data.text === 'undefined') return null;
-            if (data.text.toLowerCase().indexOf(params.term.toLowerCase()) > -1) {
-                return $.extend({}, data, true);
+            if (matchText(params.term, data.text)) {
+                return data;
             }
             return null;
         }
 
-        var select2Options = {
-            theme: 'bootstrap-5',
-            width: '100%',
-            allowClear: true,
-            matcher: matchStart,
-            dropdownParent: $('body')
-        };
-
         function initSelect2($el) {
             var placeholder = $el.data('placeholder') || 'Select an option';
-            $el.select2($.extend({}, select2Options, { placeholder: placeholder }));
+            $el.select2({
+                theme: 'bootstrap-5',
+                width: $el.data('width') || '100%',
+                allowClear: true,
+                matcher: matchStart,
+                placeholder: placeholder,
+                dropdownParent: $(document.body)
+            });
         }
 
         $(document).ready(function () {
@@ -205,7 +208,6 @@
                 initSelect2($(this));
             });
 
-            // Re-initialize select2 inside modals on show (hidden modal breaks select2 sizing)
             $(document).on('shown.bs.modal', '.modal', function () {
                 $(this).find('.select2').each(function () {
                     var $this = $(this);

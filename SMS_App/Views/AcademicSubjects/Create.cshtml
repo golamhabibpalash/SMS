@@ -11,21 +11,21 @@
             <div class="form-group row">
                 <label asp-for="SubjectName" class="control-label col-form-label col-md-2 text-md-end"></label>
                 <div class="col-md-10">
-                    <input asp-for="SubjectName" class="form-control rounded" />
+                    <input asp-for="SubjectName" class="form-control" />
                     <span asp-validation-for="SubjectName" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
                 <label asp-for="SubjectCode" class="control-label col-form-label col-md-2 text-md-end"></label>
                 <div class="col-md-10">
-                    <input asp-for="SubjectCode" class="form-control rounded" placeholder="Ex: 103" />
+                    <input asp-for="SubjectCode" class="form-control" placeholder="Ex: 103" />
                     <span asp-validation-for="SubjectCode" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
                 <label asp-for="AcademicSubjectTypeId" class="control-label col-form-label col-md-2 text-md-end"></label>
                 <div class="col-md-10 input-group">
-                    <select asp-for="AcademicSubjectTypeId" class="form-control rounded" asp-items="ViewBag.AcademicSubjectTypeId">
+                    <select asp-for="AcademicSubjectTypeId" class="form-control" asp-items="ViewBag.AcademicSubjectTypeId">
                         <option selected disabled>Select Subject Type</option>
                     </select>
                     <div>
@@ -37,7 +37,7 @@
             <div class="form-group row">
                 <label asp-for="SubjectFor" class="control-label col-form-label col-md-2 text-md-end"></label>
                 <div class="col-md-10">
-                    <select asp-for="SubjectFor" class="form-control rounded">
+                    <select asp-for="SubjectFor" class="form-control">
                         <option selected disabled>Select Subject For</option>
                         <option value="S">School</option>
                         <option value="C">College</option>
@@ -48,7 +48,7 @@
             <div class="form-group row">
                 <label asp-for="AcademicClassId" class="control-label col-form-label col-md-2 text-md-end"></label>
                 <div class="col-md-10">
-                    <select asp-for="AcademicClassId" class="form-control rounded" asp-items="ViewBag.AcademicClassId">
+                    <select asp-for="AcademicClassId" class="form-control" asp-items="ViewBag.AcademicClassId">
                         <option value="">Select Academic Class</option>
                     </select>
                     <span asp-validation-for="AcademicClassId" class="text-danger"></span>
@@ -57,7 +57,7 @@
             <div class="form-group row">
                 <label asp-for="QuestionFormatId" class="control-label col-form-label col-md-2 text-md-end"></label>
                 <div class="col-md-10">
-                    <select asp-for="QuestionFormatId" class="form-control rounded" asp-items="ViewBag.QuestionFormatId">
+                    <select asp-for="QuestionFormatId" class="form-control" asp-items="ViewBag.QuestionFormatId">
                         <option value="">Select Question Format</option>
                     </select>
                     <span asp-validation-for="QuestionFormatId" class="text-danger"></span>
@@ -66,7 +66,7 @@
             <div class="form-group row">
                 <label asp-for="ReligionId" class="control-label col-form-label col-md-2 text-md-end"></label>
                 <div class="col-md-10">
-                    <select asp-for="ReligionId" class="form-control rounded" asp-items="ViewBag.ReligionList">
+                    <select asp-for="ReligionId" class="form-control" asp-items="ViewBag.ReligionList">
                         <option value="">All Religion</option>
                     </select>
                     <span asp-validation-for="ReligionId" class="text-danger"></span>

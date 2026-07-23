@@ -43,6 +43,11 @@ public class ExamResultManager : Manager<ExamResult>, IExamResultManager
         return await _examResultRepository.GetResultProcessedStatusBulkAsync(examGroupAndClassPairs);
     }
 
+    public async Task<bool> DeleteByGroupAndClassAsync(int groupId, int classId)
+    {
+        return await _examResultRepository.DeleteByGroupAndClassAsync(groupId, classId);
+    }
+
     public async Task<Dictionary<int, int>> GetPreviousRanksByStudentIdsAsync(int examGroupId, List<int> studentIds)
     {
         var currentExamGroup = await _examResultRepository.Table

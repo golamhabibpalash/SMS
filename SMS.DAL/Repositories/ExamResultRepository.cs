@@ -49,6 +49,24 @@ namespace SMS.DAL.Repositories
             return isExist;
         }
 
+        public async Task<bool> DeleteByGroupAndClassAsync(int groupId, int classId)
+        {
+            var results = await _dbContext.ExamResults
+                .Include(r => r.ExamResultDetails)
+                .Where(r => r.AcademicExamGroupId == groupId && r.AcademicClassId == classId)
+                .ToListAsync();
+
+            if (!results.Any()) return false;
+
+            var details = results.SelectMany(r => r.ExamResultDetails).ToList();
+            if (details.Any())
+            {
+                _dbContext.ExamResultDetails.RemoveRange(details);
+            }
+            _dbContext.ExamResults.RemoveRange(results);
+            return await _dbContext.SaveChangesAsync() > 0;
+        }
+
         public async Task<Dictionary<(int ExamGroupId, int ClassId), bool>> GetResultProcessedStatusBulkAsync(IEnumerable<(int ExamGroupId, int ClassId)> examGroupAndClassPairs)
         {
             var pairs = examGroupAndClassPairs.ToList();

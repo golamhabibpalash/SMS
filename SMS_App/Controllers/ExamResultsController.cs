@@ -601,17 +601,11 @@ public class ExamResultsController : Controller
     [Authorize(Policy = "DeleteResultExamResultsPolicy")]
     public async Task<ActionResult> DeleteResult(int classId, int groupId, int scrollPosition)
     {
-        //// Storing scroll position in session
         HttpContext.Session.SetInt32("ScrollPosition", scrollPosition);
 
-        var examResult = await _examResultManager.GetAllAsync();
-        examResult = examResult.Where(s => s.AcademicExamGroupId == groupId && s.AcademicClassId == classId).ToList();
-        if (examResult != null && examResult.Count > 0)
+        bool deleted = await _examResultManager.DeleteByGroupAndClassAsync(groupId, classId);
+        if (deleted)
         {
-            foreach (var result in examResult)
-            {
-                await _examResultManager.RemoveAsync(result);
-            }
             TempData["success"] = "Exam Results are deleted successfully";
         }
         else

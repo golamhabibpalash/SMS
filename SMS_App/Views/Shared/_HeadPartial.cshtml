@@ -135,6 +135,15 @@
             overflow: visible !important;
         }
 
+        /* Force select2 open container and dropdown above modal (1055) and backdrop (1050) */
+        .select2-container--bootstrap-5.select2-container--open {
+            z-index: 99999 !important;
+        }
+
+        .select2-container--bootstrap-5 .select2-dropdown {
+            z-index: 99999 !important;
+        }
+
 
     </style>
 
@@ -203,6 +212,17 @@
             });
         }
 
+        function fixSelect2ZIndex() {
+            var $dropdown = $('.select2-container--bootstrap-5.select2-container--open .select2-dropdown');
+            if ($dropdown.length) {
+                $dropdown.css('z-index', '99999');
+            }
+            var $container = $('.select2-container--bootstrap-5.select2-container--open');
+            if ($container.length) {
+                $container.css('z-index', '99999');
+            }
+        }
+
         $(document).ready(function () {
             $('.select2').each(function () {
                 initSelect2($(this));
@@ -224,6 +244,10 @@
                         $(this).select2('destroy');
                     }
                 });
+            });
+
+            $(document).on('select2:open', function () {
+                fixSelect2ZIndex();
             });
         });
     </script>

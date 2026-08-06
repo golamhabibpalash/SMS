@@ -78,7 +78,8 @@
             <iframe id="myIframe" style="width: 100%; height: 100%;"></iframe>
         </div>
         <div class="row" id="exportOptions" style="display:none">
-            <div class="col-md-12 d-flex justify-content-end">
+            <div class="col-md-12 d-flex justify-content-end gap-2">
+                <button type="button" id="printButton" class="btn-sm btn btn-primary" data-toggle="tooltip" title="Print Admit Cards" data-placement="left"><i class="fas fa-print"></i> Print</button>
                 <form asp-action="AdmitCardExport" asp-controller="Reports" method="get" target="_blank">
                     <input type="hidden" id="exportAcademicClassId" name="academicClassId" />
                     <input type="hidden" id="exportAcademicSectionId" name="academicSectionId" />
@@ -135,8 +136,25 @@
         }
 
         $(document).ready(function () {
+            // Kept so Print can fall back to a new tab if the embedded viewer blocks print().
+            let lastPreviewUrl = '';
+
             $('#ExamTypeId, #monthId, #AcademicClassId, #AcademicSectionId').change(function () {
                 loadExamGroups();
+            });
+
+            $('#printButton').click(function () {
+                var iframe = document.getElementById('myIframe');
+                try {
+                    iframe.contentWindow.focus();
+                    iframe.contentWindow.print();
+                } catch (e) {
+                    // Some browsers refuse print() on an embedded PDF viewer; open it instead
+                    // so the user can print from the viewer's own toolbar.
+                    if (lastPreviewUrl) {
+                        window.open(lastPreviewUrl, '_blank');
+                    }
+                }
             });
 
             $('#myButton').click(function () {
@@ -165,14 +183,14 @@
                     $('#exportExamTypeId').attr('value', examTypeId);
                     $('#exportExamGroupId').attr('value', examGroupId);
 
-                    $('#myIframe').attr('src',
-                        '/Reports/AdmitCardExport?reportType=' + reportType +
+                    lastPreviewUrl = '/Reports/AdmitCardExport?reportType=' + reportType +
                         '&academicClassId=' + academicClassId +
                         '&academicSectionId=' + aSection +
                         '&monthId=' + monthId +
                         '&examTypeId=' + examTypeId +
-                        '&examGroupId=' + examGroupId
-                    );
+                        '&examGroupId=' + examGroupId;
+
+                    $('#myIframe').attr('src', lastPreviewUrl);
 
                     var iframe = document.getElementById('myIframe');
                     $('#loading').show();

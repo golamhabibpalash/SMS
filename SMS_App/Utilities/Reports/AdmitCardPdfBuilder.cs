@@ -12,6 +12,20 @@ namespace SMS_App.Utilities.Reports;
 
 public class AdmitCardPdfBuilder : IDocument
 {
+    // The admit card is printed on fixed 8.5in x 4.5in stock. Every size below is
+    // tuned to that page, so change these together if the card size ever changes.
+    private const float CardWidthInches = 8.5f;
+    private const float CardHeightInches = 4.5f;
+
+    private const float InstituteNameFont = 16f;
+    private const float InstituteMetaFont = 10f;
+    private const float TitleFont = 17f;
+    private const float ExamInfoFont = 12f;
+    private const float LabelFont = 11f;
+    private const float ValueFont = 10f;
+    private const float SubjectFont = 9.5f;
+    private const float DirectionFont = 8f;
+
     private readonly Institute _institute;
     private readonly string _logoBase64;
     private readonly string _signatureBase64;
@@ -42,22 +56,22 @@ public class AdmitCardPdfBuilder : IDocument
         {
             container.Page(page =>
             {
-                page.Size(210.82f, 119.38f);
-                page.Margin(5);
-                page.DefaultTextStyle(x => x.FontSize(7));
+                page.Size(CardWidthInches, CardHeightInches, Unit.Inch);
+                page.Margin(14);
+                page.DefaultTextStyle(x => x.FontSize(ValueFont));
 
-                page.Content().Border(0.5f).Padding(1.5f).Column(col =>
+                page.Content().Border(1).Padding(4).Column(col =>
                 {
                     ComposeBody(col, student, subjects);
                 });
 
-                page.Footer().PaddingHorizontal(1.5f).PaddingTop(1.5f).Row(bottomRow =>
+                page.Footer().PaddingHorizontal(4).PaddingTop(4).Row(bottomRow =>
                 {
                     bottomRow.RelativeItem(3).Column(directions =>
                     {
-                        directions.Item().Text("Direction:").SemiBold().FontSize(3.5f);
-                        directions.Item().Text("1. The Examinee must bring the Admit Card in the Examination hall.").FontSize(3.5f);
-                        directions.Item().Text("2. The examinee must sign in the attendance sheet for each subject in the examination hall otherwise will be treated as absent in the respective subject(s).").FontSize(3.5f);
+                        directions.Item().Text("Direction:").SemiBold().FontSize(DirectionFont);
+                        directions.Item().Text("1. The Examinee must bring the Admit Card in the Examination hall.").FontSize(DirectionFont);
+                        directions.Item().Text("2. The examinee must sign in the attendance sheet for each subject in the examination hall otherwise will be treated as absent in the respective subject(s).").FontSize(DirectionFont);
                     });
 
                     bottomRow.RelativeItem(2).AlignRight().Column(sig =>
@@ -66,13 +80,13 @@ public class AdmitCardPdfBuilder : IDocument
                         {
                             try
                             {
-                                sig.Item().Height(14).AlignRight().Image(
+                                sig.Item().Height(38).AlignRight().Image(
                                     Convert.FromBase64String(_signatureBase64)).FitArea();
                             }
                             catch { }
                         }
-                        sig.Item().AlignCenter().Text("Controller of Examinations").SemiBold().FontSize(3.5f);
-                        sig.Item().AlignCenter().Text(_institute.Name ?? "").FontSize(3.5f);
+                        sig.Item().AlignCenter().Text("Controller of Examinations").SemiBold().FontSize(DirectionFont);
+                        sig.Item().AlignCenter().Text(_institute.Name ?? "").FontSize(DirectionFont);
                     });
                 });
             });
@@ -83,10 +97,10 @@ public class AdmitCardPdfBuilder : IDocument
     {
         void InfoCell(IContainer c, string label, string value)
         {
-            c.Padding(0.5f).Text(t =>
+            c.Padding(1.5f).Text(t =>
             {
-                t.Span(label).SemiBold().FontSize(4.5f);
-                t.Span(value).FontSize(3.5f);
+                t.Span(label).SemiBold().FontSize(LabelFont);
+                t.Span(value).FontSize(ValueFont);
             });
         }
 
@@ -95,29 +109,29 @@ public class AdmitCardPdfBuilder : IDocument
         {
             if (!string.IsNullOrEmpty(_logoBase64))
             {
-                try { headerRow.ConstantItem(18).Image(Convert.FromBase64String(_logoBase64)).FitArea(); } catch { }
+                try { headerRow.ConstantItem(50).Image(Convert.FromBase64String(_logoBase64)).FitArea(); } catch { }
             }
             headerRow.RelativeItem().Column(c =>
             {
-                c.Item().AlignCenter().Text(_institute.Name ?? "").Bold().FontSize(6);
+                c.Item().AlignCenter().Text(_institute.Name ?? "").Bold().FontSize(InstituteNameFont);
                 if (!string.IsNullOrEmpty(_institute.Address))
-                    c.Item().AlignCenter().Text(_institute.Address).FontSize(4);
+                    c.Item().AlignCenter().Text(_institute.Address).FontSize(InstituteMetaFont);
                 if (!string.IsNullOrEmpty(_institute.EIIN))
-                    c.Item().AlignCenter().Text($"EIIN: {_institute.EIIN}").FontSize(4);
+                    c.Item().AlignCenter().Text($"EIIN: {_institute.EIIN}").FontSize(InstituteMetaFont);
             });
         });
 
         // Title + exam info on same row
         col.Item().Row(titleRow =>
         {
-            titleRow.RelativeItem(2).AlignCenter().Text("ADMIT CARD").Bold().FontSize(6);
-            titleRow.RelativeItem(3).AlignCenter().Text($"{student.ExamGroupName ?? student.ExamTypeName}  |  {student.SessionName}").FontSize(4.5f);
+            titleRow.RelativeItem(2).AlignCenter().Text("ADMIT CARD").Bold().FontSize(TitleFont);
+            titleRow.RelativeItem(3).AlignCenter().Text($"{student.ExamGroupName ?? student.ExamTypeName}  |  {student.SessionName}").FontSize(ExamInfoFont);
         });
 
-        col.Item().LineHorizontal(0.5f);
+        col.Item().LineHorizontal(1);
 
         // Name fields in 2-column table (wider for long names)
-        col.Item().PaddingVertical(0.5f).Table(nameTable =>
+        col.Item().PaddingVertical(1.5f).Table(nameTable =>
         {
             nameTable.ColumnsDefinition(c =>
             {
@@ -144,16 +158,23 @@ public class AdmitCardPdfBuilder : IDocument
             otherTable.Cell().Element(c => InfoCell(c, "Class: ", $"{student.ClassName} - {student.SectionName}"));
             otherTable.Cell().Element(c => InfoCell(c, "Roll: ", student.ClassRoll.ToString()));
             otherTable.Cell().Element(c => InfoCell(c, "Religion: ", student.Religion ?? ""));
-            otherTable.Cell().Element(c => InfoCell(c, "", ""));
-            otherTable.Cell().Element(c => InfoCell(c, "", ""));
-            otherTable.Cell().Element(c => InfoCell(c, "", ""));
         });
 
-        col.Item().LineHorizontal(0.5f);
+        col.Item().LineHorizontal(1);
 
-        // Subjects in 4-column table
-        col.Item().Text("Subjects:").SemiBold().FontSize(4.5f);
-        col.Item().PaddingTop(0.5f).Table(t =>
+        // Subjects in 4-column table. The card must never spill onto a second page,
+        // so tighten the rows as the subject count grows.
+        var rowCount = (int)Math.Ceiling(subjects.Count / 4.0);
+        var (subjectFont, subjectPadding) = rowCount switch
+        {
+            <= 3 => (SubjectFont, 1.5f),
+            4 => (8f, 1f),
+            5 => (7f, 0.75f),
+            _ => (6f, 0.5f),
+        };
+
+        col.Item().Text("Subjects:").SemiBold().FontSize(LabelFont);
+        col.Item().PaddingTop(1.5f).Table(t =>
         {
             t.ColumnsDefinition(c =>
             {
@@ -171,12 +192,12 @@ public class AdmitCardPdfBuilder : IDocument
                     if (idx < subjects.Count)
                     {
                         var bg = (i / 4) % 2 == 0 ? Colors.White : Colors.Grey.Lighten3;
-                        IContainer D(IContainer c) => c.Background(bg).Padding(0.5f).BorderBottom(0.2f).BorderColor(Colors.Grey.Lighten2);
+                        IContainer D(IContainer c) => c.Background(bg).Padding(subjectPadding).BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2);
                         t.Cell().Element(D).AlignLeft().Text(txt =>
                         {
-                            txt.Span(subjects[idx].SubjectCode?.ToString() ?? "").SemiBold().FontSize(3.5f);
-                            txt.Span(" ").FontSize(3.5f);
-                            txt.Span(subjects[idx].SubjectName ?? "").FontSize(3.5f);
+                            txt.Span(subjects[idx].SubjectCode?.ToString() ?? "").SemiBold().FontSize(subjectFont);
+                            txt.Span(" ").FontSize(subjectFont);
+                            txt.Span(subjects[idx].SubjectName ?? "").FontSize(subjectFont);
                         });
                     }
                     else

@@ -32,11 +32,29 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
+      # Stamps the version so every deployment is uniquely identifiable in the UI.
+      # The product version itself lives in Directory.Build.props.
+      - name: Set build metadata
+        id: build_meta
+        shell: bash
+        run: |
+          echo "build_number=${{ github.run_number }}" >> $GITHUB_OUTPUT
+          echo "git_commit=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "built_utc=$(date -u '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_OUTPUT
+
       - name: Build application
-        run: dotnet build -c Release --no-restore
+        run: >
+          dotnet build -c Release --no-restore
+          -p:BuildNumber=${{ steps.build_meta.outputs.build_number }}
+          -p:GitCommit=${{ steps.build_meta.outputs.git_commit }}
+          -p:BuildTimestampUtc="${{ steps.build_meta.outputs.built_utc }}"
 
       - name: Publish application
-        run: dotnet publish -c Release -o ./publish --no-build
+        run: >
+          dotnet publish -c Release -o ./publish --no-build
+          -p:BuildNumber=${{ steps.build_meta.outputs.build_number }}
+          -p:GitCommit=${{ steps.build_meta.outputs.git_commit }}
+          -p:BuildTimestampUtc="${{ steps.build_meta.outputs.built_utc }}"
 
       - name: Set deployment variables
         id: vars
@@ -44,7 +62,7 @@ jobs:
         run: |
           client="${{ github.event.inputs.client }}"
           if [ -z "$client" ]; then
-            client="Noble"
+            client="DMCPS"
           fi
 
           case "$client" in
@@ -302,6 +320,8 @@ jobs:
           echo "════════════════════════════════════════"
           echo "Client:     ${{ steps.vars.outputs.client_name }}"
           echo "URL:        ${{ steps.vars.outputs.url }}"
+          echo "Version:    build ${{ steps.build_meta.outputs.build_number }} @ ${{ steps.build_meta.outputs.git_commit }}"
+          echo "Built (UTC):${{ steps.build_meta.outputs.built_utc }}"
           echo "Time:       $(date '+%Y-%m-%d %H:%M:%S %Z')"
           echo "Status:     ${{ job.status }}"
           echo "════════════════════════════════════════"

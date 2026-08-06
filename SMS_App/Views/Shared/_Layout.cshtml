@@ -369,7 +369,7 @@
                                         Version:
                                         <span class="btn btn-sm p-0 m-0 text-light" data-bs-toggle="modal"
                                               data-bs-target="#versionModal">
-                                            1.2.3
+                                            @BuildInfo.ShortDisplay
                                         </span>
                                     </span>
                                 </li>
@@ -622,7 +622,7 @@
 
                         <!-- Part 1: Version -->
                         <div class="footer-version text-start col-12 col-md-4 mb-2 mb-md-0">
-                            <strong>Version:</strong> 1.0.0
+                            <strong>Version:</strong> @BuildInfo.ShortDisplay
                         </div>
 
                         <!-- Part 2: Institute Name -->
@@ -658,7 +658,25 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        ...
+                        <dl class="row mb-0">
+                            <dt class="col-5">Version</dt>
+                            <dd class="col-7">@BuildInfo.Version</dd>
+
+                            <dt class="col-5">Build</dt>
+                            <dd class="col-7">@(BuildInfo.IsOfficialBuild ? "Deployment build" : "Local build")</dd>
+
+                            <dt class="col-5">Commit</dt>
+                            <dd class="col-7"><code>@BuildInfo.Commit</code></dd>
+
+                            @if (!string.IsNullOrWhiteSpace(BuildInfo.BuiltUtc))
+                            {
+                                <dt class="col-5">Built (UTC)</dt>
+                                <dd class="col-7">@BuildInfo.BuiltUtc</dd>
+                            }
+
+                            <dt class="col-5">Institute</dt>
+                            <dd class="col-7">@instituteName</dd>
+                        </dl>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

@@ -1101,7 +1101,7 @@ public class ReportsController : Controller
 
     #region Admit Card Reports
     [Authorize(Policy = "AdmitCardReportsPolicy")]
-    public async Task<IActionResult> AdmitCardExport(string reportType, string fileName, int monthId, string academicClassId, string academicSectionId, int examTypeId, int examGroupId = 0, bool download = false)
+    public async Task<IActionResult> AdmitCardExport(string reportType, string fileName, int monthId, string academicClassId, string academicSectionId, int examTypeId, int examGroupId = 0, bool download = false, string sheet = "Legal")
     {
         var institute = await _instituteManager.GetByIdAsync(1);
         if (institute == null)
@@ -1142,7 +1142,13 @@ public class ReportsController : Controller
             return new JsonResult("No data found");
         }
 
-        var admitDoc = new AdmitCardPdfBuilder(institute, StripDataUriPrefix(imageParam), signatureParam, admitCardList);
+        // Cards are tiled onto the chosen paper (3 per Legal sheet, 2 per A4) so they
+        // print at their true physical size instead of being rescaled by the printer.
+        var cardSheet = string.Equals(sheet, "A4", StringComparison.OrdinalIgnoreCase)
+            ? AdmitCardSheet.A4
+            : AdmitCardSheet.Legal;
+
+        var admitDoc = new AdmitCardPdfBuilder(institute, StripDataUriPrefix(imageParam), signatureParam, admitCardList, cardSheet);
         var result = admitDoc.GeneratePdf();
         fileName = (string.IsNullOrEmpty(fileName) ? "admit_card" : fileName) + "_" + DateTime.Now.ToString("yyyyMMdd");
 

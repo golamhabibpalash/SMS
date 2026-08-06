@@ -10,12 +10,28 @@ using SMS.Entities.RptModels;
 
 namespace SMS_App.Utilities.Reports;
 
+/// <summary>Paper the admit cards are tiled onto before being cut apart.</summary>
+public enum AdmitCardSheet
+{
+    Legal,
+    A4,
+}
+
 public class AdmitCardPdfBuilder : IDocument
 {
-    // The admit card is printed on fixed 8.5in x 4.5in stock. Every size below is
-    // tuned to that page, so change these together if the card size ever changes.
-    private const float CardWidthInches = 8.5f;
+    // Cards are NOT one-per-page. They are tiled onto a real paper sheet and cut
+    // apart, because a printer fed with Legal/A4 paper rescales a small 8.5x4.5
+    // page to fit the sheet - which is what made printed cards come out undersized.
+    //
+    // Card height is always 4.5in. Card width follows the sheet width, so Legal
+    // gives the full 8.5in; A4 paper is only 8.27in wide and physically cannot
+    // carry an 8.5in card, so on A4 the card is 8.27in wide.
     private const float CardHeightInches = 4.5f;
+
+    private const float LegalWidthInches = 8.5f;
+    private const float LegalHeightInches = 14f;
+    private const float A4WidthInches = 8.26772f;   // 210mm
+    private const float A4HeightInches = 11.69291f; // 297mm
 
     private const float InstituteNameFont = 16f;
     private const float InstituteMetaFont = 10f;
@@ -30,18 +46,30 @@ public class AdmitCardPdfBuilder : IDocument
     private readonly string _logoBase64;
     private readonly string _signatureBase64;
     private readonly List<RptAdmitCardVM> _data;
+    private readonly AdmitCardSheet _sheet;
 
     private static string ToTitle(string s) =>
         string.IsNullOrWhiteSpace(s) ? ""
             : CultureInfo.CurrentCulture.TextInfo.ToTitleCase(s.ToLowerInvariant());
 
-    public AdmitCardPdfBuilder(Institute institute, string logoBase64, string signatureBase64, List<RptAdmitCardVM> data)
+    public AdmitCardPdfBuilder(Institute institute, string logoBase64, string signatureBase64,
+        List<RptAdmitCardVM> data, AdmitCardSheet sheet = AdmitCardSheet.Legal)
     {
         _institute = institute;
         _logoBase64 = logoBase64;
         _signatureBase64 = signatureBase64;
         _data = data;
+        _sheet = sheet;
     }
+
+    // Legal fits 3 cards (13.5in of 14in); A4 fits 2 (9in of 11.69in).
+    private (float Width, float Height, int CardsPerSheet) SheetSpec => _sheet switch
+    {
+        AdmitCardSheet.A4 => (A4WidthInches, A4HeightInches,
+            Math.Max(1, (int)Math.Floor(A4HeightInches / CardHeightInches))),
+        _ => (LegalWidthInches, LegalHeightInches,
+            Math.Max(1, (int)Math.Floor(LegalHeightInches / CardHeightInches))),
+    };
 
     public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
 
@@ -52,45 +80,63 @@ public class AdmitCardPdfBuilder : IDocument
             .Select(g => (Student: g.First(), Subjects: g.ToList()))
             .ToList();
 
-        foreach (var (student, subjects) in students)
+        var spec = SheetSpec;
+
+        foreach (var sheet in students.Chunk(spec.CardsPerSheet))
         {
             container.Page(page =>
             {
-                page.Size(CardWidthInches, CardHeightInches, Unit.Inch);
-                page.Margin(14);
+                page.Size(spec.Width, spec.Height, Unit.Inch);
+                page.Margin(0);
                 page.DefaultTextStyle(x => x.FontSize(ValueFont));
 
-                page.Content().Border(1).Padding(4).Column(col =>
+                page.Content().Column(col =>
                 {
-                    ComposeBody(col, student, subjects);
-                });
-
-                page.Footer().PaddingHorizontal(4).PaddingTop(4).Row(bottomRow =>
-                {
-                    bottomRow.RelativeItem(3).Column(directions =>
+                    foreach (var (student, subjects) in sheet)
                     {
-                        directions.Item().Text("Direction:").SemiBold().FontSize(DirectionFont);
-                        directions.Item().Text("1. The Examinee must bring the Admit Card in the Examination hall.").FontSize(DirectionFont);
-                        directions.Item().Text("2. The examinee must sign in the attendance sheet for each subject in the examination hall otherwise will be treated as absent in the respective subject(s).").FontSize(DirectionFont);
-                    });
-
-                    bottomRow.RelativeItem(2).AlignRight().Column(sig =>
-                    {
-                        if (!string.IsNullOrEmpty(_signatureBase64))
-                        {
-                            try
-                            {
-                                sig.Item().Height(38).AlignRight().Image(
-                                    Convert.FromBase64String(_signatureBase64)).FitArea();
-                            }
-                            catch { }
-                        }
-                        sig.Item().AlignCenter().Text("Controller of Examinations").SemiBold().FontSize(DirectionFont);
-                        sig.Item().AlignCenter().Text(_institute.Name ?? "").FontSize(DirectionFont);
-                    });
+                        col.Item()
+                            .Height(CardHeightInches, Unit.Inch)
+                            .Element(c => ComposeCard(c, student, subjects));
+                    }
                 });
             });
         }
+    }
+
+    // Renders one card into a full-width, exactly 4.5in tall slot on the sheet.
+    // Nothing here may use ExtendVertical: inside a fixed-height slot it expands to
+    // the whole page and pushes every card onto its own sheet.
+    private void ComposeCard(IContainer container, RptAdmitCardVM student, List<RptAdmitCardVM> subjects)
+    {
+        container.Padding(14).Border(1).Padding(4).Column(card =>
+        {
+            ComposeBody(card, student, subjects);
+
+            card.Item().PaddingTop(4).Row(bottomRow =>
+            {
+                bottomRow.RelativeItem(3).Column(directions =>
+                {
+                    directions.Item().Text("Direction:").SemiBold().FontSize(DirectionFont);
+                    directions.Item().Text("1. The Examinee must bring the Admit Card in the Examination hall.").FontSize(DirectionFont);
+                    directions.Item().Text("2. The examinee must sign in the attendance sheet for each subject in the examination hall otherwise will be treated as absent in the respective subject(s).").FontSize(DirectionFont);
+                });
+
+                bottomRow.RelativeItem(2).AlignRight().Column(sig =>
+                {
+                    if (!string.IsNullOrEmpty(_signatureBase64))
+                    {
+                        try
+                        {
+                            sig.Item().Height(38).AlignRight().Image(
+                                Convert.FromBase64String(_signatureBase64)).FitArea();
+                        }
+                        catch { }
+                    }
+                    sig.Item().AlignCenter().Text("Controller of Examinations").SemiBold().FontSize(DirectionFont);
+                    sig.Item().AlignCenter().Text(_institute.Name ?? "").FontSize(DirectionFont);
+                });
+            });
+        });
     }
 
     private void ComposeBody(ColumnDescriptor col, RptAdmitCardVM student, List<RptAdmitCardVM> subjects)
@@ -164,8 +210,11 @@ public class AdmitCardPdfBuilder : IDocument
 
         // Subjects in 4-column table. The card must never spill onto a second page,
         // so tighten the rows as the subject count grows.
+        // A4 is 0.23in narrower than Legal, so subject names wrap an extra line there;
+        // tighten one step earlier to keep the card inside its 4.5in slot.
         var rowCount = (int)Math.Ceiling(subjects.Count / 4.0);
-        var (subjectFont, subjectPadding) = rowCount switch
+        var density = rowCount + (_sheet == AdmitCardSheet.A4 ? 1 : 0);
+        var (subjectFont, subjectPadding) = density switch
         {
             <= 3 => (SubjectFont, 1.5f),
             4 => (8f, 1f),

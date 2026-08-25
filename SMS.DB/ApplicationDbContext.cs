@@ -129,6 +129,10 @@ namespace SMS.DB
         public DbSet<TeacherSubjectMap> TeacherSubjectMaps { get; set; }
         #endregion
 
+        #region A_M
+        public DbSet<AttendanceMachine> AttendanceMachines { get; set; }
+        #endregion
+
         #region U
         public DbSet<Upazila> Upazila { get; set; }
         #endregion

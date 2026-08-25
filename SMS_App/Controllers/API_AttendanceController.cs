@@ -5,6 +5,7 @@ using SMS.Entities;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 
 
@@ -21,7 +22,8 @@ namespace SMS_App.Controllers
         private readonly IEmployeeManager _employeeManager;
         private readonly IInstituteManager _instituteManager;
         private readonly IPhoneSMSManager _phoneSMSManager;
-        public API_AttendanceController(IStudentManager studentManager, IAttendanceMachineManager attendanceMachineManager,ISetupMobileSMSManager setupMobileSMSManager, IEmployeeManager employeeManager, IInstituteManager instituteManager, IPhoneSMSManager phoneSMSManager)
+        private readonly IAttendanceMachineService _attendanceMachineService;
+        public API_AttendanceController(IStudentManager studentManager, IAttendanceMachineManager attendanceMachineManager, ISetupMobileSMSManager setupMobileSMSManager, IEmployeeManager employeeManager, IInstituteManager instituteManager, IPhoneSMSManager phoneSMSManager, IAttendanceMachineService attendanceMachineService)
         {
             _studentManager = studentManager;
             _attendanceMachineManager = attendanceMachineManager;   
@@ -29,6 +31,7 @@ namespace SMS_App.Controllers
             _employeeManager = employeeManager;
             _instituteManager = instituteManager;
             _phoneSMSManager = phoneSMSManager;
+            _attendanceMachineService = attendanceMachineService;
         }
 
 
@@ -262,6 +265,117 @@ namespace SMS_App.Controllers
             return Ok(msg);
         }
 
+        // POST: api/attendance/push - Receive punch data from fingerprint machine (ZKTeco ADMS push)
+        [HttpPost("push")]
+        public async Task<IActionResult> ReceivePunch([FromBody] MachinePunchDto dto)
+        {
+            if (dto == null || string.IsNullOrEmpty(dto.UserId) || dto.PunchTime == default)
+            {
+                return BadRequest(new { success = false, message = "Invalid payload" });
+            }
+
+            try
+            {
+                // Find machine by serial number
+                var machines = await _attendanceMachineService.GetAllAsync();
+                var machine = machines.FirstOrDefault(m => m.SerialNumber == dto.MachineSerialNo);
+                
+                if (machine == null)
+                {
+                    // Try to find by IP if serial not matched
+                    var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+                    machine = machines.FirstOrDefault(m => m.IPAddress == clientIp);
+                }
+
+                if (machine == null)
+                {
+                    return BadRequest(new { success = false, message = "Machine not registered" });
+                }
+
+                // Check if already synced (deduplication)
+                var existingPunches = await _attendanceMachineManager.GetAttendanceByDateRangeAsync(
+                    dto.PunchTime.AddDays(-1).ToString("yyyy-MM-dd"),
+                    dto.PunchTime.ToString("yyyy-MM-dd")
+                );
+
+                var key = $"{dto.UserId}_{dto.PunchTime:yyyyMMddHHmmss}_{machine.SerialNumber ?? machine.Id.ToString()}";
+                var exists = existingPunches.Any(p => $"{p.CardNo}_{p.PunchDatetime:yyyyMMddHHmmss}_{p.MachineNo}" == key);
+
+                if (exists)
+                {
+                    return Ok(new { success = true, message = "Duplicate punch ignored", duplicate = true });
+                }
+
+                var punch = new Tran_MachineRawPunch
+                {
+                    CardNo = dto.UserId,
+                    PunchDatetime = dto.PunchTime,
+                    P_Day = dto.PunchTime.DayOfWeek.ToString()[0],
+                    ISManual = 'N',
+                    MachineNo = machine.SerialNumber ?? machine.Id.ToString(),
+                    VerifyMode = dto.VerifyMode,
+                    MachineSerialNo = machine.SerialNumber,
+                    IsSynced = true
+                };
+
+                await _attendanceMachineManager.AddAsync(punch);
+
+                machine.LastSyncAt = DateTime.Now;
+                await _attendanceMachineService.UpdateAsync(machine);
+
+                return Ok(new { success = true, message = "Punch recorded", punchId = punch.Tran_MachineRawPunchId });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = ex.Message });
+            }
+        }
+
+        // POST: api/attendance/sync-users/{machineId} - Push users to machine
+        [HttpPost("sync-users/{machineId}")]
+        public async Task<IActionResult> SyncUsers(int machineId)
+        {
+            try
+            {
+                var result = await _attendanceMachineService.SyncUsersToMachineAsync(machineId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = ex.Message });
+            }
+        }
+
+        // GET: api/attendance/machine-status/{machineId} - Health check
+        [HttpGet("machine-status/{machineId}")]
+        public async Task<IActionResult> GetMachineStatus(int machineId)
+        {
+            try
+            {
+                var status = await _attendanceMachineService.GetMachineHealthAsync(machineId);
+                return Ok(status);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = ex.Message });
+            }
+        }
+
+        // POST: api/attendance/pull/{machineId} - Pull attendance from machine
+        [HttpPost("pull/{machineId}")]
+        public async Task<IActionResult> PullAttendance(int machineId, [FromBody] DateRangeDto dto)
+        {
+            try
+            {
+                var result = await _attendanceMachineService.PullAttendanceFromMachineAsync(machineId, dto?.FromDate, dto?.ToDate);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = ex.Message });
+            }
+        }
+
         // GET api/<API_AttendanceController>/5
         [HttpGet("{id}")]
         public string Get(int id)
@@ -321,6 +435,21 @@ namespace SMS_App.Controllers
                 }
             }
             return msg;
+        }
+
+        public class MachinePunchDto
+        {
+            public string MachineSerialNo { get; set; }
+            public string UserId { get; set; }
+            public DateTime PunchTime { get; set; }
+            public int VerifyMode { get; set; }
+            public int InOutMode { get; set; }
+        }
+
+        public class DateRangeDto
+        {
+            public DateTime? FromDate { get; set; }
+            public DateTime? ToDate { get; set; }
         }
     }
 }

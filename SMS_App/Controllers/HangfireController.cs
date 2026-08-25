@@ -25,6 +25,7 @@ public class HangfireController : ControllerBase
 {
     private readonly IStudentManager _studentManager;
     private readonly IAttendanceMachineManager _attendanceMachineManager;
+    private readonly IAttendanceMachineService _attendanceMachineService;
     private readonly IEmployeeManager _employeeManager;
     private readonly IPhoneSMSManager _phoneSMSManager;
     private readonly ISetupMobileSMSManager _setupMobileSMSManager;
@@ -35,10 +36,11 @@ public class HangfireController : ControllerBase
     private readonly IWebHostEnvironment _webHostEnvironment;
 
     #region Constructor Start =================================================
-    public HangfireController(IStudentManager studentManager, IAttendanceMachineManager attendanceMachineManager, IEmployeeManager employeeManager, IPhoneSMSManager phoneSMSManager, ISetupMobileSMSManager setupMobileSMSManager, IOffDayManager offDayManager, IInstituteManager instituteManager, IStudentPaymentManager studentPaymentManager, IParamBusConfigManager paramBusConfigManager, IWebHostEnvironment webHostEnvironment)
+    public HangfireController(IStudentManager studentManager, IAttendanceMachineManager attendanceMachineManager, IAttendanceMachineService attendanceMachineService, IEmployeeManager employeeManager, IPhoneSMSManager phoneSMSManager, ISetupMobileSMSManager setupMobileSMSManager, IOffDayManager offDayManager, IInstituteManager instituteManager, IStudentPaymentManager studentPaymentManager, IParamBusConfigManager paramBusConfigManager, IWebHostEnvironment webHostEnvironment)
     {
         _studentManager = studentManager;
         _attendanceMachineManager = attendanceMachineManager;
+        _attendanceMachineService = attendanceMachineService;
         _employeeManager = employeeManager;
         _phoneSMSManager = phoneSMSManager;
         _setupMobileSMSManager = setupMobileSMSManager;
@@ -164,8 +166,99 @@ public class HangfireController : ControllerBase
                 //0 18 ? *SUN,MON,TUE,WED,THU,SAT *
             }
         }
+
+        // Fingerprint Machine Jobs Start ==========================================
+        var machineOptions = new RecurringJobOptions
+        {
+            TimeZone = TimeZoneInfo.Local,
+        };
+
+        //Pull attendance from all active machines: every 10 minutes, Saturday through Thursday, 6 AM - 5 PM
+        RecurringJob.AddOrUpdate("MachineAttendancePull", () => PullAllMachinesAttendance(), "*/10 6-17 * * 0-4,6", machineOptions);
+
+        //Health check all machines: every 15 minutes
+        RecurringJob.AddOrUpdate("MachineHealthCheck", () => CheckAllMachinesHealth(), "*/15 * * * *", machineOptions);
+
+        //Sync users to all machines: daily at 2 AM
+        RecurringJob.AddOrUpdate("MachineUserSync", () => SyncAllMachinesUsers(), "0 2 * * *", machineOptions);
+        // Fingerprint Machine Jobs Finished xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
         return RedirectToAction("SMSControl", "Setup");
     }
+
+    #region Fingerprint Machine Jobs Start ====================================
+    public async Task<string> PullAllMachinesAttendance()
+    {
+        string msg = string.Empty;
+        try
+        {
+            var machines = await _attendanceMachineService.GetActiveMachinesAsync();
+            if (machines == null || !machines.Any())
+            {
+                return "No active attendance machines found.";
+            }
+
+            foreach (var machine in machines.Where(m => m.IsActive))
+            {
+                var result = await _attendanceMachineService.PullAttendanceFromMachineAsync(machine.Id);
+                msg += $"[{machine.Name}] {result.Message} ";
+            }
+        }
+        catch (Exception ex)
+        {
+            msg = "Exception: " + ex.Message;
+        }
+        return msg;
+    }
+
+    public async Task<string> CheckAllMachinesHealth()
+    {
+        string msg = string.Empty;
+        try
+        {
+            var machines = await _attendanceMachineService.GetActiveMachinesAsync();
+            if (machines == null || !machines.Any())
+            {
+                return "No active attendance machines found.";
+            }
+
+            foreach (var machine in machines.Where(m => m.IsActive))
+            {
+                var status = await _attendanceMachineService.GetMachineHealthAsync(machine.Id);
+                msg += $"[{machine.Name}] {(status.IsOnline ? "Online" : "Offline")} ";
+            }
+        }
+        catch (Exception ex)
+        {
+            msg = "Exception: " + ex.Message;
+        }
+        return msg;
+    }
+
+    public async Task<string> SyncAllMachinesUsers()
+    {
+        string msg = string.Empty;
+        try
+        {
+            var machines = await _attendanceMachineService.GetActiveMachinesAsync();
+            if (machines == null || !machines.Any())
+            {
+                return "No active attendance machines found.";
+            }
+
+            foreach (var machine in machines.Where(m => m.IsActive))
+            {
+                var result = await _attendanceMachineService.SyncUsersToMachineAsync(machine.Id);
+                msg += $"[{machine.Name}] {result.Message} ";
+            }
+        }
+        catch (Exception ex)
+        {
+            msg = "Exception: " + ex.Message;
+        }
+        return msg;
+    }
+    #endregion Fingerprint Machine Jobs Finished xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
     #region CheckIn SMS Section Start===========================================
     public async Task<string> SendCheckInSMS()

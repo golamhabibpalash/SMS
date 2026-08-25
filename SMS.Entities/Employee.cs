@@ -124,5 +124,9 @@ namespace SMS.Entities
         public BloodGroup BloodGroup { get; set; }
 
         public List<Attendance> Attendances { get; set; }
+
+        [Display(Name = "Machine User ID")]
+        [StringLength(20)]
+        public string MachineUserId { get; set; }
     }
 }

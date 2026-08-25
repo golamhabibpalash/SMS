@@ -214,7 +214,7 @@ namespace SMS.DAL.Repositories.Reports
 
             var result = new List<RptDailyAttendaceVM>();
 
-            if (attendanceFor == "Student")
+            if (string.Equals(attendanceFor, "Student", StringComparison.OrdinalIgnoreCase))
             {
                 var studentsQuery = _context.Student
                     .Include(s => s.AcademicClass)
@@ -247,7 +247,7 @@ namespace SMS.DAL.Repositories.Reports
                     };
                 }).OrderBy(r => r.SortingOrder).ThenBy(r => r.ClassRoll).ToList();
             }
-            else if (attendanceFor == "Employee")
+            else if (string.Equals(attendanceFor, "Employee", StringComparison.OrdinalIgnoreCase))
             {
                 var employees = await _context.Employee
                     .Include(e => e.Designation)
@@ -285,7 +285,7 @@ namespace SMS.DAL.Repositories.Reports
 
             var result = new List<RptDailyAttendaceVM>();
 
-            if (attendanceFor == "Student")
+            if (string.Equals(attendanceFor, "Student", StringComparison.OrdinalIgnoreCase))
             {
                 var studentsQuery = _context.Student
                     .Include(s => s.AcademicClass)
@@ -318,7 +318,7 @@ namespace SMS.DAL.Repositories.Reports
                     };
                 }).OrderBy(r => r.SortingOrder).ThenBy(r => r.ClassRoll).ToList();
             }
-            else if (attendanceFor == "Employee")
+            else if (string.Equals(attendanceFor, "Employee", StringComparison.OrdinalIgnoreCase))
             {
                 var employees = await _context.Employee
                     .Include(e => e.Designation)

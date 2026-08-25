@@ -88,6 +88,14 @@ public class AuthorizationPolicies
         options.AddPolicy("EditAttendanceMachinesPolicy", policy => policy.RequireClaim("Edit Attendance"));
         options.AddPolicy("DeleteAttendanceMachinesPolicy", policy => policy.RequireClaim("Delete Attendance"));
 
+        //Attendance Machine Devices (Fingerprint)
+        options.AddPolicy("IndexAttendanceMachineDevicesPolicy", policy => policy.RequireClaim("View Attendance Machines"));
+        options.AddPolicy("DetailsAttendanceMachineDevicesPolicy", policy => policy.RequireClaim("View Details Attendance Machines"));
+        options.AddPolicy("CreateAttendanceMachineDevicesPolicy", policy => policy.RequireClaim("Create Attendance Machines"));
+        options.AddPolicy("EditAttendanceMachineDevicesPolicy", policy => policy.RequireClaim("Edit Attendance Machines"));
+        options.AddPolicy("DeleteAttendanceMachineDevicesPolicy", policy => policy.RequireClaim("Delete Attendance Machines"));
+        options.AddPolicy("ManageMachineUsersPolicy", policy => policy.RequireClaim("Manage Machine Users"));
+
         //Academic Blood Groups
         options.AddPolicy("IndexBloodGroupsPolicy", policy => policy.RequireClaim("View Blood Groups"));
         options.AddPolicy("DetailsBloodGroupsPolicy", policy => policy.RequireClaim("Details Blood Groups"));

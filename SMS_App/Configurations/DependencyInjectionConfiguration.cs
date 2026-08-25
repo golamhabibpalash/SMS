@@ -93,6 +93,11 @@ public static class DependencyInjectionConfiguration
         services.AddScoped<IAttendanceMachineRepository, AttendanceMachineRepository>();
         services.AddScoped<IAttendanceMachineManager, AttendanceMachineManager>();
 
+        services.AddScoped<IAttendanceMachineDeviceRepository, AttendanceMachineDeviceRepository>();
+        services.AddScoped<IAttendanceMachineDeviceManager, AttendanceMachineDeviceManager>();
+        services.AddScoped<IZKTecoService, ZKTecoService>();
+        services.AddScoped<IAttendanceMachineService, AttendanceMachineService>();
+
         services.AddScoped<IChapterRepository, ChapterRepository>();
         services.AddScoped<IChapterManager, ChapterManager>();
 

@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Repositories;
 using SMS.BLL.Contracts;
 using SMS.BLL.Contracts.Reports;
@@ -95,6 +95,15 @@ public static class DependencyInjectionConfiguration
 
         services.AddScoped<IAttendanceMachineDeviceRepository, AttendanceMachineDeviceRepository>();
         services.AddScoped<IAttendanceMachineDeviceManager, AttendanceMachineDeviceManager>();
+
+        //ADMS push protocol (/iclock) - used by push-only terminals such as the SenseFace T1
+        services.AddScoped<IAdmsPushManager, AdmsPushManager>();
+
+        //Tickets
+        services.AddScoped<ITicketRepository, TicketRepository>();
+        services.AddScoped<ITicketCommentRepository, TicketCommentRepository>();
+        services.AddScoped<ITicketAttachmentRepository, TicketAttachmentRepository>();
+        services.AddScoped<ITicketManager, TicketManager>();
         services.AddScoped<IZKTecoService, ZKTecoService>();
         services.AddScoped<IAttendanceMachineService, AttendanceMachineService>();
 

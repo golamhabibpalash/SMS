@@ -1,4 +1,4 @@
-using AspNetCore.Reporting;
+﻿using AspNetCore.Reporting;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -420,12 +420,14 @@ public class ReportsController : Controller
             : institute.Logo;
         string imageParam = await LoadInstituteLogoAsync(logoFileName);
         
-        attendanceFor = attendanceFor == "s" ? "student" : "employees";
+        attendanceFor = attendanceFor == "s" ? "student" : "employee";
         AcademicSession academicSession = await _academicSessionManager.GetCurrentAcademicSessionAsync();
         var reportData = new List<RptDailyAttendaceVM>();
-        reportData = attendanceCategory == "In" ? await _reportManager.GetDailyAttendanceReport(fromDate, academicClassId, academicSectionId, attendanceType, academicSession.Id.ToString(), attendanceFor) : await _reportManager.GetDailyAttendanceReportCheckOut(fromDate, academicClassId,academicSectionId,attendanceFor);
+        reportData = attendanceCategory == "In"
+            ? await _reportManager.GetDailyAttendanceReport(fromDate, academicClassId, academicSectionId, attendanceType, academicSession.Id.ToString(), attendanceFor)
+            : await _reportManager.GetDailyAttendanceReportCheckOut(fromDate, academicClassId, academicSectionId, attendanceType, academicSession.Id.ToString(), attendanceFor);
 
-        if (attendanceFor == "employees")
+        if (attendanceFor == "employee")
         {
             path = Path.Combine(_host.WebRootPath, "Reports", "Attendance", "Rpt_Daily_Attendance_Employee.rdlc");
             reportName = "Employees Daily Attendance Report";
@@ -436,11 +438,18 @@ public class ReportsController : Controller
             TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
             foreach (var item in reportData)
             {
-                var isResidential = allActiveStudents.FirstOrDefault(s => s.ClassRoll.ToString() == item.CardNo.Trim())?.IsResidential;
-                if (isResidential == true) item.Name = item.Name + " (R)";
-                item.Name = textInfo.ToTitleCase(item.Name.ToLower());
-                item.Phone = item.Phone.PadLeft(11, '0');
-                item.GuardianPhone = item.GuardianPhone.PadLeft(11, '0');
+                // Every field below is nullable in the database. Before this
+                // guard a single student with no phone number threw a
+                // NullReferenceException and the whole report failed to render.
+                var cardNo = item.CardNo?.Trim() ?? string.Empty;
+                var isResidential = allActiveStudents.FirstOrDefault(s =>
+                        s.ClassRoll.ToString() == cardNo || s.UniqueId == cardNo)?.IsResidential;
+
+                item.Name = textInfo.ToTitleCase((item.Name ?? string.Empty).ToLower());
+                if (isResidential == true) item.Name += " (R)";
+
+                item.Phone = (item.Phone ?? string.Empty).PadLeft(11, '0');
+                item.GuardianPhone = (item.GuardianPhone ?? string.Empty).PadLeft(11, '0');
             }
         }
         if (!string.IsNullOrEmpty(sms))
@@ -449,7 +458,7 @@ public class ReportsController : Controller
             else if (sms == "no") reportData = reportData.Where(s => s.SMSSent == "Not Sent").ToList();
         }
 
-        bool isEmp = attendanceFor == "employees";
+        bool isEmp = attendanceFor == "employee";
         var dailyDoc = new DailyAttendancePdfBuilder(
             institute, StripDataUriPrefix(imageParam), reportData, reportName, fromDate, isEmp);
         var pdf = dailyDoc.GeneratePdf();

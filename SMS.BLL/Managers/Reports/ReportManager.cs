@@ -1,4 +1,4 @@
-using SMS.BLL.Contracts.Reports;
+﻿using SMS.BLL.Contracts.Reports;
 using SMS.DAL.Contracts.Reports;
 using SMS.Entities;
 using SMS.Entities.RptModels;
@@ -47,9 +47,9 @@ namespace SMS.BLL.Managers.Reports
             return await _reportRepository.GetDailyAttendanceReport(fromDate, academicClassId, academicSectionId, attendanceType, aSessionId, attendanceFor);
         }
 
-        public async Task<List<RptDailyAttendaceVM>> GetDailyAttendanceReportCheckOut(string fromDate, string academicClassId, string academicSectionId, string attendanceFor)
+        public async Task<List<RptDailyAttendaceVM>> GetDailyAttendanceReportCheckOut(string fromDate, string academicClassId, string academicSectionId, string attendanceType, string aSessionId, string attendanceFor)
         {
-            return await _reportRepository.GetDailyAttendanceReportCheckOut(fromDate, academicClassId, academicSectionId, attendanceFor);
+            return await _reportRepository.GetDailyAttendanceReportCheckOut(fromDate, academicClassId, academicSectionId, attendanceType, aSessionId, attendanceFor);
         }
 
         public async Task<List<RptStudentsPaymentVM>> GetStudentPayment(string fromDate, string ToDate, string AcademicClassId, string AcademicSectionId)
@@ -90,9 +90,5 @@ namespace SMS.BLL.Managers.Reports
             return result;
         }
 
-        public Task<List<RptDailyAttendaceVM>> GetDailyAttendanceReportCheckOut(string fromDate, string AcademicClassId, string AcademicSectionId, string attendanceType, string aSessionId)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

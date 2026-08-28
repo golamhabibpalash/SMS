@@ -8,6 +8,7 @@ using SMS.Entities.RptModels.Results;
 using SMS.Entities.RptModels.StudentPayment;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -206,145 +207,179 @@ namespace SMS.DAL.Repositories.Reports
 
         public async Task<List<RptDailyAttendaceVM>> GetDailyAttendanceReport(string fromDate, string AcademicClassId, string AcademicSectionId, string attendanceType, string aSessionId, string attendanceFor)
         {
-            DateTime date = DateTime.Parse(fromDate);
-
-            var rawPunches = await _context.Tran_MachineRawPunch
-                .Where(t => t.PunchDatetime.Date == date.Date)
-                .ToListAsync();
-
-            var result = new List<RptDailyAttendaceVM>();
-
-            if (string.Equals(attendanceFor, "Student", StringComparison.OrdinalIgnoreCase))
-            {
-                var studentsQuery = _context.Student
-                    .Include(s => s.AcademicClass)
-                    .Include(s => s.AcademicSection)
-                    .AsQueryable();
-
-                if (!string.IsNullOrEmpty(AcademicClassId) && int.TryParse(AcademicClassId, out int cId))
-                    studentsQuery = studentsQuery.Where(s => s.AcademicClassId == cId);
-
-                if (!string.IsNullOrEmpty(AcademicSectionId) && int.TryParse(AcademicSectionId, out int sId))
-                    studentsQuery = studentsQuery.Where(s => s.AcademicSectionId == sId);
-
-                var students = await studentsQuery.ToListAsync();
-
-                result = students.Select(s =>
-                {
-                    var punch = rawPunches.FirstOrDefault(r => r.CardNo == s.ClassRoll.ToString());
-                    return new RptDailyAttendaceVM
-                    {
-                        CardNo = s.ClassRoll.ToString(),
-                        ClassRoll = s.ClassRoll.ToString(),
-                        Name = s.Name,
-                        Class_Designation = s.AcademicClass?.Name,
-                        Phone = s.PhoneNo,
-                        GuardianPhone = s.GuardianPhone,
-                        PunchTime = punch?.PunchDatetime.ToString("hh:mm:ss tt"),
-                        SortingOrder = s.AcademicClass?.ClassSerial.ToString(),
-                        SMSSent = "",
-                        ClassSL = s.AcademicClass?.ClassSerial.ToString()
-                    };
-                }).OrderBy(r => r.SortingOrder).ThenBy(r => r.ClassRoll).ToList();
-            }
-            else if (string.Equals(attendanceFor, "Employee", StringComparison.OrdinalIgnoreCase))
-            {
-                var employees = await _context.Employee
-                    .Include(e => e.Designation)
-                    .ToListAsync();
-
-                result = employees.Select(e =>
-                {
-                    var punch = rawPunches.FirstOrDefault(r => r.CardNo == e.Id.ToString());
-                    return new RptDailyAttendaceVM
-                    {
-                        CardNo = e.Id.ToString(),
-                        ClassRoll = "",
-                        Name = e.EmployeeName,
-                        Class_Designation = e.Designation?.DesignationName,
-                        Phone = e.Phone,
-                        GuardianPhone = "",
-                        PunchTime = punch?.PunchDatetime.ToString("hh:mm:ss tt"),
-                        SortingOrder = "",
-                        SMSSent = "",
-                        ClassSL = ""
-                    };
-                }).ToList();
-            }
-
-            return result;
+            return await BuildDailyAttendanceAsync(fromDate, AcademicClassId, AcademicSectionId, attendanceType, aSessionId, attendanceFor, checkOut: false);
         }
 
-        public async Task<List<RptDailyAttendaceVM>> GetDailyAttendanceReportCheckOut(string fromDate, string AcademicClassId, string AcademicSectionId, string attendanceFor)
+        public async Task<List<RptDailyAttendaceVM>> GetDailyAttendanceReportCheckOut(string fromDate, string AcademicClassId, string AcademicSectionId, string attendanceType, string aSessionId, string attendanceFor)
         {
-            DateTime date = DateTime.Parse(fromDate);
+            return await BuildDailyAttendanceAsync(fromDate, AcademicClassId, AcademicSectionId, attendanceType, aSessionId, attendanceFor, checkOut: true);
+        }
 
-            var checkOutPunches = await _context.Tran_MachineRawPunch
+        /// <summary>
+        /// Check-in and check-out differ only in which punch of the day they
+        /// report, so both share this. A person's first punch of the day is the
+        /// check-in and their last is the check-out; somebody who punched only
+        /// once has arrived but not left, so their check-out stays blank rather
+        /// than repeating the arrival time back at the reader.
+        /// </summary>
+        private async Task<List<RptDailyAttendaceVM>> BuildDailyAttendanceAsync(
+            string fromDate, string academicClassId, string academicSectionId,
+            string attendanceType, string aSessionId, string attendanceFor, bool checkOut)
+        {
+            // Explicit invariant parse: the date arrives from an <input type="date">
+            // as yyyy-MM-dd, which a culture-default parse mis-reads on Linux.
+            if (!DateTime.TryParse(fromDate, CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
+                date = DateTime.Today;
+
+            var punches = await _context.Tran_MachineRawPunch
+                .AsNoTracking()
                 .Where(t => t.PunchDatetime.Date == date.Date)
                 .ToListAsync();
 
+            // One entry per PIN, holding that PIN's first and last punch of the day.
+            var punchesByPin = punches
+                .Where(p => !string.IsNullOrWhiteSpace(p.CardNo))
+                .GroupBy(p => p.CardNo.Trim())
+                .ToDictionary(
+                    g => g.Key,
+                    g => new
+                    {
+                        First = g.Min(p => p.PunchDatetime),
+                        Last = g.Max(p => p.PunchDatetime),
+                        Count = g.Count()
+                    });
+
+            // Which numbers already received an attendance SMS today. Without
+            // this every row reported "", so the SMS Sent / Not Sent filter on
+            // the report screen could never match anything.
+            var smsType = checkOut ? "CheckOut" : "CheckIn";
+            var notifiedNumbers = (await _context.PhoneSMS
+                    .AsNoTracking()
+                    .Where(s => s.SMSType == smsType && s.CreatedAt.Date == date.Date)
+                    .Select(s => s.MobileNumber)
+                    .ToListAsync())
+                .Where(n => !string.IsNullOrWhiteSpace(n))
+                .Select(n => n.Trim())
+                .ToHashSet();
+
+            // Candidates are tried in order, so the current enrolment scheme
+            // wins and the legacy one only answers for older punches.
+            string PunchTimeFor(params string[] candidatePins)
+            {
+                foreach (var pin in candidatePins)
+                {
+                    if (string.IsNullOrWhiteSpace(pin) || !punchesByPin.TryGetValue(pin.Trim(), out var day))
+                        continue;
+
+                    if (checkOut)
+                        return day.Count > 1 ? day.Last.ToString("hh:mm:ss tt") : null;
+
+                    return day.First.ToString("hh:mm:ss tt");
+                }
+
+                return null;
+            }
+
+            bool WasNotified(string number) =>
+                !string.IsNullOrWhiteSpace(number) && notifiedNumbers.Contains(number.Trim());
+
             var result = new List<RptDailyAttendaceVM>();
 
-            if (string.Equals(attendanceFor, "Student", StringComparison.OrdinalIgnoreCase))
-            {
-                var studentsQuery = _context.Student
-                    .Include(s => s.AcademicClass)
-                    .Include(s => s.AcademicSection)
-                    .AsQueryable();
-
-                if (!string.IsNullOrEmpty(AcademicClassId) && int.TryParse(AcademicClassId, out int cId))
-                    studentsQuery = studentsQuery.Where(s => s.AcademicClassId == cId);
-
-                if (!string.IsNullOrEmpty(AcademicSectionId) && int.TryParse(AcademicSectionId, out int sId))
-                    studentsQuery = studentsQuery.Where(s => s.AcademicSectionId == sId);
-
-                var students = await studentsQuery.ToListAsync();
-
-                result = students.Select(s =>
-                {
-                    var punch = checkOutPunches.FirstOrDefault(r => r.CardNo == s.ClassRoll.ToString());
-                    return new RptDailyAttendaceVM
-                    {
-                        CardNo = s.ClassRoll.ToString(),
-                        ClassRoll = s.ClassRoll.ToString(),
-                        Name = s.Name,
-                        Class_Designation = s.AcademicClass?.Name,
-                        Phone = s.PhoneNo,
-                        GuardianPhone = s.GuardianPhone,
-                        PunchTime = punch?.PunchDatetime.ToString("hh:mm:ss tt"),
-                        SortingOrder = s.AcademicClass?.ClassSerial.ToString(),
-                        SMSSent = "",
-                        ClassSL = s.AcademicClass?.ClassSerial.ToString()
-                    };
-                }).OrderBy(r => r.SortingOrder).ThenBy(r => r.ClassRoll).ToList();
-            }
-            else if (string.Equals(attendanceFor, "Employee", StringComparison.OrdinalIgnoreCase))
+            if (IsEmployeeReport(attendanceFor))
             {
                 var employees = await _context.Employee
+                    .AsNoTracking()
                     .Include(e => e.Designation)
+                    .Where(e => e.Status)
                     .ToListAsync();
 
-                result = employees.Select(e =>
-                {
-                    var punch = checkOutPunches.FirstOrDefault(r => r.CardNo == e.Id.ToString());
-                    return new RptDailyAttendaceVM
+                result = employees
+                    .OrderBy(e => e.Designation != null ? e.Designation.DesignationName : string.Empty)
+                    .ThenBy(e => e.EmployeeName)
+                    .Select(e => new RptDailyAttendaceVM
                     {
-                        CardNo = e.Id.ToString(),
+                        // MachineUserId is what gets enrolled on the terminal;
+                        // e.Id is the fallback for punches recorded before that
+                        // field was in use.
+                        CardNo = string.IsNullOrWhiteSpace(e.MachineUserId) ? e.Id.ToString() : e.MachineUserId,
                         ClassRoll = "",
                         Name = e.EmployeeName,
                         Class_Designation = e.Designation?.DesignationName,
                         Phone = e.Phone,
                         GuardianPhone = "",
-                        PunchTime = punch?.PunchDatetime.ToString("hh:mm:ss tt"),
-                        SortingOrder = "",
-                        SMSSent = "",
+                        PunchTime = PunchTimeFor(e.MachineUserId, e.Id.ToString()),
+                        SortingOrder = e.Designation?.DesignationName,
+                        SMSSent = WasNotified(e.Phone) ? "Sent" : "Not Sent",
                         ClassSL = ""
-                    };
-                }).ToList();
+                    })
+                    .ToList();
             }
+            else
+            {
+                var studentsQuery = _context.Student
+                    .AsNoTracking()
+                    .Include(s => s.AcademicClass)
+                    .Include(s => s.AcademicSection)
+                    .Where(s => s.Status)
+                    .AsQueryable();
+
+                // Without the session filter the report listed every student who
+                // has ever been enrolled, previous years included.
+                if (!string.IsNullOrEmpty(aSessionId) && int.TryParse(aSessionId, out int sessionId))
+                    studentsQuery = studentsQuery.Where(s => s.AcademicSessionId == sessionId);
+
+                if (!string.IsNullOrEmpty(academicClassId) && int.TryParse(academicClassId, out int cId))
+                    studentsQuery = studentsQuery.Where(s => s.AcademicClassId == cId);
+
+                if (!string.IsNullOrEmpty(academicSectionId) && int.TryParse(academicSectionId, out int sId))
+                    studentsQuery = studentsQuery.Where(s => s.AcademicSectionId == sId);
+
+                var students = await studentsQuery.ToListAsync();
+
+                result = students
+                    // ClassSerial sorted as a number: as a string "10" ordered
+                    // ahead of "2".
+                    .OrderBy(s => s.AcademicClass != null ? s.AcademicClass.ClassSerial : int.MaxValue)
+                    .ThenBy(s => s.ClassRoll)
+                    .Select(s => new RptDailyAttendaceVM
+                    {
+                        // The terminal is enrolled with UniqueId; ClassRoll is
+                        // kept as a fallback so punches captured under the old
+                        // scheme still resolve.
+                        CardNo = string.IsNullOrWhiteSpace(s.UniqueId) ? s.ClassRoll.ToString() : s.UniqueId,
+                        ClassRoll = s.ClassRoll.ToString(),
+                        Name = s.Name,
+                        Class_Designation = s.AcademicClass?.Name,
+                        Phone = s.PhoneNo,
+                        GuardianPhone = s.GuardianPhone,
+                        PunchTime = PunchTimeFor(s.UniqueId, s.ClassRoll.ToString()),
+                        SortingOrder = s.AcademicClass?.ClassSerial.ToString(),
+                        SMSSent = WasNotified(s.GuardianPhone) ? "Sent" : "Not Sent",
+                        ClassSL = s.AcademicClass?.ClassSerial.ToString()
+                    })
+                    .ToList();
+            }
+
+            // "attended"/"absent" come from the report screen; anything else,
+            // including the unselected placeholder, means no filter.
+            if (string.Equals(attendanceType, "attended", StringComparison.OrdinalIgnoreCase))
+                result = result.Where(r => !string.IsNullOrEmpty(r.PunchTime)).ToList();
+            else if (string.Equals(attendanceType, "absent", StringComparison.OrdinalIgnoreCase))
+                result = result.Where(r => string.IsNullOrEmpty(r.PunchTime)).ToList();
 
             return result;
         }
+
+        /// <summary>
+        /// The report screen sends "e"/"s" and the controller expands those to
+        /// words. Accept every spelling that has been in use rather than
+        /// silently returning an empty report when one of them drifts.
+        /// </summary>
+        private static bool IsEmployeeReport(string attendanceFor) =>
+            !string.IsNullOrWhiteSpace(attendanceFor) &&
+            (attendanceFor.Trim().Equals("e", StringComparison.OrdinalIgnoreCase) ||
+             attendanceFor.Trim().StartsWith("employee", StringComparison.OrdinalIgnoreCase));
+
         public async Task<List<RptPaymentReceiptVM>> GetPaymentReceiptReport(int paymentId)
         {
             List<RptPaymentReceiptVM> rptPaymentReceiptVMs;

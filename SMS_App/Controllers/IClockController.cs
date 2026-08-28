@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SMS.BLL.Contracts;
+using SMS_App.Utilities.ShortMessageService;
 
 namespace SMS_App.Controllers
 {
@@ -27,11 +28,16 @@ namespace SMS_App.Controllers
     public class IClockController : Controller
     {
         private readonly IAdmsPushManager _admsPushManager;
+        private readonly IAttendanceSmsNotifier _smsNotifier;
         private readonly ILogger<IClockController> _logger;
 
-        public IClockController(IAdmsPushManager admsPushManager, ILogger<IClockController> logger)
+        public IClockController(
+            IAdmsPushManager admsPushManager,
+            IAttendanceSmsNotifier smsNotifier,
+            ILogger<IClockController> logger)
         {
             _admsPushManager = admsPushManager;
+            _smsNotifier = smsNotifier;
             _logger = logger;
         }
 
@@ -87,6 +93,19 @@ namespace SMS_App.Controllers
 
                 foreach (var error in result.Errors)
                     _logger.LogWarning("ADMS ATTLOG from {Serial}: {Error}", sn, error);
+
+                // Notify on the punches this call actually stored. Wrapped
+                // because the punches are already safely saved by now - an SMS
+                // provider outage must not turn into a 500 that makes the
+                // device replay a batch we have.
+                try
+                {
+                    await _smsNotifier.NotifyBatchAsync(result.SavedPunches);
+                }
+                catch (Exception smsEx)
+                {
+                    _logger.LogError(smsEx, "Attendance SMS failed for ATTLOG from {Serial}", sn);
+                }
 
                 // The firmware clears its buffer on OK. Report the number we
                 // accepted so a mismatch is visible in the device log.

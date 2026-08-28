@@ -1,4 +1,4 @@
-using SMS.Entities;
+﻿using SMS.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -36,5 +36,12 @@ namespace SMS.BLL.Contracts
         public int Duplicates { get; set; }
         public int Invalid { get; set; }
         public List<string> Errors { get; } = new();
+
+        /// <summary>
+        /// The punches actually written on this call - duplicates excluded, so
+        /// a device re-sending its buffer cannot trigger a second notification
+        /// for a punch somebody was already told about.
+        /// </summary>
+        public List<Tran_MachineRawPunch> SavedPunches { get; } = new();
     }
 }

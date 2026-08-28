@@ -1,4 +1,4 @@
-using SMS.BLL.Contracts;
+﻿using SMS.BLL.Contracts;
 using SMS.Entities;
 using System;
 using System.Collections.Generic;
@@ -135,6 +135,7 @@ namespace SMS.BLL.Managers
             {
                 await _attendanceMachineManager.AddRangeAsync(toSave);
                 result.Saved = toSave.Count;
+                result.SavedPunches.AddRange(toSave);
             }
 
             return result;

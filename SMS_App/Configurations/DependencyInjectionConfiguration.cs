@@ -1,4 +1,4 @@
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Repositories;
 using SMS.BLL.Contracts;
 using SMS.BLL.Contracts.Reports;
@@ -98,6 +98,11 @@ public static class DependencyInjectionConfiguration
 
         //ADMS push protocol (/iclock) - used by push-only terminals such as the SenseFace T1
         services.AddScoped<IAdmsPushManager, AdmsPushManager>();
+
+        //Turns a stored punch into a guardian/employee SMS. Lives in this layer
+        //because MobileSMS does; both the /iclock push path and the manual
+        //SendSMS endpoint share it.
+        services.AddScoped<IAttendanceSmsNotifier, AttendanceSmsNotifier>();
 
         //Tickets
         services.AddScoped<ITicketRepository, TicketRepository>();

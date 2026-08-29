@@ -38,8 +38,8 @@ namespace SMS_App.Controllers
 
             var subModules = await _projectSubModuleManager.GetAllAsync();
             var lastupdatedSubModule = subModules.OrderByDescending(s => s.EditedAt).FirstOrDefault();
-            ViewBag.LastUpdatedAt = lastUpdatedAt = lastupdatedSubModule.EditedAt.ToString("dd MMM yyyy hh:mm tt");
-            ViewBag.LastUpdatedBy = lastUpdatedBy = lastupdatedSubModule.EditedBy;
+            ViewBag.LastUpdatedAt = lastUpdatedAt = lastupdatedSubModule?.EditedAt.ToString("dd MMM yyyy hh:mm tt") ?? string.Empty;
+            ViewBag.LastUpdatedBy = lastUpdatedBy = lastupdatedSubModule?.EditedBy;
 
             ProjectSubModuleVM projectSubModuleVM = new ProjectSubModuleVM();
             projectSubModuleVM.SubModuleList = subModules.ToList();

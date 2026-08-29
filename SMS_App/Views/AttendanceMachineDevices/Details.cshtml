@@ -22,19 +22,60 @@
                 <h5 class="mb-0"><i class="fa fa-fingerprint"></i> @Model.Name</h5>
                 @if (health != null)
                 {
-                    <span class="badge @(health.IsOnline ? "badge-success" : "badge-danger")">
-                        @(health.IsOnline ? "Online" : "Offline")
+                    <span class="badge @(health.IsOnline ? "badge-success" : "badge-danger")"
+                          title="@(Model.UsePushMode ? "Based on when the device last checked in" : "Based on a live connection test")">
+                        @(health.IsOnline
+                            ? (Model.UsePushMode ? "Reporting" : "Online")
+                            : (Model.UsePushMode ? "Not reporting" : "Offline"))
                     </span>
                 }
             </div>
             <div class="card-body">
                 <table class="table table-borderless mb-0">
-                    <tr><th width="30%">IP : Port</th><td>@Model.IPAddress:@Model.Port</td></tr>
-                    <tr><th>Serial Number</th><td>@(Model.SerialNumber ?? "-")</td></tr>
+                    @if (Model.UsePushMode)
+                    {
+                        <tr>
+                            <th width="30%">Connection</th>
+                            <td>
+                                <span class="badge badge-info">Push (ADMS)</span>
+                                <small class="text-muted d-block">
+                                    The device uploads to <code>/iclock/cdata</code> on its own.
+                                    Set its Cloud Server / ADMS address to this site, then match
+                                    the serial below. No IP is dialled from the server.
+                                </small>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr><th width="30%">IP : Port</th><td>@Model.IPAddress:@Model.Port</td></tr>
+                    }
+                    <tr>
+                        <th>Serial Number</th>
+                        <td>
+                            <code>@(Model.SerialNumber ?? "-")</code>
+                            @if (Model.UsePushMode)
+                            {
+                                <small class="text-muted d-block">Uploads are accepted only for this exact serial.</small>
+                            }
+                        </td>
+                    </tr>
                     <tr><th>Model / Brand</th><td>@(Model.Model ?? "-") / @Model.Brand</td></tr>
                     <tr><th>Location</th><td>@(Model.Location ?? "-")</td></tr>
                     <tr><th>Status</th><td>@(Model.IsActive ? "Active" : "Inactive")</td></tr>
-                    <tr><th>Last Sync</th><td>@(Model.LastSyncAt?.ToString("dd MMM yyyy hh:mm tt") ?? "Never")</td></tr>
+                    <tr>
+                        <th>@(Model.UsePushMode ? "Last Check-in" : "Last Sync")</th>
+                        <td>
+                            @(Model.LastSyncAt?.ToString("dd MMM yyyy hh:mm tt") ?? "Never")
+                            @if (Model.UsePushMode && Model.LastSyncAt == null)
+                            {
+                                <small class="text-danger d-block">
+                                    This device has never contacted the server. Check its
+                                    Cloud Server / ADMS address, port and network.
+                                </small>
+                            }
+                        </td>
+                    </tr>
                     @if (!string.IsNullOrEmpty(Model.LastError))
                     {
                         <tr><th>Last Error</th><td class="text-danger">@Model.LastError</td></tr>
@@ -48,14 +89,23 @@
                 </table>
 
                 <div class="text-center mt-3">
-                    <form asp-action="TestConnection" asp-route-id="@Model.Id" method="post" class="d-inline">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-plug"></i> Test Connection</button>
-                    </form>
-                    <form asp-action="SyncUsers" asp-route-id="@Model.Id" method="post" class="d-inline">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-outline-primary" onclick="return confirm('Push all enrolled users to this machine?');"><i class="fa fa-upload"></i> Sync Users</button>
-                    </form>
+                    @if (!Model.UsePushMode)
+                    {
+                        <form asp-action="TestConnection" asp-route-id="@Model.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-plug"></i> Test Connection</button>
+                        </form>
+                        <form asp-action="SyncUsers" asp-route-id="@Model.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-outline-primary" onclick="return confirm('Push all enrolled users to this machine?');"><i class="fa fa-upload"></i> Sync Users</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <a asp-controller="MachineEnrollment" asp-action="Index" class="btn btn-outline-primary">
+                            <i class="fa fa-fingerprint"></i> User Enrollment
+                        </a>
+                    }
                     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-warning"><i class="fa fa-edit"></i> Edit</a>
                     <a asp-action="Index" class="btn btn-outline-dark">Back to List</a>
                 </div>

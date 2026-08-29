@@ -413,7 +413,7 @@
                                                         if (pDetails.CreatedBy!=null)
                                                         {
                                                             ApplicationUser aUser = await _userManager.FindByIdAsync(pDetails.CreatedBy);
-                                                            createdBy = aUser.UserName;
+                                                            createdBy = aUser?.UserName ?? "N/F";
                                                         }
                                                         <tr>
                                                             <td>@(++paySL)</td>

@@ -67,7 +67,7 @@
                             @if (item.CreatedBy != null)
                             {
                                 ApplicationUser aUser = await _userManager.FindByIdAsync(item.CreatedBy);
-                                createdBy = aUser.UserName;
+                                createdBy = aUser?.UserName ?? "N/F";
                             }
                             else
                             {
@@ -78,7 +78,7 @@
                             @if (item.EditedBy != null)
                             {
                                 ApplicationUser aUser = await _userManager.FindByIdAsync(item.EditedBy);
-                                updatedBy = aUser.UserName;
+                                updatedBy = aUser?.UserName ?? "N/F";
                             }
                             else
                             {

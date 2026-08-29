@@ -1,4 +1,4 @@
-@using Microsoft.AspNetCore.Authorization
+﻿@using Microsoft.AspNetCore.Authorization
 @using System.Security.Claims
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Http
@@ -31,6 +31,8 @@
     string instituteName = GlobalUI.InstituteName ?? "Institute Name";
     string instituteLogo = GlobalUI.Logo ?? "instituteLogo.png";
     var userName = _userManager.GetUserName(User);
+    // Scopes the remembered sidebar state to this user, so two people sharing a browser keep their own preference.
+    var sidebarUserKey = user?.Id ?? "anon";
     headerVM.InstituteName = instituteName;
 
     string userImage = "/Images/noProfileImage.png";
@@ -71,6 +73,21 @@
     <!-- END HEAD -->
 
 <body class="page-header-fixed sidemenu-closed-hidelogo page-content-white page-md header-white dark-sidebar-color logo-indigo">
+    <script>
+        // Re-apply the sidebar's collapsed state before the page paints, so it does not
+        // flash open on every navigation. layout.js has its own save/restore for this,
+        // but it is gated on the jquery.cookie plugin, which this project never loads.
+        (function () {
+            window.EIMS_SIDEBAR_KEY = "eims.sidebar.collapsed.@sidebarUserKey";
+            try {
+                // 992px is the theme's "md" breakpoint; below it the sidebar uses the
+                // mobile slide-out instead, which has its own open/closed handling.
+                if (localStorage.getItem(window.EIMS_SIDEBAR_KEY) === "1" && window.innerWidth >= 992) {
+                    document.body.classList.add("sidemenu-closed");
+                }
+            } catch (e) { /* storage blocked: fall back to the default expanded sidebar */ }
+        })();
+    </script>
     <div class="page-wrapper">
 
         <!-- start header -->
@@ -687,6 +704,33 @@
         </div>
 
 
+
+        <script>
+            // Remember the sidebar state across pages. The theme's own handler in layout.js
+            // does the toggling; this only records the result once that handler has run.
+            (function () {
+                var key = window.EIMS_SIDEBAR_KEY;
+                if (!key) { return; }
+
+                $(function () {
+                    // The pre-paint script could only reach <body>; .sidemenu exists by now
+                    // and the theme expects the same class on both.
+                    if (document.body.classList.contains("sidemenu-closed")) {
+                        $(".sidemenu").addClass("sidemenu-closed");
+                    }
+
+                    $("body").on("click", ".sidebar-toggler", function () {
+                        // Deferred so we read the class after the theme handler flips it,
+                        // whichever order the two handlers happen to be bound in.
+                        setTimeout(function () {
+                            try {
+                                localStorage.setItem(key, document.body.classList.contains("sidemenu-closed") ? "1" : "0");
+                            } catch (e) { /* storage blocked: state just is not remembered */ }
+                        }, 0);
+                    });
+                });
+            })();
+        </script>
 
         @await RenderSectionAsync("Scripts", required: false)
     </body>

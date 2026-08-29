@@ -41,7 +41,16 @@
                     <span class="badge badge-secondary">Inactive</span>
                 }
             </td>
-            <td>@item.IPAddress:@item.Port</td>
+            <td>
+                @if (item.UsePushMode)
+                {
+                    <span class="badge badge-info" title="Device uploads to /iclock on its own; no IP is dialled">Push</span>
+                }
+                else
+                {
+                    @($"{item.IPAddress}:{item.Port}")
+                }
+            </td>
             <td>@item.SerialNumber</td>
             <td>@item.Model</td>
             <td>@item.Brand</td>
@@ -55,10 +64,13 @@
             </td>
             <td>
                 <partial name="_Edit_Details_Delete" model="@item.Id" />
-                <form asp-action="PullAttendance" asp-route-id="@item.Id" method="post" class="d-inline">
-                    @Html.AntiForgeryToken()
-                    <button type="submit" class="btn btn-outline-primary btn-sm" title="Pull attendance now"><i class="fa fa-download"></i></button>
-                </form>
+                @if (!item.UsePushMode)
+                {
+                    <form asp-action="PullAttendance" asp-route-id="@item.Id" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-outline-primary btn-sm" title="Pull attendance now"><i class="fa fa-download"></i></button>
+                    </form>
+                }
             </td>
         </tr>
 }

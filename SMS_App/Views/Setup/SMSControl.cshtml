@@ -226,7 +226,7 @@
         ApplicationUser aUser = await _userManager.FindByIdAsync(Model.EditedBy);
         if (aUser != null)
         {
-            lastEditedUser = aUser.UserName;
+            lastEditedUser = aUser?.UserName ?? "N/F";
         }
     }
     <dd class="col-md-9">@lastEditedUser</dd>

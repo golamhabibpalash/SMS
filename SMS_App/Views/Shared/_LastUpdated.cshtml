@@ -13,7 +13,7 @@
                     @if (ViewBag.LastUpdatedBy != null)
                     {
                         ApplicationUser aUser = await _userManager.FindByIdAsync(ViewBag.LastUpdatedBy);
-                        createdBy = aUser.UserName;
+                        createdBy = aUser?.UserName ?? "N/F";
                     }
                     @createdBy
                 </td>

@@ -33,7 +33,7 @@
                         @if (item.EditedBy != null)
                         {
                             ApplicationUser aUser = await _userManager.FindByIdAsync(item.EditedBy);
-                            editedBy = aUser.UserName;
+                            editedBy = aUser?.UserName ?? "N/F";
                         }
                         else
                         {

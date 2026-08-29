@@ -76,7 +76,7 @@
                         <tr>
                             <td>@(++sl)</td>
                             <td class="text-nowrap">@item.SubModuleName</td>
-                            <td>@item.ProjectModule.ModuleName</td>
+                            <td>@item.ProjectModule?.ModuleName</td>
                             <td>@item.Remarks</td>
                             <td>
                                 @if (item.Status)
@@ -92,7 +92,7 @@
                                 @if (item.CreatedBy != null)
                                 {
                                     ApplicationUser aUser = await _userManager.FindByIdAsync(item.CreatedBy);
-                                    createdBy = aUser.UserName;
+                                    createdBy = aUser?.UserName ?? "N/F";
                                 }
                                 else
                                 {
@@ -112,11 +112,11 @@
                                     <input type="hidden" asp-for="ProjectSubModule.ProjectModuleId"
                                         value="@item.ProjectModuleId" />
                                     <input type="hidden" asp-for="ProjectSubModule.ProjectModuleId"
-                                        value="@item.ProjectModule.ModuleName" />
+                                        value="@item.ProjectModule?.ModuleName" />
                                     <input type="hidden" asp-for="ProjectSubModule.ProjectModuleId"
-                                        value="@item.ProjectModule.Remarks" />
+                                        value="@item.ProjectModule?.Remarks" />
                                     <input type="hidden" asp-for="ProjectSubModule.ProjectModuleId"
-                                        value="@item.ProjectModule.Status" />
+                                        value="@item.ProjectModule?.Status" />
                                     @* <input type="submit"  value="Delete" class="btn btn-sm btn-danger" /> *@
                                     <button class=" btn-sm btn-danger"><i class="fa fa-trash"></i> </button>
                                 </form>

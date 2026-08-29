@@ -1,4 +1,4 @@
-@model SMS_App.ViewModels.ExamVM.AcademicExamDetailVM
+﻿@model SMS_App.ViewModels.ExamVM.AcademicExamDetailVM
 @inject UserManager<ApplicationUser> _userManager;
 
 @{
@@ -183,7 +183,7 @@
                         if (item.EditedBy != null)
                         {
                             ApplicationUser aUser = await _userManager.FindByIdAsync(item.EditedBy);
-                            updatedBy = aUser.UserName;
+                            updatedBy = aUser?.UserName ?? "N/F";
                         }
                         <tr>
                             <td>@(++i) <input type="hidden" asp-for="AcademicExamDetails[detailId].AcademicExamId" value="@Model.Id" /> </td>

@@ -1,4 +1,4 @@
-using GHPEncryptDecript;
+﻿using GHPEncryptDecript;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Hangfire.SqlServer;
@@ -19,6 +19,7 @@ using SMS_App.Configurations;
 using SMS_App.Utilities.Automation.Hangfire;
 using SMS_App.Utilities.ShortMessageService;
 using SMS_App.Utilities.AutoMapperConfiguration;
+using SMS_App.Utilities.LoggerService;
 using SMS_App.ViewModels.ModuleSubModuleVM;
 using System;
 using System.IO;
@@ -245,6 +246,11 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
+
+// Sits inside the error-page handler above, so it sees every unhandled exception
+// first, records it in the Logs table (visible at /Logs), then rethrows and lets
+// the handler render the page exactly as before.
+app.UseMiddleware<ExceptionLoggingMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

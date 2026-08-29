@@ -70,6 +70,12 @@ namespace SMS.BLL.Managers
             if (machine == null || !machine.IsActive)
                 return false;
 
+            // A push terminal is "reachable" when it has checked in with us
+            // recently - we cannot dial it, so recent contact is the only
+            // evidence available.
+            if (machine.UsePushMode)
+                return HasRecentContact(machine);
+
             var connected = await _zktecoService.ConnectAsync(machine.IPAddress, machine.Port, machine.Username, machine.Password);
             await _zktecoService.DisconnectAsync();
             return connected;
@@ -84,6 +90,16 @@ namespace SMS.BLL.Managers
             {
                 result.Success = false;
                 result.Message = "Machine not found or inactive";
+                return result;
+            }
+
+            if (machine.UsePushMode)
+            {
+                // Nothing to dial: a push terminal has no listening port for us
+                // to reach. Bail out immediately rather than burning the full
+                // 30 second connect timeout on a call that cannot succeed.
+                result.Success = false;
+                result.Message = PushModeNotice("Users must be enrolled on the device itself");
                 return result;
             }
 
@@ -184,6 +200,13 @@ namespace SMS.BLL.Managers
             {
                 result.Success = false;
                 result.Message = "Machine not found or inactive";
+                return result;
+            }
+
+            if (machine.UsePushMode)
+            {
+                result.Success = false;
+                result.Message = PushModeNotice("Punches arrive on their own and there is nothing to pull");
                 return result;
             }
 
@@ -302,6 +325,17 @@ namespace SMS.BLL.Managers
                 return status;
             }
 
+            if (machine.UsePushMode)
+            {
+                // Report what the device last told us instead of opening a
+                // socket. Without this the Details page blocks for the whole
+                // connect timeout on every single load.
+                status.IsOnline = HasRecentContact(machine);
+                status.LastContact = machine.LastSyncAt;
+                status.Error = machine.LastError;
+                return status;
+            }
+
             try
             {
                 var connected = await _zktecoService.ConnectAsync(machine.IPAddress, machine.Port, machine.Username, machine.Password);
@@ -342,5 +376,19 @@ namespace SMS.BLL.Managers
 
             return status;
         }
+
+        /// <summary>
+        /// A push terminal polls us on the Delay interval from its handshake
+        /// (10s by default), so silence for this long means it has stopped
+        /// talking to us - wrong server address, no Wi-Fi, or powered off.
+        /// </summary>
+        private const int PushContactGraceMinutes = 15;
+
+        private static bool HasRecentContact(AttendanceMachine machine) =>
+            machine.LastSyncAt.HasValue &&
+            machine.LastSyncAt.Value > DateTime.Now.AddMinutes(-PushContactGraceMinutes);
+
+        private static string PushModeNotice(string detail) =>
+            $"This device is in push mode: it uploads to /iclock by itself. {detail}.";
     }
 }

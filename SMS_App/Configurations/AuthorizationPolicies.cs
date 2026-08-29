@@ -331,6 +331,15 @@ public class AuthorizationPolicies
         options.AddPolicy("SubjectEnrollSubjectEnrollmentPolicy", policy => policy.RequireClaim("View Enrollment List"));
         options.AddPolicy("SetOptionalSubjectSubjectEnrollmentPolicy", policy => policy.RequireClaim("Update Optional Subject"));
 
+        //Tickets
+        options.AddPolicy("IndexTicketsPolicy", policy => policy.RequireClaim("View Tickets"));
+        options.AddPolicy("DetailsTicketsPolicy", policy => policy.RequireClaim("View Details Ticket"));
+        options.AddPolicy("CreateTicketsPolicy", policy => policy.RequireClaim("Create Ticket"));
+        options.AddPolicy("EditTicketsPolicy", policy => policy.RequireClaim("Edit Ticket"));
+        options.AddPolicy("DeleteTicketsPolicy", policy => policy.RequireClaim("Delete Ticket"));
+        options.AddPolicy("ChangeStatusTicketsPolicy", policy => policy.RequireClaim("Change Ticket Status"));
+        options.AddPolicy("CommentTicketsPolicy", policy => policy.RequireClaim("Comment On Ticket"));
+
         //Upazila
         options.AddPolicy("IndexUpazilasPolicy", policy => policy.RequireClaim("View Upazilas"));
         options.AddPolicy("DetailsUpazilasPolicy", policy => policy.RequireClaim("View Details Upazila"));

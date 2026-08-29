@@ -1,0 +1,93 @@
+@model SMS_App.ViewModels.Tickets.TicketEditVM
+@{
+    ViewData["Title"] = "Edit Ticket";
+    GlobalUI.PageTitle = "Edit Ticket";
+}
+
+<partial name="_Alerts" />
+
+<div class="row">
+    <div class="col-md-8">
+        <fieldset class="border p-3 shadow">
+            <legend class="float-none w-auto text-primary px-2" style="font-size:1.1rem;">Edit Ticket #@Model.Id</legend>
+
+            <form asp-action="Edit" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+
+                <div class="form-group row mb-2">
+                    <label asp-for="Title" class="col-sm-3 col-form-label"></label>
+                    <div class="col-sm-9">
+                        <input asp-for="Title" class="form-control" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-2">
+                    <label asp-for="TicketType" class="col-sm-3 col-form-label"></label>
+                    <div class="col-sm-9">
+                        <select asp-for="TicketType" asp-items="Model.TicketTypeList" class="form-control"></select>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-2">
+                    <label asp-for="Description" class="col-sm-3 col-form-label"></label>
+                    <div class="col-sm-9">
+                        <textarea asp-for="Description" class="form-control" rows="8"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-2">
+                    <label asp-for="Attachments" class="col-sm-3 col-form-label">Add files</label>
+                    <div class="col-sm-9">
+                        <input asp-for="Attachments" type="file" multiple class="form-control" />
+                        <small class="text-muted">Up to 5 MB each.</small>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-12 text-end">
+                        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </div>
+            </form>
+        </fieldset>
+    </div>
+
+    <div class="col-md-4">
+        <fieldset class="border p-3 shadow">
+            <legend class="float-none w-auto text-primary px-2" style="font-size:1.1rem;">Existing Attachments</legend>
+            @if (Model.ExistingAttachments.Any())
+            {
+                <ul class="list-group list-group-flush">
+                    @foreach (var file in Model.ExistingAttachments)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <a asp-action="DownloadAttachment" asp-route-id="@file.Id">@file.OriginalFileName</a>
+                            <form asp-action="DeleteAttachment" asp-route-id="@file.Id" method="post" class="deleteAttachment m-0">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                            </form>
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p class="text-muted mb-0">No files attached.</p>
+            }
+        </fieldset>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(function () {
+            $('form.deleteAttachment').on('submit', function () {
+                return confirm('Remove this attachment?');
+            });
+        });
+    </script>
+}

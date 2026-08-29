@@ -131,6 +131,12 @@ namespace SMS.DB
 
         #region A_M
         public DbSet<AttendanceMachine> AttendanceMachines { get; set; }
+
+        public DbSet<Ticket> Tickets { get; set; }
+
+        public DbSet<TicketComment> TicketComments { get; set; }
+
+        public DbSet<TicketAttachment> TicketAttachments { get; set; }
         #endregion
 
         #region U

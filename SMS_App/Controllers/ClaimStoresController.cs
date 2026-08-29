@@ -35,8 +35,8 @@ namespace SMS_App.Controllers
 
             var claims = await _claimStoreManager.GetAllAsync();
             var lastupdatedClaim = claims.OrderByDescending(s=>s.EditedAt).FirstOrDefault();
-            ViewBag.LastUpdatedAt =lastUpdatedAt = lastupdatedClaim.EditedAt.ToString("dd MMM yyyy hh:mm tt");
-            ViewBag.LastUpdatedBy =lastUpdatedBy = lastupdatedClaim.EditedBy;
+            ViewBag.LastUpdatedAt =lastUpdatedAt = lastupdatedClaim?.EditedAt.ToString("dd MMM yyyy hh:mm tt") ?? string.Empty;
+            ViewBag.LastUpdatedBy =lastUpdatedBy = lastupdatedClaim?.EditedBy;
 
             ClaimStoreVM claimStoreVM = new ClaimStoreVM();
             claimStoreVM.ModuleSelectList = new SelectList(await _projectModuleManager.GetAllAsync(), "Id", "ModuleName");

@@ -30,12 +30,12 @@
                         ApplicationUser aUser = await _userManager.FindByIdAsync(item.CreatedBy);
                         if (aUser!=null)
                         {
-                            createdBy = aUser.UserName;
+                            createdBy = aUser?.UserName ?? "N/F";
                         }
                         ApplicationUser editUser = await _userManager.FindByIdAsync(item.EditedBy);
                         if (editUser != null)
                         {
-                            updateBy = editUser.UserName;
+                            updateBy = editUser?.UserName ?? "N/F";
                         }
                         <tr>
                             <td>@(++sl)</td>

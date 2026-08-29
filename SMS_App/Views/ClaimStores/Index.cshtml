@@ -65,16 +65,31 @@
     </div>
     <div class="col-md-8">
 
+        <div class="row g-2 mb-2" id="claimFilters">
+            <div class="col-sm-6">
+                <label for="filterModule" class="form-label mb-1 small">Filter by Module</label>
+                <select id="filterModule" class="form-control form-control-sm">
+                    <option value="">All modules</option>
+                </select>
+            </div>
+            <div class="col-sm-6">
+                <label for="filterSubModule" class="form-label mb-1 small">Filter by Sub Module</label>
+                <select id="filterSubModule" class="form-control form-control-sm">
+                    <option value="">All sub modules</option>
+                </select>
+            </div>
+        </div>
+
         <table class="shadow table table-responsive-sm table-striped" id="myTable">
             <thead class="table-info">
                 <tr>
-                    <th>#</th>
+                    <th class="no-sort no-search">#</th>
                     <th>Claim Value</th>
                     <th>Claim Type</th>
                     <th>Sub Module</th>
                     <th>Module</th>
                     <th>Created By</th>
-                    <th>Acation</th>
+                    <th class="no-sort no-search">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -91,7 +106,7 @@
                             <td>@if (item.CreatedBy != null)
                                 {
                                     ApplicationUser aUser = await _userManager.FindByIdAsync(item.CreatedBy);
-                                    createdBy = aUser.UserName;
+                                    createdBy = aUser?.UserName ?? "N/F";
                                 }
                                                 else
                                 {
@@ -100,25 +115,19 @@
                                 <span>@createdBy</span>
                             </td>
                             <td class="d-flex">
-                                <button class="btn btn-warning btn-sm updateBtn" id="updateBtn" data-claimtype="@item.ClaimType"
+                                <button class="btn btn-warning btn-sm updateBtn" data-claimtype="@item.ClaimType"
                                     data-claimvalue="@item.ClaimValue" data-submoduleid="@item.SubModuleId"
                                     data-moduleid="@item.SubModule.ProjectModuleId" data-claimid="@item.Id">Edit</button>
-                                <form asp-action="delete" method="post" id="delete">
-                                    <input type="hidden" asp-for="ClaimStores.Id" value="@item.Id" />
-                                    <input type="hidden" asp-for="ClaimStores.SubModuleId" value="@item.SubModuleId" />
-                                    <input type="hidden" asp-for="ClaimStores.ClaimType" value="@item.ClaimType" />
-                                    <input type="hidden" asp-for="ClaimStores.ClaimValue" value="@item.ClaimValue" />
+                                <form asp-action="delete" method="post" class="deleteForm">
+                                    <input type="hidden" name="ClaimStores.Id" value="@item.Id" />
+                                    <input type="hidden" name="ClaimStores.SubModuleId" value="@item.SubModuleId" />
+                                    <input type="hidden" name="ClaimStores.ClaimType" value="@item.ClaimType" />
+                                    <input type="hidden" name="ClaimStores.ClaimValue" value="@item.ClaimValue" />
                                     <input type="submit" value="Delete" class="btn btn-sm btn-danger" />
                                 </form>
                             </td>
                         </tr>
                     }
-                }
-                else
-                {
-                    <tr class="text-center">
-                        <td colspan="7" class="alert">Nothing Found</td>
-                    </tr>
                 }
             </tbody>
         </table>
@@ -132,76 +141,135 @@
 @section Scripts {
     <script src="~/js/DataTable/dataTable.js"></script>
     <script>
-        $('#ModuleSelectList').change(function () {
-            let id = $('#ModuleSelectList option:selected').val();
+        // Column order: 0 #, 1 Claim Value, 2 Claim Type, 3 Sub Module, 4 Module, 5 Created By, 6 Action
+        var COL_SUBMODULE = 3, COL_MODULE = 4;
 
-            $.ajax({
-                url: "/ProjectSubModules/getAllByModuleId?moduleId=" + id,
+        // Fills the sub-module dropdown for a module, then selects one of its options.
+        // Selecting has to happen in here: the old code fired the module's change event
+        // and set the sub-module on the very next line, so it always ran against an
+        // empty list and the Edit button silently lost the row's sub-module.
+        function loadSubModules(moduleId, selectedSubModuleId) {
+            var $sub = $('#ClaimStores_SubModuleId');
+
+            if (!moduleId) {
+                $sub.empty();
+                return $.Deferred().resolve().promise();
+            }
+
+            return $.ajax({
+                url: "/ProjectSubModules/getAllByModuleId?moduleId=" + moduleId,
                 dataType: "JSON",
                 type: "POST",
-                cache: false,
-                success: function (data) {
-                    $('#ClaimStores_SubModuleId').empty();
-
-                    if (data != null || data != '') {
-                        //var o = '<option disabled selected>Select Sub Module</option>';
-                        //$('#ClaimStores_SubModuleId').append(o);
-                        $.each(data, function (i, obj) {
-                            var op = '<option value="' + obj.id + '">' + obj.subModuleName + '</option>';
-                            $('#ClaimStores_SubModuleId').append(op);
-                        });
+                cache: false
+            }).done(function (data) {
+                $sub.empty();
+                if (data && data.length) {
+                    $.each(data, function (i, obj) {
+                        $sub.append($('<option>').val(obj.id).text(obj.subModuleName));
+                    });
+                    if (selectedSubModuleId) {
+                        $sub.val(String(selectedSubModuleId));
                     }
-                    else {
-                        var o = '<option disabled selected>Sub Module Not Found</option>';
-                        $('#ClaimStores_SubModuleId').append(o);
-                    }
-                },
-                error: function (err) {
-                    console.log(err);
+                } else {
+                    $sub.append('<option disabled selected>Sub Module Not Found</option>');
                 }
+            }).fail(function (err) {
+                console.log(err);
             });
-        });
+        }
 
-        // Add a click event listener to the button
-        $(".updateBtn").click(function () {
-            let form = document.getElementById('createUpdateForm');
-            form.action = "/ClaimStores/Edit";
-            document.getElementById('claimStoreCreateUpdateForm').style.backgroundColor = '#2A3F54'; /*'#f7cc93';*/
-
-            var fieldSet = document.getElementById('claimStoreCreateUpdateForm');
-            fieldSet.classList.remove('border-primary');
-
-
-            var legendData = document.getElementById('create_update_title_id');
-            legendData.innerText = "Update Claim";
-            legendData.classList.remove('text-primary');
-
-            document.getElementById('create_update_title_id').style.color = "#fff";
-
-            document.getElementById('claimStoreCreateUpdateForm').style.color = '#fff';
-            document.getElementById('submitId').value = 'Update';
-
-            //let rDoc = document.getElementById('SFAllocation_FeeAllocationApplication');
-
-            var moduleId = $(this).data("moduleid");
-            var subModuleId = $(this).data("submoduleid");
-            var claimValue = $(this).data("claimvalue");
-            var claimType = $(this).data("claimtype");
-            var claimId = $(this).data("claimid");
-
-            $('#ClaimStores_Id').val(claimId);
-
-            $("#ModuleSelectList").val(moduleId).trigger('change');
-            $('#ClaimStores_ClaimValue').val(claimValue);
-            $('#ClaimStores_ClaimType').val(claimType);
-            $("#ClaimStores_SubModuleId").val(subModuleId).trigger('change');
+        $('#ModuleSelectList').on('change', function () {
+            loadSubModules($(this).val());
         });
 
         $(function () {
-            $('form#delete').submit(function () {
-                var c = confirm("Click OK to continue?");
-                return c;
+            // dataTable.js runs on ready and is loaded above, so the table already exists.
+            var table = $.fn.DataTable.isDataTable('#myTable') ? $('#myTable').DataTable() : null;
+
+            // --- Edit / delete: delegated, so they keep working on every page of results.
+            // Bound directly they would only ever attach to the rows visible at load.
+            $('#myTable').on('click', '.updateBtn', function () {
+                var $btn = $(this);
+
+                document.getElementById('createUpdateForm').action = "/ClaimStores/Edit";
+                document.getElementById('claimStoreCreateUpdateForm').style.backgroundColor = '#2A3F54';
+                document.getElementById('claimStoreCreateUpdateForm').classList.remove('border-primary');
+                document.getElementById('claimStoreCreateUpdateForm').style.color = '#fff';
+
+                var legendData = document.getElementById('create_update_title_id');
+                legendData.innerText = "Update Claim";
+                legendData.classList.remove('text-primary');
+                legendData.style.color = "#fff";
+
+                document.getElementById('submitId').value = 'Update';
+
+                $('#ClaimStores_Id').val($btn.data("claimid"));
+                $('#ClaimStores_ClaimValue').val($btn.data("claimvalue"));
+                $('#ClaimStores_ClaimType').val($btn.data("claimtype"));
+
+                // Set the module without firing change, then load its sub-modules once
+                // and select the row's own sub-module when they have arrived.
+                $('#ModuleSelectList').val(String($btn.data("moduleid")));
+                loadSubModules($btn.data("moduleid"), $btn.data("submoduleid"));
+
+                document.getElementById('claimStoreCreateUpdateForm').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             });
+
+            $('#myTable').on('submit', 'form.deleteForm', function () {
+                return confirm("Click OK to continue?");
+            });
+
+            if (!table) { return; }
+
+            // --- Filter dropdowns, built from the rows actually on the page.
+            var pairs = [];
+            table.rows().every(function () {
+                var d = this.data();
+                pairs.push({
+                    sub: $('<div>').html(d[COL_SUBMODULE]).text().trim(),
+                    mod: $('<div>').html(d[COL_MODULE]).text().trim()
+                });
+            });
+
+            function fill($select, values, placeholder) {
+                var current = $select.val();
+                $select.empty().append($('<option>').val('').text(placeholder));
+                values.filter(function (v, i, a) { return v && a.indexOf(v) === i; })
+                      .sort()
+                      .forEach(function (v) { $select.append($('<option>').val(v).text(v)); });
+                if (values.indexOf(current) !== -1) { $select.val(current); }
+            }
+
+            fill($('#filterModule'), pairs.map(function (p) { return p.mod; }), 'All modules');
+            fill($('#filterSubModule'), pairs.map(function (p) { return p.sub; }), 'All sub modules');
+
+            function exact(value) {
+                return value ? '^' + $.fn.dataTable.util.escapeRegex(value) + '$' : '';
+            }
+
+            $('#filterModule').on('change', function () {
+                var mod = $(this).val();
+                // Narrow the sub-module list to the chosen module so the two agree.
+                var subs = pairs.filter(function (p) { return !mod || p.mod === mod; })
+                                .map(function (p) { return p.sub; });
+                fill($('#filterSubModule'), subs, 'All sub modules');
+
+                table.column(COL_MODULE).search(exact(mod), true, false);
+                table.column(COL_SUBMODULE).search(exact($('#filterSubModule').val()), true, false).draw();
+            });
+
+            $('#filterSubModule').on('change', function () {
+                table.column(COL_SUBMODULE).search(exact($(this).val()), true, false).draw();
+            });
+
+            // --- Keep the # column as a running count of what is shown, not a fixed
+            // server-side number that goes wrong as soon as you sort or page.
+            table.on('order.dt search.dt draw.dt', function () {
+                table.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            });
+            table.draw();
         });
     </script>
 }

@@ -124,6 +124,27 @@ public class InstitutesController : Controller
         {
             try
             {
+                // The Edit form only posts eight of the Institute's fields.
+                // Binding straight into a fresh entity and saving that wiped
+                // everything the form does not carry - ShortName, Phone1,
+                // Phone2, Email, FavIcon and, most damaging, StartingTime /
+                // ClosingTime / LateTime, which the attendance SMS window and
+                // the check-in/check-out split are both derived from. Load the
+                // stored row and copy the edited fields onto it instead, the
+                // same way SchoolTimeTable already does.
+                Institute institute = await _instituteManager.GetByIdAsync(id);
+                if (institute == null)
+                {
+                    TempData["failed"] = "Institute not found.";
+                    return RedirectToAction("Index");
+                }
+
+                institute.Name = existingInstitute.Name;
+                institute.EIIN = existingInstitute.EIIN;
+                institute.Slogan = existingInstitute.Slogan;
+                institute.Address = existingInstitute.Address;
+                institute.BranchName = existingInstitute.BranchName;
+
                 string img = "";
                 string root = _host.WebRootPath;
                 string folder = "Images/Institute/";
@@ -136,7 +157,7 @@ public class InstitutesController : Controller
                     {
                         await logo.CopyToAsync(stream);
                     }
-                    existingInstitute.Logo = img;
+                    institute.Logo = img;
                 }
 
                 if (banner != null)
@@ -148,7 +169,7 @@ public class InstitutesController : Controller
                     {
                         await banner.CopyToAsync(stream);
                     }
-                    existingInstitute.Banner = img;
+                    institute.Banner = img;
                 }
 
                 if (fav_Icon !=null)
@@ -160,12 +181,12 @@ public class InstitutesController : Controller
                     {
                         await fav_Icon.CopyToAsync(stream);
                     }
-                    existingInstitute.FavIcon = img;
+                    institute.FavIcon = img;
                 }
-                existingInstitute.EditedAt = DateTime.Now;
-                existingInstitute.EditedBy = HttpContext.Session.GetString("UserId");
-                existingInstitute.MACAddress = MACService.GetMAC();
-                bool isUpdate = await _instituteManager.UpdateAsync(existingInstitute);
+                institute.EditedAt = DateTime.Now;
+                institute.EditedBy = HttpContext.Session.GetString("UserId");
+                institute.MACAddress = MACService.GetMAC();
+                bool isUpdate = await _instituteManager.UpdateAsync(institute);
                 if (isUpdate)
                 {
                     //TempData["updated"] = "Information updated successfully";

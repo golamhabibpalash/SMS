@@ -1,49 +1,49 @@
 ﻿@model SMS.Entities.Institute
 
 @{
+    GlobalUI.PageTitle = "Institution information";
     ViewData["Title"] = "Edit";
 }
 
 <div class="row">
     <div class="col-md-10 offset-md-1">
-        <form asp-action="Edit" enctype="multipart/form-data">
+        <form asp-action="Edit" enctype="multipart/form-data" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
-            
+
             <div class="form-group row">
-                <label asp-for="Name" class="control-label col-form-label col-md-2 text-md-end bg-blue-sky rounded"></label>
+                <label asp-for="Name" class="control-label col-md-2 text-md-end col-form-label bg-blue-sky rounded"></label>
                 <div class="col-md-10">
                     <input readonly spellcheck="true" asp-for="Name" class="form-control inputClass rounded" />
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
             </div>
 @*            <div class="form-group row">
-                <label asp-for="ISO" class="control-label col-form-label col-md-2 text-md-end bg-blue-sky rounded"></label>
+                <label asp-for="ISO" class="control-label col-md-2 text-md-end col-form-label bg-blue-sky rounded"></label>
                 <div class="col-md-10">
                     <input readonly asp-for="ISO" class="form-control inputClass rounded" />
                     <span asp-validation-for="ISO" class="text-danger"></span>
                 </div>
             </div>*@
             <div class="form-group row">
-                <label asp-for="EIIN" class="control-label col-form-label col-md-2 text-md-end bg-blue-sky rounded"></label>
+                <label asp-for="EIIN" class="control-label col-md-2 text-md-end col-form-label bg-blue-sky rounded"></label>
                 <div class="col-md-10">
                     <input readonly asp-for="EIIN" class="form-control inputClass rounded" />
                     <span asp-validation-for="EIIN" class="text-danger"></span>
-
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="Slogan" class="control-label col-form-label col-md-2 text-md-end bg-blue-sky rounded"></label>
+                <label asp-for="Slogan" class="control-label col-md-2 text-md-end col-form-label bg-blue-sky rounded"></label>
                 <div class="col-md-10">
                     <input readonly asp-for="Slogan" class="form-control inputClass rounded" />
                     <span asp-validation-for="Slogan" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="Banner" class="control-label col-form-label col-md-2 text-md-end bg-blue-sky rounded"></label>
+                <label asp-for="Banner" class="control-label col-md-2 text-md-end col-form-label bg-blue-sky rounded"></label>
                 <div class="col-md-5 imageClass" hidden>
-                    <input type="hidden" asp-for="Banner"  />
-                    <input hidden type="file" name="Banner" class="col-form-label imageClass" id="BannerId" />
+                    <input type="hidden" asp-for="Banner" />
+                    <input hidden type="file" accept="image/*" name="Banner" class="form-control imageClass" id="BannerId" />
                     <span asp-validation-for="Banner" class="text-danger"></span>
                 </div>
                 <div class="col-md-5">
@@ -54,15 +54,15 @@
                         }
                     </div>
                     <div id="newBannerDiv" style="display:none">
-                        <img class="img-fluid" id="sBannerId" src="#" alt="Logo" style="height:130px;" />
+                        <img class="img-fluid" id="sBannerId" src="#" alt="Banner" style="height:130px;" />
                     </div>
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="Logo" class="control-label col-form-label col-md-2 text-md-end bg-blue-sky rounded"></label>
+                <label asp-for="Logo" class="control-label col-md-2 text-md-end col-form-label bg-blue-sky rounded"></label>
                 <div class="col-md-5 imageClass" hidden>
-                    <input hidden asp-for="Logo" class="col-form-label" />
-                    <input hidden type="file" name="Logo" class="imageClass col-form-label" id="inputGroupFile02"/>
+                    <input type="hidden" asp-for="Logo" />
+                    <input hidden type="file" accept="image/*" name="Logo" class="form-control imageClass" id="inputGroupFile02" />
                     <span asp-validation-for="Logo" class="text-danger"></span>
                 </div>
                 <div class="col-md-5">
@@ -78,28 +78,29 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="Address" class="control-label col-form-label col-md-2 text-md-end bg-blue-sky rounded"></label>
+                <label asp-for="Address" class="control-label col-md-2 text-md-end col-form-label bg-blue-sky rounded"></label>
                 <div class="col-md-10">
-                    <input readonly asp-for="Address" class="form-control inputClass rounded col-form-label" />
+                    <input readonly asp-for="Address" class="form-control inputClass rounded" />
                     <span asp-validation-for="Address" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="BranchName" class="control-label col-form-label col-md-2 text-md-end bg-blue-sky rounded"></label>
+                <label asp-for="BranchName" class="control-label col-md-2 text-md-end col-form-label bg-blue-sky rounded"></label>
                 <div class="col-md-10">
-                    <input readonly asp-for="BranchName" class="form-control inputClass rounded col-form-label" />
+                    <input readonly asp-for="BranchName" class="form-control inputClass rounded" />
                     <span asp-validation-for="BranchName" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
                 <div class="col-md-10 offset-md-2">
-                    <button id="submitButton" hidden class="btn btn-info" type="submit">Update</button>
+                    <button id="submitButton" hidden class="btn btn-info btn-sm" type="submit">Update</button>
                 </div>
             </div>
         </form>
     </div>
-    <div class="col-md-1 text-right">
-        <button id="editButton" class="btn-sm" title="Edit" data-toggle="tooltip" data-placement="right"><i class="fa fa-edit"></i> </button>
+    <div class="col-md-1 text-end">
+        <button id="editButton" type="button" class="btn btn-sm btn-outline-info" title="Edit"
+                data-bs-toggle="tooltip" data-bs-placement="right"><i class="fa fa-edit"></i></button>
     </div>
 </div>
 
@@ -113,13 +114,15 @@
             $('.inputClass').removeAttr('readonly');
             $('.imageClass').removeAttr('hidden');
             $('#submitButton').removeAttr('hidden');
-            
+
         });
 
         $('#submitButton').click(function () {
             $(this).hide();
             $('#editButton').show();
-            $('.inputClass').addAttr('readonly');
+            // was addAttr(), which is not a jQuery method and threw a
+            // TypeError on every click.
+            $('.inputClass').attr('readonly', true);
         });
 
         function readURL(input, idName) {

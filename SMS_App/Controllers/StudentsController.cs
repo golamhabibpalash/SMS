@@ -17,6 +17,7 @@ using NodaTime;
 using SMS.BLL.Contracts;
 using SMS.Entities;
 using SMS.Entities.AdditionalModels;
+using SMS.Entities.AdditionalModels.StudentImport;
 using SMS.Entities.AdditionalModels.StudentVM;
 using SMS.Entities.Enums;
 using SMS_App.Utilities.LoggerService;
@@ -59,10 +60,11 @@ public class StudentsController : Controller
     private readonly IAppLogger _appLogger;
     private readonly IAcademicExamManager _academicExamManager;
     private readonly IAttachDocManager _attachDocManager;
+    private readonly IStudentBulkImportManager _studentBulkImportManager;
     #endregion
 
     #region Constructor
-    public StudentsController(IStudentManager studentManager, IAcademicClassManager academicClassManager, IWebHostEnvironment host, IMapper mapper, IAcademicSessionManager academicSessionManager, IStudentPaymentManager studentPaymentManager, IDistrictManager districtManager, IUpazilaManager upazilaManager, IAcademicSectionManager academicSectionManager, IBloodGroupManager bloodGroupManager, IDivisionManager divisionManager, INationalityManager nationalityManager, IGenderManager genderManager, IReligionManager religionManager, IStudentFeeHeadManager studentFeeHeadManager, IClassFeeListManager classFeeListManager, UserManager<ApplicationUser> userManager, IPhoneSMSManager phoneSMSManager, IAttendanceMachineManager attendanceMachineManager, IInstituteManager instituteManager, IStudentActivateHistManager studentActivateHistManager, IOffDayManager offDayManager, IStudentFeeAllocationManager studentFeeAllocationManager, IAppliedStudentManager appliedStudentManager, IAppLogger appLogger, IAcademicExamManager academicExamManager = null, IAttachDocManager attachDocManager = null)
+    public StudentsController(IStudentManager studentManager, IAcademicClassManager academicClassManager, IWebHostEnvironment host, IMapper mapper, IAcademicSessionManager academicSessionManager, IStudentPaymentManager studentPaymentManager, IDistrictManager districtManager, IUpazilaManager upazilaManager, IAcademicSectionManager academicSectionManager, IBloodGroupManager bloodGroupManager, IDivisionManager divisionManager, INationalityManager nationalityManager, IGenderManager genderManager, IReligionManager religionManager, IStudentFeeHeadManager studentFeeHeadManager, IClassFeeListManager classFeeListManager, UserManager<ApplicationUser> userManager, IPhoneSMSManager phoneSMSManager, IAttendanceMachineManager attendanceMachineManager, IInstituteManager instituteManager, IStudentActivateHistManager studentActivateHistManager, IOffDayManager offDayManager, IStudentFeeAllocationManager studentFeeAllocationManager, IAppliedStudentManager appliedStudentManager, IAppLogger appLogger, IStudentBulkImportManager studentBulkImportManager, IAcademicExamManager academicExamManager = null, IAttachDocManager attachDocManager = null)
     {
         _academicClassManager = academicClassManager;
         _host = host;
@@ -91,6 +93,7 @@ public class StudentsController : Controller
         _appLogger = appLogger;
         _academicExamManager = academicExamManager;
         _attachDocManager = attachDocManager;
+        _studentBulkImportManager = studentBulkImportManager;
     }
     #endregion Constructor
 
@@ -611,6 +614,321 @@ public class StudentsController : Controller
         return View(newStudent);
     }
     #endregion Create
+
+    #region Bulk Upload
+
+    /// <summary>Folder under App_Data where an uploaded roster waits between preview and confirm.</summary>
+    private string BulkUploadTempFolder => Path.Combine(_host.ContentRootPath, "App_Data", "BulkImports");
+
+    [HttpGet]
+    [Authorize(Roles = "SuperAdmin, Admin")]
+    [Authorize(Policy = "BulkUploadStudentsPolicy")]
+    public IActionResult BulkUpload()
+    {
+        PurgeStaleUploads();
+        return View(new StudentBulkUploadVM
+        {
+            TemplateColumns = _studentBulkImportManager.GetTemplateColumns().ToList()
+        });
+    }
+
+    /// <summary>
+    /// Removes preview files left behind when a user uploaded but never confirmed.
+    /// Without this the temp folder grows for ever on a long-running site.
+    /// </summary>
+    private void PurgeStaleUploads()
+    {
+        try
+        {
+            if (!Directory.Exists(BulkUploadTempFolder)) return;
+
+            var cutoff = DateTime.Now.AddHours(-24);
+            foreach (var file in Directory.GetFiles(BulkUploadTempFolder))
+            {
+                if (System.IO.File.GetLastWriteTime(file) < cutoff)
+                    TryDeleteTempFile(file);
+            }
+        }
+        catch
+        {
+            // Housekeeping only - never block the page over it.
+        }
+    }
+
+    /// <summary>
+    /// Step 1: read the uploaded roster and show the user exactly what will be
+    /// created. Nothing is written to the database here.
+    /// </summary>
+    [HttpPost, ValidateAntiForgeryToken]
+    [Authorize(Roles = "SuperAdmin, Admin")]
+    [Authorize(Policy = "BulkUploadStudentsPolicy")]
+    [RequestSizeLimit(10 * 1024 * 1024)]
+    public async Task<IActionResult> BulkUpload(IFormFile uploadFile)
+    {
+
+        var model = new StudentBulkUploadVM
+        {
+            TemplateColumns = _studentBulkImportManager.GetTemplateColumns().ToList()
+        };
+
+        if (uploadFile == null || uploadFile.Length == 0)
+        {
+            ViewBag.msg = "Please choose a .csv or .xlsx file to upload.";
+            return View(model);
+        }
+
+        string extension = Path.GetExtension(uploadFile.FileName).ToLowerInvariant();
+        if (extension != ".csv" && extension != ".xlsx")
+        {
+            ViewBag.msg = "Only .csv and .xlsx files are supported.";
+            return View(model);
+        }
+
+        try
+        {
+            // Keep the file so the confirm step does not need a second upload.
+            Directory.CreateDirectory(BulkUploadTempFolder);
+            string token = Guid.NewGuid().ToString("N") + extension;
+            string tempPath = Path.Combine(BulkUploadTempFolder, token);
+
+            using (var fileStream = new FileStream(tempPath, FileMode.Create))
+            {
+                await uploadFile.CopyToAsync(fileStream);
+            }
+
+            using (var readStream = new FileStream(tempPath, FileMode.Open, FileAccess.Read))
+            {
+                model.Result = await _studentBulkImportManager.ParseAndValidateAsync(readStream, uploadFile.FileName);
+            }
+
+            model.FileToken = token;
+            model.OriginalFileName = uploadFile.FileName;
+
+            await _appLogger.InfoAsync(
+                $"Bulk student upload previewed: {uploadFile.FileName}, " +
+                $"{model.Result.ValidRows} valid / {model.Result.TotalRows} rows.");
+        }
+        catch (Exception ex)
+        {
+            await _appLogger.ErrorAsync(ex.Message, ex.StackTrace);
+            ViewBag.msg = "The file could not be read. Please check the format and try again.";
+        }
+
+        return View(model);
+    }
+
+    /// <summary>
+    /// Step 2: the user confirmed the preview. The file is re-read and re-validated
+    /// so that anything added by another user in the meantime is still caught, then
+    /// the valid rows are saved and a login is created for each - no SMS is sent.
+    /// </summary>
+    [HttpPost, ValidateAntiForgeryToken]
+    [Authorize(Roles = "SuperAdmin, Admin")]
+    [Authorize(Policy = "BulkUploadStudentsPolicy")]
+    public async Task<IActionResult> BulkUploadConfirm(string fileToken, string originalFileName)
+    {
+
+        var model = new StudentBulkUploadVM
+        {
+            TemplateColumns = _studentBulkImportManager.GetTemplateColumns().ToList()
+        };
+
+        if (HttpContext.Session.GetString("UserId") == null)
+            return RedirectToAction("Login", "Accounts");
+
+        // Reject anything that is not a token this action itself issued.
+        if (string.IsNullOrWhiteSpace(fileToken) || fileToken.Contains("..") ||
+            fileToken.Contains('/') || fileToken.Contains('\\'))
+        {
+            ViewBag.msg = "The upload session is no longer valid. Please upload the file again.";
+            return View(nameof(BulkUpload), model);
+        }
+
+        string tempPath = Path.Combine(BulkUploadTempFolder, fileToken);
+        if (!System.IO.File.Exists(tempPath))
+        {
+            ViewBag.msg = "The uploaded file has expired. Please upload it again.";
+            return View(nameof(BulkUpload), model);
+        }
+
+        try
+        {
+            StudentImportResult result;
+            using (var readStream = new FileStream(tempPath, FileMode.Open, FileAccess.Read))
+            {
+                result = await _studentBulkImportManager.ParseAndValidateAsync(readStream, originalFileName ?? fileToken);
+            }
+
+            if (!result.CanImport)
+            {
+                model.Result = result;
+                model.FileToken = fileToken;
+                model.OriginalFileName = originalFileName;
+                ViewBag.msg = "Nothing could be imported. Please fix the errors listed below and upload again.";
+                return View(nameof(BulkUpload), model);
+            }
+
+            string userId = HttpContext.Session.GetString("UserId");
+            string mac = MACService.GetMAC();
+
+            var savedStudents = await _studentBulkImportManager.CommitAsync(result, userId, mac);
+
+            var commit = new StudentImportCommitResult { StudentsCreated = savedStudents.Count };
+
+            // Give every imported student a login, exactly as Create does, but stay
+            // silent - a bulk import must not text hundreds of parents.
+            foreach (var student in savedStudents)
+            {
+                var studentUser = new ApplicationUser
+                {
+                    UserName = student.UniqueId,
+                    Email = student.Email,
+                    EmailConfirmed = true,
+                    PhoneNumberConfirmed = true,
+                    PhoneNumber = student.PhoneNo,
+                    NormalizedUserName = student.Name,
+                    UserType = 's',
+                    ReferenceId = Convert.ToInt32(student.UniqueId)
+                };
+
+                string password = GenerateStudentPassword();
+                var createResult = await _userManager.CreateAsync(studentUser, password);
+
+                if (createResult.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(studentUser, "Student");
+                    commit.AccountsCreated++;
+                    commit.Credentials.Add(new StudentImportCredential
+                    {
+                        Name = student.Name,
+                        ClassRoll = student.ClassRoll,
+                        UserName = student.UniqueId,
+                        Password = password,
+                        PhoneNo = student.PhoneNo
+                    });
+                }
+                else
+                {
+                    commit.Failures.Add(new StudentImportIssue
+                    {
+                        Column = "Login",
+                        Value = student.UniqueId,
+                        Message = $"Student '{student.Name}' was saved but the login could not be created: "
+                                + string.Join("; ", createResult.Errors.Select(e => e.Description)),
+                        Level = ImportIssueLevel.Warning
+                    });
+                }
+            }
+
+            // Rows that failed validation are still worth showing after the import.
+            model.Result = result;
+            model.CommitResult = commit;
+            model.OriginalFileName = originalFileName;
+
+            TempData["create"] = $"{commit.StudentsCreated} student(s) imported successfully.";
+            await _appLogger.InfoAsync(
+                $"Bulk student import committed: {commit.StudentsCreated} students, {commit.AccountsCreated} logins.");
+
+            // Hold the credentials so they can be downloaded once from the result page.
+            HttpContext.Session.SetString("BulkImportCredentials", BuildCredentialsCsv(commit.Credentials));
+        }
+        catch (Exception ex)
+        {
+            await _appLogger.ErrorAsync(ex.Message, ex.StackTrace);
+            ViewBag.msg = "The import failed. Please check the log and try again.";
+        }
+        finally
+        {
+            TryDeleteTempFile(tempPath);
+        }
+
+        return View(nameof(BulkUpload), model);
+    }
+
+    /// <summary>Downloads the logins generated by the most recent import in this session.</summary>
+    [HttpGet]
+    [Authorize(Roles = "SuperAdmin, Admin")]
+    [Authorize(Policy = "BulkUploadStudentsPolicy")]
+    public IActionResult DownloadImportCredentials()
+    {
+        string csv = HttpContext.Session.GetString("BulkImportCredentials");
+        if (string.IsNullOrEmpty(csv))
+        {
+            TempData["failed"] = "No credentials are available to download.";
+            return RedirectToAction(nameof(BulkUpload));
+        }
+
+        var bytes = Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes(csv)).ToArray();
+        return File(bytes, "text/csv", $"student-logins-{DateTime.Now:yyyyMMdd-HHmm}.csv");
+    }
+
+    /// <summary>Downloads an empty roster template with the expected header and one sample row.</summary>
+    [HttpGet]
+    [Authorize(Roles = "SuperAdmin, Admin")]
+    [Authorize(Policy = "BulkUploadStudentsPolicy")]
+    public IActionResult DownloadTemplate()
+    {
+        var columns = _studentBulkImportManager.GetTemplateColumns();
+        var sample = _studentBulkImportManager.GetTemplateSampleRow();
+
+        var builder = new StringBuilder();
+        builder.AppendLine(string.Join(",", columns.Select(CsvEscape)));
+        builder.AppendLine(string.Join(",", sample.Select(CsvEscape)));
+
+        // The BOM makes Excel open the Bangla sample text correctly.
+        var bytes = Encoding.UTF8.GetPreamble()
+            .Concat(Encoding.UTF8.GetBytes(builder.ToString()))
+            .ToArray();
+
+        return File(bytes, "text/csv", "student-import-template.csv");
+    }
+
+    private static string BuildCredentialsCsv(List<StudentImportCredential> credentials)
+    {
+        var builder = new StringBuilder();
+        builder.AppendLine("Name,ClassRoll,UserName,Password,PhoneNo");
+        foreach (var c in credentials)
+        {
+            builder.AppendLine(string.Join(",", new[]
+            {
+                CsvEscape(c.Name),
+                CsvEscape(c.ClassRoll.ToString()),
+                CsvEscape(c.UserName),
+                CsvEscape(c.Password),
+                CsvEscape(c.PhoneNo)
+            }));
+        }
+        return builder.ToString();
+    }
+
+    private static string CsvEscape(string value)
+    {
+        value ??= string.Empty;
+        return value.Contains(',') || value.Contains('"') || value.Contains('\n')
+            ? "\"" + value.Replace("\"", "\"\"") + "\""
+            : value;
+    }
+
+    private static string GenerateStudentPassword()
+    {
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        var random = new Random();
+        return new string(Enumerable.Repeat(chars, 6).Select(s => s[random.Next(s.Length)]).ToArray());
+    }
+
+    private void TryDeleteTempFile(string path)
+    {
+        try
+        {
+            if (System.IO.File.Exists(path)) System.IO.File.Delete(path);
+        }
+        catch
+        {
+            // A leftover temp file is harmless; never fail the import over it.
+        }
+    }
+
+    #endregion Bulk Upload
 
     #region Edit
     [HttpGet, Authorize(Roles = "SuperAdmin, Admin", Policy = "EditStudentsPolicy")]

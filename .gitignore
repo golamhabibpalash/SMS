@@ -393,3 +393,9 @@ FodyWeavers.xsd
 
 # Claude
 .claude/
+
+# Local self-contained publish output for Plesk deployment (437MB, has secrets when filled)
+Resources/deployment/unityschoolbd/publish/
+
+# Bulk student import staging files (previews awaiting confirmation)
+SMS_App/App_Data/BulkImports/

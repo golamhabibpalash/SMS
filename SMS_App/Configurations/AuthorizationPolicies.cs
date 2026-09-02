@@ -323,6 +323,7 @@ public class AuthorizationPolicies
         options.AddPolicy("IndexStudentsPolicy", policy => policy.RequireClaim("View Student List"));
         options.AddPolicy("DetailsStudentsPolicy", policy => policy.RequireClaim("Details Student"));
         options.AddPolicy("CreateStudentsPolicy", policy => policy.RequireClaim("Create Student"));
+        options.AddPolicy("BulkUploadStudentsPolicy", policy => policy.RequireClaim("Bulk Upload Students"));
         options.AddPolicy("EditStudentsPolicy", policy => policy.RequireClaim("Edit Student"));
         options.AddPolicy("DeleteStudentsPolicy", policy => policy.RequireClaim("Delete Student"));
         options.AddPolicy("ProfileStudentsPolicy", policy => policy.RequireClaim("View Student Profile"));

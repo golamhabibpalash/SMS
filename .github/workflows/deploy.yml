@@ -14,6 +14,8 @@ on:
           - Noble
           - Mamitonnesa
           - DMCPS
+          - Unityschoolbd
+          - Curiosity
 
 jobs:
   deploy:
@@ -98,6 +100,34 @@ jobs:
               echo "ssh_key=${{ secrets.DMCPS_SSH_KEY }}" >> $GITHUB_OUTPUT
               echo "url=https://eims.mcpsbd.com" >> $GITHUB_OUTPUT
               echo "client_name=DMCPS" >> $GITHUB_OUTPUT
+              ;;
+            "Unityschoolbd")
+              echo "server=${{ secrets.UNITY_FTP_SERVER }}" >> $GITHUB_OUTPUT
+              echo "username=${{ secrets.UNITY_FTP_USERNAME }}" >> $GITHUB_OUTPUT
+              echo "password=${{ secrets.UNITY_FTP_PASSWORD }}" >> $GITHUB_OUTPUT
+              echo "path=${{ secrets.UNITY_FTP_PATH }}" >> $GITHUB_OUTPUT
+              # Windows/IIS host: leave the SSH secrets unset and the restart step
+              # is skipped - removing app_offline.htm is what recycles the app pool.
+              echo "ssh_host=${{ secrets.UNITY_SSH_HOST }}" >> $GITHUB_OUTPUT
+              echo "ssh_user=${{ secrets.UNITY_SSH_USER }}" >> $GITHUB_OUTPUT
+              echo "ssh_key=${{ secrets.UNITY_SSH_KEY }}" >> $GITHUB_OUTPUT
+              echo "url=https://eims.unityschoolbd.com" >> $GITHUB_OUTPUT
+              echo "client_name=Unityschoolbd" >> $GITHUB_OUTPUT
+              ;;
+            "Curiosity")
+              echo "server=${{ secrets.CURIOSITY_FTP_SERVER }}" >> $GITHUB_OUTPUT
+              echo "username=${{ secrets.CURIOSITY_FTP_USERNAME }}" >> $GITHUB_OUTPUT
+              echo "password=${{ secrets.CURIOSITY_FTP_PASSWORD }}" >> $GITHUB_OUTPUT
+              echo "path=${{ secrets.CURIOSITY_FTP_PATH }}" >> $GITHUB_OUTPUT
+              echo "ssh_host=${{ secrets.CURIOSITY_SSH_HOST }}" >> $GITHUB_OUTPUT
+              echo "ssh_user=${{ secrets.CURIOSITY_SSH_USER }}" >> $GITHUB_OUTPUT
+              echo "ssh_key=${{ secrets.CURIOSITY_SSH_KEY }}" >> $GITHUB_OUTPUT
+              echo "url=https://curiosity.mcpsbd.com" >> $GITHUB_OUTPUT
+              echo "client_name=Curiosity" >> $GITHUB_OUTPUT
+              ;;
+            *)
+              echo "::error::Unknown client '$client'. No deployment target matched."
+              exit 1
               ;;
           esac
 

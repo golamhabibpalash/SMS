@@ -28,6 +28,7 @@ public static class DependencyInjectionConfiguration
 
         services.AddScoped<IStudentRepository, StudentRepository>();
         services.AddScoped<IStudentManager, StudentManager>();
+        services.AddScoped<IStudentBulkImportManager, StudentBulkImportManager>();
 
         services.AddScoped<IInstituteRepository, InstituteRepository>();
         services.AddScoped<IInstituteManager, InstituteManager>();

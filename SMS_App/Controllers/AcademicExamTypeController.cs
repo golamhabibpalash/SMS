@@ -9,8 +9,8 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SMS_App.Controllers
-{
+namespace SMS_App.Controllers;
+
     [Authorize(Roles = "SuperAdmin, Admin")]
     public class AcademicExamTypeController : Controller
     {
@@ -149,4 +149,3 @@ namespace SMS_App.Controllers
             }
         }
     }
-}

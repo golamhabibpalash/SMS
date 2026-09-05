@@ -11,7 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Framework**: ASP.NET Core 8.0 MVC with Razor Views
 - **Language**: C# / .NET 8.0
 - **ORM**: Entity Framework Core 7.0 (code-first migrations)
-- **Database**: PostgreSQL or MS SQL Server — provider chosen at runtime via the `DatabaseProvider` setting (currently `"PostgreSQL"`)
+- **Database**: PostgreSQL or MS SQL Server — provider chosen at runtime via the `DatabaseProvider` setting in `SMS_App/appsettings.json` (currently `"SqlServer"`; deployed instances often flip this to `"PostgreSQL"`)
 - **Auth**: ASP.NET Core Identity with claim-based authorization policies
 - **Background Jobs**: Hangfire (disabled by default; storage matches the active DB provider)
 - **Logging**: Serilog
@@ -21,12 +21,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Build & Run Commands
 
-```powershell
+Paths below use `/`; on Windows PowerShell swap in `\`.
+
+```bash
 # Build entire solution
 dotnet build
 
 # Run application (default: https://localhost:5001)
-dotnet run --project SMS_App\SMS_App.csproj
+dotnet run --project SMS_App/SMS_App.csproj
 
 # EF Core migrations — run from the SMS.DB directory (DesignTimeDbContextFactory lives there
 # and reads DatabaseProvider + connection string from ../SMS_App/appsettings.json)
@@ -34,6 +36,8 @@ dotnet ef database update
 dotnet ef migrations add <MigrationName> -o Migrations_SqlServer
 dotnet ef migrations remove
 ```
+
+**Tests**: there is no automated test project in the solution (`SchoolManagementSystem.sln` has the 6 layer projects only). The remote `TestProject_ForTestingPurpose` branch is not merged. Verify changes by building and running the app.
 
 The SQL Server migration history lives in `SMS.DB/Migrations_SqlServer/`. The PostgreSQL
 database is provisioned from a dump (see `Resources/docker/setup-eims-postgres.ps1`), not from
@@ -84,8 +88,9 @@ Four areas: `API`, `Identity`, `SMSAPP`, `Student` — routed as `{area:exists}/
 `Program.cs` reads `DatabaseProvider` (`"PostgreSQL"` or `"SqlServer"`, default `SqlServer`) and configures the matching `DbContext`, Hangfire storage, and migration history schema (`public` vs `dbo`).
 
 ### Connection Strings (provider-dependent)
-- **SqlServer**: the `DefaultConnection` value is AES-encrypted, decrypted in `Program.cs` via `AesEncryptionHelper.Decrypt()` with keys from env vars `AES_KEY` / `AES_IV` (defaults `"1234567890123456"`).
+- **SqlServer**: the `DefaultConnection` value is AES-encrypted, decrypted in `Program.cs` via `AesEncryptionHelper.Decrypt()` with keys from env vars `AES_KEY` / `AES_IV` (defaults `"1234567890123456"`). Use the `Resources/deployment/EncryptConnString/` console app to produce an encrypted string.
 - **PostgreSQL**: the `DefaultConnection` value is used as-is (plain text, no decryption).
+- `appsettings.json` also carries several named per-host profiles (`Mac_Docker_DefaultConnection`, `Local_Desktop_DefaultConnection`, `Noble_DefaultConnection`, etc.); `Program.cs` reads `DefaultConnection` only, so swap the desired profile's value into `DefaultConnection` to switch hosts.
 
 ### Key appsettings.json Settings
 - `DatabaseProvider` — `"PostgreSQL"` or `"SqlServer"`
@@ -134,7 +139,9 @@ Persisted to `SMS_App/Keys/` for shared hosting stability. App name: `"SMS_App"`
 | `SMS_App/Utilities/Reports/*.cs` | QuestPDF report builders (admit card, mark sheet, attendance, payments, etc.) |
 | `SMS_App/Controllers/ReportsController.cs` | Entry point that invokes the QuestPDF builders |
 | `Resources/docker/setup-eims-postgres.ps1` | Spins up a local PostgreSQL 16 container and restores the DB dump |
-| `SchoolManagementSystem.sln` | Solution file |
+| `Resources/deployment/` | Linux deploy assets: `deploy.sh`, `eims-instance.service` (systemd), `nginx-school.conf`, `EncryptConnString/` (connection-string encryptor) |
+| `Resources/sql*`, `Resources/StudentMigrationScripts/` | Raw SQL — stored procs, views, functions, data-migration scripts run outside EF |
+| `SchoolManagementSystem.sln` | Solution file (also a stray `SMS_App/SMS_App.sln` — use the root one) |
 
 ## Reference Documentation
 

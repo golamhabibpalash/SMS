@@ -399,3 +399,14 @@ Resources/deployment/unityschoolbd/publish/
 
 # Bulk student import staging files (previews awaiting confirmation)
 SMS_App/App_Data/BulkImports/
+
+# JetBrains Rider / ReSharper IDEs (machine-specific workspace/config)
+.idea/
+.fleet/
+
+# One-off scratch scripts / accidental Word saves at the repo root
+decrypt.cs
+sql.rtf
+
+# PostgreSQL dump files (large, regenerable)
+*.dump

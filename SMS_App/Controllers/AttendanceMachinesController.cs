@@ -58,19 +58,12 @@ public class AttendanceMachinesController : Controller
             ViewBag.aSessionId =aSessionId!=null? aSessionId:null;
             ViewBag.aClassId = aClassId!=null? aClassId:null;
             var result = await _attendanceMachineManager.GetAttendanceByDateAsync(attendanceFor, date, attendanceType, aSessionId, aClassId, aSectionId);
-            foreach (var item in result)
-            {
-                if (!string.IsNullOrEmpty(item.CardNo))
-                {
-                    if (item.CardNo.Length <= 7)
-                    {
-                        Student objStudent = await _studentManager.GetStudentByClassRollAsync(Convert.ToInt32(item.CardNo));
-                    }
-                }                    
-                attendanceVMs.Add(item);
-            }
-        }            
-        return View(attendanceVMs.OrderBy(a => a.Class_Designation).ThenBy(n => n.PunchTime.Substring(0,2)));
+            attendanceVMs.AddRange(result);
+        }
+        // PunchTime is null for absent rows (attendanceType "all"/"absent"); sort those last.
+        return View(attendanceVMs
+            .OrderBy(a => a.Class_Designation ?? string.Empty)
+            .ThenBy(n => string.IsNullOrEmpty(n.PunchTime) ? "99" : n.PunchTime.Substring(0, 2)));
     }
 
 

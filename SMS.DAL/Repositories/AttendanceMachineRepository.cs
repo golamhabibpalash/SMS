@@ -6,6 +6,7 @@ using SMS.Entities;
 using SMS.Entities.AdditionalModels;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -28,64 +29,98 @@ namespace SMS.DAL.Repositories
 
         public async Task<IEnumerable<AttendanceVM>> GetAttendanceByDateAsync(string attendanceFor, string date, string attendanceType, int? aSessionId, int? aClassId)
         {
-            DateTime parsedDate = DateTime.Parse(date);
+            // The date arrives from an <input type="date"> as yyyy-MM-dd; a
+            // culture-default parse mis-reads that on Linux.
+            if (!DateTime.TryParse(date, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
+                parsedDate = DateTime.Today;
+
             var rawPunches = await _context.Tran_MachineRawPunch
                 .Where(t => t.PunchDatetime.Date == parsedDate.Date)
                 .ToListAsync();
 
+            // One entry per enrolled PIN, holding that PIN's first punch of the day.
+            var firstPunchByPin = rawPunches
+                .Where(p => !string.IsNullOrWhiteSpace(p.CardNo))
+                .GroupBy(p => p.CardNo.Trim())
+                .ToDictionary(g => g.Key, g => g.Min(p => p.PunchDatetime));
+
+            // Candidates are tried in order, so the current enrolment scheme
+            // (UniqueId / MachineUserId) wins and the legacy one (roll / id) only
+            // answers for punches captured before it.
+            string PunchTimeFor(params string[] candidatePins)
+            {
+                foreach (var pin in candidatePins)
+                {
+                    if (!string.IsNullOrWhiteSpace(pin) && firstPunchByPin.TryGetValue(pin.Trim(), out var first))
+                        return first.ToString("hh:mm:ss tt");
+                }
+                return null;
+            }
+
             var result = new List<AttendanceVM>();
 
-            if (attendanceFor == "Student")
+            if (IsEmployeeAttendance(attendanceFor))
+            {
+                var employees = await _context.Employee
+                    .Include(e => e.Designation)
+                    .Where(e => e.Status)
+                    .ToListAsync();
+
+                result = employees.Select(e => new AttendanceVM
+                {
+                    CardNo = string.IsNullOrWhiteSpace(e.MachineUserId) ? e.Id.ToString() : e.MachineUserId,
+                    Name = e.EmployeeName,
+                    Class_Designation = e.Designation?.DesignationName,
+                    Phone = e.Phone,
+                    GuardianPhone = "",
+                    PunchTime = PunchTimeFor(e.MachineUserId, e.Id.ToString()),
+                    SectionId = null
+                }).ToList();
+            }
+            else
             {
                 var studentsQuery = _context.Student
                     .Include(s => s.AcademicClass)
                     .Include(s => s.AcademicSection)
+                    .Where(s => s.Status)
                     .AsQueryable();
+
+                if (aSessionId.HasValue)
+                    studentsQuery = studentsQuery.Where(s => s.AcademicSessionId == aSessionId.Value);
 
                 if (aClassId.HasValue)
                     studentsQuery = studentsQuery.Where(s => s.AcademicClassId == aClassId.Value);
 
                 var students = await studentsQuery.ToListAsync();
 
-                result = students.Select(s =>
+                result = students.Select(s => new AttendanceVM
                 {
-                    var punch = rawPunches.FirstOrDefault(r => r.CardNo == s.ClassRoll.ToString());
-                    return new AttendanceVM
-                    {
-                        CardNo = s.ClassRoll.ToString(),
-                        Name = s.Name,
-                        Class_Designation = s.AcademicClass?.Name,
-                        Phone = s.PhoneNo,
-                        GuardianPhone = s.GuardianPhone,
-                        PunchTime = punch?.PunchDatetime.ToString("hh:mm:ss tt"),
-                        SectionId = s.AcademicSectionId
-                    };
+                    CardNo = s.ClassRoll.ToString(),
+                    Name = s.Name,
+                    Class_Designation = s.AcademicClass?.Name,
+                    Phone = s.PhoneNo,
+                    GuardianPhone = s.GuardianPhone,
+                    PunchTime = PunchTimeFor(s.UniqueId, s.ClassRoll.ToString()),
+                    SectionId = s.AcademicSectionId
                 }).ToList();
             }
-            else if (attendanceFor == "Employee")
-            {
-                var employees = await _context.Employee
-                    .Include(e => e.Designation)
-                    .ToListAsync();
 
-                result = employees.Select(e =>
-                {
-                    var punch = rawPunches.FirstOrDefault(r => r.CardNo == e.Id.ToString());
-                    return new AttendanceVM
-                    {
-                        CardNo = e.Id.ToString(),
-                        Name = e.EmployeeName,
-                        Class_Designation = e.Designation?.DesignationName,
-                        Phone = e.Phone,
-                        GuardianPhone = "",
-                        PunchTime = punch?.PunchDatetime.ToString("hh:mm:ss tt"),
-                        SectionId = null
-                    };
-                }).ToList();
-            }
+            // "attended"/"absent" come from the search screen; anything else
+            // (including the "all" default) means no filter.
+            if (string.Equals(attendanceType, "attended", StringComparison.OrdinalIgnoreCase))
+                result = result.Where(r => !string.IsNullOrEmpty(r.PunchTime)).ToList();
+            else if (string.Equals(attendanceType, "absent", StringComparison.OrdinalIgnoreCase))
+                result = result.Where(r => string.IsNullOrEmpty(r.PunchTime)).ToList();
 
             return result;
         }
+
+        // The search form sends "employees"/"students"; accept every spelling
+        // that has been in use rather than silently returning nothing when one drifts.
+        private static bool IsEmployeeAttendance(string attendanceFor) =>
+            !string.IsNullOrWhiteSpace(attendanceFor) &&
+            (attendanceFor.Trim().Equals("e", StringComparison.OrdinalIgnoreCase) ||
+             attendanceFor.Trim().StartsWith("employee", StringComparison.OrdinalIgnoreCase));
 
         public async Task<List<Tran_MachineRawPunch>> GetAttendanceByDateRangeAsync(string StartDate, string EndDate)
         {

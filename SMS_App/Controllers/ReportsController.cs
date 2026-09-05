@@ -548,7 +548,8 @@ public class ReportsController : Controller
         ViewBag.monthlyHolidays = monthlyHolidays;
         foreach (Student student in studentList.Where(s => s.Status == true))
         {
-            var myAttendances = attendanceList.Where(t => Convert.ToInt32(t.CardNo) == Convert.ToInt32(student.UniqueId.Trim())).ToList();
+            var studentUniqueId = student.UniqueId?.Trim();
+            var myAttendances = attendanceList.Where(t => CardNumbersMatch(t.CardNo, studentUniqueId)).ToList();
 
             IDictionary<int, bool> daysPresents = new Dictionary<int, bool>();
             MonthlyAttendanceFullClassDetails monthlyAttendanceFullClassDetails = new()
@@ -582,6 +583,22 @@ public class ReportsController : Controller
 
         ViewBag.studentList = studentList;
         return View(monthlyAttendanceFullClass);
+    }
+
+    // CardNo (raw punch) and Student.UniqueId are string columns. RFID card numbers are often
+    // 10+ digits, which overflows Int32 — compare as long when both parse, else fall back to text.
+    private static bool CardNumbersMatch(string cardNo, string uniqueId)
+    {
+        if (string.IsNullOrWhiteSpace(cardNo) || string.IsNullOrWhiteSpace(uniqueId))
+            return false;
+
+        cardNo = cardNo.Trim();
+        uniqueId = uniqueId.Trim();
+
+        if (long.TryParse(cardNo, out long cardNumber) && long.TryParse(uniqueId, out long idNumber))
+            return cardNumber == idNumber;
+
+        return string.Equals(cardNo, uniqueId, StringComparison.OrdinalIgnoreCase);
     }
 
     public IActionResult MonthlyAttendanceReport()

@@ -1,16 +1,33 @@
-name: Deploy ASP.NET Core via FTP
+name: Deploy EIMS
+
+# One release branch, one build, fanned out to every instance.
+#
+#   push to FinalDeployment ............ deploys ALL instances
+#   Run workflow -> pick an instance ... deploys just that one (or "all")
+#
+# Each instance is a GitHub *Environment* (Settings -> Environments) whose name
+# matches an entry below. Give every environment these secrets/vars:
+#
+#   secrets: FTP_SERVER  FTP_USERNAME  FTP_PASSWORD  FTP_PATH
+#            SSH_HOST  SSH_USER  SSH_KEY        (Linux/systemd hosts only - omit on IIS)
+#   vars:    SITE_URL                          (used for the post-deploy health check)
+#            SERVICE_NAME                      (optional; defaults to eims-<client>.service)
+#
+# Per-instance config (appsettings*.json), data-protection Keys/ and uploaded
+# images stay on each server - the deploy never touches them.
 
 on:
   push:
-    branches:
-      - FinalDeployment
+    branches: [FinalDeployment]
   workflow_dispatch:
     inputs:
       client:
-        description: "Select client to deploy"
+        description: "Instance to deploy"
         required: true
+        default: all
         type: choice
         options:
+          - all
           - Noble
           - Mamitonnesa
           - DMCPS
@@ -18,352 +35,248 @@ on:
           - Curiosity
 
 jobs:
-  deploy:
+  # 1. Decide which instances this run targets ------------------------------
+  setup:
     runs-on: self-hosted
-    timeout-minutes: 30
-
+    outputs:
+      matrix: ${{ steps.pick.outputs.matrix }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - id: pick
+        shell: bash
+        run: |
+          all='["Noble","Mamitonnesa","DMCPS","Unityschoolbd","Curiosity"]'
+          sel="${{ github.event.inputs.client }}"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "$sel" ] && [ "$sel" != "all" ]; then
+            echo "matrix={\"client\":[\"$sel\"]}" >> "$GITHUB_OUTPUT"
+          else
+            echo "matrix={\"client\":$all}" >> "$GITHUB_OUTPUT"
+          fi
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+  # 2. Build & publish ONCE - every instance gets byte-identical output -----
+  build:
+    needs: setup
+    runs-on: self-hosted
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "8.0.x"
 
-      - name: Restore dependencies
+      # Stamps the version so every deployment is identifiable in the UI footer.
+      # The product version itself lives in Directory.Build.props.
+      - name: Build metadata
+        id: meta
+        shell: bash
+        run: |
+          echo "build_number=${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+          echo "git_commit=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+          echo "built_utc=$(date -u '+%Y-%m-%d %H:%M:%S')" >> "$GITHUB_OUTPUT"
+
+      - name: Restore
         run: dotnet restore
 
-      # Stamps the version so every deployment is uniquely identifiable in the UI.
-      # The product version itself lives in Directory.Build.props.
-      - name: Set build metadata
-        id: build_meta
-        shell: bash
-        run: |
-          echo "build_number=${{ github.run_number }}" >> $GITHUB_OUTPUT
-          echo "git_commit=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-          echo "built_utc=$(date -u '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_OUTPUT
-
-      - name: Build application
+      - name: Publish
         run: >
-          dotnet build -c Release --no-restore
-          -p:BuildNumber=${{ steps.build_meta.outputs.build_number }}
-          -p:GitCommit=${{ steps.build_meta.outputs.git_commit }}
-          -p:BuildTimestampUtc="${{ steps.build_meta.outputs.built_utc }}"
+          dotnet publish SMS_App/SMS_App.csproj -c Release -o ./publish --nologo
+          -p:BuildNumber=${{ steps.meta.outputs.build_number }}
+          -p:GitCommit=${{ steps.meta.outputs.git_commit }}
+          -p:BuildTimestampUtc="${{ steps.meta.outputs.built_utc }}"
 
-      - name: Publish application
-        run: >
-          dotnet publish -c Release -o ./publish --no-build
-          -p:BuildNumber=${{ steps.build_meta.outputs.build_number }}
-          -p:GitCommit=${{ steps.build_meta.outputs.git_commit }}
-          -p:BuildTimestampUtc="${{ steps.build_meta.outputs.built_utc }}"
-
-      - name: Set deployment variables
-        id: vars
+      - name: Strip files that must never leave the build server
         shell: bash
         run: |
-          client="${{ github.event.inputs.client }}"
-          if [ -z "$client" ]; then
-            client="DMCPS"
-          fi
+          rm -f  ./publish/appsettings*.json   # per-instance config lives on each server
+          rm -f  ./publish/*.pdb               # debug symbols
+          rm -rf ./publish/publish             # guard against a stray nested publish dir
 
-          case "$client" in
-            "Noble")
-              echo "server=${{ secrets.NOBLE_FTP_SERVER }}" >> $GITHUB_OUTPUT
-              echo "username=${{ secrets.NOBLE_FTP_USERNAME }}" >> $GITHUB_OUTPUT
-              echo "password=${{ secrets.NOBLE_FTP_PASSWORD }}" >> $GITHUB_OUTPUT
-              echo "path=${{ secrets.NOBLE_FTP_PATH }}" >> $GITHUB_OUTPUT
-              echo "ssh_host=${{ secrets.NOBLE_SSH_HOST }}" >> $GITHUB_OUTPUT
-              echo "ssh_user=${{ secrets.NOBLE_SSH_USER }}" >> $GITHUB_OUTPUT
-              echo "ssh_key=${{ secrets.NOBLE_SSH_KEY }}" >> $GITHUB_OUTPUT
-              echo "url=https://eims.nobleschoolbd.com" >> $GITHUB_OUTPUT
-              echo "client_name=Noble" >> $GITHUB_OUTPUT
-              ;;
-            "Mamitonnesa")
-              echo "server=${{ secrets.MAMI_FTP_SERVER }}" >> $GITHUB_OUTPUT
-              echo "username=${{ secrets.MAMI_FTP_USERNAME }}" >> $GITHUB_OUTPUT
-              echo "password=${{ secrets.MAMI_FTP_PASSWORD }}" >> $GITHUB_OUTPUT
-              echo "path=${{ secrets.MAMI_FTP_PATH }}" >> $GITHUB_OUTPUT
-              echo "ssh_host=${{ secrets.MAMI_SSH_HOST }}" >> $GITHUB_OUTPUT
-              echo "ssh_user=${{ secrets.MAMI_SSH_USER }}" >> $GITHUB_OUTPUT
-              echo "ssh_key=${{ secrets.MAMI_SSH_KEY }}" >> $GITHUB_OUTPUT
-              echo "url=https://eims.mamitonnessaghs.edu.bd" >> $GITHUB_OUTPUT
-              echo "client_name=Mamitonnesa" >> $GITHUB_OUTPUT
-              ;;
-            "DMCPS")
-              echo "server=${{ secrets.DMCPS_FTP_SERVER }}" >> $GITHUB_OUTPUT
-              echo "username=${{ secrets.DMCPS_FTP_USERNAME }}" >> $GITHUB_OUTPUT
-              echo "password=${{ secrets.DMCPS_FTP_PASSWORD }}" >> $GITHUB_OUTPUT
-              echo "path=${{ secrets.DMCPS_FTP_PATH }}" >> $GITHUB_OUTPUT
-              echo "ssh_host=${{ secrets.DMCPS_SSH_HOST }}" >> $GITHUB_OUTPUT
-              echo "ssh_user=${{ secrets.DMCPS_SSH_USER }}" >> $GITHUB_OUTPUT
-              echo "ssh_key=${{ secrets.DMCPS_SSH_KEY }}" >> $GITHUB_OUTPUT
-              echo "url=https://eims.mcpsbd.com" >> $GITHUB_OUTPUT
-              echo "client_name=DMCPS" >> $GITHUB_OUTPUT
-              ;;
-            "Unityschoolbd")
-              echo "server=${{ secrets.UNITY_FTP_SERVER }}" >> $GITHUB_OUTPUT
-              echo "username=${{ secrets.UNITY_FTP_USERNAME }}" >> $GITHUB_OUTPUT
-              echo "password=${{ secrets.UNITY_FTP_PASSWORD }}" >> $GITHUB_OUTPUT
-              echo "path=${{ secrets.UNITY_FTP_PATH }}" >> $GITHUB_OUTPUT
-              # Windows/IIS host: leave the SSH secrets unset and the restart step
-              # is skipped - removing app_offline.htm is what recycles the app pool.
-              echo "ssh_host=${{ secrets.UNITY_SSH_HOST }}" >> $GITHUB_OUTPUT
-              echo "ssh_user=${{ secrets.UNITY_SSH_USER }}" >> $GITHUB_OUTPUT
-              echo "ssh_key=${{ secrets.UNITY_SSH_KEY }}" >> $GITHUB_OUTPUT
-              echo "url=https://eims.unityschoolbd.com" >> $GITHUB_OUTPUT
-              echo "client_name=Unityschoolbd" >> $GITHUB_OUTPUT
-              ;;
-            "Curiosity")
-              echo "server=${{ secrets.CURIOSITY_FTP_SERVER }}" >> $GITHUB_OUTPUT
-              echo "username=${{ secrets.CURIOSITY_FTP_USERNAME }}" >> $GITHUB_OUTPUT
-              echo "password=${{ secrets.CURIOSITY_FTP_PASSWORD }}" >> $GITHUB_OUTPUT
-              echo "path=${{ secrets.CURIOSITY_FTP_PATH }}" >> $GITHUB_OUTPUT
-              echo "ssh_host=${{ secrets.CURIOSITY_SSH_HOST }}" >> $GITHUB_OUTPUT
-              echo "ssh_user=${{ secrets.CURIOSITY_SSH_USER }}" >> $GITHUB_OUTPUT
-              echo "ssh_key=${{ secrets.CURIOSITY_SSH_KEY }}" >> $GITHUB_OUTPUT
-              echo "url=https://curiosity.mcpsbd.com" >> $GITHUB_OUTPUT
-              echo "client_name=Curiosity" >> $GITHUB_OUTPUT
-              ;;
-            *)
-              echo "::error::Unknown client '$client'. No deployment target matched."
-              exit 1
-              ;;
-          esac
+      - name: Package
+        shell: bash
+        run: tar -czf eims-publish.tgz -C publish .
 
-      - name: Remove excluded files
+      - uses: actions/upload-artifact@v4
+        with:
+          name: eims-publish
+          path: eims-publish.tgz
+          retention-days: 2
+          if-no-files-found: error
+
+  # 3. Deploy the same package to each targeted instance -------------------
+  deploy:
+    needs: [setup, build]
+    runs-on: self-hosted
+    timeout-minutes: 30
+    environment: ${{ matrix.client }}
+    concurrency:
+      group: deploy-${{ matrix.client }}
+      cancel-in-progress: false
+    strategy:
+      fail-fast: false          # one instance failing must not block the others
+      max-parallel: 2
+      matrix: ${{ fromJSON(needs.setup.outputs.matrix) }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: eims-publish
+
+      - name: Unpack
         shell: bash
         run: |
-          echo "Removing excluded files and folders..."
+          rm -rf publish && mkdir publish
+          tar -xzf eims-publish.tgz -C publish
 
-          # Remove appsettings.json and all variants
-          rm -f ./publish/appsettings*.json
-          echo "✓ Removed appsettings*.json files"
-
-          # Clean wwwroot folder - remove all css, js, and Reports folders
-          if [ -d "./publish/wwwroot" ]; then
-            # Remove all files in wwwroot
-            find ./publish/wwwroot -type f -delete
-            # Remove all subdirectories including css, js, Reports
-            rm -rf ./publish/wwwroot/css
-            rm -rf ./publish/wwwroot/js
-            rm -rf ./publish/wwwroot/Reports
-            echo "✓ Cleaned wwwroot folder, removed css, js, Reports"
-          fi
-
-          # Remove debug symbols
-          rm -f ./publish/*.pdb
-          echo "✓ Removed .pdb files"
-
-          echo "Exclusion complete"
-
-      - name: Create maintenance page (outside publish folder)
+      - name: Take the app offline
         shell: bash
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_PATH: ${{ secrets.FTP_PATH }}
         run: |
-          cat > ./app_offline.htm << 'EOF'
-          <!DOCTYPE html>
-          <html lang="en">
-          <head>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1">
-            <title>System Maintenance</title>
-            <style>
-              body { 
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                text-align: center; 
-                padding: 50px 20px; 
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                margin: 0;
-                min-height: 100vh;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-              }
-              .container {
-                background: rgba(255,255,255,0.1);
-                backdrop-filter: blur(10px);
-                padding: 40px;
-                border-radius: 15px;
-                box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-                max-width: 500px;
-              }
-              h1 { margin: 0 0 20px 0; font-size: 2em; }
-              p { font-size: 1.1em; margin: 10px 0; }
-              .spinner {
-                border: 4px solid rgba(255,255,255,0.3);
-                border-top: 4px solid white;
-                border-radius: 50%;
-                width: 40px;
-                height: 40px;
-                animation: spin 1s linear infinite;
-                margin: 20px auto;
-              }
-              @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-              }
-            </style>
-          </head>
-          <body>
-            <div class="container">
-              <h1>🔧 System Maintenance</h1>
-              <div class="spinner"></div>
-              <p>We're updating the system with the latest improvements.</p>
-              <p><small>This will only take a moment. Please refresh in a few seconds.</small></p>
-            </div>
-          </body>
-          </html>
+          cat > app_offline.htm <<'EOF'
+          <!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <title>System Maintenance</title><style>
+          body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;text-align:center;
+          padding:50px 20px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;
+          margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center}
+          .card{background:rgba(255,255,255,.1);backdrop-filter:blur(10px);padding:40px;
+          border-radius:15px;box-shadow:0 8px 32px rgba(0,0,0,.1);max-width:500px}
+          h1{margin:0 0 20px;font-size:2em}p{font-size:1.1em;margin:10px 0}
+          .spin{border:4px solid rgba(255,255,255,.3);border-top:4px solid #fff;border-radius:50%;
+          width:40px;height:40px;animation:s 1s linear infinite;margin:20px auto}
+          @keyframes s{to{transform:rotate(360deg)}}</style></head><body><div class="card">
+          <h1>&#128295; System Maintenance</h1><div class="spin"></div>
+          <p>We're updating the system with the latest improvements.</p>
+          <p><small>This will only take a moment. Please refresh in a few seconds.</small></p>
+          </div></body></html>
+          EOF
+          lftp -u "$FTP_USERNAME,$FTP_PASSWORD" "ftp://$FTP_SERVER" <<EOF
+          set ftp:passive-mode on
+          set ssl:verify-certificate no
+          set net:timeout 30
+          set net:max-retries 3
+          cd "$FTP_PATH"
+          put app_offline.htm -o app_offline.htm
+          bye
+          EOF
+          sleep 5
+
+      - name: Deploy via FTP
+        shell: bash
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_PATH: ${{ secrets.FTP_PATH }}
+        run: |
+          # mirror -R uploads; no --delete, so server-side files we exclude are
+          # left untouched. lftp only transfers files whose size/timestamp changed,
+          # so after the first run this pushes just what actually changed.
+          lftp -u "$FTP_USERNAME,$FTP_PASSWORD" "ftp://$FTP_SERVER" <<EOF
+          set ftp:passive-mode on
+          set ssl:verify-certificate no
+          set net:timeout 120
+          set net:max-retries 3
+          set net:reconnect-interval-base 5
+          set net:reconnect-interval-multiplier 1
+          set ftp:use-site-chmod no
+          set ftp:use-site-utime no
+          set file:charset utf-8
+          cd "$FTP_PATH"
+          mirror -R --verbose --no-perms --no-umask \
+            --exclude-glob app_offline.htm \
+            --exclude-glob appsettings*.json \
+            --exclude-glob *.pdb \
+            --exclude Keys/ \
+            --exclude logs/ \
+            --exclude wwwroot/Images/Student/Photo/ \
+            --exclude wwwroot/Images/Employee/photo/ \
+            --exclude wwwroot/Images/Institute/ \
+            --parallel=3 \
+            ./publish/ .
+          bye
           EOF
 
-      - name: Upload maintenance page
-        shell: bash
-        run: |
-          echo "Uploading maintenance page..."
-          lftp -u "${{ steps.vars.outputs.username }},${{ steps.vars.outputs.password }}" "ftp://${{ steps.vars.outputs.server }}" <<EOF
-            set ftp:passive-mode on
-            set ssl:verify-certificate no
-            set net:timeout 30
-            set net:max-retries 3
-            cd "${{ steps.vars.outputs.path }}"
-            put ./app_offline.htm -o app_offline.htm
-            quit
-          EOF
-          echo "✓ Maintenance page uploaded"
-
-      - name: Wait for application to go offline
-        run: sleep 5
-
-      - name: Deploy files via FTP
-        shell: bash
-        run: |
-          echo "Starting file deployment..."
-          lftp -u "${{ steps.vars.outputs.username }},${{ steps.vars.outputs.password }}" "ftp://${{ steps.vars.outputs.server }}" <<EOF
-            set ftp:passive-mode on
-            set ssl:verify-certificate no
-            set net:timeout 120
-            set net:max-retries 3
-            set net:reconnect-interval-base 5
-            set net:reconnect-interval-multiplier 1
-            set ftp:use-site-chmod no
-            set ftp:use-site-utime no
-            set file:charset utf-8
-            
-            cd "${{ steps.vars.outputs.path }}"
-            
-            # Upload all files from publish folder, overwriting existing ones
-            mirror -R \
-              --verbose \
-              --no-perms \
-              --no-umask \
-              --exclude-glob app_offline.htm \
-              --exclude-glob appsettings*.json \
-              --exclude-glob wwwroot/ \
-              --exclude-glob Keys/ \
-              --exclude-glob logs/ \
-              --exclude-glob *.pdb \
-              --parallel=3 \
-              ./publish/ .
-            
-            quit
-          EOF
-          echo "✓ All files deployed successfully"
-
-      - name: Restart application service
+      - name: Restart service (Linux/systemd hosts only)
         shell: bash
         continue-on-error: true
         env:
-          SSH_HOST: ${{ steps.vars.outputs.ssh_host }}
-          SSH_USER: ${{ steps.vars.outputs.ssh_user }}
-          SSH_KEY: ${{ steps.vars.outputs.ssh_key }}
-          CLIENT: ${{ steps.vars.outputs.client_name }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SERVICE_NAME: ${{ vars.SERVICE_NAME }}
+          CLIENT: ${{ matrix.client }}
         run: |
-          svc="eims-$(echo "$CLIENT" | tr '[:upper:]' '[:lower:]').service"
-
           if [ -z "$SSH_HOST" ] || [ -z "$SSH_USER" ] || [ -z "$SSH_KEY" ]; then
-            echo "⚠ SSH credentials not configured. Skipping service restart."
-            echo "  To enable, add *_SSH_HOST, *_SSH_USER, *_SSH_KEY secrets in GitHub."
+            echo "No SSH secrets for $CLIENT - IIS host, removing app_offline.htm recycles the app pool."
             exit 0
           fi
-
+          svc="${SERVICE_NAME:-eims-$(echo "$CLIENT" | tr '[:upper:]' '[:lower:]').service}"
           echo "Restarting $svc on $SSH_HOST..."
-
           mkdir -p ~/.ssh
-          echo "$SSH_KEY" > ~/.ssh/deploy_key
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" "sudo systemctl restart $svc"
+          rm -f ~/.ssh/deploy_key
 
-          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" \
-            "sudo systemctl restart $svc" 2>&1
-
-          echo "✓ Service $svc restarted successfully"
-
-      - name: Remove maintenance page
+      - name: Bring the app back online
+        if: always()
         shell: bash
-        continue-on-error: true
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_PATH: ${{ secrets.FTP_PATH }}
         run: |
-          echo "Removing maintenance page..."
-          lftp -u "${{ steps.vars.outputs.username }},${{ steps.vars.outputs.password }}" "ftp://${{ steps.vars.outputs.server }}" <<EOF
-            set ftp:passive-mode on
-            set ssl:verify-certificate no
-            set net:timeout 30
-            cd "${{ steps.vars.outputs.path }}"
-            rm -f app_offline.htm
-            quit
+          lftp -u "$FTP_USERNAME,$FTP_PASSWORD" "ftp://$FTP_SERVER" <<EOF
+          set ftp:passive-mode on
+          set ssl:verify-certificate no
+          set net:timeout 30
+          cd "$FTP_PATH"
+          rm -f app_offline.htm
+          bye
           EOF
-          echo "✓ Maintenance page removed"
+          sleep 10
 
-      - name: Wait for application startup
-        run: sleep 10
-
-      - name: Verify deployment
+      - name: Verify
         shell: bash
         continue-on-error: true
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+          CLIENT: ${{ matrix.client }}
         run: |
-          url="${{ steps.vars.outputs.url }}"
-          echo "Verifying deployment at: $url"
-
-          for i in {1..5}; do
-            code=$(curl -s -o /dev/null -w "%{http_code}" -L "$url" --max-time 10)
+          if [ -z "$SITE_URL" ]; then
+            echo "No SITE_URL var for $CLIENT - skipping health check."
+            exit 0
+          fi
+          for i in $(seq 1 5); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' -L "$SITE_URL" --max-time 10 || echo 000)
             echo "Attempt $i: HTTP $code"
-            
-            if [[ "$code" == "200" || "$code" == "301" || "$code" == "302" ]]; then
-              echo "✓ Deployment verified successfully"
-              exit 0
-            fi
-            
-            if [ $i -lt 5 ]; then
-              echo "Retrying in 5 seconds..."
-              sleep 5
-            fi
+            case "$code" in
+              200|301|302) echo "OK - $SITE_URL is up"; exit 0 ;;
+            esac
+            sleep 5
           done
+          echo "WARNING: could not confirm $SITE_URL - check it manually."
 
-          echo "⚠ Warning: Could not verify deployment. Please check manually."
-          exit 0
-
-      - name: Deployment summary
+      - name: Summary
         if: always()
         shell: bash
         run: |
-          echo ""
-          echo "════════════════════════════════════════"
-          echo "    DEPLOYMENT SUMMARY"
-          echo "════════════════════════════════════════"
-          echo "Client:     ${{ steps.vars.outputs.client_name }}"
-          echo "URL:        ${{ steps.vars.outputs.url }}"
-          echo "Version:    build ${{ steps.build_meta.outputs.build_number }} @ ${{ steps.build_meta.outputs.git_commit }}"
-          echo "Built (UTC):${{ steps.build_meta.outputs.built_utc }}"
-          echo "Time:       $(date '+%Y-%m-%d %H:%M:%S %Z')"
-          echo "Status:     ${{ job.status }}"
-          echo "════════════════════════════════════════"
-          echo ""
-          echo "✓ Files deployed automatically via FTP"
-          echo "✓ Application should be live at: ${{ steps.vars.outputs.url }}"
-          echo ""
+          {
+            echo "### ${{ matrix.client }} - ${{ job.status }}"
+            echo ""
+            echo "| Field | Value |"
+            echo "|-------|-------|"
+            echo "| URL | ${{ vars.SITE_URL }} |"
+            echo "| Build | ${{ github.run_number }} |"
+            echo "| Commit | ${{ github.sha }} |"
+            echo "| Branch | ${{ github.ref_name }} |"
+          } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Cleanup local files
+      - name: Cleanup
         if: always()
         shell: bash
-        run: |
-          rm -f ./app_offline.htm
-          rm -rf ./publish
-          echo "✓ Local files cleaned up"
+        run: rm -rf publish eims-publish.tgz app_offline.htm

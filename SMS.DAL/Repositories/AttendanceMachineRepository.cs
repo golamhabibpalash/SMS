@@ -197,18 +197,18 @@ namespace SMS.DAL.Repositories
 
         public async Task<List<Employee>> GetTodaysAbsentEmployeeAsync(string date)
         {
-            DateTime parsedDate = DateTime.Parse(date);
+            var punchedPins = await GetPunchedPinsAsync(date);
             try
             {
-                var cardNosWithPunch = await _context.Tran_MachineRawPunch
-                    .Where(t => t.PunchDatetime.Date == parsedDate.Date)
-                    .Select(t => t.CardNo)
-                    .Distinct()
+                var activeEmployees = await _context.Employee
+                    .Where(e => e.Status)
                     .ToListAsync();
 
-                var absentEmployees = await _context.Employee
-                    .Where(e => !cardNosWithPunch.Contains(e.Id.ToString()))
-                    .ToListAsync();
+                // A punch resolves through the enrolled PIN (MachineUserId);
+                // legacy punches captured under the employee id still count.
+                var absentEmployees = activeEmployees
+                    .Where(e => !HasPunch(punchedPins, e.MachineUserId, e.Id.ToString()))
+                    .ToList();
 
                 return absentEmployees;
             }
@@ -220,18 +220,18 @@ namespace SMS.DAL.Repositories
 
         public async Task<List<Student>> GetTodaysAbsentStudentAsync(string date)
         {
-            DateTime parsedDate = DateTime.Parse(date);
+            var punchedPins = await GetPunchedPinsAsync(date);
             try
             {
-                var cardNosWithPunch = await _context.Tran_MachineRawPunch
-                    .Where(t => t.PunchDatetime.Date == parsedDate.Date)
-                    .Select(t => t.CardNo)
-                    .Distinct()
+                var activeStudents = await _context.Student
+                    .Where(s => s.Status)
                     .ToListAsync();
 
-                var absentStudents = await _context.Student
-                    .Where(s => s.Status && !cardNosWithPunch.Contains(s.ClassRoll.ToString()))
-                    .ToListAsync();
+                // A punch resolves through the enrolled PIN (UniqueId); legacy
+                // punches captured under the class roll still count.
+                var absentStudents = activeStudents
+                    .Where(s => !HasPunch(punchedPins, s.UniqueId, s.ClassRoll.ToString()))
+                    .ToList();
 
                 return absentStudents;
             }
@@ -239,6 +239,35 @@ namespace SMS.DAL.Repositories
             {
                 throw;
             }
+        }
+
+        // Distinct, trimmed CardNo values punched on the given day. The machine
+        // stores whatever PIN was enrolled, so callers match it against the
+        // person's UniqueId / MachineUserId (with a roll / id fallback).
+        private async Task<HashSet<string>> GetPunchedPinsAsync(string date)
+        {
+            if (!DateTime.TryParse(date, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
+                parsedDate = DateTime.Today;
+
+            var cardNos = await _context.Tran_MachineRawPunch
+                .Where(t => t.PunchDatetime.Date == parsedDate.Date)
+                .Select(t => t.CardNo)
+                .ToListAsync();
+
+            return cardNos
+                .Where(c => !string.IsNullOrWhiteSpace(c))
+                .Select(c => c.Trim())
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        }
+
+        private static bool HasPunch(HashSet<string> punchedPins, params string[] candidatePins)
+        {
+            foreach (var pin in candidatePins)
+            {
+                if (!string.IsNullOrWhiteSpace(pin) && punchedPins.Contains(pin.Trim()))
+                    return true;
+            }
+            return false;
         }
 
         public async Task<Tran_MachineRawPunch> GetTodaysAttendanceByUserIdAsync(int attendanceId)

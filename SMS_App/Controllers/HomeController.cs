@@ -107,11 +107,18 @@ public class HomeController : Controller
                 var todayAbsentStudents = await _attendanceMachineManager.GetTodaysAbsentStudentAsync(today);
                 var todayAbsentEmployees = await _attendanceMachineManager.GetTodaysAbsentEmployeeAsync(today);
 
-                dashboard.TodayAbsentStudents = todayAbsentStudents?.Count ?? 0;
+                // TotalStudents only counts the current session, so scope the
+                // absent list to it too or Present Today can go negative.
+                var sessionStudentIds = activeSessionStudents.Select(s => s.Id).ToHashSet();
+                var sessionAbsentStudents = (todayAbsentStudents ?? new List<Student>())
+                    .Where(s => sessionStudentIds.Contains(s.Id))
+                    .ToList();
+
+                dashboard.TodayAbsentStudents = sessionAbsentStudents.Count;
                 dashboard.TodayPresentStudents = dashboard.TotalStudents - dashboard.TodayAbsentStudents;
                 dashboard.TodayAbsentEmployees = todayAbsentEmployees?.Count ?? 0;
                 dashboard.TodayPresentEmployees = dashboard.TotalEmployees - dashboard.TodayAbsentEmployees;
-                dashboard.TodayAbsentStudentList = todayAbsentStudents?.Take(10).ToList() ?? new List<Student>();
+                dashboard.TodayAbsentStudentList = sessionAbsentStudents.Take(10).ToList();
             }
             catch
             {

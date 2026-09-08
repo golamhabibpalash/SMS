@@ -20,7 +20,7 @@
                         <td>Make By</td>
                         <td>Update By</td>
                         <td class="p-0 pt-1">
-                            <button class="btn btn-primary btn-sm addNewBtn" data-toggle="modal" data-target=".bd-example-modal-lg" onclick="refreshModel()">Add New Allocation</button>
+                            <button class="btn btn-primary btn-sm addNewBtn" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg" onclick="refreshModel()">Add New Allocation</button>
                         </td>
                     </tr>
                 </thead>
@@ -46,7 +46,7 @@
                             <td>@createdBy</td>
                             <td> @updateBy</td>
                             <td>
-                                <a class="btn-sm rounded examEditBtn" data-toggle="modal" data-target=".bd-example-modal-lg" onclick="EditExamClick(@item.Id)">
+                                <a class="btn-sm rounded examEditBtn" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg" onclick="EditExamClick(@item.Id)">
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 <a asp-action="ClassWiseSubjectAllocationDelete" asp-controller="AcademicSubjects" asp-route-id="@item.Id" class="btn-sm rounded">
@@ -63,7 +63,7 @@
     {
         <div class="col-md-12">
             <div class="jumbotron text-center">
-                <button class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg">Add Subject Allocation with class</button>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg">Add Subject Allocation with class</button>
             </div>
         </div>
     }

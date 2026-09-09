@@ -112,16 +112,19 @@ public class AdmitCardPdfBuilder : IDocument
         {
             ComposeBody(card, student, subjects);
 
+            // Both portions hug the bottom of the row so the last direction line and
+            // the "Controller of Examinations" line share a baseline regardless of
+            // how many lines the directions wrap to.
             card.Item().PaddingTop(4).Row(bottomRow =>
             {
-                bottomRow.RelativeItem(3).Column(directions =>
+                bottomRow.RelativeItem(3).AlignBottom().Column(directions =>
                 {
                     directions.Item().Text("Direction:").SemiBold().FontSize(DirectionFont);
                     directions.Item().Text("1. The Examinee must bring the Admit Card in the Examination hall.").FontSize(DirectionFont);
                     directions.Item().Text("2. The examinee must sign in the attendance sheet for each subject in the examination hall otherwise will be treated as absent in the respective subject(s).").FontSize(DirectionFont);
                 });
 
-                bottomRow.RelativeItem(2).AlignRight().Column(sig =>
+                bottomRow.RelativeItem(2).AlignBottom().AlignRight().Column(sig =>
                 {
                     if (!string.IsNullOrEmpty(_signatureBase64))
                     {
@@ -191,18 +194,29 @@ public class AdmitCardPdfBuilder : IDocument
             nameTable.Cell().Element(c => InfoCell(c, "Gender: ", student.Gender ?? ""));
         });
 
-        // Other fields in 3-column table
+        // Roll is displayed as 6 digits (the leading digit of the stored class roll is
+        // dropped); the Registration Number is a fixed 10 digits, built as
+        // "20" + the full class roll + "0".
+        var classRollDigits = student.ClassRoll.ToString("D7", CultureInfo.InvariantCulture);
+        var rollDisplay = classRollDigits.Length > 6
+            ? classRollDigits[^6..]
+            : classRollDigits;
+        var registrationNo = $"20{classRollDigits}0";
+
+        // Other fields in 4-column table
         col.Item().Table(otherTable =>
         {
             otherTable.ColumnsDefinition(c =>
             {
+                c.RelativeColumn(1.4f);
                 c.RelativeColumn();
-                c.RelativeColumn();
+                c.RelativeColumn(1.4f);
                 c.RelativeColumn();
             });
 
             otherTable.Cell().Element(c => InfoCell(c, "Class: ", $"{student.ClassName} - {student.SectionName}"));
-            otherTable.Cell().Element(c => InfoCell(c, "Roll: ", student.ClassRoll.ToString()));
+            otherTable.Cell().Element(c => InfoCell(c, "Roll: ", rollDisplay));
+            otherTable.Cell().Element(c => InfoCell(c, "Reg. No: ", registrationNo));
             otherTable.Cell().Element(c => InfoCell(c, "Religion: ", student.Religion ?? ""));
         });
 

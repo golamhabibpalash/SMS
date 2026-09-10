@@ -674,4 +674,9 @@ public class AcademicExamManager : Manager<AcademicExam>, IAcademicExamManager
     {
         throw new NotImplementedException();
     }
+
+    public async Task<bool> RemoveByIdAsync(int id)
+    {
+        return await _academicExamRepository.RemoveByIdAsync(id);
+    }
 }

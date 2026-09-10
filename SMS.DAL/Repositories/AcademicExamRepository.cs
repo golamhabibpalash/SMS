@@ -165,5 +165,12 @@ namespace SMS.DAL.Repositories
                 .Include(s => s.AcademicExamDetails)
                 .ToListAsync();
         }
+
+        public async Task<bool> RemoveByIdAsync(int id)
+        {
+            return await _context.AcademicExams
+                .Where(e => e.Id == id)
+                .ExecuteDeleteAsync() > 0;
+        }
     }
 }

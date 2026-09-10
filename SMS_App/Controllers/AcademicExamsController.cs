@@ -657,7 +657,7 @@ public class AcademicExamsController : Controller
                 await _academicExamDetailsManager.RemoveAsync(detail);
             }
 
-            bool isRemoved = await _examManager.RemoveAsync(academicExam);
+            bool isRemoved = await _examManager.RemoveByIdAsync(id);
             if (isRemoved)
             {
                 return Json(new { success = true, message = "Data deleted successfully." });

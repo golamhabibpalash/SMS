@@ -17,5 +17,6 @@ namespace SMS.DAL.Contracts
         Task<bool> IsDuplicateAsync(int examGroupId, int classId, int subjectId, int? sectionId, string examCategory);
         Task<List<(int SectionId, bool IsDuplicate)>> CheckDuplicatesBulkAsync(int examGroupId, int classId, int subjectId, string examCategory, List<int> sectionIds);
         Task<List<AcademicExam>> GetAllLiteAsync();
+        Task<bool> RemoveByIdAsync(int id);
     }
 }

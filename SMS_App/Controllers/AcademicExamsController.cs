@@ -639,6 +639,24 @@ public class AcademicExamsController : Controller
                 return Json(new { success = false, message = "Exam not found." });
             }
 
+            // Creating an exam seeds a placeholder AcademicExamDetail row for every student,
+            // and that FK is Restrict (cascade delete is disabled globally in ApplicationDbContext),
+            // so the exam can never be removed while those child rows exist. Allow deletion only
+            // while the exam is still untouched - no marks and no remarks entered - and clear the
+            // placeholder rows first so the parent delete can succeed.
+            var examDetails = await _academicExamDetailsManager.GetByExamIdAsync(id);
+
+            bool hasMarksEntered = examDetails.Any(d => d.ObtainMark != 0 || !string.IsNullOrWhiteSpace(d.Remarks));
+            if (hasMarksEntered)
+            {
+                return Json(new { success = false, message = "This exam has marks entered and cannot be deleted." });
+            }
+
+            foreach (var detail in examDetails)
+            {
+                await _academicExamDetailsManager.RemoveAsync(detail);
+            }
+
             bool isRemoved = await _examManager.RemoveAsync(academicExam);
             if (isRemoved)
             {
